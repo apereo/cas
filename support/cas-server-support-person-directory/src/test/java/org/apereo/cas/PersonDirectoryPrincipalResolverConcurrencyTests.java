@@ -1,29 +1,28 @@
-package org.apereo.cas.authentication.principal.resolvers;
+package org.apereo.cas;
 
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl;
-import org.apereo.services.persondir.support.ComplexStubPersonAttributeDao;
-import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
-import org.apereo.services.persondir.support.ScriptEnginePersonAttributeDao;
-import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -37,17 +36,38 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2
  */
 @Slf4j
-public class PersonDirectoryPrincipalResolverConcurrencyTests {
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreUtilConfiguration.class
+}, properties = {
+    "cas.authn.attributeRepository.stub.attributes.uid=cas",
+    "cas.authn.attributeRepository.stub.attributes.givenName=apereo-cas",
+    "cas.authn.attributeRepository.stub.attributes.phone=123456789",
 
-    private static final String DEFAULT_ATTR = "uid";
+    "cas.authn.attributeRepository.json[0].location=classpath:/json-attribute-repository.json",
+    "cas.authn.attributeRepository.json[0].order=1",
+
+    "cas.authn.attributeRepository.groovy[0].location=classpath:/GroovyAttributeDao.groovy",
+    "cas.authn.attributeRepository.groovy[0].order=2",
+
+    "cas.authn.attributeRepository.aggregation=merge",
+    "cas.authn.attributeRepository.merger=multivalued"
+})
+public class PersonDirectoryPrincipalResolverConcurrencyTests {
 
     private static final int NUM_USERS = 100;
 
     private static final int EXECUTIONS_PER_USER = 1000;
 
-    private PersonDirectoryPrincipalResolver personDirectoryResolver;
+    @Autowired
+    @Qualifier("attributeRepository")
+    private IPersonAttributeDao attributeRepository;
 
-    private final List<String> userList = new ArrayList<>();
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
+    private PrincipalResolver personDirectoryResolver;
 
     /**
      * Assert a list of runnables can run in parallel without any concurrency related exceptions.
@@ -59,7 +79,7 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
      * @throws InterruptedException interruption
      */
     private static void assertConcurrent(final String message, final List<? extends Runnable> runnables,
-                                        final int maxTimeoutSeconds) throws InterruptedException {
+                                         final int maxTimeoutSeconds) throws InterruptedException {
         val numThreads = runnables.size();
         val exceptions = Collections.synchronizedList(new ArrayList<>());
         val threadPool = Executors.newFixedThreadPool(numThreads);
@@ -91,48 +111,11 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
     }
 
     @BeforeEach
-    protected void setUp() throws Exception {
-        val attributeProvider = new SimpleUsernameAttributeProvider(DEFAULT_ATTR);
-        val stubDao = new ComplexStubPersonAttributeDao();
-        val scriptFile = "ConcurrencyPersonAttributeDao.groovy";
-        val scriptDao = new ScriptEnginePersonAttributeDao(scriptFile,
-            ScriptEnginePersonAttributeDao.getScriptEngineName(scriptFile), attributeProvider);
-        val mergingDao = new MergingPersonAttributeDaoImpl();
-        val stubDaoBackingMap = new HashMap<String, Map<String, List<Object>>>();
-
-        for (int i = 0; i < NUM_USERS; i++) {
-            userList.add("user_" + i);
-        }
-
-        userList.forEach(u -> {
-            val user = new HashMap<String, List<Object>>();
-            user.put("uid", CollectionUtils.toCollection(u, ArrayList.class));
-            user.put("phone", CollectionUtils.toCollection("777-7777", ArrayList.class));
-            user.put("displayName", CollectionUtils.toCollection("Display " + u, ArrayList.class));
-            stubDaoBackingMap.put(u, user);
-            LOGGER.debug("Creating user: {}", user.get("uid"));
-        });
-
-        stubDao.setBackingMap(stubDaoBackingMap);
-        stubDao.setUsernameAttributeProvider(attributeProvider);
-
-        val attributeSources = new ArrayList<IPersonAttributeDao>();
-        attributeSources.add(stubDao);
-        attributeSources.add(scriptDao);
-        mergingDao.setPersonAttributeDaos(attributeSources);
-
-        val cachePersonAttrDao = new CachingPersonAttributeDaoImpl();
-        cachePersonAttrDao.setCacheNullResults(false);
-        val graphs = Caffeine.newBuilder()
-            .maximumSize(25)
-            .expireAfterWrite(Duration.ofSeconds(5L))
-            .build();
-        cachePersonAttrDao.setUserInfoCache((Map) graphs.asMap());
-
-        cachePersonAttrDao.setCachedPersonAttributesDao(mergingDao);
-        cachePersonAttrDao.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider(DEFAULT_ATTR));
-        cachePersonAttrDao.afterPropertiesSet();
-        this.personDirectoryResolver = new PersonDirectoryPrincipalResolver(cachePersonAttrDao, "uid");
+    protected void setUp() {
+        this.personDirectoryResolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(
+            PrincipalFactoryUtils.newPrincipalFactory(),
+            attributeRepository, casProperties.getPersonDirectory()
+        );
     }
 
     /**
@@ -142,9 +125,14 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
      */
     @Test
     public void validatePersonDirConcurrency() throws Exception {
+        val userList = new ArrayList<String>();
+        for (int i = 0; i < NUM_USERS; i++) {
+            userList.add("user_" + i);
+        }
+
         val runnables = new ArrayList<Runnable>();
         for (val user : userList) {
-            val personAttrGetter = new PersonAttrGetter(personDirectoryResolver, user, EXECUTIONS_PER_USER);
+            val personAttrGetter = new PersonAttrGetter(personDirectoryResolver, user);
             runnables.add(personAttrGetter);
         }
         assertConcurrent("Getting persons", runnables, 600);
@@ -155,21 +143,20 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
     @RequiredArgsConstructor
     private static class PersonAttrGetter implements Runnable {
 
-        private final PersonDirectoryPrincipalResolver personDirectoryResolver;
+        private final PrincipalResolver personDirectoryResolver;
 
         private final String username;
-
-        private final int executions;
 
         @Override
         public void run() {
             val upc = new UsernamePasswordCredential(username, "password");
-            for (int i = 0; i < executions; i++) {
+            for (int i = 0; i < EXECUTIONS_PER_USER; i++) {
                 try {
-                    val person = this.personDirectoryResolver.retrievePersonAttributes(username, upc, Optional.empty());
-                    assertEquals(username, person.get("uid").get(0));
-                    LOGGER.debug("Fetched person: [{}] [{}], likes [{}]", person.get("uid"),
-                        person.get("displayName"), person.get("likes"));
+                    val person = this.personDirectoryResolver.resolve(upc);
+                    val attributes = person.getAttributes();
+                    assertEquals(username, person.getId());
+                    LOGGER.debug("Fetched person: [{}] [{}], last-name [{}]", attributes.get("uid"),
+                        attributes.get("lastName"), attributes.get("nickname"));
                 } catch (final Exception e) {
                     LOGGER.warn("Error getting person: {}", e.getMessage(), e);
                     throw e;
