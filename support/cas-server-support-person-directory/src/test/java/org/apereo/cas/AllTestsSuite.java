@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
     JdbcMultiRowAttributeRepositoryTests.class,
     JdbcSingleRowAttributeRepositoryTests.class,
     RestfulPersonAttributeDaoTests.class,
+    PersonDirectoryPrincipalResolverConcurrencyTests.class,
     PrincipalAttributeRepositoryFetcherCascadeTests.class,
     CachingAttributeRepositoryTests.class,
     CasPersonDirectoryConfigurationMergeAggregationTests.class,

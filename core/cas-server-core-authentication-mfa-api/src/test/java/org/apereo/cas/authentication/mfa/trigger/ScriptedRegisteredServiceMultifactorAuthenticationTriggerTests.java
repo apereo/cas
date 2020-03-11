@@ -17,8 +17,10 @@ import static org.mockito.Mockito.*;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated Since 6.2
  */
 @Tag("Groovy")
+@Deprecated(since = "6.2")
 public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
     public void verifyOperationByProviderEmbeddedScript() {

@@ -382,6 +382,7 @@ public class CasPersonDirectoryConfiguration {
 
     @ConditionalOnProperty(name = "cas.authn.attribute-repository.script[0].location")
     @Configuration("CasPersonDirectoryScriptedConfiguration")
+    @Deprecated(since = "6.2")
     public class CasPersonDirectoryScriptedConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
 
         @ConditionalOnMissingBean(name = "scriptedAttributeRepositories")
