@@ -249,9 +249,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                     LOGGER.debug("Found principal id attribute value [{}] and removed it from the collection of attributes", principalId);
                 }
             } else {
-                LOGGER.warn("Principal resolution is set to resolve the authenticated principal via attribute(s) [{}], and yet "
+                LOGGER.warn("Principal resolution is set to resolve users via attribute(s) [{}], and yet "
                     + "the collection of attributes retrieved [{}] do not contain any of those attributes. This is likely due to misconfiguration "
-                    + "and CAS will switch to use [{}] as the final principal id", this.principalAttributeNames, attributes.keySet(), principalId);
+                    + "and CAS will use [{}] as the final principal id", this.principalAttributeNames, attributes.keySet(), principalId);
             }
         }
 
