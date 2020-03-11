@@ -49,6 +49,7 @@ import org.junit.runner.RunWith;
     RejectResultCodePasswordPolicyHandlingStrategyTests.class,
     PasswordExpiringWarningMessageDescriptorTests.class,
     OneTimeTokenAccountTests.class,
+    CredentialCustomFieldsAttributeMetaDataPopulatorTests.class,
     AuthenticationDateAttributeMetaDataPopulatorTests.class,
     ByCredentialTypeAuthenticationHandlerResolverTests.class,
     ByCredentialSourceAuthenticationHandlerResolverTests.class,
