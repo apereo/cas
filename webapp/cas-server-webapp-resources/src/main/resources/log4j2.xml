@@ -19,8 +19,8 @@
             <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;}%n"/>
         </Console>
 
-        <RollingFile name="file" fileName="${sys:baseDir}/cas.log" append="true"
-                     filePattern="${sys:baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log">
+        <RollingFile name="file" fileName="${baseDir}/cas.log" append="true"
+                     filePattern="${baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log">
             <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
             <Policies>
                 <OnStartupTriggeringPolicy />
@@ -28,14 +28,14 @@
                 <TimeBasedTriggeringPolicy />
             </Policies>
             <DefaultRolloverStrategy max="5" compressionLevel="9">
-                <Delete basePath="${sys:baseDir}" maxDepth="2">
+                <Delete basePath="${baseDir}" maxDepth="2">
                     <IfFileName glob="*/*.log.gz" />
                     <IfLastModified age="7d" />
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
-        <RollingFile name="auditlogfile" fileName="${sys:baseDir}/cas_audit.log" append="true"
-                     filePattern="${sys:baseDir}/cas_audit-%d{yyyy-MM-dd-HH}-%i.log">
+        <RollingFile name="auditlogfile" fileName="${baseDir}/cas_audit.log" append="true"
+                     filePattern="${baseDir}/cas_audit-%d{yyyy-MM-dd-HH}-%i.log">
             <PatternLayout pattern="%highlight{%d %p [%c] - %m%n}" />
             <Policies>
                 <OnStartupTriggeringPolicy />
@@ -43,7 +43,7 @@
                 <TimeBasedTriggeringPolicy />
             </Policies>
             <DefaultRolloverStrategy max="5" compressionLevel="9">
-                <Delete basePath="${sys:baseDir}" maxDepth="2">
+                <Delete basePath="${baseDir}" maxDepth="2">
                     <IfFileName glob="*/*.log.gz" />
                     <IfLastModified age="7d" />
                 </Delete>
