@@ -191,8 +191,9 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
     }
 
     @Override
-    protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
-        val attributes = new LinkedHashMap<String, List<Object>>(super.retrievePersonAttributes(principalId, credential));
+    protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential,
+                                                                 final Optional<Principal> currentPrincipal) {
+        val attributes = new LinkedHashMap<String, List<Object>>(super.retrievePersonAttributes(principalId, credential, currentPrincipal));
         val certificate = ((X509CertificateCredential) credential).getCertificate();
         attributes.putAll(extractPersonAttributes(certificate));
         return attributes;

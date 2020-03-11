@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
@@ -44,6 +45,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -82,11 +84,13 @@ public class CoreAuthenticationUtils {
      * @param attributeRepository                  the attribute repository
      * @param principalId                          the principal id
      * @param activeAttributeRepositoryIdentifiers the active attribute repository identifiers
+     * @param currentPrincipal                     the current principal
      * @return the map or null
      */
     public static Map<String, List<Object>> retrieveAttributesFromAttributeRepository(final IPersonAttributeDao attributeRepository,
                                                                                       final String principalId,
-                                                                                      final Set<String> activeAttributeRepositoryIdentifiers) {
+                                                                                      final Set<String> activeAttributeRepositoryIdentifiers,
+                                                                                      final Optional<Principal> currentPrincipal) {
         var filter = IPersonAttributeDaoFilter.alwaysChoose();
         if (activeAttributeRepositoryIdentifiers != null && !activeAttributeRepositoryIdentifiers.isEmpty()) {
             val repoIdsArray = activeAttributeRepositoryIdentifiers.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
@@ -95,6 +99,7 @@ public class CoreAuthenticationUtils {
                     || StringUtils.equalsAnyIgnoreCase(daoId, repoIdsArray)
                     || StringUtils.equalsAnyIgnoreCase(IPersonAttributeDao.WILDCARD, repoIdsArray));
         }
+
         val attrs = attributeRepository.getPerson(principalId, filter);
         if (attrs == null) {
             return new HashMap<>(0);

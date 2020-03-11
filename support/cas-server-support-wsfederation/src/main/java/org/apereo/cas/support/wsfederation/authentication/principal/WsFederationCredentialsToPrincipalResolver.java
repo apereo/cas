@@ -79,16 +79,17 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
     }
 
     @Override
-    protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
+    protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential,
+                                                                 final Optional<Principal> currentPrincipal) {
         val wsFedCredentials = (WsFederationCredential) credential;
         if (this.configuration.getAttributesType() == WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.WSFED) {
             return wsFedCredentials.getAttributes();
         }
         if (this.configuration.getAttributesType() == WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.CAS) {
-            return super.retrievePersonAttributes(principalId, credential);
+            return super.retrievePersonAttributes(principalId, credential, currentPrincipal);
         }
         val mergedAttributes = new HashMap<String, List<Object>>(wsFedCredentials.getAttributes());
-        mergedAttributes.putAll(super.retrievePersonAttributes(principalId, credential));
+        mergedAttributes.putAll(super.retrievePersonAttributes(principalId, credential, currentPrincipal));
         return mergedAttributes;
     }
 

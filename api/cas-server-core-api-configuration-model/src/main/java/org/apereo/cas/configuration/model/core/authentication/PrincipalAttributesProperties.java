@@ -73,6 +73,20 @@ public class PrincipalAttributesProperties implements Serializable {
     private String merger = "REPLACE";
 
     /**
+     * Indicates how the results of multiple attribute repositories should
+     * be aggregated together. Accepted values are {@code MERGE}, or {@code CASCADE}.
+     * <ul>
+     * <li>{@code MERGE}: Default. Designed to query multiple repositories
+     * in order and merge the results into a single result set.</li>
+     * <li>{@code CASCADE}: Query multiple repositories in order and merge the results into
+     * a single result set. As each repository is queried
+     * the attributes from the first query in the result set are
+     * used as the query for the next repository. </li>
+     * </ul>
+     */
+    private String aggregation = "MERGE";
+
+    /**
      * CAS provides the ability to release a bundle of principal attributes to all services by default.
      * This bundle is not defined on a per-service basis and is always combined with attributes
      * produced by the specific release policy of the service, such that for instance,
