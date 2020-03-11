@@ -981,6 +981,7 @@ and their results are cached and merged.
 # cas.authn.attribute-repository.expirationTimeUnit=MINUTES
 # cas.authn.attribute-repository.maximumCacheSize=10000
 # cas.authn.attribute-repository.merger=REPLACE|ADD|MULTIVALUED|NONE
+# cas.authn.attributeRepository.aggregation=MERGE|CASCADE
 ```
 
 <div class="alert alert-info"><strong>Remember This</strong><p>Note that in certain cases,
@@ -1036,6 +1037,16 @@ The following merging strategies can be used to resolve conflicts when the same 
 | `ADD`                   | Retains existing attribute values if any, and ignores values from subsequent sources in the resolution chain.
 | `MULTIVALUED`           | Combines all values into a single attribute, essentially creating a multi-valued attribute.
 | `NONE`                  | Do not merge attributes, only use attributes retrieved during authentication.
+
+### Aggregation Strategies
+
+The following aggregation strategies can be used to resolve and merge attributes
+when multiple attribute repository sources are defined to fetch data:
+  
+| Type            | Description
+|-----------------|----------------------------------------------------------------------------------------------------
+| `MERGE`         | Default. Query multiple repositories in order and merge the results into a single result set.
+| `CASCADE`       | Same as above; results from each query are passed down to the next attribute repository source.
 
 ### Stub
 
