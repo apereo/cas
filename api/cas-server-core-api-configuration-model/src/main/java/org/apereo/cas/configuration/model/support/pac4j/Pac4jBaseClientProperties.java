@@ -43,4 +43,9 @@ public class Pac4jBaseClientProperties implements Serializable {
      * active and enabled for integration purposes.
      */
     private boolean enabled = true;
+
+    /**
+     * CSS class that should be assigned to this client.
+     */
+    private String cssClass;
 }

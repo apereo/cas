@@ -1,6 +1,9 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.config.CasPersonDirectoryConfigurationCascadeAggregationTests;
+import org.apereo.cas.config.CasPersonDirectoryConfigurationMergeAggregationTests;
+
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
@@ -15,7 +18,10 @@ import org.junit.runner.RunWith;
     JdbcMultiRowAttributeRepositoryTests.class,
     JdbcSingleRowAttributeRepositoryTests.class,
     RestfulPersonAttributeDaoTests.class,
+    PrincipalAttributeRepositoryFetcherCascadeTests.class,
     CachingAttributeRepositoryTests.class,
+    CasPersonDirectoryConfigurationMergeAggregationTests.class,
+    CasPersonDirectoryConfigurationCascadeAggregationTests.class,
     DefaultAttributeDefinitionStoreTests.class,
     JdbcSingleRowAttributeRepositoryPostgresTests.class
 })

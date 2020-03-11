@@ -18,7 +18,7 @@ public abstract class AbstractSecurityFilter {
      * The name of the optional Filter init-param specifying that configuration
      * errors should be fatal.
      */
-    public static final String FAIL_SAFE = "failSafe";
+    public static final String THROW_ON_ERROR = "throwOnError";
 
     /**
      * Throw fatal errors if set.

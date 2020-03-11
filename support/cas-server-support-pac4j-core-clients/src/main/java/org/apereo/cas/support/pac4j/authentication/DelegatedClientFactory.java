@@ -602,6 +602,9 @@ public class DelegatedClientFactory {
         if (StringUtils.isNotBlank(props.getPrincipalAttributeId())) {
             customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, props.getPrincipalAttributeId());
         }
+        if (StringUtils.isNotBlank(props.getCssClass())) {
+            customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, props.getCssClass());
+        }
         client.setCallbackUrl(casProperties.getServer().getLoginUrl());
         if (!casProperties.getAuthn().getPac4j().isLazyInit()) {
             client.init();
