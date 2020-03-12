@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("samlRestConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnClass(ServiceTicketResourceEntityResponseFactoryConfigurer.class)
+@ConditionalOnClass(value = ServiceTicketResourceEntityResponseFactoryConfigurer.class)
 public class SamlRestConfiguration {
 
     @Autowired
