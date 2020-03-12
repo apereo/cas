@@ -310,6 +310,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                             AuthenticationCredentialsThreadLocalBinder.bindInProgress(authnResult);
                             val failures = evaluateAuthenticationPolicies(authnResult, transaction, handlerSet);
                             proceedWithNextHandler = !failures.getKey();
+                        } catch (final GeneralSecurityException e) {
+                            handleAuthenticationException(e, handler.getName(), builder);
+                            proceedWithNextHandler = true;
                         } catch (final Exception e) {
                             LOGGER.error("Authentication has failed. Credentials may be incorrect or CAS cannot "
                                 + "find authentication handler that supports [{}] of type [{}]. Examine the configuration to "
