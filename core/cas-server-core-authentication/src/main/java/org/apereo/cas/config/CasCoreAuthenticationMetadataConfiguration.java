@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.metadata.AuthenticationCredentialTypeMetaDa
 import org.apereo.cas.authentication.metadata.AuthenticationDateAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.CacheCredentialsCipherExecutor;
 import org.apereo.cas.authentication.metadata.CacheCredentialsMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.CredentialCustomFieldsAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.SuccessfulHandlerMetaDataPopulator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -17,6 +18,7 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -48,6 +50,7 @@ public class CasCoreAuthenticationMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "cacheCredentialsCipherExecutor")
     @Bean
+    @RefreshScope
     public CipherExecutor cacheCredentialsCipherExecutor() {
         val cp = casProperties.getClearpass();
         if (cp.isCacheCredential()) {
@@ -67,6 +70,12 @@ public class CasCoreAuthenticationMetadataConfiguration {
         return new AuthenticationCredentialTypeMetaDataPopulator();
     }
 
+    @ConditionalOnMissingBean(name = "credentialCustomFieldsAttributeMetaDataPopulator")
+    @Bean
+    public AuthenticationMetaDataPopulator credentialCustomFieldsAttributeMetaDataPopulator() {
+        return new CredentialCustomFieldsAttributeMetaDataPopulator();
+    }
+
     @ConditionalOnMissingBean(name = "authenticationDateMetaDataPopulator")
     @Bean
     public AuthenticationMetaDataPopulator authenticationDateMetaDataPopulator() {
@@ -81,6 +90,7 @@ public class CasCoreAuthenticationMetadataConfiguration {
             plan.registerAuthenticationMetadataPopulator(rememberMeAuthenticationMetaDataPopulator());
             plan.registerAuthenticationMetadataPopulator(authenticationCredentialTypeMetaDataPopulator());
             plan.registerAuthenticationMetadataPopulator(authenticationDateMetaDataPopulator());
+            plan.registerAuthenticationMetadataPopulator(credentialCustomFieldsAttributeMetaDataPopulator());
 
             val cp = casProperties.getClearpass();
             if (cp.isCacheCredential()) {

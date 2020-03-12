@@ -12,8 +12,9 @@
 
 <body class="login mdc-typography">
     <div layout:fragment="content" class="d-flex justify-content-center">
+
         <div class="d-flex justify-content-center flex-md-row flex-column mdc-card mdc-card-content"
-            th:classappend="!(${delegatedAuthenticationProviderUrls} AND ${accepttoApplicationId}) ? 'w-lg-50' : ''">
+            th:classappend="${delegatedAuthenticationProviderConfigurations} OR ${accepttoApplicationId} ? 'w-lg-30' : 'w-lg-50'">
             <section id="loginForm"
                 class="login-section login-form"
                 th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
@@ -21,7 +22,7 @@
                     <a href="fragments/loginform.html">Login Form goes here</a>
                 </div>
             </section>
-            <section id="providers" class="login-section login-providers" th:if="${delegatedAuthenticationProviderUrls}">
+            <section id="providers" class="login-section login-providers" th:if="${delegatedAuthenticationProviderConfigurations}">
                 <div th:replace="fragments/loginProviders :: loginProviders">
                     <a href="fragments/loginProviders.html">loginProviders</a>
                 </div>

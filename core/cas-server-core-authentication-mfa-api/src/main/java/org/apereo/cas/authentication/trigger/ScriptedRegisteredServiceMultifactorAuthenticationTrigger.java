@@ -39,11 +39,13 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated Since 6.2
  */
 @Getter
 @Setter
 @Slf4j
 @RequiredArgsConstructor
+@Deprecated(since = "6.2")
 public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
 

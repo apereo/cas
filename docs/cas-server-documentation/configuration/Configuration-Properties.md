@@ -981,6 +981,7 @@ and their results are cached and merged.
 # cas.authn.attribute-repository.expirationTimeUnit=MINUTES
 # cas.authn.attribute-repository.maximumCacheSize=10000
 # cas.authn.attribute-repository.merger=REPLACE|ADD|MULTIVALUED|NONE
+# cas.authn.attributeRepository.aggregation=MERGE|CASCADE
 ```
 
 <div class="alert alert-info"><strong>Remember This</strong><p>Note that in certain cases,
@@ -1037,6 +1038,16 @@ The following merging strategies can be used to resolve conflicts when the same 
 | `MULTIVALUED`           | Combines all values into a single attribute, essentially creating a multi-valued attribute.
 | `NONE`                  | Do not merge attributes, only use attributes retrieved during authentication.
 
+### Aggregation Strategies
+
+The following aggregation strategies can be used to resolve and merge attributes
+when multiple attribute repository sources are defined to fetch data:
+  
+| Type            | Description
+|-----------------|----------------------------------------------------------------------------------------------------
+| `MERGE`         | Default. Query multiple repositories in order and merge the results into a single result set.
+| `CASCADE`       | Same as above; results from each query are passed down to the next attribute repository source.
+
 ### Stub
 
 Static attributes that need to be mapped to a hardcoded value belong here.
@@ -1082,10 +1093,11 @@ The Groovy script may be designed as:
 import java.util.*
 
 def Map<String, List<Object>> run(final Object... args) {
-    def uid = args[0]
-    def logger = args[1]
-    def casProperties = args[2]
-    def casApplicationContext = args[3]
+    def username = args[0]
+    def attributes = args[1]
+    def logger = args[2]
+    def properties = args[3]
+    def appContext = args[4]
 
     logger.debug("[{}]: The received uid is [{}]", this.class.simpleName, uid)
     return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
@@ -1141,7 +1153,12 @@ to be a JSON map as such:
 
 ### Ruby/Python/Javascript/Groovy
 
-Similar to the Groovy option but more versatile, this option takes advantage of Java's native scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script to resolve attributes. 
+<div class="alert alert-warning"><strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
+</div>
+
+Similar to the Groovy option but more versatile, this option takes advantage of Java's native 
+scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script to resolve attributes. 
 The following settings are relevant:
 
 ```properties
