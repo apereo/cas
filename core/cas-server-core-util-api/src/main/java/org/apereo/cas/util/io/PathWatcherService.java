@@ -55,7 +55,7 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
     @SneakyThrows
     public PathWatcherService(final Path watchablePath, final Consumer<File> onCreate,
                               final Consumer<File> onModify, final Consumer<File> onDelete) {
-        LOGGER.info("Watching directory at [{}]", watchablePath);
+        LOGGER.info("Watching directory path at [{}]", watchablePath);
         this.onCreate = onCreate;
         this.onModify = onModify;
         this.onDelete = onDelete;
