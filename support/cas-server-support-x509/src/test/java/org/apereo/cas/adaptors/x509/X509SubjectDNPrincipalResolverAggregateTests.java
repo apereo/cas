@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.x509;
 
 import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
-import org.apereo.cas.adaptors.x509.config.DefaultX509ConfigTests;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 
@@ -29,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attributeRepository.groovy[0].order=1",
         "cas.authn.attributeRepository.merger=multivalued"
     })
-public class X509SubjectDNPrincipalResolverAggregateTests extends DefaultX509ConfigTests {
+public class X509SubjectDNPrincipalResolverAggregateTests {
     private static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
     @Autowired
