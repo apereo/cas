@@ -354,7 +354,11 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
                             final Pair<Boolean, Set<Throwable>> failures = evaluateAuthenticationPolicies(builder.build(), transaction);
                             proceedWithNextHandler = !failures.getKey();
-                        } catch (final Exception e) {
+                        } catch (final GeneralSecurityException e) {
+                            handleAuthenticationException(e, handler.getName(), builder);
+                            proceedWithNextHandler = true;
+                        }
+                        catch (final Exception e) {
                             LOGGER.error("Authentication has failed. Credentials may be incorrect or CAS cannot "
                                 + "find authentication handler that supports [{}] of type [{}]. Examine the configuration to "
                                 + "ensure a method of authentication is defined and analyze CAS logs at DEBUG level to trace "
