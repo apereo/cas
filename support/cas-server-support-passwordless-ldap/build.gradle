@@ -41,6 +41,4 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-passwordless", configuration: "tests")
-
-    testImplementation libraries.unboundid_ldapsdk
 }
