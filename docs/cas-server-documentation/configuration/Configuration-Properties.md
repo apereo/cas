@@ -1093,10 +1093,11 @@ The Groovy script may be designed as:
 import java.util.*
 
 def Map<String, List<Object>> run(final Object... args) {
-    def uid = args[0]
-    def logger = args[1]
-    def casProperties = args[2]
-    def casApplicationContext = args[3]
+    def username = args[0]
+    def attributes = args[1]
+    def logger = args[2]
+    def properties = args[3]
+    def appContext = args[4]
 
     logger.debug("[{}]: The received uid is [{}]", this.class.simpleName, uid)
     return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
@@ -1152,7 +1153,12 @@ to be a JSON map as such:
 
 ### Ruby/Python/Javascript/Groovy
 
-Similar to the Groovy option but more versatile, this option takes advantage of Java's native scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script to resolve attributes. 
+<div class="alert alert-warning"><strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
+</div>
+
+Similar to the Groovy option but more versatile, this option takes advantage of Java's native 
+scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script to resolve attributes. 
 The following settings are relevant:
 
 ```properties

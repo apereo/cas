@@ -19,6 +19,7 @@ import lombok.val;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 6.2
  */
 @Slf4j
 @Getter
@@ -27,6 +28,7 @@ import lombok.val;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Deprecated(since = "6.2")
 public class ScriptedRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = -678554831202936052L;

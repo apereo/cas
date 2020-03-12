@@ -169,7 +169,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         }
         LOGGER.trace("Creating principal for [{}]", principalId);
         if (this.resolveAttributes) {
-            val attributes = retrievePersonAttributes(principalId, credential, currentPrincipal);
+            val attributes = retrievePersonAttributes(principalId, credential, currentPrincipal, new HashMap<>());
             if (attributes == null || attributes.isEmpty()) {
                 LOGGER.debug("Principal id [{}] did not specify any attributes", principalId);
                 if (!this.returnNullIfNoAttributes) {
@@ -249,9 +249,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                     LOGGER.debug("Found principal id attribute value [{}] and removed it from the collection of attributes", principalId);
                 }
             } else {
-                LOGGER.warn("Principal resolution is set to resolve the authenticated principal via attribute(s) [{}], and yet "
+                LOGGER.warn("Principal resolution is set to resolve users via attribute(s) [{}], and yet "
                     + "the collection of attributes retrieved [{}] do not contain any of those attributes. This is likely due to misconfiguration "
-                    + "and CAS will switch to use [{}] as the final principal id", this.principalAttributeNames, attributes.keySet(), principalId);
+                    + "and CAS will use [{}] as the final principal id", this.principalAttributeNames, attributes.keySet(), principalId);
             }
         }
 
@@ -259,21 +259,23 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     }
 
     /**
-     * Retrieve person attributes map synchronizing on a specific user.
+     * Retrieve person attributes as a map.
      *
      * @param principalId      the principal id
-     * @param credential       the credential whose id we have extracted. This is passed so that implementations
-     *                         can extract useful bits of authN info such as attributes into the principal.
+     * @param credential       the credential whose id we have extracted.
      * @param currentPrincipal the current principal
+     * @param queryAttributes  the query attributes
      * @return the map
      */
     protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential,
-                                                                 final Optional<Principal> currentPrincipal) {
+                                                                 final Optional<Principal> currentPrincipal,
+                                                                 final Map<String, List<Object>> queryAttributes) {
         return PrincipalAttributeRepositoryFetcher.builder()
             .attributeRepository(attributeRepository)
             .principalId(principalId)
             .activeAttributeRepositoryIdentifiers(activeAttributeRepositoryIdentifiers)
             .currentPrincipal(currentPrincipal.orElse(null))
+            .queryAttributes(queryAttributes)
             .build()
             .retrieve();
     }

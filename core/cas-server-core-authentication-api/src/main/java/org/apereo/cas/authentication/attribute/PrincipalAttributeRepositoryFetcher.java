@@ -38,6 +38,9 @@ public class PrincipalAttributeRepositoryFetcher {
     @Builder.Default
     private final Set<String> activeAttributeRepositoryIdentifiers = new HashSet<>();
 
+    @Builder.Default
+    private final Map<String, List<Object>> queryAttributes = new HashMap<>();
+
     private final Principal currentPrincipal;
 
     /**
@@ -55,29 +58,30 @@ public class PrincipalAttributeRepositoryFetcher {
                     || StringUtils.equalsAnyIgnoreCase(IPersonAttributeDao.WILDCARD, repoIdsArray));
         }
 
-        val queryAttributes = new HashMap<String, Object>();
-        queryAttributes.put("username", principalId);
+        val query = new HashMap<String, Object>();
+        query.put("username", principalId);
 
         if (currentPrincipal != null) {
-            queryAttributes.put("principal", currentPrincipal.getId());
-            queryAttributes.putAll(currentPrincipal.getAttributes());
+            query.put("principal", currentPrincipal.getId());
+            query.putAll(currentPrincipal.getAttributes());
         }
-
-        LOGGER.trace("Fetching person attributes for query [{}]", queryAttributes);
-        val people = attributeRepository.getPeople(queryAttributes, filter);
+        query.putAll(queryAttributes);
+        
+        LOGGER.trace("Fetching person attributes for query [{}]", query);
+        val people = attributeRepository.getPeople(query, filter);
         if (people == null || people.isEmpty()) {
-            LOGGER.warn("No person records were fetched from attribute repositories for [{}]", queryAttributes);
+            LOGGER.warn("No person records were fetched from attribute repositories for [{}]", query);
             return new HashMap<>(0);
         }
 
         if (people.size() > 1) {
             LOGGER.warn("Multiple records were found for [{}] from attribute repositories for query [{}]. The records are [{}], "
                     + "and CAS will only pick the first person record from the results.",
-                principalId, queryAttributes, people);
+                principalId, query, people);
         }
 
         val person = people.iterator().next();
-        LOGGER.debug("Retrieved person [{}] from attribute repositories for query [{}]", person, queryAttributes);
+        LOGGER.debug("Retrieved person [{}] from attribute repositories for query [{}]", person, query);
         return person.getAttributes();
     }
 }

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "spring.mail.host=localhost",
         "spring.mail.port=25000"
     })
-@Deprecated
+@Deprecated(since = "6.2")
 public class DefaultOpenIdUserNameExtractorTests {
 
     @Autowired

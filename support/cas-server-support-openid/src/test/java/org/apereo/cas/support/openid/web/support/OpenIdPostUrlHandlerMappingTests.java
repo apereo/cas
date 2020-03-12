@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.1
  * @deprecated 6.2
  */
-@Deprecated
+@Deprecated(since = "6.2")
 public class OpenIdPostUrlHandlerMappingTests extends AbstractOpenIdTests {
 
     private static final String LOGIN_URL_PATH = "/login";
