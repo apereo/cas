@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentEngine;
@@ -11,6 +12,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -28,10 +30,13 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
     public static final String EVENT_ID_CONSENT_REQUIRED = "consentRequired";
 
     public CheckConsentRequiredAction(final ServicesManager servicesManager,
-                                      final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+                                      final AuthenticationServiceSelectionPlan strategies,
                                       final ConsentEngine consentEngine,
-                                      final CasConfigurationProperties casProperties) {
-        super(casProperties, servicesManager, authenticationRequestServiceSelectionStrategies, consentEngine);
+                                      final CasConfigurationProperties casProperties,
+                                      final AttributeDefinitionStore attributeDefinitionStore,
+                                      final ConfigurableApplicationContext applicationContext) {
+        super(casProperties, servicesManager, strategies,
+            consentEngine, attributeDefinitionStore, applicationContext);
     }
 
     @Override

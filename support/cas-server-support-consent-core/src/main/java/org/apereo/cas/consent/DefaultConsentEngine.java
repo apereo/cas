@@ -29,50 +29,12 @@ import java.util.Map;
 @Getter
 public class DefaultConsentEngine implements ConsentEngine {
     private static final long serialVersionUID = -617809298856160625L;
+
     private static final int MAP_SIZE = 8;
 
     private final ConsentRepository consentRepository;
+
     private final ConsentDecisionBuilder consentDecisionBuilder;
-
-    @Override
-    public ConsentQueryResult isConsentRequiredFor(final Service service,
-                                                               final RegisteredService registeredService,
-                                                               final Authentication authentication) {
-        val attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
-
-        if (attributes == null || attributes.isEmpty()) {
-            LOGGER.debug("Consent is conditionally ignored for service [{}] given no consentable attributes are found", registeredService.getName());
-            return ConsentQueryResult.ignored();
-        }
-
-        LOGGER.debug("Locating consent decision for service [{}]", service);
-        val decision = findConsentDecision(service, registeredService, authentication);
-        if (decision == null) {
-            LOGGER.debug("No consent decision found; thus attribute consent is required");
-            return ConsentQueryResult.required();
-        }
-
-        LOGGER.debug("Located consentable attributes for release [{}]", attributes.keySet());
-        if (consentDecisionBuilder.doesAttributeReleaseRequireConsent(decision, attributes)) {
-            LOGGER.debug("Consent is required based on past decision [{}] and attribute release policy for [{}]",
-                decision, registeredService.getName());
-            return ConsentQueryResult.required(decision);
-        }
-
-        LOGGER.debug("Consent is not required yet for [{}]; checking for reminder options", service);
-        val unit = decision.getReminderTimeUnit();
-        val dt = decision.getCreatedDate().plus(decision.getReminder(), unit);
-        val now = LocalDateTime.now(ZoneId.systemDefault());
-
-        LOGGER.debug("Reminder threshold date/time is calculated as [{}]", dt);
-        if (now.isAfter(dt)) {
-            LOGGER.debug("Consent is required based on reminder options given now at [{}] is after [{}]", now, dt);
-            return ConsentQueryResult.required(decision);
-        }
-
-        LOGGER.debug("Consent is not required for service [{}]", service);
-        return ConsentQueryResult.ignored();
-    }
 
     @Audit(action = "SAVE_CONSENT",
         actionResolverName = "SAVE_CONSENT_ACTION_RESOLVER",
@@ -112,13 +74,6 @@ public class DefaultConsentEngine implements ConsentEngine {
     }
 
     @Override
-    public Map<String, List<Object>> resolveConsentableAttributesFrom(final ConsentDecision decision) {
-        LOGGER.debug("Retrieving consentable attributes from existing decision made by [{}] for [{}]",
-            decision.getPrincipal(), decision.getService());
-        return this.consentDecisionBuilder.getConsentableAttributesFrom(decision);
-    }
-
-    @Override
     public Map<String, List<Object>> resolveConsentableAttributesFrom(final Authentication authentication,
                                                                       final Service service,
                                                                       final RegisteredService registeredService) {
@@ -128,5 +83,52 @@ public class DefaultConsentEngine implements ConsentEngine {
             return policy.getConsentableAttributes(authentication.getPrincipal(), service, registeredService);
         }
         return new LinkedHashMap<>(MAP_SIZE);
+    }
+
+    @Override
+    public Map<String, List<Object>> resolveConsentableAttributesFrom(final ConsentDecision decision) {
+        LOGGER.debug("Retrieving consentable attributes from existing decision made by [{}] for [{}]",
+            decision.getPrincipal(), decision.getService());
+        return this.consentDecisionBuilder.getConsentableAttributesFrom(decision);
+    }
+
+    @Override
+    public ConsentQueryResult isConsentRequiredFor(final Service service,
+                                                   final RegisteredService registeredService,
+                                                   final Authentication authentication) {
+        val attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
+
+        if (attributes == null || attributes.isEmpty()) {
+            LOGGER.debug("Consent is conditionally ignored for service [{}] given no consentable attributes are found", registeredService.getName());
+            return ConsentQueryResult.ignored();
+        }
+
+        LOGGER.debug("Locating consent decision for service [{}]", service);
+        val decision = findConsentDecision(service, registeredService, authentication);
+        if (decision == null) {
+            LOGGER.debug("No consent decision found; thus attribute consent is required");
+            return ConsentQueryResult.required();
+        }
+
+        LOGGER.debug("Located consentable attributes for release [{}]", attributes.keySet());
+        if (consentDecisionBuilder.doesAttributeReleaseRequireConsent(decision, attributes)) {
+            LOGGER.debug("Consent is required based on past decision [{}] and attribute release policy for [{}]",
+                decision, registeredService.getName());
+            return ConsentQueryResult.required(decision);
+        }
+
+        LOGGER.debug("Consent is not required yet for [{}]; checking for reminder options", service);
+        val unit = decision.getReminderTimeUnit();
+        val dt = decision.getCreatedDate().plus(decision.getReminder(), unit);
+        val now = LocalDateTime.now(ZoneId.systemDefault());
+
+        LOGGER.debug("Reminder threshold date/time is calculated as [{}]", dt);
+        if (now.isAfter(dt)) {
+            LOGGER.debug("Consent is required based on reminder options given now at [{}] is after [{}]", now, dt);
+            return ConsentQueryResult.required(decision);
+        }
+
+        LOGGER.debug("Consent is not required for service [{}]", service);
+        return ConsentQueryResult.ignored();
     }
 }

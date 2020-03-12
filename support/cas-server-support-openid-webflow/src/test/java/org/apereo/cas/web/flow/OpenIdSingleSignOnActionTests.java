@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @deprecated 6.2
  */
 @Tag("Webflow")
-@Deprecated
+@Deprecated(since = "6.2")
 @SpringBootTest(classes = {
     AbstractOpenIdTests.SharedTestConfiguration.class,
     OpenIdWebflowConfiguration.class

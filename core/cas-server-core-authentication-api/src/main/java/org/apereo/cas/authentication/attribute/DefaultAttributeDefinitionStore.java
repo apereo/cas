@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.function.Predicate;
 
 /**
  * This is {@link DefaultAttributeDefinitionStore}.
@@ -110,6 +111,25 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     public Optional<AttributeDefinition> locateAttributeDefinition(final String key) {
         LOGGER.trace("Locating attribute definition for [{}]", key);
         return Optional.ofNullable(attributeDefinitions.get(key));
+    }
+
+    @Override
+    public <T extends AttributeDefinition> Optional<T> locateAttributeDefinition(final String key, final Class<T> clazz) {
+        LOGGER.trace("Locating attribute definition for [{}]", key);
+        val attributeDefinition = attributeDefinitions.get(key);
+        if (attributeDefinition != null && clazz.isAssignableFrom(attributeDefinition.getClass())) {
+            return Optional.of((T) attributeDefinition);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public <T extends AttributeDefinition> Optional<T> locateAttributeDefinition(final Predicate<AttributeDefinition> predicate) {
+        return attributeDefinitions.values()
+            .stream()
+            .filter(predicate::test)
+            .map(defn -> (T) defn)
+            .findFirst();
     }
 
     @Override

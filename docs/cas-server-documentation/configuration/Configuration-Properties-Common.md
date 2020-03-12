@@ -1117,6 +1117,7 @@ to an external provider such as Yahoo, given the provider's *configuration key*:
 # ${configurationKey}.secret=
 # ${configurationKey}.clientName=My Provider
 # ${configurationKey}.autoRedirect=false
+# ${configurationKey}.cssClass=
 # ${configurationKey}.principalAttributeId=
 # ${configurationKey}.enabled=true
 ```

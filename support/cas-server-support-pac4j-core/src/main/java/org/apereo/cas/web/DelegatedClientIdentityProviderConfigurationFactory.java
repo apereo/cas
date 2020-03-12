@@ -6,9 +6,9 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.Builder;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.util.Pac4jConstants;
@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Slf4j
 @Builder
 public class DelegatedClientIdentityProviderConfigurationFactory {
     /**
@@ -32,8 +31,6 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
     public static final String ENDPOINT_URL_REDIRECT = "clientredirect";
 
     private static final Pattern PAC4J_CLIENT_SUFFIX_PATTERN = Pattern.compile("Client\\d*");
-
-    private static final Pattern PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN = Pattern.compile("\\W");
 
     private final IndirectClient client;
 
@@ -82,23 +79,21 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
         val redirectUrl = uriBuilder.toUriString();
         val autoRedirect = (Boolean) client.getCustomProperties()
             .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, Boolean.FALSE);
-        val p = new DelegatedClientIdentityProviderConfiguration(name, redirectUrl, type, getCssClass(name), autoRedirect);
+        val p = new DelegatedClientIdentityProviderConfiguration(name, redirectUrl, type, getCssClass(client), autoRedirect);
         return Optional.of(p);
     }
 
     /**
      * Get a valid CSS class for the given provider name.
      *
-     * @param name Name of the provider
+     * @param client the client
      * @return the css class
      */
-    protected String getCssClass(final String name) {
-        var computedCssClass = "fa fa-lock";
-        if (StringUtils.isNotBlank(name)) {
-            computedCssClass = computedCssClass.concat(' ' + PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN.matcher(name)
-                .replaceAll("-"));
+    protected String getCssClass(final BaseClient client) {
+        val customProperties = client.getCustomProperties();
+        if (customProperties.containsKey(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS)) {
+            return customProperties.get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT).toString();
         }
-        LOGGER.trace("CSS class for [{}] is [{}]", name, computedCssClass);
-        return computedCssClass;
+        return null;
     }
 }

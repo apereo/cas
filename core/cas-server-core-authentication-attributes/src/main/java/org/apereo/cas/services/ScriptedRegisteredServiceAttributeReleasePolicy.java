@@ -26,6 +26,7 @@ import java.util.regex.Matcher;
  *
  * @author Misagh Moayyed
  * @since 5.1.0
+ * @deprecated Since 6.2
  */
 @Slf4j
 @Getter
@@ -34,6 +35,7 @@ import java.util.regex.Matcher;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Deprecated(since = "6.2")
 public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -979532578142774128L;

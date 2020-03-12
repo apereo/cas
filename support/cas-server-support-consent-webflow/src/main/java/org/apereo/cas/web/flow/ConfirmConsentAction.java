@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentReminderOptions;
@@ -9,6 +10,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -25,10 +27,12 @@ import java.time.temporal.ChronoUnit;
 public class ConfirmConsentAction extends AbstractConsentAction {
 
     public ConfirmConsentAction(final ServicesManager servicesManager,
-                                final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+                                final AuthenticationServiceSelectionPlan strategies,
                                 final ConsentEngine consentEngine,
-                                final CasConfigurationProperties casProperties) {
-        super(casProperties, servicesManager, authenticationRequestServiceSelectionStrategies, consentEngine);
+                                final CasConfigurationProperties casProperties,
+                                final AttributeDefinitionStore attributeDefinitionStore,
+                                final ConfigurableApplicationContext applicationContext) {
+        super(casProperties, servicesManager, strategies, consentEngine, attributeDefinitionStore, applicationContext);
     }
 
     @Override

@@ -13,7 +13,7 @@ dependencies {
     implementation libraries.ldaptive
     
     testImplementation project(":support:cas-server-support-generic")
-    testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
+    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core")
@@ -25,13 +25,15 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-monitor")
+    testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-cookie-api")
+
+    testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
-    testImplementation project(":core:cas-server-core-cookie")
-    testImplementation project(":core:cas-server-core-cookie-api")
 
     testImplementation libraries.unboundid_ldapsdk
 }
