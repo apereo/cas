@@ -197,7 +197,7 @@ public class CasPersonDirectoryConfiguration {
         }
     }
 
-    @ConditionalOnClass(JpaBeans.class)
+    @ConditionalOnClass(value = JpaBeans.class)
     @ConditionalOnProperty(name = "cas.authn.attribute-repository.jdbc[0].sql")
     @Configuration("CasPersonDirectoryJdbcConfiguration")
     public class CasPersonDirectoryJdbcConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {

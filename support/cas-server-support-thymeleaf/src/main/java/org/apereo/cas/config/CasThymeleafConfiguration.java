@@ -55,7 +55,7 @@ import java.util.Set;
  */
 @Configuration(value = "casThymeleafConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnClass(SpringTemplateEngine.class)
+@ConditionalOnClass(value = SpringTemplateEngine.class)
 @ImportAutoConfiguration(ThymeleafAutoConfiguration.class)
 public class CasThymeleafConfiguration {
     @Autowired
