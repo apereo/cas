@@ -47,7 +47,8 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
 
     private final String syncopeDomain;
 
-    public SyncopeAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public SyncopeAuthenticationHandler(final String name,
+                                        final ServicesManager servicesManager,
                                         final PrincipalFactory principalFactory,
                                         final String syncopeUrl,
                                         final String syncopeDomain) {
@@ -60,7 +61,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         val attributes = new HashMap<String, List<Object>>();
 
         if (user.getRoles() != null) {
-            attributes.put("syncopeUserRoles", List.of(user.getRoles()));
+            attributes.put("syncopeUserRoles", (List) user.getRoles());
         }
         if (user.getSecurityQuestion() != null) {
             attributes.put("syncopeUserSecurityQuestion", List.of(user.getSecurityQuestion()));
@@ -84,10 +85,10 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
             attributes.put("syncopeUserLastLoginDate", List.of(lastLoginDate));
         }
         if (user.getDynRoles() != null && !user.getDynRoles().isEmpty()) {
-            attributes.put("syncopeUserDynRoles", List.of(user.getDynRoles()));
+            attributes.put("syncopeUserDynRoles", (List) user.getDynRoles());
         }
         if (user.getDynRealms() != null && !user.getDynRealms().isEmpty()) {
-            attributes.put("syncopeUserDynRealms", List.of(user.getDynRealms()));
+            attributes.put("syncopeUserDynRealms", (List) user.getDynRealms());
         }
         if (user.getMemberships() != null && !user.getMemberships().isEmpty()) {
             attributes.put("syncopeUserMemberships", user.getMemberships()
