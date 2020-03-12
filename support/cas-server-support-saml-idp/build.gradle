@@ -30,6 +30,8 @@ dependencies {
     implementation project(":support:cas-server-support-saml-idp-web")
     implementation project(":support:cas-server-support-saml-idp-ticket")
     
+    compileOnly project(":support:cas-server-support-consent-api")
+    
     implementation libraries.casclient
     implementation libraries.shibidp
     implementation libraries.pac4jcore
@@ -52,6 +54,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-jpa-service-registry")
     testImplementation project(":support:cas-server-support-jdbc-drivers")
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-consent-api")
 
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
