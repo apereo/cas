@@ -8,6 +8,8 @@ import org.apereo.cas.aup.DefaultAcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.GroovyAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.web.flow.AcceptableUsagePolicyRenderAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicySubmitAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyVerifyAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyVerifyServiceAction;
@@ -87,6 +89,13 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "acceptableUsagePolicyRenderAction")
+    public Action acceptableUsagePolicyRenderAction() {
+        return new AcceptableUsagePolicyRenderAction(acceptableUsagePolicyRepository());
+    }
+
+    @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyVerifyServiceAction")
     public Action acceptableUsagePolicyVerifyServiceAction() {
         return new AcceptableUsagePolicyVerifyServiceAction(acceptableUsagePolicyRepository(),
@@ -107,7 +116,9 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
         val groovy = casProperties.getAcceptableUsagePolicy().getGroovy();
         if (groovy.getLocation() != null) {
-            return new GroovyAcceptableUsagePolicyRepository(groovy.getLocation(), applicationContext);
+            return new GroovyAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
+                casProperties.getAcceptableUsagePolicy(),
+                new WatchableGroovyScriptResource(groovy.getLocation()), applicationContext);
         }
 
         return new DefaultAcceptableUsagePolicyRepository(

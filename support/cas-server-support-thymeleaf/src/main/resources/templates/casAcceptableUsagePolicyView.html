@@ -15,8 +15,18 @@
         <form method="post" id="fm1">
             <h3 th:text="#{screen.aup.heading}">Acceptable Usage Policy</h3>
             <div class="aup">
-                <p>The purpose of this policy is to establish acceptable and unacceptable use of electronic devices and network resources in conjunction with the established culture of ethical and lawful behavior, openness, trust, and integrity.</p>
-                <p>By using these resources, you agree to abide by the Acceptable Usage Policy.</p>
+
+                <div th:if="${aupPolicy}">
+                    <p id="policyTextByCode" th:if="${aupPolicy.code}"
+                       th:utext="#{${aupPolicy.code}}">Policy terms go here</p>
+
+                    <p id='policyDefaultText' th:if="${aupPolicy.defaultText}"
+                       th:utext="${aupPolicy.defaultText}">Policy default text goes here</p>
+                </div>
+                
+                <div th:unless="${aupPolicy}">
+                    <p th:utext="#{screen.aup.policyterms}">Policy text goes here</p>
+                </div>
 
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <input type="hidden" name="_eventId" value="submit"/>

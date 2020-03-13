@@ -7,6 +7,8 @@
 # Encrypted settings include GPG_PSW, SONATYPE_USER, GPG_PASSPHRASE, SONATYPE_PWD, GH_TOKEN, COVERITY_SCAN_TOKEN
 
 language: java
+rvm:
+  - 2.5.7
 os: linux
 dist: trusty
 services:

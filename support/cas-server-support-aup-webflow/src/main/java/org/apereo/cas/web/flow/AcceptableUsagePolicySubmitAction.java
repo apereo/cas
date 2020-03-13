@@ -4,7 +4,9 @@ import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.webflow.action.AbstractAction;
@@ -19,6 +21,8 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 4.1
  */
 @RequiredArgsConstructor
+@Slf4j
+@Getter
 public class AcceptableUsagePolicySubmitAction extends AbstractAction {
     private final AcceptableUsagePolicyRepository repository;
 
@@ -30,6 +34,7 @@ public class AcceptableUsagePolicySubmitAction extends AbstractAction {
      * @return success if policy acceptance is recorded successfully.
      */
     private Event submit(final RequestContext context, final Credential credential) {
+        LOGGER.trace("Submitting acceptable usage policy request for [{}]", credential);
         if (repository.submit(context, credential)) {
             return new EventFactorySupport().event(this,
                 CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED);
