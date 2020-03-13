@@ -314,6 +314,10 @@ The following parameters are passed to the script:
 
 ### Script Engines
 
+<div class="alert alert-warning"><strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
+</div>
+
 Use alternative script engine implementations and other programming languages to configure attribute release policies. This approach 
 takes advantage of scripting functionality built into the Java platform via additional libraries and drivers. While Groovy should be 
 natively supported by CAS, the following module is required in the overlay to include support for additional languages
