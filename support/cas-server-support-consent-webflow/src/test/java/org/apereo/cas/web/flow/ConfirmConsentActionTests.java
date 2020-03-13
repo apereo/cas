@@ -34,8 +34,8 @@ public class ConfirmConsentActionTests extends BaseConsentActionTests {
         request.addParameter("reminderTimeUnit", ChronoUnit.DAYS.name());
         request.addParameter("option", String.valueOf(ConsentReminderOptions.ALWAYS.getValue()));
 
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(),
+            request, new MockHttpServletResponse()));
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService("consentService"));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, confirmConsentAction.execute(context).getId());
