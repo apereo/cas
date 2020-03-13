@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -32,5 +34,11 @@ public class CasPersonDirectoryTestConfiguration {
             "eduPersonAffiliation", CollectionUtils.wrap("developer"),
             "groupMembership", CollectionUtils.wrap("adopters"));
         return new StubPersonAttributeDao((Map) attrs);
+    }
+
+    @ConditionalOnMissingBean(name = "attributeDefinitionStore")
+    @Bean
+    public AttributeDefinitionStore attributeDefinitionStore() {
+        return new DefaultAttributeDefinitionStore();
     }
 }

@@ -43,13 +43,19 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
         HttpResponse response = null;
         try {
             val rest = aupProperties.getRest();
-
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
 
+            val service = WebUtils.getService(requestContext);
+            val parameters = CollectionUtils.wrap(
+                "username", credential.getId(),
+                "locale", request.getLocale().toString());
+            if (service != null) {
+                parameters.put("service", service.getId());
+            }
+
             response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
-                rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
-                CollectionUtils.wrap("username", credential.getId(),
-                    "locale", request.getLocale().toString()), new HashMap<>(0));
+                rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), parameters,
+                new HashMap<>(0));
             val statusCode = response.getStatusLine().getStatusCode();
             return HttpStatus.valueOf(statusCode).is2xxSuccessful();
         } catch (final Exception e) {

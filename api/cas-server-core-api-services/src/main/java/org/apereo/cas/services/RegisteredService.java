@@ -121,6 +121,13 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     RegisteredServiceUsernameAttributeProvider getUsernameAttributeProvider();
 
     /**
+     * Get the acceptable usage policy linked to this application.
+     *
+     * @return an instance of {@link RegisteredServiceAcceptableUsagePolicy}
+     */
+    RegisteredServiceAcceptableUsagePolicy getAcceptableUsagePolicy();
+
+    /**
      * Gets multifactor authentication policy.
      *
      * @return the authentication policy
