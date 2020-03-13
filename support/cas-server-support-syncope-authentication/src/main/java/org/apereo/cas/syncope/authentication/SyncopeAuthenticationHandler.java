@@ -23,11 +23,14 @@ import org.apache.syncope.common.lib.to.RelationshipTO;
 import org.apache.syncope.common.lib.to.UserTO;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -39,53 +42,26 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private final ObjectMapper objectMapper = new IgnoringJaxbModuleJacksonObjectMapper().findAndRegisterModules();
+
     private final String syncopeUrl;
+
     private final String syncopeDomain;
 
-    public SyncopeAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                        final PrincipalFactory principalFactory, final String syncopeUrl, final String syncopeDomain) {
+    public SyncopeAuthenticationHandler(final String name,
+                                        final ServicesManager servicesManager,
+                                        final PrincipalFactory principalFactory,
+                                        final String syncopeUrl,
+                                        final String syncopeDomain) {
         super(name, servicesManager, principalFactory, null);
         this.syncopeUrl = syncopeUrl;
         this.syncopeDomain = syncopeDomain;
-    }
-
-    @Override
-    @SneakyThrows
-    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c,
-                                                                                        final String originalPassword) {
-        HttpResponse response = null;
-        try {
-            val syncopeRestUrl = StringUtils.appendIfMissing(this.syncopeUrl, "/rest/users/self");
-            response = HttpUtils.executeGet(syncopeRestUrl, c.getUsername(), c.getPassword(),
-                new HashMap<>(0), CollectionUtils.wrap("X-Syncope-Domain", this.syncopeDomain));
-
-            LOGGER.debug("Received http response status as [{}]", response.getStatusLine());
-
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                LOGGER.debug("Received user object as [{}]", result);
-                val user = this.objectMapper.readValue(result, UserTO.class);
-                if (user.isSuspended()) {
-                    throw new AccountDisabledException("Could not authenticate forbidden account for " + c.getUsername());
-                }
-                if (user.isMustChangePassword()) {
-                    throw new AccountPasswordMustChangeException("Account password must change for " + c.getUsername());
-                }
-                val principal = this.principalFactory.createPrincipal(user.getUsername(), buildSyncopeUserAttributes(user));
-                return createHandlerResult(c, principal, new ArrayList<>(0));
-            }
-        } finally {
-            HttpUtils.close(response);
-        }
-
-        throw new FailedLoginException("Could not authenticate account for " + c.getUsername());
     }
 
     private static Map<String, List<Object>> buildSyncopeUserAttributes(final UserTO user) {
         val attributes = new HashMap<String, List<Object>>();
 
         if (user.getRoles() != null) {
-            attributes.put("syncopeUserRoles", List.of(user.getRoles()));
+            attributes.put("syncopeUserRoles", (List) user.getRoles());
         }
         if (user.getSecurityQuestion() != null) {
             attributes.put("syncopeUserSecurityQuestion", List.of(user.getSecurityQuestion()));
@@ -109,10 +85,10 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
             attributes.put("syncopeUserLastLoginDate", List.of(lastLoginDate));
         }
         if (user.getDynRoles() != null && !user.getDynRoles().isEmpty()) {
-            attributes.put("syncopeUserDynRoles", List.of(user.getDynRoles()));
+            attributes.put("syncopeUserDynRoles", (List) user.getDynRoles());
         }
         if (user.getDynRealms() != null && !user.getDynRealms().isEmpty()) {
-            attributes.put("syncopeUserDynRealms", List.of(user.getDynRealms()));
+            attributes.put("syncopeUserDynRealms", (List) user.getDynRealms());
         }
         if (user.getMemberships() != null && !user.getMemberships().isEmpty()) {
             attributes.put("syncopeUserMemberships", user.getMemberships()
@@ -135,5 +111,44 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
 
         user.getPlainAttrs().forEach(a -> attributes.put("syncopeUserAttr" + a.getSchema(), (List) a.getValues()));
         return attributes;
+    }
+
+    @Override
+    @SneakyThrows
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                                        final String originalPassword) {
+        val result = authenticateSyncopeUser(credential);
+        if (result.isPresent()) {
+            val user = result.get();
+            LOGGER.debug("Received user object as [{}]", user);
+            if (user.isSuspended()) {
+                throw new AccountDisabledException("Could not authenticate forbidden account for " + credential.getUsername());
+            }
+            if (user.isMustChangePassword()) {
+                throw new AccountPasswordMustChangeException("Account password must change for " + credential.getUsername());
+            }
+            val principal = this.principalFactory.createPrincipal(user.getUsername(), buildSyncopeUserAttributes(user));
+            return createHandlerResult(credential, principal, new ArrayList<>(0));
+        }
+        throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
+    }
+
+    @SneakyThrows
+    protected Optional<UserTO> authenticateSyncopeUser(final UsernamePasswordCredential credential) {
+        HttpResponse response = null;
+        try {
+            val syncopeRestUrl = StringUtils.appendIfMissing(this.syncopeUrl, "/rest/users/self");
+            response = Objects.requireNonNull(HttpUtils.executeGet(syncopeRestUrl, credential.getUsername(), credential.getPassword(),
+                new HashMap<>(0), CollectionUtils.wrap("X-Syncope-Domain", this.syncopeDomain)));
+            LOGGER.debug("Received http response status as [{}]", response.getStatusLine());
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                LOGGER.debug("Received user object as [{}]", result);
+                return Optional.of(this.objectMapper.readValue(result, UserTO.class));
+            }
+        } finally {
+            HttpUtils.close(response);
+        }
+        return Optional.empty();
     }
 }

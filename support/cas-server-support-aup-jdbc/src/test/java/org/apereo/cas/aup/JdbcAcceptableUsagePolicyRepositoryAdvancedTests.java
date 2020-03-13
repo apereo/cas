@@ -91,8 +91,8 @@ public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAc
     private void raiseException(final Map<String, List<Object>> profileAttributes) {
         val aupProperties = casProperties.getAcceptableUsagePolicy();
         val jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
-            aupProperties.getAupAttributeName(),
-            acceptableUsagePolicyDataSource.getObject(), aupProperties);
+            aupProperties,
+            acceptableUsagePolicyDataSource.getObject());
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

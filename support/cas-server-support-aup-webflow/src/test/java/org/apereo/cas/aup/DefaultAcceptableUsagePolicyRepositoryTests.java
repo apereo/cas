@@ -58,14 +58,14 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
     @Test
     public void verifyActionDefaultGlobal() {
         val properties = new AcceptableUsagePolicyProperties();
-        properties.setScope(AcceptableUsagePolicyProperties.Scope.GLOBAL);
+        properties.getInMemory().setScope(AcceptableUsagePolicyProperties.InMemory.Scope.GLOBAL);
         verifyAction(properties);
     }
 
     @Test
     public void verifyActionDefaultAuthentication() {
         val properties = new AcceptableUsagePolicyProperties();
-        properties.setScope(AcceptableUsagePolicyProperties.Scope.AUTHENTICATION);
+        properties.getInMemory().setScope(AcceptableUsagePolicyProperties.InMemory.Scope.AUTHENTICATION);
         verifyAction(properties);
     }
 

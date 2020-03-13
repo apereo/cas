@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,12 +53,14 @@ public class SyncopeAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "syncopePrincipalFactory")
     @Bean
+    @RefreshScope
     public PrincipalFactory syncopePrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "syncopeAuthenticationHandler")
     @Bean
+    @RefreshScope
     public AuthenticationHandler syncopeAuthenticationHandler() {
         val syncope = casProperties.getAuthn().getSyncope();
         if (StringUtils.isBlank(syncope.getUrl())) {
@@ -76,12 +79,14 @@ public class SyncopeAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "syncopeAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer syncopeAuthenticationEventExecutionPlanConfigurer() {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(syncopeAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "syncopePasswordPolicyConfiguration")
     @Bean
+    @RefreshScope
     public PasswordPolicyContext syncopePasswordPolicyConfiguration() {
         return new PasswordPolicyContext();
     }

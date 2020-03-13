@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.hjson.JsonValue;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -70,6 +71,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
                         LOGGER.error(e.getMessage(), e);
                     }
                 });
+                this.storeWatcherService.start(getClass().getSimpleName());
             }
         }
     }
@@ -79,12 +81,16 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     }
 
     private void loadAttributeDefinitionsFromInputStream(final Resource resource) throws IOException {
-        LOGGER.trace("Loading attribute definitions from [{}]", resource);
-        val json = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-        LOGGER.trace("Loaded attribute definitions [{}] from [{}]", json, resource);
-        val map = MAPPER.readValue(json, new TypeReference<Map<String, AttributeDefinition>>() {
-        });
-        map.forEach(this::registerAttributeDefinition);
+        try {
+            LOGGER.trace("Loading attribute definitions from [{}]", resource);
+            val json = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            LOGGER.trace("Loaded attribute definitions [{}] from [{}]", json, resource);
+            val map = MAPPER.readValue(JsonValue.readHjson(json).toString(), new TypeReference<Map<String, AttributeDefinition>>() {
+            });
+            map.forEach(this::registerAttributeDefinition);
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
     }
 
     @Override

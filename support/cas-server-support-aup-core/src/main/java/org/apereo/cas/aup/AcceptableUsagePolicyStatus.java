@@ -22,8 +22,11 @@ import java.util.stream.Collectors;
 public class AcceptableUsagePolicyStatus implements Serializable {
 
     private static final long serialVersionUID = -5552830592634074877L;
+
     private final boolean accepted;
+
     private final Principal principal;
+
     private final MultiValuedMap<String, Object> properties = new ArrayListValuedHashMap<>(0);
 
     /**
