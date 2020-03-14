@@ -1151,7 +1151,7 @@ to be a JSON map as such:
 }
 ```
 
-### Ruby/Python/Javascript/Groovy
+### Python/Javascript/Groovy
 
 <div class="alert alert-warning"><strong>Usage</strong>
 <p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
@@ -1166,12 +1166,11 @@ The following settings are relevant:
 # cas.authn.attribute-repository.script[0].order=0
 # cas.authn.attribute-repository.script[0].id=
 # cas.authn.attribute-repository.script[0].caseInsensitive=false
-# cas.authn.attribute-repository.script[0].engineName=js|groovy|ruby|python
+# cas.authn.attribute-repository.script[0].engineName=js|groovy|python
 ```
 
 While Javascript and Groovy should be natively supported by CAS, Python scripts may need
 to massage the CAS configuration to include the [Python modules](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jython-standalone%22).
-Ruby scripts are supported via [JRuby](https://search.maven.org/search?q=g:org.jruby%20AND%20a:jruby)  
 
 The Groovy script may be defined as:
 

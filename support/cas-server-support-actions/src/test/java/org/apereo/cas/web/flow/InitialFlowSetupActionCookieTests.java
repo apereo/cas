@@ -66,6 +66,7 @@ public class InitialFlowSetupActionCookieTests extends AbstractWebflowActionsTes
             .domain(null)
             .secure(false)
             .httpOnly(false)
+            .comment("CAS Cookie")
             .build();
 
         val tgt = CookieGenerationContext.builder()
@@ -75,6 +76,7 @@ public class InitialFlowSetupActionCookieTests extends AbstractWebflowActionsTes
             .domain(null)
             .secure(false)
             .httpOnly(false)
+            .comment("CAS Cookie")
             .build();
 
         this.warnCookieGenerator = new CookieRetrievingCookieGenerator(warn);
