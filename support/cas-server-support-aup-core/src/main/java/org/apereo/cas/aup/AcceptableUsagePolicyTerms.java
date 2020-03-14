@@ -1,12 +1,14 @@
 package org.apereo.cas.aup;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 
@@ -38,5 +40,15 @@ public class AcceptableUsagePolicyTerms implements Serializable {
                                       @JsonProperty("defaultText") final String defaultText) {
         this.code = code;
         this.defaultText = defaultText;
+    }
+
+    /**
+     * Indicate if policy terms are defined.
+     *
+     * @return the boolean
+     */
+    @JsonIgnore
+    public boolean isDefined() {
+        return StringUtils.isNotBlank(code) || StringUtils.isNotBlank(defaultText);
     }
 }
