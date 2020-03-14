@@ -44,15 +44,23 @@ Acceptable usage policy can be disabled and skipped on a per-service basis:
   "serviceId": "https://app.example.org",
   "name": "Example",
   "id": 1,
-  "properties" : {
-    "@class" : "java.util.HashMap",
-    "acceptableUsagePolicyEnabled" : {
-      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-      "values" : [ "java.util.HashSet", [ "false" ] ]
-    }
+  "acceptableUsagePolicy":
+  {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy",
+    "enabled": true,
+    "messageCode": "example.code",
+    "text": "example text"
   }
 }
 ```                                             
+
+The policy assigned to each service includes the following features:
+
+| Field              | Description
+|--------------------|----------------------------------------------------------------------------------------------------------
+| `enabled`          | Control whether policy is active/inactive for this service. Default is `true`.
+| `messageCode`      | The policy language code that is linked to the CAS language bundles which carries the actual policy text.
+| `text`             | The policy text that should be displayed for this application.
 
 ## Storage Mechanism
 
