@@ -74,7 +74,10 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
             .code(StringUtils.isNotBlank(message) ? code : null)
             .defaultText(getPolicyText(requestContext))
             .build();
-        return Optional.of(terms);
+        if (terms.isDefined()) {
+            return Optional.of(terms);
+        }
+        return Optional.empty();
     }
 
     /**
