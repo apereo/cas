@@ -50,6 +50,11 @@ public class CookieProperties implements Serializable {
     private String domain = StringUtils.EMPTY;
 
     /**
+     * CAS Cookie comment, describes the cookie's usage and purpose.
+     */
+    private String comment = "CAS Cookie";
+
+    /**
      * True if sending this cookie should be restricted to a secure protocol, or false if the it can be sent using any protocol.
      */
     private boolean secure = true;

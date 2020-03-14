@@ -111,7 +111,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     @Override
     protected Cookie createCookie(final String cookieValue) {
         val c = super.createCookie(cookieValue);
-        c.setComment("CAS Cookie");
+        c.setComment(cookieGenerationContext.getComment());
         return c;
     }
 
@@ -124,7 +124,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         if (rememberMe) {
             LOGGER.trace("Creating CAS cookie [{}] for remember-me authentication", getCookieName());
             cookie.setMaxAge(cookieGenerationContext.getRememberMeMaxAge());
-            cookie.setComment("CAS Cookie w/ Remember-Me");
+            cookie.setComment(String.format("%s Remember-Me", cookieGenerationContext.getComment()));
         } else {
             LOGGER.trace("Creating CAS cookie [{}]", getCookieName());
             if (getCookieMaxAge() != null) {
