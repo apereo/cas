@@ -466,7 +466,7 @@ public abstract class AbstractOAuth20Tests {
         val service = factory.createService(registeredService.getServiceId());
         val refreshToken = oAuthRefreshTokenFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"),
-            new ArrayList<>(), CLIENT_ID, new HashMap<>());
+            new ArrayList<>(), CLIENT_ID, StringUtils.EMPTY, new HashMap<>());
         this.ticketRegistry.addTicket(refreshToken);
         return refreshToken;
     }

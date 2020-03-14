@@ -53,12 +53,13 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
                                       final TicketGrantingTicket ticketGrantingTicket,
                                       final Collection<String> scopes,
                                       final String clientId,
+                                      final String descendantTicket,
                                       final Map<String, Map<String, Object>> requestClaims) {
         val codeId = this.refreshTokenIdGenerator.getNewTicketId(OAuth20RefreshToken.PREFIX);
         val expirationPolicyToUse = determineExpirationPolicyForService(clientId);
         val rt = new OAuth20DefaultRefreshToken(codeId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket,
-            scopes, clientId, requestClaims);
+            scopes, clientId, descendantTicket, requestClaims);
 
         if (ticketGrantingTicket != null) {
             ticketGrantingTicket.getDescendantTickets().add(rt.getId());
