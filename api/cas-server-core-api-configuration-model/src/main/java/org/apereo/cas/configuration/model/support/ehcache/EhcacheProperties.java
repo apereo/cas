@@ -20,11 +20,13 @@ import java.util.Map;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 6.2
  */
 @RequiresModule(name = "cas-server-support-ehcache-ticket-registry")
 @Getter
 @Setter
 @Accessors(chain = true)
+@Deprecated(since = "6.2")
 public class EhcacheProperties implements Serializable {
 
     private static final long serialVersionUID = 7772510035918976450L;
