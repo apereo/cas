@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -22,6 +23,7 @@ import java.util.stream.Stream;
 @RequiresModule(name = "cas-server-support-ignite-ticket-registry")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class IgniteProperties implements Serializable {
 
     private static final long serialVersionUID = -5259465262649559156L;
@@ -182,6 +184,8 @@ public class IgniteProperties implements Serializable {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
+    @RequiresModule(name = "cas-server-support-ignite-ticket-registry")
     public static class TicketsCache implements Serializable {
 
         private static final long serialVersionUID = 4715167757542984471L;

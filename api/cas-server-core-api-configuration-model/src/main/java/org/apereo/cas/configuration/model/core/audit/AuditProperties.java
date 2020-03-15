@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -23,6 +24,7 @@ import java.util.stream.Stream;
 @RequiresModule(name = "cas-server-core-audit", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class AuditProperties implements Serializable {
 
     private static final long serialVersionUID = 3946106584608417663L;

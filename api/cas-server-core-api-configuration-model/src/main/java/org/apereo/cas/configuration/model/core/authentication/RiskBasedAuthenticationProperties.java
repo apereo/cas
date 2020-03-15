@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-electrofence", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class RiskBasedAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 3826749727400569308L;
@@ -63,6 +65,7 @@ public class RiskBasedAuthenticationProperties implements Serializable {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class IpAddress implements Serializable {
 
         private static final long serialVersionUID = 577801361041617794L;

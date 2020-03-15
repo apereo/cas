@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -20,6 +21,7 @@ import java.util.stream.Stream;
 @RequiresModule(name = "cas-server-core-web", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class MessageBundleProperties implements Serializable {
 
     /**

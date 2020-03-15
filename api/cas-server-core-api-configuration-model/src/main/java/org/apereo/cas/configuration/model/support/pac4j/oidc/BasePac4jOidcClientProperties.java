@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +20,7 @@ import java.util.Map;
 @RequiresModule(name = "cas-server-support-pac4j-webflow")
 @Getter
 @Setter
+@Accessors(chain = true)
 public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableClientProperties {
 
     private static final long serialVersionUID = 3359382317533639638L;

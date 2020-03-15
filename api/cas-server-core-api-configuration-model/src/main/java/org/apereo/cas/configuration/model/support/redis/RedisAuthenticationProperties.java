@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -17,10 +18,10 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @RequiresModule(name = "cas-server-support-redis-authentication")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class RedisAuthenticationProperties extends BaseRedisProperties {
 
     private static final long serialVersionUID = -1232996050439638782L;
-
 
     /**
      * Principal transformation settings.

@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link Pac4jAzureOidcClientProperties}.
@@ -14,6 +15,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-pac4j-webflow")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class Pac4jAzureOidcClientProperties extends BasePac4jOidcClientProperties {
     private static final long serialVersionUID = 1259382317533639638L;
 

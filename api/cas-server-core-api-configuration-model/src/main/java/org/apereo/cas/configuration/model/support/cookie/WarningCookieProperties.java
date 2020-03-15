@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * Configuration properties class for warn.cookie.
@@ -14,6 +15,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-core-cookie", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class WarningCookieProperties extends CookieProperties {
     private static final long serialVersionUID = -266090748600049578L;
 

@@ -14,6 +14,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -112,6 +113,7 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     @RequiresModule(name = "cas-server-support-trusted-rest")
     public static class Rest extends RestEndpointProperties {
         private static final long serialVersionUID = 3659099897056632608L;
@@ -119,6 +121,7 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     @RequiresModule(name = "cas-server-support-trusted-jdbc")
     public static class Jpa extends AbstractJpaProperties {
         private static final long serialVersionUID = -8329950619696176349L;
@@ -127,6 +130,7 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-trusted-mfa-couchdb")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class CouchDb extends BaseCouchDbProperties {
 
         private static final long serialVersionUID = 5887850351177564308L;
@@ -138,6 +142,7 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     @RequiresModule(name = "cas-server-support-trusted-mongo")
     public static class MongoDb extends SingleCollectionMongoDbProperties {
 
@@ -150,6 +155,7 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     @RequiresModule(name = "cas-server-support-trusted-mfa")
     public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = 3599367681439517829L;

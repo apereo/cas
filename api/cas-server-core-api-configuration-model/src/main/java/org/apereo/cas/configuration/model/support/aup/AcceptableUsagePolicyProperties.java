@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import java.util.List;
 @RequiresModule(name = "cas-server-support-aup-webflow")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class AcceptableUsagePolicyProperties implements Serializable {
 
     private static final long serialVersionUID = -7703477581675908899L;
@@ -92,6 +94,9 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     private String aupPolicyTermsAttributeName;
     
     @RequiresModule(name = "cas-server-support-aup-couchdb")
+    @Accessors(chain = true)
+    @Getter
+    @Setter
     public static class CouchDb extends BaseAsynchronousCouchDbProperties {
 
         private static final long serialVersionUID = 1323894615409106853L;
@@ -104,6 +109,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-aup-mongo")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class MongoDb extends SingleCollectionMongoDbProperties {
 
         private static final long serialVersionUID = -1918436901491275547L;
@@ -116,6 +122,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-aup-jdbc")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Jdbc extends AbstractJpaProperties {
 
         private static final long serialVersionUID = -1325011278378393385L;
@@ -153,6 +160,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-aup-rest")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Rest extends RestEndpointProperties {
         private static final long serialVersionUID = -8102345678378393382L;
     }
@@ -160,6 +168,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-aup-core", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Groovy extends SpringResourceProperties {
         private static final long serialVersionUID = 9164227843747126083L;
     }
@@ -167,6 +176,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-aup-core", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class InMemory implements Serializable {
         private static final long serialVersionUID = 8164227843747126083L;
 
@@ -198,6 +208,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-aup-redis")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Redis extends BaseRedisProperties {
         private static final long serialVersionUID = -2147683393318585262L;
     }

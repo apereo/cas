@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -14,6 +15,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-x509-webflow")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class SerialNoPrincipalResolverProperties implements Serializable {
 
     private static final long serialVersionUID = -4935371089672080311L;

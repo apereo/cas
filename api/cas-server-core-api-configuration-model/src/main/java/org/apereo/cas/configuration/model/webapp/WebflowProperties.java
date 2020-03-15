@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-webflow")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class WebflowProperties implements Serializable {
 
     private static final long serialVersionUID = 4949978905279568311L;
@@ -85,6 +87,7 @@ public class WebflowProperties implements Serializable {
     @RequiresModule(name = "cas-server-core-webflow", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Groovy extends SpringResourceProperties {
 
         private static final long serialVersionUID = 8079027843747126083L;

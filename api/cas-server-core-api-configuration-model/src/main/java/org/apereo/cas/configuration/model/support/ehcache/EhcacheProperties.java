@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -23,6 +24,7 @@ import java.util.Map;
 @RequiresModule(name = "cas-server-support-ehcache-ticket-registry")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class EhcacheProperties implements Serializable {
 
     private static final long serialVersionUID = 7772510035918976450L;

@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -23,6 +24,7 @@ import java.util.List;
 @RequiresModule(name = "cas-server-support-spnego-webflow")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class SpnegoProperties implements Serializable {
 
     private static final long serialVersionUID = 8084143496524446970L;
@@ -140,8 +142,10 @@ public class SpnegoProperties implements Serializable {
     @NestedConfigurationProperty
     private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties(100);
 
+    @RequiresModule(name = "cas-server-support-spnego-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Ldap extends AbstractLdapSearchProperties {
 
         private static final long serialVersionUID = -8835216200501334936L;
