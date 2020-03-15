@@ -19,6 +19,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.hjson.JsonValue;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -63,7 +64,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
                                                      final HttpServletRequest request, final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_AUTHORIZATION_SCOPE);
-            val umaRequest = MAPPER.readValue(body, UmaAuthorizationRequest.class);
+            val umaRequest = MAPPER.readValue(JsonValue.readHjson(body).toString(), UmaAuthorizationRequest.class);
 
             if (StringUtils.isBlank(umaRequest.getGrantType())) {
                 return new ResponseEntity("Unable to accept authorization request; grant type is missing", HttpStatus.BAD_REQUEST);

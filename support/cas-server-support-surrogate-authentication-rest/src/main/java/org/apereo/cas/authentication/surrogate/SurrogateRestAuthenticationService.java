@@ -11,9 +11,12 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.hjson.JsonValue;
 import org.springframework.http.HttpStatus;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -66,7 +69,9 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
             response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
                 properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
                 CollectionUtils.wrap("principal", username), new HashMap<>(0));
-            return MAPPER.readValue(response.getEntity().getContent(), List.class);
+
+            val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            return MAPPER.readValue(JsonValue.readHjson(result).toString(), List.class);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
