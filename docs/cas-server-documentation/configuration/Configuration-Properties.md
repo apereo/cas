@@ -1372,7 +1372,7 @@ cas.authn.core.service-authentication-resolution.order=0
 #### Groovy
 
 ```properties
-# cas.authn.engine.groovyPreProcessor.location=file:/etc/cas/config/GroovyPreProcessor.groovy
+# cas.authn.core.engine.groovyPreProcessor.location=file:/etc/cas/config/GroovyPreProcessor.groovy
 ```
 
 The script itself may be designed as:
@@ -1396,7 +1396,7 @@ def supports(Object[] args) {
 #### Groovy
 
 ```properties
-# cas.authn.engine.groovyPostProcessor.location=file:/etc/cas/config/GroovyPostProcessor.groovy
+# cas.authn.core.engine.groovyPostProcessor.location=file:/etc/cas/config/GroovyPostProcessor.groovy
 ```
 
 The script itself may be designed as:

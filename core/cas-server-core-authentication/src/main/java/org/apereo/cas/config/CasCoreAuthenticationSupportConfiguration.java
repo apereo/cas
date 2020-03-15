@@ -107,7 +107,7 @@ public class CasCoreAuthenticationSupportConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer groovyAuthenticationProcessorExecutionPlanConfigurer() {
         return plan -> {
-            val engine = casProperties.getAuthn().getEngine();
+            val engine = casProperties.getAuthn().getCore().getEngine();
             val preResource = engine.getGroovyPreProcessor().getLocation();
             if (preResource != null) {
                 plan.registerAuthenticationPreProcessor(new GroovyAuthenticationPreProcessor(preResource));
