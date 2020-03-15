@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.hjson.JsonValue;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -88,7 +89,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
                 return new HashMap<>(0);
             }
             val names = EncodingUtils.decodeBase64ToString(result);
-            return MAPPER.readValue(names, Map.class);
+            return MAPPER.readValue(JsonValue.readHjson(names).toString(), Map.class);
         } catch (final Exception e) {
             throw new IllegalArgumentException("Could not serialize attributes for consent decision");
         }

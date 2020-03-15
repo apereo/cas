@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.hjson.JsonValue;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
@@ -468,7 +469,7 @@ public class OAuth20Utils {
         if (StringUtils.isBlank(claims)) {
             return new HashMap<>(0);
         }
-        return MAPPER.readValue(claims, Map.class);
+        return MAPPER.readValue(JsonValue.readHjson(claims).toString(), Map.class);
     }
 
     /**

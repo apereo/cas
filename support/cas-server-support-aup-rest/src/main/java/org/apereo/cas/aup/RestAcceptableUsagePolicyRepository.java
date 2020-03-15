@@ -10,11 +10,14 @@ import org.apereo.cas.web.support.WebUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
+import org.hjson.JsonValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -77,7 +80,8 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                 CollectionUtils.wrap("username", credential.getId()), new HashMap<>(0));
             val statusCode = response.getStatusLine().getStatusCode();
             if (HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
-                val terms = MAPPER.readValue(response.getEntity().getContent(), AcceptableUsagePolicyTerms.class);
+                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                val terms = MAPPER.readValue(JsonValue.readHjson(result).toString(), AcceptableUsagePolicyTerms.class);
                 return Optional.ofNullable(terms);
             }
         } catch (final Exception e) {
