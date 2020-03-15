@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -37,6 +38,12 @@ public class CoreAuthenticationProperties implements Serializable {
      */
     private GroovyAuthenticationHandlerResolution groovyAuthenticationResolution = new GroovyAuthenticationHandlerResolution();
 
+    /**
+     * Customization of authentication engine and pre/post processing.
+     */
+    @NestedConfigurationProperty
+    private AuthenticationEngineProperties engine = new AuthenticationEngineProperties();
+    
     @RequiresModule(name = "cas-server-support-authentication", automated = true)
     @Getter
     @Setter
