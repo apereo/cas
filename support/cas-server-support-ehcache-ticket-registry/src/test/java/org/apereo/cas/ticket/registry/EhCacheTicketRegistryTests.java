@@ -20,6 +20,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Scott Battaglia
  * @since 3.0.0
+ * @deprecated Since 6.2
  */
 @SpringBootTest(classes = {
     EhCacheTicketRegistryTests.EhcacheTicketRegistryTestConfiguration.class,
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.*;
     "spring.mail.port=25000"
 })
 @Tag("Ehcache")
+@Deprecated(since = "6.2")
 public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
