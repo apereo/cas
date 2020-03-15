@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -19,6 +20,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @RequiresModule(name = "cas-server-support-cloud-directory-authentication")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class CloudDirectoryProperties extends BaseAmazonWebServicesProperties {
 
     private static final long serialVersionUID = 6725526133973304269L;

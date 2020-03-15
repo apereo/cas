@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -22,6 +23,7 @@ import java.util.Map;
 @Getter
 @Setter
 @RequiresModule(name = "cas-server-support-jdbc-drivers")
+@Accessors(chain = true)
 public abstract class AbstractJpaProperties implements Serializable {
 
     private static final long serialVersionUID = 761486823496930920L;

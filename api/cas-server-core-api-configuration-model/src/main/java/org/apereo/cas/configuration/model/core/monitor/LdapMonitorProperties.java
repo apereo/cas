@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -17,6 +18,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @RequiresModule(name = "cas-server-core-ldap-monitor")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class LdapMonitorProperties extends AbstractLdapProperties {
     private static final long serialVersionUID = 4722929378440179113L;
 

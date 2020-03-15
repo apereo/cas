@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-hazelcast-discovery-swarm")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class HazelcastDockerSwarmDiscoveryProperties implements Serializable {
     private static final long serialVersionUID = -1409066358752067150L;
 
@@ -32,6 +34,7 @@ public class HazelcastDockerSwarmDiscoveryProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-hazelcast-discovery-swarm")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class DnsRProvider implements Serializable {
         private static final long serialVersionUID = -1863901001243353934L;
         /**
@@ -62,6 +65,7 @@ public class HazelcastDockerSwarmDiscoveryProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-hazelcast-discovery-swarm")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class MemberAddressProvider implements Serializable {
         private static final long serialVersionUID = -2963901001243353939L;
 

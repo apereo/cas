@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -17,6 +18,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class CoreAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = -2244126985007049516L;
 
@@ -38,6 +40,7 @@ public class CoreAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-authentication", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class GroovyAuthenticationHandlerResolution extends SpringResourceProperties {
         private static final long serialVersionUID = 8079027843747126083L;
 
@@ -50,6 +53,7 @@ public class CoreAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-authentication", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class RegisteredServiceAuthenticationHandlerResolution implements Serializable {
         private static final long serialVersionUID = 8079027843747126083L;
 

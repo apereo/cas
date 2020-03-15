@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -24,6 +25,7 @@ import java.util.List;
 @RequiresModule(name = "cas-server-support-pac4j-webflow")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class Pac4jDelegatedAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 4388567744591488495L;
@@ -174,6 +176,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class LinkedIn extends Pac4jIdentifiableClientProperties {
 
         private static final long serialVersionUID = 4633395854143281872L;
@@ -191,6 +194,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Facebook extends Pac4jIdentifiableClientProperties {
 
         private static final long serialVersionUID = -2737594266552466076L;
@@ -213,6 +217,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Bitbucket extends Pac4jIdentifiableClientProperties {
 
         private static final long serialVersionUID = -6189494666598669078L;
@@ -225,6 +230,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Wordpress extends Pac4jIdentifiableClientProperties {
 
         private static final long serialVersionUID = 4636855941699435914L;
@@ -237,6 +243,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Paypal extends Pac4jIdentifiableClientProperties {
 
         private static final long serialVersionUID = -5663033494303169583L;
@@ -249,6 +256,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Twitter extends Pac4jIdentifiableClientProperties {
 
         private static final long serialVersionUID = 6906343970517008092L;
@@ -267,6 +275,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Github extends Pac4jIdentifiableClientProperties {
 
         private static final long serialVersionUID = 9217581995885784515L;
@@ -279,6 +288,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Yahoo extends Pac4jIdentifiableClientProperties {
 
         private static final long serialVersionUID = 8011580257047982361L;
@@ -291,6 +301,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Foursquare extends Pac4jIdentifiableClientProperties {
 
         private static final long serialVersionUID = -1784820695301605307L;
@@ -303,6 +314,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Dropbox extends Pac4jIdentifiableClientProperties {
 
         private static final long serialVersionUID = -1508055128010569953L;
@@ -315,6 +327,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class HiOrgServer extends Pac4jIdentifiableClientProperties {
         private static final long serialVersionUID = -1898237349924741147L;
         /**
@@ -329,6 +342,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Orcid extends Pac4jIdentifiableClientProperties {
 
         private static final long serialVersionUID = 1337923364401817796L;
@@ -341,6 +355,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class WindowsLive extends Pac4jIdentifiableClientProperties {
 
         private static final long serialVersionUID = -1816309711278174847L;

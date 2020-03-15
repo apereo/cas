@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-web", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class Cas20ViewProperties implements Serializable {
 
     private static final long serialVersionUID = -7954879759474698003L;
@@ -41,8 +43,10 @@ public class Cas20ViewProperties implements Serializable {
      */
     private Proxy proxy = new Proxy();
 
+    @RequiresModule(name = "cas-server-core-web", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Proxy implements Serializable {
 
         private static final long serialVersionUID = 6765987342872282599L;

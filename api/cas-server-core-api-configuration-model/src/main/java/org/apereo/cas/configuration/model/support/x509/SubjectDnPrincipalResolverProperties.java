@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import javax.security.auth.x500.X500Principal;
 import java.io.Serializable;
@@ -16,6 +17,7 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-support-x509-webflow")
 @Getter
+@Accessors(chain = true)
 @Setter
 public class SubjectDnPrincipalResolverProperties implements Serializable {
 
@@ -24,7 +26,7 @@ public class SubjectDnPrincipalResolverProperties implements Serializable {
     /**
      * Format of subject DN to use.
      */
-    private SubjectDnPrincipalResolverProperties.SubjectDnFormat format = SubjectDnPrincipalResolverProperties.SubjectDnFormat.DEFAULT;
+    private SubjectDnFormat format = SubjectDnFormat.DEFAULT;
 
     /**
      * The format of subject dn to be used.

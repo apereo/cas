@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
@@ -17,6 +18,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-cookie", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class CookieProperties implements Serializable {
 
     private static final long serialVersionUID = 6804770601645126835L;

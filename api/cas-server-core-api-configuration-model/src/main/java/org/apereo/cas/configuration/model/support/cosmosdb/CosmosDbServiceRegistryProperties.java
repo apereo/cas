@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link CosmosDbServiceRegistryProperties}.
@@ -15,6 +16,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-cosmosdb-service-registry")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class CosmosDbServiceRegistryProperties extends BaseCosmosDbProperties {
 
     private static final long serialVersionUID = 6194689836396653458L;

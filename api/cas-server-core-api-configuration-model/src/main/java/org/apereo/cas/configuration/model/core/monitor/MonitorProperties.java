@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.val;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
@@ -31,6 +32,7 @@ import java.util.stream.Stream;
 @RequiresModule(name = "cas-server-core-monitor", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class MonitorProperties implements Serializable {
     private static final long serialVersionUID = -7047060071480971606L;
 
@@ -94,6 +96,7 @@ public class MonitorProperties implements Serializable {
     @RequiresModule(name = "cas-server-core-monitor", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class St implements Serializable {
 
         private static final long serialVersionUID = -8167395674267219982L;
@@ -108,6 +111,7 @@ public class MonitorProperties implements Serializable {
     @RequiresModule(name = "cas-server-core-monitor", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Tgt implements Serializable {
 
         private static final long serialVersionUID = -2756454350350278724L;
@@ -122,6 +126,7 @@ public class MonitorProperties implements Serializable {
     @RequiresModule(name = "cas-server-core-monitor", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Load implements Serializable {
 
         private static final long serialVersionUID = 5504478373010611957L;
@@ -136,6 +141,7 @@ public class MonitorProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-memcached-monitor")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Memcached extends BaseMemcachedProperties {
 
         private static final long serialVersionUID = -9139788158851782673L;
@@ -144,6 +150,7 @@ public class MonitorProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-mongo-monitor")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class MongoDb extends BaseMongoDbProperties {
 
         private static final long serialVersionUID = -1918436901491275547L;
@@ -152,6 +159,7 @@ public class MonitorProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-jdbc-monitor")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Jdbc extends AbstractJpaProperties {
 
         private static final long serialVersionUID = -7139788158851782673L;
@@ -171,6 +179,7 @@ public class MonitorProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-reports", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Endpoints implements Serializable {
         private static final long serialVersionUID = -3375777593395683691L;
 

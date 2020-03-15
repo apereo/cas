@@ -8,6 +8,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-token-webflow")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class TokenAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 6016124091895278265L;
