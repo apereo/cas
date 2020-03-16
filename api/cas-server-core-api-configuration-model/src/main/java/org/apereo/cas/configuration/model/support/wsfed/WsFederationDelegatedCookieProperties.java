@@ -6,6 +6,8 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -16,6 +18,8 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @RequiresModule(name = "cas-server-support-wsfederation-webflow")
 @Getter
+@Accessors(chain = true)
+@Setter
 public class WsFederationDelegatedCookieProperties extends CookieProperties {
     private static final long serialVersionUID = 7392972818105536350L;
 

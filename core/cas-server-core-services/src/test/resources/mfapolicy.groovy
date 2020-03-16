@@ -1,6 +1,6 @@
 import org.apereo.cas.services.*
 
-@Deprecated
+@Deprecated(since = "6.2")
 class GroovyMultifactorPolicy extends DefaultRegisteredServiceMultifactorPolicy {
     @Override
     Set<String> getMultifactorAuthenticationProviders() {

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -23,6 +24,7 @@ import java.util.stream.Stream;
 @RequiresModule(name = "cas-server-support-oidc")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class OidcProperties implements Serializable {
 
     private static final long serialVersionUID = 813028615694269276L;

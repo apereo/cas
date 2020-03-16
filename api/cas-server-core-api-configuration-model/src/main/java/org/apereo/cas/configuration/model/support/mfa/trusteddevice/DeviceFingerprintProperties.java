@@ -7,6 +7,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -21,6 +22,7 @@ import java.time.Duration;
 @RequiresModule(name = "cas-server-support-trusted-mfa")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class DeviceFingerprintProperties implements Serializable {
     private static final long serialVersionUID = 747021103142441353L;
 
@@ -51,6 +53,7 @@ public class DeviceFingerprintProperties implements Serializable {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     @RequiresModule(name = "cas-server-support-trusted-mfa")
     public static class ClientIp extends BaseDeviceFingerprintComponentProperties {
         private static final long serialVersionUID = 785014133279201757L;
@@ -63,6 +66,7 @@ public class DeviceFingerprintProperties implements Serializable {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     @RequiresModule(name = "cas-server-support-trusted-mfa")
     public static class Cookie extends CookieProperties {
         private static final long serialVersionUID = -9022498833437602657L;
@@ -99,6 +103,7 @@ public class DeviceFingerprintProperties implements Serializable {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     @RequiresModule(name = "cas-server-support-trusted-mfa")
     public static class UserAgent extends BaseDeviceFingerprintComponentProperties {
         private static final long serialVersionUID = -5325531035180836136L;
@@ -116,6 +121,7 @@ public class DeviceFingerprintProperties implements Serializable {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     @RequiresModule(name = "cas-server-support-trusted-mfa")
     public static class GeoLocation extends BaseDeviceFingerprintComponentProperties {
         private static final long serialVersionUID = -4125531035180836136L;

@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @RequiresModule(name = "cas-server-core-webflow")
+@Accessors(chain = true)
 public class WebflowSessionManagementProperties implements Serializable {
 
     private static final long serialVersionUID = 7479028707118198914L;

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -17,6 +18,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-web")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class LocaleProperties implements Serializable {
 
     private static final long serialVersionUID = -1644471820900213781L;
@@ -39,6 +41,7 @@ public class LocaleProperties implements Serializable {
     @RequiresModule(name = "cas-server-core-web")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class LocaleCookieProperties extends CookieProperties implements Serializable {
         private static final long serialVersionUID = 158577966798914031L;
     }

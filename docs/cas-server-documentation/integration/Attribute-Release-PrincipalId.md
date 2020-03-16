@@ -107,7 +107,7 @@ is not available, the default principal id will be used.
 }
 ```
 
-## Javascript/Python/Ruby/Groovy Script
+## Javascript/Python/Groovy Script
 
 <div class="alert alert-warning"><strong>Usage</strong>
 <p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>

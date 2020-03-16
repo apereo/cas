@@ -10,8 +10,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.hjson.JsonValue;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -42,7 +45,8 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>(0));
             if (response != null && response.getEntity() != null) {
-                val account = MAPPER.readValue(response.getEntity().getContent(), PasswordlessUserAccount.class);
+                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                val account = MAPPER.readValue(JsonValue.readHjson(result).toString(), PasswordlessUserAccount.class);
                 return Optional.ofNullable(account);
             }
         } catch (final Exception e) {
