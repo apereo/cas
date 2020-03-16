@@ -6,7 +6,6 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasSupportMongoDbAuditConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
@@ -43,7 +42,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @Tag("MongoDb")
 @Getter
 @EnabledIfPortOpen(port = 27017)
-@EnabledIfContinuousIntegration
 public class MongoDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
 
     @Autowired

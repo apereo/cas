@@ -176,7 +176,6 @@ allprojects {
         mavenLocal {
             content {
                 includeGroup "org.apereo.service.persondir"
-                includeGroupByRegex "$mavenLocalGroupInclude"
             }
         }
         mavenCentral()
@@ -240,7 +239,6 @@ subprojects {
         mavenLocal {
             content {
                 includeGroup "org.apereo.service.persondir"
-                includeGroupByRegex "$mavenLocalGroupInclude"
             }
         }
         mavenCentral()

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Groovy")
 public class RegisteredServiceScriptedAttributeFilterTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

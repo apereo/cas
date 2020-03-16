@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement;
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClientBuilder;
@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
         + AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests.CREDENTIAL_SECRET_KEY
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 4583)
 @Tag("AmazonWebServices")
 @ActiveProfiles("example")
 public class AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests {

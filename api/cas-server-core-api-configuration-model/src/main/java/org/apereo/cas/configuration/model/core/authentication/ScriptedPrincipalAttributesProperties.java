@@ -11,10 +11,12 @@ import lombok.Setter;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 6.2
  */
 @RequiresModule(name = "cas-server-support-person-directory", automated = true)
 @Getter
 @Setter
+@Deprecated(since = "6.2")
 public class ScriptedPrincipalAttributesProperties extends SpringResourceProperties {
 
     private static final long serialVersionUID = 4221139939506528713L;

@@ -67,13 +67,26 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
     }
 
     @Override
-    protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
-        return resolvePrincipalInternal(((X509CertificateCredential) credential).getCertificate());
+    public boolean supports(final Credential credential) {
+        return credential instanceof X509CertificateCredential;
     }
 
     @Override
-    public boolean supports(final Credential credential) {
-        return credential instanceof X509CertificateCredential;
+    protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential,
+                                                                 final Optional<Principal> currentPrincipal,
+                                                                 final Map<String, List<Object>> queryAttributes) {
+        val certificate = ((X509CertificateCredential) credential).getCertificate();
+        val certificateAttributes = extractPersonAttributes(certificate);
+        queryAttributes.putAll(certificateAttributes);
+        val attributes = new LinkedHashMap<String, List<Object>>(
+            super.retrievePersonAttributes(principalId, credential, currentPrincipal, queryAttributes));
+        attributes.putAll(certificateAttributes);
+        return attributes;
+    }
+
+    @Override
+    protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
+        return resolvePrincipalInternal(((X509CertificateCredential) credential).getCertificate());
     }
 
     /**
@@ -188,13 +201,5 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
             .filter(s -> s.size() == 2 && (Integer) s.get(0) == SAN_RFC822_EMAIL_TYPE)
             .findFirst();
         return email.map(objects -> (String) objects.get(1)).orElse(null);
-    }
-
-    @Override
-    protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
-        val attributes = new LinkedHashMap<String, List<Object>>(super.retrievePersonAttributes(principalId, credential));
-        val certificate = ((X509CertificateCredential) credential).getCertificate();
-        attributes.putAll(extractPersonAttributes(certificate));
-        return attributes;
     }
 }

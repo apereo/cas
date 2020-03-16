@@ -21,7 +21,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.bson.Document;
@@ -78,7 +78,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pac4j.typedIdUsed=false"
 })
 @EnableScheduling
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 27017)
 @Tag("MongoDb")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbAuthenticationHandlerTests {

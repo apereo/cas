@@ -6,7 +6,7 @@ import org.apereo.cas.config.CassandraServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @Tag("Cassandra")
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 9042)
 public class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("cassandraServiceRegistry")

@@ -21,7 +21,6 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.ParameterizableViewController;
-import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.servlet.view.RedirectView;
@@ -119,11 +118,6 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
 
         mapping.setUrlMap(urls);
         return mapping;
-    }
-
-    @Bean
-    public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
-        return new SimpleControllerHandlerAdapter();
     }
 
     @Override

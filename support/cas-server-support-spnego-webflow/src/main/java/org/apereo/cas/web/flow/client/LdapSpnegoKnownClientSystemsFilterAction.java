@@ -25,6 +25,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      * The must-have attribute name.
      */
     private final String spnegoAttributeName;
+
     private final SearchOperation searchOperation;
 
     /**

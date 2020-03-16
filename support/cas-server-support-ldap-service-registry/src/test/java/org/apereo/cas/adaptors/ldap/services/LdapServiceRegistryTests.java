@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.ldap.services;
 
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.springframework.test.context.TestPropertySource;
 
@@ -17,6 +17,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.serviceRegistry.ldap.bindCredential=password",
     "cas.serviceRegistry.ldap.objectClass=account"
 })
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 10389)
 public class LdapServiceRegistryTests extends BaseLdapServiceRegistryTests {
 }

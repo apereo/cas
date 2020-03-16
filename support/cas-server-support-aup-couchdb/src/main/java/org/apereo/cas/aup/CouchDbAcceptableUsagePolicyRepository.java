@@ -1,6 +1,7 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.couchdb.core.CouchDbProfileDocument;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -12,6 +13,8 @@ import lombok.val;
 import org.ektorp.UpdateConflictException;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.List;
+
 /**
  * This is {@link CouchDbAcceptableUsagePolicyRepository}.
  *
@@ -19,15 +22,18 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.0.0
  */
 @Slf4j
-public class CouchDbAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
+public class CouchDbAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository {
 
     private static final long serialVersionUID = -2391630070546362552L;
+
     private final transient ProfileCouchDbRepository couchDb;
+
     private final int conflictRetries;
 
-    public CouchDbAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport, final String aupAttributeName,
+    public CouchDbAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
+                                                  final AcceptableUsagePolicyProperties properties,
                                                   final ProfileCouchDbRepository couchDb, final int conflictRetries) {
-        super(ticketRegistrySupport, aupAttributeName);
+        super(ticketRegistrySupport, properties);
         this.couchDb = couchDb;
         this.conflictRetries = conflictRetries;
     }
@@ -49,7 +55,8 @@ public class CouchDbAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
         val profile = couchDb.findByUsername(credential.getId());
         var accepted = false;
         if (profile != null) {
-            accepted = (Boolean) profile.getAttribute(aupAttributeName);
+            val values = CollectionUtils.toCollection(profile.getAttribute(aupProperties.getAupAttributeName()));
+            accepted = CollectionUtils.firstElement(values).map(value -> (Boolean) value).orElse(Boolean.FALSE);
         }
         if (accepted) {
             LOGGER.debug("Usage policy has been accepted by [{}]", profile.getUsername());
@@ -66,11 +73,13 @@ public class CouchDbAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
         val username = credential.getId();
         val profile = couchDb.findByUsername(username);
         if (profile == null) {
-            couchDb.add(new CouchDbProfileDocument(username, null, CollectionUtils.wrap(aupAttributeName, Boolean.TRUE)));
+            val doc = new CouchDbProfileDocument(username, null,
+                CollectionUtils.wrap(aupProperties.getAupAttributeName(), List.of(Boolean.TRUE)));
+            couchDb.add(doc);
             return true;
         }
         var success = false;
-        profile.setAttribute(aupAttributeName, Boolean.TRUE);
+        profile.setAttribute(aupProperties.getAupAttributeName(), List.of(Boolean.TRUE));
         UpdateConflictException exception = null;
         for (int retries = 0; retries < conflictRetries; retries++) {
             try {

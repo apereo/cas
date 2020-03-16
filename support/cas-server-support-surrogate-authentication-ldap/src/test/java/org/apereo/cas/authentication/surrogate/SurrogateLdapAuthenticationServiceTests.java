@@ -25,7 +25,7 @@ import org.apereo.cas.config.SurrogateLdapAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
@@ -90,7 +90,7 @@ import org.springframework.core.io.ClassPathResource;
     "cas.authn.surrogate.ldap.memberAttributeValueRegex=\\\\w+@example.org"
 })
 @Getter
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 10389)
 public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
 
     private static final int LDAP_PORT = 10389;

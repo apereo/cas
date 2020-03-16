@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
@@ -33,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("DynamoDb")
 @Getter
-@EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 8000)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @SpringBootTest(classes = {

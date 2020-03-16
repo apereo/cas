@@ -16,7 +16,7 @@ import org.apereo.cas.config.CassandraAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -64,7 +64,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Cassandra")
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 9042)
 public class DefaultCassandraRepositoryTests {
     @Autowired
     @Qualifier("cassandraAuthenticationHandler")

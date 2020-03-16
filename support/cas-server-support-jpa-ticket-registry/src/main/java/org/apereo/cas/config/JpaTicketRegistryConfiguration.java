@@ -2,10 +2,10 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.hibernate.HibernateBeans;
+import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
@@ -22,6 +22,7 @@ import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -39,6 +40,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,6 +55,10 @@ import java.util.stream.Collectors;
 @EnableTransactionManagement(proxyTargetClass = true)
 @AutoConfigureBefore(CasCoreTicketsConfiguration.class)
 public class JpaTicketRegistryConfiguration {
+
+    @Autowired
+    @Qualifier("jpaBeanFactory")
+    private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -77,14 +83,13 @@ public class JpaTicketRegistryConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
-        return HibernateBeans.newHibernateEntityManagerFactoryBean(
-            new JpaConfigDataHolder(
-                HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
-                "jpaTicketRegistryContext",
-                ticketPackagesToScan(),
-                dataSourceTicket()),
-            casProperties.getTicket().getRegistry().getJpa(),
-            applicationContext);
+        val factory = jpaBeanFactory.getObject();
+        val ctx = new JpaConfigurationContext(
+            jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc()),
+            "jpaTicketRegistryContext",
+            ticketPackagesToScan(),
+            dataSourceTicket());
+        return factory.newEntityManagerFactoryBean(ctx, casProperties.getTicket().getRegistry().getJpa());
     }
 
     @Bean

@@ -25,26 +25,23 @@ import javax.sql.DataSource;
  * @since 5.2
  */
 @Slf4j
-public class JdbcAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
+public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository {
     private static final long serialVersionUID = 1600024683199961892L;
 
     private final transient JdbcTemplate jdbcTemplate;
-    private final AcceptableUsagePolicyProperties properties;
 
     public JdbcAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
-                                               final String aupAttributeName,
-                                               final DataSource dataSource,
-                                               final AcceptableUsagePolicyProperties properties) {
-        super(ticketRegistrySupport, aupAttributeName);
+                                               final AcceptableUsagePolicyProperties aupProperties,
+                                               final DataSource dataSource) {
+        super(ticketRegistrySupport, aupProperties);
         this.jdbcTemplate = new JdbcTemplate(dataSource);
-        this.properties = properties;
     }
 
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
         try {
-            val jdbc = properties.getJdbc();
-            var aupColumnName = properties.getAupAttributeName();
+            val jdbc = aupProperties.getJdbc();
+            var aupColumnName = aupProperties.getAupAttributeName();
             if (StringUtils.isNotBlank(jdbc.getAupColumn())) {
                 aupColumnName = jdbc.getAupColumn();
             }
@@ -57,20 +54,20 @@ public class JdbcAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
         }
         return false;
     }
-    
+
     /**
      * Extracts principal ID from a principal attribute or the provided credentials.
-     * 
+     *
      * @param requestContext the context
-     * @param credential the credential
+     * @param credential     the credential
      * @return the principal ID to update the AUP setting in the database for
      */
     protected String determinePrincipalId(final RequestContext requestContext, final Credential credential) {
-        if (StringUtils.isBlank(properties.getJdbc().getPrincipalIdAttribute())) {
+        if (StringUtils.isBlank(aupProperties.getJdbc().getPrincipalIdAttribute())) {
             return credential.getId();
         }
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
-        val pIdAttribName = properties.getJdbc().getPrincipalIdAttribute();
+        val pIdAttribName = aupProperties.getJdbc().getPrincipalIdAttribute();
         if (!principal.getAttributes().containsKey(pIdAttribName)) {
             throw new IllegalStateException("Principal attribute [" + pIdAttribName + "] cannot be found");
         }
@@ -82,11 +79,11 @@ public class JdbcAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
         }
         if (pIdAttributeValues.size() > 1) {
             LOGGER.warn("Principal attribute [{}] was found, but its value [{}] is multi-valued. "
-                    + "Proceeding with the first element [{}]", pIdAttribName, pIdAttributeValue, principalId);
+                + "Proceeding with the first element [{}]", pIdAttribName, pIdAttributeValue, principalId);
         }
         if (principalId.isEmpty()) {
             throw new IllegalStateException("Principal attribute [" + pIdAttribName + "] was found, but it is either empty"
-                    + " or multi-valued with an empty element");
+                + " or multi-valued with an empty element");
         }
         return principalId;
     }

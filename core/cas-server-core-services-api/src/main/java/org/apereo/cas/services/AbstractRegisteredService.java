@@ -43,7 +43,9 @@ import java.util.Map;
  */
 @Entity
 @Inheritance
-@DiscriminatorColumn(name = "expression_type", length = 50, discriminatorType = DiscriminatorType.STRING, columnDefinition = "VARCHAR(50) DEFAULT 'regex'")
+@DiscriminatorColumn(name = "expression_type", length = 50,
+    discriminatorType = DiscriminatorType.STRING,
+    columnDefinition = "VARCHAR(50) DEFAULT 'regex'")
 @Table(name = "RegexRegisteredService")
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
@@ -79,7 +81,6 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @org.springframework.data.annotation.Id
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    //@GenericGenerator(name = "native", strategy = "native")
     private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
 
     @Column
@@ -89,6 +90,10 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Column(name = "expiration_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceExpirationPolicy expirationPolicy = new DefaultRegisteredServiceExpirationPolicy();
 
+    @Lob
+    @Column(name = "acceptable_usage_policy", length = Integer.MAX_VALUE)
+    private RegisteredServiceAcceptableUsagePolicy acceptableUsagePolicy = new DefaultRegisteredServiceAcceptableUsagePolicy();
+    
     @Lob
     @Column(name = "proxy_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
@@ -163,20 +168,6 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @OrderColumn
     private List<DefaultRegisteredServiceContact> contacts = new ArrayList<>(0);
 
-    @Override
-    public void initialize() {
-        this.proxyPolicy = ObjectUtils.defaultIfNull(this.proxyPolicy, new RefuseRegisteredServiceProxyPolicy());
-        this.usernameAttributeProvider = ObjectUtils.defaultIfNull(this.usernameAttributeProvider, new DefaultRegisteredServiceUsernameProvider());
-        this.logoutType = ObjectUtils.defaultIfNull(this.logoutType, RegisteredServiceLogoutType.BACK_CHANNEL);
-        this.requiredHandlers = ObjectUtils.defaultIfNull(this.requiredHandlers, new HashSet<>(0));
-        this.accessStrategy = ObjectUtils.defaultIfNull(this.accessStrategy, new DefaultRegisteredServiceAccessStrategy());
-        this.multifactorPolicy = ObjectUtils.defaultIfNull(this.multifactorPolicy, new DefaultRegisteredServiceMultifactorPolicy());
-        this.properties = ObjectUtils.defaultIfNull(this.properties, new LinkedHashMap<>(0));
-        this.attributeReleasePolicy = ObjectUtils.defaultIfNull(this.attributeReleasePolicy, new ReturnAllowedAttributeReleasePolicy());
-        this.contacts = ObjectUtils.defaultIfNull(this.contacts, new ArrayList<>(0));
-        this.expirationPolicy = ObjectUtils.defaultIfNull(this.expirationPolicy, new DefaultRegisteredServiceExpirationPolicy());
-    }
-
     /**
      * Sets the service identifier. Extensions are to define the format.
      *
@@ -188,7 +179,8 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     public int compareTo(final RegisteredService other) {
         return new CompareToBuilder()
             .append(getEvaluationOrder(), other.getEvaluationOrder())
-            .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(), StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())
+            .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(),
+                StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())
             .append(getServiceId(), other.getServiceId()).append(getId(), other.getId())
             .toComparison();
     }
@@ -212,6 +204,21 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Override
     public List<RegisteredServiceContact> getContacts() {
         return (List) this.contacts;
+    }
+
+    @Override
+    public void initialize() {
+        this.proxyPolicy = ObjectUtils.defaultIfNull(this.proxyPolicy, new RefuseRegisteredServiceProxyPolicy());
+        this.usernameAttributeProvider = ObjectUtils.defaultIfNull(this.usernameAttributeProvider, new DefaultRegisteredServiceUsernameProvider());
+        this.logoutType = ObjectUtils.defaultIfNull(this.logoutType, RegisteredServiceLogoutType.BACK_CHANNEL);
+        this.requiredHandlers = ObjectUtils.defaultIfNull(this.requiredHandlers, new HashSet<>(0));
+        this.accessStrategy = ObjectUtils.defaultIfNull(this.accessStrategy, new DefaultRegisteredServiceAccessStrategy());
+        this.multifactorPolicy = ObjectUtils.defaultIfNull(this.multifactorPolicy, new DefaultRegisteredServiceMultifactorPolicy());
+        this.properties = ObjectUtils.defaultIfNull(this.properties, new LinkedHashMap<>(0));
+        this.attributeReleasePolicy = ObjectUtils.defaultIfNull(this.attributeReleasePolicy, new ReturnAllowedAttributeReleasePolicy());
+        this.contacts = ObjectUtils.defaultIfNull(this.contacts, new ArrayList<>(0));
+        this.expirationPolicy = ObjectUtils.defaultIfNull(this.expirationPolicy, new DefaultRegisteredServiceExpirationPolicy());
+        this.acceptableUsagePolicy = ObjectUtils.defaultIfNull(this.acceptableUsagePolicy, new DefaultRegisteredServiceAcceptableUsagePolicy());
     }
 
     public void setContacts(final List<RegisteredServiceContact> contacts) {

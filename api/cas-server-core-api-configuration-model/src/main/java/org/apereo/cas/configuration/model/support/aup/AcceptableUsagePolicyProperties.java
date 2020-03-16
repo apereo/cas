@@ -64,39 +64,33 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     private Redis redis = new Redis();
 
     /**
+     * Control AUP backed by runtime's memory.
+     */
+    private InMemory inMemory = new InMemory();
+
+    /**
      * AUP enabled allows AUP to be turned off on startup.
      */
     private boolean enabled = true;
 
     /**
      * AUP attribute to choose in order to determine whether policy
-     * has been accepted or not.
+     * has been accepted or not. The attribute is expected to contain
+     * a boolean value where {@code true} indicates policy has been
+     * accepted and {@code false} indicates otherwise.
+     * The attribute is fetched for the principal from configured sources
+     * and compared for the right match to determine policy status.
+     * If the attribute is not found, the policy status is considered as denied.
      */
     private String aupAttributeName = "aupAccepted";
 
     /**
-     * Scope options for the default aup repository can store flag indicating acceptance.
-     * Scope refers to duration that acceptance is kept.
-     * Current options are global on the particular server (not replicated across CAS servers)
-     * and once per authentication via credentials (not authentication events via TGT).
+     * AUP attribute to choose whose single value dictates
+     * how CAS should fetch the policy terms from
+     * the relevant message bundles.
      */
-    public enum Scope {
-        /**
-         * Store in global in-memory map (for life of server).
-         */
-        GLOBAL,
-
-        /**
-         * Store aup acceptance such that user is prompted when they authenticate via credentials (not TGT).
-         */
-        AUTHENTICATION
-    }
-
-    /**
-     * Scope of map where the aup selection is stored.
-     */
-    private Scope scope = Scope.GLOBAL;
-
+    private String aupPolicyTermsAttributeName;
+    
     @RequiresModule(name = "cas-server-support-aup-couchdb")
     public static class CouchDb extends BaseAsynchronousCouchDbProperties {
 
@@ -130,25 +124,25 @@ public class AcceptableUsagePolicyProperties implements Serializable {
          * The table name in the database that holds the AUP attribute to update for the user.
          */
         private String tableName;
-        
+
         /**
          * The column to store the AUP attribute. May differ from the profile attribute defined by {@link #aupAttributeName}.
          * SQL query can be further customized by setting {@link #sqlUpdateAUP}.
          */
         private String aupColumn;
-        
+
         /**
          * The column to identify the principal.
          * SQL query can be further customized by setting {@link #sqlUpdateAUP}.
          */
         private String principalIdColumn = "username";
-        
+
         /**
          * The profile attribute to extract the value for the {@link #principalIdColumn} used in the WHERE clause
          * of {@link #sqlUpdateAUP}. If empty, the principal ID will be used.
          */
         private String principalIdAttribute;
-        
+
         /**
          * The query template to update the AUP attribute.
          * %s placeholders represent {@link #tableName}, {@link #aupColumn}, {@link #principalIdColumn} settings.
@@ -168,6 +162,37 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     @Setter
     public static class Groovy extends SpringResourceProperties {
         private static final long serialVersionUID = 9164227843747126083L;
+    }
+
+    @RequiresModule(name = "cas-server-support-aup-core", automated = true)
+    @Getter
+    @Setter
+    public static class InMemory implements Serializable {
+        private static final long serialVersionUID = 8164227843747126083L;
+
+        /**
+         * Scope of map where the aup selection is stored.
+         */
+        private Scope scope = Scope.GLOBAL;
+
+        /**
+         * Scope options for the default aup repository can store flag indicating acceptance.
+         * Scope refers to duration that acceptance is kept.
+         * Current options are global on the particular server (not replicated across CAS servers)
+         * and once per authentication via credentials (not authentication events via TGT).
+         */
+        public enum Scope {
+            /**
+             * Store in global in-memory map (for life of server).
+             */
+            GLOBAL,
+
+            /**
+             * Store aup acceptance such that user is prompted when
+             * they authenticate via credentials (not TGT).
+             */
+            AUTHENTICATION
+        }
     }
 
     @RequiresModule(name = "cas-server-support-aup-redis")

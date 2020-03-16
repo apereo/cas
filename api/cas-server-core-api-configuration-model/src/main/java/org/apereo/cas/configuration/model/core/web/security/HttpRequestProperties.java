@@ -42,6 +42,12 @@ public class HttpRequestProperties implements Serializable {
     private String paramsToCheck = "ticket,service,renew,gateway,warn,method,target,SAMLart," + "pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token";
 
     /**
+     * Characters to block in incoming requests.
+     * {@code none} is a special value. Separate characters by a space.
+     */
+    private String charactersToForbid = "none";
+
+    /**
      * Specify a regular expression that would be checked
      * against the request URL. If a successful match is found,
      * the request would be blocked.

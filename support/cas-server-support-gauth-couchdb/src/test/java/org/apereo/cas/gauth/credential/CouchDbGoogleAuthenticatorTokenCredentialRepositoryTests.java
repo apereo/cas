@@ -27,7 +27,7 @@ import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.gauth.credential.GoogleAuthenticatorAccountCouchDbRepository;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -93,7 +93,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
 @Getter
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 5984)
 public class CouchDbGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
 
     @Autowired

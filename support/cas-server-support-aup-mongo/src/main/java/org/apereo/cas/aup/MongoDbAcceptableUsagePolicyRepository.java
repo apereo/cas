@@ -1,6 +1,7 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,27 +23,24 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.2
  */
 @Slf4j
-public class MongoDbAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
+public class MongoDbAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository {
     private static final long serialVersionUID = 1600024683199961892L;
 
     private final transient MongoTemplate mongoTemplate;
-    private final String collection;
 
     public MongoDbAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
-                                                  final String aupAttributeName,
-                                                  final MongoTemplate mongoTemplate,
-                                                  final String collection) {
-        super(ticketRegistrySupport, aupAttributeName);
-        this.collection = collection;
+                                                  final AcceptableUsagePolicyProperties aupProperties,
+                                                  final MongoTemplate mongoTemplate) {
+        super(ticketRegistrySupport, aupProperties);
         this.mongoTemplate = mongoTemplate;
     }
 
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
         try {
-            val update = Update.update(this.aupAttributeName, Boolean.TRUE);
+            val update = Update.update(aupProperties.getAupAttributeName(), Boolean.TRUE);
             val query = new Query(Criteria.where("username").is(credential.getId()));
-            this.mongoTemplate.updateFirst(query, update, this.collection);
+            this.mongoTemplate.updateFirst(query, update, aupProperties.getMongo().getCollection());
             return true;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

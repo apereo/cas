@@ -27,7 +27,7 @@ public interface CasWebflowConstants {
      * The transition state 'yes'.
      */
     String TRANSITION_ID_YES = "yes";
-    
+
     /**
      * The transition state 'prompt'.
      */
@@ -378,6 +378,19 @@ public interface CasWebflowConstants {
     String STATE_ID_HAS_SERVICE_CHECK = "hasServiceCheck";
 
     /**
+     * State id 'acceptableUsagePolicyView.
+     */
+    String STATE_ID_ACCEPTABLE_USAGE_POLICY_VIEW = "acceptableUsagePolicyView";
+    /**
+     * State id 'aupAcceptedAction.
+     */
+    String STATE_ID_AUP_ACCEPTED = "aupAcceptedAction";
+    /**
+     * State id 'acceptableUsagePolicyCheck.
+     */
+    String STATE_ID_AUP_CHECK = "acceptableUsagePolicyCheck";
+
+    /**
      * The state id 'redirect'.
      */
     String STATE_ID_REDIRECT = "redirect";
@@ -493,9 +506,22 @@ public interface CasWebflowConstants {
     String STATE_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
 
     /**
-     * The view id 'registerDeviceView'.
+     * The state id 'registerDeviceView'.
      */
     String STATE_ID_REGISTER_DEVICE = "registerDeviceView";
+
+    /**
+     * The state id 'spnego'.
+     */
+    String STATE_ID_SPNEGO = "spnego";
+    /**
+     * The state id 'startSpnegoAuthenticate'.
+     */
+    String STATE_ID_START_SPNEGO_AUTHENTICATE = "startSpnegoAuthenticate";
+    /**
+     * The state id 'evaluateClientRequest'.
+     */
+    String STATE_ID_EVALUATE_SPNEGO_CLIENT = "evaluateClientRequest";
 
     /*
      ****************************************
@@ -756,7 +782,29 @@ public interface CasWebflowConstants {
 
     /**
      * Action id 'openIdSingleSignOnAction .
+     *
+     * @deprecated Since 6.2
      */
+    @Deprecated(since = "6.2")
     String ACTION_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
 
+    /**
+     * Action id 'negociateSpneg .
+     */
+    String ACTION_ID_SPNEGO_NEGOTIATE = "negociateSpnego";
+
+    /**
+     * Action id 'acceptableUsagePolicyVerifyAction.
+     */
+    String ACTION_ID_AUP_VERIFY = "acceptableUsagePolicyVerifyAction";
+
+    /**
+     * Action id 'acceptableUsagePolicyRenderAction.
+     */
+    String ACTION_ID_AUP_RENDER = "acceptableUsagePolicyRenderAction";
+
+    /**
+     * Action id 'acceptableUsagePolicyVerifyServiceAction .
+     */
+    String ACTION_ID_AUP_VERIFY_SERVICE = "acceptableUsagePolicyVerifyServiceAction";
 }

@@ -2,27 +2,27 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.hibernate.HibernateBeans;
 import org.apereo.cas.impl.token.JpaPasswordlessTokenRepository;
 import org.apereo.cas.impl.token.PasswordlessAuthenticationToken;
+import org.apereo.cas.jpa.JpaBeanFactory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -41,10 +41,11 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class JpaPasswordlessAuthenticationConfiguration {
     @Autowired
-    private ConfigurableApplicationContext applicationContext;
+    private CasConfigurationProperties casProperties;
 
     @Autowired
-    private CasConfigurationProperties casProperties;
+    @Qualifier("jpaBeanFactory")
+    private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
 
     private static List<String> jpaPasswordlessPackagesToScan() {
         return List.of(PasswordlessAuthenticationToken.class.getPackage().getName());
@@ -52,8 +53,8 @@ public class JpaPasswordlessAuthenticationConfiguration {
 
     @RefreshScope
     @Bean
-    public HibernateJpaVendorAdapter jpaPasswordlessVendorAdapter() {
-        return HibernateBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+    public JpaVendorAdapter jpaPasswordlessVendorAdapter() {
+        return jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -63,14 +64,13 @@ public class JpaPasswordlessAuthenticationConfiguration {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean passwordlessEntityManagerFactory() {
-        return HibernateBeans.newHibernateEntityManagerFactoryBean(
-            new JpaConfigDataHolder(
-                jpaPasswordlessVendorAdapter(),
-                "jpaPasswordlessAuthNContext",
-                jpaPasswordlessPackagesToScan(),
-                passwordlessDataSource()),
-            casProperties.getAuthn().getPasswordless().getTokens().getJpa(),
-            applicationContext);
+        val factory = jpaBeanFactory.getObject();
+        val ctx = new JpaConfigurationContext(
+            jpaPasswordlessVendorAdapter(),
+            "jpaPasswordlessAuthNContext",
+            jpaPasswordlessPackagesToScan(),
+            passwordlessDataSource());
+        return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getPasswordless().getTokens().getJpa());
     }
 
     @Autowired

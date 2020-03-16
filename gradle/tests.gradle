@@ -333,10 +333,12 @@ tasks.withType(Test) {
         showExceptions = true
         showCauses = true
     }
-    retry {
-        maxRetries = 3
-        maxFailures = 5
-        failOnPassedAfterRetry = false
+    if (!Boolean.getBoolean("skipTestRetry")) {
+        retry {
+            maxRetries = 3
+            maxFailures = 5
+            failOnPassedAfterRetry = false
+        }
     }
 }
 

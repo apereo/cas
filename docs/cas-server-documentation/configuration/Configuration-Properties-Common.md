@@ -299,7 +299,7 @@ The following options related to JPA/JDBC support in CAS apply equally to a numb
 # ${configurationKey}.defaultCatalog=
 # ${configurationKey}.defaultSchema=
 # ${configurationKey}.ddlAuto=create-drop
-# ${configurationKey}.physicalNamingStrategyClassName=org.apereo.cas.jpa.CasHibernatePhysicalNamingStrategy
+# ${configurationKey}.physicalNamingStrategyClassName=org.apereo.cas.hibernate.CasHibernatePhysicalNamingStrategy
 
 # ${configurationKey}.autocommit=false
 # ${configurationKey}.idleTimeout=5000
@@ -1117,6 +1117,7 @@ to an external provider such as Yahoo, given the provider's *configuration key*:
 # ${configurationKey}.secret=
 # ${configurationKey}.clientName=My Provider
 # ${configurationKey}.autoRedirect=false
+# ${configurationKey}.cssClass=
 # ${configurationKey}.principalAttributeId=
 # ${configurationKey}.enabled=true
 ```

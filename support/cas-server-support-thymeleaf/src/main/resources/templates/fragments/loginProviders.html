@@ -34,22 +34,23 @@
                             <a class="mdc-button mdc-button--raised w-100"
                                 th:classappend="'mdc-button-' + ${entry.type}"
                                 th:href="@{${entry.redirectUrl}}" th:attr="autoredirect=${entry.autoRedirect}"
-                                th:inline="text" th:title="${entry.name}">
-                
-                                <span th:case="twitter" class="mdi mdi-twitter"></span>
-                                <span th:case="windowslive" class="mdi mdi-windows"></span>
-                                <span th:case="yahoo" class="mdi mdi-yahoo"></span>
-                                <span th:case="bitbucket" class="mdi mdi-bitbucket"></span>
-                                <span th:case="wordpress" class="mdi mdi-wordpress"></span>
-                                <span th:case="google2" class="mdi mdi-google-plus"></span>
-                                <span th:case="github" class="mdi mdi-github-circle"></span>
-                                <span th:case="dropbox" class="mdi mdi-dropbox"></span>
-                                <span th:case="linkedin" class="mdi mdi-linkedin"></span>
-                                <span th:case="facebook" class="mdi mdi-facebook"></span>
-                                <span th:case="oidc" class="mdi mdi-openid"></span>
-                                <span th:case="saml2" th:class="${entry.cssClass}"></span>
-                                <span th:case="*" class="mdi mdi-login"></span>
-                
+                                th:inline="text" th:title="${entry.name + ' ' + entry.type}">
+
+                                <span th:case="twitter" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-twitter')}"></span>
+                                <span th:case="windowslive" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-windows')}"></span>
+                                <span th:case="yahoo" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-yahoo')}"></span>
+                                <span th:case="bitbucket" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-bitbucket')}"></span>
+                                <span th:case="wordpress" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-wordpress')}"></span>
+                                <span th:case="google2" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-google-plus')}"></span>
+                                <span th:case="github" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-github-circle')}"></span>
+                                <span th:case="dropbox" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-dropbox')}"></span>
+                                <span th:case="linkedin2" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-linkedin')}"></span>
+                                <span th:case="facebook" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-facebook')}"></span>
+                                <span th:case="oidc" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-openid')}"></span>
+                                <span th:case="saml2" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-account-key')}"></span>
+                                <span th:case="cas" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-login')}"></span>
+                                <span th:case="*" class="mdi mdi-account-key"></span>
+
                                 [[${entry.name}]]
                             </a>
                         </li>

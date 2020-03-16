@@ -15,8 +15,6 @@ public abstract class BaseActiveDirectoryLdapAuthenticationHandlerTests extends 
 
     public static final String AD_LDAP_URL = "ldap://localhost:10390";
 
-    public static final String AD_LDAPS_URL = "ldap://localhost:10636";
-
     @Override
     protected String getSuccessPassword() {
         return "P@ssw0rd";

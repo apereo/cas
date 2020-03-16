@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderAbsentException;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -20,7 +21,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.Comparator;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link GlobalMultifactorAuthenticationTrigger}.
@@ -34,9 +38,12 @@ import java.util.Optional;
 @Slf4j
 public class GlobalMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
+
     private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
+
+    private final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
@@ -62,13 +69,37 @@ public class GlobalMultifactorAuthenticationTrigger implements MultifactorAuthen
             throw new AuthenticationException(new MultifactorAuthenticationProviderAbsentException());
         }
 
-        val providerFound = MultifactorAuthenticationUtils.resolveProvider(providerMap, globalProviderId);
-        if (providerFound.isPresent()) {
-            val provider = providerFound.get();
+        val providers = org.springframework.util.StringUtils.commaDelimitedListToSet(globalProviderId);
+        val resolvedProviders = providers.stream()
+            .map(provider -> MultifactorAuthenticationUtils.resolveProvider(providerMap, provider))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .sorted(Comparator.comparing(MultifactorAuthenticationProvider::getOrder))
+            .collect(Collectors.toList());
+
+        if (resolvedProviders.size() != providers.size()) {
+            val providerIds = resolvedProviders
+                .stream()
+                .map(MultifactorAuthenticationProvider::getId)
+                .collect(Collectors.joining(","));
+            val message = String.format("Not all requested multifactor providers could be found. "
+                    + "Requested providers are [%s] and resolved providers are [%s]", globalProviderId, providerIds);
+            LOGGER.warn(message, globalProviderId);
+            throw new MultifactorAuthenticationProviderAbsentException(message);
+        }
+
+        if (resolvedProviders.size() == 1) {
+            val provider = resolvedProviders.get(0);
+            LOGGER.debug("Resolved single multifactor provider [{}]", provider);
             return Optional.of(provider);
         }
-        val message = String.format("No multifactor provider could be found for [%s]", globalProviderId);
-        LOGGER.warn(message, globalProviderId);
-        throw new MultifactorAuthenticationProviderAbsentException(message);
+
+        val principal = authentication.getPrincipal();
+        val provider = multifactorAuthenticationProviderSelector.resolve(resolvedProviders, registeredService, principal);
+        LOGGER.debug("Selected multifactor authentication provider for this transaction is [{}]", provider);
+        if (provider != null) {
+            return Optional.of(provider);
+        }
+        return Optional.empty();
     }
 }

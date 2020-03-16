@@ -12,7 +12,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 public class CasEurekaServerServletInitializer extends SpringBootServletInitializer {
 
     @Override
-    protected SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
+    public SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
         return builder
             .sources(CasEurekaServerWebApplication.class)
             .banner(new CasEurekaServerBanner())

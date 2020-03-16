@@ -1,17 +1,23 @@
 package org.apereo.cas.configuration.support;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.lookup.DataSourceLookupFailureException;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import javax.sql.DataSource;
+
+import java.sql.Driver;
 
 /**
  * This is {@link JpaBeans}.
@@ -22,6 +28,26 @@ import javax.sql.DataSource;
 @Slf4j
 @UtilityClass
 public class JpaBeans {
+
+    /**
+     * New simple data source.
+     *
+     * @param driverClass the driver class
+     * @param username    the username
+     * @param password    the password
+     * @param url         the url
+     * @return the data source
+     */
+    @SneakyThrows
+    public static DataSource newDataSource(final String driverClass, final String username,
+                                           final String password, final String url) {
+        val ds = new SimpleDriverDataSource();
+        ds.setDriverClass((Class<Driver>) Class.forName(driverClass));
+        ds.setUsername(username);
+        ds.setPassword(password);
+        ds.setUrl(url);
+        return ds;
+    }
 
     /**
      * Get new data source, from JNDI lookup or created via direct configuration
@@ -81,6 +107,27 @@ public class JpaBeans {
         bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
         bean.setAutoCommit(jpaProperties.isAutocommit());
         bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
+        return bean;
+    }
+
+    /**
+     * New entity manager factory bean.
+     *
+     * @param config the config
+     * @return the local container entity manager factory bean
+     */
+    public static LocalContainerEntityManagerFactoryBean newEntityManagerFactoryBean(final JpaConfigurationContext config) {
+        val bean = new LocalContainerEntityManagerFactoryBean();
+        bean.setJpaVendorAdapter(config.getJpaVendorAdapter());
+
+        if (StringUtils.isNotBlank(config.getPersistenceUnitName())) {
+            bean.setPersistenceUnitName(config.getPersistenceUnitName());
+        }
+        bean.setPackagesToScan(config.getPackagesToScan().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+        if (config.getDataSource() != null) {
+            bean.setDataSource(config.getDataSource());
+        }
+        bean.getJpaPropertyMap().putAll(config.getJpaProperties());
         return bean;
     }
 }

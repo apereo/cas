@@ -69,7 +69,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
         LOGGER.trace("Principal attributes extracted for [{}] are [{}]", principal.getId(), principalAttributes);
 
         if (areAttributeRepositoryIdsDefined()) {
-            val personDirectoryAttributes = retrievePersonAttributesFromAttributeRepository(principal.getId());
+            val personDirectoryAttributes = retrievePersonAttributesFromAttributeRepository(principal);
             LOGGER.debug("Found [{}] attributes for principal [{}] from the attribute repository.", personDirectoryAttributes.size(), principal.getId());
 
             LOGGER.debug("Merging current principal attributes with that of the repository via strategy [{}]", mergeStrategy);

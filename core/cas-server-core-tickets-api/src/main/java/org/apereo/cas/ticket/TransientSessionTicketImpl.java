@@ -106,7 +106,7 @@ public class TransientSessionTicketImpl extends AbstractTicket implements Transi
         if (contains(name)) {
             return clazz.cast(this.properties.getOrDefault(name, defaultValue));
         }
-        return null;
+        return defaultValue;
     }
 }
 

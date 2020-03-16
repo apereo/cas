@@ -15,7 +15,6 @@ public class AuthenticationCredentialTypeMetaDataPopulator extends BaseAuthentic
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         transaction.getPrimaryCredential().ifPresent(c -> builder.mergeAttribute(Credential.CREDENTIAL_TYPE_ATTRIBUTE, c.getClass().getSimpleName()));
-
     }
 
     @Override
