@@ -16,6 +16,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.hjson.JsonValue;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -70,7 +71,7 @@ public abstract class AbstractGeoLocationService implements GeoLocationService {
                     response = HttpUtils.executeGet(url);
                     if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                         val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                        val infos = MAPPER.readValue(result, Map.class);
+                        val infos = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
                         val geoResponse = new GeoLocationResponse();
                         geoResponse.setLatitude((double) infos.getOrDefault("latitude", 0D));
                         geoResponse.setLongitude((double) infos.getOrDefault("longitude", 0D));

@@ -29,6 +29,7 @@ public class CookieRetrievingCookieGeneratorTests {
             .name("cas")
             .path("/")
             .maxAge(1000)
+            .comment("CAS Cookie")
             .domain("example.org")
             .secure(true)
             .httpOnly(true)

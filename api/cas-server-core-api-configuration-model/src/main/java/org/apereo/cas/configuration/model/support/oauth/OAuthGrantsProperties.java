@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-oauth")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class OAuthGrantsProperties implements Serializable {
 
     private static final long serialVersionUID = -2246860215082703251L;
@@ -28,6 +30,7 @@ public class OAuthGrantsProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-oauth")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class ResourceOwner implements Serializable {
 
         private static final long serialVersionUID = 3171206304518294330L;

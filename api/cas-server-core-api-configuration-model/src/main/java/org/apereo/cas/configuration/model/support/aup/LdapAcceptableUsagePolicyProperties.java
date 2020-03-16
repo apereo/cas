@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link LdapAcceptableUsagePolicyProperties}.
@@ -15,6 +16,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-aup-ldap")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class LdapAcceptableUsagePolicyProperties extends AbstractLdapSearchProperties {
     private static final long serialVersionUID = -7991011278378393382L;
 }

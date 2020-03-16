@@ -1,7 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;

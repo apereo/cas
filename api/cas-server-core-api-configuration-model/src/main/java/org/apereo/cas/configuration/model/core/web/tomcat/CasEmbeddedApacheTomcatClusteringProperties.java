@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-webapp-tomcat")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable {
     private static final long serialVersionUID = 620356002948464740L;
 

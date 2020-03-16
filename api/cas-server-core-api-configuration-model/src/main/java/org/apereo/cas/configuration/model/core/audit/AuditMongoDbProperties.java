@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link AuditMongoDbProperties}.
@@ -15,6 +16,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-audit-mongo")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class AuditMongoDbProperties extends SingleCollectionMongoDbProperties {
 
     private static final long serialVersionUID = 4940497540189318943L;

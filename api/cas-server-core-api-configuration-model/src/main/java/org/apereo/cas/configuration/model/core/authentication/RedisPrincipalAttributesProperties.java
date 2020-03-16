@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link RedisPrincipalAttributesProperties}.
@@ -15,6 +16,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-redis-authentication")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class RedisPrincipalAttributesProperties extends BaseRedisProperties {
 
     private static final long serialVersionUID = -2373755681488251678L;

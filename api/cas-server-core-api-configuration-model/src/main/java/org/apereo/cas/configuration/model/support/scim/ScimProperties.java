@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -17,6 +18,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-scim")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class ScimProperties implements Serializable {
 
     private static final long serialVersionUID = 7943229230342691009L;

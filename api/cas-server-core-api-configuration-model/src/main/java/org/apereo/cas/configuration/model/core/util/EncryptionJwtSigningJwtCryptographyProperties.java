@@ -5,6 +5,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @RequiresModule(name = "cas-server-core-util", automated = true)
+@Accessors(chain = true)
 public class EncryptionJwtSigningJwtCryptographyProperties implements Serializable {
 
     private static final long serialVersionUID = -3015641631298039059L;

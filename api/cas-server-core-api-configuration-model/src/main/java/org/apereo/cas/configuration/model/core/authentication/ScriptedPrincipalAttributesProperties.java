@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link ScriptedPrincipalAttributesProperties}.
@@ -17,6 +18,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Deprecated(since = "6.2")
+@Accessors(chain = true)
 public class ScriptedPrincipalAttributesProperties extends SpringResourceProperties {
 
     private static final long serialVersionUID = 4221139939506528713L;

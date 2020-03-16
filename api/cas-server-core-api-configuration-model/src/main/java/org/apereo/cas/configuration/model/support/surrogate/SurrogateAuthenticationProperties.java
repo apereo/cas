@@ -13,6 +13,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -28,6 +29,7 @@ import java.util.Map;
 @RequiresModule(name = "cas-server-support-surrogate-webflow")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class SurrogateAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = -2088813217398883623L;
@@ -93,6 +95,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-surrogate-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Simple implements Serializable {
 
         private static final long serialVersionUID = 16938920863432222L;
@@ -109,6 +112,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-surrogate-authentication-couchdb")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class CouchDb extends BaseCouchDbProperties {
 
         private static final long serialVersionUID = 8378399979559955402L;
@@ -132,6 +136,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-surrogate-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Json extends SpringResourceProperties {
 
         private static final long serialVersionUID = 3599367681439517829L;
@@ -140,6 +145,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-surrogate-authentication-rest")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Rest extends RestEndpointProperties {
 
         private static final long serialVersionUID = 8152273816132989085L;
@@ -148,6 +154,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-surrogate-authentication-ldap")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Ldap extends AbstractLdapSearchProperties {
 
         private static final long serialVersionUID = -3848837302921751926L;
@@ -176,6 +183,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-surrogate-authentication")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Tgt implements Serializable {
 
         private static final long serialVersionUID = 2077366413438267330L;
@@ -189,6 +197,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-surrogate-authentication-jdbc")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Jdbc extends AbstractJpaProperties {
 
         private static final long serialVersionUID = 8970195444880123796L;

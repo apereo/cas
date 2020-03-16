@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import java.util.Map;
 @RequiresModule(name = "cas-server-support-hazelcast-core")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class HazelcastWANReplicationTargetClusterProperties implements Serializable {
     private static final long serialVersionUID = 1635330607045885145L;
 

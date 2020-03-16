@@ -13,11 +13,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.hjson.JsonValue;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.keys.AesKey;
 import org.springframework.webflow.execution.RequestContext;
@@ -104,9 +106,9 @@ public class AccepttoApiUtils {
                 LOGGER.debug("Response status code is [{}]", status);
 
                 if (status == HttpStatus.SC_OK) {
-                    val results = MAPPER.readValue(response.getEntity().getContent(), Map.class);
-                    LOGGER.debug("Received API response as [{}]", results);
-                    return results;
+                    val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                    LOGGER.debug("Received API response as [{}]", result);
+                    return MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
                 }
             }
         } catch (final Exception e) {
@@ -174,7 +176,8 @@ public class AccepttoApiUtils {
             }
             val status = response.getStatusLine().getStatusCode();
             LOGGER.debug("Authentication response status code is [{}]", status);
-            val results = MAPPER.readValue(response.getEntity().getContent(), Map.class);
+            val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            val results = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
             LOGGER.trace("Received API response as [{}]", results);
             if (!results.containsKey("content")) {
                 throw new IllegalArgumentException("Unable to locate content in API response");
@@ -186,7 +189,7 @@ public class AccepttoApiUtils {
                 LOGGER.error("Unable to verify API content using public key [{}]", apiResponsePublicKey);
                 return new HashMap<>(0);
             }
-            val decodedResult = new String(decoded, StandardCharsets.UTF_8);
+            val decodedResult = JsonValue.readHjson(new String(decoded, StandardCharsets.UTF_8)).toString();
             LOGGER.debug("Received final API response as [{}]", decodedResult);
             return MAPPER.readValue(decodedResult, Map.class);
         } catch (final Exception e) {

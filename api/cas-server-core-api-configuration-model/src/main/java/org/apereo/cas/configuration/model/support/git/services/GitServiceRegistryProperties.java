@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -17,6 +18,7 @@ import java.io.File;
 @RequiresModule(name = "cas-server-support-git-service-registry")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class GitServiceRegistryProperties extends BaseGitProperties {
     private static final long serialVersionUID = 4194689836396653458L;
 

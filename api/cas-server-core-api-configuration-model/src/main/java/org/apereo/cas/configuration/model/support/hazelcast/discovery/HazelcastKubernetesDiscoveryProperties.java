@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-hazelcast-discovery-kubernetes")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class HazelcastKubernetesDiscoveryProperties implements Serializable {
     private static final long serialVersionUID = 8590530159392472509L;
 

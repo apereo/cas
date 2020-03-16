@@ -25,6 +25,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
+import org.hjson.JsonValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -221,7 +222,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 sectorResponse = HttpUtils.executeGet(registeredService.getSectorIdentifierUri());
                 if (sectorResponse != null && sectorResponse.getStatusLine().getStatusCode() == org.apache.http.HttpStatus.SC_OK) {
                     val result = IOUtils.toString(sectorResponse.getEntity().getContent(), StandardCharsets.UTF_8);
-                    val urls = MAPPER.readValue(result, List.class);
+                    val urls = MAPPER.readValue(JsonValue.readHjson(result).toString(), List.class);
                     if (!urls.equals(registrationRequest.getRedirectUris())) {
                         throw new IllegalArgumentException("Invalid sector identifier uri");
                     }

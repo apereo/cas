@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -17,6 +18,7 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-support-oauth")
 @Getter
+@Accessors(chain = true)
 @Setter
 public class OAuthProperties implements Serializable {
 
