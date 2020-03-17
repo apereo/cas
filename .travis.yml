@@ -18,8 +18,6 @@ before_cache:
   - rm -rf $HOME/.gradle/caches/7.0.*/
   - rm -rf $HOME/.gradle/caches/6.3.*/
   - rm -rf $HOME/.gradle/caches/6.2.*/
-  - rm -rf $HOME/.gradle/caches/6.1.*/
-  - rm -rf $HOME/.gradle/caches/6.0.*/
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
   - find ~/.gradle/caches/ -name "*.lock" -type f -delete
 cache:
