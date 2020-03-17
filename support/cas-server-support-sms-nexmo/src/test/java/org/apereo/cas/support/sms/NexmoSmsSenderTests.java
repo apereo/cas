@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = {
     "cas.sms-provider.nexmo.api-token=123456",
     "cas.sms-provider.nexmo.api-secret=123456",
-    "cas.sms-provider.nexmo.signature-secret=123456",
+    "cas.sms-provider.nexmo.signature-secret=123456"
 })
 public class NexmoSmsSenderTests {
     @Autowired

@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.support.spnego.authentication.handler.support.JcifsConfigTests;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandlerTests;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredentialsTests;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredentialsToPrincipalResolverTests;
@@ -17,6 +18,7 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     JcifsSpnegoAuthenticationHandlerTests.class,
     SpnegoCredentialsTests.class,
+    JcifsConfigTests.class,
     SpnegoCredentialsToPrincipalResolverTests.class
 })
 @RunWith(JUnitPlatform.class)
