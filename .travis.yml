@@ -164,14 +164,26 @@ jobs:
       script: ./ci/tests/restful/run-tests-restful.sh
       name: "RESTful Tests"
     - stage: test
+      script: ./ci/tests/mfa/run-tests-mfa.sh
+      name: "Multifactor Authentication Tests"
+    - stage: test
+      script: ./ci/tests/oauth/run-tests-oauth.sh
+      name: "OAuth Tests"
+    - stage: test
+      script: ./ci/tests/oauth/run-tests-uma.sh
+      name: "OAuth UMA Tests"
+    - stage: test
+      script: ./ci/tests/oidc/run-tests-oidc.sh
+      name: "OpenID Connect Tests"
+    - stage: test
+      script: ./ci/tests/saml/run-tests-saml.sh
+      name: "SAML Tests"
+    - stage: test
       script: ./ci/tests/ldap/run-tests-ldap.sh
       name: "LDAP Tests"
     - stage: test
       script: ./ci/tests/amazon/run-tests-aws.sh
       name: "AWS Tests"
-    - stage: test
-      script: ./ci/tests/mfa/run-tests-mfa.sh
-      name: "Multifactor Authentication Tests"
     - stage: test
       script: ./ci/tests/cassandra/run-tests-cassandra.sh
       name: "Apache Cassandra Tests"
@@ -199,18 +211,6 @@ jobs:
     - stage: test
       script: ./ci/tests/mail/run-tests-mail.sh
       name: "Mail Tests"
-    - stage: test
-      script: ./ci/tests/oauth/run-tests-oauth.sh
-      name: "OAuth Tests"
-    - stage: test
-      script: ./ci/tests/oauth/run-tests-uma.sh
-      name: "OAuth UMA Tests"
-    - stage: test
-      script: ./ci/tests/oidc/run-tests-oidc.sh
-      name: "OpenID Connect Tests"
-    - stage: test
-      script: ./ci/tests/saml/run-tests-saml.sh
-      name: "SAML Tests"
     - stage: test
       script: ./ci/tests/couchdb/run-tests-couchdb.sh
       name: "Apache CouchDb Tests"
