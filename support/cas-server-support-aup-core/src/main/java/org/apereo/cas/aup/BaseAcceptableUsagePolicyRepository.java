@@ -101,6 +101,7 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
         val attributes = principal.getAttributes();
 
         if (!attributes.containsKey(aupProperties.getAupPolicyTermsAttributeName())) {
+            LOGGER.trace("No attribute for policy terms is defined");
             return null;
         }
 

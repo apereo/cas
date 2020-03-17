@@ -10,6 +10,7 @@ import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.util.HttpUtils;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
@@ -24,6 +25,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
@@ -37,6 +40,7 @@ import java.util.Collection;
 @Configuration("restServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(name = "cas.serviceRegistry.rest.url")
+@Slf4j
 public class RestServiceRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -56,27 +60,38 @@ public class RestServiceRegistryConfiguration {
     }
 
     @Bean
+    public RestOperations restfulServiceRegistryTemplate() {
+        return new RestTemplate();
+    }
+
+    @Bean
     @RefreshScope
     @SneakyThrows
+    @ConditionalOnMissingBean(name = "restfulServiceRegistry")
     public ServiceRegistry restfulServiceRegistry() {
         val registry = casProperties.getServiceRegistry().getRest();
-        val restTemplate = new RestTemplate();
-        val headers = new LinkedMultiValueMap<String, String>();
+        LOGGER.debug("Creating REST-based service registry using endpoint [{}]", registry.getUrl());
+        return new RestfulServiceRegistry(applicationContext,
+            restfulServiceRegistryTemplate(),
+            registry.getUrl(),
+            restfulServiceRegistryHttpHeaders(),
+            serviceRegistryListeners.getObject(),
+            registeredServiceEntityMapper());
+    }
 
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "restfulServiceRegistryHttpHeaders")
+    public MultiValueMap<String, String> restfulServiceRegistryHttpHeaders() {
+        val registry = casProperties.getServiceRegistry().getRest();
+        val headers = new LinkedMultiValueMap<String, String>();
         if (StringUtils.isNotBlank(registry.getBasicAuthUsername())
             && StringUtils.isNotBlank(registry.getBasicAuthPassword())) {
             headers.putAll(HttpUtils.createBasicAuthHeaders(registry.getBasicAuthUsername(), registry.getBasicAuthPassword()));
         }
-
         headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
         headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
-
-        return new RestfulServiceRegistry(applicationContext,
-            restTemplate,
-            registry.getUrl(),
-            headers,
-            serviceRegistryListeners.getObject(),
-            registeredServiceEntityMapper());
+        return headers;
     }
 
     @RefreshScope
