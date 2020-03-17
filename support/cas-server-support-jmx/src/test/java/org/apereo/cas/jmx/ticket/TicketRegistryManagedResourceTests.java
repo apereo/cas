@@ -1,7 +1,6 @@
 package org.apereo.cas.jmx.ticket;
 
 import org.apereo.cas.jmx.BaseCasJmsTests;
-import org.apereo.cas.jmx.services.ServicesManagerManagedResource;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
