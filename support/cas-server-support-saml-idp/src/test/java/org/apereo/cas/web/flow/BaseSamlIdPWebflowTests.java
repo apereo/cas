@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.SamlIdPConfiguration;
@@ -32,8 +31,7 @@ import org.springframework.core.io.FileSystemResource;
     SamlIdPMetadataConfiguration.class,
     SamlIdPEndpointsConfiguration.class,
     SamlIdPWebflowConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class,
-    CasPersonDirectoryConfiguration.class
+    BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
 @Tag("SAML")
 public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests {
