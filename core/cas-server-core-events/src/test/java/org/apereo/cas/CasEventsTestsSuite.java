@@ -1,4 +1,8 @@
-package org.apereo.cas.support.events;
+package org.apereo.cas;
+
+import org.apereo.cas.support.events.CasEventsReportEndpointTests;
+import org.apereo.cas.support.events.DefaultCasEventListenerTests;
+import org.apereo.cas.support.events.LoggingCasEventListenerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -12,7 +16,8 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     DefaultCasEventListenerTests.class,
-    CasEventsReportEndpointTests.class
+    CasEventsReportEndpointTests.class,
+    LoggingCasEventListenerTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class CasEventsTestsSuite {
