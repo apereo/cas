@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
  * @since 6.0.0-RC3
  */
 @SelectClasses({
+    LdapUtilsTests.class,
     GroovyPasswordPolicyHandlingStrategyTests.class,
     OptionalWarningLdapAccountStateHandlerTests.class,
     RejectResultCodeLdapPasswordPolicyHandlingStrategyTests.class
