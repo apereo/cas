@@ -67,7 +67,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public ApplicationContextProvider applicationContextProvider() {
+    public ApplicationContextProvider casApplicationContextProvider() {
         return new ApplicationContextProvider();
     }
 
@@ -116,15 +116,15 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     }
 
     /**
-     * It's important to invoke the {@link #applicationContextProvider()}
+     * It's important to invoke the {@link #casApplicationContextProvider()}
      * method here forcefully and not rely on the {@link #applicationContext}.
      * Certain tests in the CAS context require access to the application context
-     * from the {@link #applicationContextProvider()}.
+     * from the {@link #casApplicationContextProvider()}.
      */
     @Override
     @SuppressFBWarnings("NIR_NEEDLESS_INSTANCE_RETRIEVAL")
     public void afterPropertiesSet() {
-        val appContext = applicationContextProvider().getConfigurableApplicationContext();
+        val appContext = casApplicationContextProvider().getConfigurableApplicationContext();
         val conversionService = new DefaultFormattingConversionService(true);
         conversionService.setEmbeddedValueResolver(new CasEmbeddedValueResolver(appContext));
         appContext.getEnvironment().setConversionService(conversionService);
