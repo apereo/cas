@@ -34,7 +34,7 @@ public abstract class AbstractCasTicketGrantingTicketEvent extends AbstractCasEv
      *
      * @return tgt creation time
      */
-    public ZonedDateTime getTgtCreationTime() {
+    public ZonedDateTime getCreationTime() {
         return this.ticketGrantingTicket.getCreationTime();
     }
 
@@ -43,7 +43,7 @@ public abstract class AbstractCasTicketGrantingTicketEvent extends AbstractCasEv
      *
      * @return tgt id
      */
-    public String getTgtId() {
+    public String getId() {
         return this.ticketGrantingTicket.getId();
     }
 
