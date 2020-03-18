@@ -60,6 +60,7 @@ public class RestServiceRegistryConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "restfulServiceRegistryTemplate")
     public RestOperations restfulServiceRegistryTemplate() {
         return new RestTemplate();
     }
