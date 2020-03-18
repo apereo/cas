@@ -58,11 +58,37 @@ public class MultifactorAuthenticationUtilsTests {
             new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);
         context.getRootFlow().getGlobalTransitionSet().add(transition);
 
-        var result = MultifactorAuthenticationUtils.resolveEventViaMultivaluedAttribute(MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
+        val result = MultifactorAuthenticationUtils.resolveEventViaMultivaluedAttribute(MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
             List.of("mfa-value"), MultifactorAuthenticationTestUtils.getRegisteredService(),
             Optional.of(context), provider, s -> RegexUtils.find("mfa-.+", s));
         assertNotNull(result);
         assertFalse(result.isEmpty());
+    }
+
+    @Test
+    public void verifyMultivaluedAttrs() {
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        var result = MultifactorAuthenticationUtils.resolveEventViaMultivaluedAttribute(MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
+            List.of("some-value"), MultifactorAuthenticationTestUtils.getRegisteredService(), Optional.of(context), provider,
+            s -> {
+                throw new RuntimeException("Bad Predicate");
+            });
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+
+        result = MultifactorAuthenticationUtils.resolveEventViaMultivaluedAttribute(MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
+            "some-value", MultifactorAuthenticationTestUtils.getRegisteredService(), Optional.of(context), provider,
+            s -> {
+                throw new RuntimeException("Bad Predicate");
+            });
+        assertNull(result);
     }
 
     @Test
