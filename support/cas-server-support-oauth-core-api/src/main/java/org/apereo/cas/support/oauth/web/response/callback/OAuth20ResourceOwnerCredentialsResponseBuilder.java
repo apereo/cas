@@ -38,7 +38,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder implements OAuth20Au
         val result = OAuth20AccessTokenResponseResult.builder()
             .registeredService(holder.getRegisteredService())
             .service(holder.getService())
-            .accessTokenTimeout(expirationPolicy.getTimeToLive())
+            .accessTokenTimeout(expirationPolicy.getTimeToIdle())
             .responseType(OAuth20Utils.getResponseType(context))
             .casProperties(casProperties)
             .generatedToken(accessTokenResult)

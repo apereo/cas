@@ -140,7 +140,8 @@ import static org.mockito.Mockito.*;
         "cas.authn.oidc.issuer=https://sso.example.org/cas/oidc",
         "cas.authn.oidc.jwksFile=classpath:keystore.jwks",
         "spring.mail.host=localhost",
-        "spring.mail.port=25000"
+        "spring.mail.port=25000",
+        "cas.tgc.crypto.enabled=false"
     })
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)

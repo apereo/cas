@@ -246,6 +246,8 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val principalAttributes = principal.getAttributes();
         assertEquals(attributes.size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
+        val expiresIn = StringUtils.substringAfter(redirectUrl, "&expires_in=");
+        assertEquals(String.valueOf(casProperties.getTicket().getTgt().getTimeToKillInSeconds()), expiresIn);
     }
 
     @Test
@@ -556,8 +558,9 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val principalAttributes = principal.getAttributes();
         assertEquals(attributes.size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
+        long expiresIn = jwt.getExpirationTime().getValue() - jwt.getIssuedAt().getValue();
+        assertEquals(casProperties.getTicket().getTgt().getTimeToKillInSeconds(), expiresIn);
     }
-
 
     @Override
     protected void clearAllServices() {

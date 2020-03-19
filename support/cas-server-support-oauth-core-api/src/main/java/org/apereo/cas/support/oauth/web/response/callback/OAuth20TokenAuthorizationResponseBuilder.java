@@ -96,7 +96,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
             .encode();
 
         val expiration = accessTokenExpirationPolicy.buildTicketExpirationPolicy();
-        val timeToLive = expiration.getTimeToLive();
+        val timeToLive = expiration.getTimeToIdle();
         stringBuilder.append(OAuth20Constants.ACCESS_TOKEN)
             .append('=')
             .append(encodedAccessToken)

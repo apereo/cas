@@ -102,7 +102,7 @@ public class OAuth20JwtAccessTokenEncoder {
         attributes.putAll(authentication.getPrincipal().getAttributes());
 
         val builder = JwtBuilder.JwtRequest.builder();
-        val dt = authentication.getAuthenticationDate().plusSeconds(accessToken.getExpirationPolicy().getTimeToLive());
+        val dt = authentication.getAuthenticationDate().plusSeconds(accessToken.getExpirationPolicy().getTimeToIdle());
         return builder
             .serviceAudience(service.getId())
             .issueDate(DateTimeUtils.dateOf(authentication.getAuthenticationDate()))
