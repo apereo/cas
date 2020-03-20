@@ -6,6 +6,9 @@ import org.apereo.cas.config.CasEmbeddedContainerTomcatFiltersConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
+import org.apache.catalina.ha.tcp.SimpleTcpCluster;
+import org.apache.catalina.tribes.group.GroupChannel;
+import org.apache.catalina.tribes.membership.McastService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,49 +16,30 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
- * This is {@link CasTomcatServletWebServerFactoryTests}.
+ * This is {@link CasTomcatServletWebServerFactoryClusterTests}.
  *
- * @author Misagh Moayyed
- * @since 6.0.0
+ * @author Hal Deadman
+ * @since 6.2.0
  */
 @SpringBootTest(classes = {
     CasEmbeddedContainerTomcatConfiguration.class,
     CasEmbeddedContainerTomcatFiltersConfiguration.class
 },
     properties = {
-        "server.port=8182",
+        "server.port=8183",
         "server.ssl.enabled=false",
-        "cas.server.tomcat.socket.bufferPool=10",
-        "cas.server.tomcat.socket.appReadBufSize=10",
-        "cas.server.tomcat.socket.appWriteBufSize=10",
-        "cas.server.tomcat.socket.performanceBandwidth=10",
-        "cas.server.tomcat.socket.performanceConnectionTime=1000",
-        "cas.server.tomcat.socket.performanceLatency=10",
-        "cas.server.tomcat.apr.enabled=true",
-        "cas.server.tomcat.sslValve.enabled=true",
-        "cas.server.tomcat.httpProxy.enabled=true",
-        "cas.server.tomcat.httpProxy.secure=true",
-        "cas.server.tomcat.httpProxy.scheme=https",
-        "cas.server.tomcat.httpProxy.secret=s3cr3t",
-        "cas.server.tomcat.httpProxy.redirectPort=1234",
-        "cas.server.tomcat.httpProxy.proxyPort=1212",
-        "cas.server.tomcat.http.enabled=true",
-        "cas.server.tomcat.http.port=9190",
-        "cas.server.tomcat.ajp.enabled=true",
-        "cas.server.tomcat.ajp.port=9944",
-        "cas.server.tomcat.ajp.secret=s3cr3t",
-        "cas.server.tomcat.ajp.redirectPort=1234",
-        "cas.server.tomcat.ajp.proxyPort=1212",
-        "cas.server.tomcat.basicAuthn.enabled=true",
-        "cas.server.tomcat.extAccessLog.enabled=true",
-        "cas.server.tomcat.rewriteValve.location=classpath:/container/tomcat/rewrite.config"
+        "cas.server.tomcat.clustering.enabled=true",
+        "cas.server.tomcat.clustering.clusteringType=DEFAULT"
     },
     webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
-public class CasTomcatServletWebServerFactoryTests {
+public class CasTomcatServletWebServerFactoryClusterTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
 
@@ -77,8 +61,14 @@ public class CasTomcatServletWebServerFactoryTests {
         val server = casServletWebServerFactory.getWebServer();
         try {
             server.start();
+            val tomcatServer = (TomcatWebServer) server;
+            val cluster = (SimpleTcpCluster) tomcatServer.getTomcat().getEngine().getCluster();
+            val channel = (GroupChannel) cluster.getChannel();
+            val membership = channel.getMembershipService();
+            assertTrue(membership instanceof McastService);
         } finally {
             server.stop();
         }
     }
 }
+
