@@ -43,6 +43,12 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     RegisteredServiceProxyPolicy getProxyPolicy();
 
     /**
+     * Get the authentication policy assigned to this service.
+     * @return the policy
+     */
+    RegisteredServiceAuthenticationPolicy getAuthenticationPolicy();
+
+    /**
      * The unique identifier for this service.
      *
      * @return the unique identifier for this service.
@@ -167,7 +173,9 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * An empty set indicates that there are no requirements on particular authentication handlers; any will suffice.
      *
      * @return Non -null set of required handler names.
+     * @deprecated Since 6.2
      */
+    @Deprecated(since = "6.2.0")
     Set<String> getRequiredHandlers();
 
     /**
