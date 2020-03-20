@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
@@ -32,6 +33,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Base class for mutable, persistable registered services.
@@ -53,6 +55,7 @@ import java.util.Map;
 @Setter
 @EqualsAndHashCode(exclude = "id")
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Slf4j
 public abstract class AbstractRegisteredService implements RegisteredService {
 
     private static final long serialVersionUID = 7645279151115635245L;
@@ -93,7 +96,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Lob
     @Column(name = "acceptable_usage_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceAcceptableUsagePolicy acceptableUsagePolicy = new DefaultRegisteredServiceAcceptableUsagePolicy();
-    
+
     @Lob
     @Column(name = "proxy_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
@@ -125,10 +128,6 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     private RegisteredServiceLogoutType logoutType = RegisteredServiceLogoutType.BACK_CHANNEL;
 
     @Lob
-    @Column(name = "required_handlers", length = Integer.MAX_VALUE)
-    private HashSet<String> requiredHandlers = new HashSet<>(0);
-
-    @Lob
     @Column(name = "environments", length = Integer.MAX_VALUE)
     private HashSet<String> environments = new HashSet<>(0);
 
@@ -156,6 +155,10 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Lob
     @Column(name = "public_key", length = Integer.MAX_VALUE)
     private RegisteredServicePublicKey publicKey;
+
+    @Lob
+    @Column(name = "authn_policy", length = Integer.MAX_VALUE)
+    private RegisteredServiceAuthenticationPolicy authenticationPolicy = new DefaultRegisteredServiceAuthenticationPolicy();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "RegexRegisteredService_RegexRegisteredServiceProperty")
@@ -192,6 +195,24 @@ public abstract class AbstractRegisteredService implements RegisteredService {
      */
     protected abstract AbstractRegisteredService newInstance();
 
+
+    @Deprecated(since = "6.2.0")
+    public Set<String> getRequiredHandlers() {
+        LOGGER.warn("Assigning a collection of required authentication handlers to a registered service is deprecated. "
+            + "This field is scheduled to be removed in the future. If you need to, consider defining an authentication policy "
+            + "for the registered service instead to specify required authentication handlers");
+        return getAuthenticationPolicy().getRequiredAuthenticationHandlers();
+    }
+
+    @Deprecated(since = "6.2.0")
+    public void setRequiredHandlers(final Set<String> requiredHandlers) {
+        LOGGER.warn("Assigning a collection of required authentication handlers to a registered service is deprecated. "
+            + "This field is scheduled to be removed in the future. If you need to, consider defining an authentication policy "
+            + "for the registered service instead to specify required authentication handlers [{}]", requiredHandlers);
+        initialize();
+        getAuthenticationPolicy().setRequiredAuthenticationHandlers(requiredHandlers);
+    }
+    
     @Override
     public Map<String, RegisteredServiceProperty> getProperties() {
         return (Map) this.properties;
@@ -211,7 +232,6 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         this.proxyPolicy = ObjectUtils.defaultIfNull(this.proxyPolicy, new RefuseRegisteredServiceProxyPolicy());
         this.usernameAttributeProvider = ObjectUtils.defaultIfNull(this.usernameAttributeProvider, new DefaultRegisteredServiceUsernameProvider());
         this.logoutType = ObjectUtils.defaultIfNull(this.logoutType, RegisteredServiceLogoutType.BACK_CHANNEL);
-        this.requiredHandlers = ObjectUtils.defaultIfNull(this.requiredHandlers, new HashSet<>(0));
         this.accessStrategy = ObjectUtils.defaultIfNull(this.accessStrategy, new DefaultRegisteredServiceAccessStrategy());
         this.multifactorPolicy = ObjectUtils.defaultIfNull(this.multifactorPolicy, new DefaultRegisteredServiceMultifactorPolicy());
         this.properties = ObjectUtils.defaultIfNull(this.properties, new LinkedHashMap<>(0));
@@ -219,6 +239,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         this.contacts = ObjectUtils.defaultIfNull(this.contacts, new ArrayList<>(0));
         this.expirationPolicy = ObjectUtils.defaultIfNull(this.expirationPolicy, new DefaultRegisteredServiceExpirationPolicy());
         this.acceptableUsagePolicy = ObjectUtils.defaultIfNull(this.acceptableUsagePolicy, new DefaultRegisteredServiceAcceptableUsagePolicy());
+        this.authenticationPolicy = ObjectUtils.defaultIfNull(this.authenticationPolicy, new DefaultRegisteredServiceAuthenticationPolicy());
     }
 
     public void setContacts(final List<RegisteredServiceContact> contacts) {
