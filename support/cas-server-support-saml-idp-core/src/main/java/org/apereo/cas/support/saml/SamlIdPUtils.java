@@ -101,8 +101,7 @@ public class SamlIdPUtils {
             if(acsEndpointFromReq != null) {
                 if (authnRequest.isSigned()) {
                     endpoint = acsEndpointFromReq;
-                }
-                else {
+                } else {
                     if ((acsEndpointFromMetadata == null) ||
                             !acsEndpointFromReq.getLocation().equals(adaptor.getAssertionConsumerService(binding).getLocation())) {
                         throw new SamlException(String.format("Assertion consumer service from unsigned request [%s], does not match ACS from SP metadata [%s]",
