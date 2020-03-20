@@ -96,12 +96,27 @@ public class SamlIdPUtils {
         if (authnRequest instanceof LogoutRequest) {
             endpoint = adaptor.getSingleLogoutService(binding);
         } else {
-            val endpointReq = getAssertionConsumerServiceFromRequest(authnRequest, binding);
-            endpoint = Optional.ofNullable(endpointReq).orElseGet(() -> adaptor.getAssertionConsumerService(binding));
+            val acsEndpointFromReq = getAssertionConsumerServiceFromRequest(authnRequest, binding);
+            val acsEndpointFromMetadata = adaptor.getAssertionConsumerService(binding);
+            if(acsEndpointFromReq != null) {
+                if (authnRequest.isSigned()) {
+                    endpoint = acsEndpointFromReq;
+                }
+                else {
+                    if ((acsEndpointFromMetadata == null) ||
+                            !acsEndpointFromReq.getLocation().equals(adaptor.getAssertionConsumerService(binding).getLocation())) {
+                        throw new SamlException(String.format("Assertion consumer service from unsigned request [%s], does not match ACS from SP metadata [%s]",
+                                acsEndpointFromReq.getLocation(), adaptor.getAssertionConsumerService(binding).getLocation()));
+                    }
+                    endpoint = acsEndpointFromReq;
+                }
+            } else {
+                endpoint = acsEndpointFromMetadata;
+            }
         }
 
         if (endpoint == null || StringUtils.isBlank(endpoint.getBinding())) {
-            throw new SamlException("Assertion consumer service does not define a binding");
+            throw new SamlException("Assertion consumer service is not available or does not define a binding");
         }
         val location = StringUtils.isBlank(endpoint.getResponseLocation()) ? endpoint.getLocation() : endpoint.getResponseLocation();
         if (StringUtils.isBlank(location)) {
@@ -116,7 +131,7 @@ public class SamlIdPUtils {
             if (StringUtils.isBlank(acsUrl)) {
                 return null;
             }
-            LOGGER.debug("Using assertion consumer service url [{}] with binding [{}] from authentication request", acsUrl, binding);
+            LOGGER.debug("Fetched assertion consumer service url [{}] with binding [{}] from authentication request", acsUrl, binding);
             val builder = new AssertionConsumerServiceBuilder();
             val endpoint = builder.buildObject(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
             endpoint.setBinding(binding);
