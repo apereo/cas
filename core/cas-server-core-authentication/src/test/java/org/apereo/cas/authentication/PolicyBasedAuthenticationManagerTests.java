@@ -50,8 +50,20 @@ public class PolicyBasedAuthenticationManagerTests {
      * @return New mock authentication handler instance.
      */
     private static AuthenticationHandler newMockHandler(final boolean success) {
+        return newMockHandler(success, false);
+    }
+
+    /**
+     * Creates a new mock authentication handler that either successfully validates all credentials or fails to
+     * validate all credentials.
+     *
+     * @param success True to authenticate all credentials, false to fail all credentials.
+     * @param error True if the handle has an error, false if not.
+     * @return New mock authentication handler instance.
+     */
+    private static AuthenticationHandler newMockHandler(final boolean success, final boolean error) {
         val name = "MockAuthenticationHandler" + UUID.randomUUID().toString();
-        return newMockHandler(name, success);
+        return newMockHandler(name, success, error);
     }
 
     /**
@@ -62,8 +74,21 @@ public class PolicyBasedAuthenticationManagerTests {
      * @param success True to authenticate all credentials, false to fail all credentials.
      * @return New mock authentication handler instance.
      */
-    @SneakyThrows
     private static AuthenticationHandler newMockHandler(final String name, final boolean success) {
+    	return newMockHandler(name, success, false);
+    }
+
+    /**
+     * Creates a new named mock authentication handler that either successfully validates all credentials or fails to
+     * validate all credentials.
+     *
+     * @param name    Authentication handler name.
+     * @param success True to authenticate all credentials, false to fail all credentials.
+     * @param error True if the handle has an error, false if not.
+     * @return New mock authentication handler instance.
+     */
+    @SneakyThrows
+    private static AuthenticationHandler newMockHandler(final String name, final boolean success, final boolean error) {
         val mock = mock(AuthenticationHandler.class);
         when(mock.getName()).thenReturn(name);
         when(mock.supports(any(Credential.class))).thenReturn(true);
@@ -72,8 +97,10 @@ public class PolicyBasedAuthenticationManagerTests {
 
             val result = new DefaultAuthenticationHandlerExecutionResult(mock, mock(CredentialMetaData.class), p);
             when(mock.authenticate(any(Credential.class))).thenReturn(result);
-        } else {
+        } else if (!error) {
             when(mock.authenticate(any(Credential.class))).thenThrow(new FailedLoginException());
+        } else {
+            when(mock.authenticate(any(Credential.class))).thenThrow(new PreventedException("failure"));
         }
         return mock;
     }
@@ -123,6 +150,20 @@ public class PolicyBasedAuthenticationManagerTests {
         val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(false), null);
         map.put(newMockHandler(false), null);
+
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy());
+        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ApplicationEventPublisher.class));
+
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
+    }
+
+    @Test
+    public void verifyAuthenticateAnyFailureWithError() {
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(false, true), null);
+        map.put(newMockHandler(false, true), null);
 
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy());
