@@ -2,8 +2,8 @@ package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.ticket.OAuth20Token;
 
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A refresh token is an OAuth token which can be used multiple times and has a very long lifetime.
@@ -38,7 +38,7 @@ public interface OAuth20RefreshToken extends OAuth20Token {
      * @return the access tokens
      * @since 6.2
      */
-    default Collection<String> getAccessTokens() {
+    default Set<String> getAccessTokens() {
         return new HashSet<>(0);
     }
 }
