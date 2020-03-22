@@ -1,5 +1,8 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas;
 
+import org.apereo.cas.web.flow.SpengoWebflowConfigurerTests;
+import org.apereo.cas.web.flow.SpnegoCredentialsActionTests;
+import org.apereo.cas.web.flow.SpnegoNegotiateCredentialsActionTests;
 import org.apereo.cas.web.flow.client.LdapContinuousIntegrationSpnegoKnownClientSystemsFilterActionTests;
 import org.apereo.cas.web.flow.client.SpnegoKnownClientSystemsFilterActionTests;
 
