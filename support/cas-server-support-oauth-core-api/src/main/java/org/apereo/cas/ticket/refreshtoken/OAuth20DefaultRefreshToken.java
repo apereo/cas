@@ -36,8 +36,8 @@ public class OAuth20DefaultRefreshToken extends OAuth20DefaultCode implements OA
      * The ticket ids which are tied to this ticket.
      */
     @Lob
-    @Column(name = "DESCENDANT_TICKETS", length = Integer.MAX_VALUE)
-    private HashSet<String> descendantTickets = new HashSet<>(0);
+    @Column(name = "ACCESS_TOKENS", length = Integer.MAX_VALUE)
+    private HashSet<String> accessTokens = new HashSet<>(0);
 
     public OAuth20DefaultRefreshToken(final String id, final Service service,
                                       final Authentication authentication,
@@ -47,12 +47,12 @@ public class OAuth20DefaultRefreshToken extends OAuth20DefaultCode implements OA
                                       final String codeChallenge,
                                       final String codeChallengeMethod,
                                       final String clientId,
-                                      final String descendantTicket,
+                                      final String accessToken,
                                       final Map<String, Map<String, Object>> requestClaims) {
         super(id, service, authentication, expirationPolicy,
             ticketGrantingTicket, scopes,
             codeChallenge, codeChallengeMethod, clientId, requestClaims);
-        this.descendantTickets.add(descendantTicket);
+        this.accessTokens.add(accessToken);
     }
 
     public OAuth20DefaultRefreshToken(final String id, final Service service,
@@ -61,10 +61,10 @@ public class OAuth20DefaultRefreshToken extends OAuth20DefaultCode implements OA
                                       final TicketGrantingTicket ticketGrantingTicket,
                                       final Collection<String> scopes,
                                       final String clientId,
-                                      final String descendantTicket,
+                                      final String accessToken,
                                       final Map<String, Map<String, Object>> requestClaims) {
         this(id, service, authentication, expirationPolicy,
-            ticketGrantingTicket, scopes, null, null, clientId, descendantTicket, requestClaims);
+            ticketGrantingTicket, scopes, null, null, clientId, accessToken, requestClaims);
     }
 
     @Override

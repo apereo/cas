@@ -20,7 +20,7 @@ public interface OAuth20RefreshToken extends OAuth20Token {
     String PREFIX = "RT";
 
     /**
-     * Client id for whom this access token was issued.
+     * Client id for whom this refresh token was issued.
      *
      * @return client id.
      * @since 6.2
@@ -29,11 +29,16 @@ public interface OAuth20RefreshToken extends OAuth20Token {
 
     /**
      * Gets descendant OAuth access tokens.
+     * The revocation of a refresh token may cause the revocation of related
+     * tokens and the underlying authorization grant. If a refresh token is
+     * revoked, the authorization server SHOULD
+     * also invalidate all access tokens based on the same authorization
+     * grant. Here, we track the access tokens.
      *
-     * @return the descendant tickets
+     * @return the access tokens
      * @since 6.2
      */
-    default Collection<String> getDescendantTickets() {
+    default Collection<String> getAccessTokens() {
         return new HashSet<>(0);
     }
 }

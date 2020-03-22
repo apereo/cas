@@ -24,7 +24,7 @@ public interface OAuth20RefreshTokenFactory extends TicketFactory {
      * @param ticketGrantingTicket the ticket granting ticket
      * @param scopes               the scopes
      * @param clientId             the client id
-     * @param descendantTicket     the descendant access tokens
+     * @param accessToken          the access token created with this refresh token
      * @param requestClaims        the request claims
      * @return the refresh token
      */
@@ -32,6 +32,6 @@ public interface OAuth20RefreshTokenFactory extends TicketFactory {
                                TicketGrantingTicket ticketGrantingTicket,
                                Collection<String> scopes,
                                String clientId,
-                               String descendantTicket,
+                               String accessToken,
                                Map<String, Map<String, Object>> requestClaims);
 }
