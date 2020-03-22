@@ -14,7 +14,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
-import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.device.OAuth20DeviceToken;
 import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
@@ -224,11 +223,11 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      * @param accessToken the accessToken
      */
     protected void updateOAuthCode(final AccessTokenRequestDataHolder holder, final OAuth20AccessToken accessToken) {
-        if (holder.getToken() instanceof OAuth20RefreshToken) {
+        if (holder.isRefreshToken()) {
             val refreshToken = (OAuth20RefreshToken) holder.getToken();
             refreshToken.getAccessTokens().add(accessToken.getId());
             this.ticketRegistry.updateTicket(refreshToken);
-        } else if (holder.getToken() instanceof OAuth20Code) {
+        } else if (holder.isCodeToken()) {
             val codeState = TicketState.class.cast(holder.getToken());
             codeState.update();
 
