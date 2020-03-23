@@ -241,7 +241,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
             port = Integer.parseInt(values[1]);
             var index = Integer.parseInt(values[2]);
             if (index < 0 || index > UNIQUE_ID_LIMIT) {
-                throw new IllegalArgumentException("invalid unique index: must be >= 0 and < 256");
+                throw new IllegalArgumentException("Invalid unique index: must be >= 0 and < 256");
             }
             uniqueId = "{";
             for (var i = 0; i < UNIQUE_ID_ITERATIONS; i++, index++) {

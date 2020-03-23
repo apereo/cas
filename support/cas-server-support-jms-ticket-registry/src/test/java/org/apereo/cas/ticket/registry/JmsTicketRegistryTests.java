@@ -26,7 +26,7 @@ import org.springframework.jms.annotation.EnableJms;
     properties = {"spring.activemq.pool.enabled=false", "spring.activemq.packages.trust-all=true"})
 @EnableJms
 @EnabledIfPortOpen(port = 61616)
-@Tag("ActiveMQ")
+@Tag("JMS")
 public class JmsTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")

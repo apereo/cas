@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link AmazonSnsProperties}.
@@ -15,6 +16,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-sms-clickatell")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class AmazonSnsProperties extends BaseAmazonWebServicesProperties {
     private static final long serialVersionUID = -3366665169030844517L;
 

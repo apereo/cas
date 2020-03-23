@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class PersonDirectoryPrincipalResolverProperties implements Serializable {
 
     private static final long serialVersionUID = 8929912041234879300L;
@@ -75,6 +77,7 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
     @RequiresModule(name = "cas-server-core-authentication", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class AttributeDefinitionStoreProperties implements Serializable {
         private static final long serialVersionUID = 1248812041234879300L;
 

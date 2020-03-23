@@ -25,6 +25,7 @@ import org.springframework.beans.factory.DisposableBean;
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,10 +40,13 @@ import java.util.List;
  */
 public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements DisposableBean {
     private final AWSCognitoIdentityProvider cognitoIdentityProvider;
+
     private final AmazonCognitoAuthenticationProperties properties;
+
     private final ConfigurableJWTProcessor jwtProcessor;
 
-    public AmazonCognitoAuthenticationAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public AmazonCognitoAuthenticationAuthenticationHandler(final String name,
+                                                            final ServicesManager servicesManager,
                                                             final PrincipalFactory principalFactory,
                                                             final AWSCognitoIdentityProvider cognitoIdentityProvider,
                                                             final AmazonCognitoAuthenticationProperties properties,
@@ -60,7 +64,8 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword) throws GeneralSecurityException {
+                                                                                        final String originalPassword)
+        throws GeneralSecurityException {
         try {
             val authParams = new HashMap<String, String>();
             authParams.put("USERNAME", credential.getUsername());

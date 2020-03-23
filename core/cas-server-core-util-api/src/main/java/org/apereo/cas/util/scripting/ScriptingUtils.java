@@ -554,9 +554,6 @@ public class ScriptingUtils {
         if (scriptFile.endsWith(".groovy")) {
             return "groovy";
         }
-        if (scriptFile.endsWith(".rb")) {
-            return "ruby";
-        }
         return null;
     }
 }

@@ -47,8 +47,8 @@ public class GroovyAcceptableUsagePolicyRepository extends BaseAcceptableUsagePo
     public Optional<AcceptableUsagePolicyTerms> fetchPolicy(final RequestContext requestContext, final Credential credential) {
         try {
             val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
-            val result = watchableScript.execute("fetch", AcceptableUsagePolicyTerms.class, requestContext,
-                credential, applicationContext, principal, LOGGER);
+            val result = watchableScript.execute("fetch", AcceptableUsagePolicyTerms.class,
+                requestContext, credential, applicationContext, principal, LOGGER);
             return Optional.ofNullable(result);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

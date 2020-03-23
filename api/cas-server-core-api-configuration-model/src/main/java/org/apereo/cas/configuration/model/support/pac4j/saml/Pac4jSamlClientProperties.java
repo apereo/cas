@@ -7,6 +7,7 @@ import org.apereo.cas.util.model.TriStateBoolean;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.List;
 @RequiresModule(name = "cas-server-support-pac4j-webflow")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
 
     private static final long serialVersionUID = -862819796533384951L;
@@ -241,6 +243,7 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class ServiceProviderRequestedAttribute implements Serializable {
         private static final long serialVersionUID = -862819796533384951L;
 
@@ -266,10 +269,10 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
         private boolean required;
     }
 
-
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class ServiceProviderMappedAttribute implements Serializable {
         private static final long serialVersionUID = -762819796533384951L;
 

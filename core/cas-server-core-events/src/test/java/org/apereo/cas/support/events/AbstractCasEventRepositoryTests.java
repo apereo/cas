@@ -8,6 +8,9 @@ import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -17,6 +20,26 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 public abstract class AbstractCasEventRepositoryTests {
+
+    @Test
+    public void verifyLoadOps() {
+        val dto1 = getCasEvent();
+
+        val eventRepository = getEventRepository();
+        eventRepository.save(dto1);
+
+        val dt = ZonedDateTime.now(ZoneOffset.UTC).minusMonths(12);
+        assertFalse(eventRepository.load(dt).isEmpty());
+
+        assertFalse(eventRepository.getEventsOfTypeForPrincipal(dto1.getType(), dto1.getPrincipalId()).isEmpty());
+        assertFalse(eventRepository.getEventsOfTypeForPrincipal(dto1.getType(), dto1.getPrincipalId(), dt).isEmpty());
+
+        assertFalse(eventRepository.getEventsOfType(dto1.getType(), dt).isEmpty());
+        assertFalse(eventRepository.getEventsOfType(dto1.getType()).isEmpty());
+
+        assertFalse(eventRepository.getEventsForPrincipal(dto1.getPrincipalId()).isEmpty());
+        assertFalse(eventRepository.getEventsForPrincipal(dto1.getPrincipalId(), dt).isEmpty());
+    }
 
     @Test
     public void verifySave() {

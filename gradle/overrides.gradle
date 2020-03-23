@@ -15,7 +15,7 @@ ext["springVersion"] = "5.2.4.RELEASE"
 ext["springSessionVersion"] = "2.2.0.RELEASE"
 ext["springSessionMongoVersion"] = "2.2.1.RELEASE"
 
-ext["springBootTomcatVersion"] = "9.0.31"
+ext["springBootTomcatVersion"] = "9.0.33"
 
 ext["jacksonVersion"] = "2.10.3"
 ext["jacksonCoreVersion"] = "2.10.2"
@@ -32,7 +32,7 @@ ext["caffeinVersion"] = "2.8.1"
 ext["couchbaseVersion"] = "2.7.11"
 
 ext["mysqlVersion"] = "8.0.19"
-ext["postgresqlVersion"] = "42.2.10"
+ext["postgresqlVersion"] = "42.2.11"
 ext["mariaDbVersion"] = "2.5.4"
 ext["jtdsVersion"] = "1.3.1"
 ext["mssqlServerVersion"] = "8.2.1.jre11"

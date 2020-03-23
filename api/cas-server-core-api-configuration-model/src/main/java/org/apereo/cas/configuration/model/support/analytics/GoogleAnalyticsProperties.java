@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -17,6 +18,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-google-analytics", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class GoogleAnalyticsProperties implements Serializable {
 
     private static final long serialVersionUID = 5425678120443123345L;
@@ -32,8 +34,10 @@ public class GoogleAnalyticsProperties implements Serializable {
      */
     private Cookie cookie = new Cookie();
 
+    @RequiresModule(name = "cas-server-support-google-analytics", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Cookie extends CookieProperties {
         private static final long serialVersionUID = -5432498833437602657L;
 

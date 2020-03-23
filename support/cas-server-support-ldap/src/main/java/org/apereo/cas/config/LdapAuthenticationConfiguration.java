@@ -40,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -148,11 +149,13 @@ public class LdapAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
     @Bean
+    @RefreshScope
     public PrincipalFactory ldapPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Bean
+    @RefreshScope
     public Collection<AuthenticationHandler> ldapAuthenticationHandlers() {
         val handlers = new HashSet<AuthenticationHandler>();
 
@@ -249,6 +252,7 @@ public class LdapAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "ldapAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer ldapAuthenticationEventExecutionPlanConfigurer() {
         return plan -> ldapAuthenticationHandlers().forEach(handler -> {
             LOGGER.info("Registering LDAP authentication for [{}]", handler.getName());

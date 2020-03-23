@@ -50,6 +50,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -65,6 +66,7 @@ import java.util.List;
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class AuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = -1233126985007049516L;
@@ -219,11 +221,6 @@ public class AuthenticationProperties implements Serializable {
     @NestedConfigurationProperty
     private AuthenticationExceptionsProperties errors = new AuthenticationExceptionsProperties();
 
-    /**
-     * Customization of authentication engine and pre/post processing.
-     */
-    @NestedConfigurationProperty
-    private AuthenticationEngineProperties engine = new AuthenticationEngineProperties();
 
     /**
      * Authentication policy settings.

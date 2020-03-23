@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link BindJdbcAuthenticationProperties}.
@@ -14,6 +15,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-jdbc-authentication")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class BindJdbcAuthenticationProperties extends BaseJdbcAuthenticationProperties {
     private static final long serialVersionUID = 4268982716707687796L;
 }

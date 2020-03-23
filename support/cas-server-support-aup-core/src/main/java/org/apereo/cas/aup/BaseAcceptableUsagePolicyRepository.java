@@ -36,6 +36,15 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
      */
     protected final AcceptableUsagePolicyProperties aupProperties;
 
+    private static String getPolicyText(final RequestContext requestContext) {
+        val registeredService = WebUtils.getRegisteredService(requestContext);
+        if (registeredService != null && registeredService.getAcceptableUsagePolicy() != null
+            && StringUtils.isNotBlank(registeredService.getAcceptableUsagePolicy().getText())) {
+            return registeredService.getAcceptableUsagePolicy().getText();
+        }
+        return null;
+    }
+
     @Override
     public AcceptableUsagePolicyStatus verify(final RequestContext requestContext, final Credential credential) {
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
@@ -56,24 +65,48 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
         val attributes = principal.getAttributes();
         LOGGER.debug("Principal attributes found for [{}] are [{}]", principal.getId(), attributes);
 
-        if (StringUtils.isNotBlank(aupProperties.getAupPolicyTermsAttributeName())) {
-            if (attributes != null && attributes.containsKey(aupProperties.getAupPolicyTermsAttributeName())) {
-                val value = CollectionUtils.firstElement(attributes.get(aupProperties.getAupPolicyTermsAttributeName()));
-                if (value.isPresent()) {
-                    val code = String.format("%s.%s", AcceptableUsagePolicyTerms.CODE, value.get());
-                    val appCtx = requestContext.getActiveFlow().getApplicationContext();
-                    val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-                    val message = appCtx.getMessage(code, null, StringUtils.EMPTY, request.getLocale());
-                    if (StringUtils.isNotBlank(message)) {
-                        val terms = AcceptableUsagePolicyTerms.builder()
-                            .code(code)
-                            .build();
-                        return Optional.of(terms);
-                    }
-                }
-            }
+        val code = getPolicyMessageBundleCode(requestContext);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val appCtx = requestContext.getActiveFlow().getApplicationContext();
+
+        val message = appCtx.getMessage(code, null, StringUtils.EMPTY, request.getLocale());
+        val terms = AcceptableUsagePolicyTerms.builder()
+            .code(StringUtils.isNotBlank(message) ? code : null)
+            .defaultText(getPolicyText(requestContext))
+            .build();
+        if (terms.isDefined()) {
+            return Optional.of(terms);
         }
         return Optional.empty();
+    }
+
+    /**
+     * Gets policy message bundle code.
+     *
+     * @param requestContext the request context
+     * @return the policy message bundle code
+     */
+    protected String getPolicyMessageBundleCode(final RequestContext requestContext) {
+        val registeredService = WebUtils.getRegisteredService(requestContext);
+        if (registeredService != null && registeredService.getAcceptableUsagePolicy() != null
+            && StringUtils.isNotBlank(registeredService.getAcceptableUsagePolicy().getMessageCode())) {
+            return registeredService.getAcceptableUsagePolicy().getMessageCode();
+        }
+
+        if (StringUtils.isBlank(aupProperties.getAupPolicyTermsAttributeName())) {
+            return null;
+        }
+
+        val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+        val attributes = principal.getAttributes();
+
+        if (!attributes.containsKey(aupProperties.getAupPolicyTermsAttributeName())) {
+            LOGGER.trace("No attribute for policy terms is defined");
+            return null;
+        }
+
+        val value = CollectionUtils.firstElement(attributes.get(aupProperties.getAupPolicyTermsAttributeName()));
+        return value.map(v -> String.format("%s.%s", AcceptableUsagePolicyTerms.CODE, value.get())).orElse(null);
     }
 
     /**

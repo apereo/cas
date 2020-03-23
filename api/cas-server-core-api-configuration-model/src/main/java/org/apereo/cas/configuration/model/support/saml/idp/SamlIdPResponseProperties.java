@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.val;
 
 import java.io.Serializable;
@@ -23,6 +24,7 @@ import java.util.Map;
 @RequiresModule(name = "cas-server-support-saml-idp")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class SamlIdPResponseProperties implements Serializable {
 
     private static final long serialVersionUID = 7200477683583467619L;

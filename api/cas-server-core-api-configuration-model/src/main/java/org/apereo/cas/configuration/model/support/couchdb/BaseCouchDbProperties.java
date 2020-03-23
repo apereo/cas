@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @RequiresModule(name = "cas-server-support-couchdb-core")
+@Accessors(chain = true)
 public abstract class BaseCouchDbProperties implements Serializable {
 
     private static final long serialVersionUID = 1323894615409106853L;

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -17,6 +18,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @RequiresModule(name = "cas-server-support-influxdb-core")
+@Accessors(chain = true)
 public class InfluxDbProperties implements Serializable {
 
     private static final long serialVersionUID = -1945287308473842616L;

@@ -65,6 +65,7 @@ in each case to learn the exact unit of measure.
 # ${configurationKey}.secure=true
 # ${configurationKey}.httpOnly=true
 # ${configurationKey}.sameSitePolicy=none|lax|strict
+# ${configurationKey}.comment=CAS Cookie
 ```                               
 
 ## Job Scheduling

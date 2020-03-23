@@ -6,6 +6,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -17,6 +18,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @RequiresModule(name = "cas-server-core-cookie", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class TicketGrantingCookieProperties extends CookieProperties {
 
     private static final long serialVersionUID = 7392972818105536350L;

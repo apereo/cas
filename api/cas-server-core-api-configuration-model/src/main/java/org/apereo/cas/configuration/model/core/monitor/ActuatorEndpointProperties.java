@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @ToString
+@Accessors(chain = true)
 public class ActuatorEndpointProperties implements Serializable {
     private static final long serialVersionUID = -2463521198550485506L;
     /**

@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.core.io.Resource;
 
 /**
@@ -17,6 +18,7 @@ import org.springframework.core.io.Resource;
 @RequiresModule(name = "cas-server-support-geolocation-maxmind")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class MaxmindProperties extends BaseGeoLocationProperties {
 
     private static final long serialVersionUID = 7883029275219817797L;

@@ -58,7 +58,7 @@ public class BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier("logoutFlowRegistry")
     protected FlowDefinitionRegistry logoutFlowDefinitionRegistry;
-    
+
     @Import({
         RefreshAutoConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
