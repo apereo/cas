@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.mfa.trigger;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.trigger.GlobalMultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
@@ -30,7 +29,7 @@ public class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactor
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
     }
-
+    
     @Test
     public void verifyOperationByManyProviders() {
         val props = new CasConfigurationProperties();
@@ -39,6 +38,22 @@ public class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactor
             (providers, service, principal) -> providers.iterator().next());
         assertThrows(AuthenticationException.class,
             () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
+    }
+
+    @Test
+    public void verifyOperationByValidProviders() {
+        val props = new CasConfigurationProperties();
+
+        val otherProvider = new TestMultifactorAuthenticationProvider();
+        otherProvider.setId("mfa-other");
+        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, otherProvider);
+
+        props.getAuthn().getMfa().setGlobalProviderId(TestMultifactorAuthenticationProvider.ID + ',' + otherProvider.getId());
+        val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
+            (providers, service, principal) -> providers.iterator().next());
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        assertTrue(result.isPresent());
+        assertEquals(TestMultifactorAuthenticationProvider.ID, result.get().getId());
     }
 
     @Test

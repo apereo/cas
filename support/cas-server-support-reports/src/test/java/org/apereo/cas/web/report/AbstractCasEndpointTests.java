@@ -28,6 +28,7 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasReportsConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logging.config.CasLoggingConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
@@ -89,6 +90,7 @@ public abstract class AbstractCasEndpointTests {
     @SpringBootConfiguration
     @Import({
         CasReportsConfiguration.class,
+        CasLoggingConfiguration.class,
         CasCoreAuditConfiguration.class,
         AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
         AbstractCasEndpointTests.AuditTestConfiguration.class,

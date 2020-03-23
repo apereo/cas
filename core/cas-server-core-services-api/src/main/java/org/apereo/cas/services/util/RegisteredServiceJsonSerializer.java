@@ -37,11 +37,6 @@ public class RegisteredServiceJsonSerializer extends AbstractJacksonBackedString
     }
 
     @Override
-    public Class<RegisteredService> getTypeToSerialize() {
-        return RegisteredService.class;
-    }
-
-    @Override
     public boolean supports(final File file) {
         try {
             val content = FileUtils.readFileToString(file, StandardCharsets.UTF_8.name());
@@ -54,5 +49,10 @@ public class RegisteredServiceJsonSerializer extends AbstractJacksonBackedString
     @Override
     public boolean supports(final String content) {
         return content.contains(JsonTypeInfo.Id.CLASS.getDefaultPropertyName());
+    }
+
+    @Override
+    public Class<RegisteredService> getTypeToSerialize() {
+        return RegisteredService.class;
     }
 }

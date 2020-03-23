@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.mfa.trigger;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.trigger.HttpRequestMultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
