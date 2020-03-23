@@ -1,7 +1,7 @@
 package org.apereo.cas.web.security.authentication;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.monitor.endpoints.ldap.ldapAuthz.baseDn=ou=people,dc=example,dc=org",
     "cas.monitor.endpoints.ldap.ldapAuthz.rolePrefix=ROLE_"
 })
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 10389)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends BaseMonitorEndpointLdapAuthenticationProviderTests {
 

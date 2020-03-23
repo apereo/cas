@@ -5,4 +5,7 @@ dependencies {
     implementation libraries.springsession
     implementation libraries.hazelcast
     implementation libraries.springsessionhazelcast
+
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

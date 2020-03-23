@@ -13,18 +13,18 @@ import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.exception.http.WithContentAction;
 import org.pac4j.core.exception.http.WithLocationAction;
+import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -103,10 +103,26 @@ public class DelegatedClientNavigationController {
      * @param response   the response
      * @return the view
      */
-    @RequestMapping(value = ENDPOINT_RESPONSE, method = {RequestMethod.GET, RequestMethod.POST})
+    @GetMapping(value = ENDPOINT_RESPONSE)
     public View redirectResponseToFlow(@PathVariable("clientName") final String clientName,
                                        final HttpServletRequest request,
                                        final HttpServletResponse response) {
+        return buildRedirectViewBackToFlow(clientName, request);
+    }
+
+    /**
+     * Redirect response to flow. Receives the CAS, OAuth, OIDC, etc. callback response, adjust it to work with
+     * the login webflow, and redirects the requests to the login webflow endpoint.
+     *
+     * @param clientName the path-based parameter that provider the pac4j client name
+     * @param request    the request
+     * @param response   the response
+     * @return the view
+     */
+    @PostMapping(value = ENDPOINT_RESPONSE)
+    public View postResponseToFlow(@PathVariable("clientName") final String clientName,
+                                   final HttpServletRequest request,
+                                   final HttpServletResponse response) {
         return buildRedirectViewBackToFlow(clientName, request);
     }
 

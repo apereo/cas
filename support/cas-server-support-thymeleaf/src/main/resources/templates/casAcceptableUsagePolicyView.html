@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{cas.acceptableusagepolicyview.pagetitle}"></title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body id="cas">
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" id="login" class="mdc-card p-4 m-auto w-lg-66">
+        <form method="post" id="fm1">
+            <h3 th:text="#{screen.aup.heading}">Acceptable Usage Policy</h3>
+            <div class="aup">
+
+                <div th:if="${aupPolicy}">
+                    <p id="policyTextByCode" th:if="${aupPolicy.code}"
+                       th:utext="#{${aupPolicy.code}}">Policy terms go here</p>
+
+                    <p id='policyDefaultText' th:if="${aupPolicy.defaultText}"
+                       th:utext="${aupPolicy.defaultText}">Policy default text goes here</p>
+                </div>
+                
+                <div th:unless="${aupPolicy}">
+                    <p th:utext="#{screen.aup.policyterms}">Policy text goes here</p>
+                </div>
+
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="_eventId" value="submit"/>
+                <div class="form-actions d-flex">
+                    <button class="mdc-button mdc-button--raised mr-2"
+                        name="submit"
+                        accesskey="s">
+                        <span class="mdc-button__label" th:value="#{screen.aup.button.accept}">ACCEPT</span>
+                    </button>
+                    <button class="mdc-button mdc-button--outlined"
+                        name="cancel"
+                        th:value="#{screen.aup.button.cancel}"
+                        accesskey="c"
+                        type="button"
+                        onclick="location.href = location.href;">
+                        <span class="mdc-button__label" th:text="#{screen.aup.button.cancel}">CANCEL</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>

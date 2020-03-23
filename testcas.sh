@@ -3,7 +3,7 @@
 clear
 
 printHelp() {
-    echo -e "Usage: ./testcas.sh --category [category1,category2,...] [--help] [--debug] [--coverage]\n"
+    echo -e "Usage: ./testcas.sh --category [category1,category2,...] [--help] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--coverage]\n"
     echo -e "Available test categories are:\n"
     echo -e "\t - simple"
     echo -e "\t - memcached"
@@ -22,6 +22,7 @@ printHelp() {
     echo -e "\t - postgres"
     echo -e "\t - dynamodb"
     echo -e "\t - couchbase"
+    echo -e "\t - uma"
     echo -e "\t - saml"
     echo -e "\t - mail"
     echo -e "\t - aws"
@@ -39,11 +40,18 @@ printHelp() {
 }
 
 parallel="--parallel "
+gradleCmd="./gradlew"
+flags="--build-cache -x javadoc -x check -DignoreTestFailures=false -DskipNestedConfigMetadataGen=true \
+-DshowStandardStreams=true --no-daemon --configure-on-demand"
 
 while (( "$#" )); do
     case "$1" in
     --coverage)
         coverage="jacocoRootReport "
+        shift
+        ;;
+    --no-wrapper)
+        gradleCmd="gradle"
         shift
         ;;
     --help)
@@ -59,6 +67,14 @@ while (( "$#" )); do
         tests="--tests \"$2\" "
         shift 2
         ;;
+    --no-retry)
+        flags+=" -DskipTestRetry=true"
+        shift
+        ;;
+    --ignore-failures)
+        flags+=" -DignoreTestFailures=true"
+        shift
+        ;;
     --category)
         for item in $(echo "$2" | sed "s/,/ /g")
         do
@@ -70,6 +86,11 @@ while (( "$#" )); do
             memcached|memcache|kryo)
                 task+="testMemcached "
                 category+="MEMCACHED,"
+                flags+=" -DCI=true"
+                ;;
+            uma)
+                task+="testUma "
+                category+="UMA,"
                 ;;
             filesystem|files|file|fsys)
                 task+="testFileSystem "
@@ -86,26 +107,32 @@ while (( "$#" )); do
             ignite)
                 task+="testIgnite "
                 category+="Ignite,"
+                flags+=" -DCI=true"
                 ;;
             influx|influxdb)
                 task+="testInfluxDb "
                 category+="InfluxDb,"
+                flags+=" -DCI=true"
                 ;;
             ldap|ad|activedirectory)
                 task+="testLdap "
                 category+="LDAP,"
+                flags+=" -DCI=true"
                 ;;
             couchbase)
                 task+="testCouchbase "
                 category+="COUCHBASE,"
+                flags+=" -DCI=true"
                 ;;
             mongo|mongodb)
                 task+="testMongoDb "
                 category+="MONGODB,"
+                flags+=" -DCI=true"
                 ;;
             couchdb)
                 task+="testCouchDb "
                 category+="COUCHDB,"
+                flags+=" -DCI=true"
                 ;;
             rest|restful|restapi)
                 task+="testRestful "
@@ -118,6 +145,7 @@ while (( "$#" )); do
             maria|mariadb)
                 task+="testMariaDb "
                 category+="MariaDb,"
+                flags+=" -DCI=true"
                 ;;
             jdbc|jpa|database|hibernate|rdbms|hsql)
                 task+="testJDBC "
@@ -126,10 +154,12 @@ while (( "$#" )); do
             postgres|pg|postgresql)
                 task+="testPostgres "
                 category+="POSTGRES,"
+                flags+=" -DCI=true"
                 ;;
             cassandra)
                 task+="testCassandra "
                 category+="CASSANDRA,"
+                flags+=" -DCI=true"
                 ;;
             oauth)
                 task+="testOAuth "
@@ -138,6 +168,7 @@ while (( "$#" )); do
             aws)
                 task+="testAWS "
                 category+="AmazonWebServices,"
+                flags+=" -DCI=true"
                 ;;
             oidc)
                 task+="testOIDC "
@@ -154,18 +185,22 @@ while (( "$#" )); do
             radius)
                 task+="testRadius "
                 category+="RADIUS,"
+                flags+=" -DCI=true"
                 ;;
             mail|email)
                 task+="testMail "
                 category+="MAIL,"
+                flags+=" -DCI=true"
                 ;;
             zoo|zookeeper)
                 task+="testZooKeeper "
                 category+="ZOOKEEPER,"
+                flags+=" -DCI=true"
                 ;;
             dynamodb|dynamo)
                 task+="testDynamoDb "
                 category+="DYNAMODB,"
+                flags+=" -DCI=true"
                 ;;
             webflow|swf)
                 task+="testWebflow "
@@ -174,14 +209,17 @@ while (( "$#" )); do
             oracle)
                 task+="testOracle "
                 category+="ORACLE,"
+                flags+=" -DCI=true"
                 ;;
             redis)
                 task+="testRedis "
                 category+="REDIS,"
+                flags+=" -DCI=true"
                 ;;
             activemq|amq)
                 task+="testActiveMQ "
                 category+="ActiveMQ,"
+                flags+=" -DCI=true"
                 ;;
             esac
         done
@@ -203,12 +241,10 @@ then
   exit 1
 fi
 
-flags="--build-cache -x javadoc -x check -DignoreTestFailures=false -DskipNestedConfigMetadataGen=true \
--DskipGradleLint=true -DshowStandardStreams=true --no-daemon --configure-on-demand"
 
-cmdstring="\033[1m./gradlew \e[32m$task\e[39m-DtestCategoryType=\e[33m$category\e[36m$tests\e[39m $flags ${coverage}${debug}${parallel}\e[39m"
+cmdstring="\033[1m$gradleCmd \e[32m$task\e[39m-DtestCategoryType=\e[33m$category\e[36m$tests\e[39m $flags ${coverage}${debug}${parallel}\e[39m"
 printf "$cmdstring \e[0m\n"
 
-cmd="./gradlew $task -DtestCategoryType=$category $tests $flags ${coverage} ${debug} ${parallel}"
+cmd="$gradleCmd $task -DtestCategoryType=$category $tests $flags ${coverage} ${debug} ${parallel}"
 eval "$cmd"
 

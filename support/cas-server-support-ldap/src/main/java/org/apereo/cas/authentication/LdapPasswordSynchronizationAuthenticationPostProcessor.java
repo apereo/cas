@@ -29,7 +29,7 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessor implements A
 
     public LdapPasswordSynchronizationAuthenticationPostProcessor(final AbstractLdapSearchProperties properties) {
         this.ldapProperties = properties;
-        this.searchFactory = LdapUtils.newLdaptivePooledConnectionFactory(properties);
+        this.searchFactory = LdapUtils.newLdaptiveConnectionFactory(properties);
     }
 
     @Override

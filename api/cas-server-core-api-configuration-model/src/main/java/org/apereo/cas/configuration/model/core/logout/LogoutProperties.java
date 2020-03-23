@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-logout", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class LogoutProperties implements Serializable {
 
     private static final long serialVersionUID = 7466171260665661949L;
@@ -25,7 +27,7 @@ public class LogoutProperties implements Serializable {
      * is indicated and extracted by a parameter name of your choosing here. If none specified,
      * the default will be used as {@code service}.
      */
-    private String redirectParameter;
+    private String redirectParameter = "service";
 
     /**
      * Whether CAS should be allowed to redirect to an alternative location after logout.

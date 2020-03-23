@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title>loginProviders Fragment</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body>
+    <main role="main" class="container mt-3 mb-3">
+        <div th:fragment="loginProviders" th:remove="tag" class="login-providers">
+            <div th:if="${delegatedAuthenticationProviderConfigurations}">
+
+                <h3 class="text-center mt-md-0 mt-4">
+                    <i class="fas fa-user-shield"></i>
+                    <span th:utext="#{screen.welcome.label.loginwith}">External Identity Providers</span>
+                </h3>
+
+                <div class="card-title" th:if="${delegatedAuthenticationProviderPrimary != null}">
+                    <div class="banner banner-success" role="alert">
+                        <span th:utext="#{screen.welcome.label.navto}" />
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center" th:style="'display:' + ${delegatedAuthenticationProviderPrimary != null ? 'none' : 'block'}">
+                    <ul class="list-unstyled d-flex flex-column m-0 flex-fill">
+                        <li class="p-1 login-provider-item"
+                            th:each="entry: ${delegatedAuthenticationProviderConfigurations}"
+                            th:switch="${entry.type}">
+                            <a class="mdc-button mdc-button--raised w-100"
+                                th:classappend="'mdc-button-' + ${entry.type}"
+                                th:href="@{${entry.redirectUrl}}" th:attr="autoredirect=${entry.autoRedirect}"
+                                th:inline="text" th:title="${entry.name + ' ' + entry.type}">
+
+                                <span th:case="twitter" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-twitter')}"></span>
+                                <span th:case="windowslive" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-windows')}"></span>
+                                <span th:case="yahoo" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-yahoo')}"></span>
+                                <span th:case="bitbucket" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-bitbucket')}"></span>
+                                <span th:case="wordpress" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-wordpress')}"></span>
+                                <span th:case="google2" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-google-plus')}"></span>
+                                <span th:case="github" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-github-circle')}"></span>
+                                <span th:case="dropbox" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-dropbox')}"></span>
+                                <span th:case="linkedin2" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-linkedin')}"></span>
+                                <span th:case="facebook" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-facebook')}"></span>
+                                <span th:case="oidc" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-openid')}"></span>
+                                <span th:case="saml2" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-account-key')}"></span>
+                                <span th:case="cas" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-login')}"></span>
+                                <span th:case="*" class="mdi mdi-account-key"></span>
+
+                                [[${entry.name}]]
+                            </a>
+                        </li>
+                        <li th:if="${identityProviderDiscoveryEnabled}">
+                            <script type="text/javascript" th:inline="javascript">
+                                /*<![CDATA[*/
+                                var url = /*[[@{/idp/discovery}]]*/ ;
+
+                                var returnUrl = /*[[${cas.server.name} + @{/idp/discovery/redirect}]]*/ ;
+
+                                if (window.location.search) {
+                                    returnUrl += encodeURIComponent(window.location.search);
+                                }
+                                url += "?return=" + returnUrl;
+                                var link = `<a href='${url}' class='mdc-button mdc-button--raised d-block'>
+                                                                    <i class='mdi mdi-shield' aria-hidden='true'></i>
+                                                                    <span class="mdc-button__label">SAML2 Identity Provider Discovery</span></a>`;
+                                document.write(link);
+                                                        /*]]>*/
+                            </script>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div th:if="${wsfedUrls}" id="list-providers"
+                th:class="${delegatedAuthenticationProviderPrimary == null ? 'card d-sm-none d-md-block bg-light' : ''}">
+
+                <div class="card-body">
+                    <h3 class="card-title" th:utext="#{screen.welcome.label.loginwith}"
+                        th:if="${delegatedAuthenticationProviderPrimary == null}">Login with:</h3>
+                    <div class="card-title" th:if="${delegatedAuthenticationProviderPrimary != null}">
+                        <div class="alert alert-info">
+                            <span th:utext="#{screen.welcome.label.navto}" />
+                        </div>
+                    </div>
+
+                    <div class="card-text"
+                        th:style="'display:' + ${delegatedAuthenticationProviderPrimary != null ? 'none' : 'block'}">
+                        <ul>
+                            <li th:each="entry: ${wsfedUrls}">
+                                <a class="mdc-button mdc-button--raised d-block"
+                                    th:href="@{${entry.redirectUrl}}" th:inline="text" onload=""
+                                    th:attr="autoredirect=${entry.autoRedirect}" th:title="${entry.name}">
+
+                                    <i class="mdi mdi-windows"></i>
+
+                                    <span class="mdc-button__label">[[${entry.name}]]</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                var redirectTo = $("a[autoRedirect=true]").attr("href");
+                if (redirectTo != null && redirectTo != undefined) {
+                    window.location.href = redirectTo;
+                }
+            </script>
+        </div>
+    </main>
+</body>
+
+</html>

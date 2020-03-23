@@ -30,6 +30,6 @@ public class AllAuthenticationHandlersSucceededAuthenticationPolicy implements A
                 authn.getSuccesses().size(), authenticationHandlers.size());
             return false;
         }
-        return true;
+        return !authn.getSuccesses().isEmpty();
     }
 }

@@ -11,9 +11,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.annotation.DirtiesContext;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,13 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @SuppressWarnings("JDBCExecuteWithNonConstantString")
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    DatabaseAuthenticationTestConfiguration.class
-})
 @Tag("JDBC")
-@DirtiesContext
-public class SearchModeSearchDatabaseAuthenticationHandlerTests {
+public class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
     private SearchModeSearchDatabaseAuthenticationHandler handler;
 
     @Autowired
@@ -105,6 +97,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
         private Long id;
 
         private String username;
+
         private String password;
     }
 }

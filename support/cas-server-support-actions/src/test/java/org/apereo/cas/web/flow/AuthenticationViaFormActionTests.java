@@ -32,7 +32,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
 
     private static final String TEST = "test";
+
     private static final String USERNAME_PARAM = "username";
+
     private static final String PASSWORD_PARAM = "password";
 
     @Autowired
@@ -143,7 +145,7 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
         context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService());
 
         val ev = this.action.getObject().execute(context);
-        assertEquals(CasWebflowConstants.STATE_ID_WARN, ev.getId());
+        assertEquals(CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, ev.getId());
     }
 
     @Test

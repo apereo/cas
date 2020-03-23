@@ -16,8 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 5.1.0
+ * @deprecated Since 6.2
  */
 @Tag("Groovy")
+@Deprecated(since = "6.2")
 public class ScriptedRegisteredServiceAttributeReleasePolicyTests {
 
     @Test

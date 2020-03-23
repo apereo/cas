@@ -37,9 +37,13 @@ public class GenerateJwtCommand {
     private static final int SEP_LENGTH = 8;
 
     private static final int DEFAULT_SIGNING_SECRET_SIZE = 256;
+
     private static final int DEFAULT_ENCRYPTION_SECRET_SIZE = 48;
+
     private static final String DEFAULT_SIGNING_ALGORITHM = "HS256";
+
     private static final String DEFAULT_ENCRYPTION_ALGORITHM = "dir";
+
     private static final String DEFAULT_ENCRYPTION_METHOD = "A192CBC-HS384";
 
     /**
@@ -65,22 +69,22 @@ public class GenerateJwtCommand {
      */
     @ShellMethod(key = "generate-jwt", value = "Generate a JWT with given size and algorithm for signing and encryption.")
     public static void generate(
-        @ShellOption(value = { "signingSecretSize", "--signingSecretSize" },
+        @ShellOption(value = {"signingSecretSize", "--signingSecretSize"},
             help = "Size of the signing secret",
             defaultValue = StringUtils.EMPTY + DEFAULT_SIGNING_SECRET_SIZE) final int signingSecretSize,
-        @ShellOption(value = { "encryptionSecretSize", "--encryptionSecretSize" },
+        @ShellOption(value = {"encryptionSecretSize", "--encryptionSecretSize"},
             help = "Size of the encryption secret",
             defaultValue = StringUtils.EMPTY + DEFAULT_ENCRYPTION_SECRET_SIZE) final int encryptionSecretSize,
-        @ShellOption(value = { "signingAlgorithm", "--signingAlgorithm" },
+        @ShellOption(value = {"signingAlgorithm", "--signingAlgorithm"},
             help = "Algorithm to use for signing",
             defaultValue = DEFAULT_SIGNING_ALGORITHM) final String signingAlgorithm,
-        @ShellOption(value = { "encryptionAlgorithm", "--encryptionAlgorithm" },
+        @ShellOption(value = {"encryptionAlgorithm", "--encryptionAlgorithm"},
             help = "Algorithm to use for encryption",
             defaultValue = DEFAULT_ENCRYPTION_ALGORITHM) final String encryptionAlgorithm,
-        @ShellOption(value = { "encryptionMethod", "--encryptionMethod" },
+        @ShellOption(value = {"encryptionMethod", "--encryptionMethod"},
             help = "Method to use for encryption",
             defaultValue = DEFAULT_ENCRYPTION_METHOD) final String encryptionMethod,
-        @ShellOption(value = { "subject", "--subject" },
+        @ShellOption(value = {"subject", "--subject"},
             help = "Subject to use for the JWT") final String subject) {
 
         val g = new JwtGenerator<CommonProfile>();

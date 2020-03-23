@@ -4,7 +4,7 @@ import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.config.LdapPasswordlessAuthenticationConfiguration;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Ldap")
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 10389)
 @TestPropertySource(properties = {
     "cas.authn.passwordless.accounts.ldap.ldapUrl=ldap://localhost:10389",
     "cas.authn.passwordless.accounts.ldap.baseDn=ou=people,dc=example,dc=org",

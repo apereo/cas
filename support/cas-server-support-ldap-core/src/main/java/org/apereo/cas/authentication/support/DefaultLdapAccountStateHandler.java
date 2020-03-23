@@ -55,7 +55,7 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
     protected Map<AccountState.Error, LoginException> errorMap;
 
     @Setter
-    private Map<String, Class<LoginException>> attributesToErrorMap = new LinkedCaseInsensitiveMap<>(DEFAULT_ERROR_COUNT);
+    private Map<String, Class<? extends LoginException>> attributesToErrorMap = new LinkedCaseInsensitiveMap<>(DEFAULT_ERROR_COUNT);
 
     /**
      * Instantiates a new account state handler, that populates

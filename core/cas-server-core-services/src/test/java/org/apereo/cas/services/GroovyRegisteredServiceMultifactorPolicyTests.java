@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @deprecated This component is deprecated as of 6.2.0 and is scheduled to be removed.
  */
 @Tag("Groovy")
-@Deprecated(since = "6.2.0")
+@Deprecated(since = "6.2")
 @SuppressWarnings("SuppressWarningsDeprecated")
 public class GroovyRegisteredServiceMultifactorPolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "GroovyRegisteredServiceMultifactorPolicyTests.json");
@@ -36,6 +36,11 @@ public class GroovyRegisteredServiceMultifactorPolicyTests {
         assertEquals("TestMatch", authz.getPrincipalAttributeValueToMatch());
         assertTrue(authz.getMultifactorAuthenticationProviders().contains("mfa-something"));
         assertTrue(authz.isBypassEnabled());
+        assertFalse(authz.isForceExecution());
+        assertTrue(authz.isBypassTrustedDeviceEnabled());
+        assertNull(authz.getBypassPrincipalAttributeName());
+        assertNull(authz.getBypassPrincipalAttributeValue());
+        assertNull(authz.getScript());
     }
 
     @Test

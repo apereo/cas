@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,7 +11,10 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 6.2
  */
+@Deprecated(since = "6.2")
+@Tag("Groovy")
 public class ScriptedRegisteredServiceUsernameProviderTests {
     @Test
     public void verifyUsernameProvider() {

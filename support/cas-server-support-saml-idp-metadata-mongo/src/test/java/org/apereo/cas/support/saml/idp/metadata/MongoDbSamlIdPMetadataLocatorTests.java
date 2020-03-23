@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.support.saml.BaseMongoDbSamlMetadataTests;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
@@ -31,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("MongoDb")
 @EnabledIfPortOpen(port = 27017)
-@EnabledIfContinuousIntegration
 public class MongoDbSamlIdPMetadataLocatorTests extends BaseMongoDbSamlMetadataTests {
 
     @Test

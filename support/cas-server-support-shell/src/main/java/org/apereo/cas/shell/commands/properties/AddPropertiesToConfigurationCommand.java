@@ -70,6 +70,7 @@ public class AddPropertiesToConfigurationCommand {
                 val props = loadPropertiesFromConfigurationFile(filePath);
                 writeConfigurationPropertiesToFile(filePath, results, props);
                 break;
+            case "yaml":
             case "yml":
                 createConfigurationFileIfNeeded(filePath);
                 val yamlProps = CasCoreConfigurationUtils.loadYamlProperties(new FileSystemResource(filePath));

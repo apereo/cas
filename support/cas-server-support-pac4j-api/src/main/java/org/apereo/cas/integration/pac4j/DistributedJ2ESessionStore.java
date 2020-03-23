@@ -8,7 +8,7 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.web.cookie.CookieGenerationContext;
+import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * This is {@link DistributedJ2ESessionStore}.
@@ -32,19 +33,18 @@ import java.util.Optional;
 @Slf4j
 public class DistributedJ2ESessionStore implements SessionStore<JEEContext>, LogoutPostProcessor {
     private static final String SESSION_ID_IN_REQUEST_ATTRIBUTE = "sessionIdInRequestAttribute";
+
     private final TicketRegistry ticketRegistry;
+
     private final TicketFactory ticketFactory;
+
     private final CookieRetrievingCookieGenerator cookieGenerator;
 
     public DistributedJ2ESessionStore(final TicketRegistry ticketRegistry, final TicketFactory ticketFactory,
                                       final CasConfigurationProperties casProperties) {
         this.ticketRegistry = ticketRegistry;
         this.ticketFactory = ticketFactory;
-        val tgc = casProperties.getTgc();
-        val context = CookieGenerationContext.builder()
-                .name(casProperties.getSessionReplication().getSessionCookieName())
-                .path(tgc.getPath()).maxAge(tgc.getMaxAge()).secure(tgc.isSecure())
-                .domain(tgc.getDomain()).httpOnly(tgc.isHttpOnly()).build();
+        val context = CookieUtils.buildCookieGenerationContext(casProperties.getSessionReplication().getCookie());
         this.cookieGenerator = new CookieRetrievingCookieGenerator(context);
     }
 
@@ -56,7 +56,7 @@ public class DistributedJ2ESessionStore implements SessionStore<JEEContext>, Log
         }
         LOGGER.trace("Retrieved sessionId: [{}}", sessionId);
         if (sessionId == null) {
-            sessionId = java.util.UUID.randomUUID().toString();
+            sessionId = UUID.randomUUID().toString();
             LOGGER.debug("Generated sessionId: [{}]", sessionId);
             cookieGenerator.addCookie(context.getNativeRequest(), context.getNativeResponse(), sessionId);
             context.setRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE, sessionId);
@@ -84,7 +84,7 @@ public class DistributedJ2ESessionStore implements SessionStore<JEEContext>, Log
             properties.put(key, (Serializable) value);
         } else if (value != null) {
             LOGGER.trace("Object value [{}] assigned to [{}] is not serializable and may not be part of the ticket [{}]",
-                    value, key, sessionId);
+                value, key, sessionId);
         }
 
         var ticket = getTransientSessionTicketForSession(context);
@@ -98,28 +98,6 @@ public class DistributedJ2ESessionStore implements SessionStore<JEEContext>, Log
         } else {
             ticket.getProperties().putAll(properties);
             this.ticketRegistry.updateTicket(ticket);
-        }
-    }
-
-    private TransientSessionTicket getTransientSessionTicketForSession(final JEEContext context) {
-        val sessionId = getOrCreateSessionId(context);
-        val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
-
-        LOGGER.trace("fetching ticket: {}", ticketId);
-        val ticket = this.ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
-        if (ticket == null || ticket.isExpired()) {
-            LOGGER.trace("Ticket [{}] does not exist or is expired", ticketId);
-            return null;
-        }
-        return ticket;
-    }
-
-    @Override
-    public void handle(final TicketGrantingTicket ticketGrantingTicket) {
-        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-        if (request != null && response != null) {
-            destroySession(new JEEContext(request, response, this));
         }
     }
 
@@ -155,5 +133,27 @@ public class DistributedJ2ESessionStore implements SessionStore<JEEContext>, Log
     @Override
     public boolean renewSession(final JEEContext context) {
         return false;
+    }
+
+    private TransientSessionTicket getTransientSessionTicketForSession(final JEEContext context) {
+        val sessionId = getOrCreateSessionId(context);
+        val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
+
+        LOGGER.trace("fetching ticket: {}", ticketId);
+        val ticket = this.ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
+        if (ticket == null || ticket.isExpired()) {
+            LOGGER.trace("Ticket [{}] does not exist or is expired", ticketId);
+            return null;
+        }
+        return ticket;
+    }
+
+    @Override
+    public void handle(final TicketGrantingTicket ticketGrantingTicket) {
+        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
+        if (request != null && response != null) {
+            destroySession(new JEEContext(request, response, this));
+        }
     }
 }

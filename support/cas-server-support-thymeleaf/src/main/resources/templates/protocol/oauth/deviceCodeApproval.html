@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <title th:text="#{cas.oauth.confirm.pagetitle}"></title>
+</head>
+
+<body id="cas">
+    <div layout:fragment="content" class="mdc-card p-4 m-auto w-lg-66">
+        <h2 th:text="#{cas.oauth.device.confirm.header}" />
+        <p class="my-2" th:text="#{cas.oauth.device.confirm.message}" />
+        <div class="banner banner-danger my-2" th:if="${error}">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <span th:utext="#{${'cas.oauth.device.error.' + error}}" />
+        </div>
+        <form method="post" id="fm1">
+            <div class="cas-field my-3 mdc-input-group">
+                <div class="mdc-input-group-field mdc-input-group-field-append">
+                    <div class="mdc-text-field  mdc-text-field--with-trailing-icon d-flex caps-check">
+                        <input type="password" class="mdc-text-field__input pwd" placeholder="code..." name="usercode"
+                            id="usercode" size="25" autocomplete="off" aria-describedby="code-prefix"
+                            aria-label="UserCode" />
+                        <label for="username" class="mdc-floating-label">Code:</label>
+                        <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
+                    </div>
+                </div>
+                <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button"
+                    type="button">
+                    <i class="mdi mdi-eye reveal-password-icon"></i>
+                    <span class="sr-only">Toggle Password</span>
+                </button>
+            </div>
+            <input class="mdc-button mdc-button--raised" name="submit" th:value="#{screen.oauth.confirm.allow}"
+                type="submit" value="Allow" />
+        </form>
+    </div>
+</body>
+
+</html>

@@ -30,7 +30,7 @@ import java.util.Collection;
 @ToString
 public class JpaCasEventRepository extends AbstractCasEventRepository {
 
-    private static final String SELECT_QUERY = "SELECT r from CasEvent r ";
+    private static final String SELECT_QUERY = "SELECT r from JpaCasEvent r ";
 
     private final PlatformTransactionManager transactionManager;
 
@@ -45,40 +45,42 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
 
     @Override
     public Collection<? extends CasEvent> load() {
-        return this.entityManager.createQuery(SELECT_QUERY.trim(), CasEvent.class).getResultList();
+        return this.entityManager.createQuery(SELECT_QUERY.trim(), JpaCasEvent.class).getResultList();
     }
 
     @Override
     public Collection<? extends CasEvent> load(final ZonedDateTime dateTime) {
         val query = SELECT_QUERY.concat("where r.creationTime >= :creationTime");
-        return this.entityManager.createQuery(query, CasEvent.class)
+        return this.entityManager.createQuery(query, JpaCasEvent.class)
             .setParameter(CREATION_TIME_PARAM, dateTime.toString()).getResultList();
     }
 
     @Override
     public Collection<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
         val query = SELECT_QUERY.concat("where r.type = :type and r.principalId = :principalId");
-        return this.entityManager.createQuery(query, CasEvent.class).setParameter(TYPE_PARAM, type)
+        return this.entityManager.createQuery(query, JpaCasEvent.class).setParameter(TYPE_PARAM, type)
             .setParameter(PRINCIPAL_ID_PARAM, principal).getResultList();
     }
 
     @Override
     public Collection<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal, final ZonedDateTime dateTime) {
         val query = SELECT_QUERY.concat("where r.type = :type and r.creationTime >= :creationTime and r.principalId = :principalId");
-        return this.entityManager.createQuery(query, CasEvent.class).setParameter(TYPE_PARAM, type)
+        return this.entityManager.createQuery(query, JpaCasEvent.class).setParameter(TYPE_PARAM, type)
             .setParameter(PRINCIPAL_ID_PARAM, principal)
             .setParameter(CREATION_TIME_PARAM, dateTime.toString()).getResultList();
     }
 
     @Override
     public Collection<? extends CasEvent> getEventsOfType(final String type) {
-        return this.entityManager.createQuery(SELECT_QUERY.concat("where r.type = :type"), CasEvent.class).setParameter(TYPE_PARAM, type).getResultList();
+        return this.entityManager.createQuery(SELECT_QUERY.concat("where r.type = :type"), JpaCasEvent.class)
+            .setParameter(TYPE_PARAM, type)
+            .getResultList();
     }
 
     @Override
     public Collection<? extends CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
         val query = SELECT_QUERY.concat("where r.type = :type and r.creationTime >= :creationTime");
-        return this.entityManager.createQuery(query, CasEvent.class)
+        return this.entityManager.createQuery(query, JpaCasEvent.class)
             .setParameter(TYPE_PARAM, type)
             .setParameter(CREATION_TIME_PARAM, dateTime.toString()).getResultList();
     }
@@ -86,13 +88,15 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     @Override
     public Collection<? extends CasEvent> getEventsForPrincipal(final String id) {
         val query = SELECT_QUERY.concat("where r.principalId = :principalId");
-        return this.entityManager.createQuery(query, CasEvent.class).setParameter(PRINCIPAL_ID_PARAM, id).getResultList();
+        return this.entityManager.createQuery(query, JpaCasEvent.class)
+            .setParameter(PRINCIPAL_ID_PARAM, id)
+            .getResultList();
     }
 
     @Override
     public Collection<? extends CasEvent> getEventsForPrincipal(final String id, final ZonedDateTime dateTime) {
         val query = SELECT_QUERY.concat("where r.principalId = :principalId and r.creationTime >= :creationTime");
-        return this.entityManager.createQuery(query, CasEvent.class)
+        return this.entityManager.createQuery(query, JpaCasEvent.class)
             .setParameter(PRINCIPAL_ID_PARAM, id)
             .setParameter(CREATION_TIME_PARAM, dateTime.toString()).getResultList();
     }
@@ -102,7 +106,15 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
         new TransactionTemplate(this.transactionManager).execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(final TransactionStatus status) {
-                entityManager.merge(event);
+                val jpaEvent = new JpaCasEvent();
+
+                jpaEvent.setId(event.getId());
+                jpaEvent.setCreationTime(event.getCreationTime());
+                jpaEvent.setPrincipalId(event.getPrincipalId());
+                jpaEvent.setProperties(event.getProperties());
+                jpaEvent.setType(event.getType());
+
+                entityManager.merge(jpaEvent);
             }
         });
     }

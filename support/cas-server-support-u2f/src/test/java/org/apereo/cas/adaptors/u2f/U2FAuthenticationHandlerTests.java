@@ -81,7 +81,8 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = {
     "cas.authn.mfa.u2f.json.location=file:src/test/resources/u2f-accounts.json",
     "spring.mail.host=localhost",
-    "spring.mail.port=25000"})
+    "spring.mail.port=25000"
+})
 @DirtiesContext
 @Tag("MFA")
 public class U2FAuthenticationHandlerTests {

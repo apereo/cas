@@ -6,3 +6,21 @@ coverage:
   round: up
   range: "70...100"
   precision: 5
+  status:
+    project:
+      default:
+        # basic
+        target: 70%
+        threshold: 0%
+        base: auto 
+        flags: 
+          - unit
+        paths: 
+          - "src"
+       # advanced
+        branches: 
+          - master
+        if_not_found: success
+        if_ci_failed: error
+        informational: false
+        only_pulls: false

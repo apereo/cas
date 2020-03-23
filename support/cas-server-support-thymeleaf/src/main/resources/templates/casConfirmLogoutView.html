@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{screen.logout.confirm.header}">Confirm Logout View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" class="mdc-card p-4 m-auto w-lg-66">
+        <h2 th:utext="#{screen.logout.confirm.header}">Do you want to log out completely?</h2>
+        <p th:remove="tag" th:utext="#{screen.logout.confirm.text}">An application may have redirected you to the Central
+            Authentication Service \
+            to completely log you out and destroy your single sign-on session. If you choose to log out, you will be
+            asked again \
+            to provide your credentials and re-autheticate once you attempt to access an application.
+        </p>
+        
+        <form method="post" id="fm1">
+            <input type="hidden" name="LogoutRequestConfirmed" value="true" />
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+            <input type="hidden" name="_eventId" value="success" />
+            <button class="mdc-button mdc-button--raised" name="success" accesskey="l">
+                <span class="mdc-button__label" th:text="#{screen.welcome.button.logout}">Logout</span>
+            </button>
+        </form>
+    </div>
+</main>
+</body>
+</html>

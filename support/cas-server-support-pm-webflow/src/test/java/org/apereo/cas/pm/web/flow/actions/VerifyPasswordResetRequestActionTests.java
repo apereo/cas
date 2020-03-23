@@ -5,7 +5,6 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
@@ -30,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @EnabledIfPortOpen(port = 25000)
-@EnabledIfContinuousIntegration
 @Tag("Mail")
 public class VerifyPasswordResetRequestActionTests extends BasePasswordManagementActionTests {
     @Test

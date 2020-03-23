@@ -16,7 +16,9 @@ public class DefaultServicesManager extends AbstractServicesManager {
 
     private final Set<RegisteredService> orderedServices = new ConcurrentSkipListSet<>();
 
-    public DefaultServicesManager(final ServiceRegistry serviceRegistry, final ApplicationEventPublisher eventPublisher, final Set<String> environments) {
+    public DefaultServicesManager(final ServiceRegistry serviceRegistry,
+                                  final ApplicationEventPublisher eventPublisher,
+                                  final Set<String> environments) {
         super(serviceRegistry, eventPublisher, environments);
     }
 

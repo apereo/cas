@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -19,6 +20,7 @@ import java.util.Map;
 @RequiresModule(name = "cas-server-core-web", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class HttpRequestProperties implements Serializable {
 
     private static final long serialVersionUID = -5175966163542099866L;
@@ -40,6 +42,12 @@ public class HttpRequestProperties implements Serializable {
      * The special value * instructs the Filter to check all parameters.
      */
     private String paramsToCheck = "ticket,service,renew,gateway,warn,method,target,SAMLart," + "pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token";
+
+    /**
+     * Characters to block in incoming requests.
+     * {@code none} is a special value. Separate characters by a space.
+     */
+    private String charactersToForbid = "none";
 
     /**
      * Specify a regular expression that would be checked

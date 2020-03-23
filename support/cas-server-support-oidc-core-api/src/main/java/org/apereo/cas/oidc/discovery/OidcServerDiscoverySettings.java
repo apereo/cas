@@ -65,6 +65,9 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("token_endpoint_auth_methods_supported")
     private List<String> tokenEndpointAuthMethodsSupported;
 
+    @JsonProperty("code_challenge_methods_supported")
+    private List<String> codeChallengeMethodsSupported;
+
     @JsonProperty("claims_parameter_supported")
     private boolean claimsParameterSupported = true;
 

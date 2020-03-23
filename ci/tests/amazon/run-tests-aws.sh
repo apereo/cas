@@ -30,7 +30,7 @@ echo -e "***********************************************"
 ./ci/tests/amazon/run-aws-server.sh
 
 gradleBuild="$gradleBuild testAWS jacocoRootReport -x test -x javadoc -x check \
-    -DskipGradleLint=true --parallel \
+    --parallel \
     -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

@@ -1,10 +1,8 @@
 package org.apereo.cas.web.security;
 
-import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
-import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.web.security.authentication.MonitorEndpointLdapAuthenticationProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -17,7 +15,6 @@ import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointR
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -48,8 +45,6 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     private final PathMappedEndpoints pathMappedEndpoints;
 
-    private final ApplicationContext applicationContext;
-
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         val jaas = casProperties.getMonitor().getEndpoints().getJaas();
@@ -64,13 +59,6 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
             configureLdapAuthenticationProvider(auth, ldap);
         } else {
             LOGGER.trace("No LDAP url or search filter is defined to enable LDAP authentication");
-        }
-
-        val jdbc = casProperties.getMonitor().getEndpoints().getJdbc();
-        if (StringUtils.isNotBlank(jdbc.getQuery())) {
-            configureJdbcAuthenticationProvider(auth, jdbc);
-        } else {
-            LOGGER.trace("No JDBC query is defined to enable JDBC authentication");
         }
 
         if (!auth.isConfigured()) {
@@ -120,22 +108,6 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                     configureEndpointAccess(http, requests, access, endpointDefaults, endpointRequest)));
             }
         });
-    }
-
-    /**
-     * Configure jdbc authentication provider.
-     *
-     * @param auth the auth
-     * @param jdbc the jdbc
-     * @throws Exception the exception
-     */
-    protected void configureJdbcAuthenticationProvider(final AuthenticationManagerBuilder auth, final MonitorProperties.Endpoints.JdbcSecurity jdbc) throws Exception {
-        val passwordEncoder = PasswordEncoderUtils.newPasswordEncoder(jdbc.getPasswordEncoder(), applicationContext);
-        auth.jdbcAuthentication()
-            .passwordEncoder(passwordEncoder)
-            .usersByUsernameQuery(jdbc.getQuery())
-            .rolePrefix(jdbc.getRolePrefix())
-            .dataSource(JpaBeans.newDataSource(jdbc));
     }
 
     /**

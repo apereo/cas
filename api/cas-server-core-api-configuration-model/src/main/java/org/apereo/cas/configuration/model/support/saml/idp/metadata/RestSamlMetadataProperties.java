@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RestEndpointProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link RestSamlMetadataProperties}.
@@ -15,6 +16,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-saml-idp-metadata-rest")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class RestSamlMetadataProperties extends RestEndpointProperties {
     private static final long serialVersionUID = -7734304585762871404L;
 }

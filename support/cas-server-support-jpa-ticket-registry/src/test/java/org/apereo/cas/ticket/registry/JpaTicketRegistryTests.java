@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     JpaTicketRegistryTicketCatalogConfiguration.class,
     JpaTicketRegistryConfiguration.class,
+    CasHibernateJpaConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class,
     CasWsSecurityTokenTicketCatalogConfiguration.class
 })

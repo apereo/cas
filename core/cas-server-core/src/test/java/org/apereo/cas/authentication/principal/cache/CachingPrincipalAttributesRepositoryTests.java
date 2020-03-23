@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -66,6 +67,7 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
     @TestConfiguration
     public static class CachingPrincipalAttributeRepositoryTestConfiguration {
         @Bean
+        @ConditionalOnMissingBean(name = "principalAttributesRepositoryCache")
         public PrincipalAttributesRepositoryCache principalAttributesRepositoryCache() {
             return new PrincipalAttributesRepositoryCache();
         }

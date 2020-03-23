@@ -5,6 +5,7 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.val;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -39,7 +40,7 @@ public class CasServerDiscoveryProfileEndpoint extends BaseCasActuatorEndpoint {
      *
      * @return the map
      */
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, Object> discovery() {
         val results = new HashMap<String, Object>();

@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow.client;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.val;
@@ -16,7 +16,7 @@ import org.springframework.test.context.TestPropertySource;
  * @since 4.1
  */
 @Tag("Ldap")
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 10389)
 @TestPropertySource(properties = {
     "cas.authn.spnego.ldap.ldapUrl=ldap://localhost:10389",
     "cas.authn.spnego.ldap.baseDn=ou=people,dc=example,dc=org",

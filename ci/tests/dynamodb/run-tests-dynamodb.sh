@@ -30,7 +30,7 @@ echo -e "***********************************************"
 ./ci/tests/dynamodb/run-dynamodb-server.sh
 
 gradleBuild="$gradleBuild testDynamoDb jacocoRootReport -x test -x javadoc -x check \
-    -DskipGradleLint=true \
+    \
     -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

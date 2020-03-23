@@ -10,6 +10,7 @@
         <Logger name="org.ldaptive" level="warn" />
         <Logger name="com.unboundid" level="warn" />
         <Logger name="org.springframework" level="warn" />
+        <Logger name="org.springframework.boot" level="warn" />
         <Root level="error">
             <AppenderRef ref="console"/>
         </Root>

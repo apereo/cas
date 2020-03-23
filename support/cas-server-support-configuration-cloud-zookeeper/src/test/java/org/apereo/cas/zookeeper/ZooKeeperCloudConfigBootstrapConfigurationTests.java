@@ -1,7 +1,6 @@
 package org.apereo.cas.zookeeper;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
@@ -44,7 +43,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "spring.application.name=cas"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnabledIfContinuousIntegration
 @Tag("ZooKeeper")
 @EnabledIfPortOpen(port = 2181)
 public class ZooKeeperCloudConfigBootstrapConfigurationTests {

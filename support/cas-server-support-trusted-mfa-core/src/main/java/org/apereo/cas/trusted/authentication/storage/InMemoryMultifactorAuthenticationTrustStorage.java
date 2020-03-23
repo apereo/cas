@@ -10,7 +10,6 @@ import lombok.val;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -70,14 +69,19 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
 
     @Override
     public MultifactorAuthenticationTrustRecord get(final long id) {
-        return storage.asMap()
+        val result = storage.asMap()
             .values()
             .stream()
-            .filter(Objects::nonNull)
             .filter(entry -> entry.getId() == id)
             .sorted()
-            .findFirst()
-            .orElse(null);
+            .findFirst();
+        
+        if (result.isPresent()) {
+            val record = result.get();
+            LOGGER.trace("Found multifactor authentication trust record [{}]", record);
+            return record;
+        }
+        return null;
     }
 
     @Override

@@ -17,6 +17,7 @@ import org.apereo.cas.couchdb.saml.SamlIdPMetadataCouchDbRepository;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
@@ -65,6 +66,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("CouchDb")
+@EnabledIfPortOpen(port = 5984)
 public class CouchDbSamlIdPMetadataGeneratorTests {
     @Autowired
     @Qualifier("samlIdPMetadataGenerator")

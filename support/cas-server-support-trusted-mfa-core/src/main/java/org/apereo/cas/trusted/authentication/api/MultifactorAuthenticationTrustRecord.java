@@ -9,16 +9,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
-import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.Id;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.Table;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
@@ -29,8 +27,7 @@ import java.time.temporal.ChronoUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Entity
-@Table(name = "MultifactorAuthenticationTrustRecord")
+@MappedSuperclass
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToString
 @Getter
@@ -39,9 +36,7 @@ import java.time.temporal.ChronoUnit;
 public class MultifactorAuthenticationTrustRecord implements Comparable<MultifactorAuthenticationTrustRecord> {
 
     @Id
-    @org.springframework.data.annotation.Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+    @Transient
     @JsonProperty("id")
     private long id = -1;
 
@@ -50,7 +45,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     private String principal;
 
     @JsonProperty("deviceFingerprint")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 512)
     private String deviceFingerprint;
 
     @JsonProperty("recordDate")
@@ -60,12 +55,12 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
 
     @Lob
     @JsonProperty("recordKey")
-    @Column(length = 10_000, nullable = false)
+    @Column(length = Integer.MAX_VALUE, nullable = false)
     private String recordKey;
 
     @Lob
     @JsonProperty("name")
-    @Column(length = 10_000, nullable = false)
+    @Column(length = Integer.MAX_VALUE, nullable = false)
     private String name;
 
     public MultifactorAuthenticationTrustRecord() {
@@ -80,7 +75,9 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
      * @param fingerprint the device fingerprint
      * @return the authentication trust record
      */
-    public static MultifactorAuthenticationTrustRecord newInstance(final String principal, final String geography, final String fingerprint) {
+    public static MultifactorAuthenticationTrustRecord newInstance(final String principal,
+                                                                   final String geography,
+                                                                   final String fingerprint) {
         val r = new MultifactorAuthenticationTrustRecord();
         val now = LocalDateTime.now(ZoneOffset.UTC);
         r.setRecordDate(now.truncatedTo(ChronoUnit.SECONDS));

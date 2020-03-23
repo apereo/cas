@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.services.ServicesManager;
@@ -34,6 +35,9 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnBean(name = "consentRepository")
 public class CasConsentWebflowConfiguration {
+    @Autowired
+    @Qualifier("attributeDefinitionStore")
+    private ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -64,7 +68,9 @@ public class CasConsentWebflowConfiguration {
     @Bean
     public Action checkConsentRequiredAction() {
         return new CheckConsentRequiredAction(servicesManager.getObject(),
-            authenticationRequestServiceSelectionStrategies.getObject(), consentEngine.getObject(), casProperties);
+            authenticationRequestServiceSelectionStrategies.getObject(),
+            consentEngine.getObject(), casProperties,
+            attributeDefinitionStore.getObject(), applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "confirmConsentAction")
@@ -72,14 +78,16 @@ public class CasConsentWebflowConfiguration {
     public Action confirmConsentAction() {
         return new ConfirmConsentAction(servicesManager.getObject(),
             authenticationRequestServiceSelectionStrategies.getObject(),
-            consentEngine.getObject(), casProperties);
+            consentEngine.getObject(), casProperties,
+            attributeDefinitionStore.getObject(), applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "consentWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer consentWebflowConfigurer() {
-        return new ConsentWebflowConfigurer(flowBuilderServices.getObject(), loginFlowDefinitionRegistry.getObject(),
+        return new ConsentWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(),
             applicationContext, casProperties);
     }
 

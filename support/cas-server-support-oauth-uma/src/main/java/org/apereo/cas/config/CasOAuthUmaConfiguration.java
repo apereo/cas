@@ -41,7 +41,7 @@ import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpoin
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -243,7 +243,7 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
         val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), headerClient);
         config.setSessionStore(oauthDistributedSessionStore.getObject());
         val interceptor = new SecurityInterceptor(config, clients, JEEHttpActionAdapter.INSTANCE);
-        interceptor.setAuthorizers(StringUtils.EMPTY);
+        interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
         return interceptor;
     }
 

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -16,6 +17,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @RequiresModule(name = "cas-server-support-memcached-ticket-registry")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class MemcachedTicketRegistryProperties extends BaseMemcachedProperties {
 
     private static final long serialVersionUID = 509520518053691786L;

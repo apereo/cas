@@ -11,14 +11,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
-import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.Id;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
 import java.io.Serializable;
 import java.time.ZoneOffset;
@@ -30,8 +27,7 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Entity
-@Table(name = "PasswordlessAuthenticationToken")
+@MappedSuperclass
 @ToString
 @Getter
 @Setter
@@ -44,9 +40,7 @@ public class PasswordlessAuthenticationToken implements Serializable {
     private static final long serialVersionUID = 3810773120720229099L;
 
     @Id
-    @org.springframework.data.annotation.Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+    @Transient
     @JsonProperty
     private long id;
 

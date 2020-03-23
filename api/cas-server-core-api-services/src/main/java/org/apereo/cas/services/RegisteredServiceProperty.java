@@ -86,10 +86,6 @@ public interface RegisteredServiceProperty extends Serializable {
     @RequiredArgsConstructor
     enum RegisteredServiceProperties {
         /**
-         * Whether terms of use/acceptable use policy should be enabled for this service.
-         */
-        ACCEPTABLE_USAGE_POLICY_ENABLED("acceptableUsagePolicyEnabled", "true"),
-        /**
          * used when delegating authentication to ADFS to indicate the relying party identifier.
          */
         WSFED_RELYING_PARTY_ID("wsfed.relyingPartyIdentifier", StringUtils.EMPTY),
@@ -191,6 +187,7 @@ public interface RegisteredServiceProperty extends Serializable {
         HTTP_HEADER_ENABLE_XSS_PROTECTION("httpHeaderEnableXSSProtection", "true");
 
         private final String propertyName;
+
         private final String defaultValue;
 
         /**

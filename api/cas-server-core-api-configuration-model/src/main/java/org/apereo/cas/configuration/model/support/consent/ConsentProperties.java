@@ -13,6 +13,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -27,6 +28,7 @@ import java.time.temporal.ChronoUnit;
 @RequiresModule(name = "cas-server-support-consent-webflow")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class ConsentProperties implements Serializable {
 
     private static final long serialVersionUID = 5201308051524438384L;
@@ -103,6 +105,7 @@ public class ConsentProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-consent-couchdb")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class CouchDb extends BaseCouchDbProperties {
         private static final long serialVersionUID = 8184753250455916462L;
 
@@ -114,6 +117,7 @@ public class ConsentProperties implements Serializable {
     @RequiresModule(name = "cas-server-consent-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Json extends SpringResourceProperties {
 
         private static final long serialVersionUID = 7079027843747126083L;
@@ -122,6 +126,7 @@ public class ConsentProperties implements Serializable {
     @RequiresModule(name = "cas-server-consent-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Groovy extends SpringResourceProperties {
 
         private static final long serialVersionUID = 7079027843747126083L;
@@ -130,6 +135,7 @@ public class ConsentProperties implements Serializable {
     @RequiresModule(name = "cas-server-consent-jdbc")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Jpa extends AbstractJpaProperties {
 
         private static final long serialVersionUID = 1646689616653363554L;
@@ -138,6 +144,7 @@ public class ConsentProperties implements Serializable {
     @RequiresModule(name = "cas-server-consent-ldap")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Ldap extends AbstractLdapSearchProperties {
 
         private static final long serialVersionUID = 1L;
@@ -156,6 +163,7 @@ public class ConsentProperties implements Serializable {
     @RequiresModule(name = "cas-server-consent-mongo")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class MongoDb extends SingleCollectionMongoDbProperties {
 
         private static final long serialVersionUID = -1918436901491275547L;
@@ -168,6 +176,7 @@ public class ConsentProperties implements Serializable {
     @RequiresModule(name = "cas-server-consent-rest")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Rest implements Serializable {
 
         private static final long serialVersionUID = -6909617495470495341L;
@@ -181,6 +190,7 @@ public class ConsentProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-consent-redis")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Redis extends BaseRedisProperties {
         private static final long serialVersionUID = -1347683393318585262L;
     }

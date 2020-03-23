@@ -195,9 +195,10 @@ public class ValidateEndpointCommand {
      * @param url     the url
      * @param proxy   the proxy
      * @param timeout the timeout
+     * @return the boolean
      */
     @ShellMethod(key = "validate-endpoint", value = "Test connections to an endpoint to verify connectivity, SSL, etc")
-    public void validateEndpoint(
+    public boolean validateEndpoint(
         @ShellOption(value = {"url", "--url"},
             help = "Endpoint URL to test") final String url,
         @ShellOption(value = {"proxy", "--proxy"},
@@ -223,6 +224,7 @@ public class ValidateEndpointCommand {
                     LOGGER.info("Response status code received: [{}]", code);
                 }
                 LOGGER.info("Successfully connected to url [{}]", url);
+                return true;
             }
         } catch (final Exception e) {
             LOGGER.info("Could not connect to the host address [{}]", url);
@@ -231,6 +233,7 @@ public class ValidateEndpointCommand {
             LOGGER.error(consolidateExceptionMessages(e));
             testBadTlsConnection(url, proxy);
         }
+        return false;
     }
 }
 

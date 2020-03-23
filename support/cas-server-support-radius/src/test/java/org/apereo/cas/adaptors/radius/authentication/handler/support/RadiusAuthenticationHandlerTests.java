@@ -17,7 +17,7 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.RadiusConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -66,7 +66,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.radius.client.inetAddress=localhost"
 })
 @Tag("Radius")
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 1812)
 public class RadiusAuthenticationHandlerTests {
     @Autowired
     @Qualifier("radiusAuthenticationHandler")

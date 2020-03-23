@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-git-core")
 @Getter
 @Setter
+@Accessors(chain = true)
 public abstract class BaseGitProperties implements Serializable {
     private static final long serialVersionUID = 4194689836396653458L;
 

@@ -21,7 +21,8 @@ public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final DataSource dataSource;
 
-    public AbstractJdbcUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public AbstractJdbcUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                                             final PrincipalFactory principalFactory,
                                                              final Integer order, final DataSource dataSource) {
         super(name, servicesManager, principalFactory, order);
         this.dataSource = dataSource;

@@ -1,6 +1,5 @@
 package org.apereo.cas.pm.jdbc;
 
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +22,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.pm.history.enabled=true"
 })
 @EnabledIfPortOpen(port = 5432)
-@EnabledIfContinuousIntegration
 @Tag("Postgres")
 public class PostgresJdbcPasswordHistoryServiceTests extends JdbcPasswordHistoryServiceTests {
 

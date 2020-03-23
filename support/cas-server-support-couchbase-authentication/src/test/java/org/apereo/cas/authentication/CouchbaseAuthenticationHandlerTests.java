@@ -12,6 +12,7 @@ import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.query.DefaultN1qlQueryResult;
 import com.couchbase.client.java.query.N1qlQueryRow;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -31,58 +33,20 @@ import static org.mockito.Mockito.*;
  * @author Jerome LELEU
  * @since 6.0.4
  */
+@Tag("Couchbase")
 public class CouchbaseAuthenticationHandlerTests {
 
     private static final String BUCKET_NAME = "default";
+
     private static final String LOGIN = "login";
+
     private static final String GOOD_PASSWORD = "good";
+
     private static final String BAD_PASSWORD = "bad";
 
-    @Test
-    public void noEncryptionGoodPassword() throws Exception {
-        val principal = new SimplePrincipal();
-        val result = internalAutenticate(NoOpPasswordEncoder.getInstance(), principal, GOOD_PASSWORD);
-
-        assertEquals(principal, result.getPrincipal());
-    }
-
-    @Test
-    public void noEncryptionBadPassword() {
-        assertThrows(FailedLoginException.class, () ->
-            internalAutenticate(NoOpPasswordEncoder.getInstance(), new SimplePrincipal(), BAD_PASSWORD));
-    }
-
-    @Test
-    public void sha256EncryptionGoodPassword() throws Exception {
-        val principal = new SimplePrincipal();
-        val result = internalAutenticate(new StandardPasswordEncoder(), principal, GOOD_PASSWORD);
-
-        assertEquals(principal, result.getPrincipal());
-    }
-
-    @Test
-    public void sha256EncryptionBadPassword() {
-        assertThrows(FailedLoginException.class, () ->
-            internalAutenticate(new StandardPasswordEncoder(), new SimplePrincipal(), BAD_PASSWORD));
-    }
-
-    @Test
-    public void bcryptEncryptionGoodPassword() throws Exception {
-        val principal = new SimplePrincipal();
-        val result = internalAutenticate(new BCryptPasswordEncoder(), principal, GOOD_PASSWORD);
-
-        assertEquals(principal, result.getPrincipal());
-    }
-
-    @Test
-    public void bcryptEncryptionBadPassword() {
-        assertThrows(FailedLoginException.class, () ->
-        internalAutenticate(new BCryptPasswordEncoder(), new SimplePrincipal(), BAD_PASSWORD));
-    }
-
-    private static AuthenticationHandlerExecutionResult internalAutenticate(final PasswordEncoder encoder,
-                                                                            final Principal principal,
-                                                                            final String userPassword) throws Exception {
+    private static AuthenticationHandlerExecutionResult internalAuthenticate(final PasswordEncoder encoder,
+                                                                             final Principal principal,
+                                                                             final String userPassword) throws Exception {
         val factory = mock(CouchbaseClientFactory.class);
         val defBucket = mock(Bucket.class);
         when(defBucket.name()).thenReturn(BUCKET_NAME);
@@ -109,5 +73,47 @@ public class CouchbaseAuthenticationHandlerTests {
         when(factory.query(properties.getUsernameAttribute(), LOGIN)).thenReturn(queryResult);
 
         return handler.authenticate(c);
+    }
+
+    @Test
+    public void noEncryptionGoodPassword() throws Exception {
+        val principal = new SimplePrincipal();
+        val result = internalAuthenticate(NoOpPasswordEncoder.getInstance(), principal, GOOD_PASSWORD);
+
+        assertEquals(principal, result.getPrincipal());
+    }
+
+    @Test
+    public void noEncryptionBadPassword() {
+        assertThrows(FailedLoginException.class, () ->
+            internalAuthenticate(NoOpPasswordEncoder.getInstance(), new SimplePrincipal(), BAD_PASSWORD));
+    }
+
+    @Test
+    public void sha256EncryptionGoodPassword() throws Exception {
+        val principal = new SimplePrincipal();
+        val result = internalAuthenticate(new StandardPasswordEncoder(), principal, GOOD_PASSWORD);
+
+        assertEquals(principal, result.getPrincipal());
+    }
+
+    @Test
+    public void sha256EncryptionBadPassword() {
+        assertThrows(FailedLoginException.class, () ->
+            internalAuthenticate(new StandardPasswordEncoder(), new SimplePrincipal(), BAD_PASSWORD));
+    }
+
+    @Test
+    public void bcryptEncryptionGoodPassword() throws Exception {
+        val principal = new SimplePrincipal();
+        val result = internalAuthenticate(new BCryptPasswordEncoder(), principal, GOOD_PASSWORD);
+
+        assertEquals(principal, result.getPrincipal());
+    }
+
+    @Test
+    public void bcryptEncryptionBadPassword() {
+        assertThrows(FailedLoginException.class, () ->
+            internalAuthenticate(new BCryptPasswordEncoder(), new SimplePrincipal(), BAD_PASSWORD));
     }
 }

@@ -5,9 +5,8 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -25,6 +24,7 @@ import java.util.stream.Stream;
 @RequiresModule(name = "cas-server-support-oidc")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class OidcProperties implements Serializable {
 
     private static final long serialVersionUID = 813028615694269276L;
@@ -49,13 +49,23 @@ public class OidcProperties implements Serializable {
      * Path to the JWKS file resource used to handle signing/encryption of authentication tokens.
      */
     @RequiredProperty
-    private transient Resource jwksFile = new FileSystemResource("/etc/cas/config/keystore.jwks");
+    private String jwksFile = "file:/etc/cas/config/keystore.jwks";
 
     /**
      * The key size for the generated jwks. This is an algorithm-specific metric,
      * such as modulus length, specified in number of bits.
+     * <p>
+     * If the keystore type is {@code EC}, the key size defined here
+     * should switch to one of {@code 256}, {@code 384} or {@code 521}.
+     * If using  {@code EC}, then the size should match the number of bits required.
      */
     private int jwksKeySize = 2048;
+
+    /**
+     * The type of the JWKS used to handle signing/encryption of authentication tokens.
+     * Accepted values are {@code RSA} or {@code EC}.
+     */
+    private String jwksType = "RSA";
 
     /**
      * Whether dynamic registration operates in {@code OPEN} or {@code PROTECTED} mode.
@@ -166,6 +176,11 @@ public class OidcProperties implements Serializable {
      */
     private List<String> tokenEndpointAuthMethodsSupported =
         Stream.of("client_secret_basic", "client_secret_post", "client_secret_jwt", "private_key_jwt").collect(Collectors.toList());
+
+    /**
+     * List of PKCE code challenge methods supported.
+     */
+    private List<String> codeChallengeMethodsSupported = Stream.of("plain", "S256").collect(Collectors.toList());
 
     /**
      * OIDC webfinger protocol settings.

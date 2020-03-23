@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 public class OidcSecurityInterceptor extends SecurityInterceptor {
 
     private final OidcAuthorizationRequestSupport authorizationRequestSupport;
+
     private final SessionStore<JEEContext> sessionStore;
 
     public OidcSecurityInterceptor(final Config config, final String name,
@@ -39,21 +40,17 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
     @Override
     public boolean preHandle(final HttpServletRequest request,
                              final HttpServletResponse response,
-                             final Object handler) throws Exception {
+                             final Object handler) {
         val ctx = new JEEContext(request, response, this.sessionStore);
 
         var clearCreds = false;
         val authentication = authorizationRequestSupport.isCasAuthenticationAvailable(ctx);
         if (authentication.isEmpty()) {
             clearCreds = true;
-        }
-
-        val auth = OidcAuthorizationRequestSupport.isAuthenticationProfileAvailable(ctx);
-
-        if (auth.isPresent()) {
+        } else {
             val maxAge = OidcAuthorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(ctx);
             if (maxAge.isPresent()) {
-                clearCreds = OidcAuthorizationRequestSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(ctx, auth.get());
+                clearCreds = OidcAuthorizationRequestSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(ctx, authentication.get());
             }
         }
 

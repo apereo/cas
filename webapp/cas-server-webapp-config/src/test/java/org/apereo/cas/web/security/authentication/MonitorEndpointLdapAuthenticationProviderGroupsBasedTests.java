@@ -1,7 +1,7 @@
 package org.apereo.cas.web.security.authentication;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 10389)
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = {
         "cas.monitor.endpoints.ldap.ldapAuthz.groupFilter=businessCategory={user}",

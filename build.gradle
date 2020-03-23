@@ -33,7 +33,6 @@ buildscript {
         classpath "org.gradle:test-retry-gradle-plugin:$gradleRetryVersion"
         classpath "com.github.jk1:gradle-license-report:$gradleLicenseVersion"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:$gradleLintVersion"
         classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
         classpath "com.github.ben-manes:gradle-versions-plugin:$gradleDependencyVersionsVersion"
@@ -156,13 +155,10 @@ allprojects {
 
     project.ext["forceBootifulArtifact"] = null
 
-    if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
-        apply plugin: "nebula.lint"
-        gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
-    }
-
-    jacoco {
-        toolVersion = "$gradleJacocoVersion"
+    afterEvaluate { project ->
+        jacoco {
+            toolVersion = "$gradleJacocoVersion"
+        }
     }
 
     idea {
@@ -177,10 +173,9 @@ allprojects {
     }
 
     repositories {
-        mavenLocal{
+        mavenLocal {
             content {
-                includeModuleByRegex "org\\.apereo", "person-directory.*"
-                includeGroupByRegex "$mavenLocalGroupInclude"
+                includeGroup "org.apereo.service.persondir"
             }
         }
         mavenCentral()
@@ -241,10 +236,9 @@ subprojects {
     ext.libraries = rootProject.ext.libraries
 
     repositories {
-        mavenLocal{
+        mavenLocal {
             content {
-                includeModuleByRegex "org\\.apereo", "person-directory.*"
-                includeGroupByRegex "$mavenLocalGroupInclude"
+                includeGroup "org.apereo.service.persondir"
             }
         }
         mavenCentral()
@@ -293,7 +287,7 @@ subprojects {
         }
         jcenter()
     }
-    
+
     configurations {
         tests
     }
@@ -388,7 +382,7 @@ subprojects {
                     }
                 }
             }
-            
+
             signing {
                 required = isArtifactSigningRequired
                 sign publishing.publications
@@ -461,13 +455,13 @@ subprojects {
     jar {
         manifest {
             attributes(
-                "Automatic-Module-Name": project.name,
-                "Implementation-Title": project.name,
-                "Implementation-Vendor": project.group,
-                "Created-By": project.group,
-                "Implementation-Date": java.time.ZonedDateTime.now(ZoneId.systemDefault()),
-                "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
-                "Implementation-Version": project.version)
+                    "Automatic-Module-Name": project.name,
+                    "Implementation-Title": project.name,
+                    "Implementation-Vendor": project.group,
+                    "Created-By": project.group,
+                    "Implementation-Date": java.time.ZonedDateTime.now(ZoneId.systemDefault()),
+                    "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
+                    "Implementation-Version": project.version)
         }
     }
 
@@ -524,10 +518,11 @@ subprojects {
         api libraries.inspektr
         api libraries.persondirectory
         api libraries.spring
+        api libraries.bytebuddy
         api libraries.jackson
         api libraries.httpclient
         api libraries.quartz
-        api libraries.hibernate
+        api libraries.hibernatevalidator
         api libraries.groovy
         api libraries.caffein
         api libraries.springcloud
@@ -637,15 +632,9 @@ task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
         fileTree(dir: it,
                 include: '**/*.class',
                 exclude: [
-                        '**/**Configuration.class',
-                        '**/shell/cli/**',
-                        '**/shell/commands/**',
-                        '**/**Configuration$**',
                         '**/**ConfigurationMetadataGenerator**',
                         '**/**Application.class',
                         '**/**Application$**',
-                        '**/**Exception.class',
-                        '**/**Banner.class',
                         '**/**Exception$**',
                         '**/**Properties.class',
                         '**/**Properties$**'
@@ -653,7 +642,7 @@ task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
     }
     executionData jacocoMerge.destinationFile
     reports {
-        html.enabled = !rootProject.continuousIntegrationBuild
+        html.enabled = true
         xml.enabled = true
     }
 }

@@ -6,7 +6,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasSupportRedisAuditConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -36,7 +36,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     })
 @Tag("Redis")
 @Getter
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 6379)
 public class RedisAuditTrailManagerTests extends BaseAuditConfigurationTests {
     @Autowired
     @Qualifier("redisAuditTrailManager")

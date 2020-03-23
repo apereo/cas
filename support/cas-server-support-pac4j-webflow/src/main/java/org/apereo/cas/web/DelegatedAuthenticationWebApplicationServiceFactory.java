@@ -10,8 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.util.Pac4jConstants;
 
 import javax.servlet.http.HttpServletRequest;
 

@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -20,6 +21,7 @@ import java.util.stream.Stream;
 @RequiresModule(name = "cas-server-support-ldap-core")
 @Getter
 @Setter
+@Accessors(chain = true)
 public abstract class AbstractLdapProperties implements Serializable {
 
     private static final long serialVersionUID = 2682743362616979324L;
@@ -67,6 +69,11 @@ public abstract class AbstractLdapProperties implements Serializable {
      * by the underlying Java platform.
      */
     private String trustStoreType;
+
+    /**
+     * Whether to use a pooled connection factory in components.
+     */
+    private boolean disablePooling;
 
     /**
      * Minimum LDAP connection pool size.
@@ -291,10 +298,6 @@ public abstract class AbstractLdapProperties implements Serializable {
          * No passivator.
          */
         NONE,
-        /**
-         * Close passivator.
-         */
-        CLOSE,
         /**
          * Bind passivator.
          */

@@ -77,7 +77,7 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
                     repo.setTimeUnit(timeUnit);
                     repo.setExpiration(expiration);
 
-                    LOGGER.warn("CAS has converted legacy JSON property [{}] for type [{}]. It parsed 'expiration' value [{}] with time unit of [{}]."
+                    LOGGER.warn("CAS has converted JSON property [{}] for type [{}]. It parsed 'expiration' value [{}] with time unit of [{}]."
                             + "It is STRONGLY recommended that you review the configuration and upgrade from the legacy syntax.",
                         propertyName, beanOrClass.getClass().getName(), expiration, timeUnit);
                     return Boolean.TRUE;

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <title th:text="#{cas.oauth.error.pagetitle}"></title>
+</head>
+
+<body id="cas">
+    <div layout:fragment="content" class="banner banner-danger mdc-card p-4 m-auto w-lg-66">
+        <h2 th:utext="#{cas.oauth.error.header}">Unable to Proceed</h2>
+        <p th:if="${rootCauseException != null and rootCauseException.code != null}"
+            th:utext="#{${rootCauseException.code}}">
+            rootCauseException.code</p>
+    </div>
+</body>
+
+</html>

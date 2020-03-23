@@ -1,11 +1,10 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
-import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -18,8 +17,28 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-webapp-tomcat")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable {
     private static final long serialVersionUID = 620356002948464740L;
+
+    /**
+     * Accepted values are: {@code DEFAULT, CLOUD}.
+     * Type of clustering to use, set to {@code CLOUD} if using CloudMembershipService.
+     */
+    private String clusteringType = "DEFAULT";
+
+    /**
+     * Cloud membership provider, values are case sensitive and only used with clusteringType {@code CLOUD}.
+     * The different providers rely on environment variables to discover other members of cluster
+     * via DNS lookups of the service name or querying kubernetes API. See code or Tomcat documentation
+     * for the environment variables that are used.
+     * <ul>
+     * <li> {@code kubernetes} will use org.apache.catalina.tribes.KubernetesMembershipProvider</li>
+     * <li> {@code dns} will use org.apache.catalina.tribes.DNSMembershipProvider</li>
+     * <li> class implementing {@code org.apache.catalina.tribes.MembershipProvider}</li>
+     * </ul>
+     */
+    private String cloudMembershipProvider = "kubernetes";
 
     /**
      * When a web application is being shutdown, Tomcat issues an expire call to each session to notify all the listeners.
@@ -69,7 +88,6 @@ public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable
     /**
      * Statically register members in the cluster. The syntax is: {@code address:port:index}
      */
-    @RequiredProperty
     private String clusterMembers;
 
     /**
@@ -138,8 +156,4 @@ public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable
      * Enable tomcat session clustering.
      */
     private boolean enabled;
-
-    public boolean isSessionClusteringEnabled() {
-        return isEnabled() && StringUtils.isNotBlank(getClusterMembers());
-    }
 }

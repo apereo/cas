@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-pac4j")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class Pac4jDelegatedAuthenticationProvisioningProperties implements Serializable {
     private static final long serialVersionUID = 3478567744591488495L;
 
@@ -36,6 +38,7 @@ public class Pac4jDelegatedAuthenticationProvisioningProperties implements Seria
     @RequiresModule(name = "cas-server-support-pac4j")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Groovy extends SpringResourceProperties {
         private static final long serialVersionUID = 7179027843747126083L;
     }
@@ -43,6 +46,7 @@ public class Pac4jDelegatedAuthenticationProvisioningProperties implements Seria
     @RequiresModule(name = "cas-server-support-pac4j")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Rest extends RestEndpointProperties {
         private static final long serialVersionUID = -8102345678378393382L;
     }

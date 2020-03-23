@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.mfa.trigger;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.trigger.ScriptedRegisteredServiceMultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 
@@ -17,8 +16,10 @@ import static org.mockito.Mockito.*;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated Since 6.2
  */
 @Tag("Groovy")
+@Deprecated(since = "6.2")
 public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
     public void verifyOperationByProviderEmbeddedScript() {

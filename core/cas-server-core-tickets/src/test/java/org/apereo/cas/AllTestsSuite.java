@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.InvalidTicketExceptionTests;
 import org.apereo.cas.ticket.ServiceTicketImplTests;
 import org.apereo.cas.ticket.TicketGrantingTicketImplTests;
 import org.apereo.cas.ticket.TicketSerializersTests;
+import org.apereo.cas.ticket.TransientSessionTicketImplTests;
 import org.apereo.cas.ticket.UnrecognizableServiceForServiceTicketValidationExceptionTests;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicyTests;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicyTests;
@@ -21,6 +22,7 @@ import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandlerTests;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandlerTests;
 import org.apereo.cas.ticket.registry.CachingTicketRegistryTests;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleanerTests;
+import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupportTests;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryTests;
 import org.apereo.cas.ticket.registry.DistributedTicketRegistryTests;
 import org.apereo.cas.ticket.serialization.DefaultTicketStringSerializationManagerTests;
@@ -55,6 +57,8 @@ import org.junit.runner.RunWith;
     CachingTicketRegistryTests.class,
     DistributedTicketRegistryTests.class,
     Cas10ProxyHandlerTests.class,
+    TransientSessionTicketImplTests.class,
+    DefaultTicketRegistrySupportTests.class,
     DefaultTransientSessionTicketFactoryTests.class,
     TicketEncryptionDecryptionTests.class,
     DefaultUniqueTicketIdGeneratorTests.class,

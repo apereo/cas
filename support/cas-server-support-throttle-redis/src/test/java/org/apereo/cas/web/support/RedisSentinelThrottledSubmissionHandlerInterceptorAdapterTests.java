@@ -1,7 +1,6 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.config.CasRedisThrottlingConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
@@ -27,7 +26,6 @@ import org.springframework.boot.test.context.SpringBootTest;
         "cas.audit.redis.port=6379"
     })
 @Getter
-@EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 6379)
 public class RedisSentinelThrottledSubmissionHandlerInterceptorAdapterTests extends
     BaseThrottledSubmissionHandlerInterceptorAdapterTests {

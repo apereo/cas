@@ -3,7 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Tag;
@@ -36,7 +36,7 @@ import org.springframework.context.event.EventListener;
         "cas.serviceRegistry.couchbase.bucket=testbucket"
     })
 @Tag("Couchbase")
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 8091)
 @Execution(ExecutionMode.SAME_THREAD)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ResourceLock("Couchbase")

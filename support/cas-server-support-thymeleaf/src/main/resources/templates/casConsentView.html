@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{screen.consent.title}">Consent View</title>
+    <link type="text/css" href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+
+    <script th:inline="javascript">
+
+        /*<![CDATA[*/
+        var data = {
+            attributes: /*[[${attributes}]]*/
+        };
+
+        alert(strings.info);
+
+        function jqueryReady() {
+            var consentjs = /*[[@{/js/consent.js}]]*/
+                $.getScript(consentjs, function (data, textStatus, jqxhr) {
+                });
+        }
+
+        /*]]>*/
+    </script>
+
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content">
+        <h2 th:text="#{screen.consent.title}" class="text-center">Attribute Consent</h2>
+
+        <div id="consent-tabs" class="mdc-tab-bar" role="tablist">
+            <div class="mdc-tab-scroller">
+                <div class="mdc-tab-scroller__scroll-area">
+                    <div class="mdc-tab-scroller__scroll-content">
+                        <button class="mdc-tab" role="tab" aria-selected="true">
+                            <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label" th:text="#{screen.consent.attributes}">Attributes</span>
+                            </span>
+                            <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                            <span class="mdc-tab__ripple"></span>
+                        </button>
+                        <button class="mdc-tab" role="tab" aria-selected="true">
+                            <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label" th:text="#{screen.consent.options}">Options</span>
+                            </span>
+                            <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                            <span class="mdc-tab__ripple"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form method="post" id="fm1" th:action="@{/login}" class="mdc-card p-4 m-auto d-block mb-4">
+            <section id="consent-tab-0" class="consent-tab">
+                <div class="" id="attributesPanel" role="tabpanel" aria-labelledby="attributes-tab">
+                    <p th:utext="#{screen.consent.attributes.header(${service.id})}">The following attributes will be released to</p>
+
+
+                    <div class="w-100 mdc-data-table mx-auto my-4" id="divAttributes">
+                        <table id="attributesTable" class="mdc-data-table__table">
+                            <thead>
+                            <tr class="mdc-data-table__header-row">
+                                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Attribute</th>
+                                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
+                            </tr>
+                            </thead>
+                            <tbody class="mdc-data-table__content">
+                            <tr th:each="attribute : ${attributes}" class="mdc-data-table__row">
+                                <td class="mdc-data-table__cell">
+                                    <code>
+                                        <span th:if="${attribute.friendlyName}" th:utext="${attribute.friendlyName}"/>
+                                        <span th:unless="${attribute.friendlyName}" th:utext="${attribute.name}"/>
+                                    </code>
+                                </td>
+                                <td class="mdc-data-table__cell"><code><span th:utext="${attribute.values}"/></code></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="consent-tab-1" class="d-none consent-tab">
+                <div class="mb-4">
+                    <h3 class="bg-primary p-2 mdc-typography mdc-typography--headline6 mb-2" th:text="#{screen.consent.options.header}">
+                        How should I be prompted for consent again?
+                    </h3>
+                    <div class="mdc-check-help">
+                        <div class="mdc-form-field">
+                            <div class="mdc-radio">
+                                <input class="mdc-radio__native-control"
+                                       type="radio"
+                                       name="option"
+                                       id="optionAlways"
+                                       value="0"
+                                       th:checked="${option == 0}"
+                                       onclick="optionSelected()"/>
+                                <div class="mdc-radio__background">
+                                    <div class="mdc-radio__outer-circle"></div>
+                                    <div class="mdc-radio__inner-circle"></div>
+                                </div>
+                                <div class="mdc-radio__ripple"></div>
+                            </div>
+                            <label for="optionAlways" th:utext="#{screen.consent.options.always}">Always</label>
+                        </div>
+                        <div class="mdc-typography mdc-typography--body2 pl-4 ml-4" aria-hidden="true"
+                             th:text="#{screen.consent.options.desc.always(${service.id})}">
+                            This will be displayed on your public profile
+                        </div>
+                    </div>
+                    <div class="mdc-check-help">
+                        <div class="mdc-form-field">
+                            <div class="mdc-radio">
+                                <input class="mdc-radio__native-control"
+                                       type="radio"
+                                       name="option"
+                                       id="optionAttributeName"
+                                       value="1"
+                                       th:checked="${option == 1}"
+                                       onclick="optionSelected()">
+                                <div class="mdc-radio__background">
+                                    <div class="mdc-radio__outer-circle"></div>
+                                    <div class="mdc-radio__inner-circle"></div>
+                                </div>
+                                <div class="mdc-radio__ripple"></div>
+                            </div>
+                            <label for="optionAlways" th:utext="#{screen.consent.options.attributename}">Always</label>
+                        </div>
+                        <div class="mdc-typography mdc-typography--body2 pl-4 ml-4" aria-hidden="true"
+                             th:text="#{screen.consent.options.desc.attributename(${service.id})}">
+                            This will be displayed on your public profile
+                        </div>
+                    </div>
+                    <div class="mdc-check-help">
+                        <div class="mdc-form-field">
+                            <div class="mdc-radio">
+                                <input class="mdc-radio__native-control"
+                                       type="radio"
+                                       name="option"
+                                       id="optionAttributeValue"
+                                       value="2"
+                                       th:checked="${option == 2}"
+                                       onclick="optionSelected()">
+                                <div class="mdc-radio__background">
+                                    <div class="mdc-radio__outer-circle"></div>
+                                    <div class="mdc-radio__inner-circle"></div>
+                                </div>
+                                <div class="mdc-radio__ripple"></div>
+                            </div>
+                            <label for="optionAttributeName" th:utext="#{screen.consent.options.attributevalue}">Attribute Value</label>
+                        </div>
+                        <div class="mdc-typography mdc-typography--body2 pl-4 ml-4" aria-hidden="true"
+                             th:utext="#{screen.consent.options.desc.attributevalue.intro} +
+                                '<ul><li>' +
+                                #{screen.consent.options.desc.attributevalue.first(${service.id})} +
+                                '</li><li>' +
+                                #{screen.consent.options.desc.attributevalue.second(${service.id})} +
+                                '</li><li>' +
+                                #{screen.consent.options.desc.attributevalue.third(${service.id})} +
+                                '</li><ul>'">
+                            This will be displayed on your public profile
+                        </div>
+                    </div>
+
+                </div>
+                <div id="reminderPanel">
+                    <h3 class="bg-primary p-2 mdc-typography mdc-typography--headline6 mb-2"
+                        th:text="#{screen.consent.options.reminder.header}">
+                        How often should I be reminded to consent again?
+                    </h3>
+                    <p class="mdc-typography mdc-typography--body2 mb-4" th:text="#{screen.consent.options.reminder.expl(${service.id})}">
+                        Show the consent screen, as a reminder, in the event that there is no change to the collection of attributes released to {0}.
+                    </p>
+                    <div class="d-flex mt-2">
+                        <div class="mdc-text-field  mr-2">
+                            <input class="mdc-text-field__input" name="reminder" id="reminder" type="number" th:value="${reminder}">
+                            <label for="reminder" class="mdc-floating-label">Reminder</label>
+                        </div>
+                        <select name="reminderTimeUnit" id="reminderTimeUnit" class="custom-select">
+                            <option value="seconds" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'seconds'}"
+                                    th:text="#{screen.consent.options.timeunit.seconds}">Seconds
+                            </option>
+                            <option value="minutes"
+                                    th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'minutes'}"
+                                    th:text="#{screen.consent.options.timeunit.minutes}">Minutes
+                            </option>
+                            <option value="hours"
+                                    th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'hours'}"
+                                    th:text="#{screen.consent.options.timeunit.hours}">Hours
+                            </option>
+                            <option value="days"
+                                    th:selected="${#strings.toLowerCase(reminderTimeUnit) == 'days'}"
+                                    th:text="#{screen.consent.options.timeunit.days}">Days
+                            </option>
+                            <option value="weeks"
+                                    th:selected="${#strings.toLowerCase(reminderTimeUnit) == 'weeks'}"
+                                    th:text="#{screen.consent.options.timeunit.weeks}">Weeks
+                            </option>
+                            <option value="months"
+                                    th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'months'}"
+                                    th:text="#{screen.consent.options.timeunit.months}">Months
+                            </option>
+                            <option value="years"
+                                    th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'years'}"
+                                    th:text="#{screen.consent.options.timeunit.years}">Years
+                            </option>
+                        </select>
+                    </div>
+            </section>
+            </section>
+            <section class="cas-section">
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="_eventId" value="confirm"/>
+            </section>
+            <hr class="my-4"/>
+            <section class="cas-section form-actions mt-4 d-flex justify-content-center">
+                <button class="mdc-button mdc-button--raised mr-2"
+                        name="confirm"
+                        accesskey="l"
+                        type="submit">
+                    <span class="mdc-button__label" th:text="#{screen.consent.confirm}">Confirm</span>
+                </button>
+                <a class="mdc-button mdc-button--outlined" id="cancel" name="cancel"
+                   th:href="@{/login}">
+                    <span class="mdc-button__label" th:text="#{screen.consent.cancel}">Cancel</span>
+                </a>
+            </section>
+        </form>
+
+        <script type="text/javascript" th:inline="javascript">
+            let div = document.querySelector('#divAttributes');
+            new mdc.dataTable.MDCDataTable(div);
+        </script>
+
+    </div>
+</main>
+</body>
+</html>

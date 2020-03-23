@@ -4,7 +4,6 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -55,8 +54,8 @@ public class AcceptableUsagePolicyVerifyAction extends AbstractAction {
             val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
 
-            val aupEnabled = RegisteredServiceProperty.RegisteredServiceProperties
-                .ACCEPTABLE_USAGE_POLICY_ENABLED.getPropertyBooleanValue(registeredService);
+            val aupEnabled = registeredService.getAcceptableUsagePolicy() != null
+                && registeredService.getAcceptableUsagePolicy().isEnabled();
             if (!aupEnabled) {
                 return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED);
             }

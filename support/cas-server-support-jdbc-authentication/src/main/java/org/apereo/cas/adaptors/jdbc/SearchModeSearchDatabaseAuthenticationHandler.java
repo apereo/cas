@@ -33,9 +33,11 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
     private final String fieldPassword;
     private final String tableUsers;
 
-    public SearchModeSearchDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public SearchModeSearchDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                                         final PrincipalFactory principalFactory,
                                                          final Integer order, final DataSource datasource,
-                                                         final String fieldUser, final String fieldPassword, final String tableUsers) {
+                                                         final String fieldUser, final String fieldPassword,
+                                                         final String tableUsers) {
         super(name, servicesManager, principalFactory, order, datasource);
         this.fieldUser = fieldUser;
         this.fieldPassword = fieldPassword;

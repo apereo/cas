@@ -1,9 +1,11 @@
 package org.apereo.cas.web.flow.login;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +28,10 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 public class SendTicketGrantingTicketAction extends AbstractAction {
     private final CentralAuthenticationService centralAuthenticationService;
+
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
-    private final SingleSignOnParticipationStrategy renewalStrategy;
+
+    private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
 
     @Override
     protected Event doExecute(final RequestContext context) {
@@ -41,11 +45,15 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
 
         if (WebUtils.isAuthenticatingAtPublicWorkstation(context)) {
             LOGGER.info("Authentication is at a public workstation. SSO cookie will not be generated. Requests will be challenged for authentication.");
-        } else if (this.renewalStrategy.supports(context)) {
-            val createCookie = renewalStrategy.isCreateCookieOnRenewedAuthentication(context) || this.renewalStrategy.isParticipating(context);
+        } else if (this.singleSignOnParticipationStrategy.supports(context)) {
+            val createCookie = singleSignOnParticipationStrategy.isCreateCookieOnRenewedAuthentication(context) == TriStateBoolean.TRUE
+                || this.singleSignOnParticipationStrategy.isParticipating(context);
             if (createCookie) {
                 LOGGER.debug("Setting ticket-granting cookie for current session linked to [{}].", ticketGrantingTicketId);
-                this.ticketGrantingTicketCookieGenerator.addCookie(context, ticketGrantingTicketId);
+                val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+                val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+                this.ticketGrantingTicketCookieGenerator.addCookie(request, response,
+                    CookieRetrievingCookieGenerator.isRememberMeAuthentication(context), ticketGrantingTicketId);
             } else {
                 LOGGER.info("Authentication session is renewed but CAS is not configured to create the SSO session. "
                     + "SSO cookie will not be generated. Subsequent requests will be challenged for credentials.");

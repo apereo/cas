@@ -201,6 +201,12 @@ public interface AuthenticationBuilder extends Serializable {
     AuthenticationBuilder mergeAttribute(String key, List<Object> value);
 
     /**
+     * Retrieve the authentication date/time as indicated by this builder.
+     * @return authn date/time
+     */
+    ZonedDateTime getAuthenticationDate();
+
+    /**
      * Has attribute boolean.
      *
      * @param name  the name

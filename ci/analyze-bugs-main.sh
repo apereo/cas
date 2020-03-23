@@ -27,7 +27,7 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 gradleBuild="$gradleBuild spotbugsMain -x test -x javadoc \
-     -DskipGradleLint=true -DskipNestedConfigMetadataGen=true \
+     -DskipNestedConfigMetadataGen=true \
      -DshowStandardStreams=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then

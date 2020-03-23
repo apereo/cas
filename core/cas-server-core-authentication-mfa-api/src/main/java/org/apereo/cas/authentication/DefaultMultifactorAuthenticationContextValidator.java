@@ -31,8 +31,9 @@ import java.util.stream.Collectors;
 public class DefaultMultifactorAuthenticationContextValidator implements MultifactorAuthenticationContextValidator {
 
     private final String authenticationContextAttribute;
-    private final String globalFailureMode;
+
     private final String mfaTrustedAuthnAttributeName;
+
     private final ConfigurableApplicationContext applicationContext;
 
     private static Optional<MultifactorAuthenticationProvider> locateRequestedProvider(

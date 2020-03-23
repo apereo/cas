@@ -7,6 +7,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -18,6 +19,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @RequiresModule(name = "cas-server-support-saml-idp-metadata-aws-s3")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class AmazonS3SamlMetadataProperties extends BaseAmazonWebServicesProperties {
     private static final long serialVersionUID = 352435146313504995L;
 

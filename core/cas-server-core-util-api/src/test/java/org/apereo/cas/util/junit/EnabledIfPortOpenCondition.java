@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.support.AnnotationSupport;
 
 import java.lang.reflect.AnnotatedElement;
+import java.util.Arrays;
 
 /**
  * This is {@link EnabledIfPortOpenCondition}.
@@ -18,6 +19,21 @@ import java.lang.reflect.AnnotatedElement;
  */
 public class EnabledIfPortOpenCondition implements ExecutionCondition {
     private static final ConditionEvaluationResult ENABLED_BY_DEFAULT = ConditionEvaluationResult.enabled("@EnabledIfPortOpen is not present");
+
+    private static ConditionEvaluationResult enableIfOpen(final EnabledIfPortOpen annotation, final AnnotatedElement element) {
+        val ports = annotation.port();
+        if (ports.length == 0) {
+            throw new IllegalArgumentException("At least one port must be defined");
+        }
+        for (val port : ports) {
+            if (port > 0 && SocketUtils.isTcpPortAvailable(port)) {
+                return ConditionEvaluationResult.disabled(String.format("%s is disabled because %s is not in use", element, port));
+            }
+        }
+        return ConditionEvaluationResult.enabled(
+            String.format("%s is enabled because all ports (%s) is open.", element, Arrays.toString(ports)));
+    }
+
     @Override
     public ConditionEvaluationResult evaluateExecutionCondition(final ExtensionContext extensionContext) {
         val element = extensionContext
@@ -26,16 +42,5 @@ public class EnabledIfPortOpenCondition implements ExecutionCondition {
         return AnnotationSupport.findAnnotation(element, EnabledIfPortOpen.class)
             .map(annotation -> enableIfOpen(annotation, element))
             .orElse(ENABLED_BY_DEFAULT);
-    }
-
-    private static ConditionEvaluationResult enableIfOpen(final EnabledIfPortOpen annotation, final AnnotatedElement element) {
-        val port = annotation.port();
-        if (port <= 0) {
-            throw new IllegalArgumentException("Port must be positive.");
-        }
-        if (SocketUtils.isTcpPortAvailable(port)) {
-            return ConditionEvaluationResult.disabled(String.format("%s is disabled because %s is not in use", element, port));
-        }
-        return ConditionEvaluationResult.enabled(String.format("%s is enabled because %s is open.", element, port));
     }
 }

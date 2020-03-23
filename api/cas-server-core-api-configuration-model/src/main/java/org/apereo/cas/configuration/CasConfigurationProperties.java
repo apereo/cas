@@ -46,6 +46,7 @@ import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -60,6 +61,7 @@ import java.io.Serializable;
 @ConfigurationProperties(value = "cas")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class CasConfigurationProperties implements Serializable {
     /**
      * Prefix used for all CAS-specific settings.

@@ -18,13 +18,13 @@ import org.springframework.context.annotation.Configuration;
 public class JpaTicketRegistryTicketCatalogConfiguration extends CasCoreTicketCatalogConfiguration {
     @Override
     protected void buildAndRegisterTicketGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setCascade(true);
+        metadata.getProperties().setCascadeRemovals(true);
         super.buildAndRegisterTicketGrantingTicketDefinition(plan, metadata);
     }
 
     @Override
     protected void buildAndRegisterProxyGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setCascade(true);
+        metadata.getProperties().setCascadeRemovals(true);
         super.buildAndRegisterProxyGrantingTicketDefinition(plan, metadata);
     }
 }

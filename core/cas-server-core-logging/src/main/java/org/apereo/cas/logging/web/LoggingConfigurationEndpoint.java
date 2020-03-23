@@ -52,12 +52,17 @@ import java.util.Set;
 public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint implements InitializingBean {
 
     private static final String LOGGER_NAME_ROOT = "root";
+
     private static final String FILE_PARAM = "file";
+
     private static final String FILE_PATTERN_PARAM = "filePattern";
+
     private final Environment environment;
+
     private final ResourceLoader resourceLoader;
 
     private LoggerContext loggerContext;
+
     private Resource logConfigurationFile;
 
     public LoggingConfigurationEndpoint(final CasConfigurationProperties casProperties,
@@ -70,6 +75,24 @@ public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint implem
 
     private static ILoggerFactory getCasLoggerFactoryInstance() {
         return LoggerFactory.getILoggerFactory();
+    }
+
+    @SneakyThrows
+    private static Optional<Pair<Resource, LoggerContext>> buildLoggerContext(final Environment environment, final ResourceLoader
+        resourceLoader) {
+        val logFile = environment.getProperty("logging.config", "classpath:/log4j2.xml");
+        LOGGER.info("Located logging configuration reference in the environment as [{}]", logFile);
+
+        if (ResourceUtils.doesResourceExist(logFile, resourceLoader)) {
+            val logConfigurationFile = resourceLoader.getResource(logFile);
+            LOGGER.trace("Loaded logging configuration resource [{}]. Initializing logger context...", logConfigurationFile);
+            val loggerContext = Configurator.initialize("CAS", null, logConfigurationFile.getURI());
+            LOGGER.trace("Installing log configuration listener to detect changes and update");
+            loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
+            return Optional.of(Pair.of(logConfigurationFile, loggerContext));
+        }
+        LOGGER.warn("Logging configuration cannot be found in the environment settings");
+        return Optional.empty();
     }
 
     @Override
@@ -192,23 +215,5 @@ public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint implem
                 cfg.setAdditive(additive);
             });
         this.loggerContext.updateLoggers();
-    }
-
-    @SneakyThrows
-    private static Optional<Pair<Resource, LoggerContext>> buildLoggerContext(final Environment environment, final ResourceLoader
-        resourceLoader) {
-        val logFile = environment.getProperty("logging.config", "classpath:/log4j2.xml");
-        LOGGER.info("Located logging configuration reference in the environment as [{}]", logFile);
-
-        if (ResourceUtils.doesResourceExist(logFile, resourceLoader)) {
-            val logConfigurationFile = resourceLoader.getResource(logFile);
-            LOGGER.trace("Loaded logging configuration resource [{}]. Initializing logger context...", logConfigurationFile);
-            val loggerContext = Configurator.initialize("CAS", null, logConfigurationFile.getURI());
-            LOGGER.trace("Installing log configuration listener to detect changes and update");
-            loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
-            return Optional.of(Pair.of(logConfigurationFile, loggerContext));
-        }
-        LOGGER.warn("Logging configuration cannot be found in the environment settings");
-        return Optional.empty();
     }
 }

@@ -522,7 +522,7 @@ public class ScriptingUtils {
                 return classLoader.parseClass(script);
             });
 
-            LOGGER.debug("Preparing constructor arguments [{}] for resource [{}]", args, resource);
+            LOGGER.trace("Preparing constructor arguments [{}] for resource [{}]", args, resource);
             val ctor = clazz.getDeclaredConstructor(constructorArgs);
             val result = ctor.newInstance(args);
 
@@ -553,9 +553,6 @@ public class ScriptingUtils {
         }
         if (scriptFile.endsWith(".groovy")) {
             return "groovy";
-        }
-        if (scriptFile.endsWith(".rb")) {
-            return "ruby";
         }
         return null;
     }

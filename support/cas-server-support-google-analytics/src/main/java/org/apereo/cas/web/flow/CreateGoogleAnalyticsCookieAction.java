@@ -5,6 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CreateGoogleAnalyticsCookieAction extends AbstractAction {
     private final CasConfigurationProperties casProperties;
+
     private final CasCookieBuilder googleAnalyticsCookieBuilder;
 
     @Override
@@ -51,7 +53,11 @@ public class CreateGoogleAnalyticsCookieAction extends AbstractAction {
                 .map(Object::toString)
                 .collect(Collectors.joining(","));
             LOGGER.trace("Google analytics final cookie value is [{}]", cookieValue);
-            googleAnalyticsCookieBuilder.addCookie(requestContext, cookieValue);
+
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+            googleAnalyticsCookieBuilder.addCookie(request, response,
+                CookieRetrievingCookieGenerator.isRememberMeAuthentication(requestContext), cookieValue);
         }
         return null;
     }

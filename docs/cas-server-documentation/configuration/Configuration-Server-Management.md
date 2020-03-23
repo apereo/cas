@@ -338,6 +338,23 @@ Support is provided via the following dependency in the WAR overlay:
 
 See [this guide](Configuration-Properties.html#amazon-secrets-manager) for relevant settings.
 
+##### Amazon Systems Manager Parameter Store (SSM)
+
+CAS is also able to use [AWS Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html) 
+to locate properties and settings.
+
+Support is provided via the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-configuration-cloud-aws-ssm</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+See [this guide](Configuration-Properties.html#amazon-parameter-store) for relevant settings.
+
 ##### DynamoDb
 
 CAS is also able to use [DynamoDb](https://aws.amazon.com/dynamodb/) to locate properties and settings.

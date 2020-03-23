@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -19,6 +20,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Getter
 @Setter
 @RequiresModule(name = "cas-server-support-couchdb-authentication")
+@Accessors(chain = true)
 public class CouchDbAuthenticationProperties extends BaseCouchDbProperties {
 
     private static final long serialVersionUID = 1830797033934229732L;

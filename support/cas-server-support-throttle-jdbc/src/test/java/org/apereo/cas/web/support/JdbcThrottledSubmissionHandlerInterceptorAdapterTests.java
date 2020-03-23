@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
+import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasJdbcThrottlingConfiguration;
 
 import lombok.Getter;
@@ -18,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(classes = {
     CasJdbcThrottlingConfiguration.class,
     CasSupportJdbcAuditConfiguration.class,
+    CasHibernateJpaConfiguration.class,
     BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class
 }, properties = {
     "cas.authn.throttle.usernameParameter=username",

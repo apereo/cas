@@ -1,6 +1,17 @@
 {
   "properties": [
     {
+      "name": "cas.session-replication.session-cookie-name",
+      "type": "java.lang.String",
+      "description": "Choose the name of the cookie for session replication.",
+      "defaultValue": "DISSESSION",
+      "deprecation": {
+        "replacement": "cas.session-replication.cookie.name",
+        "reason": "Cookie settings are moved to a new cookie namespace under cas.session-replication.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.release-protocol-attributes",
       "type": "java.lang.Boolean",
       "description": "Whether to release authentication attributes.",
@@ -43,8 +54,7 @@
     {
       "name": "cas.authn.saml-idp.scope",
       "type": "java.lang.String",
-      "description": "Definition of scope for CAS acting as a SAML IdP",
-      "deprecated": true,
+      "description": "Definition of scope for CAS acting as a SAML IdP.",
       "deprecation": {
         "replacement": "cas.server.scope",
         "reason": "Property is moved to cas.server.scope to be applied globally.",

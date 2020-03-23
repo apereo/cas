@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.credential;
 
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.AllArgsConstructor;
@@ -31,8 +30,8 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-public class UsernamePasswordCredential implements Credential {
+@EqualsAndHashCode(callSuper = true)
+public class UsernamePasswordCredential extends AbstractCredential {
     /**
      * Authentication attribute name for password.
      **/
@@ -66,19 +65,21 @@ public class UsernamePasswordCredential implements Credential {
      * @param context the context
      */
     public void validate(final ValidationContext context) {
-        if (!context.getUserEvent().equalsIgnoreCase("submit")) {
+        val messages = context.getMessageContext();
+        if (!context.getUserEvent().equalsIgnoreCase("submit") || messages.hasErrorMessages()) {
             return;
         }
 
-        val messages = context.getMessageContext();
         ApplicationContextProvider.getCasConfigurationProperties().ifPresent(props -> {
             if (StringUtils.isBlank(source) && props.getAuthn().getPolicy().isSourceSelectionEnabled()) {
                 messages.addMessage(new MessageBuilder()
                     .error()
                     .source("source")
+                    .defaultText("Required Source")
                     .code("source.required")
                     .build());
             }
         });
+        super.validate(context);
     }
 }

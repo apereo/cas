@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
@@ -21,7 +20,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.samlIdp.metadata.jpa.dialect=org.hibernate.dialect.Oracle12cDialect"
 })
 @EnabledIfPortOpen(port = 1521)
-@EnabledIfContinuousIntegration
 @Tag("Oracle")
 public class OracleJpaSamlIdPMetadataGeneratorTests extends JpaSamlIdPMetadataGeneratorTests {
 }

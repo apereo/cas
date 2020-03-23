@@ -6,6 +6,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasSupportCouchbaseAuditConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -35,6 +36,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 })
 @Tag("Couchbase")
 @Getter
+@EnabledIfPortOpen(port = 8091)
 public class CouchbaseAuditTrailManagerTests extends BaseAuditConfigurationTests {
 
     @Autowired

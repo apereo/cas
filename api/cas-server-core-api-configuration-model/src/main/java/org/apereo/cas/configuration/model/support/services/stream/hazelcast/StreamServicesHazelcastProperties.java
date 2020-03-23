@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -17,6 +18,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @RequiresModule(name = "cas-server-support-service-registry-stream-hazelcast")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class StreamServicesHazelcastProperties extends BaseStreamServicesProperties {
 
     private static final long serialVersionUID = -1583614089051161614L;

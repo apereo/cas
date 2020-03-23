@@ -27,7 +27,8 @@ import java.util.ArrayList;
  */
 public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
-    public BindModeSearchDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public BindModeSearchDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                                       final PrincipalFactory principalFactory,
                                                        final Integer order, final DataSource dataSource) {
         super(name, servicesManager, principalFactory, order, dataSource);
     }

@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
@@ -19,7 +18,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.serviceRegistry.jpa.url=jdbc:sqlserver://localhost:1433;databaseName=services",
     "cas.serviceRegistry.jpa.dialect=org.hibernate.dialect.SQLServer2012Dialect"
 })
-@EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 1433)
 @Tag("MsSqlServer")
 public class JpaServiceRegistryMicrosoftSqlServerTests extends JpaServiceRegistryTests {

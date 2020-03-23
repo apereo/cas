@@ -19,19 +19,33 @@ package org.apereo.cas.ticket;
 public interface TicketDefinitionProperties {
 
     /**
+     * Sets exclude from cascade.
+     *
+     * @param value the value
+     */
+    void setExcludeFromCascade(boolean value);
+
+    /**
+     * Is exclude from cascade ?
+     *
+     * @return the boolean
+     */
+    boolean isExcludeFromCascade();
+
+    /**
      * Generically describes if this ticket is linked to all ticket entities
      * such that for normal CRUD operations, cascades may be required.
      *
      * @return true /false
      */
-    boolean isCascade();
+    boolean isCascadeRemovals();
 
     /**
      * Sets cascade ticket.
      *
      * @param cascadeTicket the cascade ticket
      */
-    void setCascade(boolean cascadeTicket);
+    void setCascadeRemovals(boolean cascadeTicket);
 
     /**
      * Generic cache/storage name this ticket may want to associate with itself

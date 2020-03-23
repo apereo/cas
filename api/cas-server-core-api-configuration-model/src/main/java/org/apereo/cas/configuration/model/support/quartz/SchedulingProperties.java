@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class SchedulingProperties implements Serializable {
 
     private static final long serialVersionUID = -1522227059439367394L;

@@ -1,0 +1,23 @@
+package org.apereo.cas.shell.commands.util;
+
+import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * This is {@link GenerateJwtCommandTests}.
+ *
+ * @author Misagh Moayyed
+ * @since 6.2.0
+ */
+@EnableAutoConfiguration
+public class GenerateJwtCommandTests extends BaseCasShellCommandTests {
+    @Test
+    public void verifyOperation() {
+        assertDoesNotThrow(() -> shell.evaluate(() -> "generate-jwt --subject casuser"));
+    }
+}
+

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
@@ -34,7 +35,9 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
     private final boolean renewEnabled;
 
     private final TicketRegistrySupport ticketRegistrySupport;
+
     private final AuthenticationServiceSelectionPlan serviceSelectionStrategy;
+
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
@@ -76,6 +79,18 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
         return true;
     }
 
+    @Override
+    public TriStateBoolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
+        val registeredService = determineRegisteredService(context);
+        if (registeredService != null) {
+            val ssoPolicy = registeredService.getSingleSignOnParticipationPolicy();
+            if (ssoPolicy != null) {
+                return ssoPolicy.isCreateCookieOnRenewedAuthentication();
+            }
+        }
+        return TriStateBoolean.fromBoolean(this.createCookieOnRenewedAuthentication);
+    }
+
     private RegisteredService determineRegisteredService(final RequestContext requestContext) {
         val registeredService = WebUtils.getRegisteredService(requestContext);
         if (registeredService != null) {
@@ -87,10 +102,5 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
             return this.servicesManager.findServiceBy(serviceToUse);
         }
         return null;
-    }
-
-    @Override
-    public boolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
-        return this.createCookieOnRenewedAuthentication;
     }
 }

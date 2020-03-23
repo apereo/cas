@@ -14,6 +14,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -42,8 +43,9 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
                                                              final boolean enableDeviceRegistration,
                                                              final ConfigurableApplicationContext applicationContext,
                                                              final CasConfigurationProperties casProperties,
-                                                             final Optional<FlowDefinitionRegistry> mfaFlowDefinitionRegistry) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties, mfaFlowDefinitionRegistry);
+                                                             final Optional<FlowDefinitionRegistry> mfaFlowDefinitionRegistry,
+                                                             final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties, mfaFlowDefinitionRegistry, mfaFlowCustomizers);
         this.enableDeviceRegistration = enableDeviceRegistration;
     }
 
@@ -131,6 +133,5 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
                 throw new IllegalArgumentException(String.format(msg, ACTION_ID_MFA_VERIFY_TRUST_ACTION));
             }
         });
-
     }
 }

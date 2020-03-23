@@ -64,6 +64,8 @@ in each case to learn the exact unit of measure.
 # ${configurationKey}.name=
 # ${configurationKey}.secure=true
 # ${configurationKey}.httpOnly=true
+# ${configurationKey}.sameSitePolicy=none|lax|strict
+# ${configurationKey}.comment=CAS Cookie
 ```                               
 
 ## Job Scheduling
@@ -298,7 +300,7 @@ The following options related to JPA/JDBC support in CAS apply equally to a numb
 # ${configurationKey}.defaultCatalog=
 # ${configurationKey}.defaultSchema=
 # ${configurationKey}.ddlAuto=create-drop
-# ${configurationKey}.physicalNamingStrategyClassName=org.apereo.cas.jpa.CasHibernatePhysicalNamingStrategy
+# ${configurationKey}.physicalNamingStrategyClassName=org.apereo.cas.hibernate.CasHibernatePhysicalNamingStrategy
 
 # ${configurationKey}.autocommit=false
 # ${configurationKey}.idleTimeout=5000
@@ -513,6 +515,7 @@ The following options related to Hazelcast support in CAS apply equally to a num
 # ${configurationKey}.cluster.port=5701
 
 # ${configurationKey}.licenseKey=
+# ${configurationKey}.enableCompression=false
 ```
 
 More advanced Hazelcast configuration settings are listed below, given the component's *configuration key*:
@@ -1115,6 +1118,7 @@ to an external provider such as Yahoo, given the provider's *configuration key*:
 # ${configurationKey}.secret=
 # ${configurationKey}.clientName=My Provider
 # ${configurationKey}.autoRedirect=false
+# ${configurationKey}.cssClass=
 # ${configurationKey}.principalAttributeId=
 # ${configurationKey}.enabled=true
 ```
@@ -1149,7 +1153,7 @@ The following  options apply  to features that integrate with an LDAP server (i.
 #${configurationKey}.bindDn=cn=Directory Manager,dc=example,dc=org
 #${configurationKey}.bindCredential=Password
 
-#${configurationKey}.poolPassivator=NONE|CLOSE|BIND
+#${configurationKey}.poolPassivator=NONE|BIND
 #${configurationKey}.connectionStrategy=
 #${configurationKey}.connectTimeout=PT5S
 #${configurationKey}.trustCertificates=
@@ -1159,6 +1163,7 @@ The following  options apply  to features that integrate with an LDAP server (i.
 #${configurationKey}.keystore=
 #${configurationKey}.keystorePassword=
 #${configurationKey}.keystoreType=JKS|JCEKS|PKCS12
+#${configurationKey}.disablePooling=false
 #${configurationKey}.minPoolSize=3
 #${configurationKey}.maxPoolSize=10
 #${configurationKey}.validateOnCheckout=true
@@ -1197,7 +1202,6 @@ The following options can be used to passivate objects when they are checked bac
 | Type                    | Description
 |-------------------------|----------------------------------------------------------------------------------------------------
 | `NONE`                  | No passivation takes place.
-| `CLOSE`                 | Passivates a connection by attempting to close it.
 | `BIND`                  | The default behavior which passivates a connection by performing a bind operation on it. This option requires the availability of bind credentials when establishing connections to LDAP.
 
 #### Why Passivators?

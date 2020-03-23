@@ -160,7 +160,8 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         return new DefaultProxyGrantingTicketFactory(
             proxyGrantingTicketUniqueIdGenerator(),
             proxyGrantingTicketExpirationPolicy(),
-            protocolTicketCipherExecutor());
+            protocolTicketCipherExecutor(),
+            servicesManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "defaultProxyTicketFactory")

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetcher;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
@@ -21,7 +22,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SurrogatePrincipalBuilder {
     private final PrincipalFactory principalFactory;
+
     private final IPersonAttributeDao attributeRepository;
+
     private final SurrogateAuthenticationService surrogateAuthenticationService;
 
 
@@ -38,7 +41,15 @@ public class SurrogatePrincipalBuilder {
         if (registeredService != null) {
             repositories.addAll(registeredService.getAttributeReleasePolicy().getPrincipalAttributesRepository().getAttributeRepositoryIds());
         }
-        val attributes = CoreAuthenticationUtils.retrieveAttributesFromAttributeRepository(attributeRepository, surrogate, repositories);
+
+        val attributes = PrincipalAttributeRepositoryFetcher.builder()
+            .attributeRepository(attributeRepository)
+            .principalId(surrogate)
+            .activeAttributeRepositoryIdentifiers(repositories)
+            .currentPrincipal(primaryPrincipal)
+            .build()
+            .retrieve();
+
         val principal = principalFactory.createPrincipal(surrogate, attributes);
         return new SurrogatePrincipal(primaryPrincipal, principal);
     }

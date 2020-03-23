@@ -37,7 +37,8 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discoveryProperties.setUserInfoSigningAlgValuesSupported(oidc.getUserInfoSigningAlgValuesSupported());
         discoveryProperties.setUserInfoEncryptionAlgValuesSupported(oidc.getUserInfoEncryptionAlgValuesSupported());
         discoveryProperties.setUserInfoEncryptionEncodingValuesSupported(oidc.getUserInfoEncryptionEncodingValuesSupported());
-        
+        discoveryProperties.setCodeChallengeMethodsSupported(oidc.getCodeChallengeMethodsSupported());
+
         return discoveryProperties;
     }
 

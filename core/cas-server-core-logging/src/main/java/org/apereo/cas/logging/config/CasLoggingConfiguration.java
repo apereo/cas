@@ -67,7 +67,7 @@ public class CasLoggingConfiguration {
     /**
      * Log4j configuration.
      */
-    @ConditionalOnClass(LoggerContext.class)
+    @ConditionalOnClass(value = LoggerContext.class)
     @Configuration("casLog4jConfiguration")
     public static class CasLog4jConfiguration {
         @Autowired

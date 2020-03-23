@@ -44,15 +44,23 @@ Acceptable usage policy can be disabled and skipped on a per-service basis:
   "serviceId": "https://app.example.org",
   "name": "Example",
   "id": 1,
-  "properties" : {
-    "@class" : "java.util.HashMap",
-    "acceptableUsagePolicyEnabled" : {
-      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-      "values" : [ "java.util.HashSet", [ "false" ] ]
-    }
+  "acceptableUsagePolicy":
+  {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy",
+    "enabled": true,
+    "messageCode": "example.code",
+    "text": "example text"
   }
 }
 ```                                             
+
+The policy assigned to each service includes the following features:
+
+| Field              | Description
+|--------------------|----------------------------------------------------------------------------------------------------------
+| `enabled`          | Control whether policy is active/inactive for this service. Default is `true`.
+| `messageCode`      | The policy language code that is linked to the CAS language bundles which carries the actual policy text.
+| `text`             | The policy text that should be displayed for this application.
 
 ## Storage Mechanism
 
@@ -77,7 +85,8 @@ ticket cookie.
 
 ### Groovy
 
-Alternatively, CAS can be configured to use a Groovy script to verify status of policies and store results. The script should match the following:
+Alternatively, CAS can be configured to use a Groovy script to verify status 
+of policies and store results. The script should match the following:
 
 ```groovy
 import org.apereo.cas.authentication.principal.*
@@ -107,7 +116,28 @@ def submit(Object[] args) {
      def logger = args[4]
      ...
      return true
- }
+}
+     
+/*
+    A special callback function is implemented
+    as an override to return an `AcceptableUsagePolicyTerms` 
+    object back to CAS to be re-purposed
+    for acceptable usage policy flows.
+*/
+def fetch(Object[] args) {
+    def requestContext = args[0]
+    def credential = args[1]
+    def applicationContext = args[2]
+    def principal = args[3]
+    def logger = args[4]
+
+    ...    
+
+    return AcceptableUsagePolicyTerms.builder()
+            .defaultText("Hello, World")
+            .code(AcceptableUsagePolicyTerms.CODE)
+            .build();
+}
 ```
 
 The parameters passed are as follows:
@@ -204,8 +234,20 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ### REST
 
-CAS can be configured to use a REST API as the storage mechanism. Upon accepting the policy, the API is contacted passing along a `username` parameter
-who has accepted the policy. The expected response status code is `200`.
+CAS can be configured to use a REST API as the storage mechanism. Upon accepting the policy, 
+the API is contacted passing along a `username` parameter who has accepted the policy. The expected response status code is `200`.
+
+Furthermore, the API endpoint at `${endpoint}/policy` will be invoked by CAS to fetch the appropriate policy terms.
+The API is contacted passing along `username` and `locale` parameters and the expected response status code is `200`. The response
+output body is expected to be an instance of `AcceptableUsagePolicyTerms` as such:
+
+```json
+{
+  "@class": "org.apereo.cas.aup.AcceptableUsagePolicyTerms",
+  "code": "screen.aup.policyterms.some.key",
+  "defaultText": "Default policy text"
+}
+```
 
 Support is enabled by including the following dependency in the WAR overlay:
 
@@ -216,6 +258,7 @@ Support is enabled by including the following dependency in the WAR overlay:
   <version>${cas.version}</version>
 </dependency>
 ```
+
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
 
@@ -239,3 +282,23 @@ public class MyUsagePolicyConfiguration {
 ```
 
 [See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+
+## Policy Terms
+
+Storage options outlined above are also available to fetch the acceptable usage policy
+and pass it along to the appropriate views for display and acceptance under the attribute `aupPolicy`.
+The policy terms can reference to a particular message code found in CAS language bundles, 
+or it can contain the default policy text that would be used for display verbatim.
+
+Unless the storage option overrides and specializes this ability, th default behavior to fetch policy terms
+is based on a single-valued attribute defined in CAS properties that typically might indicate user status or membership.
+The attribute value is appended to the language code `screen.aup.policyterms` to then allow CAS to look up the specific
+policy text from language bundles. If no such key is available in CAS languages bundles, a default policy text
+found under the same language key will be displayed. 
+
+The defined attribute must of course be available for the resolved authenticated principal from the relevant sources.
+
+For example, if the policy terms attribute is defined as `status` with the value of `developer`, the expected language
+code to carry the policy text would be `screen.aup.policyterms.developer=<p>Policy for developers</p>`.
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).

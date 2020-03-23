@@ -8,4 +8,7 @@ dependencies {
 
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-logging")
+    
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

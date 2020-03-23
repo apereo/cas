@@ -1,0 +1,19 @@
+description = "Apereo CAS Configuration - AWS Parameter Store"
+dependencies {
+    implementation libraries.awsssm
+
+    implementation project(":support:cas-server-support-aws")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-services-api")
+
+    testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":core:cas-server-core-authentication-attributes")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-api")
+    testImplementation project(":core:cas-server-core-web-api")
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+}

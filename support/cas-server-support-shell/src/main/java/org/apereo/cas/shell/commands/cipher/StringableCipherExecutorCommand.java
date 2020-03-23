@@ -31,21 +31,19 @@ public class StringableCipherExecutorCommand {
      * Cipher text.
      *
      * @param value                   the value
-     * @param file                    the file
      * @param secretKeyEncryption     the secret key encryption
      * @param secretKeySigning        the secret key signing
      * @param secretKeyEncryptionSize the secret key encryption size
      * @param secretKeySigningSize    the secret key signing size
      * @param encryptionEnabled       the encryption enabled
      * @param signingEnabled          the signing enabled
+     * @return the string
      */
     @SneakyThrows
     @ShellMethod(key = {"cipher-text", "encode-text"}, value = "Sign and encrypt text data using keys")
-    public void cipher(
+    public String cipher(
         @ShellOption(value = { "value", "--value" }, defaultValue = ShellOption.NULL, help = "Value to put through the cipher")
         final String value,
-        @ShellOption(value = { "file", "--file" }, defaultValue = ShellOption.NULL, help = "File path to put through the cipher")
-        final File file,
         @ShellOption(value = { "encryption-key", "--encryption-key" }, defaultValue = ShellOption.NULL, help = "Encryption key")
         final String secretKeyEncryption,
         @ShellOption(value = { "signing-key", "--signing-key" }, defaultValue = ShellOption.NULL, help = "Signing key")
@@ -62,36 +60,37 @@ public class StringableCipherExecutorCommand {
         final boolean signingEnabled) {
 
         var toEncode = value;
-        if (file != null && file.exists()) {
-            toEncode = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        if (value != null && new File(value).exists()) {
+            toEncode = FileUtils.readFileToString(new File(value), StandardCharsets.UTF_8);
         }
 
         if (StringUtils.isNotBlank(toEncode)) {
             val cipher = new ShellStringCipherExecutor(secretKeyEncryption, secretKeySigning,
                 encryptionEnabled, signingEnabled, secretKeySigningSize, secretKeyEncryptionSize);
-            LOGGER.info("Encoded value: [{}]", cipher.encode(toEncode));
+            val encoded = cipher.encode(toEncode);
+            LOGGER.info("Encoded value: [{}]", encoded);
+            return encoded;
         }
+        return null;
     }
 
     /**
      * Decipher.
      *
      * @param value                   the value
-     * @param file                    the file
      * @param secretKeyEncryption     the secret key encryption
      * @param secretKeySigning        the secret key signing
      * @param secretKeyEncryptionSize the secret key encryption size
      * @param secretKeySigningSize    the secret key signing size
      * @param encryptionEnabled       the encryption enabled
      * @param signingEnabled          the signing enabled
+     * @return the string
      */
     @SneakyThrows
     @ShellMethod(key = {"decipher-text", "decode-text"}, value = "Decrypt and verify text data using keys")
-    public void decipher(
+    public String decipher(
         @ShellOption(value = { "value", "--value" }, defaultValue = ShellOption.NULL, help = "Value to put through the cipher")
         final String value,
-        @ShellOption(value = { "file", "--file" }, defaultValue = ShellOption.NULL, help = "File path to put through the cipher")
-        final File file,
         @ShellOption(value = { "encryption-key", "--encryption-key" }, defaultValue = ShellOption.NULL, help = "Encryption key")
         final String secretKeyEncryption,
         @ShellOption(value = { "signing-key", "--signing-key" }, defaultValue = ShellOption.NULL, help = "Signing key")
@@ -108,15 +107,18 @@ public class StringableCipherExecutorCommand {
         final boolean signingEnabled) {
 
         var toEncode = value;
-        if (file != null && file.exists()) {
-            toEncode = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        if (value != null && new File(value).exists()) {
+            toEncode = FileUtils.readFileToString(new File(value), StandardCharsets.UTF_8);
         }
 
         if (StringUtils.isNotBlank(toEncode)) {
             val cipher = new ShellStringCipherExecutor(secretKeyEncryption, secretKeySigning,
                 encryptionEnabled, signingEnabled, secretKeySigningSize, secretKeyEncryptionSize);
-            LOGGER.info("Decoded value: [{}]", cipher.decode(toEncode));
+            val decoded = cipher.decode(toEncode);
+            LOGGER.info("Decoded value: [{}]", decoded);
+            return decoded;
         }
+        return null;
     }
 
     private static class ShellStringCipherExecutor extends BaseStringCipherExecutor {

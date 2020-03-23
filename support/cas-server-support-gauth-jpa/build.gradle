@@ -9,6 +9,7 @@ dependencies {
     implementation project(":support:cas-server-support-otp-mfa")
     implementation project(":support:cas-server-support-otp-mfa-core")
     implementation project(":support:cas-server-support-jpa-util")
+    implementation project(":support:cas-server-support-jpa-hibernate")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")

@@ -160,7 +160,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     /**
-     * Delete TGT's service tickets.
+     * Delete ticket-granting ticket's service tickets.
      *
      * @param ticket the ticket
      * @return the count of tickets that were removed including child tickets and zero if the ticket was not deleted

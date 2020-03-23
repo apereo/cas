@@ -37,6 +37,7 @@ import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
+import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
@@ -68,7 +69,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
-import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.junit.jupiter.api.BeforeEach;
@@ -188,7 +189,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcDefaultJsonWebKeystoreCache")
-    protected LoadingCache<String, Optional<RsaJsonWebKey>> oidcDefaultJsonWebKeystoreCache;
+    protected LoadingCache<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCache;
 
     @Autowired
     @Qualifier("oidcTokenSigningAndEncryptionService")
@@ -196,7 +197,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcServiceJsonWebKeystoreCache")
-    protected LoadingCache<OAuthRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCache;
+    protected LoadingCache<OAuthRegisteredService, Optional<PublicJsonWebKey>> oidcServiceJsonWebKeystoreCache;
 
     @Autowired
     @Qualifier("oidcJsonWebKeystoreGeneratorService")
@@ -264,6 +265,8 @@ public abstract class AbstractOidcTests {
         svc.setInformationUrl("info");
         svc.setPrivacyUrl("privacy");
         svc.setJwks("classpath:keystore.jwks");
+        svc.setLogoutUrl("https://oauth.example.org/logout,https://logout");
+        svc.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
         svc.setScopes(CollectionUtils.wrapSet(OidcConstants.StandardScopes.EMAIL.getScope(),
             OidcConstants.StandardScopes.PROFILE.getScope()));
         return svc;

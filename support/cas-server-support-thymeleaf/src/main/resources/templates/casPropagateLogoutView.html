@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{screen.logout.header}">Propagate Logout View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        function redirectToApp() {
+            window.location = [[${logoutRedirectUrl}]];
+        }
+
+        function handleCallback(index, status) {
+            if (status == 200) {
+                $('#service' + index).addClass('fa-check').removeClass('fa-question');
+                $('#service' + index).prop('title', 'Logout request was successfully received.');
+            } else {
+                $('#service' + index).addClass('fa-warning').removeClass('fa-question');
+                $('#service' + index).prop('title', 'Logout notification could not be sent.');
+            }
+        }
+
+        /*]]>*/
+    </script>
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content">
+        <div class="alert alert-success">
+            <h2 th:utext="#{screen.logout.header}">Logout successful</h2>
+            <p th:utext="#{screen.logout.fc.success}">You have successfully logged out of the Central Authentication
+                Service. Given single logout is enabled with CAS, \
+                the following list of applications are <strong> only notified</strong> to log you out and destroy your
+                user session. Remember that this \
+                is just a notification, not a guarantee. It is up the application itself to honor these notifications
+                and properly take action to log you \
+                out.</p>
+            <ol start="a">
+                <li th:each="entry,iterStat : ${logoutUrls}">
+                    <script type="text/javascript" th:inline="javascript">
+                        /*<![CDATA[*/
+                        $.ajax({
+                            url: [[${entry.key.logoutUrl.toExternalForm()}]],
+                            dataType: 'jsonp',
+                            async: true,
+                            contentType: [[${entry.value.contentType}]]
+                            , data: [[${entry.value.message}]]
+                            , success: function (data) {
+                                var index = [[${iterStat.index}]];
+                                handleCallback(index, 200);
+                            },
+                            error: function (err, textStatus, errorThrown) {
+                                var index = [[${iterStat.index}]];
+                                handleCallback(index, err.status);
+                            }
+                        });
+                        /*]]>*/
+                    </script>
+
+                    <p>
+                        <i data-toggle="tooltip" data-placement="top" class="fa fa-question"
+                           th:id="${'service'+iterStat.index}" title="Logout request pending..."> </i>
+                        <kbd th:text="${entry.key.service.id}">entry.key.service.id</kbd>
+                    </p>
+                </li>
+            </ol>
+
+            <p th:utext="#{screen.logout.security}">For security reasons, exit your web browser.</p>
+
+            <button type="button" th:if="${logoutRedirectUrl}"
+                   class="mdc-button mdc-button--raised" onclick="redirectToApp();"
+                   th:value="${'Go to ' + logoutRedirectUrl}" value="Go to...">
+                   <span class="mdc-button__label" th:text="${'Go to ' + logoutRedirectUrl}"></span>
+            </button>
+        </div>
+    </div>
+</main>
+</body>
+</html>

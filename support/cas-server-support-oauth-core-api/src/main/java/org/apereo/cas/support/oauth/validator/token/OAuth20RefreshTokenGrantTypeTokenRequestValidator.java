@@ -35,8 +35,9 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
     protected boolean validateInternal(final JEEContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
         val request = context.getNativeRequest();
+        val clientId = OAuth20Utils.getClientIdAndClientSecret(context).getLeft();
         if (!HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REFRESH_TOKEN)
-            || !HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CLIENT_ID)) {
+            || clientId.isEmpty()) {
             return false;
         }
 
@@ -55,7 +56,6 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
             return false;
         }
 
-        val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
             getConfigurationContext().getServicesManager(), clientId);

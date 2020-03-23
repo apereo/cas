@@ -24,14 +24,14 @@ import java.util.concurrent.TimeUnit;
  * @since 6.1.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@ToString
+@ToString(callSuper = true)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @Slf4j
-public abstract class BaseDateTimeRegisteredServiceSingleSignOnParticipationPolicy implements RegisteredServiceSingleSignOnParticipationPolicy {
+public abstract class BaseDateTimeRegisteredServiceSingleSignOnParticipationPolicy extends DefaultRegisteredServiceSingleSignOnParticipationPolicy {
     private static final long serialVersionUID = -5923946898337761319L;
 
     private TimeUnit timeUnit = TimeUnit.SECONDS;

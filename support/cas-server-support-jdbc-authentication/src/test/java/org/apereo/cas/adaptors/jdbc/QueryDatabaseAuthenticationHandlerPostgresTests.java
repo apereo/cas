@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
@@ -16,9 +15,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,10 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    DatabaseAuthenticationTestConfiguration.class
-}, properties = {
+@TestPropertySource(properties = {
     "database.user=postgres",
     "database.password=password",
     "database.driverClass=org.postgresql.Driver",
@@ -48,12 +42,11 @@ import static org.junit.jupiter.api.Assertions.*;
     "database.url=jdbc:postgresql://localhost:5432/",
     "database.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
 })
-@DirtiesContext
 @EnabledIfPortOpen(port = 5432)
-@EnabledIfContinuousIntegration
 @Tag("Postgres")
-public class QueryDatabaseAuthenticationHandlerPostgresTests {
+public class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabaseAuthenticationHandlerTests {
     private static final String SQL = "SELECT * FROM caspgusers where username=?";
+
     private static final String PASSWORD_FIELD = "password";
 
     @Autowired

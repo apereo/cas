@@ -8,6 +8,7 @@ dependencies {
     
     implementation project(":support:cas-server-support-consent-api")
     implementation project(":support:cas-server-support-jpa-util")
+    implementation project(":support:cas-server-support-jpa-hibernate")
     implementation project(":support:cas-server-support-consent-core")
     
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
@@ -21,6 +22,7 @@ dependencies {
     
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-consent-core", configuration: "tests")
 }

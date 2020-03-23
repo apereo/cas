@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link LdapPasswordSynchronizationProperties}.
@@ -15,6 +16,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-ldap", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class LdapPasswordSynchronizationProperties extends AbstractLdapSearchProperties {
     private static final long serialVersionUID = -2521286056194686825L;
 
