@@ -119,4 +119,24 @@ public class OidcServerDiscoverySettings {
     public String getRevocationEndpoint() {
         return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REVOCATION_URL);
     }
+
+    @JsonProperty("backchannel_logout_supported")
+    public boolean getBackchannelLogoutSupported() {
+        return true;
+    }
+
+    @JsonProperty("backchannel_logout_session_supported")
+    public boolean getBackchannelLogoutSessionSupported() {
+        return true;
+    }
+
+    @JsonProperty("frontchannel_logout_supported")
+    public boolean getFrontchannelLogoutSupported() {
+        return true;
+    }
+
+    @JsonProperty("frontchannel_logout_session_supported")
+    public boolean getFrontchannelLogoutSessionSupported() {
+        return true;
+    }
 }

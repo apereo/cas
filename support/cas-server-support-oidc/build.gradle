@@ -31,6 +31,7 @@ dependencies {
     implementation project(":core:cas-server-core-validation-api")
     implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":core:cas-server-core-logout-api")
 
     implementation libraries.pac4jcore
     implementation libraries.pac4jcas
