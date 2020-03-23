@@ -18,10 +18,13 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.hjson.JsonValue;
 
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +62,9 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
             response = HttpUtils.executePost(this.endpoint, writer.toString(),
                 CollectionUtils.wrap("principal", principal.getId(), "service", registeredService.getServiceId()));
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                return MAPPER.readValue(response.getEntity().getContent(), new TypeReference<>() {
+                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                LOGGER.debug("Policy response received: [{}]", result);
+                return MAPPER.readValue(JsonValue.readHjson(result).toString(), new TypeReference<>() {
                 });
             }
         } catch (final Exception e) {

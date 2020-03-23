@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * Configuration properties class mongodb service registry.
@@ -15,6 +16,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-mongo-service-registry")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class MongoDbServiceRegistryProperties extends SingleCollectionMongoDbProperties {
 
     private static final long serialVersionUID = -227092724742371662L;

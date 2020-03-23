@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -29,6 +30,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-person-directory", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class JsonPrincipalAttributesProperties extends SpringResourceProperties {
 
     private static final long serialVersionUID = -6573755681498251678L;

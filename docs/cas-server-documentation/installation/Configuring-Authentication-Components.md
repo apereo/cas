@@ -55,7 +55,7 @@ Each registered application in the registry may be assigned a set of identifiers
 handlers available and configured in CAS. These names can be used to enforce a service definition to only use the 
 authentication strategy carrying that name when an authentication request is submitted to CAS.
 
-Please [review this guide](../services/Configuring-Service-Required-AuthN.html) to learn more.
+Please [review this guide](../services/Configuring-Service-AuthN-Policy.html) to learn more.
 
 #### Groovy Script
 
@@ -106,7 +106,7 @@ collection and controlling its execution sequence.
 
 Each authentication handler in CAS can be named via CAS settings and if left undefined, the short name of 
 the handler component itself is used (i.e. `LdapAuthenticationHandler`). The name itself can be any arbitrary string and typically is used
-to identify and refer to the handler components in areas such as [required authentication for a service](../services/Configuring-Service-Required-AuthN.html), etc.
+to identify and refer to the handler components in areas such as [required authentication for a service](../services/Configuring-Service-AuthN-Policy.html), etc.
 In the event that multiple authentication handlers *of the same type* are defined, it is **RECOMMENDED** that each be given a unique name so as to avoid conflicts.
 Authentication failures are typically collected in CAS by the name of each authentication handler. Leaving the name undefined will likely result in subsequent components
 in the authentication chain overriding previous results.

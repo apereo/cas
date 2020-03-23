@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link TrustedAuthenticationProperties}.
@@ -15,6 +16,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-trusted-webflow")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class TrustedAuthenticationProperties extends PersonDirectoryPrincipalResolverProperties {
 
     private static final long serialVersionUID = 279410895614233349L;

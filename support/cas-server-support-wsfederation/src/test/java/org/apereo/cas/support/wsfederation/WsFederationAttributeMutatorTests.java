@@ -4,7 +4,6 @@ import org.apereo.cas.support.wsfederation.attributes.WsFederationAttributeMutat
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author John Gasper
  * @since 4.2.0
  */
-@SpringBootTest(classes = AbstractWsFederationTests.SharedTestConfiguration.class)
 public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests {
 
     private static final String UPN_PARAM = "upn";

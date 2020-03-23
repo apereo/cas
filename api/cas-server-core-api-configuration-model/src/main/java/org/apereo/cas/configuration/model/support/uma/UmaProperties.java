@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -20,6 +21,7 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-support-oauth-uma")
 @Getter
+@Accessors(chain = true)
 @Setter
 public class UmaProperties implements Serializable {
     private static final long serialVersionUID = 865028615694269276L;
@@ -48,6 +50,7 @@ public class UmaProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-oauth-uma")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class PermissionTicket implements Serializable {
         private static final long serialVersionUID = 6624128522839644377L;
 
@@ -61,6 +64,7 @@ public class UmaProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-oauth-uma")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class ResourceSet implements Serializable {
         private static final long serialVersionUID = 215435145313504895L;
 
@@ -72,6 +76,7 @@ public class UmaProperties implements Serializable {
         @RequiresModule(name = "cas-server-support-oauth-uma")
         @Getter
         @Setter
+        @Accessors(chain = true)
         public static class Jpa extends AbstractJpaProperties {
             private static final long serialVersionUID = 210435146313504995L;
 
@@ -84,6 +89,7 @@ public class UmaProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-oauth-uma")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class RequestingPartyToken implements Serializable {
         private static final long serialVersionUID = 3988708361481340920L;
 

@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.hjson.JsonValue;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -45,7 +46,7 @@ public class LdapConsentRepository implements ConsentRepository {
     private static ConsentDecision mapFromJson(final String json) {
         try {
             LOGGER.trace("Mapping JSON value [{}] to consent object", json);
-            return MAPPER.readValue(json, ConsentDecision.class);
+            return MAPPER.readValue(JsonValue.readHjson(json).toString(), ConsentDecision.class);
         } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);
         }

@@ -72,7 +72,7 @@ public interface ServiceRegistry {
         if (service == null) {
             return null;
         }
-        
+
         if (!clazz.isAssignableFrom(service.getClass())) {
             throw new ClassCastException("Object [" + service + " is of type " + service.getClass()
                 + " when we were expecting " + clazz);
@@ -160,5 +160,7 @@ public interface ServiceRegistry {
      * @return the name.
      * @since 5.2.0
      */
-    String getName();
+    default String getName() {
+        return this.getClass().getSimpleName();
+    }
 }

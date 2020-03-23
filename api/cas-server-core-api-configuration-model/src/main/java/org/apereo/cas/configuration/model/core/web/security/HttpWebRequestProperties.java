@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -17,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 @RequiresModule(name = "cas-server-core-web", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class HttpWebRequestProperties implements Serializable {
 
     private static final long serialVersionUID = -4711604991237695091L;

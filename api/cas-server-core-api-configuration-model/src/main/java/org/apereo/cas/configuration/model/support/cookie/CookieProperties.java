@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
@@ -17,6 +18,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-cookie", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class CookieProperties implements Serializable {
 
     private static final long serialVersionUID = 6804770601645126835L;
@@ -48,6 +50,11 @@ public class CookieProperties implements Serializable {
      * By default, cookies are only returned to the server that sent them.
      */
     private String domain = StringUtils.EMPTY;
+
+    /**
+     * CAS Cookie comment, describes the cookie's usage and purpose.
+     */
+    private String comment = "CAS Cookie";
 
     /**
      * True if sending this cookie should be restricted to a secure protocol, or false if the it can be sent using any protocol.

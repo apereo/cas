@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.mfa.trigger;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.trigger.AdaptiveMultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;

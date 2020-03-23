@@ -13,6 +13,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -26,6 +27,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-gauth")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorProviderProperties {
 
     /**
@@ -119,15 +121,19 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorPro
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }
 
+    @RequiresModule(name = "cas-server-support-gauth")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Json extends SpringResourceProperties {
 
         private static final long serialVersionUID = 4303355159388663888L;
     }
 
+    @RequiresModule(name = "cas-server-support-gauth-rest")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Rest implements Serializable {
 
         private static final long serialVersionUID = 4518622579150572559L;
@@ -159,6 +165,7 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorPro
     @RequiresModule(name = "cas-server-support-gauth-couchdb")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class CouchDb extends BaseCouchDbProperties {
 
         private static final long serialVersionUID = -6260683393319585262L;
@@ -171,12 +178,15 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorPro
     @RequiresModule(name = "cas-server-support-gauth-redis")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Redis extends BaseRedisProperties {
         private static final long serialVersionUID = -1260683393319585262L;
     }
 
+    @RequiresModule(name = "cas-server-support-gauth-jpa")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Jpa extends AbstractJpaProperties {
         private static final long serialVersionUID = -2689797889546802618L;
     }

@@ -11,6 +11,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
 
@@ -105,6 +106,7 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
     @RequiresModule(name = "cas-server-support-yubikey-couchdb")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class CouchDb extends BaseCouchDbProperties {
 
         private static final long serialVersionUID = 3757390989294642185L;
@@ -117,6 +119,7 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
     @RequiresModule(name = "cas-server-support-yubikey-jpa")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Jpa extends AbstractJpaProperties {
 
         private static final long serialVersionUID = -4420099402220880361L;
@@ -125,6 +128,7 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
     @RequiresModule(name = "cas-server-support-yubikey-mongo")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class MongoDb extends SingleCollectionMongoDbProperties {
 
         private static final long serialVersionUID = 6876845341227039713L;
@@ -137,6 +141,7 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
     @RequiresModule(name = "cas-server-support-yubikey-redis")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Redis extends BaseRedisProperties {
         private static final long serialVersionUID = -1261683393319585262L;
     }

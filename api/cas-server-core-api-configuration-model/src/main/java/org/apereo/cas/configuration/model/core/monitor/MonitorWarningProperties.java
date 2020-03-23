@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @NoArgsConstructor
+@Accessors(chain = true)
 public class MonitorWarningProperties implements Serializable {
 
     private static final long serialVersionUID = 2788617778375787703L;

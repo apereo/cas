@@ -25,6 +25,8 @@ public class ChainingTemplateViewResolver extends AbstractConfigurableTemplateRe
     public ChainingTemplateViewResolver() {
         setOrder(0);
         setCacheable(false);
+        setCheckExistence(true);
+        setName(getClass().getSimpleName());
     }
 
     /**

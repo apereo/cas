@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -15,6 +16,7 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-webapp-tomcat")
 @Getter
+@Accessors(chain = true)
 @Setter
 public class CasEmbeddedApacheTomcatExtendedAccessLogProperties implements Serializable {
 

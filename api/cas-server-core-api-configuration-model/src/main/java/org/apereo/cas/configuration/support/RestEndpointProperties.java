@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.support;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link RestEndpointProperties}.
@@ -12,6 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @RequiresModule(name = "cas-server-core-util", automated = true)
+@Accessors(chain = true)
 public class RestEndpointProperties extends BaseRestEndpointProperties {
     private static final long serialVersionUID = 2687020856160473089L;
 

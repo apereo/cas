@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -23,6 +24,7 @@ import java.util.stream.Stream;
 @RequiresModule(name = "cas-server-support-hazelcast-core")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class HazelcastClusterProperties implements Serializable {
 
     private static final long serialVersionUID = 1817784607045775145L;

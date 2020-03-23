@@ -67,9 +67,4 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
         }
         return registeredService;
     }
-
-    @Override
-    public String getName() {
-        return this.getClass().getSimpleName();
-    }
 }

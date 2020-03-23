@@ -53,7 +53,6 @@ public class ScriptEngineManagerTests {
         assertNotNull(getEngineNameFor("script.py"));
         assertNotNull(getEngineNameFor("script.groovy"));
         assertNotNull(getEngineNameFor("script.js"));
-        assertNotNull(getEngineNameFor("script.rb"));
     }
 
     @Test
@@ -64,10 +63,5 @@ public class ScriptEngineManagerTests {
     @Test
     public void verifyGroovyAttributeFilter() {
         runAttributeFilterInternallyFor("classpath:attributefilter.groovy");
-    }
-
-    @Test
-    public void verifyRubyAttributeFilter() {
-        runAttributeFilterInternallyFor("classpath:attributefilter.rb");
     }
 }

@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.mfa.trigger;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.trigger.RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 

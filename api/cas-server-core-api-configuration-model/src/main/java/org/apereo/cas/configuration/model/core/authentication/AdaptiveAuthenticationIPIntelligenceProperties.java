@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class AdaptiveAuthenticationIPIntelligenceProperties implements Serializable {
 
     private static final long serialVersionUID = -9111174229142982880L;
@@ -41,6 +43,7 @@ public class AdaptiveAuthenticationIPIntelligenceProperties implements Serializa
     @RequiresModule(name = "cas-server-core-authentication", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Groovy extends SpringResourceProperties {
         private static final long serialVersionUID = 8079027843747126083L;
     }
@@ -48,6 +51,7 @@ public class AdaptiveAuthenticationIPIntelligenceProperties implements Serializa
     @RequiresModule(name = "cas-server-core-authentication", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Rest extends RestEndpointProperties {
         private static final long serialVersionUID = 3659099897056632608L;
     }
@@ -55,6 +59,7 @@ public class AdaptiveAuthenticationIPIntelligenceProperties implements Serializa
     @RequiresModule(name = "cas-server-core-authentication", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class BlackDot implements Serializable {
         private static final long serialVersionUID = -4655149615297049570L;
 

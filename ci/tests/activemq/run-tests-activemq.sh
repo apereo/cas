@@ -29,7 +29,7 @@ echo -e "***********************************************"
 
 ./ci/tests/activemq/run-activemq-server.sh
 
-gradleBuild="$gradleBuild testActiveMQ jacocoRootReport -x test -x javadoc -x check \
+gradleBuild="$gradleBuild testJMS jacocoRootReport -x test -x javadoc -x check \
     --parallel \
     -DskipNestedConfigMetadataGen=true "
 

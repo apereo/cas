@@ -186,11 +186,11 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
         this.logStreamName = awsLogStreamName;
 
         if (createLogGroupIfNeeded == null && createLogStreamIfNeeded == null) {
-            this.createLogGroupIfNeeded = Objects.requireNonNullElse(createIfNeeded, true);
-            this.createLogStreamIfNeeded = Objects.requireNonNullElse(createIfNeeded, true);
+            this.createLogGroupIfNeeded = Objects.requireNonNullElse(createIfNeeded, Boolean.TRUE);
+            this.createLogStreamIfNeeded = Objects.requireNonNullElse(createIfNeeded, Boolean.TRUE);
         } else {
-            this.createLogGroupIfNeeded = Objects.requireNonNullElse(createLogGroupIfNeeded, false);
-            this.createLogStreamIfNeeded = Objects.requireNonNullElse(createLogStreamIfNeeded, false);
+            this.createLogGroupIfNeeded = Objects.requireNonNullElse(createLogGroupIfNeeded, Boolean.FALSE);
+            this.createLogStreamIfNeeded = Objects.requireNonNullElse(createLogStreamIfNeeded, Boolean.FALSE);
         }
     }
 

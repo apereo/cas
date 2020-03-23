@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class MultifactorAuthenticationProviderBypassProperties implements Serializable {
 
     private static final long serialVersionUID = -9181362378365850397L;
@@ -77,6 +79,7 @@ public class MultifactorAuthenticationProviderBypassProperties implements Serial
     @RequiresModule(name = "cas-server-core-authentication", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Groovy extends SpringResourceProperties {
 
         private static final long serialVersionUID = 8079027843747126083L;
@@ -85,6 +88,7 @@ public class MultifactorAuthenticationProviderBypassProperties implements Serial
     @RequiresModule(name = "cas-server-core-authentication", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Rest extends RestEndpointProperties {
 
         private static final long serialVersionUID = 1833594332973137011L;

@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -21,6 +22,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @RequiresModule(name = "cas-server-support-couchdb-ticket-registry")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class CouchDbTicketRegistryProperties extends BaseCouchDbProperties {
     private static final long serialVersionUID = 6895485069081125319L;
 

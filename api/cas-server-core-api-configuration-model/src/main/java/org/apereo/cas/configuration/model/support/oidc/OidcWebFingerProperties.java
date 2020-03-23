@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-oidc")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class OidcWebFingerProperties implements Serializable {
 
     private static final long serialVersionUID = 231228615694269276L;
@@ -30,6 +32,7 @@ public class OidcWebFingerProperties implements Serializable {
 
     @RequiresModule(name = "cas-server-support-oidc")
     @Setter
+    @Accessors(chain = true)
     @Getter
     public static class UserInfoRepository implements Serializable {
         private static final long serialVersionUID = 1279027843747126043L;
@@ -48,6 +51,7 @@ public class OidcWebFingerProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-oidc")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Groovy extends SpringResourceProperties {
         private static final long serialVersionUID = 7179027843747126083L;
     }
@@ -55,6 +59,7 @@ public class OidcWebFingerProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-oidc")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Rest extends RestEndpointProperties {
         private static final long serialVersionUID = -2172345378378393382L;
     }

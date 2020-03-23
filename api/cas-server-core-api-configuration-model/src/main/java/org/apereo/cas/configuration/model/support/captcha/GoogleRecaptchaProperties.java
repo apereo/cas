@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-captcha")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class GoogleRecaptchaProperties implements Serializable {
 
     private static final long serialVersionUID = -8955074129123813915L;

@@ -13,6 +13,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -28,6 +29,7 @@ import java.util.Map;
 @RequiresModule(name = "cas-server-support-passwordless")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class PasswordlessAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 8726382874579042117L;
 
@@ -78,6 +80,7 @@ public class PasswordlessAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-passwordless")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Accounts implements Serializable {
 
         private static final long serialVersionUID = -8424650395669337488L;
@@ -108,6 +111,7 @@ public class PasswordlessAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-passwordless")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Tokens implements Serializable {
 
         private static final long serialVersionUID = 8371063350377031703L;
@@ -143,6 +147,7 @@ public class PasswordlessAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-passwordless")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Groovy extends SpringResourceProperties {
         private static final long serialVersionUID = 8079027843747126083L;
     }
@@ -150,6 +155,7 @@ public class PasswordlessAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-passwordless-ldap")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Ldap extends AbstractLdapSearchProperties {
         private static final long serialVersionUID = -1102345678378393382L;
 
@@ -169,6 +175,7 @@ public class PasswordlessAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-passwordless-jpa")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Jpa extends AbstractJpaProperties {
 
         private static final long serialVersionUID = 7647381223153797806L;
@@ -183,6 +190,7 @@ public class PasswordlessAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-passwordless")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Rest extends RestEndpointProperties {
         private static final long serialVersionUID = -8102345678378393382L;
     }
@@ -190,6 +198,7 @@ public class PasswordlessAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-passwordless")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class RestTokens extends RestEndpointProperties {
         private static final long serialVersionUID = -8102345678378393382L;
 

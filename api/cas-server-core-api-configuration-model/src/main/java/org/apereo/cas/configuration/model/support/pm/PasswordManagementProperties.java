@@ -14,6 +14,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -30,6 +31,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@Accessors(chain = true)
 public class PasswordManagementProperties implements Serializable {
 
     private static final long serialVersionUID = -260644582798411176L;
@@ -100,6 +102,7 @@ public class PasswordManagementProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pm-jdbc")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Jdbc extends AbstractJpaProperties {
 
         private static final long serialVersionUID = 4746591112640513465L;
@@ -139,6 +142,7 @@ public class PasswordManagementProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pm-rest")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Rest implements Serializable {
 
         private static final long serialVersionUID = 5262948164099973872L;
@@ -184,6 +188,7 @@ public class PasswordManagementProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pm-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class ForgotUsername implements Serializable {
         private static final long serialVersionUID = 4850199066765183587L;
 
@@ -203,6 +208,7 @@ public class PasswordManagementProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pm-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class PasswordHistory implements Serializable {
         private static final long serialVersionUID = 2211199066765183587L;
 
@@ -221,6 +227,7 @@ public class PasswordManagementProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pm-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Reset implements Serializable {
 
         private static final long serialVersionUID = 3453970349530670459L;
@@ -276,6 +283,7 @@ public class PasswordManagementProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pm")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Groovy extends SpringResourceProperties {
         private static final long serialVersionUID = 8079027843747126083L;
     }
@@ -283,6 +291,7 @@ public class PasswordManagementProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-pm")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Json extends SpringResourceProperties {
 
         private static final long serialVersionUID = 1129426669588789974L;

@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link EncryptionOptionalSigningOptionalJwtCryptographyProperties}.
@@ -13,6 +14,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@Accessors(chain = true)
 @RequiresModule(name = "cas-server-core-util", automated = true)
 public class EncryptionOptionalSigningOptionalJwtCryptographyProperties extends EncryptionJwtSigningJwtCryptographyProperties {
 

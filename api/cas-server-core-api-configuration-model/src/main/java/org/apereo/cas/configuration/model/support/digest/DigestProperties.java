@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import java.util.Map;
 @RequiresModule(name = "cas-server-support-digest-authentication")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class DigestProperties implements Serializable {
 
     private static final long serialVersionUID = -7920128284733546444L;

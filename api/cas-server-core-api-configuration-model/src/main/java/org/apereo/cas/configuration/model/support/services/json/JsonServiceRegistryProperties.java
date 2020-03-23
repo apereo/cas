@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.core.io.ClassPathResource;
 
 /**
@@ -16,6 +17,7 @@ import org.springframework.core.io.ClassPathResource;
 @RequiresModule(name = "cas-server-support-json-service-registry")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class JsonServiceRegistryProperties extends SpringResourceProperties {
 
     private static final long serialVersionUID = -3022199446494732533L;

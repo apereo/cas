@@ -91,6 +91,7 @@ public class CookieUtils {
             .maxAge(cookie.getMaxAge())
             .secure(cookie.isSecure())
             .domain(cookie.getDomain())
+            .comment(cookie.getComment())
             .sameSitePolicy(cookie.getSameSitePolicy())
             .httpOnly(cookie.isHttpOnly());
     }

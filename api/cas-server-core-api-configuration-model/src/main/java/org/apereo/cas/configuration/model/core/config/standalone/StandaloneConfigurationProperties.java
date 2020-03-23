@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.File;
 import java.io.Serializable;
@@ -20,6 +21,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @RequiresModule(name = "cas-server-core-configuration", automated = true)
+@Accessors(chain = true)
 public class StandaloneConfigurationProperties implements Serializable {
     private static final long serialVersionUID = -7749293768878152908L;
     /**
@@ -40,8 +42,10 @@ public class StandaloneConfigurationProperties implements Serializable {
      */
     private StandaloneConfigurationSecurityProperties configurationSecurity = new StandaloneConfigurationSecurityProperties();
 
+    @RequiresModule(name = "cas-server-core-configuration", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class StandaloneConfigurationSecurityProperties implements Serializable {
         private static final long serialVersionUID = 8571848605614437022L;
 

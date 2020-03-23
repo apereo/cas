@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @EnabledIfPortOpen(port = 61616)
-@Tag("ActiveMQ")
+@Tag("JMS")
 public class UpdateTicketMessageQueueCommandTests extends AbstractTicketMessageQueueCommandTests {
 
     @Test

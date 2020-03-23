@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
@@ -17,6 +18,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
+@Accessors(chain = true)
 @RequiresModule(name = "cas-server-core-util", automated = true)
 public class EncryptionRandomizedCryptoProperties implements Serializable {
 

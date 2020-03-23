@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link DuoSecurityMultifactorProperties}.
@@ -16,6 +17,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-duo")
 @Getter
 @Setter
+@Accessors(chain = true)
 @EqualsAndHashCode(of = {"duoApiHost", "duoIntegrationKey", "duoSecretKey", "duoApplicationKey"}, callSuper = true)
 public class DuoSecurityMultifactorProperties extends BaseMultifactorProviderProperties {
 
