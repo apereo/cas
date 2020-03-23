@@ -23,7 +23,7 @@ public abstract class AbstractCasEventRepositoryTests {
 
     @Test
     public void verifyLoadOps() {
-        val dto1 = getCasEvent();
+        val dto1 = getCasEvent("example1");
 
         val eventRepository = getEventRepository();
         eventRepository.save(dto1);
@@ -43,10 +43,10 @@ public abstract class AbstractCasEventRepositoryTests {
 
     @Test
     public void verifySave() {
-        val dto1 = getCasEvent();
+        val dto1 = getCasEvent("casuser");
         getEventRepository().save(dto1);
 
-        val dto2 = getCasEvent();
+        val dto2 = getCasEvent("casuser");
         getEventRepository().save(dto2);
 
         val col = getEventRepository().load();
@@ -79,8 +79,8 @@ public abstract class AbstractCasEventRepositoryTests {
         });
     }
 
-    private CasEvent getCasEvent() {
-        val ticket = new MockTicketGrantingTicket("casuser");
+    private CasEvent getCasEvent(final String user) {
+        val ticket = new MockTicketGrantingTicket(user);
         val event = new CasTicketGrantingTicketCreatedEvent(this, ticket);
 
         val dto = new CasEvent();
