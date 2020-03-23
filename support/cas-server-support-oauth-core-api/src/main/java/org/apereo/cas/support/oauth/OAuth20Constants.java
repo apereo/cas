@@ -345,4 +345,8 @@ public interface OAuth20Constants {
      */
     String UNAUTHORIZED_CLIENT = "unauthorized_client";
 
+    /**
+     * The revocation url.
+     */
+    String REVOCATION_URL = "revoke";
 }

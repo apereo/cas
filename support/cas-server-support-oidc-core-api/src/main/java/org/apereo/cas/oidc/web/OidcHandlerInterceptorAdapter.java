@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 
@@ -29,8 +30,9 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
                                          final HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor,
                                          final HandlerInterceptorAdapter requiresAuthenticationClientConfigurationInterceptor,
                                          final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode,
-                                         final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors) {
-        super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor, accessTokenGrantRequestExtractors);
+                                         final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors,
+                                         final ServicesManager servicesManager) {
+        super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor, accessTokenGrantRequestExtractors, servicesManager);
         this.requiresAuthenticationDynamicRegistrationInterceptor = requiresAuthenticationDynamicRegistrationInterceptor;
         this.dynamicClientRegistrationMode = dynamicClientRegistrationMode;
         this.requiresAuthenticationClientConfigurationInterceptor = requiresAuthenticationClientConfigurationInterceptor;

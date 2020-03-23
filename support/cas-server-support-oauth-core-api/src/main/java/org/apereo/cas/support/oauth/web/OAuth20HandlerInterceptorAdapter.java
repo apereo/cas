@@ -1,11 +1,15 @@
 package org.apereo.cas.support.oauth.web;
 
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +38,8 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
 
     private final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
 
+    private final ServicesManager servicesManager;
+
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
                              final Object handler) throws Exception {
@@ -48,6 +54,32 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
         return !isAuthorizationRequest(request, response) || requiresAuthenticationAuthorizeInterceptor.preHandle(request, response, handler);
     }
 
+    /**
+    * Is the client requesting is a OAuth "public" client.
+    * @param request the request
+    * @param response the response
+    * @return the boolean
+    */
+    protected boolean clientNeedAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
+        val clientId = OAuth20Utils.getClientIdAndClientSecret(new JEEContext(request, response)).getLeft();
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
+        if (clientId.isEmpty() || registeredService == null) {
+            return true;
+        }
+        return !StringUtils.isBlank(registeredService.getClientSecret());
+    }
+
+    /**
+     * Is revoke token request request.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the boolean
+     */
+    protected boolean isRevokeTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
+        val requestPath = request.getRequestURI();
+        return doesUriMatchPattern(requestPath, OAuth20Constants.REVOCATION_URL);
+    }
 
     /**
      * Is access token request request.
@@ -84,7 +116,11 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      */
     protected boolean requestRequiresAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
         val accessTokenRequest = isAccessTokenRequest(request, response);
-        if (!accessTokenRequest) {
+        val revokeTokenRequest = isRevokeTokenRequest(request, response);
+
+        if (revokeTokenRequest) {
+            return clientNeedAuthentication(request, response);
+        } else if (!accessTokenRequest) {
             val extractor = extractAccessTokenGrantRequest(request);
             if (extractor.isPresent()) {
                 val ext = extractor.get();
