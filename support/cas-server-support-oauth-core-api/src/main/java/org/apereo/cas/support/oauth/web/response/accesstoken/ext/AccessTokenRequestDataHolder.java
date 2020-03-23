@@ -7,6 +7,8 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.code.OAuth20Code;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -64,4 +66,12 @@ public class AccessTokenRequestDataHolder {
     private final String codeVerifier;
 
     private final String clientId;
+
+    public boolean isCodeToken() {
+        return token instanceof OAuth20Code;
+    }
+
+    public boolean isRefreshToken() {
+        return token instanceof OAuth20RefreshToken;
+    }
 }
