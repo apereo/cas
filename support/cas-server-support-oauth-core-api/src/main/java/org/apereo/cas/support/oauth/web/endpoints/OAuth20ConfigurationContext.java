@@ -21,7 +21,6 @@ import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolv
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceToken;
@@ -78,8 +77,6 @@ public class OAuth20ConfigurationContext {
     private final JwtBuilder accessTokenJwtBuilder;
 
     private final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator;
-
-    private final ExpirationPolicyBuilder<OAuth20AccessToken> accessTokenExpirationPolicy;
 
     private final Collection<OAuth20TokenRequestValidator> accessTokenGrantRequestValidators;
 

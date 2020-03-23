@@ -708,7 +708,7 @@ public class CasOAuth20Configuration {
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthResourceOwnerCredentialsResponseBuilder() {
         return new OAuth20ResourceOwnerCredentialsResponseBuilder(accessTokenResponseGenerator(), oauthTokenGenerator(),
-            accessTokenExpirationPolicy(), casProperties);
+            casProperties);
     }
 
     @ConditionalOnMissingBean(name = "oauthClientCredentialsResponseBuilder")
@@ -716,14 +716,14 @@ public class CasOAuth20Configuration {
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthClientCredentialsResponseBuilder() {
         return new OAuth20ClientCredentialsResponseBuilder(accessTokenResponseGenerator(),
-            oauthTokenGenerator(), accessTokenExpirationPolicy(), casProperties);
+            oauthTokenGenerator(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "oauthTokenResponseBuilder")
     @Bean
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthTokenResponseBuilder() {
-        return new OAuth20TokenAuthorizationResponseBuilder(oauthTokenGenerator(), accessTokenExpirationPolicy(),
+        return new OAuth20TokenAuthorizationResponseBuilder(oauthTokenGenerator(),
             servicesManager.getObject(), accessTokenJwtBuilder(), casProperties);
     }
 
@@ -899,7 +899,6 @@ public class CasOAuth20Configuration {
             .accessTokenGenerator(oauthTokenGenerator())
             .accessTokenJwtBuilder(accessTokenJwtBuilder())
             .accessTokenResponseGenerator(accessTokenResponseGenerator())
-            .accessTokenExpirationPolicy(accessTokenExpirationPolicy())
             .deviceTokenExpirationPolicy(deviceTokenExpirationPolicy())
             .accessTokenGrantRequestValidators(oauthTokenRequestValidators())
             .userProfileDataCreator(oAuth2UserProfileDataCreator())

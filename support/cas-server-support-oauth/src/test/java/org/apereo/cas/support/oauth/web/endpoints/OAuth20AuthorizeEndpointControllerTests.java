@@ -4,6 +4,7 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
@@ -246,6 +247,70 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val principalAttributes = principal.getAttributes();
         assertEquals(attributes.size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
+        val expiresIn = StringUtils.substringAfter(redirectUrl, "&expires_in=");
+        assertEquals(getDefaultAccessTokenExpiration(), Long.parseLong(expiresIn));
+    }
+
+    @Test
+    public void verifyPerServiceExpiration() throws Exception {
+        clearAllServices();
+
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());
+        mockRequest.setServerName(CAS_SERVER);
+        mockRequest.setServerPort(CAS_PORT);
+        mockRequest.setScheme(CAS_SCHEME);
+        val mockResponse = new MockHttpServletResponse();
+
+        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
+        service.setBypassApprovalPrompt(true);
+        val expirationPolicy = new DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy();
+        expirationPolicy.setMaxTimeToLive("5005");
+        expirationPolicy.setTimeToKill("1001");
+        service.setAccessTokenExpirationPolicy(expirationPolicy);
+        service.setJwtAccessToken(true);
+        this.servicesManager.save(service);
+
+        val profile = new CasProfile();
+        profile.setId(ID);
+        val attributes = new HashMap<String, Object>();
+        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
+        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
+        profile.addAttributes(attributes);
+
+        val session = new MockHttpSession();
+        mockRequest.setSession(session);
+        oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore()
+                .set(new JEEContext(mockRequest, mockResponse, new JEESessionStore()), Pac4jConstants.USER_PROFILES, profile);
+
+        val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
+        val view = modelAndView.getView();
+        assertTrue(view instanceof RedirectView);
+        val redirectView = (RedirectView) view;
+        val redirectUrl = redirectView.getUrl();
+        assertNotNull(redirectUrl);
+
+        assertTrue(redirectUrl.startsWith(REDIRECT_URI + "#access_token="));
+        val at = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=bearer");
+        val decoded = this.oauthAccessTokenJwtCipherExecutor.decode(at).toString();
+        assertNotNull(decoded);
+        val jwt = JwtClaims.parse(decoded);
+        assertNotNull(jwt);
+        assertNotNull(jwt.getExpirationTime());
+        assertNotNull(jwt.getIssuedAt());
+        assertEqualsWithDelta(Long.parseLong(expirationPolicy.getMaxTimeToLive()),
+                jwt.getExpirationTime().getValue() - jwt.getIssuedAt().getValue(),
+                DELTA
+        );
+
+        val expiresIn = StringUtils.substringAfter(redirectUrl, "&expires_in=");
+        assertEquals(expirationPolicy.getMaxTimeToLive(), expiresIn);
+    }
+
+    private void assertEqualsWithDelta(final long expected, final long actual, final long delta) {
+        assertTrue(Math.abs(expected - actual) <= delta);
     }
 
     @Test

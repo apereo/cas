@@ -36,6 +36,7 @@ import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -588,6 +589,11 @@ public abstract class AbstractOAuth20Tests {
             .generatedToken(generatedToken)
             .build();
         return accessTokenResponseGenerator.generate(mockRequest, mockResponse, result);
+    }
+
+    protected long getDefaultAccessTokenExpiration() {
+        return Beans.newDuration(casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds())
+                .getSeconds();
     }
 
     @TestConfiguration("OAuth20TestConfiguration")
