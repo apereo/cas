@@ -41,7 +41,7 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         val service = getSamlRegisteredServiceForTestShib();
         servicesManager.save(service);
         val md = SamlIdPUtils.getMetadataResolverForAllSamlServices(servicesManager, service.getServiceId(),
-                samlRegisteredServiceCachingMetadataResolver);
+            samlRegisteredServiceCachingMetadataResolver);
         assertNotNull(md);
 
         val criteriaSet = new CriteriaSet();
@@ -63,7 +63,7 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         when(authnRequest.getAssertionConsumerServiceIndex()).thenReturn(null);
         when(authnRequest.getAssertionConsumerServiceURL()).thenReturn("https://sp.testshib.org/Shibboleth.sso/SAML/POST");
         val acs = SamlIdPUtils.getAssertionConsumerServiceFor(authnRequest, servicesManager,
-                samlRegisteredServiceCachingMetadataResolver);
+            samlRegisteredServiceCachingMetadataResolver);
         assertNotNull(acs);
     }
 
@@ -79,7 +79,7 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         when(authnRequest.getProtocolBinding()).thenReturn(SAMLConstants.SAML2_POST_BINDING_URI);
         when(authnRequest.getAssertionConsumerServiceIndex()).thenReturn(0);
         val acs = SamlIdPUtils.getAssertionConsumerServiceFor(authnRequest, servicesManager,
-                samlRegisteredServiceCachingMetadataResolver);
+            samlRegisteredServiceCachingMetadataResolver);
         assertNotNull(acs);
     }
 
