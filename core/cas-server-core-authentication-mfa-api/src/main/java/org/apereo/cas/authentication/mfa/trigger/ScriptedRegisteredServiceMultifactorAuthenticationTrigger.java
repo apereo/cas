@@ -1,4 +1,4 @@
-package org.apereo.cas.authentication.trigger;
+package org.apereo.cas.authentication.mfa.trigger;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;

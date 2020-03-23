@@ -421,7 +421,7 @@ public abstract class AbstractServiceRegistryTests {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
         r.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
         r.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("https://.+"));
-        r.setRequiredHandlers(CollectionUtils.wrapHashSet("h1", "h2"));
+        r.getAuthenticationPolicy().setRequiredAuthenticationHandlers(CollectionUtils.wrapHashSet("h1", "h2"));
 
         val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
