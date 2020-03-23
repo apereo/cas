@@ -71,6 +71,11 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
     }
 
     @Override
+    public int getOrder() {
+        return 0;
+    }
+
+    @Override
     protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg, final SingleLogoutRequest request, final SingleLogoutMessage logoutMessage) {
         val binding = request.getProperties().get(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING);
 
