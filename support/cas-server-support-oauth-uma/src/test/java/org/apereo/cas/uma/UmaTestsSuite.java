@@ -1,6 +1,5 @@
 package org.apereo.cas.uma;
 
-import org.apereo.cas.uma.ticket.resource.repository.JpaResourceSetRepositoryTests;
 import org.apereo.cas.uma.web.controllers.authz.UmaAuthorizationRequestEndpointControllerTests;
 import org.apereo.cas.uma.web.controllers.permission.UmaPermissionRegistrationEndpointControllerTests;
 import org.apereo.cas.uma.web.controllers.policy.UmaCreatePolicyForResourceSetEndpointControllerTests;
@@ -32,8 +31,7 @@ import org.junit.runner.RunWith;
     UmaDeletePolicyForResourceSetEndpointControllerTests.class,
     UmaFindPolicyForResourceSetEndpointControllerTests.class,
     UmaUpdatePolicyForResourceSetEndpointControllerTests.class,
-    UmaAuthorizationRequestEndpointControllerTests.class,
-    JpaResourceSetRepositoryTests.class
+    UmaAuthorizationRequestEndpointControllerTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class UmaTestsSuite {

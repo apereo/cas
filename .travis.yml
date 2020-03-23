@@ -18,8 +18,6 @@ before_cache:
   - rm -rf $HOME/.gradle/caches/7.0.*/
   - rm -rf $HOME/.gradle/caches/6.3.*/
   - rm -rf $HOME/.gradle/caches/6.2.*/
-  - rm -rf $HOME/.gradle/caches/6.1.*/
-  - rm -rf $HOME/.gradle/caches/6.0.*/
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
   - find ~/.gradle/caches/ -name "*.lock" -type f -delete
 cache:
@@ -38,7 +36,7 @@ notifications:
 env:
   global:
     - JAVA_OPTS="-Xms512m -Xmx4048m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
-    - GRADLE_OPTS="-Xms512m -Xmx1024m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
+    - GRADLE_OPTS="-Xms512m -Xmx2024m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
     - SPRING_MAIN_BANNER-MODE="off"
     - DEPENDENCY_BOT_BRANCH=^renovate
     - TERM=xterm
@@ -166,20 +164,32 @@ jobs:
       script: ./ci/tests/restful/run-tests-restful.sh
       name: "RESTful Tests"
     - stage: test
+      script: ./ci/tests/mfa/run-tests-mfa.sh
+      name: "Multifactor Authentication Tests"
+    - stage: test
+      script: ./ci/tests/oauth/run-tests-oauth.sh
+      name: "OAuth Tests"
+    - stage: test
+      script: ./ci/tests/oauth/run-tests-uma.sh
+      name: "OAuth UMA Tests"
+    - stage: test
+      script: ./ci/tests/oidc/run-tests-oidc.sh
+      name: "OpenID Connect Tests"
+    - stage: test
+      script: ./ci/tests/saml/run-tests-saml.sh
+      name: "SAML Tests"
+    - stage: test
       script: ./ci/tests/ldap/run-tests-ldap.sh
       name: "LDAP Tests"
     - stage: test
       script: ./ci/tests/amazon/run-tests-aws.sh
       name: "AWS Tests"
     - stage: test
-      script: ./ci/tests/mfa/run-tests-mfa.sh
-      name: "Multifactor Authentication Tests"
-    - stage: test
       script: ./ci/tests/cassandra/run-tests-cassandra.sh
-      name: "Cassandra Tests"
+      name: "Apache Cassandra Tests"
     - stage: test
       script: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
-      name: "CosmosDb Tests"
+      name: "Azure CosmosDb Tests"
     - stage: test
       script: ./ci/tests/radius/run-tests-radius.sh
       name: "Radius Tests"
@@ -201,18 +211,6 @@ jobs:
     - stage: test
       script: ./ci/tests/mail/run-tests-mail.sh
       name: "Mail Tests"
-    - stage: test
-      script: ./ci/tests/oauth/run-tests-oauth.sh
-      name: "OAuth Tests"
-    - stage: test
-      script: ./ci/tests/oauth/run-tests-uma.sh
-      name: "OAuth UMA Tests"
-    - stage: test
-      script: ./ci/tests/oidc/run-tests-oidc.sh
-      name: "OpenID Connect Tests"
-    - stage: test
-      script: ./ci/tests/saml/run-tests-saml.sh
-      name: "SAML Tests"
     - stage: test
       script: ./ci/tests/couchdb/run-tests-couchdb.sh
       name: "Apache CouchDb Tests"

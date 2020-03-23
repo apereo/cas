@@ -4,7 +4,7 @@ def testCategories = [
     "Ldap", "Mail", "MariaDb", "Memcached", "JDBC",
     "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
     "Radius", "AmazonWebServices", "RestfulApi", "Groovy",
-    "OAuth", "OIDC", "SAML", "UMA", "Oracle", "ActiveMQ",
+    "OAuth", "OIDC", "SAML", "UMA", "Oracle", "JMS",
     "ZooKeeper", "Webflow", "DynamoDb", "MFA"
 ] as String[]
 
@@ -53,11 +53,11 @@ if (hasTestsOfCategory(project, "ZooKeeper")) {
     }
 }
 
-if (hasTestsOfCategory(project, "ActiveMQ")) {
-    task testActiveMQ(type: Test) {
-        enabled = shouldTest(project, "ActiveMQ")
+if (hasTestsOfCategory(project, "JMS")) {
+    task testJMS(type: Test) {
+        enabled = shouldTest(project, "JMS")
         useJUnitPlatform {
-            includeTags "ActiveMQ"
+            includeTags "JMS"
         }
     }
 }
@@ -320,8 +320,9 @@ tasks.withType(Test) {
             logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
         }
     }
-
     systemProperty("spring.main.banner-mode", "off")
+    systemProperty("CI", System.getProperty("CI"))
+
     failFast = true
     jvmArgs.addAll(["-Xms512m", "-Xmx4g"])
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
@@ -332,10 +333,12 @@ tasks.withType(Test) {
         showExceptions = true
         showCauses = true
     }
-    retry {
-        maxRetries = 3
-        maxFailures = 5
-        failOnPassedAfterRetry = false
+    if (!Boolean.getBoolean("skipTestRetry")) {
+        retry {
+            maxRetries = 3
+            maxFailures = 5
+            failOnPassedAfterRetry = false
+        }
     }
 }
 

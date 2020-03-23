@@ -1,0 +1,61 @@
+description = "Apereo CAS OAuth UMA Server Support"
+dependencies {
+    api project(":api:cas-server-core-api-throttle")
+    api project(":api:cas-server-core-api")
+
+    implementation project(":support:cas-server-support-oauth-core")
+    implementation project(":support:cas-server-support-oauth-core-api")
+    implementation project(":support:cas-server-support-oauth-uma-core")
+    implementation project(":support:cas-server-support-oauth-uma")
+    implementation project(":support:cas-server-support-oauth-services")
+    implementation project(":support:cas-server-support-oauth-api")
+    implementation project(":support:cas-server-support-oauth")
+    implementation project(":support:cas-server-support-token-core-api")
+    implementation project(":support:cas-server-support-jpa-util")
+    implementation project(":support:cas-server-support-jpa-hibernate")
+
+    implementation project(":core:cas-server-core-audit-api")
+    implementation project(":core:cas-server-core-services-registry")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-authentication-attributes")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-cookie-api")
+
+
+    implementation libraries.pac4jcore
+    implementation libraries.nimbus
+    implementation libraries.jose4j
+
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+    
+    testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-thymeleaf")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-logout-api")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-cookie")
+    
+
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+
+    testImplementation project(path: ":support:cas-server-support-oauth", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-oauth-core", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-oauth-services", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-oauth-uma", configuration: "tests")
+}

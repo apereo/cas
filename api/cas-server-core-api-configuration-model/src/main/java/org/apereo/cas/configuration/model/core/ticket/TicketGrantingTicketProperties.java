@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class TicketGrantingTicketProperties implements Serializable {
 
     private static final long serialVersionUID = 2349079252583399336L;
@@ -64,7 +66,9 @@ public class TicketGrantingTicketProperties implements Serializable {
     private RememberMe rememberMe = new RememberMe();
 
     @Getter
+    @RequiresModule(name = "cas-server-core-tickets", automated = true)
     @Setter
+    @Accessors(chain = true)
     public static class HardTimeout implements Serializable {
 
         private static final long serialVersionUID = 4160963910346416908L;
@@ -75,8 +79,10 @@ public class TicketGrantingTicketProperties implements Serializable {
         private long timeToKillInSeconds;
     }
 
+    @RequiresModule(name = "cas-server-core-tickets", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Timeout implements Serializable {
 
         private static final long serialVersionUID = 8635419913795245907L;
@@ -89,6 +95,8 @@ public class TicketGrantingTicketProperties implements Serializable {
 
     @Getter
     @Setter
+    @RequiresModule(name = "cas-server-core-tickets", automated = true)
+    @Accessors(chain = true)
     public static class ThrottledTimeout implements Serializable {
 
         private static final long serialVersionUID = -2370751379747804646L;
@@ -104,6 +112,8 @@ public class TicketGrantingTicketProperties implements Serializable {
         private long timeInBetweenUsesInSeconds;
     }
 
+    @Accessors(chain = true)
+    @RequiresModule(name = "cas-server-core-tickets", automated = true)
     @Getter
     @Setter
     public static class RememberMe implements Serializable {

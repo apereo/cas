@@ -6,14 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.Id;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+
 import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -30,16 +28,13 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Entity
-@Table(name = "PasswordHistoryTable")
+@MappedSuperclass
 public class PasswordHistoryEntity implements Serializable {
     private static final long serialVersionUID = -206561112913280345L;
 
-    @org.springframework.data.annotation.Id
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
-    private long id;
+    @Transient
+    private long id = -1;
 
     @Column(nullable = false)
     private String username;

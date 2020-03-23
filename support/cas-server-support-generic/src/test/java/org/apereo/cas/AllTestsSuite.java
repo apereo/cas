@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.adaptors.generic.ConfigurationTests;
 import org.apereo.cas.adaptors.generic.FileAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.generic.GroovyAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.generic.JsonResourceAuthenticationHandlerTests;
@@ -19,7 +20,8 @@ import org.junit.runner.RunWith;
     FileAuthenticationHandlerTests.class,
     RejectUsersAuthenticationHandlerTests.class,
     GroovyAuthenticationHandlerTests.class,
-    JsonResourceAuthenticationHandlerTests.class
+    JsonResourceAuthenticationHandlerTests.class,
+    ConfigurationTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {

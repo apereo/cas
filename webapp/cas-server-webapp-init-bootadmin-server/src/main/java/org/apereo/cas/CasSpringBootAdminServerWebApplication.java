@@ -39,7 +39,8 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
     GsonAutoConfiguration.class,
     MetricsAutoConfiguration.class,
     DataSourceTransactionManagerAutoConfiguration.class,
-    RedisRepositoriesAutoConfiguration.class})
+    RedisRepositoriesAutoConfiguration.class
+})
 @EnableAdminServer
 @NoArgsConstructor
 public class CasSpringBootAdminServerWebApplication {

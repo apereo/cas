@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * this is {@link GlibcCryptPasswordEncoder}.
+ * This is {@link GlibcCryptPasswordEncoder}.
  *
  * @author Martin Böhmer
  * @since 5.3.10
@@ -22,7 +22,9 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
     private static final int SALT_LENGTH = 8;
 
     private final String encodingAlgorithm;
+
     private final int strength;
+
     private String secret;
 
     @Override

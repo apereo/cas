@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.config.U2FJpaConfiguration;
 
@@ -18,11 +19,16 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@SpringBootTest(classes = {
-    U2FJpaConfiguration.class,
-    U2FConfiguration.class,
-    AopAutoConfiguration.class,
-    RefreshAutoConfiguration.class})
+@SpringBootTest(classes =
+    {
+        U2FJpaConfiguration.class,
+        U2FConfiguration.class,
+        CasHibernateJpaConfiguration.class,
+        AopAutoConfiguration.class,
+        RefreshAutoConfiguration.class
+    },
+    properties = "cas.jdbc.showSql=true"
+)
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @Tag("JDBC")
@@ -30,7 +36,6 @@ public class U2FJpaDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTest
     @Autowired
     @Qualifier("u2fDeviceRepository")
     private U2FDeviceRepository u2fDeviceRepository;
-
 
     @Override
     protected U2FDeviceRepository getDeviceRepository() {

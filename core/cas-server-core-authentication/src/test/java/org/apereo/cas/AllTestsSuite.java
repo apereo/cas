@@ -11,10 +11,14 @@ import org.apereo.cas.authentication.FileTrustStoreSslSocketFactoryTests;
 import org.apereo.cas.authentication.OneTimePasswordCredentialTests;
 import org.apereo.cas.authentication.RememberMePasswordCredentialTests;
 import org.apereo.cas.authentication.UsernamePasswordCredentialTests;
+import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalExceptionTests;
 import org.apereo.cas.authentication.handler.ConvertCasePrincipalNameTransformerTests;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandlerSystemConfigurationTests;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandlerTests;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordHandlerTests;
+import org.apereo.cas.authentication.metadata.CacheCredentialsCipherExecutorTests;
+import org.apereo.cas.authentication.policy.AllAuthenticationHandlersSucceededAuthenticationPolicyTests;
+import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicyTests;
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicyTests;
 import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicyTests;
 import org.apereo.cas.authentication.principal.ChainingPrincipalElectionStrategyTests;
@@ -24,6 +28,7 @@ import org.apereo.cas.authentication.principal.NullPrincipalTests;
 import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataPopulatorTests;
 import org.apereo.cas.authentication.principal.SimplePrincipalFactoryTests;
 import org.apereo.cas.authentication.principal.SimplePrincipalTests;
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtilsTests;
 import org.apereo.cas.util.TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -41,6 +46,7 @@ import org.junit.runner.RunWith;
     SimplePrincipalTests.class,
     ChainingPrincipalResolverTests.class,
     NullPrincipalTests.class,
+    PasswordEncoderUtilsTests.class,
     SimplePrincipalFactoryTests.class,
     RememberMeAuthenticationMetaDataPopulatorTests.class,
     DefaultPrincipalFactoryTests.class,
@@ -49,11 +55,16 @@ import org.junit.runner.RunWith;
     JaasAuthenticationHandlerTests.class,
     SimpleTestUsernamePasswordHandlerTests.class,
     CoreAuthenticationUtilsTests.class,
+    UsernamePasswordCredentialTests.class,
     DefaultPasswordEncoderTests.class,
     DefaultAuthenticationTests.class,
+    CacheCredentialsCipherExecutorTests.class,
+    NotPreventedAuthenticationPolicyTests.class,
+    AllAuthenticationHandlersSucceededAuthenticationPolicyTests.class,
     BasicCredentialMetaDataTests.class,
     ChainingPrincipalElectionStrategyTests.class,
     UsernamePasswordCredentialTests.class,
+    UnresolvedPrincipalExceptionTests.class,
     RememberMePasswordCredentialTests.class,
     AcceptUsersAuthenticationHandlerTests.class,
     CacheCredentialsMetaDataPopulatorTests.class,

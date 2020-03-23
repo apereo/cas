@@ -23,6 +23,7 @@ import org.apache.catalina.tribes.group.interceptors.TcpFailureDetector;
 import org.apache.catalina.tribes.group.interceptors.TcpPingInterceptor;
 import org.apache.catalina.tribes.membership.McastService;
 import org.apache.catalina.tribes.membership.StaticMember;
+import org.apache.catalina.tribes.membership.cloud.CloudMembershipService;
 import org.apache.catalina.tribes.transport.ReplicationTransmitter;
 import org.apache.catalina.tribes.transport.nio.NioReceiver;
 import org.apache.catalina.tribes.transport.nio.PooledParallelSender;
@@ -125,18 +126,28 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
 
     private void configureSessionClustering(final Tomcat tomcat) {
         val clusteringProperties = casProperties.getServer().getTomcat().getClustering();
-        if (!clusteringProperties.isSessionClusteringEnabled()) {
+        if (!clusteringProperties.isEnabled()) {
             LOGGER.trace("Tomcat session clustering/replication is turned off");
             return;
         }
 
         val cluster = new SimpleTcpCluster();
+        val groupChannel = new GroupChannel();
+        if ("CLOUD".equalsIgnoreCase(clusteringProperties.getClusteringType())) {
+            val membershipService = new CloudMembershipService();
+            membershipService.setMembershipProviderClassName(clusteringProperties.getCloudMembershipProvider());
+            groupChannel.setMembershipService(membershipService);
+            cluster.setChannel(groupChannel);
+            tomcat.getEngine().setCluster(cluster);
+            LOGGER.trace("Tomcat session clustering/replication configured using cloud membership provider [{}]",
+                clusteringProperties.getCloudMembershipProvider());
+            return;
+        }
+
         cluster.setChannelSendOptions(clusteringProperties.getChannelSendOptions());
 
         val manager = getClusteringManagerInstance();
         cluster.setManagerTemplate(manager);
-
-        val channel = new GroupChannel();
 
         val receiver = new NioReceiver();
         receiver.setPort(clusteringProperties.getReceiverPort());
@@ -144,7 +155,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         receiver.setMaxThreads(clusteringProperties.getReceiverMaxThreads());
         receiver.setAddress(clusteringProperties.getReceiverAddress());
         receiver.setAutoBind(clusteringProperties.getReceiverAutoBind());
-        channel.setChannelReceiver(receiver);
+        groupChannel.setChannelReceiver(receiver);
 
         val membershipService = new McastService();
         membershipService.setPort(clusteringProperties.getMembershipPort());
@@ -154,28 +165,31 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         membershipService.setRecoveryEnabled(clusteringProperties.isMembershipRecoveryEnabled());
         membershipService.setRecoveryCounter(clusteringProperties.getMembershipRecoveryCounter());
         membershipService.setLocalLoopbackDisabled(clusteringProperties.isMembershipLocalLoopbackDisabled());
-        channel.setMembershipService(membershipService);
+        groupChannel.setMembershipService(membershipService);
 
         val sender = new ReplicationTransmitter();
         sender.setTransport(new PooledParallelSender());
-        channel.setChannelSender(sender);
+        groupChannel.setChannelSender(sender);
 
-        channel.addInterceptor(new TcpPingInterceptor());
-        channel.addInterceptor(new TcpFailureDetector());
-        channel.addInterceptor(new MessageDispatchInterceptor());
+        groupChannel.addInterceptor(new TcpPingInterceptor());
+        groupChannel.addInterceptor(new TcpFailureDetector());
+        groupChannel.addInterceptor(new MessageDispatchInterceptor());
 
-        val membership = new StaticMembershipInterceptor();
-        val memberSpecs = clusteringProperties.getClusterMembers().split(",", -1);
-        for (val spec : memberSpecs) {
-            val memberDesc = new ClusterMemberDesc(spec);
-            val member = new StaticMember();
-            member.setHost(memberDesc.getAddress());
-            member.setPort(memberDesc.getPort());
-            member.setDomain("CAS");
-            member.setUniqueId(memberDesc.getUniqueId());
-            membership.addStaticMember(member);
-            channel.addInterceptor(membership);
-            cluster.setChannel(channel);
+        val clusterMembers = clusteringProperties.getClusterMembers();
+        if (StringUtils.isNotBlank(clusterMembers)) {
+            val membership = new StaticMembershipInterceptor();
+            val memberSpecs = clusterMembers.split(",", -1);
+            for (val spec : memberSpecs) {
+                val memberDesc = new ClusterMemberDesc(spec);
+                val member = new StaticMember();
+                member.setHost(memberDesc.getAddress());
+                member.setPort(memberDesc.getPort());
+                member.setDomain("CAS");
+                member.setUniqueId(memberDesc.getUniqueId());
+                membership.addStaticMember(member);
+                groupChannel.addInterceptor(membership);
+                cluster.setChannel(groupChannel);
+            }
         }
         cluster.addValve(new ReplicationValve());
         cluster.addValve(new JvmRouteBinderValve());
@@ -186,7 +200,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
 
     private void configureContextForSessionClustering() {
         val clusteringProperties = casProperties.getServer().getTomcat().getClustering();
-        if (!clusteringProperties.isSessionClusteringEnabled()) {
+        if (!clusteringProperties.isEnabled()) {
             LOGGER.trace("Tomcat session clustering/replication is turned off");
             return;
         }
@@ -227,7 +241,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
             port = Integer.parseInt(values[1]);
             var index = Integer.parseInt(values[2]);
             if (index < 0 || index > UNIQUE_ID_LIMIT) {
-                throw new IllegalArgumentException("invalid unique index: must be >= 0 and < 256");
+                throw new IllegalArgumentException("Invalid unique index: must be >= 0 and < 256");
             }
             uniqueId = "{";
             for (var i = 0; i < UNIQUE_ID_ITERATIONS; i++, index++) {

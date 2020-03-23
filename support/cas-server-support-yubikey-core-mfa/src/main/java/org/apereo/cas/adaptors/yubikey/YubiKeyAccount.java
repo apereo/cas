@@ -6,17 +6,15 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.Id;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.Table;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,9 +25,9 @@ import java.util.ArrayList;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Entity
-@Table(name = "YubiKeyAccount")
+@MappedSuperclass
 @ToString
+@NoArgsConstructor
 @Getter
 @Setter
 @AllArgsConstructor
@@ -37,7 +35,7 @@ import java.util.ArrayList;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class YubiKeyAccount implements Serializable {
     /**
-     * uername field.
+     * username field.
      */
     public static final String FIELD_USERNAME = "username";
 
@@ -49,10 +47,8 @@ public class YubiKeyAccount implements Serializable {
     private static final long serialVersionUID = 311869140885521905L;
 
     @Id
-    @org.springframework.data.annotation.Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
     @JsonProperty
+    @Transient
     private long id = -1;
 
     @Lob
@@ -64,9 +60,6 @@ public class YubiKeyAccount implements Serializable {
     @JsonProperty
     private String username;
 
-    public YubiKeyAccount() {
-        this.id = System.currentTimeMillis();
-    }
 
     /**
      * Register device.

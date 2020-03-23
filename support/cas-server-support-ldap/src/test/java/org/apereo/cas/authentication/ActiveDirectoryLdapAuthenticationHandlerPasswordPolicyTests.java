@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     "cas.authn.ldap[0].passwordPolicy.type=AD",
     "cas.authn.ldap[0].passwordPolicy.enabled=true"
 })
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 10390)
 public class ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
 
     @Override
@@ -56,7 +56,7 @@ public class ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests extends
         this.handler.forEach(Unchecked.consumer(h -> {
             val credential = new UsernamePasswordCredential(getUsername(), getSuccessPassword());
             val result = h.authenticate(credential);
-            assertTrue(result.getWarnings() != null && result.getWarnings().size() > 0);
+            assertTrue(result.getWarnings() != null && !result.getWarnings().isEmpty());
             assertTrue(result.getWarnings().stream().anyMatch(messageDescriptor -> messageDescriptor.getCode().equals("password.expiration.warning")));
             assertNotNull(result.getPrincipal());
             assertEquals(credential.getUsername(), result.getPrincipal().getId());

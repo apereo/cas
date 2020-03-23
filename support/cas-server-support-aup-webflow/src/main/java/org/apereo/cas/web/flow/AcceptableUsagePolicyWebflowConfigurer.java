@@ -19,13 +19,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    static final String VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW = "acceptableUsagePolicyView";
-    static final String STATE_ID_AUP_CHECK = "acceptableUsagePolicyCheck";
-
-    private static final String AUP_ACCEPTED_ACTION = "aupAcceptedAction";
-    private static final String AUP_VERIFY_ACTION = "acceptableUsagePolicyVerifyAction";
-    private static final String AUP_VERIFY_SERVICE_ACTION = "acceptableUsagePolicyVerifyServiceAction";
-
     public AcceptableUsagePolicyWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                   final ConfigurableApplicationContext applicationContext,
@@ -51,7 +44,7 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
      */
     protected void createTransitionStateToAcceptableUsagePolicy(final Flow flow) {
         val submit = getRealSubmissionState(flow);
-        createTransitionForState(submit, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_AUP_CHECK, true);
+        createTransitionForState(submit, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_AUP_CHECK, true);
     }
 
     /**
@@ -70,11 +63,12 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
      * @param flow the flow
      */
     protected void createSubmitActionState(final Flow flow) {
-        val aupAcceptedAction = createActionState(flow, AUP_ACCEPTED_ACTION, "acceptableUsagePolicySubmitAction");
+        val aupAcceptedAction = createActionState(flow, CasWebflowConstants.STATE_ID_AUP_ACCEPTED, "acceptableUsagePolicySubmitAction");
         val target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         val transitionSet = aupAcceptedAction.getTransitionSet();
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED, target));
-        transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM));
+        transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR,
+            CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM));
     }
 
     /**
@@ -83,8 +77,10 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
      * @param flow the flow
      */
     protected void createAcceptableUsagePolicyView(final Flow flow) {
-        val viewState = createViewState(flow, VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW, "casAcceptableUsagePolicyView");
-        createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, AUP_ACCEPTED_ACTION);
+        val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_ACCEPTABLE_USAGE_POLICY_VIEW, "casAcceptableUsagePolicyView");
+        createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
+            CasWebflowConstants.STATE_ID_AUP_ACCEPTED);
+        viewState.getRenderActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_AUP_RENDER));
     }
 
     /**
@@ -93,19 +89,23 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
      * @param flow the flow
      */
     protected void createVerifyActionState(final Flow flow) {
-        val actionState = createActionState(flow, STATE_ID_AUP_CHECK, AUP_VERIFY_ACTION);
+        val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_AUP_CHECK, CasWebflowConstants.ACTION_ID_AUP_VERIFY);
 
         val transitionSet = actionState.getTransitionSet();
         val target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED, target));
-        transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT, VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW));
+        transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT,
+            CasWebflowConstants.STATE_ID_ACCEPTABLE_USAGE_POLICY_VIEW));
 
         val ticketCreateState = getState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET, ActionState.class);
-        createEvaluateActionForExistingActionState(flow, ticketCreateState.getId(), AUP_VERIFY_ACTION);
-        createTransitionForState(ticketCreateState, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT, VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW);
-        
+        createEvaluateActionForExistingActionState(flow, ticketCreateState.getId(), CasWebflowConstants.ACTION_ID_AUP_VERIFY);
+        createTransitionForState(ticketCreateState, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT,
+            CasWebflowConstants.STATE_ID_ACCEPTABLE_USAGE_POLICY_VIEW);
+
         val genServiceTicketState = getState(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, ActionState.class);
-        createEvaluateActionForExistingActionState(flow, genServiceTicketState.getId(), AUP_VERIFY_SERVICE_ACTION);
-        createTransitionForState(genServiceTicketState, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT, VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW);
+        createEvaluateActionForExistingActionState(flow, genServiceTicketState.getId(),
+            CasWebflowConstants.ACTION_ID_AUP_VERIFY_SERVICE);
+        createTransitionForState(genServiceTicketState, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT,
+            CasWebflowConstants.STATE_ID_ACCEPTABLE_USAGE_POLICY_VIEW);
     }
 }

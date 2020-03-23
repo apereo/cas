@@ -1,6 +1,5 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
@@ -21,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @EnabledIfPortOpen(port = 25000)
-@EnabledIfContinuousIntegration
 @Tag("Mail")
 public class VerifySecurityQuestionsActionTests extends BasePasswordManagementActionTests {
 

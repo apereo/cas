@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.mfa.DefaultChainingMultifactorAuthenticatio
 import org.apereo.cas.authentication.mfa.DefaultMultifactorAuthenticationContextValidatorTests;
 import org.apereo.cas.authentication.mfa.DefaultRequestedAuthenticationContextValidatorTests;
 import org.apereo.cas.authentication.mfa.MultifactorAuthenticationProviderBypassTests;
+import org.apereo.cas.authentication.mfa.MultifactorAuthenticationUtilsTests;
 import org.apereo.cas.authentication.mfa.bypass.DefaultChainingMultifactorAuthenticationBypassProviderTests;
 import org.apereo.cas.authentication.mfa.bypass.audit.MultifactorAuthenticationProviderBypassAuditResourceResolverTests;
 import org.apereo.cas.authentication.mfa.trigger.AdaptiveMultifactorAuthenticationTriggerTests;
@@ -11,11 +12,13 @@ import org.apereo.cas.authentication.mfa.trigger.AuthenticationAttributeMultifac
 import org.apereo.cas.authentication.mfa.trigger.GlobalMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.authentication.mfa.trigger.GroovyScriptMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.authentication.mfa.trigger.HttpRequestMultifactorAuthenticationTriggerTests;
+import org.apereo.cas.authentication.mfa.trigger.PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.authentication.mfa.trigger.PrincipalAttributeMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.authentication.mfa.trigger.RegisteredServiceMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.authentication.mfa.trigger.RegisteredServicePrincipalAttributeMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.authentication.mfa.trigger.RestEndpointMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.authentication.mfa.trigger.ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests;
+import org.apereo.cas.authentication.mfa.trigger.TimedMultifactorAuthenticationTriggerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -36,6 +39,9 @@ import org.junit.runner.RunWith;
     RestMultifactorAuthenticationProviderBypassEvaluatorTests.class,
     AdaptiveMultifactorAuthenticationTriggerTests.class,
     GlobalMultifactorAuthenticationTriggerTests.class,
+    MultifactorAuthenticationUtilsTests.class,
+    TimedMultifactorAuthenticationTriggerTests.class,
+    PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests.class,
     ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests.class,
     RegisteredServiceMultifactorAuthenticationTriggerTests.class,
     RegisteredServicePrincipalAttributeMultifactorAuthenticationTriggerTests.class,

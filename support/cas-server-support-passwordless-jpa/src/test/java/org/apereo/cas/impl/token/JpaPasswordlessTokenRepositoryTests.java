@@ -1,6 +1,7 @@
 package org.apereo.cas.impl.token;
 
 import org.apereo.cas.api.PasswordlessTokenRepository;
+import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.JpaPasswordlessAuthenticationConfiguration;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.time.ZoneOffset;
@@ -31,7 +33,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @Getter
 @Tag("JDBC")
-@Import(JpaPasswordlessAuthenticationConfiguration.class)
+@Import({
+    CasHibernateJpaConfiguration.class,
+    JpaPasswordlessAuthenticationConfiguration.class
+})
+@TestPropertySource(properties = "cas.jdbc.showSql=true")
 public class JpaPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier("passwordlessTokenRepository")
@@ -60,7 +66,7 @@ public class JpaPasswordlessTokenRepositoryTests extends BasePasswordlessUserAcc
         val tt = ZonedDateTime.now(ZoneOffset.UTC).plusHours(5).toInstant().toEpochMilli();
         DateTimeUtils.setCurrentMillisFixed(tt);
         repository.clean();
-        
+
         assertTrue(repository.findToken(uid).isEmpty());
     }
 }

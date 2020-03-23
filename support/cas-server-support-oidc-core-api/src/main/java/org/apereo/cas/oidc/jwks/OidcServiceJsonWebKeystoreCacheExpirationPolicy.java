@@ -8,7 +8,7 @@ import com.github.benmanes.caffeine.cache.Expiry;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -20,26 +20,26 @@ import java.util.concurrent.TimeUnit;
  * @since 6.1.0
  */
 @RequiredArgsConstructor
-public class OidcServiceJsonWebKeystoreCacheExpirationPolicy implements Expiry<OAuthRegisteredService, Optional<RsaJsonWebKey>> {
+public class OidcServiceJsonWebKeystoreCacheExpirationPolicy implements Expiry<OAuthRegisteredService, Optional<PublicJsonWebKey>> {
     private final CasConfigurationProperties casProperties;
 
     @Override
     public long expireAfterCreate(final OAuthRegisteredService oidcRegisteredService,
-                                  final Optional<RsaJsonWebKey> rsaJsonWebKey,
+                                  final Optional<PublicJsonWebKey> rsaJsonWebKey,
                                   final long currentTime) {
         return getExpiration(oidcRegisteredService);
     }
 
     @Override
     public long expireAfterUpdate(final OAuthRegisteredService oidcRegisteredService,
-                                  final Optional<RsaJsonWebKey> rsaJsonWebKey,
+                                  final Optional<PublicJsonWebKey> rsaJsonWebKey,
                                   final long currentTime, final long currentDuration) {
         return getExpiration(oidcRegisteredService);
     }
 
     @Override
     public long expireAfterRead(final OAuthRegisteredService oidcRegisteredService,
-                                final Optional<RsaJsonWebKey> rsaJsonWebKey,
+                                final Optional<PublicJsonWebKey> rsaJsonWebKey,
                                 final long currentTime,
                                 final long currentDuration) {
         return getExpiration(oidcRegisteredService);

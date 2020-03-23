@@ -40,11 +40,11 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         val list = new ArrayList<RegisteredService>();
 
         var svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1");
-        svc.setRequiredHandlers(CollectionUtils.wrapHashSet("handler1", "handler2"));
+        svc.getAuthenticationPolicy().setRequiredAuthenticationHandlers(CollectionUtils.wrapHashSet("handler1", "handler2"));
         list.add(svc);
 
         svc = RegisteredServiceTestUtils.getRegisteredService("serviceid2");
-        svc.setRequiredHandlers(new HashSet<>(0));
+        svc.getAuthenticationPolicy().setRequiredAuthenticationHandlers(new HashSet<>(0));
         list.add(svc);
 
         val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), list, new ArrayList<>());

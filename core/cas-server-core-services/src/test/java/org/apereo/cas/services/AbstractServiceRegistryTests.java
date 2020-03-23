@@ -421,7 +421,7 @@ public abstract class AbstractServiceRegistryTests {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
         r.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
         r.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("https://.+"));
-        r.setRequiredHandlers(CollectionUtils.wrapHashSet("h1", "h2"));
+        r.getAuthenticationPolicy().setRequiredAuthenticationHandlers(CollectionUtils.wrapHashSet("h1", "h2"));
 
         val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
@@ -553,6 +553,7 @@ public abstract class AbstractServiceRegistryTests {
         r.setContacts(CollectionUtils.wrap(contact));
         this.serviceRegistry.save(r);
         this.serviceRegistry.load();
+        this.serviceRegistry.delete(r);
     }
 
     @ParameterizedTest
@@ -585,6 +586,7 @@ public abstract class AbstractServiceRegistryTests {
 
         val prop = r.getProperties().get("field1");
         assertEquals(2, prop.getValues().size());
+        this.serviceRegistry.delete(r);
     }
 
     /**

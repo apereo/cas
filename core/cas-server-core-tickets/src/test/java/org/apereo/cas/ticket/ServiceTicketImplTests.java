@@ -27,12 +27,16 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ServiceTicketImplTests {
 
     private static final String ST_ID = "stest1";
+
     private static final File ST_JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "st.json");
+
     private static final String ID = "test";
 
     private final TicketGrantingTicketImpl tgt = new TicketGrantingTicketImpl(ID,
         CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+
     private final DefaultUniqueTicketIdGenerator idGenerator = new DefaultUniqueTicketIdGenerator();
+
     private ObjectMapper mapper;
 
     @BeforeEach

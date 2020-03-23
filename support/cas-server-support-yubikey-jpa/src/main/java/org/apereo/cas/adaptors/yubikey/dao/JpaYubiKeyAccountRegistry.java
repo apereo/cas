@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
+import org.apereo.cas.adaptors.yubikey.JpaYubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
-    private static final String SELECT_QUERY = "SELECT r from " + YubiKeyAccount.class.getSimpleName() + " r ";
+    private static final String SELECT_QUERY = "SELECT r from " + JpaYubiKeyAccount.class.getSimpleName() + " r ";
 
     private static final String SELECT_ACCOUNT_QUERY = SELECT_QUERY.concat(" WHERE r.username = :username");
 
@@ -46,12 +47,12 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         if (accountValidator.isValid(uid, token)) {
             val yubikeyPublicId = getCipherExecutor().encode(accountValidator.getTokenPublicId(token));
 
-            val results = this.entityManager.createQuery(SELECT_ACCOUNT_QUERY, YubiKeyAccount.class)
+            val results = this.entityManager.createQuery(SELECT_ACCOUNT_QUERY, JpaYubiKeyAccount.class)
                 .setParameter("username", uid)
                 .setMaxResults(1)
                 .getResultList();
 
-            val account = results.isEmpty() ? new YubiKeyAccount() : results.get(0);
+            val account = results.isEmpty() ? new JpaYubiKeyAccount() : results.get(0);
             account.registerDevice(getCipherExecutor().encode(yubikeyPublicId));
             account.setUsername(uid);
             return this.entityManager.merge(account) != null;
@@ -62,7 +63,7 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     @Override
     public Collection<? extends YubiKeyAccount> getAccounts() {
         try {
-            return this.entityManager.createQuery(SELECT_QUERY, YubiKeyAccount.class)
+            return this.entityManager.createQuery(SELECT_QUERY, JpaYubiKeyAccount.class)
                 .getResultList()
                 .stream()
                 .peek(it -> {
@@ -83,13 +84,13 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     @Override
     public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
         try {
-            val account = this.entityManager.createQuery(SELECT_ACCOUNT_QUERY, YubiKeyAccount.class)
+            val account = this.entityManager.createQuery(SELECT_ACCOUNT_QUERY, JpaYubiKeyAccount.class)
                 .setParameter("username", uid)
                 .getSingleResult();
             val devices = account.getDeviceIdentifiers().stream()
                 .map(pubId -> getCipherExecutor().decode(pubId))
                 .collect(Collectors.toCollection(ArrayList::new));
-            val yubiKeyAccount = new YubiKeyAccount(account.getId(), devices, account.getUsername());
+            val yubiKeyAccount = new JpaYubiKeyAccount(account.getId(), devices, account.getUsername());
             return Optional.of(yubiKeyAccount);
         } catch (final NoResultException e) {
             LOGGER.debug("No registration record could be found", e);
@@ -101,7 +102,7 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public void delete(final String uid) {
-        val count = this.entityManager.createQuery("DELETE FROM " + YubiKeyAccount.class.getSimpleName() + " r WHERE r.username = :username")
+        val count = this.entityManager.createQuery("DELETE FROM " + JpaYubiKeyAccount.class.getSimpleName() + " r WHERE r.username = :username")
             .setParameter("username", uid)
             .executeUpdate();
         LOGGER.debug("Deleted [{}] record(s)", count);
@@ -109,6 +110,6 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public void deleteAll() {
-        this.entityManager.createQuery("DELETE FROM " + YubiKeyAccount.class.getSimpleName()).executeUpdate();
+        this.entityManager.createQuery("DELETE FROM " + JpaYubiKeyAccount.class.getSimpleName()).executeUpdate();
     }
 }

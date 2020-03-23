@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-interrupt-webflow")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class InterruptProperties implements Serializable {
     private static final long serialVersionUID = -4945287309473842615L;
 
@@ -26,6 +28,7 @@ public class InterruptProperties implements Serializable {
      * complete the first condition for the interrupt notifications trigger.
      */
     private String attributeName;
+
     /**
      * A regex pattern on the attribute value that if matches will successfully
      * complete the first condition for the interrupt notifications trigger.
@@ -50,6 +53,7 @@ public class InterruptProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-interrupt-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Json extends SpringResourceProperties {
 
         private static final long serialVersionUID = 1079027840047126083L;
@@ -58,6 +62,7 @@ public class InterruptProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-interrupt-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Groovy extends SpringResourceProperties {
 
         private static final long serialVersionUID = 8079027843747126083L;
@@ -66,6 +71,7 @@ public class InterruptProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-interrupt-webflow")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Rest extends RestEndpointProperties {
 
         private static final long serialVersionUID = 1833594332973137011L;

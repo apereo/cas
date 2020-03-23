@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title th:text="#{cas.login.pagetitle}">CAS Acceptable Use Policy View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+
+</head>
+
+<body class="login mdc-typography">
+    <div layout:fragment="content" class="d-flex justify-content-center">
+
+        <div class="d-flex justify-content-center flex-md-row flex-column mdc-card mdc-card-content"
+            th:classappend="${delegatedAuthenticationProviderConfigurations} OR ${accepttoApplicationId} ? 'w-lg-30' : 'w-lg-50'">
+            <section id="loginForm"
+                class="login-section login-form"
+                th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+                <div th:replace="fragments/loginform :: loginform">
+                    <a href="fragments/loginform.html">Login Form goes here</a>
+                </div>
+            </section>
+            <section id="providers" class="login-section login-providers" th:if="${delegatedAuthenticationProviderConfigurations}">
+                <div th:replace="fragments/loginProviders :: loginProviders">
+                    <a href="fragments/loginProviders.html">loginProviders</a>
+                </div>
+            </section>
+            
+            <section id="acceptto" class="login-section login-qr d-xs-none d-md-block" th:if="${accepttoApplicationId}">
+                <div th:replace="fragments/accepttoQRCode :: accepttoQRCode">
+                    <a href="fragments/accepttoQRCode.html">accepttoQRCode</a>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+
+</html>

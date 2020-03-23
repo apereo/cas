@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.rest;
 
 import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -14,6 +15,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.util.LinkedMultiValueMap;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -65,6 +67,24 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactoryTests {
         val credential = (SurrogateUsernamePasswordCredential) results.get(0);
         assertNotNull(credential);
         assertEquals("surrogate", credential.getSurrogateUsername());
+        assertEquals("test", credential.getUsername());
+    }
+
+    @Test
+    public void verifyBasicUsernamePasswordOperationWithoutSurrogatePrincipal() {
+        val request = new MockHttpServletRequest();
+        val requestBody = new LinkedMultiValueMap<String, String>();
+        requestBody.add("username", "test");
+        requestBody.add("password", "password");
+
+        val service = new SimpleSurrogateAuthenticationService(Collections.emptyMap(), mock(ServicesManager.class));
+        val factory = new SurrogateAuthenticationRestHttpRequestCredentialFactory(service, casProperties.getAuthn().getSurrogate());
+        val results = factory.fromRequest(request, requestBody);
+        assertFalse(results.isEmpty());
+        assertFalse(results.get(0) instanceof SurrogateUsernamePasswordCredential);
+        assertTrue(results.get(0) instanceof UsernamePasswordCredential);
+        val credential = (UsernamePasswordCredential) results.get(0);
+        assertNotNull(credential);
         assertEquals("test", credential.getUsername());
     }
 }

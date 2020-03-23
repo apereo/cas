@@ -7,7 +7,6 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.util.MockSmsSender;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.util.io.SmsSender;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
@@ -15,6 +14,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -46,7 +46,6 @@ import org.springframework.context.annotation.Bean;
     "cas.serviceRegistry.mail.text=Service %s has expired in CAS service registry"
 })
 @Tag("Mail")
-@EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 25000)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RegisteredServicesEventListenerTests {
@@ -90,6 +89,7 @@ public class RegisteredServicesEventListenerTests {
     @TestConfiguration
     public static class RegisteredServicesEventListenerTestConfiguration {
 
+        @ConditionalOnMissingBean(name = "smsSender")
         @Bean
         public SmsSender smsSender() {
             return new MockSmsSender();

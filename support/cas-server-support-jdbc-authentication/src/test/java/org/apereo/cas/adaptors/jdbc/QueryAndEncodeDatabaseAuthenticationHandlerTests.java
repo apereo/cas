@@ -18,10 +18,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.annotation.DirtiesContext;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -38,20 +35,22 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @SuppressWarnings("JDBCExecuteWithNonConstantString")
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    DatabaseAuthenticationTestConfiguration.class
-})
-@DirtiesContext
 @Tag("JDBC")
-public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
+public class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
     private static final String ALG_NAME = "SHA-512";
+
     private static final String SQL = "SELECT * FROM users where %s";
+
     private static final int NUM_ITERATIONS = 5;
+
     private static final String STATIC_SALT = "STATIC_SALT";
+
     private static final String PASSWORD_FIELD_NAME = "password";
+
     private static final String EXPIRED_FIELD_NAME = "expired";
+
     private static final String DISABLED_FIELD_NAME = "disabled";
+
     private static final String NUM_ITERATIONS_FIELD_NAME = "numIterations";
 
     @Autowired
@@ -201,10 +200,15 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         private Long id;
 
         private String username;
+
         private String password;
+
         private String salt;
+
         private String expired;
+
         private String disabled;
+
         private long numIterations;
     }
 }

@@ -20,7 +20,6 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.LdapAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -33,10 +32,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.apereo.cas.util.junit.Assertions.*;
+import static org.apereo.cas.util.junit.Assertions.assertThrowsWithRootCause;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -69,7 +69,6 @@ import static org.junit.jupiter.api.Assertions.*;
     LdapAuthenticationConfiguration.class
 })
 @Tag("Ldap")
-@EnabledIfContinuousIntegration
 public abstract class BaseLdapAuthenticationHandlerTests {
     @Autowired
     @Qualifier("ldapAuthenticationHandlers")
@@ -97,7 +96,7 @@ public abstract class BaseLdapAuthenticationHandlerTests {
     }
 
     String[] getPrincipalAttributes() {
-        return new String[] {"cn", "description"};
+        return new String[]{"cn", "description"};
     }
 
     String getUsername() {

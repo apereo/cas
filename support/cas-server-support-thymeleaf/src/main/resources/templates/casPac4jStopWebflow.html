@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title th:text="#{screen.pac4j.unauthz.pagetitle}">Pac4j Stop Webflow View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body>
+    <main role="main" class="container mt-3 mb-3">
+        <div layout:fragment="content" class="banner banner-danger mdc-card p-4 m-auto w-lg-66">
+            <div class="">
+                <h2 th:utext="#{screen.pac4j.unauthz.heading}">Unauthorized Access</h2>
+                <p th:utext="#{screen.pac4j.unauthz.message}">Either the authentication request was rejected/cancelled,
+                    or
+                    the authentication provider denied access due to permissions, etc. Review logs to find the root
+                    cause of
+                    the issue.</p>
+
+                <div class="mdc-data-table">
+                    <table th:if="${error != null or reason != null or code != null or description != null}"
+                        class="mdc-data-table__table w-100" aria-label="Error information">
+                        <thead>
+                            <tr class="mdc-data-table__header-row">
+                                <th class="mdc-data-table__header-cell">Error</th>
+                                <th class="mdc-data-table__header-cell">Reason</th>
+                                <th class="mdc-data-table__header-cell">Code</th>
+                                <th class="mdc-data-table__header-cell">Description</th>
+                                <th class="mdc-data-table__header-cell">Provider</th>
+                                <th class="mdc-data-table__header-cell">Destination</th>
+                            </tr>
+                        </thead>
+                        <tbody class="mdc-data-table__content">
+                            <tr class="mdc-data-table__row">
+                                <td class="mdc-data-table__cell" th:text="${error}">Error</td>
+                                <td class="mdc-data-table__cell" th:text="${reason}">reason</td>
+                                <td class="mdc-data-table__cell" th:text="${code}">code</td>
+                                <td class="mdc-data-table__cell" th:text="${description}">description</td>
+                                <td class="mdc-data-table__cell" th:text="${client}">client</td>
+                                <td class="mdc-data-table__cell">
+                                    <a th:href="${service}" th:text="#{screen.pac4j.unauthz.gotoapp}">Goto
+                                        Application</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="d-flex">
+                <a class="mdc-button mdc-button--raised mr-2" th:href="@{/login}">
+                    <span class="mdc-button__label" th:text="#{screen.pac4j.unauthz.login}">Back to CAS</span>
+                </a>
+                <a class="mdc-button mdc-button--outlined" th:href="${service}">
+                    <span class="mdc-button__label" th:text="#{screen.pac4j.unauthz.gotoapp}">Goto Application</span>
+                </a>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

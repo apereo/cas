@@ -254,16 +254,18 @@ public class CasValidationConfiguration {
             viewFactory.registerView(ServiceValidationViewTypes.JSON, cas3ServiceJsonView());
 
             val successViewV3 = cas3ServiceSuccessView();
-            viewFactory.registerView(V3ServiceValidateController.class, Pair.of(successViewV3, cas3ServiceFailureView()));
-            viewFactory.registerView(V3ProxyValidateController.class, Pair.of(successViewV3, cas3ServiceFailureView()));
+            val failureViewV3 = cas3ServiceFailureView();
+            viewFactory.registerView(V3ServiceValidateController.class, Pair.of(successViewV3, failureViewV3));
+            viewFactory.registerView(V3ProxyValidateController.class, Pair.of(successViewV3, failureViewV3));
 
             if (casProperties.getView().getCas2().isV3ForwardCompatible()) {
-                viewFactory.registerView(ProxyValidateController.class, Pair.of(successViewV3, cas3ServiceFailureView()));
-                viewFactory.registerView(ServiceValidateController.class, Pair.of(successViewV3, cas3ServiceFailureView()));
+                viewFactory.registerView(ProxyValidateController.class, Pair.of(successViewV3, failureViewV3));
+                viewFactory.registerView(ServiceValidateController.class, Pair.of(successViewV3, failureViewV3));
             } else {
                 val successViewV2 = cas2ServiceSuccessView();
-                viewFactory.registerView(ProxyValidateController.class, Pair.of(successViewV2, cas2ServiceFailureView()));
-                viewFactory.registerView(ServiceValidateController.class, Pair.of(successViewV2, cas2ServiceFailureView()));
+                val failureViewV2 = cas2ServiceFailureView();
+                viewFactory.registerView(ProxyValidateController.class, Pair.of(successViewV2, failureViewV2));
+                viewFactory.registerView(ServiceValidateController.class, Pair.of(successViewV2, failureViewV2));
             }
 
             viewFactory.registerView(LegacyValidateController.class, Pair.of(cas1ServiceSuccessView(), cas1ServiceFailureView()));

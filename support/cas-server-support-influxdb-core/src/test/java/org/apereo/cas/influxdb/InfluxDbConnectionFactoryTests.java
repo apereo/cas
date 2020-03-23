@@ -1,6 +1,6 @@
 package org.apereo.cas.influxdb;
 
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @Tag("InfluxDb")
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 8086)
 public class InfluxDbConnectionFactoryTests {
     private static final String CAS_EVENTS_DATABASE = "casEventsDatabase";
 

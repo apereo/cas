@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
@@ -19,7 +18,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.serviceRegistry.jpa.url=jdbc:postgresql://localhost:5432/services",
     "cas.serviceRegistry.jpa.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
 })
-@EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 5432)
 @Tag("Postgres")
 public class JpaServiceRegistryPostgresTests extends JpaServiceRegistryTests {

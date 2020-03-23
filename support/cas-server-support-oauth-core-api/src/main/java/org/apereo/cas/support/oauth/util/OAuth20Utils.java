@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.hjson.JsonValue;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
@@ -446,8 +447,11 @@ public class OAuth20Utils {
      * @return the client id from authenticated profile
      */
     public static String getClientIdFromAuthenticatedProfile(final CommonProfile profile) {
-        if (profile.containsAttribute(OAuth20Constants.CLIENT_ID)) {
-            val attribute = profile.getAttribute(OAuth20Constants.CLIENT_ID);
+        val attrs = new HashMap<>(profile.getAttributes());
+        attrs.putAll(profile.getAuthenticationAttributes());
+        
+        if (attrs.containsKey(OAuth20Constants.CLIENT_ID)) {
+            val attribute = attrs.get(OAuth20Constants.CLIENT_ID);
             return CollectionUtils.toCollection(attribute, ArrayList.class).get(0).toString();
         }
         return null;
@@ -465,7 +469,7 @@ public class OAuth20Utils {
         if (StringUtils.isBlank(claims)) {
             return new HashMap<>(0);
         }
-        return MAPPER.readValue(claims, Map.class);
+        return MAPPER.readValue(JsonValue.readHjson(claims).toString(), Map.class);
     }
 
     /**

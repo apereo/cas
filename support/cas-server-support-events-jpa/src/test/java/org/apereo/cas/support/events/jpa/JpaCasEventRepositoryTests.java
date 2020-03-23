@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.jpa;
 
+import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.JpaEventsConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -22,9 +23,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @SpringBootTest(classes = {
     JpaEventsConfiguration.class,
+    CasHibernateJpaConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class
-})
+}, properties = "cas.jdbc.showSql=true")
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @Getter

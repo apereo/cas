@@ -95,15 +95,11 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseA
     @Autowired
     protected CasConfigurationProperties casProperties;
 
-    @Override
-    public boolean hasLiveUpdates() {
-        return false;
-    }
-
     protected String determinePrincipalId(final String actualPrincipalId, final Map<String, List<Object>> profileAttributes) {
         val aupProperties = casProperties.getAcceptableUsagePolicy();
-        val jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
-            aupProperties.getAupAttributeName(), acceptableUsagePolicyDataSource.getObject(), aupProperties);
+        val jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(
+            ticketRegistrySupport.getObject(),
+            aupProperties, acceptableUsagePolicyDataSource.getObject());
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -119,5 +115,10 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseA
     @Override
     public AcceptableUsagePolicyRepository getAcceptableUsagePolicyRepository() {
         return acceptableUsagePolicyRepository.getObject();
+    }
+
+    @Override
+    public boolean hasLiveUpdates() {
+        return false;
     }
 }

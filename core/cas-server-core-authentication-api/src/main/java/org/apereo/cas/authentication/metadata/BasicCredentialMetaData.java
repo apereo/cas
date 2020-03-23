@@ -56,9 +56,6 @@ public class BasicCredentialMetaData implements CredentialMetaData {
     @JsonIgnore
     @Override
     public Credential toCredential() {
-        if (credentialInstance != null) {
-            return SerializationUtils.deserialize(this.credentialInstance, credentialClass);
-        }
-        throw new IllegalArgumentException("Unable to accept credential " + credentialClass + " to build credential metadata instance.");
+        return SerializationUtils.deserialize(this.credentialInstance, credentialClass);
     }
 }

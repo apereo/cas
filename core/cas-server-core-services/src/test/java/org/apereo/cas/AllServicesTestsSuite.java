@@ -8,7 +8,9 @@ import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImplTe
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactoryTests;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProviderTests;
 import org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicyTests;
+import org.apereo.cas.services.ChainingServicesManagerTests;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategyTests;
+import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceDomainExtractorTests;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicyTests;
@@ -89,6 +91,7 @@ import org.junit.runner.RunWith;
     ShibbolethCompatiblePersistentIdGeneratorTests.class,
     SimpleWebApplicationServiceImplTests.class,
     WebApplicationServiceFactoryTests.class,
+    DefaultRegisteredServiceAuthenticationPolicyTests.class,
     UnauthorizedProxyingExceptionTests.class,
     UnauthorizedServiceExceptionTests.class,
     UnauthorizedSsoServiceExceptionTests.class,
@@ -96,6 +99,7 @@ import org.junit.runner.RunWith;
     RegisteredServiceMutantRegexAttributeFilterTests.class,
     RegisteredServiceScriptedAttributeFilterTests.class,
     GroovyRegisteredServiceAccessStrategyTests.class,
+    ChainingServicesManagerTests.class,
     DefaultRegisteredServiceJsonSerializerTests.class
 })
 @RunWith(JUnitPlatform.class)

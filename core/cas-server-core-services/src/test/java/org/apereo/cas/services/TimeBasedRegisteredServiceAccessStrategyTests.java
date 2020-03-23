@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -42,6 +43,30 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(10).toString());
         assertFalse(authz.isServiceAccessAllowed());
 
+    }
+
+    @Test
+    public void checkFailWithNowAfterEndTime() {
+        var authz = new TimeBasedRegisteredServiceAccessStrategy(true, true);
+        authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(10).toString());
+        authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(5).toString());
+        assertFalse(authz.isServiceAccessAllowed());
+    }
+
+    @Test
+    public void checkLocalFailWithNowAfterEndTime() {
+        val authz = new TimeBasedRegisteredServiceAccessStrategy(true, true);
+        authz.setStartingDateTime(LocalDateTime.now(ZoneOffset.UTC).minusDays(10).toString());
+        authz.setEndingDateTime(LocalDateTime.now(ZoneOffset.UTC).minusDays(5).toString());
+        assertFalse(authz.isServiceAccessAllowed());
+    }
+
+    @Test
+    public void checkLocalFailWithNowBeforeStartTime() {
+        val authz = new TimeBasedRegisteredServiceAccessStrategy(true, true);
+        authz.setStartingDateTime(LocalDateTime.now(ZoneOffset.UTC).plusDays(10).toString());
+        authz.setEndingDateTime(LocalDateTime.now(ZoneOffset.UTC).minusDays(15).toString());
+        assertFalse(authz.isServiceAccessAllowed());
     }
 
     @Test

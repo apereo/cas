@@ -16,6 +16,7 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
+import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.JpaYubiKeyConfiguration;
 import org.apereo.cas.config.YubiKeyConfiguration;
@@ -57,6 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
     JpaYubiKeyConfiguration.class,
     JpaYubiKeyAccountRegistryTests.JpaYubiKeyAccountRegistryTestConfiguration.class,
     YubiKeyAuthenticationEventExecutionPlanConfiguration.class,
+    CasHibernateJpaConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreHttpConfiguration.class,
@@ -83,7 +85,9 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 }, properties = {
     "cas.authn.mfa.yubikey.clientId=18423",
-    "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As="
+    "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As=",
+    "cas.jdbc.showSql=true",
+    "cas.authn.mfa.yubikey.jpa.ddlAuto=create-drop"
 })
 @Tag("JDBC")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -93,7 +97,7 @@ public class JpaYubiKeyAccountRegistryTests {
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")
     private YubiKeyAccountRegistry yubiKeyAccountRegistry;
-
+    
     @Test
     public void verifyAccountNotRegistered() {
         assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("missing-user"));

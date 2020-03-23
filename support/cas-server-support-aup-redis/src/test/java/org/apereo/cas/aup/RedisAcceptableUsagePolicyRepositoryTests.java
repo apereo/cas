@@ -1,14 +1,20 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.config.CasAcceptableUsagePolicyRedisConfiguration;
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link RedisAcceptableUsagePolicyRepositoryTests}.
@@ -18,7 +24,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @Tag("Redis")
 @Import(CasAcceptableUsagePolicyRedisConfiguration.class)
-@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 6379)
 @TestPropertySource(properties = {
     "cas.acceptableUsagePolicy.redis.host=localhost",
     "cas.acceptableUsagePolicy.redis.port=6379",
@@ -29,4 +35,11 @@ public class RedisAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsa
     @Autowired
     @Qualifier("acceptableUsagePolicyRepository")
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
+
+    @Test
+    public void verifyOperation() {
+        assertNotNull(acceptableUsagePolicyRepository);
+        verifyRepositoryAction("casuser",
+            CollectionUtils.wrap("accepted", List.of("false"), "email", List.of("CASuser@example.org")));
+    }
 }

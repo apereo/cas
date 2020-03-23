@@ -13,6 +13,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.concurrent.TimeUnit;
@@ -26,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 @RequiresModule(name = "cas-server-support-u2f")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class U2FMultifactorProperties extends BaseMultifactorProviderProperties {
 
     /**
@@ -125,6 +127,7 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Jpa extends AbstractJpaProperties {
 
         private static final long serialVersionUID = -4334840263678287815L;
@@ -132,6 +135,7 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class MongoDb extends SingleCollectionMongoDbProperties {
 
         private static final long serialVersionUID = -7963843335569634144L;
@@ -144,6 +148,7 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
     @RequiresModule(name = "cas-server-support-u2f")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Json extends SpringResourceProperties {
 
         private static final long serialVersionUID = -6883660787308509919L;
@@ -152,6 +157,7 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
     @RequiresModule(name = "cas-server-support-u2f")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Rest extends RestEndpointProperties {
 
         private static final long serialVersionUID = -8102345678378393382L;
@@ -160,6 +166,7 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
     @RequiresModule(name = "cas-server-support-u2f")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Groovy extends SpringResourceProperties {
 
         private static final long serialVersionUID = 8079027843747126083L;
@@ -168,6 +175,7 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
     @RequiresModule(name = "cas-server-support-u2f-redis")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Redis extends BaseRedisProperties {
         private static final long serialVersionUID = -1261683393319585262L;
     }

@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -17,6 +18,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-hazelcast-core")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class BaseHazelcastProperties implements Serializable {
 
     /**
@@ -67,7 +69,12 @@ public class BaseHazelcastProperties implements Serializable {
      * Hazelcast enterprise license key.
      */
     private String licenseKey;
-    
+
+    /**
+     * Enables compression when default java serialization is used.
+     */
+    private boolean enableCompression;
+
     /**
      * Hazelcast cluster settings if CAS is able to auto-create caches.
      */

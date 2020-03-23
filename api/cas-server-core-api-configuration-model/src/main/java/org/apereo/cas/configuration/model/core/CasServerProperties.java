@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.SneakyThrows;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -22,6 +23,7 @@ import java.net.URL;
 @RequiresModule(name = "cas-server-core", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class CasServerProperties implements Serializable {
 
     private static final long serialVersionUID = 7876382696803430817L;

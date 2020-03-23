@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
@@ -20,7 +19,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.jpa.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
 })
 @EnabledIfPortOpen(port = 5432)
-@EnabledIfContinuousIntegration
 @Tag("Postgres")
-public class PostgresOauthJpaTicketRegistryCleanerTests extends OauthJpaTicketRegistryCleanerTests {
+public class PostgresOauthJpaTicketRegistryCleanerTests extends OAuthJpaTicketRegistryCleanerTests {
 }

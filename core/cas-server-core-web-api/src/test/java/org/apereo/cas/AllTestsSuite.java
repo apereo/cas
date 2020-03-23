@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.web.support.filters.AddResponseHeadersFilterTests;
 import org.apereo.cas.web.support.filters.RequestParameterPolicyEnforcementFilterTests;
+import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilterTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -15,6 +16,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     RequestParameterPolicyEnforcementFilterTests.class,
+    ResponseHeadersEnforcementFilterTests.class,
     AddResponseHeadersFilterTests.class
 })
 @RunWith(JUnitPlatform.class)

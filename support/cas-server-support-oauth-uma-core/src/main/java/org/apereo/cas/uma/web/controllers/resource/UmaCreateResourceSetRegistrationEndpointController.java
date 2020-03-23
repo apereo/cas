@@ -8,6 +8,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.hjson.JsonValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +48,7 @@ public class UmaCreateResourceSetRegistrationEndpointController extends BaseUmaE
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
 
-            val umaRequest = MAPPER.readValue(body, UmaResourceRegistrationRequest.class);
+            val umaRequest = MAPPER.readValue(JsonValue.readHjson(body).toString(), UmaResourceRegistrationRequest.class);
             if (umaRequest == null) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "UMA request cannot be found or parsed");
                 return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <title th:text="#{cas.oauth.confirm.pagetitle}"></title>
+</head>
+
+<body id="cas">
+    <div layout:fragment="content" class="banner banner-success mdc-card p-4 m-auto w-lg-66">
+        <h1 th:text="#{screen.oauth.confirm.header}" />
+
+        <div class="d-flex flex-column align-items-center mb-2">
+            <img th:src="${service.logo}" th:if="${service.logo}" />
+            <p th:text="${service.description}" />
+        </div>
+
+        <div th:if="${dynamic}" class="my-2 banner banner-warning d-flex align-items-center">
+            <i class="mdi mdi-alert mr-2"></i>
+            <strong th:utext="#{screen.oidc.confirm.dynamic(${dynamicTime})}" />
+        </div>
+        <div th:unless="${#sets.isEmpty(scopes)}">
+            <h3 class="border-bottom bg-primary p-2">Scopes</h3>
+            <p th:text="#{screen.oidc.confirm.asksinfo}"/>
+
+            <div th:each="scope : ${scopes}">
+                <i class="mdi mdi-cog" aria-hidden="true"></i>
+                <strong><code th:text="${scope}" /></strong>
+                <p th:utext="#{screen.oidc.confirm.scope.__${scope}__}"/>
+            </div>
+        </div>
+
+        <div th:unless="${#sets.isEmpty(userInfoClaims)}" class="my-2">
+            <h3 class="border-bottom bg-primary p-2">Claims</h3>
+            <p th:utext="#{screen.oidc.confirm.asksinfo}"/>
+
+            <div th:each="claim : ${userInfoClaims}">
+                <i class="mdi mdi-cog" aria-hidden="true"></i>
+                <strong><code th:text="${claim}"/></strong>
+                <p th:utext="#{screen.oidc.confirm.claim.__${claim}__}"/>
+            </div>
+        </div>
+        
+
+        <div th:if="${service.informationUrl}" class="my-2">
+            <i class="mdi mdi-comment" aria-hidden="true"></i>
+            <a th:href="${service.informationUrl}" th:utext="#{screen.oidc.confirm.infourl(${serviceName})}"/>
+        </div>
+        <div th:if="${service.privacyUrl}" class="my-2">
+            <i class="mdi mdi-eye" aria-hidden="true"></i>
+            <a th:href="${service.privacyUrl}" th:utext="#{screen.oidc.confirm.privacyurl(${serviceName})}"/>
+        </div>
+            
+        <h3 class="strong border-bottom pb-2 mt-4" th:text="#{screen.oauth.confirm.message(${serviceName})}"/>
+        <div class="d-flex">
+            <a class="mdc-button mdc-button--raised mr-2"
+                id="allow"
+                name="allow"
+                th:href="@{${callbackUrl}}">
+                <span class="mdc-button__label" th:utext="#{screen.oauth.confirm.allow}"></span>
+            </a>
+
+            <a class="mdc-button mdc-button--outlined" id="cancel" name="cancel"
+               th:href="@{/login}">
+                <span class="mdc-button__label" th:text="#{screen.oauth.confirm.deny}">Cancel</span>
+            </a>
+            
+            <a th:if="${deniedApprovalUrl}" th:href="@{${deniedApprovalUrl}}"
+                class="mdc-button mdc-button--outlined" id="deny" name="deny" href="/">
+                <span class="mdc-button__label" th:utext="#{screen.oauth.confirm.deny}"></span>
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

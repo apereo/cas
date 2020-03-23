@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title th:text="#{cas.mfa.duologin.pagetitle}">Duo Login View</title>
+    <script th:src="@{/js/duo/Duo-Web-v2.min.js}"></script>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body>
+    <main role="main" class="container mt-3 mb-3">
+        <div layout:fragment="content" class="m-auto w-lg-66">
+            <form method="post" id="duo_form" th:object="${credential}" th:action="@{/login}">
+                <div id="msg" class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${#fields.hasErrors('*')}">
+                <span th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">this error block and text is only shown if there are errors</span>
+            </div>
+
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            <input type="hidden" name="_eventId" value="submit"/>
+            <input type="hidden" name="geolocation"/>
+
+            <div id="login" class="m-0 p-0">
+                <iframe id="duo_iframe"
+                        class="mdc-elevation--z1"
+                        frameborder="0"
+                        th:attr="data-host=${apiHost},data-sig-request=${sigRequest}"
+                        data-post-argument="signedDuoResponse">
+                </iframe>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>

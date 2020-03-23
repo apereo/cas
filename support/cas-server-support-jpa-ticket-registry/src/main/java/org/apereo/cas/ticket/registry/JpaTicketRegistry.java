@@ -44,6 +44,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     private static final int STREAM_BATCH_SIZE = 100;
 
     private final LockModeType lockType;
+
     private final TicketCatalog ticketCatalog;
 
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
@@ -54,29 +55,10 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket updateTicket(final Ticket ticket) {
-        LOGGER.trace("Updating ticket [{}]", ticket);
-        val encodeTicket = this.encodeTicket(ticket);
-        this.entityManager.merge(encodeTicket);
-        LOGGER.debug("Updated ticket [{}].", encodeTicket);
-        return encodeTicket;
-    }
-
-    @Override
     public void addTicket(final Ticket ticket) {
         val encodeTicket = encodeTicket(ticket);
         this.entityManager.persist(encodeTicket);
         LOGGER.debug("Added ticket [{}] to registry.", encodeTicket);
-    }
-
-    @Override
-    public long deleteAll() {
-        return this.ticketCatalog.findAll()
-            .stream()
-            .map(this::getTicketEntityName)
-            .map(entityName -> entityManager.createQuery(String.format("DELETE FROM %s", entityName)))
-            .mapToLong(Query::executeUpdate)
-            .sum();
     }
 
     @Override
@@ -107,6 +89,16 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public long deleteAll() {
+        return this.ticketCatalog.findAll()
+            .stream()
+            .map(this::getTicketEntityName)
+            .map(entityName -> entityManager.createQuery(String.format("DELETE FROM %s", entityName)))
+            .mapToLong(Query::executeUpdate)
+            .sum();
+    }
+
+    @Override
     public Collection<? extends Ticket> getTickets() {
         if (isCipherExecutorEnabled()) {
             val sql = String.format("SELECT t FROM %s t", EncodedTicket.class.getSimpleName());
@@ -130,6 +122,15 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             .flatMap(List::stream)
             .map(this::decodeTicket)
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public Ticket updateTicket(final Ticket ticket) {
+        LOGGER.trace("Updating ticket [{}]", ticket);
+        val encodeTicket = this.encodeTicket(ticket);
+        this.entityManager.merge(encodeTicket);
+        LOGGER.debug("Updated ticket [{}].", encodeTicket);
+        return encodeTicket;
     }
 
     /**
@@ -191,6 +192,18 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         return countToLong(query.getSingleResult());
     }
 
+    /**
+     * Delete a ticket by its identifier.
+     * Simple call to the super method to force a transaction to be started in case of a direct call.
+     *
+     * @param ticketId the ticket identifier
+     * @return the number of tickets deleted including children.
+     */
+    @Override
+    public int deleteTicket(final String ticketId) {
+        return super.deleteTicket(ticketId);
+    }
+
     @Override
     public boolean deleteSingleTicket(final String ticketIdToDelete) {
         val encTicketId = encodeTicketId(ticketIdToDelete);
@@ -198,7 +211,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         var totalCount = 0;
         val md = this.ticketCatalog.find(ticketIdToDelete);
 
-        if (md.getProperties().isCascade() && !isCipherExecutorEnabled()) {
+        if (md.getProperties().isCascadeRemovals() && !isCipherExecutorEnabled()) {
             totalCount = deleteTicketGrantingTickets(encTicketId);
         } else {
             val ticketEntityName = getTicketEntityName(md);
@@ -222,26 +235,28 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * @return the total count
      */
     private int deleteTicketGrantingTickets(final String ticketId) {
-        var totalCount = 0;
-
-        val st = this.ticketCatalog.find(ServiceTicket.PREFIX);
-
-        val sql1 = String.format("DELETE FROM %s s WHERE s.ticketGrantingTicket.id = :id", getTicketEntityName(st));
-        var query = entityManager.createQuery(sql1);
-        query.setParameter("id", ticketId);
-        totalCount += query.executeUpdate();
+        var totalCount = this.ticketCatalog.findAll()
+            .stream()
+            .filter(defn -> !defn.getProperties().isExcludeFromCascade())
+            .mapToInt(defn -> {
+                try {
+                    val sql = String.format("DELETE FROM %s s WHERE s.ticketGrantingTicket.id = :id", getTicketEntityName(defn));
+                    LOGGER.trace("Creating query [{}]", sql);
+                    val query = entityManager.createQuery(sql);
+                    query.setParameter("id", ticketId);
+                    return query.executeUpdate();
+                } catch (final Exception e) {
+                    LOGGER.trace(e.getMessage(), e);
+                }
+                return 0;
+            })
+            .sum();
 
         val tgt = this.ticketCatalog.find(TicketGrantingTicket.PREFIX);
-        val sql2 = String.format("DELETE FROM %s s WHERE s.ticketGrantingTicket.id = :id", getTicketEntityName(tgt));
-        query = entityManager.createQuery(sql2);
+        val sql = String.format("DELETE FROM %s t WHERE t.id = :id", getTicketEntityName(tgt));
+        val query = entityManager.createQuery(sql);
         query.setParameter("id", ticketId);
         totalCount += query.executeUpdate();
-
-        val sql3 = String.format("DELETE FROM %s t WHERE t.id = :id", getTicketEntityName(tgt));
-        query = entityManager.createQuery(sql3);
-        query.setParameter("id", ticketId);
-        totalCount += query.executeUpdate();
-
         return totalCount;
     }
 

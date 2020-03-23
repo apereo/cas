@@ -24,6 +24,18 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class CookieRetrievingCookieGeneratorTests {
 
+    private static CookieGenerationContext getCookieGenerationContext() {
+        return CookieGenerationContext.builder()
+            .name("cas")
+            .path("/")
+            .maxAge(1000)
+            .comment("CAS Cookie")
+            .domain("example.org")
+            .secure(true)
+            .httpOnly(true)
+            .build();
+    }
+
     @Test
     public void verifyCookieValueByHeader() {
         val context = getCookieGenerationContext();
@@ -47,7 +59,7 @@ public class CookieRetrievingCookieGeneratorTests {
         WebUtils.putRememberMeAuthenticationEnabled(context, Boolean.TRUE);
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        gen.addCookie(context, "CAS-Cookie-Value");
+        gen.addCookie(request, response, CookieRetrievingCookieGenerator.isRememberMeAuthentication(context), "CAS-Cookie-Value");
         val cookie = response.getCookie(ctx.getName());
         assertNotNull(cookie);
         assertEquals(ctx.getRememberMeMaxAge(), cookie.getMaxAge());
@@ -66,20 +78,9 @@ public class CookieRetrievingCookieGeneratorTests {
         WebUtils.putRememberMeAuthenticationEnabled(context, Boolean.TRUE);
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        gen.addCookie(context, "CAS-Cookie-Value");
+        gen.addCookie(request, response, CookieRetrievingCookieGenerator.isRememberMeAuthentication(context), "CAS-Cookie-Value");
         val cookie = response.getCookie(ctx.getName());
         assertNotNull(cookie);
         assertEquals(ctx.getRememberMeMaxAge(), cookie.getMaxAge());
-    }
-
-    private static CookieGenerationContext getCookieGenerationContext() {
-        return CookieGenerationContext.builder()
-            .name("cas")
-            .path("/")
-            .maxAge(1000)
-            .domain("example.org")
-            .secure(true)
-            .httpOnly(true)
-            .build();
     }
 }

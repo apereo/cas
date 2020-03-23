@@ -11,8 +11,7 @@ If you would like to create your own `css/custom.css file`, for example, you wil
 
 ```bash
 cas.standard.css.file=/css/cas.css
-cas.admin.css.file=/css/admin.css
-cas.javascript.file=/js/cas.js
+cas.standard.js.file=/js/cas.js
 ```
 
 ## Responsive Design
@@ -29,30 +28,23 @@ You can also create your own `custom.js` file, for example, and call it from wit
 <script type="text/javascript" src="/js/custom.js"></script>
 ```
 
-If you are developing themes per service, each theme also has the ability to specify a custom `cas.js` file under the `cas.javascript.file` setting.
+If you are developing themes per service, each theme also has the ability to specify a custom `cas.js` file under the `cas.standard.js.file` setting.
 
 Most importantly, the following Javascript libraries are utilized by CAS automatically:
 
 * JQuery
-* JQuery UI
-* JQuery Cookie
 * Bootstrap
+* Bootstrap Material Web Components
 
-## Asynchronous Script Loading
+## Script Loading
 
-CAS will attempt to load the aforementioned script libraries asynchronously so as to not block the page rendering functionality.
-The loading of script files is handled by the [`head.js` library](http://headjs.com) and is the responsibility of some javascript in the `bottom.html` template fragment which calls some methods in the `cas.js` file.
-
-The only script that is loaded synchronously is the `head.js` library itself.
-
-Because scripts, and especially JQuery are loaded asynchronously, any custom Javascript that is placed inside the page
-that relies on these libraries may not immediately function on page load. CAS provides a callback function that allows
+CAS provides a callback function that allows
 adopters to be notified when script loading has completed and this would be a safe time to execute/load other Javascript-related
 functions that depend on JQuery inside the actual page.
 
 ```javascript
 function jqueryReady() {
-    //Custom Javascript tasks can be carried out now via JQuery...
+    // Custom Javascript tasks can be carried out now via JQuery...
 }
 ```
 

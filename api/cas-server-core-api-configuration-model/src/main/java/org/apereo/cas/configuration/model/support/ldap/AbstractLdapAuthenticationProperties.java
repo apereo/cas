@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequiresModule(name = "cas-server-support-ldap-core")
 @Getter
 @Setter
+@Accessors(chain = true)
 public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapSearchProperties {
 
     private static final long serialVersionUID = 3849857270054289852L;

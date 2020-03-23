@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class PasswordSynchronizationProperties implements Serializable {
     private static final long serialVersionUID = -3878237508646993100L;
 
@@ -25,5 +27,4 @@ public class PasswordSynchronizationProperties implements Serializable {
      * Options for password sync via LDAP.
      */
     private List<LdapPasswordSynchronizationProperties> ldap = new ArrayList<>(0);
-
 }
