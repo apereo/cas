@@ -457,7 +457,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, approveResp, null);
         val mvApproved = controller.handleRequest(mockRequest, approveResp);
         assertTrue(mvApproved.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
-        assertTrue(mvApproved.getModel().containsKey(OAuth20Constants.EXPIRES_IN));
+        assertEquals((long) TIMEOUT, mvApproved.getModel().get(OAuth20Constants.EXPIRES_IN));
         assertTrue(mvApproved.getModel().containsKey(OAuth20Constants.TOKEN_TYPE));
     }
 

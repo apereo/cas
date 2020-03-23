@@ -8,7 +8,6 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenExpirationPolicyBuilder;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -78,9 +77,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
             .getAccessToken()
             .get();
 
-        val tokenExpirationPolicyBuilder = new OAuth20AccessTokenExpirationPolicyBuilder(casProperties);
         val tokenAuthorizationResponseBuilder = new OAuth20TokenAuthorizationResponseBuilder(oauthTokenGenerator,
-            tokenExpirationPolicyBuilder,
             servicesManager,
             accessTokenJwtBuilder,
             casProperties);

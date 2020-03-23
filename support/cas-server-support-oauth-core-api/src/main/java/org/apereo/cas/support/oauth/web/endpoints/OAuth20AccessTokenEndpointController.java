@@ -17,6 +17,7 @@ import com.google.common.base.Supplier;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -126,12 +127,11 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
 
         val deviceRefreshInterval = Beans.newDuration(getOAuthConfigurationContext().getCasProperties()
             .getAuthn().getOauth().getDeviceToken().getRefreshInterval()).getSeconds();
-        val atPolicy = getOAuthConfigurationContext().getAccessTokenExpirationPolicy();
         val dtPolicy = getOAuthConfigurationContext().getDeviceTokenExpirationPolicy();
         val tokenResult = OAuth20AccessTokenResponseResult.builder()
             .registeredService(requestHolder.getRegisteredService())
             .service(requestHolder.getService())
-            .accessTokenTimeout(atPolicy.buildTicketExpirationPolicy().getTimeToIdle())
+            .accessTokenTimeout(result.getAccessToken().map(OAuth20AccessToken::getExpiresIn).orElse(0L))
             .deviceRefreshInterval(deviceRefreshInterval)
             .deviceTokenTimeout(dtPolicy.buildTicketExpirationPolicy().getTimeToIdle())
             .responseType(result.getResponseType().orElse(OAuth20ResponseTypes.NONE))

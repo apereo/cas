@@ -209,10 +209,6 @@ public class OidcConfiguration implements WebMvcConfigurer {
     private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
     @Autowired
-    @Qualifier("accessTokenExpirationPolicy")
-    private ObjectProvider<ExpirationPolicyBuilder> accessTokenExpirationPolicy;
-
-    @Autowired
     @Qualifier("deviceTokenExpirationPolicy")
     private ObjectProvider<ExpirationPolicyBuilder> deviceTokenExpirationPolicy;
 
@@ -662,14 +658,14 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder() {
         return new OidcImplicitIdTokenAuthorizationResponseBuilder(oidcIdTokenGenerator(), oauthTokenGenerator.getObject(),
-            accessTokenExpirationPolicy.getObject(), grantingTicketExpirationPolicy.getObject(),
+            grantingTicketExpirationPolicy.getObject(),
             servicesManager.getObject(), accessTokenJwtBuilder.getObject(), casProperties);
     }
 
     @Bean
     public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenAndTokenCallbackUrlBuilder() {
         return new OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder(oidcIdTokenGenerator(), oauthTokenGenerator.getObject(),
-            accessTokenExpirationPolicy.getObject(), grantingTicketExpirationPolicy.getObject(),
+            grantingTicketExpirationPolicy.getObject(),
             servicesManager.getObject(), accessTokenJwtBuilder.getObject(), casProperties);
     }
 
@@ -780,7 +776,6 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .profileScopeToAttributesFilter(profileScopeToAttributesFilter())
             .accessTokenGenerator(oauthTokenGenerator.getObject())
             .accessTokenResponseGenerator(oidcAccessTokenResponseGenerator())
-            .accessTokenExpirationPolicy(accessTokenExpirationPolicy.getObject())
             .deviceTokenExpirationPolicy(deviceTokenExpirationPolicy.getObject())
             .accessTokenGrantRequestValidators(oauthTokenRequestValidators.getObject())
             .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor.getObject())
