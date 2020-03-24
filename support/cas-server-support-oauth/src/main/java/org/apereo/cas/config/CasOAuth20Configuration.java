@@ -531,9 +531,9 @@ public class CasOAuth20Configuration {
         return new OAuth20UserProfileEndpointController(context);
     }
 
-    @ConditionalOnMissingBean(name = "revocationController")
+    @ConditionalOnMissingBean(name = "oauthRevocationController")
     @Bean
-    public OAuth20RevocationEndpointController revocationController() {
+    public OAuth20RevocationEndpointController oauthRevocationController() {
         val context = buildConfigurationContext()
             .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor())
             .build();

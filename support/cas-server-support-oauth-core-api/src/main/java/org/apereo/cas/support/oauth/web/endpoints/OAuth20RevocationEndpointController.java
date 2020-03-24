@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 
@@ -55,7 +56,7 @@ public class OAuth20RevocationEndpointController extends BaseOAuth20Controller {
         val clientId = OAuth20Utils.getClientIdAndClientSecret(context).getLeft();
         val registeredService = getRegisteredServiceByClientId(clientId);
 
-        if (isServiceNeedAuthentication(registeredService)) {
+        if (OAuth20Utils.doesServiceNeedAuthentication(registeredService)) {
             if (manager.get(true).isEmpty()) {
                 LOGGER.error("Service [{}] requests authentication", clientId);
                 return OAuth20Utils.writeError(response, OAuth20Constants.ACCESS_DENIED);
@@ -64,10 +65,7 @@ public class OAuth20RevocationEndpointController extends BaseOAuth20Controller {
         val token = context.getRequestParameter(OAuth20Constants.TOKEN)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
 
-        if (isAsupportedTokenType(token)) {
-            return generateRevocationResponse(token, clientId, response);
-        }
-        return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
+        return generateRevocationResponse(token, clientId, response);
     }
 
     /**
@@ -78,34 +76,28 @@ public class OAuth20RevocationEndpointController extends BaseOAuth20Controller {
      * @param response the response
      * @return the model and view
      */
-    private ModelAndView generateRevocationResponse(final String token,
-                                                    final String client,
-                                                    final HttpServletResponse response) {
+    protected ModelAndView generateRevocationResponse(final String token,
+                                                      final String clientId,
+                                                      final HttpServletResponse response) {
 
-        if (token.startsWith(OAuth20RefreshToken.PREFIX)) {
-            val registryToken = getOAuthConfigurationContext().getTicketRegistry().getTicket(token, OAuth20RefreshToken.class);
+        val registryToken = getOAuthConfigurationContext().getTicketRegistry().getTicket(token, OAuth20Token.class);
 
-            if (registryToken == null) {
-                LOGGER.error("Provided token [{}] has not been found in the ticket registry", token);
+        if (registryToken == null) {
+            LOGGER.error("Provided token [{}] has not been found in the ticket registry", token);
+        } else if (isRefreshToken(registryToken) || isAccessToken(registryToken)) {
+            if (!StringUtils.equals(clientId, registryToken.getClientId())) {
+                LOGGER.error("Provided token [{}] has not been issued for the service [{}]", token, clientId);
+                return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
+            }
+
+            if (isRefreshToken(registryToken)) {
+                revokeToken(((OAuth20RefreshToken)registryToken));
             } else {
-                if (!StringUtils.equals(client, registryToken.getClientId())) {
-                    LOGGER.error("Provided token [{}] is not related with the service [{}]", token, client);
-                    return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
-                }
-                revokeToken(registryToken);
+                revokeToken(registryToken.getId());
             }
         } else {
-            val registryToken = getOAuthConfigurationContext().getTicketRegistry().getTicket(token, OAuth20AccessToken.class);
-
-            if (registryToken == null) {
-                LOGGER.error("Provided token [{}] has not been found in the ticket registry", token);
-            } else {
-                if (!StringUtils.equals(client, registryToken.getClientId())) {
-                    LOGGER.error("Provided token [{}] is not related with the service [{}]", token, client);
-                    return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
-                }
-                revokeToken(registryToken);
-            }
+            LOGGER.error("Provided token [{}] is either not a refresh token or not an access token", token);
+            return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
         }
 
         val mv = new ModelAndView(new MappingJackson2JsonView());
@@ -120,34 +112,42 @@ public class OAuth20RevocationEndpointController extends BaseOAuth20Controller {
      * @return the model and view
      */
     private void revokeToken(final OAuth20RefreshToken token) {
-        LOGGER.debug("Revoking token [{}]", token);
-        getOAuthConfigurationContext().getTicketRegistry().deleteTicket(token);
+        revokeToken(token.getId());
 
         token.getAccessTokens().forEach(item-> {
-            LOGGER.debug("Revoking Access Token [{}] related to Refresh Token [{}]", item, token);
-            getOAuthConfigurationContext().getTicketRegistry().deleteTicket(item);
+            revokeToken(item);
         });
     }
 
     /**
-     * Revoke the provided Access Token.
+     * Revoke the provided OAuth Token.
      *
      * @param token the token
      * @return the model and view
      */
-    private void revokeToken(final OAuth20AccessToken token) {
+    private void revokeToken(final String token) {
         LOGGER.debug("Revoking token [{}]", token);
         getOAuthConfigurationContext().getTicketRegistry().deleteTicket(token);
     }
 
     /**
-     * Verify if the request related token type is supported.
+     * Is the OAuth token a Refresh Token?
      *
      * @param token the token
-     * @return whether the token type is supported
+     * @return whether the token type is a RefreshToken
      */
-    private boolean isAsupportedTokenType(final String token) {
-        return token.startsWith(OAuth20RefreshToken.PREFIX) || token.startsWith(OAuth20AccessToken.PREFIX);
+    private boolean isRefreshToken(final OAuth20Token token) {
+        return token instanceof OAuth20RefreshToken;
+    }
+
+    /**
+     * Is the OAuth token an Access Token?
+     *
+     * @param token the token
+     * @return whether the token type is a RefreshToken
+     */
+    private boolean isAccessToken(final OAuth20Token token) {
+        return token instanceof OAuth20AccessToken;
     }
 
     /**
@@ -158,16 +158,6 @@ public class OAuth20RevocationEndpointController extends BaseOAuth20Controller {
      */
     private OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
         return OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId);
-    }
-
-    /**
-     * Verify if the request related service must be authenticated.
-     *
-     * @param registeredService the registered service
-     * @return whether the service need authentication
-     */
-    private boolean isServiceNeedAuthentication(final OAuthRegisteredService registeredService) {
-        return !StringUtils.isBlank(registeredService.getClientSecret());
     }
 
     /**

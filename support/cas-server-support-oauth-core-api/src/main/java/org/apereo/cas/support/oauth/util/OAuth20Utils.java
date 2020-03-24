@@ -449,7 +449,7 @@ public class OAuth20Utils {
     public static String getClientIdFromAuthenticatedProfile(final CommonProfile profile) {
         val attrs = new HashMap<>(profile.getAttributes());
         attrs.putAll(profile.getAuthenticationAttributes());
-        
+
         if (attrs.containsKey(OAuth20Constants.CLIENT_ID)) {
             val attribute = attrs.get(OAuth20Constants.CLIENT_ID);
             return CollectionUtils.toCollection(attribute, ArrayList.class).get(0).toString();
@@ -512,5 +512,15 @@ public class OAuth20Utils {
         val clientSecret = context.getRequestParameter(OAuth20Constants.CLIENT_SECRET)
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
         return Pair.of(clientId, clientSecret);
+    }
+
+    /**
+     * Is the registered service need authentication?
+     *
+     * @param registeredService the registered service
+     * @return whether the service need authentication
+     */
+    public boolean doesServiceNeedAuthentication(final OAuthRegisteredService registeredService) {
+        return StringUtils.isNotBlank(registeredService.getClientSecret());
     }
 }

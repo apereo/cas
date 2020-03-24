@@ -8,7 +8,6 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGran
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -55,7 +54,9 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
     }
 
     /**
-    * Is the client requesting is a OAuth "public" client.
+    * Is the client requesting is a OAuth "public" client?
+    * An OAuth "public" client is one that does not define a secret like a mobile application.
+    *
     * @param request the request
     * @param response the response
     * @return the boolean
@@ -66,11 +67,11 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
         if (clientId.isEmpty() || registeredService == null) {
             return true;
         }
-        return !StringUtils.isBlank(registeredService.getClientSecret());
+        return OAuth20Utils.doesServiceNeedAuthentication(registeredService);
     }
 
     /**
-     * Is revoke token request request.
+     * Is revoke token request request?
      *
      * @param request  the request
      * @param response the response
@@ -120,7 +121,9 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
 
         if (revokeTokenRequest) {
             return clientNeedAuthentication(request, response);
-        } else if (!accessTokenRequest) {
+        }
+
+        if (!accessTokenRequest) {
             val extractor = extractAccessTokenGrantRequest(request);
             if (extractor.isPresent()) {
                 val ext = extractor.get();
