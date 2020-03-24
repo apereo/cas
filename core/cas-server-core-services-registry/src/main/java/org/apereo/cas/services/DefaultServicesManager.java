@@ -1,10 +1,12 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.stream.Collectors;
 
 /**
  * Default implementation of the {@link ServicesManager} interface.
@@ -25,6 +27,14 @@ public class DefaultServicesManager extends AbstractServicesManager {
     @Override
     protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
         return this.orderedServices;
+    }
+
+    @Override
+    protected Collection<RegisteredService> getCandidateServicesToMatch(Service service) {
+        return this.orderedServices
+                .stream()
+                .filter(r -> r.matches(service))
+                .collect(Collectors.toSet());
     }
 
     @Override

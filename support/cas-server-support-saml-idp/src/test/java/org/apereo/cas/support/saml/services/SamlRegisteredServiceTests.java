@@ -1,13 +1,16 @@
 package org.apereo.cas.support.saml.services;
 
+import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.JsonServiceRegistry;
+import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.util.io.WatcherService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -109,5 +112,51 @@ public class SamlRegisteredServiceTests {
         MAPPER.writeValue(JSON_FILE, serviceWritten);
         val serviceRead = MAPPER.readValue(JSON_FILE, SamlRegisteredService.class);
         assertEquals(serviceWritten, serviceRead);
+    }
+
+    @Test
+    public void verifyMatchesBasedOnTargetServiceType() {
+        val samlRegisteredService = new SamlRegisteredService();
+        samlRegisteredService.setName(SAML_SERVICE);
+        samlRegisteredService.setServiceId("https://.+");
+        samlRegisteredService.setMetadataLocation(METADATA_LOCATION);
+
+        val samlService = new SamlService();
+        samlService.setId("https://saml.service/");
+        assertTrue(samlRegisteredService.matches(samlService));
+    }
+
+    @Test
+    public void verifyDoesNotMatchBasedOnWrongTargetServiceType() {
+        val samlRegisteredService = new SamlRegisteredService();
+        samlRegisteredService.setName(SAML_SERVICE);
+        samlRegisteredService.setServiceId("https://.+");
+        samlRegisteredService.setMetadataLocation(METADATA_LOCATION);
+
+        val simpleService = new SimpleWebApplicationServiceImpl();
+        simpleService.setId("https://google.com/");
+        assertFalse(samlRegisteredService.matches(simpleService));
+    }
+
+    @Test
+    public void verifyRegexServiceMatchesBasedOnCorrectTargetType() {
+        val registeredService = new RegexRegisteredService();
+        registeredService.setServiceId("https://.*");
+
+        val targetService = new SimpleWebApplicationServiceImpl();
+        targetService.setId("https://google.com/");
+
+        assertTrue(registeredService.matches(targetService));
+    }
+
+    @Test
+    public void verifyRegexServiceDoesNotMatchBasedOnWrongTargetType() {
+        val registeredService = new RegexRegisteredService();
+        registeredService.setServiceId("https://.*");
+
+        val targetService = new SamlService();
+        targetService.setId("https://some.saml.service/");
+
+        assertFalse(registeredService.matches(targetService));
     }
 }

@@ -41,7 +41,7 @@ public class RegexRegisteredService extends AbstractRegisteredService {
 
     @Override
     public boolean matches(final Service service) {
-        return service != null && matches(service.getId());
+        return service != null && "simple".equals(service.getType()) && matches(service.getId());
     }
 
     @Override

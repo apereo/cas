@@ -23,4 +23,13 @@ public interface Service extends Principal {
      */
     default void setPrincipal(final String principal) {
     }
+
+    /**
+     * Get a string representation of service type. Each concrete type will return an appropriate string value if necessary.
+     *
+     * @return String representation of service type
+     */
+    default String getType() {
+        return "simple";
+    }
 }

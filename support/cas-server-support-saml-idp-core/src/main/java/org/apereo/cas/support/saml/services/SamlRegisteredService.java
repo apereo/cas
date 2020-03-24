@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 
@@ -211,5 +212,10 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Override
     public String getFriendlyName() {
         return "SAML2 Service Provider";
+    }
+
+    @Override
+    public boolean matches(Service service) {
+        return service != null && "saml".equals(service.getType()) && super.matches(service.getId());
     }
 }

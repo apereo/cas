@@ -1,5 +1,6 @@
 package org.apereo.cas.services.domain;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.AbstractServicesManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -67,6 +69,11 @@ public class DomainServicesManager extends AbstractServicesManager {
     }
 
     @Override
+    protected Collection<RegisteredService> getCandidateServicesToMatch(Service service) {
+        return getCandidateServicesToMatch(service == null ? "" : service.getId());
+    }
+
+    @Override
     protected void saveInternal(final RegisteredService service) {
         addToDomain(service, this.domains);
     }
@@ -92,8 +99,8 @@ public class DomainServicesManager extends AbstractServicesManager {
     private void addToDomain(final RegisteredService r, final Map<String, TreeSet<RegisteredService>> map) {
         val domain = registeredServiceDomainExtractor.extract(r.getServiceId());
         val services = map.containsKey(domain)
-            ? map.get(domain)
-            : new TreeSet<RegisteredService>();
+                ? map.get(domain)
+                : new TreeSet<RegisteredService>();
         LOGGER.debug("Added service [{}] mapped to domain definition [{}]", r, domain);
         services.add(r);
         map.put(domain, services);

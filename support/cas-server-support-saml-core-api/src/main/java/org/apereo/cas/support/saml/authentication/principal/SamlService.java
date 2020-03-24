@@ -49,4 +49,9 @@ public class SamlService extends AbstractWebApplicationService {
         super(id, originalUrl, artifactId);
         this.requestId = requestId;
     }
+
+    @Override
+    public String getType() {
+        return "saml";
+    }
 }
