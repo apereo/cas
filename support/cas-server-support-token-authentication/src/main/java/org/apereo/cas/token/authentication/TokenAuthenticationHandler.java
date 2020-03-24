@@ -178,6 +178,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         if (propName.isAssignedTo(service)) {
             return propName.getPropertyValue(service).getValue();
         }
+        LOGGER.trace("Service [{}] does not define a property [{}] in the registry", service.getServiceId(), propName);
         return null;
     }
 
