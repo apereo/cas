@@ -91,7 +91,7 @@ public class OAuth20RevocationEndpointController extends BaseOAuth20Controller {
             }
 
             if (isRefreshToken(registryToken)) {
-                revokeToken(((OAuth20RefreshToken)registryToken));
+                revokeToken((OAuth20RefreshToken)registryToken);
             } else {
                 revokeToken(registryToken.getId());
             }
