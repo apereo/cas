@@ -34,7 +34,7 @@ public class OAuth20RevocationRequestValidator implements OAuth20TokenRequestVal
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
 
         if (registeredService == null) {
-            LOGGER.warn("Provided client id cannot be matched against a service definition");
+            LOGGER.warn("Provided client id [{}] cannot be matched against a service definition", clientId);
             return false;
         }
         return true;
