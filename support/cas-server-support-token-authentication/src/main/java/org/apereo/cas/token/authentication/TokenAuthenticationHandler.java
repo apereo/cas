@@ -131,7 +131,9 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
                 val encSecretBytes = getSecretBytes(encryptionSecret, secretsAreBase64Encoded);
                 jwtAuthenticator.setEncryptionConfiguration(new SecretEncryptionConfiguration(encSecretBytes, encAlg, encMethod));
             } else {
-                LOGGER.warn("JWT authentication is configured to share jwtAuthenticator single key for both signing/encryption");
+                LOGGER.info("No token encryption secret is defined for service [{}]. You may want to use the [{}] property",
+                        service.getServiceId(),
+                        RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION.getPropertyName());
             }
             return jwtAuthenticator;
         }
@@ -176,7 +178,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         if (propName.isAssignedTo(service)) {
             return propName.getPropertyValue(service).getValue();
         }
-        LOGGER.warn("Service [{}] does not define a property [{}] in the registry", service.getServiceId(), propName);
+        LOGGER.trace("Service [{}] does not define a property [{}] in the registry", service.getServiceId(), propName);
         return null;
     }
 
