@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
+import org.apereo.cas.services.RegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.experimental.UtilityClass;
@@ -24,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.mockito.Mockito.*;
 
@@ -175,6 +177,10 @@ public class CoreAuthenticationTestUtils {
         val access = mock(RegisteredServiceAccessStrategy.class);
         when(access.isServiceAccessAllowed()).thenReturn(true);
         when(service.getAccessStrategy()).thenReturn(access);
+
+        val authnPolicy = mock(RegisteredServiceAuthenticationPolicy.class);
+        when(authnPolicy.getRequiredAuthenticationHandlers()).thenReturn(Set.of());
+        when(service.getAuthenticationPolicy()).thenReturn(authnPolicy);
         return service;
     }
 

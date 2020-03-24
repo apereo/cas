@@ -3,6 +3,8 @@ package org.apereo.cas.logout.slo;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
+import org.springframework.core.Ordered;
+
 import java.util.Collection;
 
 /**
@@ -12,7 +14,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public interface SingleLogoutServiceMessageHandler {
+public interface SingleLogoutServiceMessageHandler extends Ordered {
 
     /**
      * Handle logout for slo service.
@@ -58,4 +60,9 @@ public interface SingleLogoutServiceMessageHandler {
      * @return the single logout message payload
      */
     SingleLogoutMessage createSingleLogoutMessage(SingleLogoutRequest logoutRequest);
+
+    @Override
+    default int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
+    }
 }
