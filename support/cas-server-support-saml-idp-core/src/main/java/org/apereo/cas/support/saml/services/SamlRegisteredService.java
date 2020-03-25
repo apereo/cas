@@ -215,7 +215,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     }
 
     @Override
-    public boolean matches(Service service) {
+    public boolean matches(final Service service) {
         return service != null && "saml".equals(service.getType()) && super.matches(service.getId());
     }
 }

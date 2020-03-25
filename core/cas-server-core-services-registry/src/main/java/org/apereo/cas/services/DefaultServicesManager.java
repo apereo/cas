@@ -30,7 +30,7 @@ public class DefaultServicesManager extends AbstractServicesManager {
     }
 
     @Override
-    protected Collection<RegisteredService> getCandidateServicesToMatch(Service service) {
+    protected Collection<RegisteredService> getCandidateServicesToMatch(final Service service) {
         return this.orderedServices
                 .stream()
                 .filter(r -> r.matches(service))

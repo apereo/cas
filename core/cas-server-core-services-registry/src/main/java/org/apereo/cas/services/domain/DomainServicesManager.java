@@ -69,7 +69,7 @@ public class DomainServicesManager extends AbstractServicesManager {
     }
 
     @Override
-    protected Collection<RegisteredService> getCandidateServicesToMatch(Service service) {
+    protected Collection<RegisteredService> getCandidateServicesToMatch(final Service service) {
         return getCandidateServicesToMatch(service == null ? "" : service.getId());
     }
 
