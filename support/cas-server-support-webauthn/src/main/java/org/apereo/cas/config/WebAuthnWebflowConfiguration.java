@@ -15,6 +15,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAccountCheckRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAccountSaveRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationWebflowAction;
@@ -33,7 +34,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,7 +60,7 @@ public class WebAuthnWebflowConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("webAuthnCredentialRepository")
@@ -68,9 +68,6 @@ public class WebAuthnWebflowConfiguration {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
@@ -102,7 +99,7 @@ public class WebAuthnWebflowConfiguration {
 
     @Bean
     public FlowDefinitionRegistry webAuthnFlowRegistry() {
-        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices.getObject());
         builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
         builder.addFlowLocationPattern("/mfa-webauthn/*-webflow.xml");
         return builder.build();
@@ -118,9 +115,10 @@ public class WebAuthnWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer() {
-        return new WebAuthnMultifactorWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry.getIfAvailable(), webAuthnFlowRegistry(),
-            applicationContext, casProperties);
+        return new WebAuthnMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(), webAuthnFlowRegistry(),
+            applicationContext, casProperties,
+            MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
     }
 
     @ConditionalOnMissingBean(name = "webAuthnStartAuthenticationAction")
@@ -159,7 +157,6 @@ public class WebAuthnWebflowConfiguration {
             .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getIfAvailable())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
             .casProperties(casProperties)
-            .eventPublisher(applicationEventPublisher)
             .applicationContext(applicationContext)
             .build();
 
@@ -185,9 +182,11 @@ public class WebAuthnWebflowConfiguration {
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer webAuthnMultifactorTrustWebflowConfigurer() {
             val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-            return new WebAuthnMultifactorTrustWebflowConfigurer(flowBuilderServices,
-                deviceRegistrationEnabled, loginFlowDefinitionRegistry.getIfAvailable(),
-                applicationContext, casProperties, webAuthnFlowRegistry());
+            return new WebAuthnMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
+                deviceRegistrationEnabled, webAuthnFlowRegistry(),
+                loginFlowDefinitionRegistry.getIfAvailable(),
+                applicationContext, casProperties,
+                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
         }
 
         @Override

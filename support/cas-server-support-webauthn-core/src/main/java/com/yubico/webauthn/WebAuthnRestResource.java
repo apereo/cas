@@ -145,17 +145,6 @@ public class WebAuthnRestResource {
         );
     }
 
-    @PostMapping(API_VERSION + "/register/finish-u2f")
-    public ResponseEntity finishU2fRegistration(@RequestBody final String responseJson) throws ExecutionException {
-        val result = server.finishU2fRegistration(responseJson);
-        return finishResponse(
-            result,
-            "U2F registration failed; further error message(s) were unfortunately lost to an internal server error.",
-            "finishU2fRegistration",
-            responseJson
-        );
-    }
-
     @PostMapping(API_VERSION + "/authenticate")
     public ResponseEntity startAuthentication(@RequestParam("username") String username) throws MalformedURLException {
         Either<List<String>, AssertionRequestWrapper> request = server.startAuthentication(Optional.ofNullable(username));
@@ -307,11 +296,8 @@ public class WebAuthnRestResource {
     private final class StartRegistrationActions {
         private final URL finish;
 
-        private final URL finishU2f;
-
         public StartRegistrationActions() {
             finish = casProperties.getServer().buildContextRelativeUrl(API_VERSION + "/register/finish");
-            finishU2f = casProperties.getServer().buildContextRelativeUrl(API_VERSION + "/register/finish-u2f");
         }
     }
 
