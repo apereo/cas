@@ -37,13 +37,13 @@ public final class CasCoreConfigurationUtils {
      * @param resource the resource
      * @return the map
      */
-    public static Map loadYamlProperties(final Resource... resource) {
+    public static Map<String, Object> loadYamlProperties(final Resource... resource) {
         val factory = new YamlPropertiesFactoryBean();
         factory.setResolutionMethod(YamlProcessor.ResolutionMethod.OVERRIDE);
         factory.setResources(resource);
         factory.setSingleton(true);
         factory.afterPropertiesSet();
-        return factory.getObject();
+        return (Map) factory.getObject();
     }
 
     /**
@@ -53,7 +53,7 @@ public final class CasCoreConfigurationUtils {
      * @return the map
      */
     @SneakyThrows
-    public static Map<String, String> asMap(final Serializable properties) {
+    public static Map<String, Object> asMap(final Serializable properties) {
         try (val writer = new StringWriter()) {
             val mapper = new YAMLMapper();
             val module = new SimpleModule();
