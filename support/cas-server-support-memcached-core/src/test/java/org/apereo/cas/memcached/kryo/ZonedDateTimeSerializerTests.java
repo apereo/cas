@@ -2,6 +2,7 @@ package org.apereo.cas.memcached.kryo;
 
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZoneId;
@@ -14,6 +15,7 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("Memcached")
 public class ZonedDateTimeSerializerTests {
 
     @Test
