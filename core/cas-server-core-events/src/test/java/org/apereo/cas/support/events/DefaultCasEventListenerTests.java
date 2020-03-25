@@ -23,11 +23,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
@@ -46,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 public class DefaultCasEventListenerTests {
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("casEventRepository")
@@ -66,7 +67,7 @@ public class DefaultCasEventListenerTests {
         val event = new CasAuthenticationTransactionFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()),
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
-        eventPublisher.publishEvent(event);
+        applicationContext.publishEvent(event);
         assertFalse(casEventRepository.load().isEmpty());
     }
 
@@ -74,7 +75,7 @@ public class DefaultCasEventListenerTests {
     public void verifyTicketGrantingTicketCreated() {
         val tgt = new MockTicketGrantingTicket("casuser");
         val event = new CasTicketGrantingTicketCreatedEvent(this, tgt);
-        eventPublisher.publishEvent(event);
+        applicationContext.publishEvent(event);
         assertFalse(casEventRepository.load().isEmpty());
     }
 
@@ -85,7 +86,7 @@ public class DefaultCasEventListenerTests {
             new DefaultAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
                 CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())),
             CoreAuthenticationTestUtils.getAuthentication());
-        eventPublisher.publishEvent(event);
+        applicationContext.publishEvent(event);
         assertFalse(casEventRepository.load().isEmpty());
     }
 
@@ -95,7 +96,7 @@ public class DefaultCasEventListenerTests {
             CoreAuthenticationTestUtils.getAuthentication(),
             CoreAuthenticationTestUtils.getRegisteredService(),
             new Object());
-        eventPublisher.publishEvent(event);
+        applicationContext.publishEvent(event);
         assertFalse(casEventRepository.load().isEmpty());
     }
 

@@ -15,8 +15,8 @@ import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.configuration.model.core.rest.RestProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
-import org.apereo.cas.configuration.model.core.slo.SloProperties;
-import org.apereo.cas.configuration.model.core.sso.SsoProperties;
+import org.apereo.cas.configuration.model.core.slo.SingleLogOutProperties;
+import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.configuration.model.core.util.TicketProperties;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpRequestProperties;
@@ -52,6 +52,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * This is {@link CasConfigurationProperties}.
@@ -72,11 +73,16 @@ public class CasConfigurationProperties implements Serializable {
     private static final long serialVersionUID = -8620267783496071683L;
 
     /**
+     * Timestamp that indicates the initialization time.
+     */
+    private long initializationTime = new Date().getTime();
+
+    /**
      * Logging functionality.
      */
     @NestedConfigurationProperty
     private LoggingProperties logging = new LoggingProperties();
-    
+
     /**
      * Interrupt/notification functionality.
      */
@@ -171,13 +177,13 @@ public class CasConfigurationProperties implements Serializable {
      * SLO functionality.
      */
     @NestedConfigurationProperty
-    private SloProperties slo = new SloProperties();
+    private SingleLogOutProperties slo = new SingleLogOutProperties();
 
     /**
      * SSO functionality.
      */
     @NestedConfigurationProperty
-    private SsoProperties sso = new SsoProperties();
+    private SingleSignOnProperties sso = new SingleSignOnProperties();
 
     /**
      * Ticketing functionality.
@@ -328,7 +334,6 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SessionReplicationProperties sessionReplication = new SessionReplicationProperties();
-
 
     /**
      * Hold configuration settings in a parent

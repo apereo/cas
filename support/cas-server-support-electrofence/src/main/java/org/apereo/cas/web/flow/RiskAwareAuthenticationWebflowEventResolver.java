@@ -19,6 +19,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.Set;
 
 /**
@@ -31,7 +32,9 @@ import java.util.Set;
 public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
     private final AuthenticationRiskEvaluator authenticationRiskEvaluator;
+
     private final AuthenticationRiskMitigator authenticationRiskMitigator;
+
     private final double threshold;
 
     public RiskAwareAuthenticationWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext,
@@ -68,14 +71,15 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
     protected Set<Event> handlePossibleSuspiciousAttempt(final HttpServletRequest request, final Authentication authentication,
                                                          final RegisteredService service) {
 
-        getWebflowEventResolutionConfigurationContext().getEventPublisher()
+        val applicationContext = getWebflowEventResolutionConfigurationContext().getApplicationContext();
+        applicationContext
             .publishEvent(new CasRiskBasedAuthenticationEvaluationStartedEvent(this, authentication, service));
 
         LOGGER.debug("Evaluating possible suspicious authentication attempt for [{}]", authentication.getPrincipal());
         val score = authenticationRiskEvaluator.eval(authentication, service, request);
 
         if (score.isRiskGreaterThan(threshold)) {
-            getWebflowEventResolutionConfigurationContext().getEventPublisher()
+            applicationContext
                 .publishEvent(new CasRiskyAuthenticationDetectedEvent(this, authentication, service, score));
 
             LOGGER.debug("Calculated risk score [{}] for authentication request by [{}] is above the risk threshold [{}].",
@@ -83,10 +87,10 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
                 authentication.getPrincipal(),
                 threshold);
 
-            getWebflowEventResolutionConfigurationContext().getEventPublisher()
+            applicationContext
                 .publishEvent(new CasRiskBasedAuthenticationMitigationStartedEvent(this, authentication, service, score));
             val res = authenticationRiskMitigator.mitigate(authentication, service, score, request);
-            getWebflowEventResolutionConfigurationContext().getEventPublisher()
+            applicationContext
                 .publishEvent(new CasRiskyAuthenticationMitigatedEvent(this, authentication, service, res));
 
             return CollectionUtils.wrapSet(res.getResult());
