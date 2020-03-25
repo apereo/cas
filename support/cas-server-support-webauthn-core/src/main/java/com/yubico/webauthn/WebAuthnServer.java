@@ -31,9 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.cache.Cache;
-import com.upokecenter.cbor.CBORObject;
 import com.yubico.internal.util.CertificateParser;
-import com.yubico.internal.util.ExceptionUtil;
 import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.util.Either;
 import com.yubico.webauthn.attestation.Attestation;
@@ -43,13 +41,9 @@ import com.yubico.webauthn.data.AssertionResponse;
 import com.yubico.webauthn.data.AuthenticatorData;
 import com.yubico.webauthn.data.AuthenticatorSelectionCriteria;
 import com.yubico.webauthn.data.ByteArray;
-import com.yubico.webauthn.data.COSEAlgorithmIdentifier;
 import com.yubico.webauthn.data.CredentialRegistration;
-import com.yubico.webauthn.data.PublicKeyCredentialDescriptor;
 import com.yubico.webauthn.data.RegistrationRequest;
 import com.yubico.webauthn.data.RegistrationResponse;
-import com.yubico.webauthn.data.U2fRegistrationResponse;
-import com.yubico.webauthn.data.U2fRegistrationResult;
 import com.yubico.webauthn.data.UserIdentity;
 import com.yubico.webauthn.exception.AssertionFailedException;
 import com.yubico.webauthn.exception.RegistrationFailedException;
@@ -61,7 +55,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Clock;
@@ -69,9 +62,7 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
@@ -80,7 +71,7 @@ public class WebAuthnServer {
     private static final Logger logger = LoggerFactory.getLogger(WebAuthnServer.class);
 
     private static final SecureRandom random = new SecureRandom();
-    
+
     private final Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage;
 
     private final Cache<ByteArray, RegistrationRequest> registerRequestStorage;
@@ -88,8 +79,6 @@ public class WebAuthnServer {
     private final RegistrationStorage userStorage;
 
     private final SessionManager sessions = new SessionManager();
-
-    private final MetadataService metadataService;
 
     private final Clock clock = Clock.system(ZoneId.systemDefault());
 
@@ -106,37 +95,12 @@ public class WebAuthnServer {
         this.registerRequestStorage = registerRequestStorage;
         this.assertRequestStorage = assertRequestStorage;
         this.rp = relyingParty;
-        this.metadataService = metadataService;
     }
 
     private static ByteArray generateRandom(final int length) {
         byte[] bytes = new byte[length];
         random.nextBytes(bytes);
         return new ByteArray(bytes);
-    }
-
-    static ByteArray rawEcdaKeyToCose(ByteArray key) {
-        final byte[] keyBytes = key.getBytes();
-
-        if (!(keyBytes.length == 64 || (keyBytes.length == 65 && keyBytes[0] == 0x04))) {
-            throw new IllegalArgumentException(String.format(
-                "Raw key must be 64 bytes long or be 65 bytes long and start with 0x04, was %d bytes starting with %02x",
-                keyBytes.length,
-                keyBytes[0]
-            ));
-        }
-
-        final int start = keyBytes.length == 64 ? 0 : 1;
-
-        Map<Long, Object> coseKey = new HashMap<>();
-
-        coseKey.put(1L, 2L); // Key type: EC
-        coseKey.put(3L, COSEAlgorithmIdentifier.ES256.getId());
-        coseKey.put(-1L, 1L); // Curve: P-256
-        coseKey.put(-2L, Arrays.copyOfRange(keyBytes, start, start + 32)); // x
-        coseKey.put(-3L, Arrays.copyOfRange(keyBytes, start + 32, start + 64)); // y
-
-        return new ByteArray(CBORObject.FromObject(coseKey).EncodeToBytes());
     }
 
     public Either<String, RegistrationRequest> startRegistration(
@@ -205,7 +169,7 @@ public class WebAuthnServer {
             return Either.left(Arrays.asList("Registration failed!", "No such registration in progress."));
         } else {
             try {
-                com.yubico.webauthn.RegistrationResult registration = rp.finishRegistration(
+                RegistrationResult registration = rp.finishRegistration(
                     FinishRegistrationOptions.builder()
                         .request(request.getPublicKeyCredentialCreationOptions())
                         .response(response.getCredential())
@@ -258,76 +222,6 @@ public class WebAuthnServer {
                 logger.error("fail finishRegistration responseJson: {}", responseJson, e);
                 return Either.left(Arrays.asList("Registration failed unexpectedly; this is likely a bug.", e.getMessage()));
             }
-        }
-    }
-
-    public Either<List<String>, SuccessfulU2fRegistrationResult> finishU2fRegistration(String responseJson) throws ExecutionException {
-        logger.trace("finishU2fRegistration responseJson: {}", responseJson);
-        U2fRegistrationResponse response = null;
-        try {
-            response = jsonMapper.readValue(responseJson, U2fRegistrationResponse.class);
-        } catch (IOException e) {
-            logger.error("JSON error in finishU2fRegistration; responseJson: {}", responseJson, e);
-            return Either.left(Arrays.asList("Registration failed!", "Failed to decode response object.", e.getMessage()));
-        }
-
-        RegistrationRequest request = registerRequestStorage.getIfPresent(response.getRequestId());
-        registerRequestStorage.invalidate(response.getRequestId());
-
-        if (request == null) {
-            logger.debug("fail finishU2fRegistration responseJson: {}", responseJson);
-            return Either.left(Arrays.asList("Registration failed!", "No such registration in progress."));
-        } else {
-
-            try {
-                ExceptionUtil.assure(
-                    U2fVerifier.verify(rp.getAppId().get(), request, response),
-                    "Failed to verify signature."
-                );
-            } catch (Exception e) {
-                logger.debug("Failed to verify U2F signature.", e);
-                return Either.left(Arrays.asList("Failed to verify signature.", e.getMessage()));
-            }
-
-            X509Certificate attestationCert = null;
-            try {
-                attestationCert = CertificateParser.parseDer(response.getCredential().getU2fResponse().getAttestationCertAndSignature().getBytes());
-            } catch (CertificateException e) {
-                logger.error("Failed to parse attestation certificate: {}", response.getCredential().getU2fResponse().getAttestationCertAndSignature(), e);
-            }
-
-            Optional<Attestation> attestation = Optional.empty();
-            try {
-                if (attestationCert != null) {
-                    attestation = Optional.of(metadataService.getAttestation(Collections.singletonList(attestationCert)));
-                }
-            } catch (CertificateEncodingException e) {
-                logger.error("Failed to resolve attestation", e);
-            }
-
-            final U2fRegistrationResult result = U2fRegistrationResult.builder()
-                .keyId(PublicKeyCredentialDescriptor.builder().id(response.getCredential().getU2fResponse().getKeyHandle()).build())
-                .attestationTrusted(attestation.map(Attestation::isTrusted).orElse(false))
-                .publicKeyCose(rawEcdaKeyToCose(response.getCredential().getU2fResponse().getPublicKey()))
-                .attestationMetadata(attestation)
-                .build();
-
-            return Either.right(
-                new SuccessfulU2fRegistrationResult(
-                    request,
-                    response,
-                    addRegistration(
-                        request.getPublicKeyCredentialCreationOptions().getUser(),
-                        request.getCredentialNickname(),
-                        0,
-                        result
-                    ),
-                    result.isAttestationTrusted(),
-                    Optional.of(new AttestationCertInfo(response.getCredential().getU2fResponse().getAttestationCertAndSignature())),
-                    request.getUsername(),
-                    sessions.createSession(request.getPublicKeyCredentialCreationOptions().getUser().getId())
-                )
-            );
         }
     }
 
@@ -487,26 +381,6 @@ public class WebAuthnServer {
         UserIdentity userIdentity,
         Optional<String> nickname,
         long signatureCount,
-        U2fRegistrationResult result
-    ) {
-        return addRegistration(
-            userIdentity,
-            nickname,
-            signatureCount,
-            RegisteredCredential.builder()
-                .credentialId(result.getKeyId().getId())
-                .userHandle(userIdentity.getId())
-                .publicKeyCose(result.getPublicKeyCose())
-                .signatureCount(signatureCount)
-                .build(),
-            result.getAttestationMetadata()
-        );
-    }
-
-    private CredentialRegistration addRegistration(
-        UserIdentity userIdentity,
-        Optional<String> nickname,
-        long signatureCount,
         RegisteredCredential credential,
         Optional<Attestation> attestationMetadata
     ) {
@@ -598,7 +472,7 @@ public class WebAuthnServer {
 
     @Value
     @AllArgsConstructor
-    public static final class SuccessfulAuthenticationResult {
+    public static class SuccessfulAuthenticationResult {
         private final boolean success = true;
 
         private final AssertionRequestWrapper request;
@@ -616,7 +490,9 @@ public class WebAuthnServer {
 
         private final List<String> warnings;
 
-        public SuccessfulAuthenticationResult(AssertionRequestWrapper request, AssertionResponse response, Collection<CredentialRegistration> registrations, String username, ByteArray sessionToken, List<String> warnings) {
+        public SuccessfulAuthenticationResult(AssertionRequestWrapper request, AssertionResponse response,
+                                              Collection<CredentialRegistration> registrations, String username,
+                                              ByteArray sessionToken, List<String> warnings) {
             this(
                 request,
                 response,
@@ -659,25 +535,6 @@ public class WebAuthnServer {
             gen.writeObjectField("extensions", value.getExtensions());
             gen.writeEndObject();
         }
-    }
-
-    @Value
-    public static class SuccessfulU2fRegistrationResult {
-        final boolean success = true;
-
-        final RegistrationRequest request;
-
-        final U2fRegistrationResponse response;
-
-        final CredentialRegistration registration;
-
-        boolean attestationTrusted;
-
-        Optional<AttestationCertInfo> attestationCert;
-
-        final String username;
-
-        final ByteArray sessionToken;
     }
 
 }

@@ -24,18 +24,23 @@
 
 package com.yubico.webauthn.data;
 
-import java.util.Optional;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
+import java.util.Optional;
+
 @Value
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode
 public class RegistrationRequest {
 
     String username;
+
     Optional<String> credentialNickname;
+
     ByteArray requestId;
+
     PublicKeyCredentialCreationOptions publicKeyCredentialCreationOptions;
+
     Optional<ByteArray> sessionToken;
 
 }

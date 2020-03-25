@@ -2,11 +2,13 @@ package org.apereo.cas.webauthn.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractMultifactorTrustedDeviceWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -19,13 +21,16 @@ public class WebAuthnMultifactorTrustWebflowConfigurer extends AbstractMultifact
 
     public WebAuthnMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                      final boolean deviceRegistrationEnabled,
+                                                     final FlowDefinitionRegistry flowDefinitionRegistry,
                                                      final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                      final ConfigurableApplicationContext applicationContext,
                                                      final CasConfigurationProperties casProperties,
-                                                     final FlowDefinitionRegistry flowDefinitionRegistry) {
+                                                     final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, deviceRegistrationEnabled,
-            applicationContext, casProperties, Optional.of(flowDefinitionRegistry));
+            applicationContext, casProperties, Optional.of(flowDefinitionRegistry),
+            mfaFlowCustomizers);
     }
+
 
     @Override
     protected void doInitialize() {

@@ -53,7 +53,7 @@ ext.libraries = [
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
-                    force = true
+
                 },
                 dependencies.create("com.yubico:webauthn-server-attestation:$yubicoWebauthnVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -61,23 +61,27 @@ ext.libraries = [
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
-                    force = true
+
+                },
+                dependencies.create("com.yubico:yubico-util:$yubicoWebauthnVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+
                 },
                 dependencies.create("com.upokecenter:cbor:4.0.1") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
+
                 },
                 dependencies.create("org.webjars.npm:text-encoding:0.7.0") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
+
                 },
                 dependencies.create("org.webjars.npm:whatwg-fetch:3.0.0") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
+
                 },
                 dependencies.create("org.webjars.npm:base64-js:1.3.0") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
+
                 }
         ],
         semver                  : [

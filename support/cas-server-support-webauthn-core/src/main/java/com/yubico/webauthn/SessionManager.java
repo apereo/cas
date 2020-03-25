@@ -3,18 +3,19 @@ package com.yubico.webauthn;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.yubico.webauthn.data.ByteArray;
+import lombok.NonNull;
+
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import lombok.NonNull;
 
 public class SessionManager {
 
     private final SecureRandom random = new SecureRandom();
 
     private final Cache<ByteArray, ByteArray> sessionIdsToUsers = newCache();
+
     private final Cache<ByteArray, ByteArray> usersToSessionIds = newCache();
 
     private static <K, V> Cache<K, V> newCache() {

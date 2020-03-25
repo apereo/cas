@@ -26,7 +26,6 @@ package com.yubico.webauthn;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.yubico.internal.util.CollectionUtil;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.CredentialRegistration;
 import com.yubico.webauthn.data.PublicKeyCredentialDescriptor;
@@ -36,10 +35,10 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -117,7 +116,7 @@ public class InMemoryRegistrationStorage implements RegistrationStorage, Credent
             )));
 
         Set<CredentialRegistration> regs = storage.getIfPresent(result.getUsername());
-        regs.remove(registration);
+        Objects.requireNonNull(regs).remove(registration);
         regs.add(registration.withSignatureCount(result.getSignatureCount()));
     }
 
@@ -165,18 +164,17 @@ public class InMemoryRegistrationStorage implements RegistrationStorage, Credent
 
     @Override
     public Set<RegisteredCredential> lookupAll(ByteArray credentialId) {
-        return CollectionUtil.immutableSet(
-            storage.asMap().values().stream()
-                .flatMap(Collection::stream)
-                .filter(reg -> reg.getCredential().getCredentialId().equals(credentialId))
-                .map(reg -> RegisteredCredential.builder()
-                    .credentialId(reg.getCredential().getCredentialId())
-                    .userHandle(reg.getUserIdentity().getId())
-                    .publicKeyCose(reg.getCredential().getPublicKeyCose())
-                    .signatureCount(reg.getSignatureCount())
-                    .build()
-                )
-                .collect(Collectors.toSet()));
+        return storage.asMap().values().stream()
+            .flatMap(Collection::stream)
+            .filter(reg -> reg.getCredential().getCredentialId().equals(credentialId))
+            .map(reg -> RegisteredCredential.builder()
+                .credentialId(reg.getCredential().getCredentialId())
+                .userHandle(reg.getUserIdentity().getId())
+                .publicKeyCose(reg.getCredential().getPublicKeyCose())
+                .signatureCount(reg.getSignatureCount())
+                .build()
+            )
+            .collect(Collectors.toSet());
     }
 
 }

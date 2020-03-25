@@ -25,10 +25,11 @@
 package com.yubico.webauthn.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import java.util.Optional;
+import com.yubico.webauthn.AssertionRequest;
 import lombok.NonNull;
 import lombok.Value;
+
+import java.util.Optional;
 
 @Value
 public class AssertionRequestWrapper {
@@ -48,9 +49,9 @@ public class AssertionRequestWrapper {
 
     public AssertionRequestWrapper(
         @NonNull
-        ByteArray requestId,
+            ByteArray requestId,
         @NonNull
-            com.yubico.webauthn.AssertionRequest request
+            AssertionRequest request
     ) {
         this.requestId = requestId;
         this.publicKeyCredentialRequestOptions = request.getPublicKeyCredentialRequestOptions();
