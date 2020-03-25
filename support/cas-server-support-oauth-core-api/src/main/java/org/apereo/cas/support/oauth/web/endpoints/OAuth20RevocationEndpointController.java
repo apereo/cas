@@ -72,7 +72,7 @@ public class OAuth20RevocationEndpointController extends BaseOAuth20Controller {
      * Generate revocation token response.
      *
      * @param token the token to revoke
-     * @param client the client who requests the revocation
+     * @param clientId the client who requests the revocation
      * @param response the response
      * @return the model and view
      */
@@ -91,7 +91,7 @@ public class OAuth20RevocationEndpointController extends BaseOAuth20Controller {
             }
 
             if (isRefreshToken(registryToken)) {
-                revokeToken((OAuth20RefreshToken)registryToken);
+                revokeToken((OAuth20RefreshToken) registryToken);
             } else {
                 revokeToken(registryToken.getId());
             }
