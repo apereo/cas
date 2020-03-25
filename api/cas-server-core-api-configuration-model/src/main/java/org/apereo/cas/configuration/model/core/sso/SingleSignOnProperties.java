@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class SsoProperties implements Serializable {
+public class SingleSignOnProperties implements Serializable {
 
     private static final long serialVersionUID = -8777647966370741733L;
 
