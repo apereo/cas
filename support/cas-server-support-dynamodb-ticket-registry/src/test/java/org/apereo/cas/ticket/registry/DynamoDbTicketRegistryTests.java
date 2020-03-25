@@ -16,6 +16,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +95,7 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
         val token = new OAuth20DefaultRefreshTokenFactory(neverExpiresExpirationPolicyBuilder(), servicesManager)
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
-                CollectionUtils.wrapSet("1", "2"), "clientId1234567", new HashMap<>());
+                CollectionUtils.wrapSet("1", "2"), "clientId1234567", StringUtils.EMPTY, new HashMap<>());
         ticketRegistry.addTicket(token);
         assertSame(1, ticketRegistry.deleteTicket(token.getId()), "Wrong ticket count");
         assertNull(ticketRegistry.getTicket(token.getId()));

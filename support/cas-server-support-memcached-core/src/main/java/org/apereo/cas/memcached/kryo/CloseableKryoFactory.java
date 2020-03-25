@@ -33,6 +33,7 @@ import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvid
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceContact;
 import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy;
@@ -223,6 +224,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(DefaultRegisteredServiceProxyTicketExpirationPolicy.class);
         kryo.register(DefaultRegisteredServiceDelegatedAuthenticationPolicy.class);
         kryo.register(DefaultRegisteredServiceAcceptableUsagePolicy.class);
+        kryo.register(DefaultRegisteredServiceAuthenticationPolicy.class);
         kryo.register(ShibbolethCompatiblePersistentIdGenerator.class);
     }
 

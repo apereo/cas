@@ -22,6 +22,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -44,15 +45,22 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Slf4j
+@Tag("Memcached")
 public class CasKryoTranscoderTests {
     private static final String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";
+
     private static final String TGT_ID = "TGT-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK-cas1";
+
     private static final String PGT_ID = "PGT-1234567";
+
     private static final String PT_ID = "PT-1234567";
 
     private static final String USERNAME = "handymanbob";
+
     private static final String PASSWORD = "foo";
+
     private static final String NICKNAME_KEY = "nickname";
+
     private static final String NICKNAME_VALUE = "bob";
 
     private final CasKryoTranscoder transcoder;

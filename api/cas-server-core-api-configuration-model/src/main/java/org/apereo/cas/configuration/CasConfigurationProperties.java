@@ -45,6 +45,7 @@ import org.apereo.cas.configuration.model.webapp.LocaleProperties;
 import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -327,4 +328,26 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SessionReplicationProperties sessionReplication = new SessionReplicationProperties();
+
+
+    /**
+     * Hold configuration settings in a parent
+     * field mainly used for serialization.
+     *
+     * @return the serializable
+     */
+    public Serializable withHolder() {
+        return new Holder(this);
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    private static class Holder implements Serializable {
+        private static final long serialVersionUID = -3129941286238115568L;
+
+        /**
+         * Reference to configuration settings.
+         */
+        private final CasConfigurationProperties cas;
+    }
 }
