@@ -773,6 +773,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @ConditionalOnMissingBean(name = "oidcSingleLogoutMessageCreator")
     @Bean
+    @RefreshScope
     public SingleLogoutMessageCreator oidcSingleLogoutMessageCreator() {
         return new OidcSingleLogoutMessageCreator(buildConfigurationContext());
     }
