@@ -780,6 +780,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @ConditionalOnMissingBean(name = "oidcSingleLogoutServiceMessageHandler")
     @Bean
+    @RefreshScope
     public SingleLogoutServiceMessageHandler oidcSingleLogoutServiceMessageHandler() {
         return new OidcSingleLogoutServiceMessageHandler(httpClient.getObject(),
                 oidcSingleLogoutMessageCreator(),
