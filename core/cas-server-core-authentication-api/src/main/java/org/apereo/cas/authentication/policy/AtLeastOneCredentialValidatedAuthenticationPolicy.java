@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
@@ -13,7 +12,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.Ordered;
 
 import java.util.Set;
 
@@ -26,24 +24,18 @@ import java.util.Set;
 @Slf4j
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor(force = true)
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @Setter
-@AllArgsConstructor
 @Getter
-public class AtLeastOneCredentialValidatedAuthenticationPolicy implements AuthenticationPolicy {
+@AllArgsConstructor
+public class AtLeastOneCredentialValidatedAuthenticationPolicy extends BaseAuthenticationPolicy {
 
     private static final long serialVersionUID = -7484490540437793931L;
 
     /**
      * Flag to try all credentials before policy is satisfied. Defaults to {@code false}.
      */
-    private boolean tryAll;
-
-    private int order = Ordered.LOWEST_PRECEDENCE;
-
-    public AtLeastOneCredentialValidatedAuthenticationPolicy(final boolean tryAll) {
-        this(tryAll, Ordered.LOWEST_PRECEDENCE);
-    }
+    private final boolean tryAll;
 
     @Override
     public boolean isSatisfiedBy(final Authentication authn, final Set<AuthenticationHandler> authenticationHandlers,

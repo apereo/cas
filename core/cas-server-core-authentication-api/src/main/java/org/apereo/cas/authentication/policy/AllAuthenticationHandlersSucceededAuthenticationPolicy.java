@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -11,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.Ordered;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,13 +23,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor(force = true)
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @Setter
 @Getter
-public class AllAuthenticationHandlersSucceededAuthenticationPolicy implements AuthenticationPolicy {
+public class AllAuthenticationHandlersSucceededAuthenticationPolicy extends BaseAuthenticationPolicy {
     private static final long serialVersionUID = 8901190843828760737L;
-
-    private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
     public boolean isSatisfiedBy(final Authentication authn, final Set<AuthenticationHandler> authenticationHandlers,

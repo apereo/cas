@@ -236,7 +236,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * @return the principal resolver linked to handler if any, or null.
      */
     protected PrincipalResolver getPrincipalResolverLinkedToHandlerIfAny(final AuthenticationHandler handler, final AuthenticationTransaction transaction) {
-        return this.authenticationEventExecutionPlan.getPrincipalResolverForAuthenticationTransaction(handler, transaction);
+        return this.authenticationEventExecutionPlan.getPrincipalResolver(handler, transaction);
     }
 
     /**
@@ -280,7 +280,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         val builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
         credentials.forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
 
-        val handlerSet = this.authenticationEventExecutionPlan.getAuthenticationHandlersForTransaction(transaction);
+        val handlerSet = this.authenticationEventExecutionPlan.getAuthenticationHandlers(transaction);
         LOGGER.debug("Candidate resolved authentication handlers for this transaction are [{}]", handlerSet);
 
         if (handlerSet.isEmpty()) {

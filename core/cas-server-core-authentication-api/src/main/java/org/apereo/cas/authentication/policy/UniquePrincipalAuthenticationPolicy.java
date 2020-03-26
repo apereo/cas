@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -17,7 +16,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.Ordered;
 
 import java.security.GeneralSecurityException;
 import java.util.Set;
@@ -35,13 +33,11 @@ import java.util.Set;
 @Slf4j
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor(force = true)
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @Setter
 @Getter
-public class UniquePrincipalAuthenticationPolicy implements AuthenticationPolicy {
+public class UniquePrincipalAuthenticationPolicy extends BaseAuthenticationPolicy {
     private static final long serialVersionUID = 3974114391376732470L;
-
-    private int order = Ordered.LOWEST_PRECEDENCE;
 
     private static boolean isSamePrincipalId(final Ticket t, final Principal p) {
         return FunctionUtils.doIf(TicketGrantingTicket.class.isInstance(t) && !t.isExpired(),

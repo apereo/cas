@@ -27,6 +27,10 @@ public class DefaultRegisteredServiceAuthenticationPolicyTests {
         var svc = RegisteredServiceTestUtils.getRegisteredService("serviceidauth");
         val policy = new DefaultRegisteredServiceAuthenticationPolicy();
         policy.setRequiredAuthenticationHandlers(Set.of("handler1", "handler2"));
+        val criteria = new DefaultRegisteredServiceAuthenticationPolicyCriteria();
+        criteria.setTryAll(true);
+        criteria.setType(RegisteredServiceAuthenticationPolicyCriteria.AuthenticationPolicyTypes.ANY_AUTHENTICATION_HANDLER);
+        policy.setCriteria(criteria);
         svc.setAuthenticationPolicy(policy);
         MAPPER.writerWithDefaultPrettyPrinter().writeValue(JSON_FILE, svc);
         val svc2 = MAPPER.readValue(JSON_FILE, AbstractRegisteredService.class);

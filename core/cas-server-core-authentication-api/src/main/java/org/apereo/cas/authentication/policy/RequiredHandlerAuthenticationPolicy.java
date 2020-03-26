@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
@@ -14,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.Ordered;
 
 import java.util.Set;
 
@@ -28,11 +26,11 @@ import java.util.Set;
 @Slf4j
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor(force = true)
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @Setter
-@AllArgsConstructor
 @Getter
-public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy {
+@AllArgsConstructor
+public class RequiredHandlerAuthenticationPolicy extends BaseAuthenticationPolicy {
 
     private static final long serialVersionUID = -3871692225877293627L;
 
@@ -46,14 +44,8 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
      */
     private boolean tryAll;
 
-    private int order = Ordered.LOWEST_PRECEDENCE;
-
     public RequiredHandlerAuthenticationPolicy(final String requiredHandlerName) {
-        this(requiredHandlerName, false, Ordered.LOWEST_PRECEDENCE);
-    }
-
-    public RequiredHandlerAuthenticationPolicy(final String requiredHandlerName, final boolean tryAll) {
-        this(requiredHandlerName, tryAll, Ordered.LOWEST_PRECEDENCE);
+        this(requiredHandlerName, false);
     }
 
     @Override

@@ -32,4 +32,13 @@ public interface AuthenticationPolicy extends Ordered, Serializable {
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
     }
+
+    /**
+     * Define the name of this even resolver.
+     *
+     * @return name of the resolver.
+     */
+    default String getName() {
+        return this.getClass().getSimpleName();
+    }
 }
