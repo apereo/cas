@@ -36,6 +36,11 @@ public class GroovyRegisteredServiceMultifactorPolicyTests {
         assertEquals("TestMatch", authz.getPrincipalAttributeValueToMatch());
         assertTrue(authz.getMultifactorAuthenticationProviders().contains("mfa-something"));
         assertTrue(authz.isBypassEnabled());
+        assertFalse(authz.isForceExecution());
+        assertTrue(authz.isBypassTrustedDeviceEnabled());
+        assertNull(authz.getBypassPrincipalAttributeName());
+        assertNull(authz.getBypassPrincipalAttributeValue());
+        assertNull(authz.getScript());
     }
 
     @Test

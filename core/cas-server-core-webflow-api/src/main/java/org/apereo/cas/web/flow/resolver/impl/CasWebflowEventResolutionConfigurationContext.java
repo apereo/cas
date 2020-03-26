@@ -14,7 +14,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -29,15 +28,24 @@ import org.springframework.context.ConfigurableApplicationContext;
 @Builder
 public class CasWebflowEventResolutionConfigurationContext {
     private final AuthenticationSystemSupport authenticationSystemSupport;
+
     private final CentralAuthenticationService centralAuthenticationService;
+
     private final ServicesManager servicesManager;
+
     private final TicketRegistrySupport ticketRegistrySupport;
+
     private final TicketRegistry ticketRegistry;
+
     private final CasCookieBuilder warnCookieGenerator;
+
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-    private final ApplicationEventPublisher eventPublisher;
+
     private final ConfigurableApplicationContext applicationContext;
+
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+
     private final CasConfigurationProperties casProperties;
+
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 }
