@@ -790,6 +790,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "oidcLogoutExecutionPlanConfigurer")
     public LogoutExecutionPlanConfigurer oidcLogoutExecutionPlanConfigurer() {
         return plan -> plan.registerSingleLogoutServiceMessageHandler(oidcSingleLogoutServiceMessageHandler());
     }
