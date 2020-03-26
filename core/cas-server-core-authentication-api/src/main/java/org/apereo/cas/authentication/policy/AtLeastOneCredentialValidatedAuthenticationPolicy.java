@@ -4,11 +4,16 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.Ordered;
 
 import java.util.Set;
 
@@ -19,18 +24,30 @@ import java.util.Set;
  * @since 4.0.0
  */
 @Slf4j
-@Setter
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor(force = true)
+@EqualsAndHashCode
+@Setter
 @AllArgsConstructor
+@Getter
 public class AtLeastOneCredentialValidatedAuthenticationPolicy implements AuthenticationPolicy {
+
+    private static final long serialVersionUID = -7484490540437793931L;
 
     /**
      * Flag to try all credentials before policy is satisfied. Defaults to {@code false}.
      */
-    private final boolean tryAll;
+    private boolean tryAll;
+
+    private int order = Ordered.LOWEST_PRECEDENCE;
+
+    public AtLeastOneCredentialValidatedAuthenticationPolicy(final boolean tryAll) {
+        this(tryAll, Ordered.LOWEST_PRECEDENCE);
+    }
 
     @Override
-    public boolean isSatisfiedBy(final Authentication authn, final Set<AuthenticationHandler> authenticationHandlers) throws Exception {
+    public boolean isSatisfiedBy(final Authentication authn, final Set<AuthenticationHandler> authenticationHandlers,
+                                 final ConfigurableApplicationContext applicationContext) throws Exception {
         if (this.tryAll) {
             val sum = authn.getSuccesses().size() + authn.getFailures().size();
             if (authenticationHandlers.size() != sum) {

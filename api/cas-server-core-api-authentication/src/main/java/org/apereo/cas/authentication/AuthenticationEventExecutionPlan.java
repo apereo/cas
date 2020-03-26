@@ -70,6 +70,13 @@ public interface AuthenticationEventExecutionPlan {
     void registerAuthenticationPolicy(AuthenticationPolicy authenticationPolicy);
 
     /**
+     * Register authentication policies.
+     *
+     * @param authenticationPolicy the authentication policy
+     */
+    void registerAuthenticationPolicies(Collection<AuthenticationPolicy> authenticationPolicy);
+
+    /**
      * Register authentication handler resolver.
      *
      * @param handlerResolver the handler resolver

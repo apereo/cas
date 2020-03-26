@@ -11,9 +11,17 @@ import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.Ordered;
 
 import javax.persistence.Transient;
 
@@ -28,10 +36,20 @@ import java.util.Set;
  * @since 5.2.0
  */
 @Slf4j
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+@NoArgsConstructor(force = true)
+@EqualsAndHashCode
+@Setter
+@AllArgsConstructor
+@Getter
 public class GroovyScriptAuthenticationPolicy implements AuthenticationPolicy {
 
-    private final String script;
+    private static final long serialVersionUID = 6948477763790549040L;
 
+    private String script;
+
+    private int order = Ordered.LOWEST_PRECEDENCE;
+    
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
@@ -43,7 +61,9 @@ public class GroovyScriptAuthenticationPolicy implements AuthenticationPolicy {
     }
 
     @Override
-    public boolean isSatisfiedBy(final Authentication auth, final Set<AuthenticationHandler> authenticationHandlers) throws Exception {
+    public boolean isSatisfiedBy(final Authentication auth,
+                                 final Set<AuthenticationHandler> authenticationHandlers,
+                                 final ConfigurableApplicationContext applicationContext) throws Exception {
         initializeWatchableScriptIfNeeded();
         val ex = getScriptExecutionResult(auth);
         if (ex != null && ex.isPresent()) {

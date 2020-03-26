@@ -9,9 +9,15 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.Ordered;
 
 import java.security.GeneralSecurityException;
 import java.util.Set;
@@ -27,29 +33,15 @@ import java.util.Set;
  * @since 5.2.0
  */
 @Slf4j
-@RequiredArgsConstructor
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+@NoArgsConstructor(force = true)
+@EqualsAndHashCode
+@Setter
+@Getter
 public class UniquePrincipalAuthenticationPolicy implements AuthenticationPolicy {
-    private final TicketRegistry ticketRegistry;
+    private static final long serialVersionUID = 3974114391376732470L;
 
-    @Override
-    public boolean isSatisfiedBy(final Authentication authentication, final Set<AuthenticationHandler> authenticationHandlers) throws Exception {
-        try {
-            val authPrincipal = authentication.getPrincipal();
-            try (val ticketsStream =
-                         this.ticketRegistry.getTickets(t -> isSamePrincipalId(t, authPrincipal))) {
-                val count = ticketsStream.count();
-                if (count == 0) {
-                    LOGGER.debug("Authentication policy is satisfied with [{}]", authPrincipal.getId());
-                    return true;
-                }
-                LOGGER.warn("Authentication policy cannot be satisfied for principal [{}] because [{}] sessions currently exist",
-                        authPrincipal.getId(), count);
-                return false;
-            }
-        } catch (final Exception e) {
-            throw new GeneralSecurityException(e);
-        }
-    }
+    private int order = Ordered.LOWEST_PRECEDENCE;
 
     private static boolean isSamePrincipalId(final Ticket t, final Principal p) {
         return FunctionUtils.doIf(TicketGrantingTicket.class.isInstance(t) && !t.isExpired(),
@@ -58,5 +50,27 @@ public class UniquePrincipalAuthenticationPolicy implements AuthenticationPolicy
                 return principal.getId().equalsIgnoreCase(p.getId());
             },
             () -> Boolean.TRUE).get();
+    }
+
+    @Override
+    public boolean isSatisfiedBy(final Authentication authentication,
+                                 final Set<AuthenticationHandler> authenticationHandlers,
+                                 final ConfigurableApplicationContext applicationContext) throws Exception {
+        try {
+            val ticketRegistry = applicationContext.getBean("ticketRegistry", TicketRegistry.class);
+            val authPrincipal = authentication.getPrincipal();
+            try (val ticketsStream = ticketRegistry.getTickets(t -> isSamePrincipalId(t, authPrincipal))) {
+                val count = ticketsStream.count();
+                if (count == 0) {
+                    LOGGER.debug("Authentication policy is satisfied with [{}]", authPrincipal.getId());
+                    return true;
+                }
+                LOGGER.warn("Authentication policy cannot be satisfied for principal [{}] because [{}] sessions currently exist",
+                    authPrincipal.getId(), count);
+                return false;
+            }
+        } catch (final Exception e) {
+            throw new GeneralSecurityException(e);
+        }
     }
 }
