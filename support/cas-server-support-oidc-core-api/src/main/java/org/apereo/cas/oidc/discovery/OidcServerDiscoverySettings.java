@@ -122,21 +122,21 @@ public class OidcServerDiscoverySettings {
 
     @JsonProperty("backchannel_logout_supported")
     public boolean getBackchannelLogoutSupported() {
-        return true;
+        return this.casProperties.getAuthn().getOidc().getLogout().isBackchannelLogoutSupported();
     }
 
     @JsonProperty("backchannel_logout_session_supported")
     public boolean getBackchannelLogoutSessionSupported() {
-        return true;
+        return getBackchannelLogoutSupported();
     }
 
     @JsonProperty("frontchannel_logout_supported")
     public boolean getFrontchannelLogoutSupported() {
-        return true;
+        return this.casProperties.getAuthn().getOidc().getLogout().isFrontchannelLogoutSupported();
     }
 
     @JsonProperty("frontchannel_logout_session_supported")
     public boolean getFrontchannelLogoutSessionSupported() {
-        return true;
+        return getFrontchannelLogoutSupported();
     }
 }

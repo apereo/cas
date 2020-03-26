@@ -59,6 +59,11 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
         return registeredService instanceof OidcRegisteredService;
     }
 
+    @Override
+    public int getOrder() {
+        return 0;
+    }
+
     /**
      * Compute the logout requests.
      * For a front channel logout, the logout URL is supplemented with the issuer and session identifier.

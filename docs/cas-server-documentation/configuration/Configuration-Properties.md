@@ -3476,6 +3476,15 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
 under the configuration key `cas.authn.oidc.webfinger.userInfo.rest`.
 
+### OpenID Connect Logout
+
+The supported logout channels can be defined via the following properties:
+
+```properties
+# cas.authn.oidc.logout.backchannelLogoutSupported: true
+# cas.authn.oidc.logout.frontchannelLogoutSupported: true
+```
+
 ## Pac4j Delegated AuthN
 
 Act as a proxy, and delegate authentication to external identity providers.
