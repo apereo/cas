@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
@@ -21,7 +20,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.Ordered;
 
 import javax.persistence.Transient;
 
@@ -38,18 +36,16 @@ import java.util.Set;
 @Slf4j
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor(force = true)
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @Setter
-@AllArgsConstructor
 @Getter
-public class GroovyScriptAuthenticationPolicy implements AuthenticationPolicy {
+@AllArgsConstructor
+public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
 
     private static final long serialVersionUID = 6948477763790549040L;
 
     private String script;
 
-    private int order = Ordered.LOWEST_PRECEDENCE;
-    
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient

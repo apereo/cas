@@ -18,16 +18,17 @@ import java.util.Set;
 public interface RegisteredServiceAuthenticationPolicy extends Serializable {
 
     /**
-     * Gets required authentication handlers.
+     * Gets required authentication handlers by their name/id.
      *
      * @return the required authentication handlers
      */
     Set<String> getRequiredAuthenticationHandlers();
 
     /**
-     * Sets required authentication handlers.
+     * Gets required authentication policy criteria.
      *
-     * @param handlers the handlers
+     * @return the required authentication policies
      */
-    void setRequiredAuthenticationHandlers(Set<String> handlers);
+    RegisteredServiceAuthenticationPolicyCriteria getCriteria();
+
 }

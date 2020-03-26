@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.Principal;
@@ -17,7 +16,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.Ordered;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -44,20 +42,14 @@ import java.util.Set;
 @Slf4j
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor(force = true)
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @Setter
-@AllArgsConstructor
 @Getter
-public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
+@AllArgsConstructor
+public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
     private static final long serialVersionUID = -7688729533538097898L;
 
-    private final String endpoint;
-
-    private int order = Ordered.LOWEST_PRECEDENCE;
-
-    public RestfulAuthenticationPolicy(final String endpoint) {
-        this(endpoint, Ordered.LOWEST_PRECEDENCE);
-    }
+    private String endpoint;
 
     private static Exception handleResponseStatusCode(final HttpStatus statusCode, final Principal p) {
         if (statusCode == HttpStatus.FORBIDDEN || statusCode == HttpStatus.METHOD_NOT_ALLOWED) {

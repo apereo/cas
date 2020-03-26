@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -11,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.Ordered;
 
 import java.util.Set;
 
@@ -24,17 +22,16 @@ import java.util.Set;
 @Slf4j
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor(force = true)
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @Setter
 @Getter
-public class AllCredentialsValidatedAuthenticationPolicy implements AuthenticationPolicy {
-
+public class AllCredentialsValidatedAuthenticationPolicy extends BaseAuthenticationPolicy {
     private static final long serialVersionUID = 6112280265093249844L;
 
-    private int order = Ordered.LOWEST_PRECEDENCE;
-
     @Override
-    public boolean isSatisfiedBy(final Authentication authn, final Set<AuthenticationHandler> authenticationHandlers, final ConfigurableApplicationContext applicationContext) {
+    public boolean isSatisfiedBy(final Authentication authn,
+                                 final Set<AuthenticationHandler> authenticationHandlers,
+                                 final ConfigurableApplicationContext applicationContext) {
         LOGGER.debug("Successful authentications: [{}], credentials: [{}]", authn.getSuccesses().keySet(), authn.getCredentials());
         if (authn.getSuccesses().size() != authn.getCredentials().size()) {
             LOGGER.warn("Number of successful authentications, [{}], does not match the number of provided credentials, [{}].",
