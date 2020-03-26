@@ -75,6 +75,11 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
+    public void registerAuthenticationPolicies(final Collection<AuthenticationPolicy> authenticationPolicy) {
+        this.authenticationPolicies.addAll(authenticationPolicy);
+    }
+
+    @Override
     public void registerAuthenticationHandlerResolver(final AuthenticationHandlerResolver handlerResolver) {
         this.authenticationHandlerResolvers.add(handlerResolver);
     }

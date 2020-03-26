@@ -1,14 +1,23 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
+import org.apereo.cas.configuration.model.core.authentication.GroovyAuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
+import org.apereo.cas.configuration.model.core.authentication.RestAuthenticationPolicyProperties;
 import org.apereo.cas.util.CollectionUtils;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,6 +32,82 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 public class CoreAuthenticationUtilsTests {
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
+        .findAndRegisterModules();
+
+    private static void verifySerialization(final Collection<AuthenticationPolicy> policy) throws IOException {
+        val file = new File(FileUtils.getTempDirectoryPath(), UUID.randomUUID().toString() + ".json");
+        MAPPER.writeValue(file, policy);
+        val readPolicy = MAPPER.readValue(file, Collection.class);
+        assertEquals(policy, readPolicy);
+    }
+
+    @Test
+    public void verifyAuthnPolicyRequired() throws Exception {
+        val props = new AuthenticationPolicyProperties();
+        props.getReq().setEnabled(true);
+        val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
+        verifySerialization(policy);
+    }
+
+    @Test
+    public void verifyAuthnPolicyAllHandlers() throws Exception {
+        val props = new AuthenticationPolicyProperties();
+        props.getAllHandlers().setEnabled(true);
+        val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
+        verifySerialization(policy);
+    }
+
+    @Test
+    public void verifyAuthnPolicyAll() throws Exception {
+        val props = new AuthenticationPolicyProperties();
+        props.getAllHandlers().setEnabled(true);
+        val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
+        verifySerialization(policy);
+    }
+
+    @Test
+    public void verifyAuthnPolicyNotPrevented() throws Exception {
+        val props = new AuthenticationPolicyProperties();
+        props.getNotPrevented().setEnabled(true);
+        val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
+        verifySerialization(policy);
+    }
+
+    @Test
+    public void verifyAuthnPolicyUnique() throws Exception {
+        val props = new AuthenticationPolicyProperties();
+        props.getUniquePrincipal().setEnabled(true);
+        val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
+        verifySerialization(policy);
+    }
+
+    @Test
+    public void verifyAuthnPolicyGroovy() throws Exception {
+        val props = new AuthenticationPolicyProperties();
+        props.getGroovy()
+            .add(new GroovyAuthenticationPolicyProperties().setScript("classpath:example.groovy"));
+        val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
+        verifySerialization(policy);
+    }
+
+    @Test
+    public void verifyAuthnPolicyRest() throws Exception {
+        val props = new AuthenticationPolicyProperties();
+        props.getRest()
+            .add(new RestAuthenticationPolicyProperties().setEndpoint("http://example.org"));
+        val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
+        verifySerialization(policy);
+    }
+
+    @Test
+    public void verifyAuthnPolicyAny() throws Exception {
+        val props = new AuthenticationPolicyProperties();
+        props.getAny().setEnabled(true);
+        val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
+        verifySerialization(policy);
+    }
 
     @Test
     public void verifyMapTransform() {
