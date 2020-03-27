@@ -1,5 +1,23 @@
 #!/bin/bash
 
+installJdk11() {
+    echo -e "Installing Java...\n"
+    jdkVersion="11.0.6"
+    jdkRevision="10"
+    jdkDownloadUrl="https://github.com/AdoptOpenJDK/openjdk11-upstream-binaries/releases/download"
+    url="${jdkDownloadUrl}/jdk-${jdkVersion}%2B${jdkRevision}/OpenJDK11U-jdk_x64_linux_${jdkVersion}_${jdkRevision}.tar.gz"
+    wget https://github.com/sormuras/bach/raw/master/install-jdk.sh && chmod +x install-jdk.sh
+    for i in {1..5}; do
+        export JAVA_HOME=$(./install-jdk.sh --emit-java-home --url ${url} -c | tail --lines 1)
+        if [[ -d ${JAVA_HOME} ]] ; then
+            break;
+        fi
+        echo -e "Trying download again... [${i}]\n"
+        sleep 5
+    done
+    echo JAVA_HOME=${JAVA_HOME}
+}
+
 currentChangeSetContains() {
     # Turn on for case-insensitive matching
     # shopt -s nocasematch
