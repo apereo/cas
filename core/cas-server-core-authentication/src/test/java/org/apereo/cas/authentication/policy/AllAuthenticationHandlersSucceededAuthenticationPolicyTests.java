@@ -7,10 +7,12 @@ import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordA
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link AllAuthenticationHandlersSucceededAuthenticationPolicyTests}.
@@ -24,13 +26,14 @@ public class AllAuthenticationHandlersSucceededAuthenticationPolicyTests {
         val input = new AllAuthenticationHandlersSucceededAuthenticationPolicy();
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         val authn = builder.addFailure("Prevented", new PreventedException("error")).build();
-        assertFalse(input.isSatisfiedBy(authn, Set.of()));
+        assertFalse(input.isSatisfiedBy(authn, Set.of(), mock(ConfigurableApplicationContext.class)));
     }
 
     @Test
     public void verifyMismatch() {
         val input = new AllAuthenticationHandlersSucceededAuthenticationPolicy();
         val authn = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal()).build();
-        assertFalse(input.isSatisfiedBy(authn, Set.of(new SimpleTestUsernamePasswordAuthenticationHandler())));
+        assertFalse(input.isSatisfiedBy(authn, Set.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
+            mock(ConfigurableApplicationContext.class)));
     }
 }

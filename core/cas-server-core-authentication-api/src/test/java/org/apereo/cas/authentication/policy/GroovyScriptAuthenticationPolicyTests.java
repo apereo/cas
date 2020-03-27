@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -15,6 +16,7 @@ import java.security.GeneralSecurityException;
 import java.util.LinkedHashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link GroovyScriptAuthenticationPolicyTests}.
@@ -32,7 +34,8 @@ public class GroovyScriptAuthenticationPolicyTests {
             + " return Optional.empty()\n"
             + '}';
         val p = new GroovyScriptAuthenticationPolicy(script);
-        assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), new LinkedHashSet<>()));
+        assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(),
+            new LinkedHashSet<>(), mock(ConfigurableApplicationContext.class)));
     }
 
     @Test
@@ -44,7 +47,8 @@ public class GroovyScriptAuthenticationPolicyTests {
             + '}';
         val p = new GroovyScriptAuthenticationPolicy(script);
         assertThrows(GeneralSecurityException.class,
-            () -> p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), new LinkedHashSet<>()));
+            () -> p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(),
+                new LinkedHashSet<>(), mock(ConfigurableApplicationContext.class)));
     }
 
     @Test
@@ -60,6 +64,7 @@ public class GroovyScriptAuthenticationPolicyTests {
         FileUtils.write(scriptFile, script, StandardCharsets.UTF_8);
         val p = new GroovyScriptAuthenticationPolicy("file:" + scriptFile.getCanonicalPath());
         assertThrows(GeneralSecurityException.class,
-            () -> p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), new LinkedHashSet<>()));
+            () -> p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(),
+                new LinkedHashSet<>(), mock(ConfigurableApplicationContext.class)));
     }
 }

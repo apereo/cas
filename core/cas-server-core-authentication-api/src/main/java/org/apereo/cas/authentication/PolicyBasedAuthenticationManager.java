@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.lang.reflect.UndeclaredThrowableException;
 import java.security.GeneralSecurityException;
@@ -45,7 +45,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
     private final boolean principalResolutionFailureFatal;
 
-    private final ApplicationEventPublisher eventPublisher;
+    private final ConfigurableApplicationContext applicationContext;
 
     /**
      * Populate authentication metadata attributes.
@@ -57,14 +57,13 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                                                       final AuthenticationTransaction transaction) {
         LOGGER.debug("Invoking authentication post processors for authentication transaction");
         val pops = authenticationEventExecutionPlan.getAuthenticationPostProcessors(transaction);
-
-        final Collection<AuthenticationPostProcessor> supported = pops.stream().filter(processor -> transaction.getCredentials()
-            .stream()
-            .anyMatch(processor::supports))
-            .collect(Collectors.toList());
-        for (val p : supported) {
-            p.process(builder, transaction);
-        }
+        pops.stream()
+            .filter(processor -> transaction.getCredentials()
+                .stream()
+                .anyMatch(processor::supports))
+            .forEach(processor -> {
+                processor.process(builder, transaction);
+            });
     }
 
     /**
@@ -237,7 +236,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * @return the principal resolver linked to handler if any, or null.
      */
     protected PrincipalResolver getPrincipalResolverLinkedToHandlerIfAny(final AuthenticationHandler handler, final AuthenticationTransaction transaction) {
-        return this.authenticationEventExecutionPlan.getPrincipalResolverForAuthenticationTransaction(handler, transaction);
+        return this.authenticationEventExecutionPlan.getPrincipalResolver(handler, transaction);
     }
 
     /**
@@ -257,8 +256,8 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * @param event the event
      */
     protected void publishEvent(final ApplicationEvent event) {
-        if (this.eventPublisher != null) {
-            this.eventPublisher.publishEvent(event);
+        if (applicationContext != null) {
+            applicationContext.publishEvent(event);
         }
     }
 
@@ -281,7 +280,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         val builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
         credentials.forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
 
-        val handlerSet = this.authenticationEventExecutionPlan.getAuthenticationHandlersForTransaction(transaction);
+        val handlerSet = this.authenticationEventExecutionPlan.getAuthenticationHandlers(transaction);
         LOGGER.debug("Candidate resolved authentication handlers for this transaction are [{}]", handlerSet);
 
         if (handlerSet.isEmpty()) {
@@ -380,7 +379,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                     .stream()
                     .filter(handler -> transaction.getCredentials().stream().anyMatch(handler::supports))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
-                if (!p.isSatisfiedBy(authentication, supportingHandlers)) {
+                if (!p.isSatisfiedBy(authentication, supportingHandlers, this.applicationContext)) {
                     failures.add(new AuthenticationException("Unable to satisfy authentication policy " + simpleName));
                 }
             } catch (final GeneralSecurityException e) {
@@ -407,9 +406,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         if (ex instanceof UndeclaredThrowableException) {
             e = ((UndeclaredThrowableException) ex).getUndeclaredThrowable();
         }
-
         LOGGER.trace(e.getMessage(), e);
-
         val msg = new StringBuilder(StringUtils.defaultString(e.getMessage()));
         if (e.getCause() != null) {
             msg.append(" / ").append(e.getCause().getMessage());

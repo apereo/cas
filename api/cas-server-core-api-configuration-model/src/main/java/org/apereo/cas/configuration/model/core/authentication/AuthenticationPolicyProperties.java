@@ -87,24 +87,39 @@ public class AuthenticationPolicyProperties implements Serializable {
      */
     private UniquePrincipal uniquePrincipal = new UniquePrincipal();
 
+
+    @RequiresModule(name = "cas-server-core-authentication", automated = true)
     @Getter
     @Setter
     public abstract static class BaseAuthenticationPolicy implements Serializable {
         private static final long serialVersionUID = -1830217018850738715L;
+
         /**
          * Enables the policy.
          */
         private boolean enabled;
+
+        /**
+         * The name of the authentication policy.
+         */
+        private String name;
     }
 
+    @RequiresModule(name = "cas-server-core-authentication", automated = true)
+    @Getter
+    @Setter
     public static class NotPrevented extends BaseAuthenticationPolicy {
         private static final long serialVersionUID = 8184166804664983317L;
     }
 
+    @RequiresModule(name = "cas-server-core-authentication", automated = true)
+    @Getter
+    @Setter
     public static class UniquePrincipal extends BaseAuthenticationPolicy {
         private static final long serialVersionUID = -4930217087310738715L;
     }
 
+    @RequiresModule(name = "cas-server-core-authentication", automated = true)
     @Getter
     @Setter
     public static class AnyCredential extends BaseAuthenticationPolicy {
@@ -122,14 +137,21 @@ public class AuthenticationPolicyProperties implements Serializable {
         }
     }
 
+    @RequiresModule(name = "cas-server-core-authentication", automated = true)
+    @Getter
+    @Setter
     public static class AllCredentials extends BaseAuthenticationPolicy {
         private static final long serialVersionUID = 928409456096460793L;
     }
 
+    @RequiresModule(name = "cas-server-core-authentication", automated = true)
+    @Getter
+    @Setter
     public static class AllHandlers extends BaseAuthenticationPolicy {
         private static final long serialVersionUID = 928409456096460793L;
     }
 
+    @RequiresModule(name = "cas-server-core-authentication", automated = true)
     @Getter
     @Setter
     public static class RequiredAuthenticationHandler extends BaseAuthenticationPolicy {
