@@ -18,8 +18,8 @@ to enhance the authentication flow.
   "name" : "ExampleApp",
   "id" : 1,
   "authenticationPolicy" : {
-    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
-    "requiredAuthenticationHandlers" : [ "handler2", "handler1" ],
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",  
+    "requiredAuthenticationHandlers" : ["java.util.TreeSet", [ "AuthNHandlerName" ]],
     "criteria": {
       "@class": "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicyCriteria",
       "tryAll": true,
@@ -45,3 +45,6 @@ with the following types:
 |-----------------------|-----------------------------------------------------------------------------------------------
 | `DEFAULT`  | Use the globally defined policy and skip assigning a special override to this service definition.
 | `ANY_AUTHENTICATION_HANDLER`  | Maps to the `Any` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).
+| `ALL_AUTHENTICATION_HANDLERS`  | Maps to the `All` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).
+| `NOT_PREVENTED`  | Maps to the `Not Prevented` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).
+| `GROOVY`  | Maps to the `Groovy` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).
