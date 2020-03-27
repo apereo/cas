@@ -3481,8 +3481,8 @@ under the configuration key `cas.authn.oidc.webfinger.userInfo.rest`.
 The supported logout channels can be defined via the following properties:
 
 ```properties
-# cas.authn.oidc.logout.backchannelLogoutSupported: true
-# cas.authn.oidc.logout.frontchannelLogoutSupported: true
+# cas.authn.oidc.logout.backchannelLogoutSupported=true
+# cas.authn.oidc.logout.frontchannelLogoutSupported=true
 ```
 
 ## Pac4j Delegated AuthN
