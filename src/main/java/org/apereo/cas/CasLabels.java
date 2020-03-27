@@ -41,7 +41,7 @@ public enum CasLabels {
     LABEL_COUCHDB("CouchDb"),
     LABEL_COUCHBASE("Couchbase", "couchbase"),
     LABEL_PENDING_DOCUMENT_PROPERTY("Remember: Document Property"),
-    LABEL_DELEGATED_AUTHENTICATION_PAC4J("Delegated Authentication Pac4J", "pac4j|delegation|delegated authentication"),
+    LABEL_DELEGATED_AUTHENTICATION_PAC4J("Delegated Authentication Pac4J", "pac4j|delegation|delegated authentication|delegated auth|delegated client"),
     LABEL_DELEGATED_AUTHENTICATION_WS_FED("Delegated Authentication WS-FED", "adfs"),
     LABEL_DEPENDENCIES_MODULES("Dependencies & Modules", "renovatebot\\(deps\\)|gradle|dependency|bom|maven|dependencies|\\bversion\\b|upgrade|update.+to\\sv.+"),
     LABEL_DIGEST_AUTHENTICATION("Digest Authentication"),
