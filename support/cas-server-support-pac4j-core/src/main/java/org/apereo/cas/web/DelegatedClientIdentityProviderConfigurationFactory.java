@@ -14,6 +14,8 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -52,31 +54,36 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
         val uriBuilder = UriComponentsBuilder
             .fromUriString(ENDPOINT_URL_REDIRECT)
             .queryParam(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, name);
+        Map<String, String> queryParams = new HashMap<>();
 
         if (service != null) {
             val sourceParam = service.getSource();
             val serviceParam = service.getOriginalUrl();
             if (StringUtils.isNotBlank(sourceParam) && StringUtils.isNotBlank(serviceParam)) {
-                uriBuilder.queryParam(sourceParam, serviceParam);
+                uriBuilder.queryParam(sourceParam, "{service}");
+                queryParams.put("service", serviceParam);
             }
         }
 
         val methodParam = webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isNotBlank(methodParam)) {
-            uriBuilder.queryParam(CasProtocolConstants.PARAMETER_METHOD, methodParam);
+            uriBuilder.queryParam(CasProtocolConstants.PARAMETER_METHOD, "{method}");
+            queryParams.put("method", methodParam);
         }
         val localeParam = webContext.getRequestParameter(casProperties.getLocale().getParamName())
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isNotBlank(localeParam)) {
-            uriBuilder.queryParam(casProperties.getLocale().getParamName(), localeParam);
+            uriBuilder.queryParam(casProperties.getLocale().getParamName(), "{locale}");
+            queryParams.put("locale", localeParam);
         }
         val themeParam = webContext.getRequestParameter(casProperties.getTheme().getParamName())
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isNotBlank(themeParam)) {
-            uriBuilder.queryParam(casProperties.getTheme().getParamName(), themeParam);
+            uriBuilder.queryParam(casProperties.getTheme().getParamName(), "{theme}");
+            queryParams.put("theme", themeParam);
         }
-        val redirectUrl = uriBuilder.toUriString();
+        val redirectUrl = uriBuilder.build(queryParams).toString();
         val autoRedirect = (Boolean) client.getCustomProperties()
             .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, Boolean.FALSE);
         val p = new DelegatedClientIdentityProviderConfiguration(name, redirectUrl, type, getCssClass(client), autoRedirect);
