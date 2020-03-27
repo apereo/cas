@@ -1,8 +1,10 @@
 package org.apereo.cas.authentication.adaptive.geo;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Set;
@@ -18,8 +20,10 @@ import java.util.concurrent.ConcurrentSkipListSet;
 @ToString
 @Getter
 @Setter
+@Accessors(chain = true)
 public class GeoLocationResponse {
 
+    @Builder.Default
     private final Set<String> addresses = new ConcurrentSkipListSet<>();
 
     private double latitude;

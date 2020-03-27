@@ -24,7 +24,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 }, properties = {
     "cas.authn.throttle.usernameParameter=username",
     "cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
-    "cas.audit.jdbc.asynchronous=false"})
+    "cas.audit.jdbc.asynchronous=false",
+    "cas.authn.throttle.usernameParameter=username",
+    "cas.authn.throttle.failure.range-seconds=5"
+})
 @Getter
 @Tag("JDBC")
 public class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {

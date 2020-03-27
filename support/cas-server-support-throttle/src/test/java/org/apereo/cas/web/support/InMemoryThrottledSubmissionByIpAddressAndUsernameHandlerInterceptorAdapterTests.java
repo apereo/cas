@@ -16,9 +16,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootTest(classes = BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.throttle.usernameParameter=username",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+        "cas.authn.throttle.failure.range-seconds=5"
+    }
+)
 @Getter
 public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests
     extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {

@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 },
     properties = {
         "cas.authn.throttle.usernameParameter=username",
+        "cas.authn.throttle.failure.range-seconds=5",
         "cas.audit.redis.host=localhost",
         "cas.audit.redis.port=6379"
     })
