@@ -27,4 +27,10 @@ public class DefaultRegisteredServiceAuthenticationPolicyCriteria implements Reg
     private AuthenticationPolicyTypes type;
 
     private String script;
+
+    private String url;
+
+    private String basicAuthUsername;
+
+    private String basicAuthPassword;
 }

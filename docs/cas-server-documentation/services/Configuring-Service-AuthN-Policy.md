@@ -48,3 +48,4 @@ with the following types:
 | `ALL_AUTHENTICATION_HANDLERS`  | Maps to the `All` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).
 | `NOT_PREVENTED`  | Maps to the `Not Prevented` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).
 | `GROOVY`  | Maps to the `Groovy` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).
+| `REST`  | Maps to the `Rest` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).

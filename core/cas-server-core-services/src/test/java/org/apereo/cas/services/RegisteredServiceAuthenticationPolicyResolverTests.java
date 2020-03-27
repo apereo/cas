@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthent
 import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RegisteredServiceAuthenticationPolicyResolver;
+import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,6 +72,17 @@ public class RegisteredServiceAuthenticationPolicyResolverTests {
         svc5.setAuthenticationPolicy(p5);
         list.add(svc5);
 
+        val svc6 = RegisteredServiceTestUtils.getRegisteredService("serviceid6");
+        val p6 = new DefaultRegisteredServiceAuthenticationPolicy();
+        val cr6 = new DefaultRegisteredServiceAuthenticationPolicyCriteria();
+        cr6.setUrl("https://example.org");
+        cr6.setBasicAuthPassword("uid");
+        cr6.setBasicAuthUsername("password");
+        cr6.setType(RegisteredServiceAuthenticationPolicyCriteria.AuthenticationPolicyTypes.REST);
+        p6.setCriteria(cr6);
+        svc6.setAuthenticationPolicy(p6);
+        list.add(svc6);
+
         val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), list, new ArrayList<>());
 
         this.servicesManager = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
@@ -130,7 +142,7 @@ public class RegisteredServiceAuthenticationPolicyResolverTests {
     }
 
     @Test
-    public void checkNotGroovyPolicy() {
+    public void checkGroovyPolicy() {
         val resolver = new RegisteredServiceAuthenticationPolicyResolver(this.servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
 
@@ -140,6 +152,17 @@ public class RegisteredServiceAuthenticationPolicyResolverTests {
         val policies = resolver.resolve(transaction);
         assertEquals(1, policies.size());
         assertTrue(policies.iterator().next() instanceof GroovyScriptAuthenticationPolicy);
+    }
+
+    @Test
+    public void checkRestPolicy() {
+        val resolver = new RegisteredServiceAuthenticationPolicyResolver(this.servicesManager,
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
+        val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid6"),
+            RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+        val policies = resolver.resolve(transaction);
+        assertEquals(1, policies.size());
+        assertTrue(policies.iterator().next() instanceof RestfulAuthenticationPolicy);
     }
 
 }

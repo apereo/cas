@@ -37,6 +37,27 @@ public interface RegisteredServiceAuthenticationPolicyCriteria extends Serializa
     String getScript();
 
     /**
+     * Gets url for rest endpoint.
+     *
+     * @return the url
+     */
+    String getUrl();
+
+    /**
+     * Gets basic auth username for rest endpoint.
+     *
+     * @return the basic auth username
+     */
+    String getBasicAuthUsername();
+
+    /**
+     * Gets basic auth password for rest endpoint.
+     *
+     * @return the basic auth password
+     */
+    String getBasicAuthPassword();
+
+    /**
      * The authentication policy types.
      */
     enum AuthenticationPolicyTypes {
@@ -62,6 +83,10 @@ public interface RegisteredServiceAuthenticationPolicyCriteria extends Serializa
         /**
          * Script the authentication policy definition using a groovy script.
          */
-        GROOVY
+        GROOVY,
+        /**
+         * Call out to a REST endpoint for the authentication policy.
+         */
+        REST
     }
 }

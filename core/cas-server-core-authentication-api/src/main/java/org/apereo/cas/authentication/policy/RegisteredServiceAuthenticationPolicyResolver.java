@@ -54,6 +54,10 @@ public class RegisteredServiceAuthenticationPolicyResolver implements Authentica
                 case ANY_AUTHENTICATION_HANDLER:
                     policies.add(new AtLeastOneCredentialValidatedAuthenticationPolicy(criteria.isTryAll()));
                     break;
+                case REST:
+                    policies.add(new RestfulAuthenticationPolicy(criteria.getUrl(),
+                        criteria.getBasicAuthUsername(), criteria.getBasicAuthPassword()));
+                    break;
                 case ALL_AUTHENTICATION_HANDLERS:
                     policies.add(new AllAuthenticationHandlersSucceededAuthenticationPolicy());
                     break;

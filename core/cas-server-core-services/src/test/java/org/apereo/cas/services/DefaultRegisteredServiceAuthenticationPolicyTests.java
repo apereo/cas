@@ -29,6 +29,7 @@ public class DefaultRegisteredServiceAuthenticationPolicyTests {
         policy.setRequiredAuthenticationHandlers(Set.of("handler1", "handler2"));
         val criteria = new DefaultRegisteredServiceAuthenticationPolicyCriteria();
         criteria.setTryAll(true);
+        criteria.setScript("groovy {}");
         criteria.setType(RegisteredServiceAuthenticationPolicyCriteria.AuthenticationPolicyTypes.ANY_AUTHENTICATION_HANDLER);
         policy.setCriteria(criteria);
         svc.setAuthenticationPolicy(policy);
