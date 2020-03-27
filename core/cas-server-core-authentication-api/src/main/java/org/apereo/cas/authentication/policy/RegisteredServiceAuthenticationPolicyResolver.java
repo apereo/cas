@@ -54,6 +54,15 @@ public class RegisteredServiceAuthenticationPolicyResolver implements Authentica
                 case ANY_AUTHENTICATION_HANDLER:
                     policies.add(new AtLeastOneCredentialValidatedAuthenticationPolicy(criteria.isTryAll()));
                     break;
+                case ALL_AUTHENTICATION_HANDLERS:
+                    policies.add(new AllAuthenticationHandlersSucceededAuthenticationPolicy());
+                    break;
+                case NOT_PREVENTED:
+                    policies.add(new NotPreventedAuthenticationPolicy());
+                    break;
+                case GROOVY:
+                    policies.add(new GroovyScriptAuthenticationPolicy(criteria.getScript()));
+                    break;
                 case DEFAULT:
                 default:
                     break;

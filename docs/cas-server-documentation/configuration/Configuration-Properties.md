@@ -1517,9 +1517,10 @@ Contact a REST endpoint via `POST` to detect authentication policy.
 The message body contains the CAS authenticated principal that can be used
 to examine account status and policy.
 
-```properties
-# cas.authn.policy.rest[0].endpoint=https://account.example.org/endpoint
-```
+RESTful settings for this feature are 
+available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.policy.rest[0]`.
+
+Response codes from the REST endpoint are translated as such:
 
 | Code                   | Result
 |------------------------|---------------------------------------------

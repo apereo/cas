@@ -25,4 +25,6 @@ public class DefaultRegisteredServiceAuthenticationPolicyCriteria implements Reg
     private boolean tryAll;
 
     private AuthenticationPolicyTypes type;
+
+    private String script;
 }
