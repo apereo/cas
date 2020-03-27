@@ -214,7 +214,6 @@ public class DelegatedAuthenticationWebflowConfiguration {
         return new Saml2ClientMetadataController(builtClients.getObject(), configBean.getObject());
     }
 
-    @ConditionalOnMissingBean(name = "delegatedClientNavigationController")
     @Bean
     public DelegatedClientNavigationController delegatedClientNavigationController() {
         return new DelegatedClientNavigationController(builtClients.getObject(),
