@@ -283,6 +283,11 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
         public Github() {
             setClientName("Github");
         }
+
+        /**
+         * The requested scope from the provider.
+         */
+        private String scope;
     }
 
     @RequiresModule(name = "cas-server-support-pac4j-webflow")

@@ -112,6 +112,9 @@ public class DelegatedClientFactory {
         if (github.isEnabled() && StringUtils.isNotBlank(github.getId()) && StringUtils.isNotBlank(github.getSecret())) {
             val client = new GitHubClient(github.getId(), github.getSecret());
             configureClient(client, github);
+            if (StringUtils.isNotBlank(github.getScope())) {
+                client.setScope(github.getScope());
+            }
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
