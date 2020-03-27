@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.AuthenticationPolicyResolver;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationTransaction;
-import org.apereo.cas.services.RegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 
@@ -48,29 +47,9 @@ public class RegisteredServiceAuthenticationPolicyResolver implements Authentica
         val service = authenticationServiceSelectionPlan.resolveService(transaction.getService());
         val registeredService = this.servicesManager.findServiceBy(service);
         val criteria = registeredService.getAuthenticationPolicy().getCriteria();
-        val policies = new LinkedHashSet<AuthenticationPolicy>();
+        val policies = new LinkedHashSet<AuthenticationPolicy>(1);
         if (criteria != null) {
-            switch (criteria.getType()) {
-                case ANY_AUTHENTICATION_HANDLER:
-                    policies.add(new AtLeastOneCredentialValidatedAuthenticationPolicy(criteria.isTryAll()));
-                    break;
-                case REST:
-                    policies.add(new RestfulAuthenticationPolicy(criteria.getUrl(),
-                        criteria.getBasicAuthUsername(), criteria.getBasicAuthPassword()));
-                    break;
-                case ALL_AUTHENTICATION_HANDLERS:
-                    policies.add(new AllAuthenticationHandlersSucceededAuthenticationPolicy());
-                    break;
-                case NOT_PREVENTED:
-                    policies.add(new NotPreventedAuthenticationPolicy());
-                    break;
-                case GROOVY:
-                    policies.add(new GroovyScriptAuthenticationPolicy(criteria.getScript()));
-                    break;
-                case DEFAULT:
-                default:
-                    break;
-            }
+            policies.add(criteria.toAuthenticationPolicy());
         }
         LOGGER.debug("Authentication policies for this transaction are [{}]", policies);
         return policies;
@@ -89,8 +68,7 @@ public class RegisteredServiceAuthenticationPolicyResolver implements Authentica
             val authenticationPolicy = registeredService.getAuthenticationPolicy();
             if (authenticationPolicy != null) {
                 val criteria = authenticationPolicy.getCriteria();
-                return criteria != null
-                    && criteria.getType() != RegisteredServiceAuthenticationPolicyCriteria.AuthenticationPolicyTypes.DEFAULT;
+                return criteria != null;
             }
         }
         return false;

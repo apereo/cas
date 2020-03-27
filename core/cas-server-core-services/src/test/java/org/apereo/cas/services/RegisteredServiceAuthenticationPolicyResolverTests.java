@@ -36,8 +36,7 @@ public class RegisteredServiceAuthenticationPolicyResolverTests {
 
         val svc1 = RegisteredServiceTestUtils.getRegisteredService("serviceid1");
         val p1 = new DefaultRegisteredServiceAuthenticationPolicy();
-        val cr1 = new DefaultRegisteredServiceAuthenticationPolicyCriteria();
-        cr1.setType(RegisteredServiceAuthenticationPolicyCriteria.AuthenticationPolicyTypes.ANY_AUTHENTICATION_HANDLER);
+        val cr1 = new AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria();
         cr1.setTryAll(true);
         p1.setCriteria(cr1);
         svc1.setAuthenticationPolicy(p1);
@@ -49,36 +48,32 @@ public class RegisteredServiceAuthenticationPolicyResolverTests {
 
         val svc3 = RegisteredServiceTestUtils.getRegisteredService("serviceid3");
         val p3 = new DefaultRegisteredServiceAuthenticationPolicy();
-        val cr3 = new DefaultRegisteredServiceAuthenticationPolicyCriteria();
-        cr3.setType(RegisteredServiceAuthenticationPolicyCriteria.AuthenticationPolicyTypes.ALL_AUTHENTICATION_HANDLERS);
+        val cr3 = new AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria();
         p3.setCriteria(cr3);
         svc3.setAuthenticationPolicy(p3);
         list.add(svc3);
 
         val svc4 = RegisteredServiceTestUtils.getRegisteredService("serviceid4");
         val p4 = new DefaultRegisteredServiceAuthenticationPolicy();
-        val cr4 = new DefaultRegisteredServiceAuthenticationPolicyCriteria();
-        cr4.setType(RegisteredServiceAuthenticationPolicyCriteria.AuthenticationPolicyTypes.NOT_PREVENTED);
+        val cr4 = new NotPreventedRegisteredServiceAuthenticationPolicyCriteria();
         p4.setCriteria(cr4);
         svc4.setAuthenticationPolicy(p4);
         list.add(svc4);
 
         val svc5 = RegisteredServiceTestUtils.getRegisteredService("serviceid5");
         val p5 = new DefaultRegisteredServiceAuthenticationPolicy();
-        val cr5 = new DefaultRegisteredServiceAuthenticationPolicyCriteria();
+        val cr5 = new GroovyRegisteredServiceAuthenticationPolicyCriteria();
         cr5.setScript("groovy { return Optional.empty() }");
-        cr5.setType(RegisteredServiceAuthenticationPolicyCriteria.AuthenticationPolicyTypes.GROOVY);
         p5.setCriteria(cr5);
         svc5.setAuthenticationPolicy(p5);
         list.add(svc5);
 
         val svc6 = RegisteredServiceTestUtils.getRegisteredService("serviceid6");
         val p6 = new DefaultRegisteredServiceAuthenticationPolicy();
-        val cr6 = new DefaultRegisteredServiceAuthenticationPolicyCriteria();
+        val cr6 = new RestfulRegisteredServiceAuthenticationPolicyCriteria();
         cr6.setUrl("https://example.org");
         cr6.setBasicAuthPassword("uid");
         cr6.setBasicAuthUsername("password");
-        cr6.setType(RegisteredServiceAuthenticationPolicyCriteria.AuthenticationPolicyTypes.REST);
         p6.setCriteria(cr6);
         svc6.setAuthenticationPolicy(p6);
         list.add(svc6);

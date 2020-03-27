@@ -1,5 +1,8 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.AuthenticationPolicy;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
@@ -12,81 +15,12 @@ import java.io.Serializable;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceAuthenticationPolicyCriteria extends Serializable {
+
     /**
-     * Gets type of the policy
-     * that loosely should translate to {@link org.apereo.cas.authentication.AuthenticationPolicy}
-     * implementations.
+     * To authentication policy.
      *
-     * @return the type
+     * @return the authentication policy
      */
-    AuthenticationPolicyTypes getType();
-
-    /**
-     * Whether all handlers/credentials should be tried
-     * depending on the specific policy type.
-     *
-     * @return the boolean
-     */
-    boolean isTryAll();
-
-    /**
-     * Authentication policy script definition.
-     *
-     * @return the script
-     */
-    String getScript();
-
-    /**
-     * Gets url for rest endpoint.
-     *
-     * @return the url
-     */
-    String getUrl();
-
-    /**
-     * Gets basic auth username for rest endpoint.
-     *
-     * @return the basic auth username
-     */
-    String getBasicAuthUsername();
-
-    /**
-     * Gets basic auth password for rest endpoint.
-     *
-     * @return the basic auth password
-     */
-    String getBasicAuthPassword();
-
-    /**
-     * The authentication policy types.
-     */
-    enum AuthenticationPolicyTypes {
-        /**
-         * Do not assign a specific authentication policy
-         * to this service and use the default.
-         */
-        DEFAULT,
-        /**
-         * Allow any authentication handler to proceed.
-         */
-        ANY_AUTHENTICATION_HANDLER,
-        /**
-         * Force all authentication handler to proceed.
-         */
-        ALL_AUTHENTICATION_HANDLERS,
-        /**
-         * Ensure authentication failures do not contain
-         * a reference to {@link org.apereo.cas.authentication.PreventedException}.
-         */
-        NOT_PREVENTED,
-
-        /**
-         * Script the authentication policy definition using a groovy script.
-         */
-        GROOVY,
-        /**
-         * Call out to a REST endpoint for the authentication policy.
-         */
-        REST
-    }
+    @JsonIgnore
+    AuthenticationPolicy toAuthenticationPolicy();
 }
