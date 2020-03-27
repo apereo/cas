@@ -1,6 +1,7 @@
 package org.apereo.cas.mock;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
@@ -66,6 +67,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
         val metaData = new BasicCredentialMetaData(c);
         authentication = new DefaultAuthenticationBuilder(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(principal, attributes))
             .addCredential(metaData)
+            .addAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS,
+                List.of(SimpleTestUsernamePasswordAuthenticationHandler.class.getSimpleName()))
             .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
                 new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData)).build();
         created = ZonedDateTime.now(ZoneOffset.UTC);
