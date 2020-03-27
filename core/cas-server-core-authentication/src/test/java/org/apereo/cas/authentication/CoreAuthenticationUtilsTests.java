@@ -95,8 +95,9 @@ public class CoreAuthenticationUtilsTests {
     @Test
     public void verifyAuthnPolicyRest() throws Exception {
         val props = new AuthenticationPolicyProperties();
-        props.getRest()
-            .add(new RestAuthenticationPolicyProperties().setEndpoint("http://example.org"));
+        val rest = new RestAuthenticationPolicyProperties();
+        rest.setUrl("http://example.org");
+        props.getRest().add(rest);
         val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
         verifySerialization(policy);
     }
