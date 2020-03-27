@@ -3465,6 +3465,10 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 
 ### OpenID Connect WebFinger
 
+WebFinger is a protocol specified by the Internet Engineering Task Force IETF that allows for 
+discovery of information about people and things identified by a URI.[1] Information about a person 
+might be discovered via an "acct:" URI, for example, which is a URI that looks like an email address.
+
 #### WebFinger UserInfo via Groovy
 
 ```properties
