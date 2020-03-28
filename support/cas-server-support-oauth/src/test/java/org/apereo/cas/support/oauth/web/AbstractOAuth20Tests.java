@@ -321,6 +321,21 @@ public abstract class AbstractOAuth20Tests {
         return registeredServiceImpl;
     }
 
+    protected static OAuthRegisteredService getRegisteredService(final String serviceId,
+                                                                 final String clientId,
+                                                                 final String secret,
+                                                                 final Set<OAuth20GrantTypes> grantTypes) {
+        val registeredServiceImpl = new OAuthRegisteredService();
+        registeredServiceImpl.setName("The registered service name");
+        registeredServiceImpl.setServiceId(serviceId);
+        registeredServiceImpl.setClientId(clientId);
+        registeredServiceImpl.setClientSecret(secret);
+        registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        registeredServiceImpl.setSupportedGrantTypes(
+            grantTypes.stream().map(OAuth20GrantTypes::getType).collect(Collectors.toCollection(HashSet::new)));
+        return registeredServiceImpl;
+    }
+
     protected static Principal createPrincipal() {
         val map = new HashMap<String, List<Object>>();
         map.put(NAME, List.of(VALUE));
@@ -466,9 +481,31 @@ public abstract class AbstractOAuth20Tests {
         val service = factory.createService(registeredService.getServiceId());
         val refreshToken = oAuthRefreshTokenFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"),
-            new ArrayList<>(), CLIENT_ID, StringUtils.EMPTY, new HashMap<>());
+            new ArrayList<>(), registeredService.getClientId(), StringUtils.EMPTY, new HashMap<>());
         this.ticketRegistry.addTicket(refreshToken);
         return refreshToken;
+    }
+
+    protected OAuth20RefreshToken addRefreshToken(final Principal principal, final OAuthRegisteredService registeredService, final OAuth20AccessToken accessToken) {
+        val authentication = getAuthentication(principal);
+        val factory = new WebApplicationServiceFactory();
+        val service = factory.createService(registeredService.getServiceId());
+        val refreshToken = oAuthRefreshTokenFactory.create(service, authentication,
+            new MockTicketGrantingTicket("casuser"),
+            new ArrayList<>(), registeredService.getClientId(), accessToken.getId(), new HashMap<>());
+        this.ticketRegistry.addTicket(refreshToken);
+        return refreshToken;
+    }
+
+    protected OAuth20AccessToken addAccessToken(final Principal principal, final OAuthRegisteredService registeredService) {
+        val authentication = getAuthentication(principal);
+        val factory = new WebApplicationServiceFactory();
+        val service = factory.createService(registeredService.getServiceId());
+        val accessToken = defaultAccessTokenFactory.create(service, authentication,
+            new MockTicketGrantingTicket("casuser"),
+            new ArrayList<>(), registeredService.getClientId(), new HashMap<>());
+        this.ticketRegistry.addTicket(accessToken);
+        return accessToken;
     }
 
     @SneakyThrows
