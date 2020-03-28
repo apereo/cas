@@ -190,9 +190,9 @@ public class LdapAuthenticationConfiguration {
                     l.getOrder(), authenticator, strategy);
                 handler.setCollectDnAttribute(l.isCollectDnAttribute());
 
-                if (StringUtils.isNotBlank(l.getPrincipalAttributeId())) {
-                    val additionalAttributes = l.getAdditionalAttributes();
-                    additionalAttributes.add(l.getPrincipalAttributeId());
+                if (!l.getAdditionalAttributes().isEmpty()) {
+                    val additional = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(l.getAdditionalAttributes());
+                    multiMapAttributes.putAll(additional);
                 }
                 if (StringUtils.isNotBlank(l.getPrincipalDnAttributeName())) {
                     handler.setPrincipalDnAttributeName(l.getPrincipalDnAttributeName());
@@ -212,8 +212,7 @@ public class LdapAuthenticationConfiguration {
                     LOGGER.trace("No principal id attribute is found for LDAP authentication via [{}]", l.getLdapUrl());
                 } else {
                     handler.setPrincipalIdAttribute(l.getPrincipalAttributeId());
-                    LOGGER.trace("Using principal id attribute [{}] for LDAP authentication via [{}]", l.getPrincipalAttributeId(),
-                        l.getLdapUrl());
+                    LOGGER.trace("Using principal id attribute [{}] for LDAP authentication via [{}]", l.getPrincipalAttributeId(), l.getLdapUrl());
                 }
 
                 val passwordPolicy = l.getPasswordPolicy();
