@@ -15,6 +15,8 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {
     "cas.authn.ldap[0].password-policy.enabled=true",
     "cas.authn.ldap[0].password-policy.type=EDirectory",
+    "cas.authn.ldap[0].password-policy.strategy=GROOVY",
+    "cas.authn.ldap[0].password-policy.groovy.location=classpath:GroovyPwdPolicy.groovy",
     "cas.authn.ldap[0].password-policy.accountStateHandlingEnabled=true",
     "cas.authn.ldap[0].password-policy.warning-attribute-name=attr-name",
     "cas.authn.ldap[0].password-policy.warning-attribute-value=attr-value"
