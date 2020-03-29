@@ -3527,6 +3527,16 @@ Provision and create established user profiles to identity stores.
 
 RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.pac4j.provisioning.rest`.
 
+### GitHub
+
+In addition to the [common block of settings](Configuration-Properties-Common.html#delegated-authentication-settings) , the following properties are additionally supported, when delegating authentication to GitHub:
+
+```properties
+# cas.authn.pac4j.github.scope=user|read:user|user:email|...
+```
+
+For a full list of possible scopes, please check https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/
+
 ### Google
 
 In addition to the [common block of settings](Configuration-Properties-Common.html#delegated-authentication-settings) , the following properties are additionally supported, when delegating authentication to Google:
