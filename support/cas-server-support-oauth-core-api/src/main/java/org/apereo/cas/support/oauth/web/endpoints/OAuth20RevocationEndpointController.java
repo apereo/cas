@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
+import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -60,6 +61,18 @@ public class OAuth20RevocationEndpointController extends BaseOAuth20Controller {
             if (manager.get(true).isEmpty()) {
                 LOGGER.error("Service [{}] requests authentication", clientId);
                 return OAuth20Utils.writeError(response, OAuth20Constants.ACCESS_DENIED);
+            }
+        } else {
+            val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());
+
+            val audit = AuditableContext.builder()
+                .service(service)
+                .registeredService(registeredService)
+                .build();
+
+            val accessResult = getOAuthConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+            if (accessResult.isExecutionFailure()) {
+                return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
             }
         }
         val token = context.getRequestParameter(OAuth20Constants.TOKEN)
