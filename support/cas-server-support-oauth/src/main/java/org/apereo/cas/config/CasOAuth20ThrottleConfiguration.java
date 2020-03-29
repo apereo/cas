@@ -88,7 +88,8 @@ public class CasOAuth20ThrottleConfiguration {
             requiresAuthenticationAccessTokenInterceptor(),
             requiresAuthenticationAuthorizeInterceptor(),
             accessTokenGrantRequestExtractors,
-            servicesManager.getObject());
+            servicesManager.getObject(),
+            oauthSecConfig.getObject().getSessionStore());
     }
 
     @Bean

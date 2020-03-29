@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGran
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +40,8 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
 
     private final ServicesManager servicesManager;
 
+    private final SessionStore<JEEContext> sessionStore;
+
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
                              final Object handler) throws Exception {
@@ -62,7 +65,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
     * @return the boolean
     */
     protected boolean clientNeedAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
-        val clientId = OAuth20Utils.getClientIdAndClientSecret(new JEEContext(request, response)).getLeft();
+        val clientId = OAuth20Utils.getClientIdAndClientSecret(new JEEContext(request, response, sessionStore)).getLeft();
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
         if (clientId.isEmpty() || registeredService == null) {
             return true;

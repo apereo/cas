@@ -5,6 +5,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 
+import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.SessionStore;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -31,8 +33,9 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
                                          final HandlerInterceptorAdapter requiresAuthenticationClientConfigurationInterceptor,
                                          final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode,
                                          final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors,
-                                         final ServicesManager servicesManager) {
-        super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor, accessTokenGrantRequestExtractors, servicesManager);
+                                         final ServicesManager servicesManager,
+                                         final SessionStore<JEEContext> sessionStore) {
+        super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor, accessTokenGrantRequestExtractors, servicesManager, sessionStore);
         this.requiresAuthenticationDynamicRegistrationInterceptor = requiresAuthenticationDynamicRegistrationInterceptor;
         this.dynamicClientRegistrationMode = dynamicClientRegistrationMode;
         this.requiresAuthenticationClientConfigurationInterceptor = requiresAuthenticationClientConfigurationInterceptor;

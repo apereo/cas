@@ -647,7 +647,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
             requiresAuthenticationClientConfigurationInterceptor(),
             mode,
             accessTokenGrantRequestExtractors.getObject(),
-            servicesManager.getObject());
+            servicesManager.getObject(),
+            oauthDistributedSessionStore.getObject());
     }
 
     @RefreshScope
