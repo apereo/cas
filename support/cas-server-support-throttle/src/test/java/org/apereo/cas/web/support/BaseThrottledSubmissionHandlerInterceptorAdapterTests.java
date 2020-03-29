@@ -152,7 +152,8 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         getThrottle().preHandle(request, response, null);
 
         try {
-            authenticationManager.authenticate(DefaultAuthenticationTransaction.of(CoreAuthenticationTestUtils.getService(), badCredentials(username)));
+            val transaction = DefaultAuthenticationTransaction.of(CoreAuthenticationTestUtils.getService(), badCredentials(username));
+            authenticationManager.authenticate(transaction);
         } catch (final AuthenticationException e) {
             getThrottle().postHandle(request, response, null, null);
             return response;
