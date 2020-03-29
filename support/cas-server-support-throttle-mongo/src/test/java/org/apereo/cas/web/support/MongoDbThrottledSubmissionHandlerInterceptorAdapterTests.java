@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.config.CasMongoDbThrottlingConfiguration;
+import org.apereo.cas.config.CasSupportMongoDbAuditConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
@@ -18,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @Tag("MongoDb")
 @SpringBootTest(classes = {
     CasMongoDbThrottlingConfiguration.class,
+    CasSupportMongoDbAuditConfiguration.class,
     BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class
 },
     properties = {
