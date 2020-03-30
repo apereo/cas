@@ -8,8 +8,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.webauthn.InMemoryRegistrationStorage;
 import com.yubico.webauthn.RegistrationStorage;
@@ -24,6 +24,7 @@ import com.yubico.webauthn.attestation.TrustResolver;
 import com.yubico.webauthn.attestation.resolver.CompositeAttestationResolver;
 import com.yubico.webauthn.attestation.resolver.CompositeTrustResolver;
 import com.yubico.webauthn.attestation.resolver.SimpleAttestationResolver;
+import com.yubico.webauthn.attestation.resolver.SimpleTrustResolverWithEquality;
 import com.yubico.webauthn.data.AttestationConveyancePreference;
 import com.yubico.webauthn.data.RelyingPartyIdentity;
 import com.yubico.webauthn.extension.appid.AppId;
@@ -73,7 +74,7 @@ public class WebAuthnConfiguration {
     private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> webAuthnBypassEvaluator;
 
     private static <K, V> Cache<K, V> newCache() {
-        return CacheBuilder.newBuilder()
+        return Caffeine.newBuilder()
             .maximumSize(CACHE_MAX_SIZE)
             .expireAfterAccess(Duration.ofMinutes(5))
             .recordStats()
@@ -106,6 +107,12 @@ public class WebAuthnConfiguration {
         p.setOrder(u2f.getRank());
         p.setId(u2f.getId());
         return p;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "simpleTrustResolverWithEquality")
+    public TrustResolver simpleTrustResolverWithEquality() {
+        return new SimpleTrustResolverWithEquality(new ArrayList<>());
     }
 
     @Bean
@@ -165,6 +172,6 @@ public class WebAuthnConfiguration {
             .appId(appId)
             .build();
 
-        return new WebAuthnServer(webAuthnCredentialRepository(), newCache(), newCache(), relyingParty, webAuthnMetadataService());
+        return new WebAuthnServer(webAuthnCredentialRepository(), newCache(), newCache(), relyingParty);
     }
 }
