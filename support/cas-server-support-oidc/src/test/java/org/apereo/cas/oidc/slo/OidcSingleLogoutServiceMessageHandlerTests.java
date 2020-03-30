@@ -16,10 +16,9 @@ import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.UrlValidator;
 
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import lombok.val;
 
 import java.util.Collections;
 import java.util.List;

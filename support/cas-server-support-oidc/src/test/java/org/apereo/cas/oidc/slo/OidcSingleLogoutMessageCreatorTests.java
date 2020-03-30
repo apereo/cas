@@ -11,11 +11,10 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DigestUtils;
 
 import com.nimbusds.jwt.JWTParser;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import lombok.val;
 
 import java.text.ParseException;
 import java.util.Map;
