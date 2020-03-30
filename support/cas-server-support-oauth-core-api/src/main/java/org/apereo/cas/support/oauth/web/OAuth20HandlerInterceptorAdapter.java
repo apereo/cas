@@ -66,15 +66,19 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
     */
     protected boolean clientNeedAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
         val clientId = OAuth20Utils.getClientIdAndClientSecret(new JEEContext(request, response, sessionStore)).getLeft();
+        if (clientId.isEmpty()) {
+            return true;
+        }
+
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
-        if (clientId.isEmpty() || registeredService == null) {
+        if (registeredService == null) {
             return true;
         }
         return OAuth20Utils.doesServiceNeedAuthentication(registeredService);
     }
 
     /**
-     * Is revoke token request request?
+     * Is a revoke token request?
      *
      * @param request  the request
      * @param response the response
@@ -119,13 +123,13 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      * @return true/false
      */
     protected boolean requestRequiresAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
-        val accessTokenRequest = isAccessTokenRequest(request, response);
         val revokeTokenRequest = isRevokeTokenRequest(request, response);
 
         if (revokeTokenRequest) {
             return clientNeedAuthentication(request, response);
         }
 
+        val accessTokenRequest = isAccessTokenRequest(request, response);
         if (!accessTokenRequest) {
             val extractor = extractAccessTokenGrantRequest(request);
             if (extractor.isPresent()) {

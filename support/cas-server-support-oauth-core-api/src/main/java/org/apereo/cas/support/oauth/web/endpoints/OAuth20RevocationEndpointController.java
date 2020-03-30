@@ -59,7 +59,7 @@ public class OAuth20RevocationEndpointController extends BaseOAuth20Controller {
 
         if (OAuth20Utils.doesServiceNeedAuthentication(registeredService)) {
             if (manager.get(true).isEmpty()) {
-                LOGGER.error("Service [{}] requests authentication", clientId);
+                LOGGER.warn("Service [{}] requests authentication", clientId);
                 return OAuth20Utils.writeError(response, OAuth20Constants.ACCESS_DENIED);
             }
         } else {
@@ -99,7 +99,7 @@ public class OAuth20RevocationEndpointController extends BaseOAuth20Controller {
             LOGGER.error("Provided token [{}] has not been found in the ticket registry", token);
         } else if (isRefreshToken(registryToken) || isAccessToken(registryToken)) {
             if (!StringUtils.equals(clientId, registryToken.getClientId())) {
-                LOGGER.error("Provided token [{}] has not been issued for the service [{}]", token, clientId);
+                LOGGER.warn("Provided token [{}] has not been issued for the service [{}]", token, clientId);
                 return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
             }
 

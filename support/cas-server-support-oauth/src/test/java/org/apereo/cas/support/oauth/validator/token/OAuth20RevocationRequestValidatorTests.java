@@ -7,7 +7,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.HttpUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,23 +88,19 @@ public class OAuth20RevocationRequestValidatorTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        request.addHeader("Authorization",
-                          "Basic " + EncodingUtils.encodeBase64(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID + ":" + RequestValidatorTestUtils.SHARED_SECRET));
+        HttpUtils.createBasicAuthHeaders(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID, RequestValidatorTestUtils.SHARED_SECRET).forEach(request::addHeader);
         request.setParameter(OAuth20Constants.TOKEN, SUPPORTING_SERVICE_TICKET);
         assertTrue(this.validator.validate(new JEEContext(request, response)));
 
 
         request.removeHeader("Authorization");
         request.removeAllParameters();
-        request.addHeader("Authorization",
-                          "Basic " + EncodingUtils.encodeBase64(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID + ":" + RequestValidatorTestUtils.SHARED_SECRET));
+        HttpUtils.createBasicAuthHeaders(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID, RequestValidatorTestUtils.SHARED_SECRET).forEach(request::addHeader);
         assertFalse(this.validator.supports(new JEEContext(request, response)));
 
         request.removeHeader("Authorization");
         request.removeAllParameters();
-        request.removeHeader("Authorization");
-        request.addHeader("Authorization",
-                          "Basic " + EncodingUtils.encodeBase64(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID + ":" + RequestValidatorTestUtils.SHARED_SECRET));
+        HttpUtils.createBasicAuthHeaders(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID, RequestValidatorTestUtils.SHARED_SECRET).forEach(request::addHeader);
         request.setParameter(OAuth20Constants.TOKEN, SUPPORTING_SERVICE_TICKET);
         assertFalse(this.validator.validate(new JEEContext(request, response)));
     }

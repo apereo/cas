@@ -257,6 +257,11 @@ public interface OAuth20Constants {
     String PROFILE_URL = "profile";
 
     /**
+    * The revocation url.
+    */
+    String REVOCATION_URL = "revoke";
+
+    /**
      * The remaining time in seconds before expiration.
      */
     String EXPIRES_IN = "expires_in";
@@ -344,9 +349,4 @@ public interface OAuth20Constants {
      * The unauthorized client.
      */
     String UNAUTHORIZED_CLIENT = "unauthorized_client";
-
-    /**
-     * The revocation url.
-     */
-    String REVOCATION_URL = "revoke";
 }

@@ -310,15 +310,7 @@ public abstract class AbstractOAuth20Tests {
     protected static OAuthRegisteredService getRegisteredService(final String serviceId,
                                                                  final String secret,
                                                                  final Set<OAuth20GrantTypes> grantTypes) {
-        val registeredServiceImpl = new OAuthRegisteredService();
-        registeredServiceImpl.setName("The registered service name");
-        registeredServiceImpl.setServiceId(serviceId);
-        registeredServiceImpl.setClientId(CLIENT_ID);
-        registeredServiceImpl.setClientSecret(secret);
-        registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        registeredServiceImpl.setSupportedGrantTypes(
-            grantTypes.stream().map(OAuth20GrantTypes::getType).collect(Collectors.toCollection(HashSet::new)));
-        return registeredServiceImpl;
+        return getRegisteredService(serviceId, CLIENT_ID, secret, grantTypes);
     }
 
     protected static OAuthRegisteredService getRegisteredService(final String serviceId,
