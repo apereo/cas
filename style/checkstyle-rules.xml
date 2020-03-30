@@ -679,8 +679,8 @@
         <metadata name="net.sf.eclipsecs.core.comment" value="Forbidden annotations"/>
         <property name="severity" value="error"/>
         <property name="id" value="forbiddenAnnotations"/>
-        <property name="format" value="@Component|@Value"/>
-        <property name="message" value="Avoid using the indicated annotations such as @Component, @Value, etc."/>
+        <property name="format" value="@Component|@Service"/>
+        <property name="message" value="Avoid using the indicated annotations such as @Component, @Service, etc."/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use @TestConfiguration"/>

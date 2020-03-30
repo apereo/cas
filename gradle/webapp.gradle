@@ -46,6 +46,7 @@ dependencies {
     implementation project(":support:cas-server-support-validation")
     implementation project(":support:cas-server-support-thymeleaf")
     implementation project(":support:cas-server-support-pm-webflow")
+    implementation project(":support:cas-server-support-webauthn")
 
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")

@@ -1,41 +1,6 @@
-// Copyright (c) 2018, Yubico AB
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//
-// 1. Redistributions of source code must retain the above copyright notice, this
-//    list of conditions and the following disclaimer.
-//
-// 2. Redistributions in binary form must reproduce the above copyright notice,
-//    this list of conditions and the following disclaimer in the documentation
-//    and/or other materials provided with the distribution.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-// DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-// OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 package com.yubico.webauthn;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.google.common.cache.Cache;
-import com.yubico.internal.util.CertificateParser;
-import com.yubico.internal.util.JacksonCodecs;
-import com.yubico.util.Either;
 import com.yubico.webauthn.attestation.Attestation;
-import com.yubico.webauthn.attestation.MetadataService;
 import com.yubico.webauthn.data.AssertionRequestWrapper;
 import com.yubico.webauthn.data.AssertionResponse;
 import com.yubico.webauthn.data.AuthenticatorData;
@@ -47,18 +12,28 @@ import com.yubico.webauthn.data.RegistrationResponse;
 import com.yubico.webauthn.data.UserIdentity;
 import com.yubico.webauthn.exception.AssertionFailedException;
 import com.yubico.webauthn.exception.RegistrationFailedException;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.yubico.internal.util.CertificateParser;
+import com.yubico.internal.util.JacksonCodecs;
+import com.yubico.util.Either;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.io.IOException;
-import java.security.SecureRandom;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Clock;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -67,73 +42,57 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
+/**
+ * This is {@link WebAuthnServer}.
+ *
+ * @author Misagh Moayyed
+ * @since 6.2
+ */
+@Slf4j
+@RequiredArgsConstructor
 public class WebAuthnServer {
-    private static final Logger logger = LoggerFactory.getLogger(WebAuthnServer.class);
-
-    private static final SecureRandom random = new SecureRandom();
-
-    private final Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage;
-
-    private final Cache<ByteArray, RegistrationRequest> registerRequestStorage;
 
     private final RegistrationStorage userStorage;
 
+    private final Cache<ByteArray, RegistrationRequest> registerRequestStorage;
+
+    private final Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage;
+
+    private final RelyingParty relyingParty;
+
     private final SessionManager sessions = new SessionManager();
 
-    private final Clock clock = Clock.system(ZoneId.systemDefault());
+    private final Clock clock = Clock.system(ZoneOffset.UTC);
 
     private final ObjectMapper jsonMapper = JacksonCodecs.json().findAndRegisterModules();
 
-    private final RelyingParty rp;
-
-    public WebAuthnServer(final RegistrationStorage userStorage,
-                          final Cache<ByteArray, RegistrationRequest> registerRequestStorage,
-                          final Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage,
-                          final RelyingParty relyingParty,
-                          final MetadataService metadataService) {
-        this.userStorage = userStorage;
-        this.registerRequestStorage = registerRequestStorage;
-        this.assertRequestStorage = assertRequestStorage;
-        this.rp = relyingParty;
-    }
-
-    private static ByteArray generateRandom(final int length) {
-        byte[] bytes = new byte[length];
-        random.nextBytes(bytes);
-        return new ByteArray(bytes);
-    }
-
     public Either<String, RegistrationRequest> startRegistration(
-        @NonNull String username,
-        Optional<String> displayName,
-        Optional<String> credentialNickname,
-        boolean requireResidentKey,
-        Optional<ByteArray> sessionToken
-    ) throws ExecutionException {
-        logger.trace("startRegistration username: {}, credentialNickname: {}", username, credentialNickname);
+        @NonNull final String username,
+        final Optional<String> displayName,
+        final Optional<String> credentialNickname,
+        final boolean requireResidentKey,
+        final Optional<ByteArray> sessionToken) throws ExecutionException {
 
-        final Collection<CredentialRegistration> registrations = userStorage.getRegistrationsByUsername(username);
-        final Optional<UserIdentity> existingUser =
-            registrations.stream().findAny().map(CredentialRegistration::getUserIdentity);
-        final boolean permissionGranted = existingUser
-            .map(userIdentity ->
-                sessions.isSessionForUser(userIdentity.getId(), sessionToken))
+
+        val registrations = userStorage.getRegistrationsByUsername(username);
+        val existingUser = registrations.stream().findAny().map(CredentialRegistration::getUserIdentity);
+        val permissionGranted = existingUser
+            .map(userIdentity -> sessions.isSessionForUser(userIdentity.getId(), sessionToken))
             .orElse(true);
 
         if (permissionGranted) {
-            final UserIdentity registrationUserId = existingUser.orElseGet(() ->
+            val registrationUserId = existingUser.orElseGet(() ->
                 UserIdentity.builder()
                     .name(username)
                     .displayName(displayName.get())
-                    .id(generateRandom(32))
-                    .build()
-            );
+                    .id(WebAuthnUtils.generateRandomId())
+                    .build());
 
-            RegistrationRequest request = new RegistrationRequest(
+            val request = new RegistrationRequest(
                 username,
                 credentialNickname,
-                generateRandom(32),
-                rp.startRegistration(
+                WebAuthnUtils.generateRandomId(),
+                relyingParty.startRegistration(
                     StartRegistrationOptions.builder()
                         .user(registrationUserId)
                         .authenticatorSelection(AuthenticatorSelectionCriteria.builder()
@@ -146,183 +105,167 @@ public class WebAuthnServer {
             );
             registerRequestStorage.put(request.getRequestId(), request);
             return Either.right(request);
-        } else {
-            return Either.left("The username \"" + username + "\" is already registered.");
         }
+        return Either.left("The username " + username + " is registered.");
     }
 
-    public Either<List<String>, SuccessfulRegistrationResult> finishRegistration(String responseJson) {
-        logger.trace("finishRegistration responseJson: {}", responseJson);
+    public Either<List<String>, SuccessfulRegistrationResult> finishRegistration(final String responseJson) {
+        LOGGER.trace("Finished registration with response: [{}]", responseJson);
         RegistrationResponse response = null;
         try {
             response = jsonMapper.readValue(responseJson, RegistrationResponse.class);
-        } catch (IOException e) {
-            logger.error("JSON error in finishRegistration; responseJson: {}", responseJson, e);
-            return Either.left(Arrays.asList("Registration failed!", "Failed to decode response object.", e.getMessage()));
+        } catch (final IOException e) {
+            LOGGER.error("JSON error in registration; Response: [{}]", responseJson, e);
+            return Either.left(Arrays.asList("Registration failed", "Failed to decode response object", e.getMessage()));
         }
 
-        RegistrationRequest request = registerRequestStorage.getIfPresent(response.getRequestId());
+        val request = registerRequestStorage.getIfPresent(response.getRequestId());
         registerRequestStorage.invalidate(response.getRequestId());
 
         if (request == null) {
-            logger.debug("fail finishRegistration responseJson: {}", responseJson);
+            LOGGER.debug("Failed to finish registration: [{}]", responseJson);
             return Either.left(Arrays.asList("Registration failed!", "No such registration in progress."));
-        } else {
-            try {
-                RegistrationResult registration = rp.finishRegistration(
-                    FinishRegistrationOptions.builder()
-                        .request(request.getPublicKeyCredentialCreationOptions())
-                        .response(response.getCredential())
-                        .build()
-                );
-
-                if (userStorage.userExists(request.getUsername())) {
-                    boolean permissionGranted = false;
-
-                    final boolean isValidSession = request.getSessionToken().map(token ->
-                        sessions.isSessionForUser(request.getPublicKeyCredentialCreationOptions().getUser().getId(), token)
-                    ).orElse(false);
-
-                    logger.debug("Session token: {}", request.getSessionToken());
-                    logger.debug("Valid session: {}", isValidSession);
-
-                    if (isValidSession) {
-                        permissionGranted = true;
-                        logger.info("Session token accepted for user {}", request.getPublicKeyCredentialCreationOptions().getUser().getId());
-                    }
-
-                    logger.debug("permissionGranted: {}", permissionGranted);
-
-                    if (!permissionGranted) {
-                        throw new RegistrationFailedException(new IllegalArgumentException(String.format(
-                            "User %s already exists",
-                            request.getUsername()
-                        )));
-                    }
-                }
-
-                return Either.right(
-                    new SuccessfulRegistrationResult(
-                        request,
-                        response,
-                        addRegistration(
-                            request.getPublicKeyCredentialCreationOptions().getUser(),
-                            request.getCredentialNickname(),
-                            response,
-                            registration
-                        ),
-                        registration.isAttestationTrusted(),
-                        sessions.createSession(request.getPublicKeyCredentialCreationOptions().getUser().getId())
-                    )
-                );
-            } catch (RegistrationFailedException e) {
-                logger.debug("fail finishRegistration responseJson: {}", responseJson, e);
-                return Either.left(Arrays.asList("Registration failed!", e.getMessage()));
-            } catch (Exception e) {
-                logger.error("fail finishRegistration responseJson: {}", responseJson, e);
-                return Either.left(Arrays.asList("Registration failed unexpectedly; this is likely a bug.", e.getMessage()));
-            }
         }
-    }
-
-    public Either<List<String>, AssertionRequestWrapper> startAuthentication(Optional<String> username) {
-        logger.trace("startAuthentication username: {}", username);
-
-        if (username.isPresent() && !userStorage.userExists(username.get())) {
-            return Either.left(Collections.singletonList("The username \"" + username.get() + "\" is not registered."));
-        } else {
-            AssertionRequestWrapper request = new AssertionRequestWrapper(
-                generateRandom(32),
-                rp.startAssertion(
-                    StartAssertionOptions.builder()
-                        .username(username)
-                        .build()
-                )
+        try {
+            val registration = relyingParty.finishRegistration(
+                FinishRegistrationOptions.builder()
+                    .request(request.getPublicKeyCredentialCreationOptions())
+                    .response(response.getCredential())
+                    .build()
             );
 
-            assertRequestStorage.put(request.getRequestId(), request);
+            if (userStorage.userExists(request.getUsername())) {
+                var permissionGranted = false;
 
-            return Either.right(request);
+                val isValidSession = request.getSessionToken().map(token ->
+                    sessions.isSessionForUser(request.getPublicKeyCredentialCreationOptions().getUser().getId(), token)
+                ).orElse(false);
+
+                LOGGER.debug("Session token: [{}], validity [{}]", request.getSessionToken(), isValidSession);
+
+                if (isValidSession) {
+                    permissionGranted = true;
+                    LOGGER.info("Session token accepted for user [{}]", request.getPublicKeyCredentialCreationOptions().getUser().getId());
+                }
+
+                LOGGER.debug("Permissions granted: [{}]", permissionGranted);
+
+                if (!permissionGranted) {
+                    throw new RegistrationFailedException(new IllegalArgumentException(String.format(
+                        "User %s already exists",
+                        request.getUsername()
+                    )));
+                }
+            }
+
+            return Either.right(
+                new SuccessfulRegistrationResult(
+                    request,
+                    response,
+                    addRegistration(
+                        request.getPublicKeyCredentialCreationOptions().getUser(),
+                        request.getCredentialNickname(),
+                        response,
+                        registration
+                    ),
+                    registration.isAttestationTrusted(),
+                    sessions.createSession(request.getPublicKeyCredentialCreationOptions().getUser().getId())
+                )
+            );
+        } catch (final Exception e) {
+            LOGGER.debug("Failed to finish registration: [{}]", responseJson);
+            LOGGER.trace(e.getMessage(), e);
+            return Either.left(Arrays.asList("Registration failed.", e.getMessage()));
         }
     }
 
-    public Either<List<String>, SuccessfulAuthenticationResult> finishAuthentication(String responseJson) {
-        logger.trace("finishAuthentication responseJson: {}", responseJson);
+    public Either<List<String>, AssertionRequestWrapper> startAuthentication(final Optional<String> username) {
+        if (username.isPresent() && !userStorage.userExists(username.get())) {
+            return Either.left(Collections.singletonList("The username " + username.get() + " is not registered."));
+        }
+        val request = new AssertionRequestWrapper(
+            WebAuthnUtils.generateRandomId(),
+            relyingParty.startAssertion(
+                StartAssertionOptions.builder()
+                    .username(username)
+                    .build()
+            )
+        );
+        assertRequestStorage.put(request.getRequestId(), request);
+        return Either.right(request);
+    }
 
-        final AssertionResponse response;
+    public Either<List<String>, SuccessfulAuthenticationResult> finishAuthentication(final String responseJson) {
+
+        var response = (AssertionResponse) null;
         try {
             response = jsonMapper.readValue(responseJson, AssertionResponse.class);
-        } catch (IOException e) {
-            logger.debug("Failed to decode response object", e);
+        } catch (final IOException e) {
+            LOGGER.debug("Failed to decode response object", e);
             return Either.left(Arrays.asList("Assertion failed!", "Failed to decode response object.", e.getMessage()));
         }
 
-        AssertionRequestWrapper request = assertRequestStorage.getIfPresent(response.getRequestId());
+        val request = assertRequestStorage.getIfPresent(response.getRequestId());
         assertRequestStorage.invalidate(response.getRequestId());
 
         if (request == null) {
             return Either.left(Arrays.asList("Assertion failed!", "No such assertion in progress."));
-        } else {
-            try {
-                AssertionResult result = rp.finishAssertion(
-                    FinishAssertionOptions.builder()
-                        .request(request.getRequest())
-                        .response(response.getCredential())
-                        .build()
-                );
+        }
 
-                if (result.isSuccess()) {
-                    try {
-                        userStorage.updateSignatureCount(result);
-                    } catch (Exception e) {
-                        logger.error(
-                            "Failed to update signature count for user \"{}\", credential \"{}\"",
-                            result.getUsername(),
-                            response.getCredential().getId(),
-                            e
-                        );
-                    }
+        try {
+            val result = relyingParty.finishAssertion(
+                FinishAssertionOptions.builder()
+                    .request(request.getRequest())
+                    .response(response.getCredential())
+                    .build()
+            );
 
-                    return Either.right(
-                        new SuccessfulAuthenticationResult(
-                            request,
-                            response,
-                            userStorage.getRegistrationsByUsername(result.getUsername()),
-                            result.getUsername(),
-                            sessions.createSession(result.getUserHandle()),
-                            result.getWarnings()
-                        )
+            if (result.isSuccess()) {
+                try {
+                    userStorage.updateSignatureCount(result);
+                } catch (final Exception e) {
+                    LOGGER.error(
+                        "Failed to update signature count for user [{}}], credential [{}]",
+                        result.getUsername(),
+                        response.getCredential().getId(),
+                        e
                     );
-                } else {
-                    return Either.left(Collections.singletonList("Assertion failed: Invalid assertion."));
                 }
-            } catch (AssertionFailedException e) {
-                logger.debug("Assertion failed", e);
-                return Either.left(Arrays.asList("Assertion failed!", e.getMessage()));
-            } catch (Exception e) {
-                logger.error("Assertion failed", e);
-                return Either.left(Arrays.asList("Assertion failed unexpectedly; this is likely a bug.", e.getMessage()));
+
+                return Either.right(
+                    new SuccessfulAuthenticationResult(
+                        request,
+                        response,
+                        userStorage.getRegistrationsByUsername(result.getUsername()),
+                        result.getUsername(),
+                        sessions.createSession(result.getUserHandle()),
+                        result.getWarnings()
+                    )
+                );
             }
+            return Either.left(Collections.singletonList("Assertion failed: Invalid assertion."));
+        } catch (final AssertionFailedException e) {
+            LOGGER.debug("Assertion failed", e);
+            return Either.left(Arrays.asList("Assertion failed!", e.getMessage()));
+        } catch (final Exception e) {
+            LOGGER.error("Assertion failed", e);
+            return Either.left(Arrays.asList("Assertion failed unexpectedly.", e.getMessage()));
         }
     }
 
-    public Either<List<String>, DeregisterCredentialResult> deregisterCredential(
-        @NonNull ByteArray sessionToken,
-        ByteArray credentialId
-    ) {
-        logger.trace("deregisterCredential session: {}, credentialId: {}", sessionToken, credentialId);
+    public Either<List<String>, DeregisterCredentialResult> deregisterCredential(@NonNull final ByteArray sessionToken, final ByteArray credentialId) {
 
         if (credentialId == null || credentialId.getBytes().length == 0) {
             return Either.left(Collections.singletonList("Credential ID must not be empty."));
         }
 
-        Optional<ByteArray> session = sessions.getSession(sessionToken);
+        val session = sessions.getSession(sessionToken);
         if (session.isPresent()) {
-            ByteArray userHandle = session.get();
-            Optional<String> username = userStorage.getUsernameForUserHandle(userHandle);
+            val userHandle = session.get();
+            val username = userStorage.getUsernameForUserHandle(userHandle);
 
             if (username.isPresent()) {
-                Optional<CredentialRegistration> credReg = userStorage.getRegistrationByUsernameAndCredentialId(username.get(), credentialId);
+                val credReg = userStorage.getRegistrationByUsernameAndCredentialId(username.get(), credentialId);
                 if (credReg.isPresent()) {
                     userStorage.removeRegistrationByUsername(username.get(), credReg.get());
 
@@ -330,39 +273,33 @@ public class WebAuthnServer {
                         credReg.get(),
                         !userStorage.userExists(username.get())
                     ));
-                } else {
-                    return Either.left(Collections.singletonList("Credential ID not registered:" + credentialId));
                 }
-            } else {
-                return Either.left(Collections.singletonList("Invalid user handle"));
+                return Either.left(Collections.singletonList("Credential ID not registered:" + credentialId));
             }
-        } else {
-            return Either.left(Collections.singletonList("Invalid session"));
+            return Either.left(Collections.singletonList("Invalid user handle"));
         }
+        return Either.left(Collections.singletonList("Invalid session"));
     }
 
-    public <T> Either<List<String>, T> deleteAccount(String username, Supplier<T> onSuccess) {
-        logger.trace("deleteAccount username: {}", username);
-
+    public <T> Either<List<String>, T> deleteAccount(final String username, final Supplier<T> onSuccess) {
         if (username == null || username.isEmpty()) {
             return Either.left(Collections.singletonList("Username must not be empty."));
         }
 
-        boolean removed = userStorage.removeAllRegistrations(username);
+        val removed = userStorage.removeAllRegistrations(username);
 
         if (removed) {
             return Either.right(onSuccess.get());
-        } else {
-            return Either.left(Collections.singletonList("Username not registered:" + username));
         }
+        return Either.left(Collections.singletonList("Username not registered:" + username));
     }
 
     private CredentialRegistration addRegistration(
-        UserIdentity userIdentity,
-        Optional<String> nickname,
-        RegistrationResponse response,
-        RegistrationResult result
-    ) {
+        final UserIdentity userIdentity,
+        final Optional<String> nickname,
+        final RegistrationResponse response,
+        final RegistrationResult result) {
+
         return addRegistration(
             userIdentity,
             nickname,
@@ -378,13 +315,12 @@ public class WebAuthnServer {
     }
 
     private CredentialRegistration addRegistration(
-        UserIdentity userIdentity,
-        Optional<String> nickname,
-        long signatureCount,
-        RegisteredCredential credential,
-        Optional<Attestation> attestationMetadata
-    ) {
-        CredentialRegistration reg = CredentialRegistration.builder()
+        final UserIdentity userIdentity,
+        final Optional<String> nickname,
+        final long signatureCount,
+        final RegisteredCredential credential,
+        final Optional<Attestation> attestationMetadata) {
+        val reg = CredentialRegistration.builder()
             .userIdentity(userIdentity)
             .credentialNickname(nickname)
             .registrationTime(clock.instant())
@@ -393,8 +329,8 @@ public class WebAuthnServer {
             .attestationMetadata(attestationMetadata)
             .build();
 
-        logger.debug(
-            "Adding registration: user: {}, nickname: {}, credential: {}",
+        LOGGER.debug(
+            "Adding registration: user: [{}], nickname: [{}], credential: [{}]",
             userIdentity,
             nickname,
             credential
@@ -405,38 +341,39 @@ public class WebAuthnServer {
 
     @Value
     public static class SuccessfulRegistrationResult {
-        final boolean success = true;
+        private boolean success = true;
 
-        RegistrationRequest request;
+        private RegistrationRequest request;
 
-        RegistrationResponse response;
+        private RegistrationResponse response;
 
-        CredentialRegistration registration;
+        private CredentialRegistration registration;
 
-        boolean attestationTrusted;
+        private boolean attestationTrusted;
 
-        Optional<AttestationCertInfo> attestationCert;
+        private Optional<AttestationCertInfo> attestationCert;
 
         @JsonSerialize(using = AuthDataSerializer.class)
-        AuthenticatorData authData;
+        private AuthenticatorData authData;
 
-        String username;
+        private String username;
 
-        ByteArray sessionToken;
+        private ByteArray sessionToken;
 
-        public SuccessfulRegistrationResult(RegistrationRequest request, RegistrationResponse response, CredentialRegistration registration, boolean attestationTrusted, ByteArray sessionToken) {
+        SuccessfulRegistrationResult(final RegistrationRequest request, final RegistrationResponse response,
+                                     final CredentialRegistration registration, final boolean attestationTrusted,
+                                     final ByteArray sessionToken) {
             this.request = request;
             this.response = response;
             this.registration = registration;
             this.attestationTrusted = attestationTrusted;
-            attestationCert = Optional.ofNullable(
-                response.getCredential().getResponse().getAttestation().getAttestationStatement().get("x5c")
+            attestationCert = Optional.ofNullable(response.getCredential().getResponse().getAttestation().getAttestationStatement().get("x5c")
             ).map(certs -> certs.get(0))
                 .flatMap((JsonNode certDer) -> {
                     try {
                         return Optional.of(new ByteArray(certDer.binaryValue()));
-                    } catch (IOException e) {
-                        logger.error("Failed to get binary value from x5c element: {}", certDer, e);
+                    } catch (final IOException e) {
+                        LOGGER.error("Failed to get binary value from x5c element: [{}]", certDer, e);
                         return Optional.empty();
                     }
                 })
@@ -449,23 +386,24 @@ public class WebAuthnServer {
     }
 
     @Value
-    public static class AttestationCertInfo {
-        final ByteArray der;
+    private static class AttestationCertInfo {
+        private ByteArray der;
 
-        final String text;
+        private String text;
 
-        public AttestationCertInfo(ByteArray certDer) {
+        AttestationCertInfo(final ByteArray certDer) {
             der = certDer;
+
             X509Certificate cert = null;
             try {
                 cert = CertificateParser.parseDer(certDer.getBytes());
-            } catch (CertificateException e) {
-                logger.error("Failed to parse attestation certificate");
+            } catch (final Exception e) {
+                LOGGER.error("Failed to parse attestation certificate", e);
             }
-            if (cert == null) {
-                text = null;
-            } else {
+            if (cert != null) {
                 text = cert.toString();
+            } else {
+                text = null;
             }
         }
     }
@@ -473,26 +411,26 @@ public class WebAuthnServer {
     @Value
     @AllArgsConstructor
     public static class SuccessfulAuthenticationResult {
-        private final boolean success = true;
+        private boolean success = true;
 
-        private final AssertionRequestWrapper request;
+        private AssertionRequestWrapper request;
 
-        private final AssertionResponse response;
+        private AssertionResponse response;
 
-        private final Collection<CredentialRegistration> registrations;
+        private Collection<CredentialRegistration> registrations;
 
         @JsonSerialize(using = AuthDataSerializer.class)
-        AuthenticatorData authData;
+        private AuthenticatorData authData;
 
-        private final String username;
+        private String username;
 
-        private final ByteArray sessionToken;
+        private ByteArray sessionToken;
 
-        private final List<String> warnings;
+        private List<String> warnings;
 
-        public SuccessfulAuthenticationResult(AssertionRequestWrapper request, AssertionResponse response,
-                                              Collection<CredentialRegistration> registrations, String username,
-                                              ByteArray sessionToken, List<String> warnings) {
+        SuccessfulAuthenticationResult(final AssertionRequestWrapper request, final AssertionResponse response,
+                                       final Collection<CredentialRegistration> registrations, final String username,
+                                       final ByteArray sessionToken, final List<String> warnings) {
             this(
                 request,
                 response,
@@ -506,17 +444,17 @@ public class WebAuthnServer {
     }
 
     @Value
-    public static final class DeregisterCredentialResult {
-        boolean success = true;
+    public static class DeregisterCredentialResult {
+        private boolean success = true;
 
-        CredentialRegistration droppedRegistration;
+        private CredentialRegistration droppedRegistration;
 
-        boolean accountDeleted;
+        private boolean accountDeleted;
     }
 
     private static class AuthDataSerializer extends JsonSerializer<AuthenticatorData> {
         @Override
-        public void serialize(AuthenticatorData value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        public void serialize(final AuthenticatorData value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
             gen.writeStartObject();
             gen.writeStringField("rpIdHash", value.getRpIdHash().getHex());
             gen.writeObjectField("flags", value.getFlags());
@@ -528,7 +466,7 @@ public class WebAuthnServer {
                     gen.writeStringField("credentialId", acd.getCredentialId().getHex());
                     gen.writeStringField("publicKey", acd.getCredentialPublicKey().getHex());
                     gen.writeEndObject();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     throw new RuntimeException(e);
                 }
             });
@@ -536,5 +474,4 @@ public class WebAuthnServer {
             gen.writeEndObject();
         }
     }
-
 }
