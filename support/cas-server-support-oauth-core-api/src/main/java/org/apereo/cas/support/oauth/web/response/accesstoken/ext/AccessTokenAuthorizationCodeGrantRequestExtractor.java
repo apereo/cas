@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.OAuth20Token;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -76,7 +77,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * @param request         the request
      * @return the set
      */
-    protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes, final OAuth20Token token, final HttpServletRequest request) {
+    protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes,
+                                                        final OAuth20Token token, final HttpServletRequest request) {
         val scopes = new TreeSet<String>(requestedScopes);
         scopes.addAll(token.getScopes());
         return scopes;
@@ -102,7 +104,9 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * @return the registered service identifier from request
      */
     protected String getRegisteredServiceIdentifierFromRequest(final JEEContext context) {
-        return context.getRequestParameter(OAuth20Constants.REDIRECT_URI).get();
+        return context.getRequestParameter(OAuth20Constants.REDIRECT_URI)
+            .map(String::valueOf)
+            .orElse(StringUtils.EMPTY);
     }
 
     /**

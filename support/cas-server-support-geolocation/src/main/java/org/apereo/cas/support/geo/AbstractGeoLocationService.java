@@ -43,7 +43,7 @@ public abstract class AbstractGeoLocationService implements GeoLocationService {
             val info = UserInfo.getInfo(address);
             if (info != null) {
                 val pos = info.getPosition();
-                if (pos != null && pos.getLatitude() != null && pos.getLatitude() != null) {
+                if (pos != null && pos.getLatitude() != null && pos.getLongitude() != null) {
                     return locate(pos.getLatitude(), pos.getLongitude());
                 }
                 return locateByIpStack(address);
