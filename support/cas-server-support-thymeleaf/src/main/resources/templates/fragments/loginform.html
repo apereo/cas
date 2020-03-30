@@ -23,13 +23,12 @@
                 <form method="post" id="fm1" th:object="${credential}" action="login">
 
                     <div th:if="${existingSingleSignOnSessionAvailable}">
-                        <h6>
-                            <i class="fas fa-info-circle"></i>&nbsp;
-                            <span th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal.id})}" />
-                        </h6>
+                        <i class="mdi mdi-alert-decagram"></i>&nbsp;
+                        <span class="mdc-button__label"
+                              th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal.id},${registeredService.name})}" />
                     </div>
                     <h3 th:unless="${existingSingleSignOnSessionAvailable}" class="text-center">
-                        <i class="fas fa-id-card"></i>
+                        <i class="mdi mdi-security"></i>
                         <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>
                     </h3>
 

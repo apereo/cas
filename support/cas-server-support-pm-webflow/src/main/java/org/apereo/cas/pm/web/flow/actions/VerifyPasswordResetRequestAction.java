@@ -1,11 +1,11 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.ticket.TransientSessionTicket;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -27,12 +27,13 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 public class VerifyPasswordResetRequestAction extends AbstractAction {
     private final CasConfigurationProperties casProperties;
+
     private final PasswordManagementService passwordManagementService;
-    private final TicketRegistry ticketRegistry;
+
+    private final CentralAuthenticationService centralAuthenticationService;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val transientTicket = request.getParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN);
 
@@ -41,7 +42,7 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
             return error();
         }
 
-        val tst = this.ticketRegistry.getTicket(transientTicket, TransientSessionTicket.class);
+        val tst = this.centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
         if (tst == null) {
             LOGGER.error("Unable to locate token [{}] in the ticket registry", transientTicket);
             return error();
@@ -53,7 +54,7 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
             LOGGER.error("Password reset token could not be verified");
             return error();
         }
-        this.ticketRegistry.deleteTicket(tst);
+        this.centralAuthenticationService.deleteTicket(tst.getId());
 
         PasswordManagementWebflowUtils.putPasswordResetToken(requestContext, token);
         val pm = casProperties.getAuthn().getPm();

@@ -1,5 +1,8 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.AuthenticationPolicy;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
@@ -12,12 +15,12 @@ import java.io.Serializable;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceAuthenticationPolicyCriteria extends Serializable {
-    enum AuthenticationPolicyTypes {
-        DEFAULT,
-        ANY_AUTHENTICATION_HANDLER
-    }
 
-    AuthenticationPolicyTypes getType();
-
-    boolean isTryAll();
+    /**
+     * To authentication policy.
+     *
+     * @return the authentication policy
+     */
+    @JsonIgnore
+    AuthenticationPolicy toAuthenticationPolicy();
 }
