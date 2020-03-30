@@ -10,15 +10,15 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DigestUtils;
 
+import com.nimbusds.jwt.JWTParser;
 import org.apache.commons.lang3.StringUtils;
-import org.jose4j.jwt.MalformedClaimException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import lombok.val;
 
+import java.text.ParseException;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -32,14 +32,13 @@ import static org.mockito.Mockito.*;
 @Tag("OIDC")
 public class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
 
-    private static final String ISSUER = "https://mycasserver";
-    private static final String TGT_ID = "TGT-0";
     private static final String PRINCIPAL_ID = "jleleu";
 
     @Test
-    public void verifyBackChannelLogout() throws MalformedClaimException {
+    public void verifyBackChannelLogout() throws ParseException {
 
-        casProperties.getAuthn().getOidc().setIssuer(ISSUER);
+        val service = getOidcRegisteredService(true, false);
+
         val context = OAuth20ConfigurationContext.builder()
                 .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService)
                 .casProperties(casProperties)
@@ -51,7 +50,7 @@ public class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
         when(tgt.getAuthentication()).thenReturn(authentication);
         val logoutRequest = DefaultSingleLogoutRequest.builder()
                 .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
-                .registeredService(getOidcRegisteredService())
+                .registeredService(service)
                 .ticketGrantingTicket(tgt)
                 .build();
 
@@ -60,16 +59,17 @@ public class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
 
         assertNull(message.getMessage());
         val token = message.getPayload();
-        val claims = oidcTokenSigningAndEncryptionService.decode(token, Optional.of(getOidcRegisteredService()));
 
-        assertEquals(ISSUER, claims.getIssuer());
+        var claims = JWTParser.parse(token).getJWTClaimsSet();
+
+        assertEquals("https://sso.example.org/cas/oidc", claims.getIssuer());
         assertEquals(PRINCIPAL_ID, claims.getSubject());
-        assertEquals(getOidcRegisteredService().getClientId(), claims.getAudience());
-        assertNotNull(claims.getIssuedAt());
-        assertNotNull(claims.getJwtId());
-        val events = (Map<String, Object>) claims.getClaimValue("events");
+        assertEquals(service.getClientId(), claims.getAudience().get(0));
+        assertNotNull(claims.getClaim("iat"));
+        assertNotNull(claims.getClaim("jti"));
+        val events = (Map<String, Object>) claims.getClaim("events");
         assertNotNull(events.get("http://schemas.openid.net/event/backchannel-logout"));
-        assertEquals(DigestUtils.sha(TGT_ID), claims.getClaimValue(OidcConstants.CLAIM_SESSIOND_ID));
+        assertEquals(DigestUtils.sha(TGT_ID), claims.getClaim(OidcConstants.CLAIM_SESSIOND_ID));
     }
 
     @Test
