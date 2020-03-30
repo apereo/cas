@@ -1,5 +1,13 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.policy.AllAuthenticationHandlersSucceededAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -7,6 +15,7 @@ import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipa
 import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPolicyHandlingStrategy;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -41,6 +50,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -306,9 +316,64 @@ public class CoreAuthenticationUtils {
             Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isAttributeResolutionEnabled),
             Arrays.stream(personDirectory)
                 .filter(p -> StringUtils.isNotBlank(p.getActiveAttributeRepositoryIds()))
-                .map(p-> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
+                .map(p -> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
                 .flatMap(Set::stream)
                 .collect(Collectors.toSet())
         );
+    }
+
+    /**
+     * New authentication policy collection.
+     *
+     * @param policyProps the policy props
+     * @return the collection
+     */
+    public static Collection<AuthenticationPolicy> newAuthenticationPolicy(final AuthenticationPolicyProperties policyProps) {
+        if (policyProps.getReq().isEnabled()) {
+            LOGGER.trace("Activating authentication policy [{}]", RequiredHandlerAuthenticationPolicy.class.getSimpleName());
+            return CollectionUtils.wrapList(new RequiredHandlerAuthenticationPolicy(policyProps.getReq().getHandlerName(), policyProps.getReq().isTryAll()));
+        }
+
+        if (policyProps.getAllHandlers().isEnabled()) {
+            LOGGER.trace("Activating authentication policy [{}]", AllAuthenticationHandlersSucceededAuthenticationPolicy.class.getSimpleName());
+            return CollectionUtils.wrapList(new AllAuthenticationHandlersSucceededAuthenticationPolicy());
+        }
+
+        if (policyProps.getAll().isEnabled()) {
+            LOGGER.trace("Activating authentication policy [{}]", AllCredentialsValidatedAuthenticationPolicy.class.getSimpleName());
+            return CollectionUtils.wrapList(new AllCredentialsValidatedAuthenticationPolicy());
+        }
+
+        if (policyProps.getNotPrevented().isEnabled()) {
+            LOGGER.trace("Activating authentication policy [{}]", NotPreventedAuthenticationPolicy.class.getSimpleName());
+            return CollectionUtils.wrapList(new NotPreventedAuthenticationPolicy());
+        }
+
+        if (policyProps.getUniquePrincipal().isEnabled()) {
+            LOGGER.trace("Activating authentication policy [{}]", UniquePrincipalAuthenticationPolicy.class.getSimpleName());
+            return CollectionUtils.wrapList(new UniquePrincipalAuthenticationPolicy());
+        }
+
+        if (!policyProps.getGroovy().isEmpty()) {
+            LOGGER.trace("Activating authentication policy [{}]", GroovyScriptAuthenticationPolicy.class.getSimpleName());
+            return policyProps.getGroovy()
+                .stream()
+                .map(groovy -> new GroovyScriptAuthenticationPolicy(groovy.getScript()))
+                .collect(Collectors.toList());
+        }
+
+        if (!policyProps.getRest().isEmpty()) {
+            LOGGER.trace("Activating authentication policy [{}]", RestfulAuthenticationPolicy.class.getSimpleName());
+            return policyProps.getRest()
+                .stream()
+                .map(r -> new RestfulAuthenticationPolicy(r.getUrl(), r.getBasicAuthUsername(), r.getBasicAuthPassword()))
+                .collect(Collectors.toList());
+        }
+
+        if (policyProps.getAny().isEnabled()) {
+            LOGGER.trace("Activating authentication policy [{}]", AtLeastOneCredentialValidatedAuthenticationPolicy.class.getSimpleName());
+            return CollectionUtils.wrapList(new AtLeastOneCredentialValidatedAuthenticationPolicy(policyProps.getAny().isTryAll()));
+        }
+        return new ArrayList<>();
     }
 }

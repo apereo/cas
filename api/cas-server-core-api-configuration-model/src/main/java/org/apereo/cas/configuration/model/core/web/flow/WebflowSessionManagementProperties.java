@@ -1,4 +1,4 @@
-package org.apereo.cas.configuration.model.webapp;
+package org.apereo.cas.configuration.model.core.web.flow;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 

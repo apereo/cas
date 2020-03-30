@@ -71,7 +71,7 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests imple
         SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
     }
 
-    private UserManagedCache<URI, byte[]> getCache(final int entries) {
+    private static UserManagedCache<URI, byte[]> getCache(final int entries) {
         return UserManagedCacheBuilder.newUserManagedCacheBuilder(URI.class, byte[].class)
             .withResourcePools(ResourcePoolsBuilder.heap(entries)).build();
     }

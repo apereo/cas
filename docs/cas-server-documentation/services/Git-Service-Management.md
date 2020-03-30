@@ -24,7 +24,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 <div class="alert alert-warning"><strong>No Interference!</strong><p>
 Be careful to not manually modify the state of the git repository directory that is cloned on the local server. By doing so, you risk 
-intefering with CAS' own service management processes and ultimately may end up corrupting the state of the git repository.
+interfering with CAS' own service management processes and ultimately may end up corrupting the state of the git repository.
 </p></div>
 
 The service registry is also able to auto detect changes as it will pull changes from defined remotes periodically. It will monitor changes to recognize

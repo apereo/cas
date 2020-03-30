@@ -3,7 +3,6 @@ package org.apereo.cas.util.cipher;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.DecryptionException;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -17,6 +16,7 @@ import org.jose4j.jwk.OctJwkGenerator;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 
@@ -34,13 +34,14 @@ import java.nio.charset.StandardCharsets;
 @Getter
 @Setter
 public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
-    private static final String CIPHER_ALGORITHM = "AES";
+    private static final String CIPHER_ALGORITHM = "AES/GCM/NoPadding";
+    private static final int IV_SPEC_LENGTH = 16;
+    private static final IvParameterSpec IV_SPEC = new IvParameterSpec(new byte[IV_SPEC_LENGTH]);
 
     /**
      * Name of the cipher/component whose keys are generated here.
      */
     protected final String cipherName;
-    
     private final SecretKeySpec encryptionKey;
     /**
      * Secret key IV algorithm. Default is {@code AES}.
@@ -48,16 +49,6 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     private String secretKeyAlgorithm = "AES";
     private byte[] encryptionSecretKey;
 
-
-    /**
-     * Instantiates a new cryptic ticket cipher executor.
-     *
-     * @param encryptionSecretKey the encryption secret key, base64 encoded
-     * @param signingSecretKey    the signing key
-     * @param signingKeySize      the signing key size
-     * @param encryptionKeySize   the encryption key size
-     * @param cipherName          the cipher name
-     */
     public BaseBinaryCipherExecutor(final String encryptionSecretKey, final String signingSecretKey,
                                     final int signingKeySize, final int encryptionKeySize,
                                     final String cipherName) {
@@ -77,7 +68,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     @SneakyThrows
     public byte[] encode(final byte[] value, final Object[] parameters) {
         val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
-        aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey);
+        aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey, IV_SPEC);
         val result = aesCipher.doFinal(value);
         return sign(result);
     }
@@ -87,7 +78,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     public byte[] decode(final byte[] value, final Object[] parameters) {
         val verifiedValue = verifySignature(value);
         val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
-        aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey);
+        aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey, IV_SPEC);
         try {
             return aesCipher.doFinal(verifiedValue);
         } catch (final IllegalBlockSizeException | BadPaddingException e) {

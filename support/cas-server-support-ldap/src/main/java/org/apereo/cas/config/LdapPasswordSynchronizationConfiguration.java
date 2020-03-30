@@ -31,7 +31,8 @@ public class LdapPasswordSynchronizationConfiguration {
             val ldap = casProperties.getAuthn().getPasswordSync().getLdap();
             ldap.stream()
                 .filter(LdapPasswordSynchronizationProperties::isEnabled)
-                .forEach(instance -> plan.registerAuthenticationPostProcessor(new LdapPasswordSynchronizationAuthenticationPostProcessor(instance)));
+                .forEach(instance ->
+                    plan.registerAuthenticationPostProcessor(new LdapPasswordSynchronizationAuthenticationPostProcessor(instance)));
         };
     }
 }
