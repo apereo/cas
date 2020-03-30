@@ -49,7 +49,7 @@ public class EventCouchDbRepository extends CouchDbRepositorySupport<CouchDbCasE
             .stream()
             .filter(event -> {
                 val eventDate = ZonedDateTime.parse(event.getCreationTime());
-                return eventDate.isEqual(dt) || eventDate.isAfter(dt) && eventDate.isBefore(now);
+                return eventDate.isEqual(dt) || (eventDate.isAfter(dt) && eventDate.isBefore(now));
             })
             .collect(Collectors.toList());
     }
@@ -83,7 +83,7 @@ public class EventCouchDbRepository extends CouchDbRepositorySupport<CouchDbCasE
             .stream()
             .filter(event -> {
                 val eventDate = ZonedDateTime.parse(event.getCreationTime());
-                return eventDate.isEqual(dt) || eventDate.isAfter(dt) && eventDate.isBefore(now);
+                return eventDate.isEqual(dt) || (eventDate.isAfter(dt) && eventDate.isBefore(now));
             })
             .collect(Collectors.toList());
     }
@@ -113,7 +113,7 @@ public class EventCouchDbRepository extends CouchDbRepositorySupport<CouchDbCasE
             .stream()
             .filter(event -> {
                 val eventDate = ZonedDateTime.parse(event.getCreationTime());
-                return eventDate.isEqual(creationTime) || eventDate.isAfter(creationTime) && eventDate.isBefore(now);
+                return eventDate.isEqual(creationTime) || (eventDate.isAfter(creationTime) && eventDate.isBefore(now));
             })
             .collect(Collectors.toList());
     }

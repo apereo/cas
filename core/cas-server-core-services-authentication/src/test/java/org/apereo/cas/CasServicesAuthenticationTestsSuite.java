@@ -1,5 +1,6 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas;
 
+import org.apereo.cas.authentication.WebApplicationServiceResponseBuilderTests;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoderTests;
 import org.apereo.cas.authentication.support.ProtocolAttributeEncoderTests;
 

@@ -164,8 +164,8 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
      * @param property          the registered service property
      * @return Optional(true / false value of property); empty() if property not set
      */
-    private Optional<Boolean> shouldHttpHeaderBeInjectedIntoResponse(final Optional<Object> registeredService,
-                                                                     final RegisteredServiceProperties property) {
+    private static Optional<Boolean> shouldHttpHeaderBeInjectedIntoResponse(final Optional<Object> registeredService,
+                                                                            final RegisteredServiceProperties property) {
 
         val propValue = getStringProperty(registeredService, property);
         if (propValue != null) {

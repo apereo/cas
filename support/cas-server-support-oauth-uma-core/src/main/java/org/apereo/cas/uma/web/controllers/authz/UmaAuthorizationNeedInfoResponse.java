@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
@@ -16,7 +17,7 @@ import java.util.LinkedHashSet;
  * @since 6.0.0
  */
 @Data
-public class UmaAuthorizationNeedInfoResponse {
+public class UmaAuthorizationNeedInfoResponse implements Serializable {
     private static final long serialVersionUID = -8719088128201373899L;
 
     @JsonProperty(value = "redirect_user", defaultValue = "true")

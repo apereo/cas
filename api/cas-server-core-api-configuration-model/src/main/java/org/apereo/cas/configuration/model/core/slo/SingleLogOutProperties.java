@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 
 /**
- * This is {@link SloProperties}.
+ * This is {@link SingleLogOutProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class SloProperties implements Serializable {
+public class SingleLogOutProperties implements Serializable {
 
     private static final long serialVersionUID = 3676710533477055700L;
 

@@ -1517,9 +1517,10 @@ Contact a REST endpoint via `POST` to detect authentication policy.
 The message body contains the CAS authenticated principal that can be used
 to examine account status and policy.
 
-```properties
-# cas.authn.policy.rest[0].endpoint=https://account.example.org/endpoint
-```
+RESTful settings for this feature are 
+available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.policy.rest[0]`.
+
+Response codes from the REST endpoint are translated as such:
 
 | Code                   | Result
 |------------------------|---------------------------------------------
@@ -3464,6 +3465,10 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 ```
 
 ### OpenID Connect WebFinger
+
+WebFinger is a protocol specified by the Internet Engineering Task Force IETF that allows for 
+discovery of information about people and things identified by a URI.[1] Information about a person 
+might be discovered via an "acct:" URI, for example, which is a URI that looks like an email address.
 
 #### WebFinger UserInfo via Groovy
 
