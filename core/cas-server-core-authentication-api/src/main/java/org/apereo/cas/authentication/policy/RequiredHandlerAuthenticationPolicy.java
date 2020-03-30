@@ -2,12 +2,17 @@ package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationPolicy;
 
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Set;
 
@@ -19,30 +24,33 @@ import java.util.Set;
  * @since 4.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
-public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy {
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+@NoArgsConstructor(force = true)
+@EqualsAndHashCode(callSuper = true)
+@Setter
+@Getter
+@AllArgsConstructor
+public class RequiredHandlerAuthenticationPolicy extends BaseAuthenticationPolicy {
+
+    private static final long serialVersionUID = -3871692225877293627L;
 
     /**
      * Authentication handler name that is required to satisfy policy.
      */
-    private final String requiredHandlerName;
+    private String requiredHandlerName;
 
     /**
      * Flag to try all credentials before policy is satisfied.
      */
-    private final boolean tryAll;
+    private boolean tryAll;
 
-    /**
-     * Instantiates a new required handler authentication policy.
-     *
-     * @param requiredHandlerName the required handler name
-     */
     public RequiredHandlerAuthenticationPolicy(final String requiredHandlerName) {
         this(requiredHandlerName, false);
     }
 
     @Override
-    public boolean isSatisfiedBy(final Authentication authn, final Set<AuthenticationHandler> authenticationHandlers) {
+    public boolean isSatisfiedBy(final Authentication authn, final Set<AuthenticationHandler> authenticationHandlers,
+                                 final ConfigurableApplicationContext applicationContext) {
         var credsOk = true;
         val sum = authn.getSuccesses().size() + authn.getFailures().size();
         if (this.tryAll) {
@@ -68,7 +76,7 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
             }
         }
 
-        LOGGER.debug("Authentication policy is satisfied");
+        LOGGER.trace("Authentication policy is satisfied");
         return true;
     }
 }

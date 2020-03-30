@@ -9,6 +9,10 @@ import org.apereo.cas.web.flow.actions.AuthenticationExceptionHandlerActionTests
 import org.apereo.cas.web.flow.actions.CasDefaultFlowUrlHandlerTests;
 import org.apereo.cas.web.flow.actions.InjectResponseHeadersActionTests;
 import org.apereo.cas.web.flow.actions.RedirectToServiceActionTests;
+import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAbstractTicketExceptionHandlerTests;
+import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAuthenticationExceptionHandlerTests;
+import org.apereo.cas.web.flow.authentication.GenericCasWebflowExceptionHandlerTests;
+import org.apereo.cas.web.flow.authentication.RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -26,6 +30,10 @@ import org.junit.runner.RunWith;
     DefaultLoginWebflowConfigurerTests.class,
     DefaultLogoutWebflowConfigurerTests.class,
     RedirectToServiceActionTests.class,
+    DefaultCasWebflowAbstractTicketExceptionHandlerTests.class,
+    DefaultCasWebflowAuthenticationExceptionHandlerTests.class,
+    GenericCasWebflowExceptionHandlerTests.class,
+    RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTests.class,
     DefaultSingleSignOnParticipationStrategyTests.class,
     ChainingSingleSignOnParticipationStrategyTests.class,
     AuthenticationExceptionHandlerActionTests.class

@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -49,6 +50,9 @@ public class CasCoreValidationConfiguration {
     @Qualifier("authenticationEventExecutionPlan")
     private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     @ConditionalOnMissingBean(name = "cas10ProtocolValidationSpecification")
@@ -86,7 +90,8 @@ public class CasCoreValidationConfiguration {
     @ConditionalOnMissingBean(name = "authenticationPolicyAwareServiceTicketValidationAuthorizer")
     public ServiceTicketValidationAuthorizer authenticationPolicyAwareServiceTicketValidationAuthorizer() {
         return new AuthenticationPolicyAwareServiceTicketValidationAuthorizer(
-            servicesManager.getObject(), authenticationEventExecutionPlan.getObject());
+            servicesManager.getObject(), authenticationEventExecutionPlan.getObject(),
+            applicationContext);
     }
 
     @Bean

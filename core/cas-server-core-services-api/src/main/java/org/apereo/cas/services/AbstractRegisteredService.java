@@ -210,7 +210,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
             + "This field is scheduled to be removed in the future. If you need to, consider defining an authentication policy "
             + "for the registered service instead to specify required authentication handlers [{}]", requiredHandlers);
         initialize();
-        getAuthenticationPolicy().setRequiredAuthenticationHandlers(requiredHandlers);
+        getAuthenticationPolicy().getRequiredAuthenticationHandlers().addAll(requiredHandlers);
     }
     
     @Override
