@@ -4,8 +4,10 @@ import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasJdbcThrottlingConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
-
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
@@ -42,5 +44,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 })
 @EnabledIfPortOpen(port = 5432)
 @Tag("Postgres")
-public class PostgresJdbcThrottledSubmissionHandlerInterceptorAdapterTests extends JdbcThrottledSubmissionHandlerInterceptorAdapterTests {
+@Getter
+public class PostgresJdbcThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
+    @Autowired
+    @Qualifier("authenticationThrottle")
+    private ThrottledSubmissionHandlerInterceptor throttle;
 }
