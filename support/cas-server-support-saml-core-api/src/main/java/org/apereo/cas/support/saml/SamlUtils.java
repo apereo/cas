@@ -10,7 +10,6 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.Criterion;
 import org.cryptacular.util.CertUtil;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
@@ -229,7 +228,7 @@ public class SamlUtils {
      * @return the basic credential
      * @throws Exception the exception
      */
-    public static BasicCredential buildCredentialForMetadataSignatureValidation(final Resource resource) throws Exception {
+    private static BasicCredential buildCredentialForMetadataSignatureValidation(final Resource resource) throws Exception {
         try {
             val x509FactoryBean = new BasicX509CredentialFactoryBean();
             x509FactoryBean.setCertificateResources(CollectionUtils.wrap(resource));
@@ -253,7 +252,7 @@ public class SamlUtils {
         if (!sigConfigs.isEmpty()) {
             val paramsResolver = new BasicSignatureValidationParametersResolver();
 
-            val configCriteria = new CriteriaSet(new Criterion[]{new SignatureValidationConfigurationCriterion(sigConfigs)});
+            val configCriteria = new CriteriaSet(new SignatureValidationConfigurationCriterion(sigConfigs));
             val params = paramsResolver.resolveSingle(configCriteria);
             if (params != null) {
                 criteriaSet.add(new SignatureValidationParametersCriterion(params), true);
