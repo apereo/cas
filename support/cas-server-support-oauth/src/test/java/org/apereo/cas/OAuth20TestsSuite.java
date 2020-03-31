@@ -12,12 +12,14 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationCodeGran
 import org.apereo.cas.support.oauth.validator.token.OAuth20ClientCredentialsGrantTypeTokenRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20PasswordGrantTypeTokenRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests;
+import org.apereo.cas.support.oauth.validator.token.OAuth20RevocationRequestValidatorTests;
 import org.apereo.cas.support.oauth.web.OAuth20RefreshTokenTests;
 import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenGrantRequestAuditResourceResolverTests;
 import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourceResolverTests;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointControllerTests;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointControllerTests;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointControllerTests;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20RevocationEndpointControllerTests;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointControllerTests;
 import org.apereo.cas.support.oauth.web.mgmt.OAuth20TokenManagementEndpointTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenAtHashGeneratorTests;
@@ -53,8 +55,10 @@ import org.junit.runner.RunWith;
     OAuth20ClientCredentialsGrantTypeTokenRequestValidatorTests.class,
     OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests.class,
     OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests.class,
+    OAuth20RevocationRequestValidatorTests.class,
     OAuth20RefreshTokenSovereignExpirationPolicyTests.class,
     OAuth20UserProfileEndpointControllerTests.class,
+    OAuth20RevocationEndpointControllerTests.class,
     OAuth20UtilsTests.class,
     OAuth20AccessTokenAtHashGeneratorTests.class,
     OAuth20IntrospectionEndpointControllerTests.class,
