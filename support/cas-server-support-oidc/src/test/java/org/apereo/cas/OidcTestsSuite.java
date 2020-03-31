@@ -22,6 +22,8 @@ import org.apereo.cas.oidc.profile.OidcUserProfileDataCreatorTests;
 import org.apereo.cas.oidc.profile.OidcUserProfileViewRendererDefaultTests;
 import org.apereo.cas.oidc.profile.OidcUserProfileViewRendererFlatTests;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListenerTests;
+import org.apereo.cas.oidc.slo.OidcSingleLogoutMessageCreatorTests;
+import org.apereo.cas.oidc.slo.OidcSingleLogoutServiceMessageHandlerTests;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorServiceTests;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionServiceTests;
 import org.apereo.cas.oidc.token.OidcJwtAccessTokenEncoderTests;
@@ -29,8 +31,8 @@ import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecut
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupportTests;
 import org.apereo.cas.oidc.web.OidcAccessTokenResponseGeneratorTests;
 import org.apereo.cas.oidc.web.controllers.OidcIntrospectionEndpointControllerTests;
+import org.apereo.cas.oidc.web.controllers.OidcLogoutEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.OidcWellKnownEndpointControllerTests;
-import org.apereo.cas.oidc.web.controllers.logout.OidcLogoutEndpointControllerTests;
 import org.apereo.cas.oidc.web.flow.OidcAuthenticationContextWebflowEventResolverTests;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIActionTests;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurerTests;
@@ -79,7 +81,9 @@ import org.junit.runner.RunWith;
     OidcAccessTokenAuthenticatorTests.class,
     OidcWebflowConfigurerTests.class,
     OidcRegisteredServiceJwtAccessTokenCipherExecutorTests.class,
-    OidcClientConfigurationAccessTokenAuthenticatorTests.class
+    OidcClientConfigurationAccessTokenAuthenticatorTests.class,
+    OidcSingleLogoutMessageCreatorTests.class,
+    OidcSingleLogoutServiceMessageHandlerTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class OidcTestsSuite {

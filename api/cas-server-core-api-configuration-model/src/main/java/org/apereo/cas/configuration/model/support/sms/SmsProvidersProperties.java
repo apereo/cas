@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @RequiresModule(name = "cas-server-core-util", automated = true)
+@Accessors(chain = true)
 public class SmsProvidersProperties implements Serializable {
     private static final long serialVersionUID = -3713886839517507306L;
 
@@ -65,6 +67,7 @@ public class SmsProvidersProperties implements Serializable {
     @RequiresModule(name = "cas-server-core-util", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Rest extends RestEndpointProperties {
         private static final long serialVersionUID = -8102345678378393382L;
     }
@@ -72,6 +75,7 @@ public class SmsProvidersProperties implements Serializable {
     @RequiresModule(name = "cas-server-core-util", automated = true)
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Groovy extends SpringResourceProperties {
         private static final long serialVersionUID = 8079027843747126083L;
     }

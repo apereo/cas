@@ -34,10 +34,15 @@ import java.util.stream.Collectors;
 @Getter
 public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLogoutServiceMessageHandler {
     private final HttpClient httpClient;
+
     private final SingleLogoutMessageCreator logoutMessageBuilder;
+
     private final ServicesManager servicesManager;
+
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
+
     private final boolean asynchronous;
+
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @Override
@@ -76,6 +81,23 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
             return supportsInternal(singleLogoutService, registeredService);
         }
         return false;
+    }
+
+    @Override
+    public boolean performBackChannelLogout(final SingleLogoutRequest request) {
+        try {
+            LOGGER.trace("Creating back-channel logout request based on [{}]", request);
+            val logoutRequest = createSingleLogoutMessage(request);
+            return sendSingleLogoutMessage(request, logoutRequest);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
+    }
+
+    @Override
+    public SingleLogoutMessage createSingleLogoutMessage(final SingleLogoutRequest logoutRequest) {
+        return this.logoutMessageBuilder.create(logoutRequest);
     }
 
     /**
@@ -153,18 +175,6 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
         return logoutRequest;
     }
 
-    @Override
-    public boolean performBackChannelLogout(final SingleLogoutRequest request) {
-        try {
-            LOGGER.trace("Creating back-channel logout request based on [{}]", request);
-            val logoutRequest = createSingleLogoutMessage(request);
-            return sendSingleLogoutMessage(request, logoutRequest);
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return false;
-    }
-
     /**
      * Send single logout message.
      *
@@ -203,10 +213,5 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
      */
     protected LogoutHttpMessage getLogoutHttpMessageToSend(final SingleLogoutRequest request, final SingleLogoutMessage logoutMessage) {
         return new LogoutHttpMessage(request.getLogoutUrl(), logoutMessage.getPayload(), this.asynchronous);
-    }
-
-    @Override
-    public SingleLogoutMessage createSingleLogoutMessage(final SingleLogoutRequest logoutRequest) {
-        return this.logoutMessageBuilder.create(logoutRequest);
     }
 }

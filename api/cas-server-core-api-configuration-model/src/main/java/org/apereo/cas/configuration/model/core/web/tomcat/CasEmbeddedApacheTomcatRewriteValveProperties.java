@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-webapp-tomcat")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class CasEmbeddedApacheTomcatRewriteValveProperties implements Serializable {
 
     private static final long serialVersionUID = 9030094143985594411L;

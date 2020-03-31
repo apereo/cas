@@ -981,6 +981,7 @@ and their results are cached and merged.
 # cas.authn.attribute-repository.expirationTimeUnit=MINUTES
 # cas.authn.attribute-repository.maximumCacheSize=10000
 # cas.authn.attribute-repository.merger=REPLACE|ADD|MULTIVALUED|NONE
+# cas.authn.attributeRepository.aggregation=MERGE|CASCADE
 ```
 
 <div class="alert alert-info"><strong>Remember This</strong><p>Note that in certain cases,
@@ -1037,6 +1038,16 @@ The following merging strategies can be used to resolve conflicts when the same 
 | `MULTIVALUED`           | Combines all values into a single attribute, essentially creating a multi-valued attribute.
 | `NONE`                  | Do not merge attributes, only use attributes retrieved during authentication.
 
+### Aggregation Strategies
+
+The following aggregation strategies can be used to resolve and merge attributes
+when multiple attribute repository sources are defined to fetch data:
+  
+| Type            | Description
+|-----------------|----------------------------------------------------------------------------------------------------
+| `MERGE`         | Default. Query multiple repositories in order and merge the results into a single result set.
+| `CASCADE`       | Same as above; results from each query are passed down to the next attribute repository source.
+
 ### Stub
 
 Static attributes that need to be mapped to a hardcoded value belong here.
@@ -1082,10 +1093,11 @@ The Groovy script may be designed as:
 import java.util.*
 
 def Map<String, List<Object>> run(final Object... args) {
-    def uid = args[0]
-    def logger = args[1]
-    def casProperties = args[2]
-    def casApplicationContext = args[3]
+    def username = args[0]
+    def attributes = args[1]
+    def logger = args[2]
+    def properties = args[3]
+    def appContext = args[4]
 
     logger.debug("[{}]: The received uid is [{}]", this.class.simpleName, uid)
     return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
@@ -1139,9 +1151,14 @@ to be a JSON map as such:
 }
 ```
 
-### Ruby/Python/Javascript/Groovy
+### Python/Javascript/Groovy
 
-Similar to the Groovy option but more versatile, this option takes advantage of Java's native scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script to resolve attributes. 
+<div class="alert alert-warning"><strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
+</div>
+
+Similar to the Groovy option but more versatile, this option takes advantage of Java's native 
+scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script to resolve attributes. 
 The following settings are relevant:
 
 ```properties
@@ -1149,12 +1166,11 @@ The following settings are relevant:
 # cas.authn.attribute-repository.script[0].order=0
 # cas.authn.attribute-repository.script[0].id=
 # cas.authn.attribute-repository.script[0].caseInsensitive=false
-# cas.authn.attribute-repository.script[0].engineName=js|groovy|ruby|python
+# cas.authn.attribute-repository.script[0].engineName=js|groovy|python
 ```
 
 While Javascript and Groovy should be natively supported by CAS, Python scripts may need
 to massage the CAS configuration to include the [Python modules](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jython-standalone%22).
-Ruby scripts are supported via [JRuby](https://search.maven.org/search?q=g:org.jruby%20AND%20a:jruby)  
 
 The Groovy script may be defined as:
 
@@ -1356,7 +1372,7 @@ cas.authn.core.service-authentication-resolution.order=0
 #### Groovy
 
 ```properties
-# cas.authn.engine.groovyPreProcessor.location=file:/etc/cas/config/GroovyPreProcessor.groovy
+# cas.authn.core.engine.groovyPreProcessor.location=file:/etc/cas/config/GroovyPreProcessor.groovy
 ```
 
 The script itself may be designed as:
@@ -1380,7 +1396,7 @@ def supports(Object[] args) {
 #### Groovy
 
 ```properties
-# cas.authn.engine.groovyPostProcessor.location=file:/etc/cas/config/GroovyPostProcessor.groovy
+# cas.authn.core.engine.groovyPostProcessor.location=file:/etc/cas/config/GroovyPostProcessor.groovy
 ```
 
 The script itself may be designed as:
@@ -1501,9 +1517,10 @@ Contact a REST endpoint via `POST` to detect authentication policy.
 The message body contains the CAS authenticated principal that can be used
 to examine account status and policy.
 
-```properties
-# cas.authn.policy.rest[0].endpoint=https://account.example.org/endpoint
-```
+RESTful settings for this feature are 
+available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.policy.rest[0]`.
+
+Response codes from the REST endpoint are translated as such:
 
 | Code                   | Result
 |------------------------|---------------------------------------------
@@ -3449,6 +3466,10 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 
 ### OpenID Connect WebFinger
 
+WebFinger is a protocol specified by the Internet Engineering Task Force IETF that allows for 
+discovery of information about people and things identified by a URI.[1] Information about a person 
+might be discovered via an "acct:" URI, for example, which is a URI that looks like an email address.
+
 #### WebFinger UserInfo via Groovy
 
 ```properties
@@ -3459,6 +3480,15 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 
 RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
 under the configuration key `cas.authn.oidc.webfinger.userInfo.rest`.
+
+### OpenID Connect Logout
+
+The supported logout channels can be defined via the following properties:
+
+```properties
+# cas.authn.oidc.logout.backchannelLogoutSupported=true
+# cas.authn.oidc.logout.frontchannelLogoutSupported=true
+```
 
 ## Pac4j Delegated AuthN
 
@@ -4945,8 +4975,21 @@ To learn more about this topic, [please review this guide](../webflow/Webflow-Cu
 
 ```properties
 # cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
-# cas.acceptableUsagePolicy.scope=GLOBAL|AUTHENTICATION
+# cas.acceptableUsagePolicy.aupPolicyTermsAttributeName=membership
 ```
+
+#### Default
+
+```properties
+# cas.acceptableUsagePolicy.in-memory.scope=GLOBAL|AUTHENTICATION
+```                                                    
+
+The following scopes are supported:
+
+| Scope                | Description
+|----------------------|----------------------------------
+| `GLOBAL`             | Store decisions in the global in-memory map (for life of server).
+| `AUTHENTICATION`     | Store decisions such that user is prompted when they authenticate via credentials.
 
 #### Groovy
 

@@ -19,6 +19,7 @@ import java.util.List;
 public class DefaultLogoutExecutionPlan implements LogoutExecutionPlan {
 
     private final List<LogoutPostProcessor> handlers = new ArrayList<>(0);
+
     private final List<SingleLogoutServiceMessageHandler> singleLogoutServiceMessageHandlers = new ArrayList<>(0);
 
     @Override
@@ -28,15 +29,15 @@ public class DefaultLogoutExecutionPlan implements LogoutExecutionPlan {
     }
 
     @Override
-    public Collection<LogoutPostProcessor> getLogoutPostProcessor() {
-        AnnotationAwareOrderComparator.sort(this.handlers);
-        return this.handlers;
-    }
-
-    @Override
     public void registerSingleLogoutServiceMessageHandler(final SingleLogoutServiceMessageHandler handler) {
         LOGGER.trace("Registering single logout service message handler [{}]", handler.getName());
         singleLogoutServiceMessageHandlers.add(handler);
+    }
+
+    @Override
+    public Collection<LogoutPostProcessor> getLogoutPostProcessor() {
+        AnnotationAwareOrderComparator.sort(this.handlers);
+        return this.handlers;
     }
 
     @Override

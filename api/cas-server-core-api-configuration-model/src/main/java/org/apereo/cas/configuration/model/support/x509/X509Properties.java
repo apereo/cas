@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 @RequiresModule(name = "cas-server-support-x509-webflow")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class X509Properties implements Serializable {
 
     private static final long serialVersionUID = -9032744084671270366L;

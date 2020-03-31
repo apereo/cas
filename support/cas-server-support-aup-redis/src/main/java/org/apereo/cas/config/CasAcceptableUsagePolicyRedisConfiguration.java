@@ -55,7 +55,7 @@ public class CasAcceptableUsagePolicyRedisConfiguration {
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
         return new RedisAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
-            casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
+            casProperties.getAcceptableUsagePolicy(),
             redisAcceptableUsagePolicyTemplate());
     }
 }

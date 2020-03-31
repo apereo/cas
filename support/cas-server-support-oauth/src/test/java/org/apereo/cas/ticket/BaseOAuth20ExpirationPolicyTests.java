@@ -98,7 +98,7 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
     protected OAuth20RefreshToken newRefreshToken(final OAuth20AccessToken at) {
         val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
         val rt = defaultRefreshTokenFactory.create(testService, at.getAuthentication(),
-            at.getTicketGrantingTicket(), new ArrayList<>(), "clientid12345",
+            at.getTicketGrantingTicket(), new ArrayList<>(), "clientid12345", at.getId(),
             new HashMap<>());
         at.getTicketGrantingTicket().getDescendantTickets().add(rt.getId());
         return rt;

@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -18,6 +19,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @RequiresModule(name = "cas-server-support-jdbc-authentication")
 @Getter
 @Setter
+@Accessors(chain = true)
 public abstract class BaseJdbcAuthenticationProperties extends AbstractJpaProperties {
     private static final long serialVersionUID = 8460723293967413501L;
 

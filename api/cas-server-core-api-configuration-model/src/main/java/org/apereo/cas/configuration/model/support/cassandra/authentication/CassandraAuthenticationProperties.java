@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -18,6 +19,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @RequiresModule(name = "cas-server-support-cassandra-authentication")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class CassandraAuthenticationProperties extends BaseCassandraProperties {
 
     private static final long serialVersionUID = 1369405266376125234L;

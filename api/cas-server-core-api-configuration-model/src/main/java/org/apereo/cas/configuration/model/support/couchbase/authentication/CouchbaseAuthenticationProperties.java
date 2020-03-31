@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -18,6 +19,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Getter
 @Setter
+@Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-couchbase-authentication")
 public class CouchbaseAuthenticationProperties extends BaseCouchbaseProperties {
 

@@ -1,6 +1,7 @@
 package org.apereo.cas.memcached.kryo.serial;
 
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
@@ -8,6 +9,7 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.services.RegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceProxyPolicy;
@@ -28,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -96,7 +97,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         kryo.writeObject(output, ObjectUtils.defaultIfNull(service.getLogo(), getEmptyUrl()));
         kryo.writeObject(output, service.getLogoutType());
         kryo.writeObject(output, ObjectUtils.defaultIfNull(service.getLogoutUrl(), StringUtils.EMPTY));
-        kryo.writeObject(output, new HashSet<>(service.getRequiredHandlers()));
+        
         kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getTheme(), StringUtils.EMPTY));
         kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getResponseType(), StringUtils.EMPTY));
 
@@ -106,6 +107,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getUsernameAttributeProvider(), new DefaultRegisteredServiceUsernameProvider()));
         writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getAccessStrategy(), new DefaultRegisteredServiceAccessStrategy()));
         writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getMultifactorPolicy(), new DefaultRegisteredServiceMultifactorPolicy()));
+        writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getAuthenticationPolicy(), new DefaultRegisteredServiceAuthenticationPolicy()));
         writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getContacts(), new ArrayList<>(0)));
 
         kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getInformationUrl(), StringUtils.EMPTY));
@@ -124,7 +126,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         svc.setLogo(kryo.readObject(input, String.class));
         svc.setLogoutType(kryo.readObject(input, RegisteredServiceLogoutType.class));
         svc.setLogoutUrl(kryo.readObject(input, String.class));
-        svc.setRequiredHandlers(kryo.readObject(input, HashSet.class));
+       
         svc.setTheme(kryo.readObject(input, String.class));
         svc.setResponseType(StringUtils.defaultIfBlank(kryo.readObject(input, String.class), null));
 
@@ -134,6 +136,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         svc.setUsernameAttributeProvider(readObjectByReflection(kryo, input, RegisteredServiceUsernameAttributeProvider.class));
         svc.setAccessStrategy(readObjectByReflection(kryo, input, RegisteredServiceAccessStrategy.class));
         svc.setMultifactorPolicy(readObjectByReflection(kryo, input, RegisteredServiceMultifactorPolicy.class));
+        svc.setAuthenticationPolicy(readObjectByReflection(kryo, input, RegisteredServiceAuthenticationPolicy.class));
         svc.setContacts(readObjectByReflection(kryo, input, List.class));
 
         svc.setInformationUrl(StringUtils.defaultIfBlank(kryo.readObject(input, String.class), null));

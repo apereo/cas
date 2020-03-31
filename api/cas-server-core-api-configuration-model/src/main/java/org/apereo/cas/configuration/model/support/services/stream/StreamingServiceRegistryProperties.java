@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-service-registry-stream")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class StreamingServiceRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = 4957127900906059461L;

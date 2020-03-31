@@ -1,6 +1,7 @@
 package org.apereo.cas.mock;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
@@ -49,9 +50,13 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     private final Authentication authentication;
 
     private final ZonedDateTime created;
+
     private final Map<String, Service> services = new HashMap<>();
+
     private final Map<String, Service> proxyGrantingTickets = new HashMap<>();
+
     private int usageCount;
+
     private boolean expired;
 
     @Setter
@@ -62,6 +67,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
         val metaData = new BasicCredentialMetaData(c);
         authentication = new DefaultAuthenticationBuilder(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(principal, attributes))
             .addCredential(metaData)
+            .addAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS,
+                List.of(SimpleTestUsernamePasswordAuthenticationHandler.class.getSimpleName()))
             .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
                 new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData)).build();
         created = ZonedDateTime.now(ZoneOffset.UTC);
@@ -73,11 +80,6 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
 
     public MockTicketGrantingTicket(final String principal, final Map attributes) {
         this(principal, CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"), attributes);
-    }
-
-    @Override
-    public void update() {
-        usageCount++;
     }
 
     public ServiceTicket grantServiceTicket(final Service service) {
@@ -95,8 +97,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     @Override
-    public Service getProxiedBy() {
-        return null;
+    public void removeAllServices() {
     }
 
     @Override
@@ -115,6 +116,11 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     @Override
+    public Service getProxiedBy() {
+        return null;
+    }
+
+    @Override
     public TicketGrantingTicket getTicketGrantingTicket() {
         return this;
     }
@@ -130,6 +136,21 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     @Override
+    public ExpirationPolicy getExpirationPolicy() {
+        return this.expirationPolicy;
+    }
+
+    @Override
+    public String getPrefix() {
+        return TicketGrantingTicket.PREFIX;
+    }
+
+    @Override
+    public void markTicketExpired() {
+        expired = true;
+    }
+
+    @Override
     public ZonedDateTime getLastTimeUsed() {
         return created;
     }
@@ -140,26 +161,12 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     @Override
-    public ExpirationPolicy getExpirationPolicy() {
-        return this.expirationPolicy;
-    }
-
-    @Override
-    public void removeAllServices() {
-    }
-
-    @Override
-    public void markTicketExpired() {
-        expired = true;
+    public void update() {
+        usageCount++;
     }
 
     @Override
     public int compareTo(final Ticket o) {
         return this.id.compareTo(o.getId());
-    }
-
-    @Override
-    public String getPrefix() {
-        return TicketGrantingTicket.PREFIX;
     }
 }

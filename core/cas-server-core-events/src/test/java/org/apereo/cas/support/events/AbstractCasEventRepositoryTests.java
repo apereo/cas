@@ -8,6 +8,9 @@ import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -19,11 +22,31 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class AbstractCasEventRepositoryTests {
 
     @Test
+    public void verifyLoadOps() {
+        val dto1 = getCasEvent("example1");
+
+        val eventRepository = getEventRepository();
+        eventRepository.save(dto1);
+
+        val dt = ZonedDateTime.now(ZoneOffset.UTC).minusMonths(12);
+        assertFalse(eventRepository.load(dt).isEmpty());
+
+        assertFalse(eventRepository.getEventsOfTypeForPrincipal(dto1.getType(), dto1.getPrincipalId()).isEmpty());
+        assertFalse(eventRepository.getEventsOfTypeForPrincipal(dto1.getType(), dto1.getPrincipalId(), dt).isEmpty());
+
+        assertFalse(eventRepository.getEventsOfType(dto1.getType(), dt).isEmpty());
+        assertFalse(eventRepository.getEventsOfType(dto1.getType()).isEmpty());
+
+        assertFalse(eventRepository.getEventsForPrincipal(dto1.getPrincipalId()).isEmpty());
+        assertFalse(eventRepository.getEventsForPrincipal(dto1.getPrincipalId(), dt).isEmpty());
+    }
+
+    @Test
     public void verifySave() {
-        val dto1 = getCasEvent();
+        val dto1 = getCasEvent("casuser");
         getEventRepository().save(dto1);
 
-        val dto2 = getCasEvent();
+        val dto2 = getCasEvent("casuser");
         getEventRepository().save(dto2);
 
         val col = getEventRepository().load();
@@ -56,8 +79,8 @@ public abstract class AbstractCasEventRepositoryTests {
         });
     }
 
-    private CasEvent getCasEvent() {
-        val ticket = new MockTicketGrantingTicket("casuser");
+    private CasEvent getCasEvent(final String user) {
+        val ticket = new MockTicketGrantingTicket(user);
         val event = new CasTicketGrantingTicketCreatedEvent(this, ticket);
 
         val dto = new CasEvent();

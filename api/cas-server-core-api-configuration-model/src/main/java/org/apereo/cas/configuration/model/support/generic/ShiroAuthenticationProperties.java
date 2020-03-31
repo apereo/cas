@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.HashSet;
@@ -22,6 +23,7 @@ import java.util.Set;
 @RequiresModule(name = "cas-server-support-shiro")
 @Getter
 @Setter
+@Accessors(chain = true)
 @NoArgsConstructor
 public class ShiroAuthenticationProperties extends SpringResourceProperties {
 

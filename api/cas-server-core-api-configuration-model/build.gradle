@@ -35,6 +35,6 @@ if (!skipConfigurationMetadata) {
         args buildDir, projectDir.canonicalPath
     }
 
-    compileJava.dependsOn(processResources)
+    compileJava.inputs.files(processResources)
     jar.dependsOn(generateConfigurationMetadata)
 }

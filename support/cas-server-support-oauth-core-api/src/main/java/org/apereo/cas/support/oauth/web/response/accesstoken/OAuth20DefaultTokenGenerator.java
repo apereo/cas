@@ -14,7 +14,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
-import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.device.OAuth20DeviceToken;
 import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
@@ -205,10 +204,10 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         addTicketToRegistry(accessToken, ticketGrantingTicket);
         LOGGER.debug("Added access token [{}] to registry", accessToken);
 
-        updateOAuthCode(holder);
+        updateOAuthCode(holder, accessToken);
 
         val refreshToken = FunctionUtils.doIf(holder.isGenerateRefreshToken(),
-            () -> generateRefreshToken(holder),
+            () -> generateRefreshToken(holder, accessToken),
             () -> {
                 LOGGER.debug("Service [{}] is not able/allowed to receive refresh tokens", holder.getService());
                 return null;
@@ -221,9 +220,14 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      * Update OAuth code.
      *
      * @param holder the holder
+     * @param accessToken the accessToken
      */
-    protected void updateOAuthCode(final AccessTokenRequestDataHolder holder) {
-        if (holder.getToken() instanceof OAuth20Code) {
+    protected void updateOAuthCode(final AccessTokenRequestDataHolder holder, final OAuth20AccessToken accessToken) {
+        if (holder.isRefreshToken()) {
+            val refreshToken = (OAuth20RefreshToken) holder.getToken();
+            refreshToken.getAccessTokens().add(accessToken.getId());
+            this.ticketRegistry.updateTicket(refreshToken);
+        } else if (holder.isCodeToken()) {
             val codeState = TicketState.class.cast(holder.getToken());
             codeState.update();
 
@@ -264,15 +268,17 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      * Generate refresh token.
      *
      * @param responseHolder the response holder
+     * @param accessToken the related Access token
      * @return the refresh token
      */
-    protected OAuth20RefreshToken generateRefreshToken(final AccessTokenRequestDataHolder responseHolder) {
+    protected OAuth20RefreshToken generateRefreshToken(final AccessTokenRequestDataHolder responseHolder, final OAuth20AccessToken accessToken) {
         LOGGER.debug("Creating refresh token for [{}]", responseHolder.getService());
         val refreshToken = this.refreshTokenFactory.create(responseHolder.getService(),
             responseHolder.getAuthentication(),
             responseHolder.getTicketGrantingTicket(),
             responseHolder.getScopes(),
-            responseHolder.getClientId(),
+            responseHolder.getRegisteredService().getClientId(),
+            accessToken.getId(),
             responseHolder.getClaims());
         LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
         addTicketToRegistry(refreshToken, responseHolder.getTicketGrantingTicket());

@@ -5,6 +5,7 @@ import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,11 +24,14 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.1.0
+ * @deprecated 6.2
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class
 })
+@Tag("Groovy")
+@Deprecated
 public class ScriptEngineManagerTests {
     private static void runAttributeFilterInternallyFor(final String s) {
         val filter = new ScriptedRegisteredServiceAttributeReleasePolicy(s);
@@ -49,7 +53,6 @@ public class ScriptEngineManagerTests {
         assertNotNull(getEngineNameFor("script.py"));
         assertNotNull(getEngineNameFor("script.groovy"));
         assertNotNull(getEngineNameFor("script.js"));
-        assertNotNull(getEngineNameFor("script.rb"));
     }
 
     @Test
@@ -60,10 +63,5 @@ public class ScriptEngineManagerTests {
     @Test
     public void verifyGroovyAttributeFilter() {
         runAttributeFilterInternallyFor("classpath:attributefilter.groovy");
-    }
-
-    @Test
-    public void verifyRubyAttributeFilter() {
-        runAttributeFilterInternallyFor("classpath:attributefilter.rb");
     }
 }

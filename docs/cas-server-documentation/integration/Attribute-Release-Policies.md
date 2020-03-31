@@ -314,10 +314,14 @@ The following parameters are passed to the script:
 
 ### Script Engines
 
+<div class="alert alert-warning"><strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
+</div>
+
 Use alternative script engine implementations and other programming languages to configure attribute release policies. This approach 
 takes advantage of scripting functionality built into the Java platform via additional libraries and drivers. While Groovy should be 
 natively supported by CAS, the following module is required in the overlay to include support for additional languages
-such as Python or Ruby, etc.
+such as Python, etc.
 
 ```xml
 <dependency>
@@ -337,12 +341,13 @@ The service definition then may be designed as:
   "id" : 300,
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy",
-    "scriptFile" : "classpath:/script.[py|js|groovy|rb]"
+    "scriptFile" : "classpath:/script.[py|js|groovy]"
   }
 }
 ```
 
-The configuration of this component qualifies to use the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax. The scripts 
+The configuration of this component qualifies to use 
+the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax. The scripts 
 need to design a `run` function that receives a list of parameters. The collection of current attributes in process
 as well as a logger object are passed to this function. The result must produce a map whose `key`s are attributes names 
 and whose `value`s are a list of attribute values.
@@ -369,17 +374,6 @@ def run(*Params):
   Logger = Params[1]
   # Calculate attributes and return a new dictionary of attributes...
   return ...
-```
-
-Here's the same script written in Ruby:
-
-```ruby
-def run(*params)
-    attributes = params[0]
-    logger = params[1]    
-    # Calculate attributes and return a new map of attributes...
-    return ...
-end
 ```
 
 You are also allowed to stuff inlined groovy scripts into the `scriptFile` attribute. The script

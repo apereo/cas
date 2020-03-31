@@ -1,0 +1,10 @@
+{
+  "@class": "java.util.TreeMap",
+  "eduPersonPrincipalName": {
+    "@class": "org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlIdPAttributeDefinition",
+    "key": "eduPersonPrincipalName",
+    "name": "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
+    "friendlyName": "eduPersonPrincipalName-FriendlyName",
+    "scoped": true
+  }
+}

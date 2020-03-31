@@ -65,6 +65,7 @@ in each case to learn the exact unit of measure.
 # ${configurationKey}.secure=true
 # ${configurationKey}.httpOnly=true
 # ${configurationKey}.sameSitePolicy=none|lax|strict
+# ${configurationKey}.comment=CAS Cookie
 ```                               
 
 ## Job Scheduling
@@ -1117,6 +1118,7 @@ to an external provider such as Yahoo, given the provider's *configuration key*:
 # ${configurationKey}.secret=
 # ${configurationKey}.clientName=My Provider
 # ${configurationKey}.autoRedirect=false
+# ${configurationKey}.cssClass=
 # ${configurationKey}.principalAttributeId=
 # ${configurationKey}.enabled=true
 ```

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link LdapPasswordPolicyProperties}.
@@ -15,6 +16,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @RequiresModule(name = "cas-server-support-ldap")
+@Accessors(chain = true)
 public class LdapPasswordPolicyProperties extends PasswordPolicyProperties {
     private static final long serialVersionUID = -1878237508646993100L;
 

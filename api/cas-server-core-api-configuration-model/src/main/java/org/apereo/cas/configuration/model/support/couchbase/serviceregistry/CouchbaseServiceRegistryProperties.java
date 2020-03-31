@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link CouchbaseServiceRegistryProperties}.
@@ -15,6 +16,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-couchbase-service-registry")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class CouchbaseServiceRegistryProperties extends BaseCouchbaseProperties {
     private static final long serialVersionUID = -4975171412161962007L;
 }

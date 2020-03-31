@@ -1,4 +1,5 @@
 #!/bin/bash
+source ./ci/functions.sh
 
 echo -e "Branch: ${TRAVIS_BRANCH}"
 echo -e "************************************"
@@ -35,18 +36,7 @@ sudo service postgresql stop
 echo -e "Setting build environment...\n"
 sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
 
-echo -e "Installing Java...\n"
-url="https://github.com/AdoptOpenJDK/openjdk11-upstream-binaries/releases/download/jdk-11.0.5%2B10/OpenJDK11U-jdk_x64_linux_11.0.5_10.tar.gz"
-wget https://github.com/sormuras/bach/raw/master/install-jdk.sh && chmod +x install-jdk.sh
-for i in {1..5}; do
-    export JAVA_HOME=$(./install-jdk.sh --emit-java-home --url ${url} -c | tail --lines 1)
-    if [[ -d ${JAVA_HOME} ]] ; then
-        break;
-    fi
-    echo -e "Trying download again... [${i}]\n"
-    sleep 5
-done
-echo JAVA_HOME=${JAVA_HOME}
+installJdk11
 
 chmod -R 777 ./ci/*.sh
 

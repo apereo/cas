@@ -673,7 +673,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         val service = factory.createService(registeredService.getServiceId());
         val expiringRefreshTokenFactory = new OAuth20DefaultRefreshTokenFactory(alwaysExpiresExpirationPolicyBuilder(), servicesManager);
         val refreshToken = expiringRefreshTokenFactory.create(service, authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), CLIENT_ID, new HashMap<>());
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), CLIENT_ID, StringUtils.EMPTY, new HashMap<>());
         this.ticketRegistry.addTicket(refreshToken);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
@@ -863,7 +863,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         val service = factory.createService(registeredService.getServiceId());
         val refreshToken = oAuthRefreshTokenFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"),
-            scopes, CLIENT_ID, new HashMap<>());
+            scopes, CLIENT_ID, StringUtils.EMPTY, new HashMap<>());
         this.ticketRegistry.addTicket(refreshToken);
         return refreshToken;
     }

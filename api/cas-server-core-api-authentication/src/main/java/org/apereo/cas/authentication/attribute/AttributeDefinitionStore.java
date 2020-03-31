@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -61,6 +62,18 @@ public interface AttributeDefinitionStore {
     Optional<AttributeDefinition> locateAttributeDefinition(String name);
 
     /**
+     * Locate attribute definition optional.
+     *
+     * @param <T>   the type parameter
+     * @param key  the name
+     * @param clazz the clazz
+     * @return the optional
+     */
+    <T extends AttributeDefinition> Optional<T> locateAttributeDefinition(String key, Class<T> clazz);
+
+    <T extends AttributeDefinition> Optional<T> locateAttributeDefinition(Predicate<AttributeDefinition> predicate);
+
+    /**
      * Gets attribute definitions.
      *
      * @return the attribute definitions
@@ -93,7 +106,7 @@ public interface AttributeDefinitionStore {
                     val definition = defnResult.get();
                     val attributeValues = determineValuesForAttributeDefinition(attributes, entry, definition);
                     LOGGER.trace("Resolving attribute [{}] from attribute definition store with values [{}]", entry.getKey(), attributeValues);
-                    
+
                     val result = resolveAttributeValues(entry.getKey(), attributeValues);
                     if (result.isPresent()) {
                         val resolvedValues = result.get().getValue();

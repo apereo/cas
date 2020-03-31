@@ -14,7 +14,6 @@ import org.springframework.context.ApplicationEvent;
 @Slf4j
 public class CasRegisteredServiceNoOpStreamPublisher implements CasRegisteredServiceStreamPublisher {
 
-
     @Override
     public void publish(final RegisteredService service, final ApplicationEvent event) {
         LOGGER.warn("CAS is NOT configured to stream and broadcast registered services over a queue. "

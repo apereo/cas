@@ -52,7 +52,7 @@ public class JcifsConfig {
                 LOGGER.debug("Attempting to load login config from [{}]", loginConf);
 
                 val res = resourceLoader.getResource(effectiveLoginConf);
-                if (res != null && res.exists()) {
+                if (res.exists()) {
                     val urlPath = res.getURL().toExternalForm();
                     LOGGER.debug("Located login config [{}] and configured it under [{}]", urlPath, JcifsConfigConstants.SYS_PROP_LOGIN_CONF);
                     System.setProperty(JcifsConfigConstants.SYS_PROP_LOGIN_CONF, urlPath);

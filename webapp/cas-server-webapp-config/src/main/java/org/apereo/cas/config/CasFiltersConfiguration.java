@@ -143,6 +143,7 @@ public class CasFiltersConfiguration {
             BooleanUtils.toStringTrueFalse(httpWebRequest.isAllowMultiValueParameters()));
         initParams.put(RequestParameterPolicyEnforcementFilter.ONLY_POST_PARAMETERS,
             httpWebRequest.getOnlyPostParams());
+        initParams.put(RequestParameterPolicyEnforcementFilter.THROW_ON_ERROR, Boolean.TRUE.toString());
 
         if (StringUtils.isNotBlank(httpWebRequest.getPatternToBlock())) {
             initParams.put(RequestParameterPolicyEnforcementFilter.PATTERN_TO_BLOCK,

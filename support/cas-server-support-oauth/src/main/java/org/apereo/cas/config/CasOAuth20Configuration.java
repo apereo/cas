@@ -41,6 +41,7 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20ClientCredentialsGran
 import org.apereo.cas.support.oauth.validator.token.OAuth20DeviceCodeResponseTypeRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20PasswordGrantTypeTokenRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20RefreshTokenGrantTypeTokenRequestValidator;
+import org.apereo.cas.support.oauth.validator.token.OAuth20RevocationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
 import org.apereo.cas.support.oauth.web.audit.AccessTokenResponseAuditResourceResolver;
@@ -52,6 +53,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20CallbackAuthorizeEndpoi
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20RevocationEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
 import org.apereo.cas.support.oauth.web.mgmt.OAuth20TokenManagementEndpoint;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
@@ -297,7 +299,7 @@ public class CasOAuth20Configuration {
         accessTokenClient.setAuthenticator(oAuthAccessTokenAuthenticator());
         accessTokenClient.setName(Authenticators.CAS_OAUTH_CLIENT_ACCESS_TOKEN_AUTHN);
         accessTokenClient.init();
-        
+
         val clientList = new ArrayList<Client>();
 
         val beans = applicationContext.getBeansOfType(OAuthAuthenticationClientProvider.class, false, true);
@@ -529,6 +531,15 @@ public class CasOAuth20Configuration {
         return new OAuth20UserProfileEndpointController(context);
     }
 
+    @ConditionalOnMissingBean(name = "oauthRevocationController")
+    @Bean
+    public OAuth20RevocationEndpointController oauthRevocationController() {
+        val context = buildConfigurationContext()
+            .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor())
+            .build();
+        return new OAuth20RevocationEndpointController(context);
+    }
+
     @ConditionalOnMissingBean(name = "oauthAuthorizationResponseBuilders")
     @Bean
     @RefreshScope
@@ -577,6 +588,14 @@ public class CasOAuth20Configuration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "oauthRevocationRequestValidator")
+    @RefreshScope
+    public OAuth20TokenRequestValidator oauthRevocationRequestValidator() {
+        val svcManager = servicesManager.getObject();
+        return new OAuth20RevocationRequestValidator(svcManager);
+    }
+
+    @Bean
     @ConditionalOnMissingBean(name = "oauthRefreshTokenGrantTypeTokenRequestValidator")
     @RefreshScope
     public OAuth20TokenRequestValidator oauthRefreshTokenGrantTypeTokenRequestValidator() {
@@ -619,6 +638,7 @@ public class CasOAuth20Configuration {
         validators.add(oauthRefreshTokenGrantTypeTokenRequestValidator());
         validators.add(oauthPasswordGrantTypeTokenRequestValidator());
         validators.add(oauthClientCredentialsGrantTypeTokenRequestValidator());
+        validators.add(oauthRevocationRequestValidator());
 
         return validators;
     }

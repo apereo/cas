@@ -31,6 +31,9 @@ public class CookieGenerationContext implements Serializable {
     private String name;
 
     @Builder.Default
+    private String comment = "CAS Cookie";
+
+    @Builder.Default
     private String path = StringUtils.EMPTY;
 
     @Builder.Default

@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 4.2.0
+ * @deprecated Since 6.2
  */
 @SpringBootTest(classes = {
     SamlGoogleAppsConfiguration.class,
@@ -37,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.googleApps.publicKeyLocation=classpath:DSAPublicKey01.key",
     "cas.googleApps.privateKeyLocation=classpath:DSAPrivateKey01.key"
 })
+@Deprecated
 public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTests {
     @Autowired
     private ApplicationContextProvider applicationContextProvider;

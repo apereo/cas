@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.mfa.trigger;
 
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.trigger.PrincipalAttributeMultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;

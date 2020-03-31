@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link CouchbasePrincipalAttributesProperties}.
@@ -16,6 +17,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-couchbase-authentication")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class CouchbasePrincipalAttributesProperties extends BaseCouchbaseProperties {
     private static final long serialVersionUID = -6573755681498251678L;
 

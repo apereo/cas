@@ -13,10 +13,6 @@ public class TicketGrantingCookieRetrievingCookieGenerator extends CookieRetriev
 
     private static final long serialVersionUID = -1239028220717183717L;
 
-    public TicketGrantingCookieRetrievingCookieGenerator(final CookieGenerationContext context) {
-        super(context);
-    }
-
     public TicketGrantingCookieRetrievingCookieGenerator(final CookieGenerationContext context,
                                                          final CookieValueManager casCookieValueManager) {
         super(context, casCookieValueManager);

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apereo.services.persondir.support.QueryType;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 
@@ -22,6 +23,7 @@ import java.util.Map;
 @RequiresModule(name = "cas-server-support-person-directory", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
 
     private static final long serialVersionUID = 6915428382578138387L;

@@ -48,7 +48,7 @@ public class CouchDbCasEventRepository extends AbstractCasEventRepository {
 
     @Override
     public Collection<CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal, final ZonedDateTime dateTime) {
-        return castEvents(couchDb.findByTypeForPrincipalSince(type, principal, dateTime.toLocalDateTime()));
+        return castEvents(couchDb.findByTypeForPrincipalSince(type, principal, dateTime));
     }
 
     @Override
@@ -58,7 +58,7 @@ public class CouchDbCasEventRepository extends AbstractCasEventRepository {
 
     @Override
     public Collection<CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
-        return castEvents(couchDb.findByTypeSince(type, dateTime.toLocalDateTime()));
+        return castEvents(couchDb.findByTypeSince(type, dateTime));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class CouchDbCasEventRepository extends AbstractCasEventRepository {
 
     @Override
     public Collection<CasEvent> getEventsForPrincipal(final String id, final ZonedDateTime dateTime) {
-        return castEvents(couchDb.findByPrincipalSince(id, dateTime.toLocalDateTime()));
+        return castEvents(couchDb.findByPrincipalSince(id, dateTime));
     }
 
     @Override

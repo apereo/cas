@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -17,6 +18,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-pac4j-api", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class SessionReplicationProperties implements Serializable {
     private static final long serialVersionUID = -3839399712674610962L;
 
@@ -27,6 +29,7 @@ public class SessionReplicationProperties implements Serializable {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Cookie extends CookieProperties {
         private static final long serialVersionUID = 6165162204295764362L;
 

@@ -53,7 +53,7 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", service);
                 throw new UnauthorizedSsoServiceException();
             }
-            return !registeredService.getRequiredHandlers().isEmpty();
+            return !registeredService.getAuthenticationPolicy().getRequiredAuthenticationHandlers().isEmpty();
         }
         return false;
     }
@@ -63,10 +63,10 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
         val service = authenticationServiceSelectionPlan.resolveService(transaction.getService());
         val registeredService = this.servicesManager.findServiceBy(service);
 
-        val requiredHandlers = registeredService.getRequiredHandlers();
+        val requiredHandlers = registeredService.getAuthenticationPolicy().getRequiredAuthenticationHandlers();
         LOGGER.debug("Authentication transaction requires [{}] for service [{}]", requiredHandlers, service);
         val handlerSet = new LinkedHashSet<AuthenticationHandler>(candidateHandlers);
-        LOGGER.info("Candidate authentication handlers examined this transaction are [{}]", handlerSet);
+        LOGGER.debug("Candidate authentication handlers examined for this transaction are [{}]", handlerSet);
 
         val it = handlerSet.iterator();
         while (it.hasNext()) {
@@ -77,7 +77,7 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
                 it.remove();
             }
         }
-        LOGGER.debug("Authentication handlers for this transaction are [{}]", handlerSet);
+        LOGGER.info("Authentication handlers for this transaction are [{}]", handlerSet);
         return handlerSet;
     }
 }

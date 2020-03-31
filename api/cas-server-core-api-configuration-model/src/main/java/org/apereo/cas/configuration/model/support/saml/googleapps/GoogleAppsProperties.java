@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -12,10 +13,13 @@ import java.io.Serializable;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 6.2
  */
 @Getter
 @Setter
 @RequiresModule(name = "cas-server-support-saml-googleapps")
+@Accessors(chain = true)
+@Deprecated(since = "6.2")
 public class GoogleAppsProperties implements Serializable {
 
     private static final long serialVersionUID = -5133482766495375325L;

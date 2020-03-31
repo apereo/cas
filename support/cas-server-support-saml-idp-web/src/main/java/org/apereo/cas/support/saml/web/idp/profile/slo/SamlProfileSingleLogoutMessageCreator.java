@@ -65,7 +65,7 @@ public class SamlProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectB
     /**
      * Saml idp object signer.
      */
-    protected final SamlIdPObjectSigner samlObjectSigner;
+    protected final transient SamlIdPObjectSigner samlObjectSigner;
 
     private final transient SOAPObjectBuilder<Envelope> envelopeBuilder;
     private final transient SOAPObjectBuilder<Body> bodyBuilder;

@@ -1,7 +1,7 @@
-
 package org.apereo.cas;
 
 import org.apereo.cas.configuration.CasConfigurationPropertiesTests;
+import org.apereo.cas.configuration.CasCoreConfigurationUtilsTests;
 import org.apereo.cas.configuration.CommaSeparatedStringToThrowablesConverterTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -16,7 +16,8 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     CommaSeparatedStringToThrowablesConverterTests.class,
-    CasConfigurationPropertiesTests.class
+    CasConfigurationPropertiesTests.class,
+    CasCoreConfigurationUtilsTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {

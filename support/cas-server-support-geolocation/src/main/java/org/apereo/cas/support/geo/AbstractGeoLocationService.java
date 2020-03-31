@@ -16,7 +16,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.hjson.JsonValue;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
@@ -33,6 +35,24 @@ public abstract class AbstractGeoLocationService implements GeoLocationService {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private String ipStackAccessKey;
+
+    @Override
+    @SneakyThrows
+    public GeoLocationResponse locate(final String address) {
+        try {
+            val info = UserInfo.getInfo(address);
+            if (info != null) {
+                val pos = info.getPosition();
+                if (pos != null && pos.getLatitude() != null && pos.getLongitude() != null) {
+                    return locate(pos.getLatitude(), pos.getLongitude());
+                }
+                return locateByIpStack(address);
+            }
+            return null;
+        } catch (final Exception e) {
+            return locateByIpStack(address);
+        }
+    }
 
     @Override
     public GeoLocationResponse locate(final String clientIp, final GeoLocationRequest location) {
@@ -53,39 +73,40 @@ public abstract class AbstractGeoLocationService implements GeoLocationService {
         return locate(Double.valueOf(request.getLatitude()), Double.valueOf(request.getLongitude()));
     }
 
-    @Override
-    @SneakyThrows
-    public GeoLocationResponse locate(final String address) {
-        try {
-            val info = UserInfo.getInfo(address);
-            if (info != null && info.getPosition() != null) {
-                return locate(info.getPosition().getLatitude(), info.getPosition().getLongitude());
-            }
+    private GeoLocationResponse locateByIpStack(final String address) throws IOException {
+        if (StringUtils.isBlank(ipStackAccessKey)) {
             return null;
-        } catch (final Exception e) {
-            if (StringUtils.isNotBlank(ipStackAccessKey)) {
-                val url = String.format("https://api.ipstack.com/%s?access_key=%s", address, ipStackAccessKey);
-                HttpResponse response = null;
-                try {
-                    response = HttpUtils.executeGet(url);
-                    if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                        val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                        val infos = MAPPER.readValue(result, Map.class);
-                        val geoResponse = new GeoLocationResponse();
-                        geoResponse.setLatitude((double) infos.getOrDefault("latitude", 0D));
-                        geoResponse.setLongitude((double) infos.getOrDefault("longitude", 0D));
-                        geoResponse
-                            .addAddress((String) infos.getOrDefault("city", StringUtils.EMPTY))
-                            .addAddress((String) infos.getOrDefault("region_name", StringUtils.EMPTY))
-                            .addAddress((String) infos.getOrDefault("region_code", StringUtils.EMPTY))
-                            .addAddress((String) infos.getOrDefault("county_name", StringUtils.EMPTY));
-                        return geoResponse;
-                    }
-                } finally {
-                    HttpUtils.close(response);
-                }
+        }
+        val url = buildIpStackUrlFor(address);
+        HttpResponse response = null;
+        try {
+            response = HttpUtils.executeGet(url);
+            if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                val infos = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
+                val geoResponse = new GeoLocationResponse();
+                geoResponse.setLatitude((double) infos.getOrDefault("latitude", 0D));
+                geoResponse.setLongitude((double) infos.getOrDefault("longitude", 0D));
+                geoResponse
+                    .addAddress((String) infos.getOrDefault("city", StringUtils.EMPTY))
+                    .addAddress((String) infos.getOrDefault("region_name", StringUtils.EMPTY))
+                    .addAddress((String) infos.getOrDefault("region_code", StringUtils.EMPTY))
+                    .addAddress((String) infos.getOrDefault("county_name", StringUtils.EMPTY));
+                return geoResponse;
             }
+        } finally {
+            HttpUtils.close(response);
         }
         return null;
+    }
+
+    /**
+     * Build ip stack url for address.
+     *
+     * @param address the address
+     * @return the string
+     */
+    protected String buildIpStackUrlFor(final String address) {
+        return String.format("https://api.ipstack.com/%s?access_key=%s", address, ipStackAccessKey);
     }
 }
