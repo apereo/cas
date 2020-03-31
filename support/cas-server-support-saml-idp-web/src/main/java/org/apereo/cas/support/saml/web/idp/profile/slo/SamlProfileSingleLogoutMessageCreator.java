@@ -12,20 +12,16 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlAttributeBasedNameIdGenerator;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.RandomUtils;
-
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringNameIDEncoder;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.NameID;
@@ -35,6 +31,7 @@ import org.opensaml.soap.soap11.Envelope;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 /**
  * This is {@link SamlProfileSingleLogoutMessageCreator}.
@@ -68,6 +65,7 @@ public class SamlProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectB
     protected final transient SamlIdPObjectSigner samlObjectSigner;
 
     private final transient SOAPObjectBuilder<Envelope> envelopeBuilder;
+
     private final transient SOAPObjectBuilder<Body> bodyBuilder;
 
     public SamlProfileSingleLogoutMessageCreator(final OpenSamlConfigBean configBean,
@@ -97,16 +95,13 @@ public class SamlProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectB
 
         val issueInstant = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(skewAllowance);
 
-        val encoder = new SAML2StringNameIDEncoder();
-
-        encoder.setNameFormat(StringUtils.defaultIfBlank(samlService.getRequiredNameIdFormat(), NameID.UNSPECIFIED));
-        encoder.setNameQualifier(samlService.getNameIdQualifier());
-
-        val attribute = new IdPAttribute(AttributePrincipal.class.getName());
         val principalName = request.getTicketGrantingTicket().getAuthentication().getPrincipal().getId();
         LOGGER.trace("Preparing NameID attribute for principal [{}]", principalName);
-        attribute.setValues(CollectionUtils.wrap(new StringAttributeValue(principalName)));
-        val nameId = encoder.encode(attribute);
+
+        val nameFormat = StringUtils.defaultIfBlank(samlService.getRequiredNameIdFormat(), NameID.UNSPECIFIED);
+        val encoder = SamlAttributeBasedNameIdGenerator.get(Optional.empty(), nameFormat, samlService, principalName);
+        LOGGER.debug("Encoding NameID based on [{}]", nameFormat);
+        val nameId = encoder.generate(new ProfileRequestContext(), nameFormat);
 
         var samlLogoutRequest = newLogoutRequest(id, issueInstant,
             request.getLogoutUrl().toExternalForm(),
@@ -121,7 +116,8 @@ public class SamlProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectB
             val adaptor = adaptorRes.orElseThrow(() -> new IllegalArgumentException("Unable to find metadata for saml service " + serviceId));
             val httpRequest = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
             val httpResponse = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-            samlObjectSigner.encode(samlLogoutRequest, samlService, adaptor, httpResponse, httpRequest, binding, samlLogoutRequest);
+            samlObjectSigner.encode(samlLogoutRequest, samlService, adaptor,
+                httpResponse, httpRequest, binding, samlLogoutRequest);
         }
 
         if (SAMLConstants.SAML2_SOAP11_BINDING_URI.equalsIgnoreCase(binding)) {

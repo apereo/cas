@@ -1,24 +1,31 @@
 package org.apereo.cas.support.saml;
 
+import org.apereo.cas.support.saml.util.credential.BasicResourceCredentialFactoryBean;
+import org.apereo.cas.support.saml.util.credential.BasicX509CredentialFactoryBean;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
-
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.idp.profile.spring.factory.BasicResourceCredentialFactoryBean;
-import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.SignatureValidationCriteriaSetFactoryBean;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.utilities.java.support.resolver.Criterion;
 import org.cryptacular.util.CertUtil;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
 import org.opensaml.security.credential.BasicCredential;
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
+import org.opensaml.xmlsec.SecurityConfigurationSupport;
+import org.opensaml.xmlsec.SignatureValidationConfiguration;
+import org.opensaml.xmlsec.criterion.SignatureValidationConfigurationCriterion;
+import org.opensaml.xmlsec.impl.BasicSignatureValidationParametersResolver;
 import org.opensaml.xmlsec.keyinfo.impl.BasicProviderKeyInfoCredentialResolver;
 import org.opensaml.xmlsec.keyinfo.impl.KeyInfoProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.DEREncodedKeyValueProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.DSAKeyValueProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
+import org.opensaml.xmlsec.signature.support.SignatureValidationParametersCriterion;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -28,9 +35,7 @@ import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -209,8 +214,7 @@ public class SamlUtils {
 
         LOGGER.debug("Adding signature validation filter based on the configured trust engine");
         val signatureValidationFilter = new SignatureValidationFilter(trustEngine);
-        signatureValidationFilter.setDefaultCriteria(new SignatureValidationCriteriaSetFactoryBean().getObject());
-
+        signatureValidationFilter.setDefaultCriteria(buildSignatureValidationFilterCriteria());
         LOGGER.debug("Added metadata SignatureValidationFilter with signature from [{}]", signatureResourceLocation);
         return signatureValidationFilter;
     }
@@ -225,18 +229,34 @@ public class SamlUtils {
     public static BasicCredential buildCredentialForMetadataSignatureValidation(final Resource resource) throws Exception {
         try {
             val x509FactoryBean = new BasicX509CredentialFactoryBean();
-            x509FactoryBean.setCertificateResource(resource);
-            x509FactoryBean.afterPropertiesSet();
+            x509FactoryBean.setCertificateResources(CollectionUtils.wrap(resource));
             return x509FactoryBean.getObject();
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
-
             LOGGER.debug("Credential cannot be extracted from [{}] via X.509. Treating it as a public key to locate credential...", resource);
             val credentialFactoryBean = new BasicResourceCredentialFactoryBean();
             credentialFactoryBean.setPublicKeyInfo(resource);
-            credentialFactoryBean.afterPropertiesSet();
             return credentialFactoryBean.getObject();
         }
+    }
+
+    @SneakyThrows
+    private static CriteriaSet buildSignatureValidationFilterCriteria() {
+        val criteriaSet = new CriteriaSet();
+
+        val sigConfigs = new ArrayList<SignatureValidationConfiguration>();
+        sigConfigs.add(SecurityConfigurationSupport.getGlobalSignatureValidationConfiguration());
+
+        if (!sigConfigs.isEmpty()) {
+            val paramsResolver = new BasicSignatureValidationParametersResolver();
+
+            val configCriteria = new CriteriaSet(new Criterion[]{new SignatureValidationConfigurationCriterion(sigConfigs)});
+            val params = paramsResolver.resolveSingle(configCriteria);
+            if (params != null) {
+                criteriaSet.add(new SignatureValidationParametersCriterion(params), true);
+            }
+        }
+        return criteriaSet;
     }
 
     /**

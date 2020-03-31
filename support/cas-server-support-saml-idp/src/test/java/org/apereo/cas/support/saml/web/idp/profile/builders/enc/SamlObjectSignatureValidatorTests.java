@@ -63,9 +63,9 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         saml2Client.init();
 
         samlContext = new MessageContext();
-        saml2MessageContext = new SAML2MessageContext(samlContext);
+        saml2MessageContext = new SAML2MessageContext();
 
-        val peer = saml2MessageContext.getSubcontext(SAMLPeerEntityContext.class, true);
+        val peer = saml2MessageContext.getMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
         assertNotNull(peer);
 
         peer.setEntityId("https://cas.example.org/idp");
@@ -77,7 +77,7 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
             new EntityIdCriterion(Objects.requireNonNull(peer.getEntityId())),
             new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME))));
 
-        val self = saml2MessageContext.getSubcontext(SAMLSelfEntityContext.class, true);
+        val self = saml2MessageContext.getMessageContext().getSubcontext(SAMLSelfEntityContext.class, true);
         assertNotNull(self);
         self.setEntityId(saml2ClientConfiguration.getServiceProviderEntityId());
 

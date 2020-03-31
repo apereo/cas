@@ -207,7 +207,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         val children = this.ssoDescriptor.getOrderedChildren();
         if (children != null) {
             nameIdFormats.addAll(children.stream().filter(NameIDFormat.class::isInstance)
-                .map(child -> ((NameIDFormat) child).getFormat()).collect(Collectors.toList()));
+                .map(child -> ((NameIDFormat) child).getURI()).collect(Collectors.toList()));
         }
         return nameIdFormats;
     }
