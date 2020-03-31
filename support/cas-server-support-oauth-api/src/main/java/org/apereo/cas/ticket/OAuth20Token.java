@@ -33,4 +33,10 @@ public interface OAuth20Token extends ServiceTicket {
      * @return map of requested claims.
      */
     Map<String, Map<String, Object>> getClaims();
+
+    /**
+     * Client id for whom this token was issued.
+     * @return client id.
+     */
+    String getClientId();
 }
