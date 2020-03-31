@@ -104,8 +104,8 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         LOGGER.trace("Located entity descriptor in metadata for [{}]", entityID);
 
         if (entityDescriptor.getValidUntil() != null) {
-            val validUntil = DateTimeUtils.zonedDateTimeOf(entityDescriptor.getValidUntil());
-            val expired = validUntil.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
+            val expired = entityDescriptor.getValidUntil()
+                .isBefore(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
             if (expired) {
                 LOGGER.warn("Entity descriptor in the metadata has expired at [{}]", entityDescriptor.getValidUntil());
                 return Optional.empty();
