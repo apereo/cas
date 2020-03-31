@@ -1,6 +1,7 @@
 description = "Apereo CAS SAML Core/Common Functionality"
 dependencies {
     implementation libraries.shibidpjavasupport
+    implementation libraries.opensaml
     
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":core:cas-server-core-configuration-api")
@@ -20,4 +21,5 @@ dependencies {
     
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }
