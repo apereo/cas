@@ -219,4 +219,21 @@ public class FunctionUtils {
             }
         };
     }
+
+    /**
+     * Do without throws and return status.
+     *
+     * @param func   the func
+     * @param params the params
+     * @return the boolean
+     */
+    public static boolean doWithoutThrows(final Consumer<Object> func, final Object... params) {
+        try {
+            func.accept(params);
+            return true;
+        } catch (final Throwable e) {
+            LOGGER.warn(e.getMessage(), e);
+            return false;
+        }
+    }
 }

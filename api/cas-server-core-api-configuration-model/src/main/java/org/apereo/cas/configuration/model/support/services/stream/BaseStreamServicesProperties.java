@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @RequiresModule(name = "cas-server-support-service-registry-stream")
+@Accessors(chain = true)
 public class BaseStreamServicesProperties implements Serializable {
 
     private static final long serialVersionUID = 7025417314334269017L;

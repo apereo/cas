@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Credential;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * This is {@link AcceptableUsagePolicyRepository}.
@@ -30,5 +31,14 @@ public interface AcceptableUsagePolicyRepository extends Serializable {
      * @return true if choice was saved.
      */
     boolean submit(RequestContext requestContext, Credential credential);
+
+    /**
+     * Fetch policy as optional.
+     *
+     * @param requestContext the request context
+     * @param credential     the credential
+     * @return the optional
+     */
+    Optional<AcceptableUsagePolicyTerms> fetchPolicy(RequestContext requestContext, Credential credential);
 
 }

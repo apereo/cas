@@ -32,6 +32,7 @@ import static org.mockito.Mockito.*;
 public class RegisteredServiceAuthenticationHandlerResolverTests {
 
     private ServicesManager defaultServicesManager;
+
     private Set<AuthenticationHandler> authenticationHandlers;
 
     @BeforeEach
@@ -40,11 +41,11 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         val list = new ArrayList<RegisteredService>();
 
         var svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1");
-        svc.setRequiredHandlers(CollectionUtils.wrapHashSet("handler1", "handler2"));
+        svc.getAuthenticationPolicy().getRequiredAuthenticationHandlers().addAll(CollectionUtils.wrapHashSet("handler1", "handler2"));
         list.add(svc);
 
         svc = RegisteredServiceTestUtils.getRegisteredService("serviceid2");
-        svc.setRequiredHandlers(new HashSet<>(0));
+        svc.getAuthenticationPolicy().getRequiredAuthenticationHandlers().addAll(new HashSet<>(0));
         list.add(svc);
 
         val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), list, new ArrayList<>());
@@ -62,7 +63,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
     @Test
     public void checkAuthenticationHandlerResolutionDefault() {
         val resolver = new RegisteredServiceAuthenticationHandlerResolver(this.defaultServicesManager,
-                new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
         val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid1"),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 

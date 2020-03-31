@@ -12,7 +12,10 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
+import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
@@ -39,6 +42,8 @@ import org.apereo.cas.oidc.profile.OidcUserProfileDataCreator;
 import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionService;
 import org.apereo.cas.oidc.profile.OidcUserProfileViewRenderer;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
+import org.apereo.cas.oidc.slo.OidcSingleLogoutMessageCreator;
+import org.apereo.cas.oidc.slo.OidcSingleLogoutServiceMessageHandler;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutor;
@@ -97,6 +102,7 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.validation.CasProtocolViewFactory;
@@ -315,6 +321,14 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Autowired
     @Qualifier("multifactorAuthenticationProviderResolver")
     private ObjectProvider<MultifactorAuthenticationProviderResolver> multifactorAuthenticationProviderResolver;
+
+    @Autowired
+    @Qualifier("noRedirectHttpClient")
+    private ObjectProvider<HttpClient> httpClient;
+
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
@@ -548,7 +562,6 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
             .ticketRegistry(ticketRegistry.getObject())
-            .eventPublisher(applicationContext)
             .applicationContext(applicationContext)
             .build();
 
@@ -646,7 +659,9 @@ public class OidcConfiguration implements WebMvcConfigurer {
             requiresAuthenticationDynamicRegistrationInterceptor(),
             requiresAuthenticationClientConfigurationInterceptor(),
             mode,
-            accessTokenGrantRequestExtractors.getObject());
+            accessTokenGrantRequestExtractors.getObject(),
+            servicesManager.getObject(),
+            oauthDistributedSessionStore.getObject());
     }
 
     @RefreshScope
@@ -755,6 +770,32 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     public View oidcConfirmView() {
         return casProtocolViewFactory.getObject().create(applicationContext, "protocol/oidc/confirm");
+    }
+
+    @ConditionalOnMissingBean(name = "oidcSingleLogoutMessageCreator")
+    @Bean
+    @RefreshScope
+    public SingleLogoutMessageCreator oidcSingleLogoutMessageCreator() {
+        return new OidcSingleLogoutMessageCreator(buildConfigurationContext());
+    }
+
+    @ConditionalOnMissingBean(name = "oidcSingleLogoutServiceMessageHandler")
+    @Bean
+    @RefreshScope
+    public SingleLogoutServiceMessageHandler oidcSingleLogoutServiceMessageHandler() {
+        return new OidcSingleLogoutServiceMessageHandler(httpClient.getObject(),
+                oidcSingleLogoutMessageCreator(),
+                servicesManager.getObject(),
+                singleLogoutServiceLogoutUrlBuilder.getObject(),
+                casProperties.getSlo().isAsynchronous(),
+                authenticationServiceSelectionPlan.getObject(),
+                casProperties.getAuthn().getOidc().getIssuer());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "oidcLogoutExecutionPlanConfigurer")
+    public LogoutExecutionPlanConfigurer oidcLogoutExecutionPlanConfigurer() {
+        return plan -> plan.registerSingleLogoutServiceMessageHandler(oidcSingleLogoutServiceMessageHandler());
     }
 
     private OAuth20ConfigurationContext buildConfigurationContext() {

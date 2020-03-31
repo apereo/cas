@@ -3,7 +3,7 @@
 clear
 
 printHelp() {
-    echo -e "Usage: ./testcas.sh --category [category1,category2,...] [--help] [--no-wrapper] [--no-retry] [--debug] [--coverage]\n"
+    echo -e "Usage: ./testcas.sh --category [category1,category2,...] [--help] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--coverage]\n"
     echo -e "Available test categories are:\n"
     echo -e "\t - simple"
     echo -e "\t - memcached"
@@ -69,6 +69,10 @@ while (( "$#" )); do
         ;;
     --no-retry)
         flags+=" -DskipTestRetry=true"
+        shift
+        ;;
+    --ignore-failures)
+        flags+=" -DignoreTestFailures=true"
         shift
         ;;
     --category)

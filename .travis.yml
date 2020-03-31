@@ -18,8 +18,6 @@ before_cache:
   - rm -rf $HOME/.gradle/caches/7.0.*/
   - rm -rf $HOME/.gradle/caches/6.3.*/
   - rm -rf $HOME/.gradle/caches/6.2.*/
-  - rm -rf $HOME/.gradle/caches/6.1.*/
-  - rm -rf $HOME/.gradle/caches/6.0.*/
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
   - find ~/.gradle/caches/ -name "*.lock" -type f -delete
 cache:
@@ -166,41 +164,8 @@ jobs:
       script: ./ci/tests/restful/run-tests-restful.sh
       name: "RESTful Tests"
     - stage: test
-      script: ./ci/tests/ldap/run-tests-ldap.sh
-      name: "LDAP Tests"
-    - stage: test
-      script: ./ci/tests/amazon/run-tests-aws.sh
-      name: "AWS Tests"
-    - stage: test
       script: ./ci/tests/mfa/run-tests-mfa.sh
       name: "Multifactor Authentication Tests"
-    - stage: test
-      script: ./ci/tests/cassandra/run-tests-cassandra.sh
-      name: "Apache Cassandra Tests"
-    - stage: test
-      script: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
-      name: "Azure CosmosDb Tests"
-    - stage: test
-      script: ./ci/tests/radius/run-tests-radius.sh
-      name: "Radius Tests"
-    - stage: test
-      script: ./ci/tests/couchbase/run-tests-couchbase.sh
-      name: "Couchbase Tests"
-    - stage: test
-      script: ./ci/tests/dynamodb/run-tests-dynamodb.sh
-      name: "DynamoDb Tests"
-    - stage: test
-      script: ./ci/tests/ehcache/run-tests-ehcache.sh
-      name: "Ehcache Tests"
-    - stage: test
-      script: ./ci/tests/ignite/run-tests-ignite.sh
-      name: "Apache Ignite Tests"
-    - stage: test
-      script: ./ci/tests/influxdb/run-tests-influxdb.sh
-      name: "InfluxDb Tests"
-    - stage: test
-      script: ./ci/tests/mail/run-tests-mail.sh
-      name: "Mail Tests"
     - stage: test
       script: ./ci/tests/oauth/run-tests-oauth.sh
       name: "OAuth Tests"
@@ -214,11 +179,23 @@ jobs:
       script: ./ci/tests/saml/run-tests-saml.sh
       name: "SAML Tests"
     - stage: test
-      script: ./ci/tests/couchdb/run-tests-couchdb.sh
-      name: "Apache CouchDb Tests"
+      script: ./ci/tests/ldap/run-tests-ldap.sh
+      name: "LDAP Tests"
     - stage: test
-      script: ./ci/tests/memcached/run-tests-memcached.sh
-      name: "Memcached Tests"
+      script: ./ci/tests/amazon/run-tests-aws.sh
+      name: "AWS Tests"
+    - stage: test
+      script: ./ci/tests/mongodb/run-tests-mongodb.sh
+      name: "MongoDb Tests"
+    - stage: test
+      script: ./ci/tests/redis/run-tests-redis.sh
+      name: "Redis Tests"
+    - stage: test
+      script: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
+      name: "Azure CosmosDb Tests"
+    - stage: test
+      script: ./ci/tests/radius/run-tests-radius.sh
+      name: "Radius Tests"
     - stage: test
       script: ./ci/tests/mysql/run-tests-mysql.sh
       name: "MySQL Tests"
@@ -235,11 +212,32 @@ jobs:
       script: ./ci/tests/oracle/run-tests-oracle.sh
       name: "Oracle Tests"
     - stage: test
-      script: ./ci/tests/mongodb/run-tests-mongodb.sh
-      name: "MongoDb Tests"
+      script: ./ci/tests/cassandra/run-tests-cassandra.sh
+      name: "Apache Cassandra Tests"
     - stage: test
-      script: ./ci/tests/redis/run-tests-redis.sh
-      name: "Redis Tests"
+      script: ./ci/tests/couchbase/run-tests-couchbase.sh
+      name: "Couchbase Tests"
+    - stage: test
+      script: ./ci/tests/dynamodb/run-tests-dynamodb.sh
+      name: "DynamoDb Tests"
+    - stage: test
+      script: ./ci/tests/memcached/run-tests-memcached.sh
+      name: "Memcached Tests"
+    - stage: test
+      script: ./ci/tests/ehcache/run-tests-ehcache.sh
+      name: "Ehcache Tests"
+    - stage: test
+      script: ./ci/tests/ignite/run-tests-ignite.sh
+      name: "Apache Ignite Tests"
+    - stage: test
+      script: ./ci/tests/influxdb/run-tests-influxdb.sh
+      name: "InfluxDb Tests"
+    - stage: test
+      script: ./ci/tests/mail/run-tests-mail.sh
+      name: "Mail Tests"
+    - stage: test
+      script: ./ci/tests/couchdb/run-tests-couchdb.sh
+      name: "Apache CouchDb Tests"
     - stage: test
       script: ./ci/tests/activemq/run-tests-activemq.sh
       name: "Apache ActiveMQ Tests"

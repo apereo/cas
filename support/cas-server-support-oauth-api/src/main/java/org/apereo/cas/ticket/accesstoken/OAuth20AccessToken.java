@@ -29,10 +29,4 @@ public interface OAuth20AccessToken extends OAuth20Token {
      * @return the id token
      */
     String getIdToken();
-
-    /**
-     * Client id for whom this access token was issued.
-     * @return client id.
-     */
-    String getClientId();
 }

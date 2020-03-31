@@ -1,9 +1,6 @@
-import org.apereo.cas.authentication.principal.*
-import org.apereo.cas.authentication.*
-import org.apereo.cas.util.*
-import org.apereo.cas.aup.*
-import org.springframework.webflow.execution.*
 import groovy.transform.Field
+import org.apereo.cas.aup.AcceptableUsagePolicyStatus
+import org.apereo.cas.aup.AcceptableUsagePolicyTerms
 
 @Field int count = 0
 
@@ -29,4 +26,17 @@ def submit(Object[] args) {
 
     count++
     return true
+}
+
+AcceptableUsagePolicyTerms fetch(Object[] args) {
+    def requestContext = args[0]
+    def credential = args[1]
+    def applicationContext = args[2]
+    def principal = args[3]
+    def logger = args[4]
+
+    return AcceptableUsagePolicyTerms.builder()
+            .defaultText("Hello, World")
+            .code(AcceptableUsagePolicyTerms.CODE)
+            .build();
 }

@@ -75,7 +75,7 @@ public class CasRegisteredServicesTestConfiguration {
         svc4.setEvaluationOrder(20);
         svc4.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         val handlers = CollectionUtils.wrapHashSet(AcceptUsersAuthenticationHandler.class.getSimpleName(), TestOneTimePasswordAuthenticationHandler.class.getSimpleName());
-        svc4.setRequiredHandlers(handlers);
+        svc4.getAuthenticationPolicy().getRequiredAuthenticationHandlers().addAll(handlers);
         svc4.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         l.add(svc4);
 

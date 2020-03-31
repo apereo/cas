@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.hjson.JsonValue;
 import org.springframework.http.HttpStatus;
 
 import java.nio.charset.StandardCharsets;
@@ -45,7 +46,7 @@ public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 LOGGER.debug("Principal factory response received: [{}]", result);
-                return MAPPER.readValue(result, SimplePrincipal.class);
+                return MAPPER.readValue(JsonValue.readHjson(result).toString(), SimplePrincipal.class);
             }
         } catch (final Exception e) {
             throw new IllegalArgumentException(e.getMessage(), e);

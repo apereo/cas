@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestOperations;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class RestfulServiceRegistry extends AbstractServiceRegistry {
-    private final transient RestTemplate restTemplate;
+    private final transient RestOperations restTemplate;
 
     private final String url;
 
@@ -36,7 +36,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
     private final RegisteredServiceEntityMapper registeredServiceEntityMapper;
 
     public RestfulServiceRegistry(final ApplicationEventPublisher eventPublisher,
-                                  final RestTemplate restTemplate,
+                                  final RestOperations restTemplate,
                                   final String url,
                                   final MultiValueMap<String, String> headers,
                                   final Collection<ServiceRegistryListener> serviceRegistryListeners,
@@ -54,9 +54,9 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
             invokeServiceRegistryListenerPreSave(registeredService);
             val result = registeredServiceEntityMapper.fromRegisteredService(registeredService);
             val requestEntity = new HttpEntity<Serializable>(result, this.headers);
-            val responseEntity = restTemplate.exchange(this.url, HttpMethod.POST, requestEntity, RegisteredService.class);
+            val responseEntity = restTemplate.exchange(this.url, HttpMethod.POST, requestEntity, Serializable.class);
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
-                return responseEntity.getBody();
+                return registeredServiceEntityMapper.toRegisteredService(responseEntity.getBody());
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

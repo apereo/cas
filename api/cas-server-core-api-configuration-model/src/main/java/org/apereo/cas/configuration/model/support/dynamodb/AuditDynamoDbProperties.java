@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link AuditDynamoDbProperties}.
@@ -14,6 +15,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-audit-dynamodb")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class AuditDynamoDbProperties extends AbstractDynamoDbProperties {
 
     private static final long serialVersionUID = 102540148774854955L;

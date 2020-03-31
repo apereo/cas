@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -19,6 +20,7 @@ import java.util.List;
  */
 @Getter
 @Setter
+@Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-ws-idp")
 public class WsFederationProperties implements Serializable {
 
@@ -36,6 +38,7 @@ public class WsFederationProperties implements Serializable {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     @RequiresModule(name = "cas-server-support-ws-idp")
     public static class IdentityProvider implements Serializable {
 
@@ -56,6 +59,7 @@ public class WsFederationProperties implements Serializable {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     @RequiresModule(name = "cas-server-support-ws-sts")
     public static class SecurityTokenService implements Serializable {
 
@@ -151,6 +155,7 @@ public class WsFederationProperties implements Serializable {
         @Getter
         @Setter
         @RequiresModule(name = "cas-server-support-ws-sts")
+        @Accessors(chain = true)
         public static class RealmDefinition implements Serializable {
 
             private static final long serialVersionUID = -2209230334376432934L;

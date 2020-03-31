@@ -1064,6 +1064,31 @@ public class WebUtils {
     }
 
     /**
+     * Put acceptable usage policy terms into flow scope.
+     *
+     * @param context the context
+     * @param terms   the terms
+     */
+    public static void putAcceptableUsagePolicyTermsIntoFlowScope(final RequestContext context, final Object terms) {
+        context.getFlowScope().put("aupPolicy", terms);
+    }
+
+    /**
+     * Gets acceptable usage policy terms from flow scope.
+     *
+     * @param <T>            the type parameter
+     * @param requestContext the request context
+     * @param clazz          the clazz
+     * @return the acceptable usage policy terms from flow scope
+     */
+    public static <T> T getAcceptableUsagePolicyTermsFromFlowScope(final RequestContext requestContext, final Class<T> clazz) {
+        if (requestContext.getFlowScope().contains("aupPolicy")) {
+            return (T) requestContext.getFlowScope().put("aupPolicy", clazz);
+        }
+        return null;
+    }
+
+    /**
      * Put custom login form fields.
      *
      * @param context               the context

@@ -2,6 +2,7 @@ package org.apereo.cas.util.services;
 
 import org.apereo.cas.services.AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy;
 import org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicy;
+import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
@@ -42,7 +43,14 @@ public class DefaultRegisteredServiceJsonSerializerTests {
 
     @Test
     public void verifySsoPolicySerialization() {
+        val policyWritten = new DefaultRegisteredServiceAcceptableUsagePolicy();
+        policyWritten.setEnabled(true);
+        policyWritten.setMessageCode("example.code");
+        policyWritten.setText("example text");
+
         val s = new RegexRegisteredService();
+        s.setAcceptableUsagePolicy(policyWritten);
+        
         val policy = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
         policy.addPolicies(Arrays.asList(
             new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1),

@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-saml-idp")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class SamlIdPProfileProperties implements Serializable {
 
     private static final long serialVersionUID = -3218075783676789852L;
@@ -38,6 +40,7 @@ public class SamlIdPProfileProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-saml-idp")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Saml2SloProfile implements Serializable {
         private static final long serialVersionUID = 1976431439191949383L;
 
@@ -51,6 +54,7 @@ public class SamlIdPProfileProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-saml-idp")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Saml2SsoProfile implements Serializable {
         private static final long serialVersionUID = 6576431439191949383L;
 
@@ -64,6 +68,7 @@ public class SamlIdPProfileProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-saml-idp")
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Saml2SsoPostSimpleSignProfile implements Serializable {
         private static final long serialVersionUID = 2276431439191949383L;
 

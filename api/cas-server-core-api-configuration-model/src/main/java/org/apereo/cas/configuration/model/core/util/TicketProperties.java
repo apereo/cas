@@ -11,6 +11,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -24,6 +25,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class TicketProperties implements Serializable {
 
     private static final long serialVersionUID = 5586947805593202037L;

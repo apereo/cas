@@ -51,9 +51,9 @@ public class LoggingCasEventListener {
     @EventListener
     @Async
     public void logTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent e) {
-        val tgtId = sanitize(e.getTgtId());
+        val tgtId = sanitize(e.getId());
         LOGGER.debug(GRANTED_TGT_MSG,
-            e.getTgtCreationTime(),
+            e.getCreationTime(),
             tgtId,
             e.getTimeToLive(),
             e.getTimeToIdle(),
@@ -90,9 +90,9 @@ public class LoggingCasEventListener {
     @EventListener
     @Async
     public void logTicketGrantingTicketDestroyedEvent(final CasTicketGrantingTicketDestroyedEvent e) {
-        val tgtId = sanitize(e.getTgtId());
+        val tgtId = sanitize(e.getId());
         LOGGER.debug(DESTROYED_TGT_MSG,
-            e.getTgtCreationTime(),
+            e.getCreationTime(),
             tgtId,
             e.getTimeToLive(),
             e.getTimeToIdle(),

@@ -16,4 +16,9 @@ public interface ClientCustomPropertyConstants {
      * Property to indicate whether auto-redirect should execute for this client.
      */
     String CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT = "autoRedirect";
+
+    /**
+     * CSS class assigned to this client to be used in the UI.
+     */
+    String CLIENT_CUSTOM_PROPERTY_CSS_CLASS = "cssClass";
 }

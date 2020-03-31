@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.hjson.JsonValue;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
@@ -448,7 +449,7 @@ public class OAuth20Utils {
     public static String getClientIdFromAuthenticatedProfile(final CommonProfile profile) {
         val attrs = new HashMap<>(profile.getAttributes());
         attrs.putAll(profile.getAuthenticationAttributes());
-        
+
         if (attrs.containsKey(OAuth20Constants.CLIENT_ID)) {
             val attribute = attrs.get(OAuth20Constants.CLIENT_ID);
             return CollectionUtils.toCollection(attribute, ArrayList.class).get(0).toString();
@@ -468,7 +469,7 @@ public class OAuth20Utils {
         if (StringUtils.isBlank(claims)) {
             return new HashMap<>(0);
         }
-        return MAPPER.readValue(claims, Map.class);
+        return MAPPER.readValue(JsonValue.readHjson(claims).toString(), Map.class);
     }
 
     /**
@@ -511,5 +512,15 @@ public class OAuth20Utils {
         val clientSecret = context.getRequestParameter(OAuth20Constants.CLIENT_SECRET)
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
         return Pair.of(clientId, clientSecret);
+    }
+
+    /**
+     * Is the registered service need authentication?
+     *
+     * @param registeredService the registered service
+     * @return whether the service need authentication
+     */
+    public boolean doesServiceNeedAuthentication(final OAuthRegisteredService registeredService) {
+        return StringUtils.isNotBlank(registeredService.getClientSecret());
     }
 }

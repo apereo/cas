@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.core.io.ClassPathResource;
 
 /**
@@ -16,6 +17,7 @@ import org.springframework.core.io.ClassPathResource;
 @RequiresModule(name = "cas-server-support-yaml-service-registry")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class YamlServiceRegistryProperties extends SpringResourceProperties {
 
     private static final long serialVersionUID = 4863603996990314548L;

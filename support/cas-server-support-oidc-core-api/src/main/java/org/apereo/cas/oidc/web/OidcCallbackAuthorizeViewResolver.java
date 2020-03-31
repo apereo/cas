@@ -32,7 +32,7 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
             val result = manager.get(true);
             if (result.isPresent()) {
                 LOGGER.trace("Redirecting to URL [{}] without prompting for login", url);
-                return new ModelAndView(url);
+                return new ModelAndView(new RedirectView(url));
             }
             val originalRedirectUrl = ctx.getRequestParameter(OAuth20Constants.REDIRECT_URI);
 

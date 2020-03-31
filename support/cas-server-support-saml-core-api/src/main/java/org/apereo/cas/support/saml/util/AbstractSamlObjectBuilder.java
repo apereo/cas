@@ -130,6 +130,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         LOGGER.trace("Attempting to construct an instance of Document from xml: [{}]", xmlString);
         try {
             val builder = new SAXBuilder();
+            builder.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
             builder.setFeature("http://xml.org/sax/features/external-general-entities", false);
             builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             return builder.build(new ByteArrayInputStream(xmlString.getBytes(Charset.defaultCharset())));

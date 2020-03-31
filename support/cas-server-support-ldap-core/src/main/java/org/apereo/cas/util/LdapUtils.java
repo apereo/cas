@@ -885,6 +885,7 @@ public class LdapUtils {
     }
 
     private static SaslConfig getSaslConfigFrom(final AbstractLdapProperties l) {
+
         if (Mechanism.valueOf(l.getSaslMechanism()) == Mechanism.DIGEST_MD5) {
             val sc = new SaslConfig();
             sc.setMechanism(Mechanism.DIGEST_MD5);
@@ -1003,7 +1004,9 @@ public class LdapUtils {
                     break;
                 case RECURSIVE_ENTRY:
                     val recursive = h.getRecursive();
-                    searchResultHandlers.add(new RecursiveResultHandler(recursive.getSearchAttribute(), recursive.getMergeAttributes().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
+                    searchResultHandlers.add(
+                        new RecursiveResultHandler(recursive.getSearchAttribute(),
+                            recursive.getMergeAttributes().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
                     break;
                 default:
                     break;

@@ -21,20 +21,17 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 4.2
  */
 @Slf4j
-public class DefaultAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
+public class DefaultAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository {
 
     private static final long serialVersionUID = -3059445754626980894L;
 
     private static final String AUP_ACCEPTED = "AUP_ACCEPTED";
 
-    private final AcceptableUsagePolicyProperties aupProperties;
-
     private final Map<String, Boolean> policyMap = new ConcurrentHashMap<>();
 
     public DefaultAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
                                                   final AcceptableUsagePolicyProperties aupProperties) {
-        super(ticketRegistrySupport, null);
-        this.aupProperties = aupProperties;
+        super(ticketRegistrySupport, aupProperties);
     }
 
     @Override
@@ -48,7 +45,7 @@ public class DefaultAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
         }
         val principal = authentication.getPrincipal();
         if (map.containsKey(key)) {
-            val accepted = (boolean) map.getOrDefault(key, Boolean.FALSE);
+            val accepted = (boolean) map.getOrDefault(key, Boolean.FALSE) || isUsagePolicyAcceptedBy(principal);
             return new AcceptableUsagePolicyStatus(accepted, principal);
         }
         return AcceptableUsagePolicyStatus.denied(principal);
@@ -64,7 +61,7 @@ public class DefaultAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
     }
 
     private Pair<String, Map> getKeyAndMap(final RequestContext requestContext, final Credential credential) {
-        switch (aupProperties.getScope()) {
+        switch (aupProperties.getInMemory().getScope()) {
             case GLOBAL:
                 if (credential == null) {
                     LOGGER.debug("Falling back to AUP scope AUTHENTICATION because credential is null");
