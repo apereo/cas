@@ -177,7 +177,7 @@ public class WsFederationHelper {
             credential.setNotBefore(DateTimeUtils.zonedDateTimeOf(conditions.getNotBefore()));
             credential.setNotOnOrAfter(DateTimeUtils.zonedDateTimeOf(conditions.getNotOnOrAfter()));
             if (!conditions.getAudienceRestrictionConditions().isEmpty()) {
-                credential.setAudience(conditions.getAudienceRestrictionConditions().get(0).getAudiences().get(0).getUri());
+                credential.setAudience(conditions.getAudienceRestrictionConditions().get(0).getAudiences().get(0).getURI());
             }
         }
         if (!assertion.getAuthenticationStatements().isEmpty()) {

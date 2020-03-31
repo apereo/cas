@@ -6,8 +6,7 @@ dependencies {
     api libraries.jdom
     api libraries.xmlapis
     api libraries.apachevelocity
-    
-    implementation libraries.shibidp
+
     implementation libraries.shibidpjavasupport
     
     implementation project(":core:cas-server-core-web-api")
