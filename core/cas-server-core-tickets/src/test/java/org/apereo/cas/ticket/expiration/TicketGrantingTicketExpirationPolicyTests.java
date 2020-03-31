@@ -16,6 +16,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -54,8 +55,9 @@ public class TicketGrantingTicketExpirationPolicyTests {
          */
         val creationTime = ticketGrantingTicket.getCreationTime();
         while (creationTime.plus(HARD_TIMEOUT - SLIDING_TIMEOUT / 2, ChronoUnit.SECONDS)
-            .isAfter(org.apereo.cas.util.DateTimeUtils.zonedDateTimeOf(DateTimeUtils.currentTimeMillis()))) {
-            ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
+            .isAfter(org.apereo.cas.util.DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(DateTimeUtils.currentTimeMillis())))) {
+            ticketGrantingTicket.grantServiceTicket(TGT_ID,
+                RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
 
             val tt = DateTimeUtils.currentTimeMillis() + (SLIDING_TIMEOUT - TIMEOUT_BUFFER) * 1_000;
             DateTimeUtils.setCurrentMillisFixed(tt);
@@ -110,7 +112,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
 
         @Override
         protected ZonedDateTime getCurrentSystemTime() {
-            return org.apereo.cas.util.DateTimeUtils.zonedDateTimeOf(DateTimeUtils.currentTimeMillis());
+            return org.apereo.cas.util.DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(DateTimeUtils.currentTimeMillis()));
         }
     }
 }
