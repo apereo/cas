@@ -1,8 +1,14 @@
 package org.apereo.cas.consent;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlIdPAttributeDefinition;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
@@ -14,6 +20,8 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +43,10 @@ public class DefaultConsentEngine implements ConsentEngine {
     private final ConsentRepository consentRepository;
 
     private final ConsentDecisionBuilder consentDecisionBuilder;
+
+    private final SamlIdPProperties samlIdPProperties;
+
+    private final AttributeDefinitionStore attributeDefinitionStore;
 
     @Audit(action = "SAVE_CONSENT",
         actionResolverName = "SAVE_CONSENT_ACTION_RESOLVER",
@@ -80,7 +92,38 @@ public class DefaultConsentEngine implements ConsentEngine {
         LOGGER.debug("Retrieving consentable attributes for [{}]", registeredService);
         val policy = registeredService.getAttributeReleasePolicy();
         if (policy != null) {
-            return policy.getConsentableAttributes(authentication.getPrincipal(), service, registeredService);
+            Map<String, List<Object>> attributes = policy.getConsentableAttributes(authentication.getPrincipal(), service, registeredService);
+
+            // get friendly names if registeredService is instance of SamlRegisteredService
+            if (registeredService instanceof SamlRegisteredService) {
+                val friendlyAttributes = new HashMap<String, List<Object>>();
+                val samlRegisteredService = (SamlRegisteredService) registeredService;
+                val globalFriendlyNames = samlIdPProperties.getAttributeFriendlyNames();
+                val friendlyNames = new HashMap<String, String>(CollectionUtils.convertDirectedListToMap(globalFriendlyNames));
+
+                attributeDefinitionStore.getAttributeDefinitions()
+                    .stream()
+                    .filter(defn -> defn instanceof SamlIdPAttributeDefinition)
+                    .map(SamlIdPAttributeDefinition.class::cast)
+                    .filter(defn -> StringUtils.isNotBlank(defn.getFriendlyName()))
+                    .forEach(defn -> friendlyNames.put(defn.getKey(), defn.getFriendlyName()));
+
+                friendlyNames.putAll(samlRegisteredService.getAttributeFriendlyNames());
+
+                for (val e : attributes.entrySet()) {
+                    if (e.getValue() != null && ((Collection<?>) e.getValue()).isEmpty()) {
+                        LOGGER.info("Skipping attribute [{}] because it does not have any values.", e.getKey());
+                        continue;
+                    }
+                    val friendlyName = friendlyNames.getOrDefault(e.getKey(), e.getKey());
+
+                    friendlyAttributes.put(friendlyName, e.getValue());
+                }
+
+                return friendlyAttributes;
+            }
+
+            return attributes;
         }
         return new LinkedHashMap<>(MAP_SIZE);
     }

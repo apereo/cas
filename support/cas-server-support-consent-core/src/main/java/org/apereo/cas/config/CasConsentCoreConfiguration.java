@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.AttributeConsentReportEndpoint;
 import org.apereo.cas.consent.AttributeReleaseConsentCipherExecutor;
@@ -51,11 +52,15 @@ public class CasConsentCoreConfiguration {
     @Qualifier("returnValueResourceResolver")
     private ObjectProvider<AuditResourceResolver> returnValueResourceResolver;
 
+    @Autowired
+    @Qualifier("attributeDefinitionStore")
+    private ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore;
+
     @ConditionalOnMissingBean(name = "consentEngine")
     @Bean
     @RefreshScope
     public ConsentEngine consentEngine() {
-        return new DefaultConsentEngine(consentRepository(), consentDecisionBuilder());
+        return new DefaultConsentEngine(consentRepository(), consentDecisionBuilder(), casProperties.getAuthn().getSamlIdp(), attributeDefinitionStore.getObject());
     }
 
     @ConditionalOnMissingBean(name = "consentCipherExecutor")
