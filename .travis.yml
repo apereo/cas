@@ -197,6 +197,21 @@ jobs:
       script: ./ci/tests/radius/run-tests-radius.sh
       name: "Radius Tests"
     - stage: test
+      script: ./ci/tests/mysql/run-tests-mysql.sh
+      name: "MySQL Tests"
+    - stage: test
+      script: ./ci/tests/mssqlserver/run-tests-mssqlserver.sh
+      name: "MSSQL Server Tests"
+    - stage: test
+      script: ./ci/tests/postgres/run-tests-postgres.sh
+      name: "PostgreSQL Tests"
+    - stage: test
+      script: ./ci/tests/mariadb/run-tests-mariadb.sh
+      name: "MariaDb Tests"
+    - stage: test
+      script: ./ci/tests/oracle/run-tests-oracle.sh
+      name: "Oracle Tests"
+    - stage: test
       script: ./ci/tests/cassandra/run-tests-cassandra.sh
       name: "Apache Cassandra Tests"
     - stage: test
@@ -223,21 +238,6 @@ jobs:
     - stage: test
       script: ./ci/tests/couchdb/run-tests-couchdb.sh
       name: "Apache CouchDb Tests"
-    - stage: test
-      script: ./ci/tests/mysql/run-tests-mysql.sh
-      name: "MySQL Tests"
-    - stage: test
-      script: ./ci/tests/mssqlserver/run-tests-mssqlserver.sh
-      name: "MSSQL Server Tests"
-    - stage: test
-      script: ./ci/tests/postgres/run-tests-postgres.sh
-      name: "PostgreSQL Tests"
-    - stage: test
-      script: ./ci/tests/mariadb/run-tests-mariadb.sh
-      name: "MariaDb Tests"
-    - stage: test
-      script: ./ci/tests/oracle/run-tests-oracle.sh
-      name: "Oracle Tests"
     - stage: test
       script: ./ci/tests/activemq/run-tests-activemq.sh
       name: "Apache ActiveMQ Tests"

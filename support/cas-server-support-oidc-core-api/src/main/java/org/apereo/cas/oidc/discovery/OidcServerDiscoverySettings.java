@@ -3,7 +3,6 @@ package org.apereo.cas.oidc.discovery;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -20,24 +19,27 @@ import java.util.List;
 @Getter
 @Setter
 public class OidcServerDiscoverySettings {
-
-    @JsonIgnore
-    private final CasConfigurationProperties casProperties;
-
     @JsonProperty
     private final String issuer;
+
     @JsonIgnore
     private final String serverPrefix;
+
     @JsonProperty("scopes_supported")
     private List<String> scopesSupported;
+
     @JsonProperty("response_types_supported")
     private List<String> responseTypesSupported;
+
     @JsonProperty("subject_types_supported")
     private List<String> subjectTypesSupported;
+
     @JsonProperty("claim_types_supported")
     private List<String> claimTypesSupported;
+
     @JsonProperty("claims_supported")
     private List<String> claimsSupported;
+
     @JsonProperty("grant_types_supported")
     private List<String> grantTypesSupported;
 
@@ -74,10 +76,15 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("request_parameter_supported")
     private boolean requestParameterSupported;
 
+    @JsonProperty("backchannel_logout_supported")
+    private boolean backchannelLogoutSupported;
+
+    @JsonProperty("frontchannel_logout_supported")
+    private boolean frontchannelLogoutSupported;
+
     public OidcServerDiscoverySettings(final CasConfigurationProperties casProperties, final String issuer) {
         this.issuer = issuer;
         this.serverPrefix = casProperties.getServer().getPrefix();
-        this.casProperties = casProperties;
     }
 
     @JsonProperty("authorization_endpoint")
@@ -120,23 +127,13 @@ public class OidcServerDiscoverySettings {
         return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REVOCATION_URL);
     }
 
-    @JsonProperty("backchannel_logout_supported")
-    public boolean getBackchannelLogoutSupported() {
-        return this.casProperties.getAuthn().getOidc().getLogout().isBackchannelLogoutSupported();
-    }
-
     @JsonProperty("backchannel_logout_session_supported")
-    public boolean getBackchannelLogoutSessionSupported() {
-        return getBackchannelLogoutSupported();
+    public boolean isBackchannelLogoutSessionSupported() {
+        return isBackchannelLogoutSupported();
     }
-
-    @JsonProperty("frontchannel_logout_supported")
-    public boolean getFrontchannelLogoutSupported() {
-        return this.casProperties.getAuthn().getOidc().getLogout().isFrontchannelLogoutSupported();
-    }
-
+    
     @JsonProperty("frontchannel_logout_session_supported")
-    public boolean getFrontchannelLogoutSessionSupported() {
-        return getFrontchannelLogoutSupported();
+    public boolean isFrontchannelLogoutSessionSupported() {
+        return isFrontchannelLogoutSupported();
     }
 }
