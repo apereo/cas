@@ -56,4 +56,21 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests extends BaseOAuth20Au
         authenticator.validate(credentials, ctx);
         assertNull(credentials.getUserProfile());
     }
+
+    @Test
+    public void verifyAuthenticationWithGrantTypeRefreshTokenAndClientWithoutPassword() {
+        val refreshToken = getRefreshToken(serviceWithoutSecret);
+        ticketRegistry.addTicket(refreshToken);
+        
+        val credentials = new UsernamePasswordCredentials("serviceWithoutSecret", refreshToken.getId());
+        val request = new MockHttpServletRequest();
+        val ctx = new JEEContext(request, new MockHttpServletResponse());
+
+        request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name());
+        request.addParameter(OAuth20Constants.CLIENT_ID, "serviceWithoutSecret");
+        request.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
+
+        authenticator.validate(credentials, ctx);
+        assertNull(credentials.getUserProfile());
+    }
 }
