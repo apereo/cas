@@ -12,7 +12,7 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 @Slf4j
 public class TokenTicketCipherExecutor extends BaseStringCipherExecutor {
     public TokenTicketCipherExecutor() {
-        this(null, null, null, false, false);
+        this(null, null, null, true, true);
     }
 
     public TokenTicketCipherExecutor(final String secretKeyEncryption,
