@@ -5,7 +5,6 @@ import org.apereo.cas.config.CouchDbMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.trusted.MultifactorAuthenticationTrustRecordCouchDbRepository;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
-import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
@@ -35,11 +34,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @Getter
 @EnabledIfPortOpen(port = 5984)
 public class CouchDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
-
-    @Autowired
-    @Qualifier("mfaTrustEngine")
-    protected MultifactorAuthenticationTrustStorage mfaTrustEngine;
-
+    
     @Autowired
     @Qualifier("mfaTrustCouchDbFactory")
     private CouchDbConnectorFactory couchDbFactory;

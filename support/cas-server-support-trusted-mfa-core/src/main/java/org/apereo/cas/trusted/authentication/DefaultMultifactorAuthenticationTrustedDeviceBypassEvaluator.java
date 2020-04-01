@@ -36,7 +36,7 @@ public class DefaultMultifactorAuthenticationTrustedDeviceBypassEvaluator implem
         val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();
 
-        val mfaPolicy = registeredService.getMultifactorPolicy();
+        val mfaPolicy = registeredService != null ? registeredService.getMultifactorPolicy() : null;
         return mfaPolicy != null && mfaPolicy.isBypassTrustedDeviceEnabled();
     }
 }

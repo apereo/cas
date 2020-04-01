@@ -12,6 +12,7 @@ import org.apereo.cas.trusted.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 
+import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ import org.springframework.webflow.execution.Action;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-import static org.apereo.cas.trusted.BeanNames.*;
+import static org.apereo.cas.trusted.BeanNames.BEAN_DEVICE_FINGERPRINT_STRATEGY;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -41,10 +42,23 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
 @Tag("MFA")
+@Getter
 public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
+    @Autowired
+    @Qualifier("mfaTrustEngine")
+    protected MultifactorAuthenticationTrustStorage mfaTrustEngine;
+
     @Autowired
     @Qualifier("mfaVerifyTrustAction")
     protected Action mfaVerifyTrustAction;
+
+    @Autowired
+    @Qualifier("mfaSetTrustAction")
+    protected Action mfaSetTrustAction;
+
+    @Autowired
+    @Qualifier("mfaPrepareTrustDeviceViewAction")
+    protected Action mfaPrepareTrustDeviceViewAction;
 
     @Autowired
     @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY)
@@ -74,8 +88,6 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         assertFalse(getMfaTrustEngine().get(now).isEmpty());
         assertFalse(getMfaTrustEngine().get(record.getPrincipal(), now).isEmpty());
     }
-
-    public abstract MultifactorAuthenticationTrustStorage getMfaTrustEngine();
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
