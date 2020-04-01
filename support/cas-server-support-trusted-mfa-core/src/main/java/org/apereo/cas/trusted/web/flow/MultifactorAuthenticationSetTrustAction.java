@@ -29,12 +29,19 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 @Getter
 public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
-    private static final String PARAM_NAME_DEVICE_NAME = "deviceName";
+    /**
+     * Parameter to indicate the device name.
+     */
+    static final String PARAM_NAME_DEVICE_NAME = "deviceName";
 
     private final MultifactorAuthenticationTrustStorage storage;
+
     private final DeviceFingerprintStrategy deviceFingerprintStrategy;
+
     private final TrustedDevicesMultifactorProperties trustedProperties;
+
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+
     private final MultifactorAuthenticationTrustedDeviceBypassEvaluator bypassEvaluator;
 
     @Override
@@ -47,7 +54,7 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
 
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val service = WebUtils.getService(requestContext);
-        
+
         if (bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authn)) {
             LOGGER.debug("Trusted device registration is disabled for [{}]", registeredService);
             return success();
@@ -59,7 +66,7 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
         val providedDeviceName = StringUtils.isNotBlank(deviceName);
         if (providedDeviceName) {
             if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
-                LOGGER.debug("Attempt to store trusted authentication record for [{}] as device [{}]", principal, deviceName);
+                LOGGER.debug("Attempting to store trusted authentication record for [{}] as device [{}]", principal, deviceName);
                 val fingerprint = deviceFingerprintStrategy.determineFingerprint(principal, requestContext, true);
                 val record = MultifactorAuthenticationTrustRecord.newInstance(principal,
                     MultifactorAuthenticationTrustUtils.generateGeography(),
@@ -72,6 +79,7 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
             MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
                 authn,
                 trustedProperties.getAuthenticationContextAttribute());
+            WebUtils.putAuthentication(authn, requestContext);
         } else {
             LOGGER.debug("No device name is provided. Trusted authentication record is not stored and tracked for the session");
         }

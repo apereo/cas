@@ -7,6 +7,8 @@ import org.apereo.cas.trusted.authentication.storage.fingerprint.ClientIpDeviceF
 import org.apereo.cas.trusted.authentication.storage.fingerprint.DefaultDeviceFingerprintStrategyTests;
 import org.apereo.cas.trusted.authentication.storage.fingerprint.GeoLocationDeviceFingerprintComponentExtractorTests;
 import org.apereo.cas.trusted.authentication.storage.fingerprint.UserAgentDeviceFingerprintComponentExtractorTests;
+import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationPrepareTrustDeviceViewActionTests;
+import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustActionTests;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustActionTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -26,6 +28,8 @@ import org.junit.runner.RunWith;
     InMemoryMultifactorAuthenticationTrustStorageTests.class,
     MultifactorAuthenticationVerifyTrustActionTests.class,
     DefaultDeviceFingerprintStrategyTests.class,
+    MultifactorAuthenticationSetTrustActionTests.class,
+    MultifactorAuthenticationPrepareTrustDeviceViewActionTests.class,
     GeoLocationDeviceFingerprintComponentExtractorTests.class,
     MultifactorAuthenticationTrustStorageCleanerTests.class
 })
