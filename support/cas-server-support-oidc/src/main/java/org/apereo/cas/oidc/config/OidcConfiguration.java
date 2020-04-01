@@ -34,6 +34,7 @@ import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcRestfulWebFingerUser
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequestSerializer;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
+import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheExpirationPolicy;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheLoader;
@@ -104,7 +105,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.StringSerializer;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -384,6 +384,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "oidcCasClientRedirectActionBuilder")
+    @RefreshScope
     public OAuth20CasClientRedirectActionBuilder oidcCasClientRedirectActionBuilder() {
         return new OidcCasClientRedirectActionBuilder(oidcAuthorizationRequestSupport());
     }
@@ -406,18 +408,21 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "oidcAuthorizationRequestSupport")
     public OidcAuthorizationRequestSupport oidcAuthorizationRequestSupport() {
         return new OidcAuthorizationRequestSupport(ticketGrantingTicketCookieGenerator.getObject(), ticketRegistrySupport.getObject());
     }
 
     @ConditionalOnMissingBean(name = "oidcPrincipalFactory")
     @Bean
+    @RefreshScope
     public PrincipalFactory oidcPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcAttributeToScopeClaimMapper")
     public OidcAttributeToScopeClaimMapper oidcAttributeToScopeClaimMapper() {
         val mappings = casProperties.getAuthn().getOidc().getClaimsMap();
         return new OidcDefaultAttributeToScopeClaimMapper(mappings);
@@ -466,6 +471,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @ConditionalOnMissingBean(name = "clientRegistrationRequestSerializer")
     @Bean
+    @RefreshScope
     public StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer() {
         return new OidcClientRegistrationRequestSerializer();
     }
@@ -489,15 +495,14 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     public OidcJwksEndpointController oidcJwksController() {
         val context = buildConfigurationContext();
-        val resource = SpringExpressionLanguageValueResolver.getInstance().resolve(
-            casProperties.getAuthn().getOidc().getJwksFile());
-        return new OidcJwksEndpointController(context, resourceLoader.getResource(resource));
+        return new OidcJwksEndpointController(context, oidcJsonWebKeystoreGeneratorService());
     }
 
     @Autowired
     @RefreshScope
     @Bean
-    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory") final OidcServerDiscoverySettings discoverySettings) {
+    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory")
+                                                                   final OidcServerDiscoverySettings discoverySettings) {
         val context = buildConfigurationContext();
         return new OidcWellKnownEndpointController(
             context, new OidcWebFingerDiscoveryService(oidcWebFingerUserInfoRepository(), discoverySettings));
@@ -532,6 +537,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "oidcUserProfileDataCreator")
+    @RefreshScope
     public OAuth20UserProfileDataCreator oidcUserProfileDataCreator() {
         return new OidcUserProfileDataCreator(servicesManager.getObject(), profileScopeToAttributesFilter());
     }
@@ -545,6 +552,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcMultifactorAuthenticationTrigger")
     public MultifactorAuthenticationTrigger oidcMultifactorAuthenticationTrigger() {
         return new OidcMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver.getObject(), this.applicationContext);
     }
@@ -587,6 +595,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcTokenSigningAndEncryptionService")
     public OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
         val oidc = casProperties.getAuthn().getOidc();
         return new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
@@ -595,6 +605,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcUserProfileSigningAndEncryptionService")
     public OAuth20TokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService() {
         val oidc = casProperties.getAuthn().getOidc();
         return new OidcUserProfileSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
@@ -603,6 +615,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "oidcServiceJsonWebKeystoreCache")
+    @RefreshScope
     public LoadingCache<OAuthRegisteredService, Optional<PublicJsonWebKey>> oidcServiceJsonWebKeystoreCache() {
         return Caffeine.newBuilder()
             .maximumSize(1)
@@ -611,23 +625,25 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "oidcDefaultJsonWebKeystoreCache")
+    @RefreshScope
     public LoadingCache<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCache() {
         val oidc = casProperties.getAuthn().getOidc();
         return Caffeine.newBuilder().maximumSize(1)
-            .expireAfterWrite(Duration.ofMinutes(oidc.getJwksCacheInMinutes()))
+            .expireAfterWrite(Duration.ofMinutes(oidc.getJwks().getJwksCacheInMinutes()))
             .build(oidcDefaultJsonWebKeystoreCacheLoader());
     }
 
     @Bean
     @SneakyThrows
-    public OidcDefaultJsonWebKeystoreCacheLoader oidcDefaultJsonWebKeystoreCacheLoader() {
-        val resource = SpringExpressionLanguageValueResolver.getInstance()
-            .resolve(casProperties.getAuthn().getOidc().getJwksFile());
-        val jwksFile = resourceLoader.getResource(resource);
-        return new OidcDefaultJsonWebKeystoreCacheLoader(jwksFile);
+    @ConditionalOnMissingBean(name = "oidcDefaultJsonWebKeystoreCacheLoader")
+    @RefreshScope
+    public CacheLoader<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCacheLoader() {
+        return new OidcDefaultJsonWebKeystoreCacheLoader(oidcJsonWebKeystoreGeneratorService());
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "oidcServiceJsonWebKeystoreCacheLoader")
     public CacheLoader<OAuthRegisteredService, Optional<PublicJsonWebKey>> oidcServiceJsonWebKeystoreCacheLoader() {
         return new OidcServiceJsonWebKeystoreCacheLoader(applicationContext);
     }
@@ -638,13 +654,11 @@ public class OidcConfiguration implements WebMvcConfigurer {
         return new OidcServerDiscoverySettingsFactory(casProperties);
     }
 
-    @Bean
+    @Bean(initMethod = "generate")
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreGeneratorService")
     public OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService() {
-        val s = new OidcJsonWebKeystoreGeneratorService(casProperties.getAuthn().getOidc());
-        s.generate();
-        return s;
+        return new OidcDefaultJsonWebKeystoreGeneratorService(casProperties.getAuthn().getOidc());
     }
 
     @Bean
@@ -784,12 +798,12 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @RefreshScope
     public SingleLogoutServiceMessageHandler oidcSingleLogoutServiceMessageHandler() {
         return new OidcSingleLogoutServiceMessageHandler(httpClient.getObject(),
-                oidcSingleLogoutMessageCreator(),
-                servicesManager.getObject(),
-                singleLogoutServiceLogoutUrlBuilder.getObject(),
-                casProperties.getSlo().isAsynchronous(),
-                authenticationServiceSelectionPlan.getObject(),
-                casProperties.getAuthn().getOidc().getIssuer());
+            oidcSingleLogoutMessageCreator(),
+            servicesManager.getObject(),
+            singleLogoutServiceLogoutUrlBuilder.getObject(),
+            casProperties.getSlo().isAsynchronous(),
+            authenticationServiceSelectionPlan.getObject(),
+            casProperties.getAuthn().getOidc().getIssuer());
     }
 
     @Bean
