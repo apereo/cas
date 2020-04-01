@@ -238,8 +238,8 @@ public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     public void verifyExceptionNotThrown() {
         val context = AuditableContext.builder().build();
         val result = new RegisteredServiceAccessStrategyAuditableEnforcer().execute(context);
-        assertTrue(result.isExecutionFailure());
-        assertTrue(result.getException().isPresent());
+        assertFalse(result.isExecutionFailure());
+        assertFalse(result.getException().isPresent());
     }
 
     private static RegexRegisteredService createRegisteredService(final boolean enabled) {
