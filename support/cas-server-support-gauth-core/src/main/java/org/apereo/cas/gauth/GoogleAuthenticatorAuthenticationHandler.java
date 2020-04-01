@@ -71,11 +71,6 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
             throw new AccountNotFoundException(uid + " cannot be found in the registry");
         }
 
-        LOGGER.trace("Attempting to locate OTP token [{}] in token repository for [{}]...", otp, uid);
-        if (this.tokenRepository.exists(uid, otp)) {
-            throw new AccountExpiredException(uid + " cannot reuse OTP " + otp + " as it may be expired/invalid");
-        }
-
         LOGGER.debug("Attempting to authorize OTP token [{}]...", otp);
         var isCodeValid = this.googleAuthenticatorInstance.authorize(acct.getSecretKey(), otp);
 
