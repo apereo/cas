@@ -14,17 +14,22 @@ else
     exit $retVal
 fi
 
-sudo docker exec -it mssql-server /opt/mssql-tools/bin/sqlcmd \
-   -S localhost -U SA -P 'p@ssw0rd' -Q 'CREATE DATABASE audit;'
+echo "Creating audit database"
+docker exec -it mssql-server /opt/mssql-tools/bin/sqlcmd \
+   -S localhost -U sa -P 'p@ssw0rd' -Q 'CREATE DATABASE audit;'
 
-sudo docker exec -it mssql-server /opt/mssql-tools/bin/sqlcmd \
+echo "Creating saml database"
+docker exec -it mssql-server /opt/mssql-tools/bin/sqlcmd \
    -S localhost -U SA -P 'p@ssw0rd' -Q 'CREATE DATABASE saml;'
 
-sudo docker exec -it mssql-server /opt/mssql-tools/bin/sqlcmd \
+echo "Creating samlidp database"
+docker exec -it mssql-server /opt/mssql-tools/bin/sqlcmd \
    -S localhost -U SA -P 'p@ssw0rd' -Q 'CREATE DATABASE samlidp;'
 
-sudo docker exec -it mssql-server /opt/mssql-tools/bin/sqlcmd \
+echo "Creating services database"
+docker exec -it mssql-server /opt/mssql-tools/bin/sqlcmd \
    -S localhost -U SA -P 'p@ssw0rd' -Q 'CREATE DATABASE services;'
 
-sudo docker exec -it mssql-server /opt/mssql-tools/bin/sqlcmd \
+echo "Creating yubikey database"
+docker exec -it mssql-server /opt/mssql-tools/bin/sqlcmd \
    -S localhost -U SA -P 'p@ssw0rd' -Q 'CREATE DATABASE yubikey;'

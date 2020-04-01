@@ -1,6 +1,8 @@
-package org.apereo.cas.oidc.jwks;
+package org.apereo.cas.oidc.jwks.generator;
 
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
@@ -26,13 +28,13 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKeystoreGeneratorService {
 
-
     private final OidcProperties oidcProperties;
-    
+
     @SneakyThrows
     @Override
     public Resource generate() {
-        val resolve = SpringExpressionLanguageValueResolver.getInstance().resolve(oidcProperties.getJwks().getJwksFile());
+        val resolve = SpringExpressionLanguageValueResolver.getInstance()
+            .resolve(oidcProperties.getJwks().getJwksFile());
         val resource = ResourceUtils.getRawResourceFrom(resolve);
         return generate(resource);
     }
@@ -45,16 +47,15 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
      */
     @SneakyThrows
     protected Resource generate(final Resource file) {
-        if (!ResourceUtils.doesResourceExist(file)) {
-            val jwk = generateJsonWebKey();
-            val jsonWebKeySet = new JsonWebKeySet(jwk);
-            val data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
-            val location = file.getFile();
-            FileUtils.write(location, data, StandardCharsets.UTF_8);
-            LOGGER.debug("Generated JSON web keystore at [{}]", location);
-        } else {
+        if (ResourceUtils.doesResourceExist(file)) {
             LOGGER.debug("Located JSON web keystore at [{}]", file);
+            return file;
         }
+        val jwk = generateJsonWebKey();
+        val data = new JsonWebKeySet(jwk).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
+        val location = file.getFile();
+        FileUtils.write(location, data, StandardCharsets.UTF_8);
+        LOGGER.debug("Generated JSON web keystore at [{}]", location);
         return file;
     }
 
