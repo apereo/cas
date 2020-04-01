@@ -1,4 +1,4 @@
-package org.apereo.cas.oidc.jwks;
+package org.apereo.cas.oidc.jwks.generator;
 
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.AbstractOidcTests;
@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
 
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("OIDC")
+@TestPropertySource(properties = "cas.authn.oidc.jwks.jwksFile=file:${#systemProperties['java.io.tmpdir']}/something.jwks")
 public class OidcDefaultJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
     private static File KEYSTORE;
 
@@ -30,7 +32,12 @@ public class OidcDefaultJsonWebKeystoreGeneratorServiceTests extends AbstractOid
         if (KEYSTORE.exists()) {
             assertTrue(KEYSTORE.delete());
         }
+    }
 
+    @Test
+    public void verifyOperation() {
+        val resource = oidcJsonWebKeystoreGeneratorService.generate();
+        assertTrue(resource.exists());
     }
 
     @Test

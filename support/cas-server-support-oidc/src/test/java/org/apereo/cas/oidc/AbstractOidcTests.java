@@ -204,7 +204,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcJsonWebKeystoreGeneratorService")
-    protected OidcJsonWebKeystoreGeneratorService oidcDefaultJsonWebKeystoreGeneratorService;
+    protected OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService;
 
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")

@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.oidc;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.configuration.support.RestEndpointProperties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -48,4 +49,17 @@ public class OidcJsonWebKeystoreProperties implements Serializable {
      * Accepted values are {@code RSA} or {@code EC}.
      */
     private String jwksType = "RSA";
+
+    /**
+     * Fetch JWKS via a REST endpoint.
+     */
+    private Rest rest = new Rest();
+
+    @RequiresModule(name = "cas-server-support-oidc", automated = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    public static class Rest extends RestEndpointProperties {
+        private static final long serialVersionUID = 3659099897056632608L;
+    }
 }

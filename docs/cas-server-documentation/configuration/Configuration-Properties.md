@@ -3450,11 +3450,26 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 ### OpenID Connect JWKS
 
 ```properties
-# cas.authn.oidc.jwks.jwks-file=file:/etc/cas/config/keystore.jwks
 # cas.authn.oidc.jwks.jwks-cache-in-minutes=60
 # cas.authn.oidc.jwks.jwks-key-size=2048
 # cas.authn.oidc.jwks.jwks-type=RSA|EC
 ```                         
+
+#### File-based JWKS
+
+Manage the JSON web keyset for OpenID Connect as a static file resource.
+
+```properties 
+# cas.authn.oidc.jwks.jwks-file=file:/etc/cas/config/keystore.jwks
+```                                                               
+
+#### REST-based JWKS
+
+Reach out to an external REST API to ask for the JSON web keyset. The expected response code is `200`
+where the response body should contain the contents of the JSON web keyset.
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.oidc.jwks.rest`.
 
 ### OpenID Connect Scopes & Claims
 
