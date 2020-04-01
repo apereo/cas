@@ -23,7 +23,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String, Optional<PublicJsonWebKey>> {
-    private final Resource jwksFile;
+    private final OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService;
 
     private static PublicJsonWebKey getJsonSigningWebKeyFromJwks(final JsonWebKeySet jwks) {
         if (jwks.getJsonWebKeys().isEmpty()) {
@@ -69,10 +69,11 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
      */
     private Optional<JsonWebKeySet> buildJsonWebKeySet() {
         try {
-            LOGGER.debug("Loading default JSON web key from [{}]", this.jwksFile);
-            if (this.jwksFile != null) {
-                LOGGER.debug("Retrieving default JSON web key from [{}]", this.jwksFile);
-                val jsonWebKeySet = buildJsonWebKeySet(this.jwksFile);
+            val jwksFile = oidcJsonWebKeystoreGeneratorService.generate();
+            LOGGER.debug("Loading default JSON web key from [{}]", jwksFile);
+            if (jwksFile != null) {
+                LOGGER.debug("Retrieving default JSON web key from [{}]", jwksFile);
+                val jsonWebKeySet = buildJsonWebKeySet(jwksFile);
 
                 if (jsonWebKeySet == null || jsonWebKeySet.getJsonWebKeys().isEmpty()) {
                     LOGGER.warn("No JSON web keys could be found");
@@ -113,6 +114,4 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
         }
         return Optional.of(key);
     }
-
-
 }

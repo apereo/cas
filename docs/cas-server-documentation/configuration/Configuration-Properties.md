@@ -3420,11 +3420,6 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # Skew ID tokens in minutes
 # cas.authn.oidc.skew=5
 
-# cas.authn.oidc.jwksFile=file:/etc/cas/config/keystore.jwks
-# cas.authn.oidc.jwksCacheInMinutes=60
-# cas.authn.oidc.jwksKeySize=2048
-# cas.authn.oidc.jwksType=RSA|EC
-
 # cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
 
 # cas.authn.oidc.subjectTypes=public,pairwise
@@ -3451,6 +3446,15 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
     A128GCMKW,A192GCMKW,A256GCMKW,ECDH-ES,ECDH-ES+A128KW,ECDH-ES+A192KW,ECDH-ES+A256KW
 # cas.authn.oidc.userInfoEncryptionEncodingValuesSupported=A128CBC-HS256,A192CBC-HS384,A256CBC-HS512,A128GCM,A192GCM,A256GCM
 ```
+  
+### OpenID Connect JWKS
+
+```properties
+# cas.authn.oidc.jwks.jwks-file=file:/etc/cas/config/keystore.jwks
+# cas.authn.oidc.jwks.jwks-cache-in-minutes=60
+# cas.authn.oidc.jwks.jwks-key-size=2048
+# cas.authn.oidc.jwks.jwks-type=RSA|EC
+```                         
 
 ### OpenID Connect Scopes & Claims
 
