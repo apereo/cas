@@ -5,6 +5,9 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegexRegisteredService;
+
+import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -32,7 +35,9 @@ public class DefaultMultifactorAuthenticationTrustedDeviceBypassEvaluator implem
         val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();
 
-        val mfaPolicy = registeredService.getMultifactorPolicy();
+        val mfaPolicy = Optional.ofNullable(registeredService)
+                                .orElse(new RegexRegisteredService())
+                                .getMultifactorPolicy();
         return mfaPolicy != null && mfaPolicy.isBypassTrustedDeviceEnabled();
     }
 }
