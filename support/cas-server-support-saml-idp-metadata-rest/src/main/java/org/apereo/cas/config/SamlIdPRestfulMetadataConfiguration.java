@@ -16,14 +16,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * This is {@link SamlIdPRestMetadataConfiguration}.
+ * This is {@link SamlIdPRestfulMetadataConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @Configuration("samlIdPRestMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlIdPRestMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurer {
+public class SamlIdPRestfulMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurer {
 
     @Autowired
     private CasConfigurationProperties casProperties;
