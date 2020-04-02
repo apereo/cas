@@ -252,13 +252,13 @@ public abstract class AbstractSamlProfileHandlerController {
             authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs()
                 .stream()
                 .filter(ref -> {
-                    val clazz = ref.getAuthnContextClassRef();
+                    val clazz = ref.getURI();
                     return mappings.containsKey(clazz);
                 })
                 .findFirst();
 
         if (p.isPresent()) {
-            val mappedClazz = mappings.get(p.get().getAuthnContextClassRef());
+            val mappedClazz = mappings.get(p.get().getURI());
             return initialUrl + '&' + samlProfileHandlerConfigurationContext.getCasProperties()
                 .getAuthn().getMfa().getRequestParameter() + '=' + mappedClazz;
         }

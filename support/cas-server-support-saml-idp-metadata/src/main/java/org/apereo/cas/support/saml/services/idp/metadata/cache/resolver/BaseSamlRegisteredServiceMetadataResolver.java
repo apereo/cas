@@ -25,6 +25,8 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.core.io.Resource;
 
 import javax.xml.namespace.QName;
+
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -263,8 +265,9 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      */
     protected void buildRequiredValidUntilFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
         if (service.getMetadataMaxValidity() > 0) {
-            val requiredValidUntilFilter = new RequiredValidUntilFilter(service.getMetadataMaxValidity());
-            metadataFilterList.add(requiredValidUntilFilter);
+            val filter = new RequiredValidUntilFilter();
+            filter.setMaxValidityInterval(Duration.ofSeconds(service.getMetadataMaxValidity()));
+            metadataFilterList.add(filter);
             LOGGER.debug("Added metadata RequiredValidUntilFilter with max validity of [{}]", service.getMetadataMaxValidity());
         } else {
             LOGGER.debug("No metadata maximum validity criteria is defined for [{}], so RequiredValidUntilFilter will not be invoked",

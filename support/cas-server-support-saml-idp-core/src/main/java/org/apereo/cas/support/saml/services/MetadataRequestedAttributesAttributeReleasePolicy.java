@@ -51,7 +51,7 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
         val releaseAttributes = new HashMap<String, List<Object>>();
         val sso = facade.getSsoDescriptor();
         if (sso != null) {
-            sso.getAttributeConsumingServices().forEach(svc -> svc.getRequestAttributes().stream().filter(attr -> {
+            sso.getAttributeConsumingServices().forEach(svc -> svc.getRequestedAttributes().stream().filter(attr -> {
                 val name = this.useFriendlyName ? attr.getFriendlyName() : attr.getName();
                 LOGGER.debug("Checking for requested attribute [{}] in metadata for [{}]", name, registeredService.getName());
                 return attributes.containsKey(name);
