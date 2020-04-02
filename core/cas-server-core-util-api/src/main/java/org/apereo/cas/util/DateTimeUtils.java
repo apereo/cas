@@ -149,13 +149,23 @@ public class DateTimeUtils {
     }
 
     /**
+     * Zoned date time.
+     *
+     * @param time the time
+     * @return the zoned date time
+     */
+    public static ZonedDateTime zonedDateTimeOf(final Instant time) {
+        return ZonedDateTime.from(time.atZone(ZoneOffset.UTC));
+    }
+
+    /**
      * Gets ZonedDateTime for ReadableInstant.
      *
      * @param time Time object to be converted.
      * @return ZonedDateTime representing time
      */
     public static ZonedDateTime zonedDateTimeOf(final ReadableInstant time) {
-        return zonedDateTimeOf(time.getMillis());
+        return zonedDateTimeOf(Instant.ofEpochMilli(time.getMillis()));
     }
 
     /**
@@ -186,7 +196,7 @@ public class DateTimeUtils {
      * @return ZonedDateTime representing time
      */
     public static ZonedDateTime zonedDateTimeOf(final Date time) {
-        return zonedDateTimeOf(time.getTime());
+        return zonedDateTimeOf(Instant.ofEpochMilli(time.getTime()));
     }
 
     /**

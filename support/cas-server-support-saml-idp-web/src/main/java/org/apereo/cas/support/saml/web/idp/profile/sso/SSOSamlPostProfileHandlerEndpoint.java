@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This is {@link SSOSamlPostProfileHandlerEndpoint}.
@@ -104,9 +105,10 @@ public class SSOSamlPostProfileHandlerEndpoint extends BaseCasActuatorEndpoint {
                 registeredService, entityId);
             if (adaptorResult.isPresent()) {
                 val adaptor = adaptorResult.get();
-                val messageContext = new MessageContext<>();
+                val messageContext = new MessageContext();
                 val scratch = messageContext.getSubcontext(ScratchContext.class, true);
-                scratch.getMap().put(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.FALSE);
+                val map = (Map) Objects.requireNonNull(scratch).getMap();
+                map.put(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.FALSE);
                 val assertion = getAssertion(username, password, entityId);
                 val object = this.responseBuilder.build(authnRequest, request, response, assertion,
                     registeredService, adaptor, SAMLConstants.SAML2_POST_BINDING_URI, messageContext);

@@ -52,7 +52,7 @@ public class SamlResponseAuditResourceResolverTests {
 
         val fault = mock(Fault.class);
         val actor = mock(FaultActor.class);
-        when(actor.getValue()).thenReturn("actor");
+        when(actor.getURI()).thenReturn("actor");
         val msg = mock(FaultString.class);
         when(msg.getValue()).thenReturn("message");
         when(fault.getMessage()).thenReturn(msg);

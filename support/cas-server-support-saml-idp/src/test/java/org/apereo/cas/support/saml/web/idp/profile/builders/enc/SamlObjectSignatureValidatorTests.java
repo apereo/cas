@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
@@ -28,6 +27,9 @@ import org.pac4j.saml.sso.impl.SAML2AuthnRequestBuilder;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.File;
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link SamlObjectSignatureValidatorTests}.
@@ -38,8 +40,11 @@ import java.io.File;
 @Tag("SAML")
 public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
     private SAML2Configuration saml2ClientConfiguration;
+
     private SAML2MessageContext saml2MessageContext;
-    private MessageContext<SAMLObject> samlContext;
+
+    private MessageContext samlContext;
+
     private SamlRegisteredServiceServiceProviderMetadataFacade adaptor;
 
     @BeforeEach
@@ -57,26 +62,34 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         saml2Client.setCallbackUrl("http://callback.example.org");
         saml2Client.init();
 
-        samlContext = new MessageContext<>();
-        saml2MessageContext = new SAML2MessageContext(samlContext);
+        samlContext = new MessageContext();
+        saml2MessageContext = new SAML2MessageContext();
 
-        val peer = saml2MessageContext.getSubcontext(SAMLPeerEntityContext.class, true);
+        val peer = saml2MessageContext.getMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
+        assertNotNull(peer);
+
         peer.setEntityId("https://cas.example.org/idp");
         val md = peer.getSubcontext(SAMLMetadataContext.class, true);
+        assertNotNull(md);
         val idpResolver = SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, true);
-        md.setRoleDescriptor(idpResolver.resolveSingle(new CriteriaSet(
-            new EntityIdCriterion(peer.getEntityId()), new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME))));
 
-        val self = saml2MessageContext.getSubcontext(SAMLSelfEntityContext.class, true);
+        md.setRoleDescriptor(idpResolver.resolveSingle(new CriteriaSet(
+            new EntityIdCriterion(Objects.requireNonNull(peer.getEntityId())),
+            new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME))));
+
+        val self = saml2MessageContext.getMessageContext().getSubcontext(SAMLSelfEntityContext.class, true);
+        assertNotNull(self);
         self.setEntityId(saml2ClientConfiguration.getServiceProviderEntityId());
 
         val sp = self.getSubcontext(SAMLMetadataContext.class, true);
+        assertNotNull(sp);
         val spRes = new InMemoryResourceMetadataResolver(new File(spMetadataPath), openSamlConfigBean);
         spRes.setId(getClass().getSimpleName());
         spRes.initialize();
         val spResolver = SamlIdPUtils.getRoleDescriptorResolver(spRes, true);
         sp.setRoleDescriptor(spResolver.resolveSingle(new CriteriaSet(
-            new EntityIdCriterion(self.getEntityId()), new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME))));
+            new EntityIdCriterion(Objects.requireNonNull(self.getEntityId())),
+            new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME))));
 
         val service = new SamlRegisteredService();
         service.setName("Sample");

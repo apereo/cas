@@ -19,7 +19,6 @@ dependencies {
     implementation project(":support:cas-server-support-mongo-core")
     
     implementation libraries.mongo
-    implementation libraries.shibidp
     implementation libraries.shibidpjavasupport
 
     testImplementation project(":core:cas-server-core-cookie")
