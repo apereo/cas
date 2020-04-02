@@ -23,6 +23,10 @@ public class DefaultMultifactorAuthenticationTrustedDeviceBypassEvaluator implem
     public boolean shouldBypassTrustedDevice(final RegisteredService registeredService,
                                              final Service service,
                                              final Authentication authentication) {
+        if (registeredService == null && service == null) {
+            return false;
+        }
+
         val audit = AuditableContext.builder()
             .service(service)
             .authentication(authentication)
