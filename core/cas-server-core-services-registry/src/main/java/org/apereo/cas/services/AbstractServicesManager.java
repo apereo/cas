@@ -114,7 +114,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public RegisteredService findServiceBy(final Service service) {
-        if(service == null) {
+        if (service == null) {
             return null;
         }
 
