@@ -5,9 +5,6 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
-
-import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -26,20 +23,20 @@ public class DefaultMultifactorAuthenticationTrustedDeviceBypassEvaluator implem
     public boolean shouldBypassTrustedDevice(final RegisteredService registeredService,
                                              final Service service,
                                              final Authentication authentication) {
-        if (registeredService != null) {
-            val audit = AuditableContext.builder()
-                .service(service)
-                .authentication(authentication)
-                .registeredService(registeredService)
-                .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
-                .build();
-            val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
-            accessResult.throwExceptionIfNeeded();
+        if (registeredService == null && service == null) {
+            return false;
         }
 
-        val mfaPolicy = Optional.ofNullable(registeredService)
-                                .map(RegisteredService::getMultifactorPolicy)
-                                .orElse(new DefaultRegisteredServiceMultifactorPolicy());
+        val audit = AuditableContext.builder()
+            .service(service)
+            .authentication(authentication)
+            .registeredService(registeredService)
+            .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
+            .build();
+        val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        accessResult.throwExceptionIfNeeded();
+
+        val mfaPolicy = registeredService.getMultifactorPolicy();
         return mfaPolicy != null && mfaPolicy.isBypassTrustedDeviceEnabled();
     }
 }
