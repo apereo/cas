@@ -4,14 +4,15 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.metadata.resolver.RestSamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
-import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("samlIdPRestMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlIdPRestfulMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurer {
+public class SamlIdPRestfulMetadataConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -33,13 +34,16 @@ public class SamlIdPRestfulMetadataConfiguration implements SamlRegisteredServic
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Bean
+    @ConditionalOnMissingBean(name = "restSamlRegisteredServiceMetadataResolver")
+    @RefreshScope
     public SamlRegisteredServiceMetadataResolver restSamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new RestSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject());
     }
 
-    @Override
-    public void configureMetadataResolutionPlan(final SamlRegisteredServiceMetadataResolutionPlan plan) {
-        plan.registerMetadataResolver(restSamlRegisteredServiceMetadataResolver());
+    @Bean
+    @ConditionalOnMissingBean(name = "restSamlRegisteredServiceMetadataResolutionPlanConfigurer")
+    public SamlRegisteredServiceMetadataResolutionPlanConfigurer restSamlRegisteredServiceMetadataResolutionPlanConfigurer() {
+        return plan -> plan.registerMetadataResolver(restSamlRegisteredServiceMetadataResolver());
     }
 }
