@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.LinkedHashSet;
@@ -56,12 +57,16 @@ public class UniquePrincipalAuthenticationPolicyTests {
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     @SneakyThrows
     public void verifyPolicyIsGoodUserNotFound() {
         this.ticketRegistry.deleteAll();
-        val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
-        assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"), new LinkedHashSet<>()));
+        val p = new UniquePrincipalAuthenticationPolicy();
+        assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
+            new LinkedHashSet<>(), applicationContext));
     }
 
     @Test
@@ -70,7 +75,8 @@ public class UniquePrincipalAuthenticationPolicyTests {
         this.ticketRegistry.deleteAll();
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TGT-1", CoreAuthenticationTestUtils.getAuthentication("casuser"),
             NeverExpiresExpirationPolicy.INSTANCE));
-        val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
-        assertFalse(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"), new LinkedHashSet<>()));
+        val p = new UniquePrincipalAuthenticationPolicy();
+        assertFalse(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
+            new LinkedHashSet<>(), applicationContext));
     }
 }
