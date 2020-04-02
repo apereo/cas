@@ -40,6 +40,7 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
     public MultifactorAuthenticationTrustRecord set(final MultifactorAuthenticationTrustRecord record) {
         LOGGER.debug("Stored authentication trust record for [{}]", record);
         record.setRecordKey(generateKey(record));
+        
         return setInternal(record);
     }
 
