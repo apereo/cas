@@ -108,7 +108,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
      * 1. When the grant type is {@code password}, in which case the authentication will be performed by {@code OAuth20UsernamePasswordAuthenticator}
      * 2. When request contains OAuth {@code code} which was issued with a {@code code_challenge}, in which case the authentication will be
      * performed by {{@code OAuth20ProofKeyCodeExchangeAuthenticator}
-     * 3. When the grant type is {@refresh_token} and the request doesn't have any secret, in which case the authentication will be performed
+     * 3. When the grant type is {@code refresh_token} and the request doesn't have any {@code client_secret}, in which case the authentication will be performed
      * by {@OAuth20RefreshTokenAuthenticator}
      *
      * @param context the context
@@ -128,7 +128,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
             && OAuth20Utils.isGrantType(grantType.get(), OAuth20GrantTypes.REFRESH_TOKEN)
             && context.getRequestParameter(OAuth20Constants.CLIENT_ID).isPresent()
             && !context.getRequestParameter(OAuth20Constants.CLIENT_SECRET).isPresent()) {
-            LOGGER.debug("Skipping Client credential authentication to use refresh_token authentication");
+            LOGGER.debug("Skipping client credential authentication to use refresh token authentication");
             return false;
         }
 

@@ -41,13 +41,12 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
     }
 
     /**
-     * RefreshTokenAuthenticator can only be used for a refresh token request of a "public" client.
+     * OAuth20RefreshTokenAuthenticator can only be used for a refresh token request of a "public" client.
      * An OAuth "public" client is one that does not define a secret like a mobile application.
      *
      * @param context the context
      * @return true if authenticator can validate credentials.
      */
-    @Override
     protected boolean canAuthenticate(final WebContext context) {
         val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
         val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
@@ -57,6 +56,7 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
             && context.getRequestParameter(OAuth20Constants.REFRESH_TOKEN).isPresent()) {
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getServicesManager(), clientId.get());
 
+            LOGGER.trace("Checking if the client [{}] is eligible for refresh token authentication", clientId.get());
             if (registeredService != null && !OAuth20Utils.doesServiceNeedAuthentication(registeredService)) {
                 return true;
             }
@@ -64,15 +64,15 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
         return false;
     }
 
-    @Override
     protected void validateCredentials(final UsernamePasswordCredentials credentials,
                                        final OAuthRegisteredService registeredService, final WebContext context) {
         val token = credentials.getPassword();
         LOGGER.trace("Received refresh token [{}] for authentication", token);
 
         val refreshToken = getTicketRegistry().getTicket(token, OAuth20RefreshToken.class);
-        if (refreshToken == null || refreshToken.isExpired() || !StringUtils.equals(refreshToken.getClientId(), credentials.getUsername())) {
-            LOGGER.error("Provided refresh token [{}] is either not found in the ticket registry or has expired or not related with the client provided");
+        val clientId = credentials.getUsername();
+        if (refreshToken == null || refreshToken.isExpired() || !StringUtils.equals(refreshToken.getClientId(), clientId)) {
+            LOGGER.error("Provided refresh token [{}] is either not found in the ticket registry, has expired or is not related to the client [{}]", token, clientId);
             throw new CredentialsException("Invalid token: " + token);
         }
     }
