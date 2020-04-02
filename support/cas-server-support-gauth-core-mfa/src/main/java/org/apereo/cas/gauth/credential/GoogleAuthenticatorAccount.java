@@ -31,6 +31,7 @@ public class GoogleAuthenticatorAccount extends OneTimeTokenAccount {
                                       @JsonProperty("secretKey") final String secretKey,
                                       @JsonProperty("validationCode") final int validationCode,
                                       @JsonProperty("scratchCodes") final List<Integer> scratchCodes) {
-        super(username, secretKey, validationCode, scratchCodes);
+        // Do not store the validation code that creates the account
+        super(username, secretKey, 0, scratchCodes);
     }
 }
