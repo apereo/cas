@@ -11,11 +11,14 @@ import lombok.Getter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link U2FCouchDbDeviceRepositoryTests}.
@@ -60,5 +63,10 @@ public class U2FCouchDbDeviceRepositoryTests extends AbstractU2FDeviceRepository
     public void tearDown() {
         couchDbRepository.deleteAll();
         couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
+    }
+
+    @Test
+    public void verifyOperation() {
+        assertNotNull(deviceRepository);
     }
 }
