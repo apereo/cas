@@ -57,7 +57,8 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c,
-                                                                                        final String originalPassword) throws GeneralSecurityException, PreventedException {
+                                                                                        final String originalPassword)
+        throws GeneralSecurityException, PreventedException {
         val username = c.getUsername();
         val password = c.getPassword();
         try {
