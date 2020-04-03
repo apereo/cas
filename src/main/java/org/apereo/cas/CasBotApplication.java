@@ -16,13 +16,11 @@
 
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.github.GitHubOperations;
 import org.apereo.cas.github.GitHubTemplate;
 import org.apereo.cas.github.RegexLinkParser;
-
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -77,9 +75,13 @@ public class CasBotApplication {
         @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
         public Map<String, String> home() {
             var map = new LinkedHashMap<String, String>();
-            map.put("name", repository.getOrganization() + '/' + repository.getName());
-            map.put("repository", repository.getGitHubProperties().getRepository().getUrl());
-            map.put("version", repository.getCurrentVersionInMaster().toString());
+            try {
+                map.put("name", repository.getOrganization() + '/' + repository.getName());
+                map.put("repository", repository.getGitHubProperties().getRepository().getUrl());
+                map.put("version", repository.getCurrentVersionInMaster().toString());
+            } catch (final Exception e) {
+                log.error(e.getMessage(), e);
+            }
             return map;
         }
     }

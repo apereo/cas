@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.val;
 import org.apereo.cas.github.CheckRun;
 import org.apereo.cas.github.CombinedCommitStatus;
 import org.apereo.cas.github.Commit;
@@ -22,6 +23,7 @@ import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Predicate;
@@ -46,6 +48,21 @@ public class MonitoredRepository {
         return l -> l.getName().equals(name.getTitle());
     }
 
+    public Version getCurrentVersionInMaster() {
+        try {
+            val rest = new RestTemplate();
+            val uri = URI.create(gitHubProperties.getRepository().getUrl() + "/raw/master/gradle.properties");
+            val entity = rest.getForEntity(uri, String.class);
+            val properties = new Properties();
+            properties.load(new StringReader(Objects.requireNonNull(entity.getBody())));
+            currentVersionInMaster = Version.valueOf(properties.get("version").toString());
+            log.info("Current master version is {}", currentVersionInMaster);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        throw new RuntimeException("Unable to determine version in master branch");
+    }
+
     private List<Label> getActiveLabels() {
         final List<Label> labels = new ArrayList<>();
         try {
@@ -64,15 +81,6 @@ public class MonitoredRepository {
     private List<Milestone> getActiveMilestones() {
         final List<Milestone> milestones = new ArrayList<>();
         try {
-            final RestTemplate rest = new RestTemplate();
-            final URI uri = URI.create(gitHubProperties.getRepository().getUrl() + "/raw/master/gradle.properties");
-            final ResponseEntity entity = rest.getForEntity(uri, String.class);
-            final Properties properties = new Properties();
-            properties.load(new StringReader(entity.getBody().toString()));
-            currentVersionInMaster = Version.valueOf(properties.get("version").toString());
-
-            log.info("Current master version is {}", currentVersionInMaster);
-
             Page<Milestone> page = gitHub.getMilestones(getOrganization(), getName());
             while (page != null) {
                 milestones.addAll(page.getContent());
@@ -110,8 +118,8 @@ public class MonitoredRepository {
     }
 
     public Optional<Milestone> getMilestoneForBranch(final String branch) {
-        List<Milestone> milestones = getActiveMilestones();
-        final Version branchVersion = Version.valueOf(branch.replace(".x", "." + Integer.MAX_VALUE));
+        val milestones = getActiveMilestones();
+        val branchVersion = Version.valueOf(branch.replace(".x", "." + Integer.MAX_VALUE));
         return milestones.stream()
             .filter(milestone -> {
                 final Version milestoneVersion = Version.valueOf(milestone.getTitle());
@@ -180,8 +188,8 @@ public class MonitoredRepository {
     }
 
     public List<CommitStatus> getPullRequestCommitStatuses(final PullRequest pr) {
-        final List<CommitStatus> results = new ArrayList<>();
-        Page<CommitStatus> pages = this.gitHub.getPullRequestCommitStatus(pr);
+        val results = new ArrayList<CommitStatus>();
+        var pages = this.gitHub.getPullRequestCommitStatus(pr);
         while (pages != null) {
             results.addAll(pages.getContent());
             pages = pages.next();
