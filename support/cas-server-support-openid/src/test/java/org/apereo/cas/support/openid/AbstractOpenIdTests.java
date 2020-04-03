@@ -54,7 +54,7 @@ import org.springframework.context.annotation.Import;
         "spring.mail.host=localhost",
         "spring.mail.port=25000"
     })
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class AbstractOpenIdTests {
 
     @ImportAutoConfiguration({

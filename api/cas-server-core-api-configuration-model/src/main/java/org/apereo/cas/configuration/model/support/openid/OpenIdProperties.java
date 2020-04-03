@@ -20,7 +20,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-openid")
 @Getter
 @Setter
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 @Accessors(chain = true)
 public class OpenIdProperties implements Serializable {
 

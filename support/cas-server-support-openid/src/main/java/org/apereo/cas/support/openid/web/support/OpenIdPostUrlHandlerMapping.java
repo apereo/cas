@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
  * @deprecated 6.2
  * @since 3.1
  */
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class OpenIdPostUrlHandlerMapping extends SimpleUrlHandlerMapping {
 
     @Override

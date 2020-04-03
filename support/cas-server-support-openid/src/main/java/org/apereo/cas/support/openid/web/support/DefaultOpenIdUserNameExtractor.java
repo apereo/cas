@@ -10,7 +10,7 @@ package org.apereo.cas.support.openid.web.support;
  * @deprecated 6.2
  * @since 3.1
  */
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class DefaultOpenIdUserNameExtractor implements OpenIdUserNameExtractor {
 
     @Override

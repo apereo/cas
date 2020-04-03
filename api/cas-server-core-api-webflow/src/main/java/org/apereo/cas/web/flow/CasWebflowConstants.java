@@ -785,7 +785,7 @@ public interface CasWebflowConstants {
      *
      * @deprecated Since 6.2
      */
-    @Deprecated(since = "6.2")
+    @Deprecated(since = "6.2.0")
     String ACTION_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
 
     /**
