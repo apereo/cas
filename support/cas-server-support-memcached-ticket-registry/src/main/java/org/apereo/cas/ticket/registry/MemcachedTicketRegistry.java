@@ -65,7 +65,7 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
         val clientFromPool = getClientFromPool();
         try {
             val ticket = encodeTicket(ticketToAdd);
-            LOGGER.debug("Adding ticket [{}]", ticket);
+            LOGGER.trace("Adding ticket [{}]", ticket);
             clientFromPool.set(ticket.getId(), getTimeout(ticketToAdd), ticket);
         } catch (final Exception e) {
             LOGGER.error("Failed adding [{}]", ticketToAdd, e);
