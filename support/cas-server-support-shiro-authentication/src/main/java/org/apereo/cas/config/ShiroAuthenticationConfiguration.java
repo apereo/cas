@@ -56,11 +56,11 @@ public class ShiroAuthenticationConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "shiroAuthenticationHandler")
     public AuthenticationHandler shiroAuthenticationHandler() {
         val shiro = casProperties.getAuthn().getShiro();
         val h = new ShiroAuthenticationHandler(shiro.getName(), servicesManager.getObject(), shiroPrincipalFactory(),
             shiro.getRequiredRoles(), shiro.getRequiredPermissions());
-
         h.loadShiroConfiguration(shiro.getLocation());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(shiro.getPasswordEncoder(), applicationContext));
         h.setPasswordPolicyConfiguration(shiroPasswordPolicyConfiguration());

@@ -19,7 +19,7 @@ import java.io.Serializable;
 @Setter
 @RequiresModule(name = "cas-server-support-saml-googleapps")
 @Accessors(chain = true)
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class GoogleAppsProperties implements Serializable {
 
     private static final long serialVersionUID = -5133482766495375325L;

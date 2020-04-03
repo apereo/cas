@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     AopAutoConfiguration.class
 })
 @Tag("Groovy")
-@Deprecated
+@Deprecated(since = "6.2.0")
 public class ScriptEngineManagerTests {
     private static void runAttributeFilterInternallyFor(final String s) {
         val filter = new ScriptedRegisteredServiceAttributeReleasePolicy(s);

@@ -31,7 +31,7 @@ import java.util.Map;
  * @since 4.2
  */
 @Slf4j
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
     private static final long serialVersionUID = -4581238964007702423L;
