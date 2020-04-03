@@ -47,7 +47,7 @@ currentChangeSetAffectsBuild() {
 }
 
 currentChangeSetAffectsTests() {
-    currentChangeSetContains "\.(java|groovy|xml|properties|yml|json)"
+    currentChangeSetContains "\.(sh|java|groovy|xml|properties|yml|json)"
     return `(expr "$?" + 0)`
 }
 
