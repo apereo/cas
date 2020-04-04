@@ -109,7 +109,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
      * 2. When request contains OAuth {@code code} which was issued with a {@code code_challenge}, in which case the authentication will be
      * performed by {{@code OAuth20ProofKeyCodeExchangeAuthenticator}
      * 3. When the grant type is {@code refresh_token} and the request doesn't have any {@code client_secret}, in which case the authentication will be performed
-     * by {@OAuth20RefreshTokenAuthenticator}
+     * by {@code OAuth20RefreshTokenAuthenticator}
      *
      * @param context the context
      * @return true if authenticator can validate credentials.
