@@ -51,7 +51,7 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
     public void verifyDeviceNotTrusted() throws Exception {
         val r = getMultifactorAuthenticationTrustRecord();
         r.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(5));
-        getMfaTrustEngine().set(r);
+        getMfaTrustEngine().save(r);
 
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
@@ -81,7 +81,7 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
         record.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(5));
         val deviceFingerprint = deviceFingerprintStrategy.determineFingerprint(record.getPrincipal(), context, true);
         record.setDeviceFingerprint(deviceFingerprint);
-        mfaTrustEngine.set(record);
+        mfaTrustEngine.save(record);
 
         assertNotNull(response.getCookies());
         assertTrue(response.getCookies().length == 1);

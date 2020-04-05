@@ -35,6 +35,7 @@ public class CouchDbMultifactorAuthenticationTrustRecord extends MultifactorAuth
                                                        @JsonProperty("principal") final @NonNull String principal,
                                                        @JsonProperty("deviceFingerprint") final @NonNull String deviceFingerprint,
                                                        @JsonProperty("recordDate") final @NonNull LocalDateTime recordDate,
+                                                       @JsonProperty("expirationDate") final @NonNull LocalDateTime expirationDate,
                                                        @JsonProperty("recordKey") final @NonNull String recordKey,
                                                        @JsonProperty("name") final String name) {
         this.cid = cid;
@@ -45,10 +46,12 @@ public class CouchDbMultifactorAuthenticationTrustRecord extends MultifactorAuth
         setRecordDate(recordDate);
         setRecordKey(recordKey);
         setName(name);
+        setExpirationDate(expirationDate);
     }
 
     public CouchDbMultifactorAuthenticationTrustRecord(final MultifactorAuthenticationTrustRecord record) {
-        this(null, null, record.getId(), record.getPrincipal(), record.getDeviceFingerprint(), record.getRecordDate(), record.getRecordKey(), record.getName());
+        this(null, null, record.getId(), record.getPrincipal(), record.getDeviceFingerprint(),
+            record.getRecordDate(), record.getExpirationDate(), record.getRecordKey(), record.getName());
     }
 
     /**
@@ -63,6 +66,7 @@ public class CouchDbMultifactorAuthenticationTrustRecord extends MultifactorAuth
         setRecordDate(other.getRecordDate());
         setRecordKey(other.getRecordKey());
         setName(other.getName());
+        setExpirationDate(other.getExpirationDate());
         return this;
     }
 }

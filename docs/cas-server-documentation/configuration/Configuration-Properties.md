@@ -2812,7 +2812,15 @@ To learn more about this topic, [please review this guide](../mfa/Multifactor-Tr
 # cas.authn.mfa.trusted.deviceRegistrationEnabled=true
 # cas.authn.mfa.trusted.expiration=30
 # cas.authn.mfa.trusted.timeUnit=SECONDS|MINUTES|HOURS|DAYS
+# cas.authn.mfa.trusted.keyGeneratorType=DEFAULT|LEGACY
 ```
+
+The following strategies can be used to generate keys for trusted device records:
+
+| Type                 | Description
+|----------------------|------------------------------------------------------------------------------------------------
+| `DEFAULT`            | Uses a combination of the username, device name and device fingerprint to generate the device key.
+| `LEGACY`             | Deprecated. Uses a combination of the username, record date and device fingerprint to generate the device key.
 
 #### Signing & Encryption
 

@@ -70,7 +70,7 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests extends 
         record.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(5));
         val deviceFingerprint = deviceFingerprintStrategy.determineFingerprint(record.getPrincipal(), context, true);
         record.setDeviceFingerprint(deviceFingerprint);
-        mfaTrustEngine.set(record);
+        mfaTrustEngine.save(record);
 
         assertNotNull(response.getCookies());
         assertTrue(response.getCookies().length == 1);
