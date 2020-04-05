@@ -27,7 +27,7 @@ public class MultifactorAuthenticationTrustStorageCleanerTests extends AbstractM
         try {
             val record = getMultifactorAuthenticationTrustRecord();
             record.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
-            getMfaTrustEngine().set(record);
+            getMfaTrustEngine().save(record);
             mfaTrustStorageCleaner.clean();
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);

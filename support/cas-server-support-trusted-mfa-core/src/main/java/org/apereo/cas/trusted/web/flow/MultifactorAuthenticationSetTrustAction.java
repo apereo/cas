@@ -69,10 +69,9 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
                 LOGGER.debug("Attempting to store trusted authentication record for [{}] as device [{}]", principal, deviceName);
                 val fingerprint = deviceFingerprintStrategy.determineFingerprint(principal, requestContext, true);
                 val record = MultifactorAuthenticationTrustRecord.newInstance(principal,
-                    MultifactorAuthenticationTrustUtils.generateGeography(),
-                    fingerprint);
+                    MultifactorAuthenticationTrustUtils.generateGeography(), fingerprint);
                 record.setName(deviceName);
-                storage.set(record);
+                storage.save(record);
                 LOGGER.debug("Saved trusted authentication record for [{}] under [{}]", principal, record.getName());
             }
             LOGGER.debug("Trusted authentication session exists for [{}]", principal);

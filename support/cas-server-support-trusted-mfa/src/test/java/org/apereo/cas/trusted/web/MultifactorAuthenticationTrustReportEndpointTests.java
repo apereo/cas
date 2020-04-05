@@ -16,7 +16,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link MultifactorTrustedDevicesReportEndpointTests}.
+ * This is {@link MultifactorAuthenticationTrustReportEndpointTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
@@ -24,11 +24,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "management.endpoint.multifactorTrustedDevices.enabled=true")
 @Tag("MFA")
 @ImportAutoConfiguration(MultifactorAuthnTrustConfiguration.class)
-public class MultifactorTrustedDevicesReportEndpointTests extends AbstractCasEndpointTests {
+public class MultifactorAuthenticationTrustReportEndpointTests extends AbstractCasEndpointTests {
 
     @Autowired
     @Qualifier("mfaTrustedDevicesReportEndpoint")
-    private MultifactorTrustedDevicesReportEndpoint endpoint;
+    private MultifactorAuthenticationTrustReportEndpoint endpoint;
 
     @Autowired
     @Qualifier("mfaTrustEngine")
@@ -37,7 +37,7 @@ public class MultifactorTrustedDevicesReportEndpointTests extends AbstractCasEnd
     @Test
     public void verifyOperation() {
         assertNotNull(endpoint);
-        val record = mfaTrustEngine.set(MultifactorAuthenticationTrustRecord.newInstance("casuser",
+        val record = mfaTrustEngine.save(MultifactorAuthenticationTrustRecord.newInstance("casuser",
             "geography", "fingerprint"));
         assertFalse(endpoint.devices().isEmpty());
         assertFalse(endpoint.devicesForUser("casuser").isEmpty());

@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.DynamoDbMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.DynamoDbMultifactorTrustEngineFacilitator;
@@ -32,6 +33,10 @@ public class DynamoDbMultifactorAuthenticationTrustConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("mfaTrustRecordKeyGenerator")
+    private ObjectProvider<MultifactorAuthenticationTrustRecordKeyGenerator> keyGenerationStrategy;
+
+    @Autowired
     @Qualifier("mfaTrustCipherExecutor")
     private ObjectProvider<CipherExecutor> mfaTrustCipherExecutor;
 
@@ -60,9 +65,7 @@ public class DynamoDbMultifactorAuthenticationTrustConfiguration {
     @RefreshScope
     @Bean
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        val m = new DynamoDbMultifactorAuthenticationTrustStorage(
-            dynamoDbMultifactorTrustEngineFacilitator());
-        m.setCipherExecutor(mfaTrustCipherExecutor.getObject());
-        return m;
+        return new DynamoDbMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
+            mfaTrustCipherExecutor.getObject(), dynamoDbMultifactorTrustEngineFacilitator(), keyGenerationStrategy.getObject());
     }
 }
