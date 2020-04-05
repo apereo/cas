@@ -30,12 +30,12 @@ public class CasServletContextListenerConfigurationBean {
 
     private static class CasServletContextListener implements ServletContextListener {
         @Override
-        public void contextInitialized(ServletContextEvent sce) {
+        public void contextInitialized(final ServletContextEvent sce) {
             LOGGER.debug("Registered CasServletContextListener");
         }
 
         @Override
-        public final void contextDestroyed(ServletContextEvent sce) {
+        public final void contextDestroyed(final ServletContextEvent sce) {
             /* ... First close any background tasks which may be using the DB ...
                ... Then close any DB connection pools ...
 

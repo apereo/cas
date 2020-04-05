@@ -33,6 +33,4 @@
     <suppress checks="\w+" files="(\.(crt|crl|class|keystore))|rebel.xml"/>
     <suppress checks="." files="com[\\/]duosecurity[\\/]duoweb[\\/]"/>
     <suppress checks="." files="org[\\/]apereo[\\/]cas[\\/]authentication[\\/]soap[\\/]"/>
-    <suppress checks="FinalParameters" files="webapp/cas-server-webapp-init/src/main/java/org/apereo/cas/web/CasServletContextListenerConfigurationBean.java"/>
-    <suppress checks="FinalLocalVariable" files="webapp/cas-server-webapp-init/src/main/java/org/apereo/cas/web/CasServletContextListenerConfigurationBean.java"/>
 </suppressions>
