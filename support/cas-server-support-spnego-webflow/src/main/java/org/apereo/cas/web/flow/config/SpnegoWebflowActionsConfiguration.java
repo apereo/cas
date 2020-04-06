@@ -92,7 +92,7 @@ public class SpnegoWebflowActionsConfiguration {
     }
 
     @Lazy
-    @Bean
+    @Bean(destroyMethod="close")
     @RefreshScope
     public Action ldapSpnegoClientAction() {
         val spnegoProperties = casProperties.getAuthn().getSpnego();

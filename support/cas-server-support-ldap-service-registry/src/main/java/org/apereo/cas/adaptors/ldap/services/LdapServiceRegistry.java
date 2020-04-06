@@ -204,4 +204,8 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(id.toString()));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter, ldapProperties.getPageSize());
     }
+
+    public void close() {
+        connectionFactory.close();
+    }
 }

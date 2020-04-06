@@ -35,7 +35,7 @@ public class SurrogateLdapAuthenticationConfiguration {
     private CasConfigurationProperties casProperties;
 
     @RefreshScope
-    @Bean
+    @Bean(destroyMethod="close")
     public SurrogateAuthenticationService surrogateAuthenticationService() {
         val su = casProperties.getAuthn().getSurrogate();
         LOGGER.debug("Using LDAP [{}] with baseDn [{}] to locate surrogate accounts",

@@ -51,7 +51,7 @@ public class LdapServiceRegistryConfiguration {
         return new DefaultLdapRegisteredServiceMapper(casProperties.getServiceRegistry().getLdap());
     }
 
-    @Bean
+    @Bean(destroyMethod="close")
     @RefreshScope
     public ServiceRegistry ldapServiceRegistry() {
         val ldap = casProperties.getServiceRegistry().getLdap();

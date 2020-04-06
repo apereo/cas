@@ -1,5 +1,7 @@
 package org.apereo.cas.web.security.authentication;
 
+import org.apereo.cas.authentication.LdapAuthenticationHandler;
+import org.apereo.cas.authorization.BaseUseAttributesAuthorizationGenerator;
 import org.apereo.cas.authorization.LdapUserAttributesToRolesAuthorizationGenerator;
 import org.apereo.cas.authorization.LdapUserGroupsToRolesAuthorizationGenerator;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
@@ -85,6 +87,9 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
                     new JEESessionStore());
                 val authZGen = buildAuthorizationGenerator();
                 authZGen.generate(context, profile);
+                if (authZGen instanceof BaseUseAttributesAuthorizationGenerator) {
+                    ((BaseUseAttributesAuthorizationGenerator) authZGen).closeSearchOperation();
+                }
                 LOGGER.debug("Assembled user profile with roles after generating authorization claims [{}]", profile);
 
                 val authorities = profile.getRoles()
@@ -104,6 +109,10 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
                 LOGGER.warn("LDAP authentication response produced no results for [{}]", username);
             }
 
+            val authenticationHandler = authenticator.getAuthenticationHandler();
+            if (authenticationHandler instanceof LdapAuthenticationHandler) {
+                ((LdapAuthenticationHandler) authenticationHandler).closeAuthenticationHandler();
+            }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new InsufficientAuthenticationException("Unexpected LDAP error", e);

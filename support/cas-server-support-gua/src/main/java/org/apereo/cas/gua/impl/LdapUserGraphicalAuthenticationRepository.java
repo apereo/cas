@@ -49,13 +49,16 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
         val filter = LdapUtils.newLdaptiveSearchFilter(gua.getLdap().getSearchFilter(),
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
             CollectionUtils.wrap(id));
-        return LdapUtils.executeSearchOperation(
-            LdapUtils.newLdaptiveConnectionFactory(gua.getLdap()),
+        val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(gua.getLdap());
+        val result = LdapUtils.executeSearchOperation(
+            connectionFactory,
             gua.getLdap().getBaseDn(),
             filter,
             0,
             new String[]{gua.getLdap().getImageAttribute()},
             ReturnAttributes.ALL_USER.value());
+        connectionFactory.close();
+        return result;
     }
 
 }

@@ -17,10 +17,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ReturnAttributes;
+import org.ldaptive.auth.AbstractAuthenticationHandler;
+import org.ldaptive.auth.AbstractSearchEntryResolver;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
+import org.ldaptive.auth.SearchDnResolver;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -99,6 +102,15 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         super(name, servicesManager, principalFactory, order);
         this.authenticator = authenticator;
         this.passwordPolicyHandlingStrategy = strategy;
+    }
+
+    public void closeAuthenticationHandler() {
+        val authenticationHandler = (AbstractAuthenticationHandler) authenticator.getAuthenticationHandler();
+        val dnResolver = (SearchDnResolver) authenticator.getDnResolver();
+        val entryResolver = (AbstractSearchEntryResolver) authenticator.getEntryResolver();
+        authenticationHandler.getConnectionFactory().close();
+        dnResolver.getConnectionFactory().close();
+        entryResolver.getConnectionFactory().close();
     }
 
     @Override

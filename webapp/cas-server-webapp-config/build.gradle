@@ -18,6 +18,7 @@ dependencies {
     
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-pac4j-core")
+    implementation project(":support:cas-server-support-ldap")
     implementation project(":support:cas-server-support-ldap-core")
     
     testImplementation project(":support:cas-server-support-person-directory")

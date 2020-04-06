@@ -32,6 +32,10 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessor implements A
         this.searchFactory = LdapUtils.newLdaptiveConnectionFactory(properties);
     }
 
+    public void closeSearchFactory() {
+        searchFactory.close();
+    }
+
     @Override
     public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws AuthenticationException {
         val primaryCredential = transaction.getPrimaryCredential();

@@ -259,4 +259,8 @@ public class LdapConsentRepository implements ConsentRepository {
         LOGGER.debug("Unable to read consent entries from LDAP via filter [{}]", filter);
         return new HashSet<>(0);
     }
+
+    public void close() {
+        connectionFactory.close();
+    }
 }

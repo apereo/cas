@@ -98,4 +98,8 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
     protected Optional<UserProfile> generateAuthorizationForLdapEntry(final UserProfile profile, final LdapEntry userEntry) {
         return Optional.ofNullable(profile);
     }
+
+    public void closeSearchOperation() {
+        this.userSearchOperation.getConnectionFactory().close();
+    }
 }

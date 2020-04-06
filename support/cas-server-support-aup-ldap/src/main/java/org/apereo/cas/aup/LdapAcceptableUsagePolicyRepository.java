@@ -15,6 +15,7 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchResponse;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.Set;
@@ -55,19 +56,25 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
         val response = LdapUtils.executeSearchOperation(connectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
         if (LdapUtils.containsResultEntry(response)) {
             return Optional.of(Pair.of(connectionFactory, response));
+        } else {
+            connectionFactory.close();
         }
         return Optional.empty();
     }
 
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
+        var returnVal = false;
+        var responses = new ArrayList<Optional<Pair<ConnectionFactory, SearchResponse>>>()
+                        .stream();
+
         try {
-            val response = aupProperties.getLdap()
+            responses = aupProperties.getLdap()
                 .stream()
                 .sorted(Comparator.comparing(LdapAcceptableUsagePolicyProperties::getName))
                 .map(Unchecked.function(ldap -> searchLdapForId(ldap, credential.getId())))
-                .filter(Optional::isPresent)
-                .findFirst();
+                .filter(Optional::isPresent);
+            val response = responses.findFirst();
 
             if (response.isPresent()) {
                 val result = response.get().get();
@@ -75,11 +82,15 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                 LOGGER.debug("Updating [{}]", currentDn);
                 val attributes = CollectionUtils.<String, Set<String>>wrap(aupProperties.getAupAttributeName(),
                     CollectionUtils.wrapSet(Boolean.TRUE.toString().toUpperCase()));
-                return LdapUtils.executeModifyOperation(currentDn, result.getKey(), attributes);
+                returnVal = LdapUtils.executeModifyOperation(currentDn, result.getKey(), attributes);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return false;
+
+        responses.forEach(optionalPair ->
+            optionalPair.get().getKey().close()
+        );
+        return returnVal;
     }
 }

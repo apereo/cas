@@ -129,4 +129,8 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     protected boolean verifySpnegoAttributeValue(final LdapAttribute attribute) {
         return attribute != null && StringUtils.isNotBlank(attribute.getStringValue());
     }
+
+    public void close() {
+        this.searchOperation.getConnectionFactory().close();
+    }
 }

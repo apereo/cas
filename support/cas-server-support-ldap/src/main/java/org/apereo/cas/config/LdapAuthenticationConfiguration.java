@@ -154,10 +154,17 @@ public class LdapAuthenticationConfiguration {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-    @Bean
+    @Bean(destroyMethod="close")
     @RefreshScope
     public Collection<AuthenticationHandler> ldapAuthenticationHandlers() {
-        val handlers = new HashSet<AuthenticationHandler>();
+        val handlers = new HashSet<AuthenticationHandler>() {
+            public void close() {
+                LOGGER.debug("Closing LDAP authentication handlers");
+                stream()
+                    .map(LdapAuthenticationHandler.class::cast)
+                    .forEach(LdapAuthenticationHandler::closeAuthenticationHandler);
+            }
+        };
 
         casProperties.getAuthn().getLdap()
             .stream()

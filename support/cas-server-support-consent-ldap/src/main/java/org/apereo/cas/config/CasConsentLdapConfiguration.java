@@ -24,7 +24,7 @@ public class CasConsentLdapConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Bean
+    @Bean(destroyMethod="close")
     public ConsentRepository consentRepository() {
         val ldap = casProperties.getConsent().getLdap();
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);

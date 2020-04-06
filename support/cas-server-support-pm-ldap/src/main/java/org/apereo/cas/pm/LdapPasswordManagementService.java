@@ -98,6 +98,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                         }
                     });
                 }
+                ldapConnectionFactory.close();
                 LOGGER.debug("LDAP response did not contain a result for security questions");
             }));
         return results;
@@ -144,6 +145,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                             .findFirst()
                             .orElse(null);
                     }
+                    ldapConnectionFactory.close();
                     LOGGER.warn("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
                     return null;
                 }))
@@ -184,6 +186,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                     } else {
                         LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
                     }
+                    ldapConnectionFactory.close();
                     return Boolean.FALSE;
                 }))
                 .collect(Collectors.toList());

@@ -105,4 +105,8 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
         LOGGER.debug("No accounts may be eligible for surrogate authentication");
         return new ArrayList<>(0);
     }
+
+    public void close() {
+        connectionFactory.close();
+    }
 }
