@@ -418,7 +418,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             msg.append(" / ").append(e.getCause().getMessage());
         }
         if (e instanceof GeneralSecurityException) {
-            LOGGER.debug("[{}] exception details: [{}].", name, msg);
+            LOGGER.info("[{}] exception details: [{}].", name, msg);
             builder.addFailure(name, e);
         } else {
             LOGGER.error("[{}]: [{}]", name, msg);
