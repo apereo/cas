@@ -48,6 +48,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("radiusMfaConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnProperty(name = "cas.authn.mfa.radius.client.inetAddress")
 public class RadiusMultifactorConfiguration {
 
     @Autowired
