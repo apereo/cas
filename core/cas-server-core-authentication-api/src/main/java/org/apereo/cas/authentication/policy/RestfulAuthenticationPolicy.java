@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpUtils;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -50,6 +52,14 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
     private static final long serialVersionUID = -7688729533538097898L;
 
     private String endpoint;
+
+    private String basicAuthUsername;
+
+    private String basicAuthPassword;
+
+    public RestfulAuthenticationPolicy(final String endpoint) {
+        this.endpoint = endpoint;
+    }
 
     private static Exception handleResponseStatusCode(final HttpStatus statusCode, final Principal p) {
         if (statusCode == HttpStatus.FORBIDDEN || statusCode == HttpStatus.METHOD_NOT_ALLOWED) {
@@ -109,6 +119,9 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
         val headers = new HttpHeaders();
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         headers.setContentType(MediaType.APPLICATION_JSON);
-        return new HttpEntity<Principal>(principal, headers);
+        if (StringUtils.isNotBlank(this.basicAuthUsername) && StringUtils.isNotBlank(this.basicAuthPassword)) {
+            headers.putAll(HttpUtils.createBasicAuthHeaders(basicAuthUsername, basicAuthPassword));
+        }
+        return new HttpEntity<>(principal, headers);
     }
 }

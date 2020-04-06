@@ -307,7 +307,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         }
 
         if (indexExistsWithDifferentOptions) {
-            LOGGER.debug("Removing MongoDb index [{}] from [{}] because it appears to already exist in a different form", index.getIndexKeys(), collection.getNamespace());
+            LOGGER.debug("Removing MongoDb index [{}] from [{}] because it exists in a different form", index.getIndexKeys(), collection.getNamespace());
             collection.dropIndex(index.getIndexKeys());
         }
     }

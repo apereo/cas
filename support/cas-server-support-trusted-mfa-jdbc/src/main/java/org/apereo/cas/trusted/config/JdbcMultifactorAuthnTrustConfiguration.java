@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.JpaMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.CollectionUtils;
@@ -50,6 +51,10 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @Qualifier("jpaBeanFactory")
     private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
 
+    @Autowired
+    @Qualifier("mfaTrustRecordKeyGenerator")
+    private ObjectProvider<MultifactorAuthenticationTrustRecordKeyGenerator> keyGenerationStrategy;
+
     @RefreshScope
     @Bean
     public JpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter() {
@@ -89,8 +94,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
 
     @Bean
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        val m = new JpaMultifactorAuthenticationTrustStorage();
-        m.setCipherExecutor(mfaTrustCipherExecutor.getObject());
-        return m;
+        return new JpaMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
+            mfaTrustCipherExecutor.getObject(), keyGenerationStrategy.getObject());
     }
 }

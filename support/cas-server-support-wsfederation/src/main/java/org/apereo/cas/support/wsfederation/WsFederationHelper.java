@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.google.common.base.Predicates;
@@ -170,19 +171,18 @@ public class WsFederationHelper {
         credential.setRetrievedOn(retrievedOn);
         credential.setId(assertion.getID());
         credential.setIssuer(assertion.getIssuer());
-        credential.setIssuedOn(ZonedDateTime.parse(assertion.getIssueInstant().toDateTimeISO().toString()));
+        credential.setIssuedOn(DateTimeUtils.zonedDateTimeOf(assertion.getIssueInstant()));
         val conditions = assertion.getConditions();
         if (conditions != null) {
-            credential.setNotBefore(ZonedDateTime.parse(conditions.getNotBefore().toDateTimeISO().toString()));
-            credential.setNotOnOrAfter(ZonedDateTime.parse(conditions.getNotOnOrAfter().toDateTimeISO().toString()));
+            credential.setNotBefore(DateTimeUtils.zonedDateTimeOf(conditions.getNotBefore()));
+            credential.setNotOnOrAfter(DateTimeUtils.zonedDateTimeOf(conditions.getNotOnOrAfter()));
             if (!conditions.getAudienceRestrictionConditions().isEmpty()) {
-                credential.setAudience(conditions.getAudienceRestrictionConditions().get(0).getAudiences().get(0).getUri());
+                credential.setAudience(conditions.getAudienceRestrictionConditions().get(0).getAudiences().get(0).getURI());
             }
         }
         if (!assertion.getAuthenticationStatements().isEmpty()) {
             credential.setAuthenticationMethod(assertion.getAuthenticationStatements().get(0).getAuthenticationMethod());
         }
-        //retrieve an attributes from the assertion
         val attributes = new HashMap<String, List<Object>>();
         assertion.getAttributeStatements().stream().flatMap(attributeStatement -> attributeStatement.getAttributes().stream()).forEach(item -> {
             LOGGER.debug("Processed attribute: [{}]", item.getAttributeName());
@@ -368,7 +368,8 @@ public class WsFederationHelper {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             if (RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.isAssignedTo(registeredService)) {
                 LOGGER.debug("Determined relying party identifier from service [{}] to be [{}]", service, relyingPartyIdentifier);
-                return RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.getPropertyValue(registeredService).getValue();
+                val propertyValue = RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.getPropertyValue(registeredService);
+                return propertyValue != null ? propertyValue.getValue() : relyingPartyIdentifier;
             }
         }
         LOGGER.debug("Determined relying party identifier to be [{}]", relyingPartyIdentifier);

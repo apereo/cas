@@ -1,12 +1,11 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.support.BaseRestEndpointProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
 
 /**
  * This is {@link RestAuthenticationPolicyProperties}.
@@ -18,12 +17,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class RestAuthenticationPolicyProperties implements Serializable {
-
+public class RestAuthenticationPolicyProperties extends BaseRestEndpointProperties {
     private static final long serialVersionUID = -8979188862774758908L;
-
-    /**
-     * Rest endpoint url to contact.
-     */
-    private String endpoint;
 }

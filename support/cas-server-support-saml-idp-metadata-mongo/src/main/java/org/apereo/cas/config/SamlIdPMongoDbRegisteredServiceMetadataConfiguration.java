@@ -5,7 +5,6 @@ import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.metadata.resolver.MongoDbSamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
-import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 
 import lombok.val;
@@ -26,7 +25,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @Configuration("samlIdPMongoDbRegisteredServiceMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurer {
+public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -51,9 +50,9 @@ public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration implements Sam
         return mongoTemplate;
     }
 
-    @Override
-    public void configureMetadataResolutionPlan(final SamlRegisteredServiceMetadataResolutionPlan plan) {
-        plan.registerMetadataResolver(mongoDbSamlRegisteredServiceMetadataResolver());
+    @Bean
+    @ConditionalOnMissingBean(name = "mongoDbSamlRegisteredServiceMetadataResolutionPlanConfigurer")
+    public SamlRegisteredServiceMetadataResolutionPlanConfigurer mongoDbSamlRegisteredServiceMetadataResolutionPlanConfigurer() {
+        return plan -> plan.registerMetadataResolver(mongoDbSamlRegisteredServiceMetadataResolver());
     }
-
 }

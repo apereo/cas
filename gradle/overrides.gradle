@@ -7,7 +7,7 @@
   overlays could use and pull this file and have their 
   dependencies match that of CAS. 
  */
-ext["hibernateVersion"] = "5.4.12.Final"
+ext["hibernateVersion"] = "5.4.13.Final"
 ext["hazelcastVersion"] = "4.0"
 ext["infinispanVersion"] = "10.1.3.Final"
 
@@ -32,10 +32,10 @@ ext["caffeinVersion"] = "2.8.1"
 ext["couchbaseVersion"] = "2.7.11"
 
 ext["mysqlVersion"] = "8.0.19"
-ext["postgresqlVersion"] = "42.2.11"
+ext["postgresqlVersion"] = "42.2.12"
 ext["mariaDbVersion"] = "2.5.4"
 ext["jtdsVersion"] = "1.3.1"
-ext["mssqlServerVersion"] = "8.2.1.jre11"
+ext["mssqlServerVersion"] = "8.2.2.jre11"
 ext["mongoDriverVersion"] = "3.12.2"
 ext["oracleJdbcVersion"] = "19.3.0.0"
 

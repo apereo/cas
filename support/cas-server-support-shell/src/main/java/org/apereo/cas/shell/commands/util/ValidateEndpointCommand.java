@@ -168,6 +168,7 @@ public class ValidateEndpointCommand {
     }
 
     @SneakyThrows
+    @SuppressWarnings("java:S4830")
     private static SSLContext getTheAllTrustingSSLContext() {
         val sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, new TrustManager[]{new X509TrustManager() {

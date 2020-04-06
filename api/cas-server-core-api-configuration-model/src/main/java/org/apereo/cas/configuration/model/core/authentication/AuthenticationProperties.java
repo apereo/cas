@@ -329,7 +329,7 @@ public class AuthenticationProperties implements Serializable {
      * @deprecated 6.2
      */
     @NestedConfigurationProperty
-    @Deprecated(since = "6.2")
+    @Deprecated(since = "6.2.0")
     private OpenIdProperties openid = new OpenIdProperties();
 
     /**

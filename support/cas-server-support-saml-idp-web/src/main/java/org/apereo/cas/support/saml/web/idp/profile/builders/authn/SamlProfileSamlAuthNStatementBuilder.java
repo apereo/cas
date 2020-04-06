@@ -91,8 +91,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
             val skewAllowance = service.getSkewAllowance() > 0
                 ? service.getSkewAllowance()
                 : casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance();
-
-            statement.setSessionNotOnOrAfter(DateTimeUtils.dateTimeOf(dt.plusSeconds(skewAllowance)));
+            statement.setSessionNotOnOrAfter(dt.plusSeconds(skewAllowance).toInstant());
         }
         val subjectLocality = buildSubjectLocality(assertion, authnRequest, adaptor, binding);
         statement.setSubjectLocality(subjectLocality);

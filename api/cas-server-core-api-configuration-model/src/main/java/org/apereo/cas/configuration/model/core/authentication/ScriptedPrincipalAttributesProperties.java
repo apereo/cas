@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @RequiresModule(name = "cas-server-support-person-directory", automated = true)
 @Getter
 @Setter
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 @Accessors(chain = true)
 public class ScriptedPrincipalAttributesProperties extends SpringResourceProperties {
 

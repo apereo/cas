@@ -2,6 +2,7 @@ package org.apereo.cas.aup;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.config.CasAcceptableUsagePolicyLdapConfiguration;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -20,6 +21,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link LdapAcceptableUsagePolicyRepositoryTests}.
@@ -59,5 +64,9 @@ public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
 
     @Test
     public void verifyOperation() {
+        assertNotNull(acceptableUsagePolicyRepository);
+        verifyRepositoryAction("casuser",
+            CollectionUtils.wrap("carLicense", List.of("false"),
+                "email", List.of("CASuser@example.org")));
     }
 }

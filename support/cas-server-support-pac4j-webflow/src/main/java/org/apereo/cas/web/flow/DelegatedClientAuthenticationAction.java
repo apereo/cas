@@ -22,7 +22,6 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -35,14 +34,12 @@ import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.util.Pac4jConstants;
-import org.pac4j.saml.metadata.SAML2ServiceProviderMetadataResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -175,7 +172,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @return whether it is a SAML logout request
      */
     protected static boolean isLogoutRequest(final HttpServletRequest request) {
-        return request.getParameter(SAML2ServiceProviderMetadataResolver.LOGOUT_ENDPOINT_PARAMETER) != null;
+        return request.getParameter(Pac4jConstants.LOGOUT_ENDPOINT_PARAMETER) != null;
     }
 
     @Override

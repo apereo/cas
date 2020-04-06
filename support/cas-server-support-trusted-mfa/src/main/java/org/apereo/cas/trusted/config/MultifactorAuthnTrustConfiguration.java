@@ -6,11 +6,14 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.trusted.authentication.keys.DefaultMultifactorAuthenticationTrustRecordKeyGenerator;
+import org.apereo.cas.trusted.authentication.keys.LegacyMultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
-import org.apereo.cas.trusted.web.MultifactorTrustedDevicesReportEndpoint;
+import org.apereo.cas.trusted.web.MultifactorAuthenticationTrustReportEndpoint;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -46,6 +49,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Slf4j
 public class MultifactorAuthnTrustConfiguration {
     private static final int INITIAL_CACHE_SIZE = 50;
+
     private static final long MAX_CACHE_SIZE = 1_000_000;
 
     @Autowired
@@ -76,13 +80,14 @@ public class MultifactorAuthnTrustConfiguration {
         val m = FunctionUtils.doIf(trusted.getJson().getLocation() != null,
             () -> {
                 LOGGER.debug("Storing trusted device records inside the JSON resource [{}]", trusted.getJson().getLocation());
-                return new JsonMultifactorAuthenticationTrustStorage(trusted.getJson().getLocation());
+                return new JsonMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
+                    mfaTrustCipherExecutor(), trusted.getJson().getLocation(), mfaTrustRecordKeyGenerator());
             },
             () -> {
                 LOGGER.warn("Storing trusted device records in runtime memory. Changes and records will be lost upon CAS restarts");
-                return new InMemoryMultifactorAuthenticationTrustStorage(storage);
+                return new InMemoryMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
+                    mfaTrustCipherExecutor(), storage, mfaTrustRecordKeyGenerator());
             }).get();
-        m.setCipherExecutor(mfaTrustCipherExecutor());
         return m;
     }
 
@@ -92,8 +97,20 @@ public class MultifactorAuthnTrustConfiguration {
         return new PseudoPlatformTransactionManager();
     }
 
+    @ConditionalOnMissingBean(name = "mfaTrustRecordKeyGenerator")
     @Bean
     @RefreshScope
+    public MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator() {
+        val type = casProperties.getAuthn().getMfa().getTrusted().getKeyGeneratorType();
+        if (type.equalsIgnoreCase("default")) {
+            return new DefaultMultifactorAuthenticationTrustRecordKeyGenerator();
+        }
+        return new LegacyMultifactorAuthenticationTrustRecordKeyGenerator();
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "mfaTrustCipherExecutor")
     public CipherExecutor mfaTrustCipherExecutor() {
         val crypto = casProperties.getAuthn().getMfa().getTrusted().getCrypto();
         if (crypto.isEnabled()) {
@@ -125,8 +142,8 @@ public class MultifactorAuthnTrustConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public MultifactorTrustedDevicesReportEndpoint mfaTrustedDevicesReportEndpoint() {
-        return new MultifactorTrustedDevicesReportEndpoint(casProperties, mfaTrustEngine());
+    public MultifactorAuthenticationTrustReportEndpoint mfaTrustedDevicesReportEndpoint() {
+        return new MultifactorAuthenticationTrustReportEndpoint(casProperties, mfaTrustEngine());
     }
 
 }
