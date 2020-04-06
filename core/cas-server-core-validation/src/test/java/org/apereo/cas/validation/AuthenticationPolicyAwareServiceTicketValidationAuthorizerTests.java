@@ -43,6 +43,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.List;
@@ -85,6 +86,9 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     private static Assertion getAssertion(final Map<Credential, ? extends AuthenticationHandler> handlers) {
         val assertion = mock(Assertion.class);
@@ -221,6 +225,6 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
         val plan = new DefaultAuthenticationEventExecutionPlan();
         plan.registerAuthenticationHandlers(authenticationHandlers);
         plan.registerAuthenticationPolicy(policy);
-        return new AuthenticationPolicyAwareServiceTicketValidationAuthorizer(servicesManager, plan);
+        return new AuthenticationPolicyAwareServiceTicketValidationAuthorizer(servicesManager, plan, applicationContext);
     }
 }

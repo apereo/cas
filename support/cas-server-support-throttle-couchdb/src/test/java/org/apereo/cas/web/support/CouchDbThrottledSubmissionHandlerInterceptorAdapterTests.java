@@ -32,7 +32,9 @@ import org.springframework.boot.test.context.SpringBootTest;
         "cas.audit.couchDb.dbName=throttle",
         "cas.audit.couchDb.asynchronous=false",
         "cas.audit.couchDb.username=cas",
-        "cas.audit.couchdb.password=password"
+        "cas.audit.couchdb.password=password",
+        "cas.authn.throttle.usernameParameter=username",
+        "cas.authn.throttle.failure.range-seconds=5"
     })
 @Getter
 @EnabledIfPortOpen(port = 5984)

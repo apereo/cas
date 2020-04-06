@@ -51,4 +51,13 @@ public class JdbcDataSourceHealthIndicatorTests {
         val status = monitor.health();
         assertEquals(Status.UP, status.getStatus());
     }
+
+    @Test
+    public void verifyBadQuery() {
+        val monitor = new JdbcDataSourceHealthIndicator(5000,
+            this.dataSource, this.executor,
+            "SELECT 1 FROM XYZ");
+        val status = monitor.health();
+        assertEquals(Status.OUT_OF_SERVICE, status.getStatus());
+    }
 }

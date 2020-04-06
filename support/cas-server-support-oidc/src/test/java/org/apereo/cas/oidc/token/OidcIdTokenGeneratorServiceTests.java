@@ -66,6 +66,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         val response = new MockHttpServletResponse();
 
         val tgt = mock(TicketGrantingTicket.class);
+        when(tgt.getId()).thenReturn(TGT_ID);
         val callback = casProperties.getServer().getPrefix()
             + OAuth20Constants.BASE_OAUTH20_URL + '/'
             + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
@@ -115,6 +116,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         val response = new MockHttpServletResponse();
 
         val tgt = mock(TicketGrantingTicket.class);
+        when(tgt.getId()).thenReturn(TGT_ID);
 
         when(tgt.getServices()).thenReturn(new HashMap<>());
         val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser",

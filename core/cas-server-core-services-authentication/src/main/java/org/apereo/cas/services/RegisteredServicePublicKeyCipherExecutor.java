@@ -1,7 +1,5 @@
-package org.apereo.cas.services.util;
+package org.apereo.cas.services;
 
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.SneakyThrows;
@@ -10,6 +8,7 @@ import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.Cipher;
+
 import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.security.Security;
@@ -42,7 +41,7 @@ public class RegisteredServicePublicKeyCipherExecutor implements RegisteredServi
                                            final RegisteredService registeredService) {
         val cipher = initializeCipherBasedOnServicePublicKey(publicKey, registeredService);
         if (cipher != null) {
-            LOGGER.debug("Initialized cipher successfully. Proceeding to finalize...");
+            LOGGER.trace("Initialized cipher successfully. Proceeding to finalize...");
             return cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
         }
         return null;
@@ -56,12 +55,12 @@ public class RegisteredServicePublicKeyCipherExecutor implements RegisteredServi
      */
     private static PublicKey createRegisteredServicePublicKey(final RegisteredService registeredService) {
         if (registeredService.getPublicKey() == null) {
-            LOGGER.debug("No public key is defined for service [{}]. No encoding will take place.", registeredService);
+            LOGGER.trace("No public key is defined for service [{}]. No encoding will take place.", registeredService);
             return null;
         }
         val publicKey = registeredService.getPublicKey().createInstance();
         if (publicKey == null) {
-            LOGGER.debug("No public key instance created for service [{}]. No encoding will take place.", registeredService);
+            LOGGER.trace("No public key created for service [{}]. No encoding will take place.", registeredService);
             return null;
         }
         return publicKey;
@@ -83,7 +82,7 @@ public class RegisteredServicePublicKeyCipherExecutor implements RegisteredServi
 
             val cipher = Cipher.getInstance(publicKey.getAlgorithm());
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            LOGGER.debug("Initialized cipher in encrypt-mode via the public key algorithm [{}] for service [{}]",
+            LOGGER.trace("Initialized cipher in encrypt-mode via the public key algorithm [{}] for service [{}]",
                 publicKey.getAlgorithm(), registeredService.getServiceId());
             return cipher;
         } catch (final Exception e) {

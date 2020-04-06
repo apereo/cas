@@ -101,7 +101,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
         verifyParam(params, OAuth20Constants.NONCE, NONCE);
     }
 
-    private void verifyParam(final Map<String, List<String>> params, final String paramName, final String expectedParamValue) {
+    private static void verifyParam(final Map<String, List<String>> params, final String paramName, final String expectedParamValue) {
         assertTrue(params.containsKey(paramName), "Expected " + paramName + "  param in redirect URL");
         assertEquals(1,
             params
@@ -121,11 +121,11 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
         }
         return Arrays
             .stream(fragment.split("&"))
-            .map(this::splitQueryParameter)
+            .map(OAuth20TokenAuthorizationResponseBuilderTests::splitQueryParameter)
             .collect(Collectors.groupingBy(AbstractMap.SimpleImmutableEntry::getKey, LinkedHashMap::new, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
     }
 
-    private AbstractMap.SimpleImmutableEntry<String, String> splitQueryParameter(final String it) {
+    private static AbstractMap.SimpleImmutableEntry<String, String> splitQueryParameter(final String it) {
         val idx = it.indexOf("=");
         val key = idx > 0 ? it.substring(0, idx) : it;
         val value = idx > 0 && it.length() > idx + 1 ? it.substring(idx + 1) : null;

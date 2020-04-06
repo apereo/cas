@@ -4,6 +4,12 @@
         <cve>CVE-2019-15752</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2020-10673</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2020-10672</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2014-9356</cve>
     </suppress>
     <suppress>

@@ -1,8 +1,5 @@
-package org.apereo.cas.services.util;
+package org.apereo.cas.services;
 
-import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
@@ -20,6 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class RegisteredServicePublicKeyCipherExecutorTests {
 
+    private static AbstractRegisteredService getService(final String keyLocation) {
+        val svc = new RegexRegisteredService();
+        svc.setServiceId("Testing");
+        svc.setPublicKey(new RegisteredServicePublicKeyImpl(keyLocation, "RSA"));
+        return svc;
+    }
+
     @Test
     public void verifyCipherUnableToEncodeForStringIsTooLong() {
         val svc = getService("classpath:keys/RSA1024Public.key");
@@ -35,13 +39,6 @@ public class RegisteredServicePublicKeyCipherExecutorTests {
         val ticketId = RandomUtils.randomAlphanumeric(120);
         val e = new RegisteredServicePublicKeyCipherExecutor();
         assertNotNull(e.encode(ticketId, Optional.of(svc)));
-    }
-
-    private static AbstractRegisteredService getService(final String keyLocation) {
-        val svc = new RegexRegisteredService();
-        svc.setServiceId("Testing");
-        svc.setPublicKey(new RegisteredServicePublicKeyImpl(keyLocation, "RSA"));
-        return svc;
     }
 
 

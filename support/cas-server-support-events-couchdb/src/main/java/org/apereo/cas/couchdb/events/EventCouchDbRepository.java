@@ -7,10 +7,11 @@ import org.ektorp.support.CouchDbRepositorySupport;
 import org.ektorp.support.GenerateView;
 import org.ektorp.support.View;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link EventCouchDbRepository}. Typed interface to CouchDB.
@@ -26,6 +27,7 @@ public class EventCouchDbRepository extends CouchDbRepositorySupport<CouchDbCasE
 
     /**
      * Find by event type.
+     *
      * @param type event type
      * @return events of requested type
      */
@@ -36,20 +38,26 @@ public class EventCouchDbRepository extends CouchDbRepositorySupport<CouchDbCasE
 
     /**
      * Fund by type since a given date.
+     *
      * @param type type to search for
-     * @param localDateTime time to search since
+     * @param dt   time to search since
      * @return events of the given type since the given time
      */
-    @View(name = "by_type_and_local_date_time", map = "function(doc) { emit([doc.type, doc.creationTime], doc) }")
-    public List<CouchDbCasEvent> findByTypeSince(final String type, final LocalDateTime localDateTime) {
-        val view = createQuery("by_type_and_local_date_time").startKey(ComplexKey.of(type, localDateTime))
-            .endKey(ComplexKey.of(type, LocalDateTime.now(ZoneId.systemDefault())));
-        return db.queryView(view, CouchDbCasEvent.class);
+    public List<CouchDbCasEvent> findByTypeSince(final String type, final ZonedDateTime dt) {
+        val now = ZonedDateTime.now(ZoneOffset.UTC);
+        return findByType(type)
+            .stream()
+            .filter(event -> {
+                val eventDate = ZonedDateTime.parse(event.getCreationTime());
+                return eventDate.isEqual(dt) || (eventDate.isAfter(dt) && eventDate.isBefore(now));
+            })
+            .collect(Collectors.toList());
     }
 
     /**
      * Find by type and principal id.
-     * @param type event type
+     *
+     * @param type        event type
      * @param principalId principal to search for
      * @return events of requested type and principal
      */
@@ -61,20 +69,28 @@ public class EventCouchDbRepository extends CouchDbRepositorySupport<CouchDbCasE
 
     /**
      * Find by type and principal id.
-     * @param type event type
+     *
+     * @param type        event type
      * @param principalId principal to search for
-     * @param localDateTime time to search after
+     * @param dt          time to search after
      * @return events of requested type and principal since given time
      */
-    @View(name = "by_type_for_principal_id_since", map = "function(doc) { emit([doc.type, doc.principal, doc.creationTime], doc) }")
-    public Collection<CouchDbCasEvent> findByTypeForPrincipalSince(final String type, final String principalId, final LocalDateTime localDateTime) {
-        val view = createQuery("by_type_for_principal_id_since").startKey(ComplexKey.of(type, principalId, localDateTime))
-            .endKey(ComplexKey.of(type, principalId, LocalDateTime.now(ZoneId.systemDefault())));
-        return db.queryView(view, CouchDbCasEvent.class);
+    public Collection<CouchDbCasEvent> findByTypeForPrincipalSince(final String type,
+                                                                   final String principalId,
+                                                                   final ZonedDateTime dt) {
+        val now = ZonedDateTime.now(ZoneOffset.UTC);
+        return findByTypeForPrincipalId(type, principalId)
+            .stream()
+            .filter(event -> {
+                val eventDate = ZonedDateTime.parse(event.getCreationTime());
+                return eventDate.isEqual(dt) || (eventDate.isAfter(dt) && eventDate.isBefore(now));
+            })
+            .collect(Collectors.toList());
     }
 
     /**
      * Find by principal.
+     *
      * @param principalId principal to search for
      * @return events for the given principal
      */
@@ -85,14 +101,20 @@ public class EventCouchDbRepository extends CouchDbRepositorySupport<CouchDbCasE
 
     /**
      * Find by principal.
-     * @param principalId principal to search for
+     *
+     * @param principalId  principal to search for
      * @param creationTime time to search after
      * @return events for the given principal after the given time
      */
-    @View(name = "by_principal_id_since", map = "function(doc) { emit([doc.principalId, doc.creationTime], doc) }")
-    public Collection<CouchDbCasEvent> findByPrincipalSince(final String principalId, final LocalDateTime creationTime) {
-        val view = createQuery("by_principal_id_since").startKey(ComplexKey.of(principalId, creationTime))
-            .endKey(ComplexKey.of(principalId, LocalDateTime.now(ZoneId.systemDefault())));
-        return db.queryView(view, CouchDbCasEvent.class);
+    public Collection<CouchDbCasEvent> findByPrincipalSince(final String principalId, final ZonedDateTime creationTime) {
+
+        val now = ZonedDateTime.now(ZoneOffset.UTC);
+        return findByPrincipalId(principalId)
+            .stream()
+            .filter(event -> {
+                val eventDate = ZonedDateTime.parse(event.getCreationTime());
+                return eventDate.isEqual(creationTime) || (eventDate.isAfter(creationTime) && eventDate.isBefore(now));
+            })
+            .collect(Collectors.toList());
     }
 }

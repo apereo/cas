@@ -198,7 +198,6 @@ public class RadiusConfiguration {
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
             .ticketRegistry(ticketRegistry.getObject())
-            .eventPublisher(applicationContext)
             .applicationContext(applicationContext)
             .build();
         val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(context, radiusAccessChallengedMultifactorAuthenticationTrigger());

@@ -13,7 +13,7 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
 import javax.security.auth.login.FailedLoginException;
@@ -36,6 +36,7 @@ import static org.mockito.Mockito.*;
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
 public class PolicyBasedAuthenticationManagerTests {
     private static final String HANDLER_A = "HandlerA";
+
     private static final String HANDLER_B = "HandlerB";
 
     private final AuthenticationTransaction transaction = DefaultAuthenticationTransaction.of(CoreAuthenticationTestUtils.getService(),
@@ -105,6 +106,23 @@ public class PolicyBasedAuthenticationManagerTests {
         return mock;
     }
 
+    protected static ServicesManager mockServicesManager() {
+        val svc = mock(ServicesManager.class);
+        val reg = CoreAuthenticationTestUtils.getRegisteredService();
+        when(svc.findServiceBy(any(Service.class))).thenReturn(reg);
+        when(svc.getAllServices()).thenReturn(List.of(reg));
+        return svc;
+    }
+
+    private static AuthenticationEventExecutionPlan getAuthenticationExecutionPlan(final Map<AuthenticationHandler, PrincipalResolver> map) {
+        val plan = new DefaultAuthenticationEventExecutionPlan();
+        plan.registerAuthenticationHandlerWithPrincipalResolver(map);
+        plan.registerAuthenticationHandlerResolver(new RegisteredServiceAuthenticationHandlerResolver(mockServicesManager(),
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())));
+        plan.registerAuthenticationHandlerResolver(new DefaultAuthenticationHandlerResolver());
+        return plan;
+    }
+
     @Test
     public void verifyAuthenticateAnySuccess() {
         val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
@@ -114,7 +132,7 @@ public class PolicyBasedAuthenticationManagerTests {
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy());
         val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ApplicationEventPublisher.class));
+            false, mock(ConfigurableApplicationContext.class));
 
         val auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
@@ -129,20 +147,12 @@ public class PolicyBasedAuthenticationManagerTests {
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy(true));
         val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ApplicationEventPublisher.class));
+            false, mock(ConfigurableApplicationContext.class));
 
         val auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
         assertEquals(1, auth.getFailures().size());
         assertEquals(2, map.size());
-    }
-
-    protected static ServicesManager mockServicesManager() {
-        val svc = mock(ServicesManager.class);
-        val reg = CoreAuthenticationTestUtils.getRegisteredService();
-        when(svc.findServiceBy(any(Service.class))).thenReturn(reg);
-        when(svc.getAllServices()).thenReturn(List.of(reg));
-        return svc;
     }
 
     @Test
@@ -154,7 +164,7 @@ public class PolicyBasedAuthenticationManagerTests {
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy());
         val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ApplicationEventPublisher.class));
+            false, mock(ConfigurableApplicationContext.class));
 
         assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
     }
@@ -182,7 +192,7 @@ public class PolicyBasedAuthenticationManagerTests {
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new AllCredentialsValidatedAuthenticationPolicy());
         val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ApplicationEventPublisher.class));
+            false, mock(ConfigurableApplicationContext.class));
 
         val auth = manager.authenticate(transaction);
         assertEquals(2, auth.getSuccesses().size());
@@ -199,7 +209,7 @@ public class PolicyBasedAuthenticationManagerTests {
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new AllCredentialsValidatedAuthenticationPolicy());
         val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ApplicationEventPublisher.class));
+            false, mock(ConfigurableApplicationContext.class));
 
         assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
     }
@@ -213,7 +223,7 @@ public class PolicyBasedAuthenticationManagerTests {
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy(HANDLER_A));
         val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ApplicationEventPublisher.class));
+            false, mock(ConfigurableApplicationContext.class));
 
 
         val auth = manager.authenticate(transaction);
@@ -230,7 +240,7 @@ public class PolicyBasedAuthenticationManagerTests {
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy(HANDLER_B));
         val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ApplicationEventPublisher.class));
+            false, mock(ConfigurableApplicationContext.class));
 
         assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
     }
@@ -244,20 +254,11 @@ public class PolicyBasedAuthenticationManagerTests {
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy(HANDLER_A, true));
         val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan, false,
-            mock(ApplicationEventPublisher.class));
+            mock(ConfigurableApplicationContext.class));
 
         val auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
         assertEquals(1, auth.getFailures().size());
         assertEquals(2, auth.getCredentials().size());
-    }
-
-    private static AuthenticationEventExecutionPlan getAuthenticationExecutionPlan(final Map<AuthenticationHandler, PrincipalResolver> map) {
-        val plan = new DefaultAuthenticationEventExecutionPlan();
-        plan.registerAuthenticationHandlerWithPrincipalResolver(map);
-        plan.registerAuthenticationHandlerResolver(new RegisteredServiceAuthenticationHandlerResolver(mockServicesManager(),
-                new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())));
-        plan.registerAuthenticationHandlerResolver(new DefaultAuthenticationHandlerResolver());
-        return plan;
     }
 }
