@@ -163,6 +163,10 @@ public class LdapAuthenticationConfiguration {
                 stream()
                     .map(LdapAuthenticationHandler.class::cast)
                     .forEach(LdapAuthenticationHandler::closeAuthenticationHandler);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                }
             }
         };
 

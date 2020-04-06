@@ -108,5 +108,9 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
 
     public void close() {
         connectionFactory.close();
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+        }
     }
 }

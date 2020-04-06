@@ -269,6 +269,10 @@ public class CasPersonDirectoryConfiguration {
 
         public void close() {
             connectionFactories.forEach(ConnectionFactory::close);
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+            }
         }
     }
 
