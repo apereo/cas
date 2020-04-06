@@ -21,6 +21,5 @@ dependencies {
     implementation project(":support:cas-server-support-saml-idp-core")
     
     implementation libraries.casclient
-    implementation libraries.shibidp
     implementation libraries.shibidpjavasupport
 }

@@ -138,7 +138,7 @@ import static org.mockito.Mockito.*;
 },
     properties = {
         "cas.authn.oidc.issuer=https://sso.example.org/cas/oidc",
-        "cas.authn.oidc.jwksFile=classpath:keystore.jwks",
+        "cas.authn.oidc.jwks.jwksFile=classpath:keystore.jwks",
         "spring.mail.host=localhost",
         "spring.mail.port=25000"
     })

@@ -54,7 +54,7 @@ import java.util.Properties;
 @Configuration("openidConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class OpenIdConfiguration {
     @Autowired
     @Qualifier("serviceValidationViewFactory")

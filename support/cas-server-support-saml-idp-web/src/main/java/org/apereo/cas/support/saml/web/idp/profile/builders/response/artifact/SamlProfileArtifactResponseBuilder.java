@@ -9,7 +9,6 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlPr
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 
 import lombok.val;
-import org.joda.time.DateTime;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -22,6 +21,9 @@ import org.opensaml.soap.soap11.Header;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 /**
  * This is {@link SamlProfileArtifactResponseBuilder}.
@@ -49,7 +51,7 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
         val castedAssertion = org.jasig.cas.client.validation.Assertion.class.cast(casAssertion);
         val ticket = (SamlArtifactTicket) castedAssertion.getAttributes().get("artifact");
         val artifactResponse = new ArtifactResponseBuilder().buildObject();
-        artifactResponse.setIssueInstant(DateTime.now());
+        artifactResponse.setIssueInstant(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
         artifactResponse.setIssuer(newIssuer(ticket.getIssuer()));
         artifactResponse.setInResponseTo(ticket.getRelyingPartyId());
         artifactResponse.setID(ticket.getId());

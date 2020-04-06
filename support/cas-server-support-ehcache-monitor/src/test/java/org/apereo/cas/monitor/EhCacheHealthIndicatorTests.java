@@ -50,9 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
     MailSenderAutoConfiguration.class
 }, properties = {
     "cas.ticket.registry.ehcache.maxElementsOnDisk=100",
-    "cas.ticket.registry.ehcache.maxElementsInMemory=100",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
+    "cas.ticket.registry.ehcache.maxElementsInMemory=100"
 })
 @Tag("Ehcache")
 @Deprecated(since = "6.2.0")

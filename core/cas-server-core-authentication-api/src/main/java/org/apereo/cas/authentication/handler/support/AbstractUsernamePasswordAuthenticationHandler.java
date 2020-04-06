@@ -58,7 +58,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) {
         val originalUserPass = (UsernamePasswordCredential) credential;
-        val userPass = new UsernamePasswordCredential();
+        val userPass = (UsernamePasswordCredential) credential.getClass().getDeclaredConstructor().newInstance();
 
         BeanUtils.copyProperties(userPass, originalUserPass);
 

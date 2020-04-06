@@ -4,7 +4,7 @@ gradle="./gradlew "
 gradleBuild=""
 gradleBuildOptions="--build-cache --configure-on-demand --no-daemon "
 
-tomcatVersion="9.0.31"
+tomcatVersion="9.0.33"
 tomcatVersionTag="v${tomcatVersion}"
 tomcatUrl="https://www-eu.apache.org/dist/tomcat/tomcat-9/${tomcatVersionTag}/bin/apache-tomcat-${tomcatVersion}.zip"
 

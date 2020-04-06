@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.generic;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -30,6 +31,8 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -43,6 +46,7 @@ import java.util.Set;
 public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     private final Set<String> requiredRoles;
+
     private final Set<String> requiredPermissions;
 
     public ShiroAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
@@ -69,7 +73,14 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
 
             checkSubjectRolesAndPermissions(currentUser);
 
-            return createAuthenticatedSubjectResult(transformedCredential, currentUser);
+            val strategy = getPasswordPolicyHandlingStrategy();
+            val messageList = new ArrayList<MessageDescriptor>();
+            if (strategy != null) {
+                LOGGER.debug("Attempting to examine and handle password policy via [{}]", strategy.getClass().getSimpleName());
+                val principal = this.principalFactory.createPrincipal(token.getUsername());
+                messageList.addAll(strategy.handle(principal, getPasswordPolicyConfiguration()));
+            }
+            return createAuthenticatedSubjectResult(transformedCredential, currentUser, messageList);
         } catch (final UnknownAccountException uae) {
             throw new AccountNotFoundException(uae.getMessage());
         } catch (final LockedAccountException | ExcessiveAttemptsException lae) {
@@ -112,11 +123,14 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
      *
      * @param credential  the credential
      * @param currentUser the current user
+     * @param messages    the messages
      * @return the handler result
      */
-    protected AuthenticationHandlerExecutionResult createAuthenticatedSubjectResult(final Credential credential, final Subject currentUser) {
+    protected AuthenticationHandlerExecutionResult createAuthenticatedSubjectResult(final Credential credential,
+                                                                                    final Subject currentUser,
+                                                                                    final List<MessageDescriptor> messages) {
         val username = currentUser.getPrincipal().toString();
-        return createHandlerResult(credential, this.principalFactory.createPrincipal(username));
+        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), messages);
     }
 
     /**

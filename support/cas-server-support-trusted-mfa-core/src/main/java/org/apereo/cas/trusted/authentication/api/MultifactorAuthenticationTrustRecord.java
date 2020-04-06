@@ -1,7 +1,6 @@
 package org.apereo.cas.trusted.authentication.api;
 
-import org.apereo.cas.util.jpa.SkippingNanoSecondsLocalDateTimeConverter;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
@@ -12,11 +11,9 @@ import lombok.val;
 import org.springframework.data.annotation.Id;
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
-
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
@@ -50,7 +47,6 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
 
     @JsonProperty("recordDate")
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    @Convert(converter = SkippingNanoSecondsLocalDateTimeConverter.class)
     private LocalDateTime recordDate;
 
     @Lob
@@ -62,6 +58,10 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     @JsonProperty("name")
     @Column(length = Integer.MAX_VALUE, nullable = false)
     private String name;
+
+    @JsonProperty("expirationDate")
+    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    private LocalDateTime expirationDate;
 
     public MultifactorAuthenticationTrustRecord() {
         this.id = System.currentTimeMillis();
@@ -85,6 +85,28 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
         r.setDeviceFingerprint(fingerprint);
         r.setName(principal.concat("-").concat(now.toString()).concat("-").concat(geography));
         return r;
+    }
+
+    /**
+     * Is record expired ?
+     *
+     * @return the boolean
+     */
+    @JsonIgnore
+    public boolean isExpired() {
+        val expDate = LocalDateTime.now(ZoneOffset.UTC);
+        return expDate.isEqual(getExpirationDate()) || expDate.isAfter(getExpirationDate());
+    }
+
+    /**
+     * Set expiration date of record in given time.
+     *
+     * @param expiration the expiration
+     * @param timeUnit   the time unit
+     */
+    public void expireIn(final long expiration, final ChronoUnit timeUnit) {
+        val expDate = LocalDateTime.now(ZoneOffset.UTC).plus(expiration, timeUnit);
+        setExpirationDate(expDate);
     }
 
     @Override

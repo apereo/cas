@@ -9,8 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwk.EcJwkGenerator;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
+import org.jose4j.jwk.RsaJwkGenerator;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.keys.EllipticCurves;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -19,16 +23,21 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
- * This is {@link OidcJsonWebKeySetUtils}.
+ * This is {@link OidcJsonWebKeyStoreUtils}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
 @UtilityClass
 @Slf4j
-public class OidcJsonWebKeySetUtils {
+public class OidcJsonWebKeyStoreUtils {
+    private static final int JWK_EC_P384_SIZE = 384;
+
+    private static final int JWK_EC_P512_SIZE = 512;
+
     /**
      * Gets json web key set.
      *
@@ -141,5 +150,38 @@ public class OidcJsonWebKeySetUtils {
     @SneakyThrows
     public static JsonWebKeySet parseJsonWebKeySet(final String json) {
         return new JsonWebKeySet(json);
+    }
+
+    /**
+     * Generate json web key public.
+     *
+     * @param jwksType    the jwks type
+     * @param jwksKeySize the jwks key size
+     * @return the public json web key
+     */
+    @SneakyThrows
+    public static PublicJsonWebKey generateJsonWebKey(final String jwksType, final int jwksKeySize) {
+        switch (jwksType.trim().toLowerCase()) {
+            case "ec":
+                if (jwksKeySize == JWK_EC_P384_SIZE) {
+                    val jwk = EcJwkGenerator.generateJwk(EllipticCurves.P384);
+                    jwk.setKeyId(UUID.randomUUID().toString());
+                    jwk.setAlgorithm(AlgorithmIdentifiers.ECDSA_USING_P384_CURVE_AND_SHA384);
+                    return jwk;
+                }
+                if (jwksKeySize == JWK_EC_P512_SIZE) {
+                    val jwk = EcJwkGenerator.generateJwk(EllipticCurves.P521);
+                    jwk.setKeyId(UUID.randomUUID().toString());
+                    jwk.setAlgorithm(AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512);
+                    return jwk;
+                }
+                val jwk = EcJwkGenerator.generateJwk(EllipticCurves.P256);
+                jwk.setKeyId(UUID.randomUUID().toString());
+                jwk.setAlgorithm(AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512);
+                return jwk;
+            case "rsa":
+            default:
+                return RsaJwkGenerator.generateJwk(jwksKeySize);
+        }
     }
 }

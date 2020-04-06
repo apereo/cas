@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.swivel.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.flow.configurer.AbstractMultifactorTrustedDeviceWebflowConfigurer;
+import org.apereo.cas.trusted.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 
 import org.springframework.context.ConfigurableApplicationContext;

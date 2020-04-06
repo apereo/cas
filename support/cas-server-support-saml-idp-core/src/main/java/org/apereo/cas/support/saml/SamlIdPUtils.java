@@ -5,7 +5,6 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -27,6 +26,7 @@ import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
 import org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.LogoutRequest;
+import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.StatusResponseType;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
@@ -290,6 +290,19 @@ public class SamlIdPUtils {
         roleDescriptorResolver.setRequireValidMetadata(requireValidMetadata);
         roleDescriptorResolver.initialize();
         return roleDescriptorResolver;
+    }
+
+    /**
+     * Gets name id policy.
+     *
+     * @param authnRequest the authn request
+     * @return the name id policy
+     */
+    public static Optional<NameIDPolicy> getNameIDPolicy(final RequestAbstractType authnRequest) {
+        if (authnRequest instanceof AuthnRequest) {
+            return Optional.ofNullable(AuthnRequest.class.cast(authnRequest).getNameIDPolicy());
+        }
+        return Optional.empty();
     }
 }
 

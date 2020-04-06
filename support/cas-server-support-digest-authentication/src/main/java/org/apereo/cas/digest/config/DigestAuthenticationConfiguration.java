@@ -71,7 +71,9 @@ public class DigestAuthenticationConfiguration {
 
     @Autowired
     @Bean
-    public Action digestAuthenticationAction(@Qualifier("defaultDigestCredentialRetriever") final DigestHashedCredentialRetriever defaultDigestCredentialRetriever) {
+    @ConditionalOnMissingBean(name = "digestAuthenticationAction")
+    public Action digestAuthenticationAction(@Qualifier("defaultDigestCredentialRetriever")
+                                             final DigestHashedCredentialRetriever defaultDigestCredentialRetriever) {
         return new DigestAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
             serviceTicketRequestWebflowEventResolver.getObject(),
             adaptiveAuthenticationPolicy.getObject(),

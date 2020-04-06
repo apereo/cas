@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
-import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -16,7 +15,6 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -45,9 +43,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @Tag("Webflow")
 public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {
-    @Autowired
-    @Qualifier("mfaTrustEngine")
-    protected MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -56,7 +51,7 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
     public void verifyDeviceNotTrusted() throws Exception {
         val r = getMultifactorAuthenticationTrustRecord();
         r.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(5));
-        getMfaTrustEngine().set(r);
+        getMfaTrustEngine().save(r);
 
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
@@ -86,7 +81,7 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
         record.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(5));
         val deviceFingerprint = deviceFingerprintStrategy.determineFingerprint(record.getPrincipal(), context, true);
         record.setDeviceFingerprint(deviceFingerprint);
-        mfaTrustEngine.set(record);
+        mfaTrustEngine.save(record);
 
         assertNotNull(response.getCookies());
         assertTrue(response.getCookies().length == 1);

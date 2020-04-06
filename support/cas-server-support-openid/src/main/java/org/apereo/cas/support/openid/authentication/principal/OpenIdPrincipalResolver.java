@@ -20,7 +20,7 @@ import java.util.Set;
  * @since 3.1
  */
 @ToString(callSuper = true)
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     public OpenIdPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,

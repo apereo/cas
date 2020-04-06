@@ -19,7 +19,6 @@ dependencies {
     implementation project(":support:cas-server-support-aws")
 
     implementation libraries.awss3
-    implementation libraries.shibidp
     implementation libraries.shibidpjavasupport
 
     testImplementation project(":support:cas-server-support-person-directory")
