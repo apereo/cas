@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  * @deprecated Since 6.2
  */
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 @Tag("Groovy")
 public class ScriptedRegisteredServiceUsernameProviderTests {
     @Test

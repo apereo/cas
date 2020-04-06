@@ -59,6 +59,13 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     private TimeUnit timeUnit = TimeUnit.DAYS;
 
     /**
+     * Indicates how record keys for trusted devices would be generated
+     * so they can be signed/verified on fetch operations.
+     * Acceptable values are {@code default}, {@code legacy}.
+     */
+    private String keyGeneratorType = "default";
+
+    /**
      * Store devices records via REST.
      */
     private Rest rest = new Rest();

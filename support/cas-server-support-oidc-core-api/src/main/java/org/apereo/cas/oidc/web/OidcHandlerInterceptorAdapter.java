@@ -1,10 +1,13 @@
 package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,8 +32,10 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
                                          final HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor,
                                          final HandlerInterceptorAdapter requiresAuthenticationClientConfigurationInterceptor,
                                          final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode,
-                                         final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors) {
-        super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor, accessTokenGrantRequestExtractors);
+                                         final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors,
+                                         final ServicesManager servicesManager,
+                                         final SessionStore<JEEContext> sessionStore) {
+        super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor, accessTokenGrantRequestExtractors, servicesManager, sessionStore);
         this.requiresAuthenticationDynamicRegistrationInterceptor = requiresAuthenticationDynamicRegistrationInterceptor;
         this.dynamicClientRegistrationMode = dynamicClientRegistrationMode;
         this.requiresAuthenticationClientConfigurationInterceptor = requiresAuthenticationClientConfigurationInterceptor;

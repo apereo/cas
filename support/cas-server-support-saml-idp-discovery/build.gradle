@@ -22,8 +22,7 @@ dependencies {
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-saml-mdui-core")
     implementation project(":support:cas-server-support-saml-idp-core")
-    
-    implementation libraries.shibidp
+
     implementation libraries.shibidpjavasupport
     implementation libraries.opensaml
     implementation libraries.dropwizard

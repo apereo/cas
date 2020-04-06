@@ -76,7 +76,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 
 /**
  * The {@link SamlIdPConfiguration}.
@@ -209,7 +209,7 @@ public class SamlIdPConfiguration {
             samlArtifactTicketFactory(),
             ticketGrantingTicketCookieGenerator.getObject());
         val expirationPolicy = samlArtifactTicketExpirationPolicy().buildTicketExpirationPolicy();
-        map.setArtifactLifetime(TimeUnit.SECONDS.toMillis(expirationPolicy.getTimeToLive()));
+        map.setArtifactLifetime(Duration.ofSeconds(expirationPolicy.getTimeToLive()));
         return map;
     }
 
@@ -315,7 +315,7 @@ public class SamlIdPConfiguration {
             openSamlConfigBean.getObject(),
             samlAttributeEncoder(),
             casProperties.getAuthn().getSamlIdp(),
-            samlObjectEncrypter(), 
+            samlObjectEncrypter(),
             attributeDefinitionStore.getObject());
     }
 

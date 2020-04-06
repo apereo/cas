@@ -18,13 +18,8 @@ to enhance the authentication flow.
   "name" : "ExampleApp",
   "id" : 1,
   "authenticationPolicy" : {
-    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
-    "requiredAuthenticationHandlers" : [ "handler2", "handler1" ],
-    "criteria": {
-      "@class": "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicyCriteria",
-      "tryAll": true,
-      "type": "ANY_AUTHENTICATION_HANDLER"
-    }
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",  
+    "requiredAuthenticationHandlers" : ["java.util.TreeSet", [ "AuthNHandlerName" ]]
   }
 }
 ```    
@@ -38,10 +33,107 @@ The following fields may be assigned to the policy:
 ## Authentication Policy Criteria
 
 Authentication policy criteria can also be assigned to each application definition, which should override the global policy defined for the deployment.
-Such policies should closely follow after those [that can be defined globally](../installation/Configuring-Authentication-Components.html#authentication-policy), 
-with the following types:
+Such policies should closely follow after those [that can be defined globally](../installation/Configuring-Authentication-Components.html#authentication-policy), are entirely optional and can be one of the following types:
 
-| Type                  | Description
-|-----------------------|-----------------------------------------------------------------------------------------------
-| `DEFAULT`  | Use the globally defined policy and skip assigning a special override to this service definition.
-| `ANY_AUTHENTICATION_HANDLER`  | Maps to the `Any` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).
+
+### Any
+
+Maps to the `Any` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "https://app.example.org/.+",
+  "name" : "ExampleApp",
+  "id" : 1,
+  "authenticationPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
+    "criteria": {
+      "@class" : "org.apereo.cas.services.AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria",
+      "tryAll": true
+    }
+  }
+}
+```
+
+### All
+
+Maps to the `All` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "https://app.example.org/.+",
+  "name" : "ExampleApp",
+  "id" : 1,
+  "authenticationPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
+    "criteria": {
+      "@class" : "org.apereo.cas.services.AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria"
+    }
+  }
+}
+```
+
+### Not Prevented
+
+Maps to the `Not Prevented` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "https://app.example.org/.+",
+  "name" : "ExampleApp",
+  "id" : 1,
+  "authenticationPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
+    "criteria": {
+      "@class" : "org.apereo.cas.services.NotPreventedRegisteredServiceAuthenticationPolicyCriteria"
+    }
+  }
+}
+```
+
+### Groovy
+
+Maps to the `Groovy` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "https://app.example.org/.+",
+  "name" : "ExampleApp",
+  "id" : 1,
+  "authenticationPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
+    "criteria": {
+      "@class" : "org.apereo.cas.services.GroovyRegisteredServiceAuthenticationPolicyCriteria",
+      "script": "..."
+    }
+  }
+}
+```
+
+The `script` attribute can either be an inline Groovy script or a reference to an external file. 
+
+### REST
+
+ Maps to the `Rest` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).
+ 
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "https://app.example.org/.+",
+  "name" : "ExampleApp",
+  "id" : 1,
+  "authenticationPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
+    "criteria": {
+      "@class" : "org.apereo.cas.services.RestfulRegisteredServiceAuthenticationPolicyCriteria",
+      "url": "...",
+      "basicAuthUsername": "...",
+      "basicAuthPassword": "..."
+    }
+  }
+}
+```

@@ -1517,9 +1517,10 @@ Contact a REST endpoint via `POST` to detect authentication policy.
 The message body contains the CAS authenticated principal that can be used
 to examine account status and policy.
 
-```properties
-# cas.authn.policy.rest[0].endpoint=https://account.example.org/endpoint
-```
+RESTful settings for this feature are 
+available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.policy.rest[0]`.
+
+Response codes from the REST endpoint are translated as such:
 
 | Code                   | Result
 |------------------------|---------------------------------------------
@@ -2811,7 +2812,15 @@ To learn more about this topic, [please review this guide](../mfa/Multifactor-Tr
 # cas.authn.mfa.trusted.deviceRegistrationEnabled=true
 # cas.authn.mfa.trusted.expiration=30
 # cas.authn.mfa.trusted.timeUnit=SECONDS|MINUTES|HOURS|DAYS
+# cas.authn.mfa.trusted.keyGeneratorType=DEFAULT|LEGACY
 ```
+
+The following strategies can be used to generate keys for trusted device records:
+
+| Type                 | Description
+|----------------------|------------------------------------------------------------------------------------------------
+| `DEFAULT`            | Uses a combination of the username, device name and device fingerprint to generate the device key.
+| `LEGACY`             | Deprecated. Uses a combination of the username, record date and device fingerprint to generate the device key.
 
 #### Signing & Encryption
 
@@ -3248,37 +3257,53 @@ under the configuration key `cas.authn.samlIdp.metadata.jpa`.
 # cas.authn.samlIdp.metadata.jpa.idpMetadataEnabled=true
 ```
  
- The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.samlIdp.metadata.jpa`.
+The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & 
+encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.samlIdp.metadata.jpa`.
  
 #### SAML Metadata CouchDb
 
- Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) 
- under the configuration key `cas.authn.samlIdp.metadata`.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) 
+under the configuration key `cas.authn.samlIdp.metadata`.
  
- The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.samlIdp.metadata.mongo`.
+```properties
+# cas.authn.samlIdp.metadata.couchDb.idpMetadataEnabled=true
+```
+
+The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption 
+settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.samlIdp.metadata.mongo`.
 
 #### SAML Metadata MongoDb
 
- Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) 
- under the configuration key `cas.authn.samlIdp.metadata`.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.samlIdp.metadata`.
  
 ```properties
 # cas.authn.samlIdp.metadata.mongo.idpMetadataCollection=saml-idp-metadata
 ```
  
- The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.samlIdp.metadata.mongo`.
+The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & 
+encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the 
+configuration key `cas.authn.samlIdp.metadata.mongo`.
  
 #### SAML Metadata REST
  
 RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
 under the configuration key `cas.authn.samlIdp.metadata.rest`.
 
+```properties
+# cas.authn.samlIdp.metadata.rest.idpMetadataEnabled=true
+```
+
+The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & 
+encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the 
+configuration key `cas.authn.samlIdp.metadata.rest`.
+
 #### SAML Metadata Amazon S3
  
 Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
 under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
 
- The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
+The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption 
+settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
  
 ```properties
 # cas.authn.samlIdp.metadata.amazonS3.bucketName=saml-sp-bucket
@@ -3419,11 +3444,6 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # Skew ID tokens in minutes
 # cas.authn.oidc.skew=5
 
-# cas.authn.oidc.jwksFile=file:/etc/cas/config/keystore.jwks
-# cas.authn.oidc.jwksCacheInMinutes=60
-# cas.authn.oidc.jwksKeySize=2048
-# cas.authn.oidc.jwksType=RSA|EC
-
 # cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
 
 # cas.authn.oidc.subjectTypes=public,pairwise
@@ -3450,6 +3470,30 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
     A128GCMKW,A192GCMKW,A256GCMKW,ECDH-ES,ECDH-ES+A128KW,ECDH-ES+A192KW,ECDH-ES+A256KW
 # cas.authn.oidc.userInfoEncryptionEncodingValuesSupported=A128CBC-HS256,A192CBC-HS384,A256CBC-HS512,A128GCM,A192GCM,A256GCM
 ```
+  
+### OpenID Connect JWKS
+
+```properties
+# cas.authn.oidc.jwks.jwks-cache-in-minutes=60
+# cas.authn.oidc.jwks.jwks-key-size=2048
+# cas.authn.oidc.jwks.jwks-type=RSA|EC
+```                         
+
+#### File-based JWKS
+
+Manage the JSON web keyset for OpenID Connect as a static file resource.
+
+```properties 
+# cas.authn.oidc.jwks.jwks-file=file:/etc/cas/config/keystore.jwks
+```                                                               
+
+#### REST-based JWKS
+
+Reach out to an external REST API to ask for the JSON web keyset. The expected response code is `200`
+where the response body should contain the contents of the JSON web keyset.
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.oidc.jwks.rest`.
 
 ### OpenID Connect Scopes & Claims
 
@@ -3479,6 +3523,15 @@ might be discovered via an "acct:" URI, for example, which is a URI that looks l
 
 RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
 under the configuration key `cas.authn.oidc.webfinger.userInfo.rest`.
+
+### OpenID Connect Logout
+
+The supported logout channels can be defined via the following properties:
+
+```properties
+# cas.authn.oidc.logout.backchannelLogoutSupported=true
+# cas.authn.oidc.logout.frontchannelLogoutSupported=true
+```
 
 ## Pac4j Delegated AuthN
 

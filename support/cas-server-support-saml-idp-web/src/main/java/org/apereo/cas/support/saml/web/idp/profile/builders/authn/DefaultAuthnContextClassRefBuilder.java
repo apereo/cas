@@ -77,7 +77,7 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
                                                          final RequestedAuthnContext requestedAuthnContext,
                                                          final List<AuthnContextClassRef> authnContextClassRefs) {
         LOGGER.debug("AuthN Context comparison is requested to use [{}]", requestedAuthnContext.getComparison());
-        authnContextClassRefs.forEach(c -> LOGGER.debug("Requested AuthN Context [{}]", c.getAuthnContextClassRef()));
+        authnContextClassRefs.forEach(c -> LOGGER.debug("Requested AuthN Context [{}]", c.getURI()));
         return null;
     }
 }
