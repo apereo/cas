@@ -1231,15 +1231,111 @@ ext.libraries = [
             
         },
         jradius                 : [
-                createJRadiusDependency(
-                        "net.jradius:jradius-extras:$jradiusVersion",
-                        "net.jradius:jradius-apps:$jradiusVersion",
-                        "net.jradius:jradius-dictionary:$jradiusVersion",
-                        "net.jradius:jradius-client:$jradiusVersion",
-                        "net.jradius:jradius-extended:$jradiusVersion",
-                        "net.jradius:jradius-core:$jradiusVersion",
-                        "net.jradius:jradius-server:$jradiusVersion"
-                )
+            dependencies.create("net.jradius:jradius-extras:$jradiusVersion") {
+                exclude(group: "commons-logging", module: "commons-logging")
+                exclude(group: "log4j", module: "log4j")
+                exclude(group: "org.slf4j", module: "slf4j-api")
+                exclude(group: "commons-collections", module: "commons-collections")
+                exclude(group: "commons-beanutils", module: "commons-beanutils")
+                exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
+                exclude(group: "org.slf4j", module: "slf4j-log4j12")
+                exclude(group: "org.springframework", module: "spring-beans")
+                exclude(group: "org.springframework", module: "spring-context")
+                exclude(group: "org.springframework", module: "spring-context-support")
+                exclude(group: "org.springframework", module: "spring-core")
+                exclude(group: "commons-lang", module: "commons-lang")
+                exclude(group: "net.sf.ehcache", module: "ehcache-core")
+            },
+            dependencies.create("net.jradius:jradius-apps:$jradiusVersion") {
+                exclude(group: "commons-logging", module: "commons-logging")
+                exclude(group: "log4j", module: "log4j")
+                exclude(group: "org.slf4j", module: "slf4j-api")
+                exclude(group: "commons-collections", module: "commons-collections")
+                exclude(group: "commons-beanutils", module: "commons-beanutils")
+                exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
+                exclude(group: "org.slf4j", module: "slf4j-log4j12")
+                exclude(group: "org.springframework", module: "spring-beans")
+                exclude(group: "org.springframework", module: "spring-context")
+                exclude(group: "org.springframework", module: "spring-context-support")
+                exclude(group: "org.springframework", module: "spring-core")
+                exclude(group: "commons-lang", module: "commons-lang")
+                exclude(group: "net.sf.ehcache", module: "ehcache-core")
+            },
+            dependencies.create("net.jradius:jradius-dictionary:$jradiusVersion") {
+                exclude(group: "commons-logging", module: "commons-logging")
+                exclude(group: "log4j", module: "log4j")
+                exclude(group: "org.slf4j", module: "slf4j-api")
+                exclude(group: "commons-collections", module: "commons-collections")
+                exclude(group: "commons-beanutils", module: "commons-beanutils")
+                exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
+                exclude(group: "org.slf4j", module: "slf4j-log4j12")
+                exclude(group: "org.springframework", module: "spring-beans")
+                exclude(group: "org.springframework", module: "spring-context")
+                exclude(group: "org.springframework", module: "spring-context-support")
+                exclude(group: "org.springframework", module: "spring-core")
+                exclude(group: "commons-lang", module: "commons-lang")
+                exclude(group: "net.sf.ehcache", module: "ehcache-core")
+            },
+            dependencies.create("net.jradius:jradius-client:$jradiusVersion") {
+                exclude(group: "commons-logging", module: "commons-logging")
+                exclude(group: "log4j", module: "log4j")
+                exclude(group: "org.slf4j", module: "slf4j-api")
+                exclude(group: "commons-collections", module: "commons-collections")
+                exclude(group: "commons-beanutils", module: "commons-beanutils")
+                exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
+                exclude(group: "org.slf4j", module: "slf4j-log4j12")
+                exclude(group: "org.springframework", module: "spring-beans")
+                exclude(group: "org.springframework", module: "spring-context")
+                exclude(group: "org.springframework", module: "spring-context-support")
+                exclude(group: "org.springframework", module: "spring-core")
+                exclude(group: "commons-lang", module: "commons-lang")
+                exclude(group: "net.sf.ehcache", module: "ehcache-core")
+            },  
+            dependencies.create("net.jradius:jradius-extended:$jradiusVersion") {
+                exclude(group: "commons-logging", module: "commons-logging")
+                exclude(group: "log4j", module: "log4j")
+                exclude(group: "org.slf4j", module: "slf4j-api")
+                exclude(group: "commons-collections", module: "commons-collections")
+                exclude(group: "commons-beanutils", module: "commons-beanutils")
+                exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
+                exclude(group: "org.slf4j", module: "slf4j-log4j12")
+                exclude(group: "org.springframework", module: "spring-beans")
+                exclude(group: "org.springframework", module: "spring-context")
+                exclude(group: "org.springframework", module: "spring-context-support")
+                exclude(group: "org.springframework", module: "spring-core")
+                exclude(group: "commons-lang", module: "commons-lang")
+                exclude(group: "net.sf.ehcache", module: "ehcache-core")
+            },  
+            dependencies.create("net.jradius:jradius-core:$jradiusVersion") {
+                exclude(group: "commons-logging", module: "commons-logging")
+                exclude(group: "log4j", module: "log4j")
+                exclude(group: "org.slf4j", module: "slf4j-api")
+                exclude(group: "commons-collections", module: "commons-collections")
+                exclude(group: "commons-beanutils", module: "commons-beanutils")
+                exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
+                exclude(group: "org.slf4j", module: "slf4j-log4j12")
+                exclude(group: "org.springframework", module: "spring-beans")
+                exclude(group: "org.springframework", module: "spring-context")
+                exclude(group: "org.springframework", module: "spring-context-support")
+                exclude(group: "org.springframework", module: "spring-core")
+                exclude(group: "commons-lang", module: "commons-lang")
+                exclude(group: "net.sf.ehcache", module: "ehcache-core")
+            },
+            dependencies.create("net.jradius:jradius-server:$jradiusVersion") {
+                exclude(group: "commons-logging", module: "commons-logging")
+                exclude(group: "log4j", module: "log4j")
+                exclude(group: "org.slf4j", module: "slf4j-api")
+                exclude(group: "commons-collections", module: "commons-collections")
+                exclude(group: "commons-beanutils", module: "commons-beanutils")
+                exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
+                exclude(group: "org.slf4j", module: "slf4j-log4j12")
+                exclude(group: "org.springframework", module: "spring-beans")
+                exclude(group: "org.springframework", module: "spring-context")
+                exclude(group: "org.springframework", module: "spring-context-support")
+                exclude(group: "org.springframework", module: "spring-core")
+                exclude(group: "commons-lang", module: "commons-lang")
+                exclude(group: "net.sf.ehcache", module: "ehcache-core")
+            }
         ],
         tests                   : [
                 dependencies.create("com.unboundid:unboundid-ldapsdk:$unboundidVersion") {
@@ -3381,27 +3477,6 @@ ext.libraries = [
                 }
         ]
 ]
-
-def createJRadiusDependency(String... coordinates) {
-    coordinates.each {
-        dependencies.create(it) {
-            exclude(group: "commons-logging", module: "commons-logging")
-            exclude(group: "log4j", module: "log4j")
-            exclude(group: "org.slf4j", module: "slf4j-api")
-            exclude(group: "commons-collections", module: "commons-collections")
-            exclude(group: "commons-beanutils", module: "commons-beanutils")
-            exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
-            exclude(group: "org.slf4j", module: "slf4j-log4j12")
-            exclude(group: "org.springframework", module: "spring-beans")
-            exclude(group: "org.springframework", module: "spring-context")
-            exclude(group: "org.springframework", module: "spring-context-support")
-            exclude(group: "org.springframework", module: "spring-core")
-            exclude(group: "commons-lang", module: "commons-lang")
-            exclude(group: "net.sf.ehcache", module: "ehcache-core")
-            
-        }
-    }
-}
 
 def createMetricsDependencies(String... coordinates) {
     coordinates.each {

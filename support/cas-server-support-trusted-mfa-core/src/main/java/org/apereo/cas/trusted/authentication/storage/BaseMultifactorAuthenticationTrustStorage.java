@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorP
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
@@ -46,7 +47,8 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
     public MultifactorAuthenticationTrustRecord save(final MultifactorAuthenticationTrustRecord record) {
         record.setRecordKey(generateKey(record));
         if (record.getExpirationDate() == null) {
-            record.expireRecordIn(trustedDevicesMultifactorProperties.getExpiration(), trustedDevicesMultifactorProperties.getTimeUnit());
+            val unit = DateTimeUtils.toChronoUnit(trustedDevicesMultifactorProperties.getTimeUnit());
+            record.expireIn(trustedDevicesMultifactorProperties.getExpiration(), unit);
         }
         LOGGER.debug("Storing authentication trust record for [{}]", record);
         return saveInternal(record);
