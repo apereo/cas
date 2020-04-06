@@ -31,7 +31,7 @@ public class CasEmbeddedContainerTomcatFiltersConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @ConditionalOnProperty(prefix = "cas.server.csrf", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "cas.server.tomcat.csrf", name = "enabled", havingValue = "true")
     @RefreshScope
     @Bean
     public FilterRegistrationBean tomcatCsrfPreventionFilter() {
@@ -42,7 +42,7 @@ public class CasEmbeddedContainerTomcatFiltersConfiguration {
         return bean;
     }
 
-    @ConditionalOnProperty(prefix = "cas.server.remoteAddr", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "cas.server.tomcat.remoteAddr", name = "enabled", havingValue = "true")
     @RefreshScope
     @Bean
     public FilterRegistrationBean tomcatRemoteAddressFilter() {
