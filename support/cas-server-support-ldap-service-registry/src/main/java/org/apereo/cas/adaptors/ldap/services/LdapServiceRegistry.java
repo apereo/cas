@@ -209,7 +209,8 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
         connectionFactory.close();
         try {
             Thread.sleep(5000);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
+            //This is expected
         }
     }
 }

@@ -271,7 +271,8 @@ public class CasPersonDirectoryConfiguration {
             connectionFactories.forEach(ConnectionFactory::close);
             try {
                 Thread.sleep(5000);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
+                //This is expected
             }
         }
     }
