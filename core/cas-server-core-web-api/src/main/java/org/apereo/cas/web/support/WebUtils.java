@@ -43,7 +43,6 @@ import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
@@ -727,6 +726,28 @@ public class WebUtils {
      */
     public static Boolean isRememberMeAuthenticationEnabled(final RequestContext context) {
         return context.getFlowScope().getBoolean("rememberMeAuthenticationEnabled", Boolean.FALSE);
+    }
+
+    /**
+     * Gets multifactor authentication trust record.
+     *
+     * @param <T>     the type parameter
+     * @param context the context
+     * @param clazz   the clazz
+     * @return the multifactor authentication trust record
+     */
+    public static <T> Optional<T> getMultifactorAuthenticationTrustRecord(final RequestContext context, final Class<T> clazz) {
+        return Optional.ofNullable(context.getFlowScope().get(CasWebflowConstants.VAR_ID_MFA_TRUST_RECORD, clazz));
+    }
+
+    /**
+     * Put multifactor authentication trust record.
+     *
+     * @param context the context
+     * @param object  the object
+     */
+    public static void putMultifactorAuthenticationTrustRecord(final RequestContext context, final Serializable object) {
+        context.getFlowScope().put(CasWebflowConstants.VAR_ID_MFA_TRUST_RECORD, object);
     }
 
     /**

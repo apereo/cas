@@ -1,7 +1,6 @@
 package org.apereo.cas;
 
 import org.apereo.cas.adaptors.fortress.FortressAuthenticationHandlerTests;
-import org.apereo.cas.adaptors.fortress.config.FortressAuthenticationConfiguration;
 import org.apereo.cas.config.FortressAuthenticationConfigurationTests;
 
 import org.junit.platform.runner.JUnitPlatform;

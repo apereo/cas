@@ -76,7 +76,8 @@ public class MultifactorAuthenticationSetTrustActionTests extends AbstractMultif
 
     @Test
     public void verifySetDevice() throws Exception {
-        request.addParameter(MultifactorAuthenticationSetTrustAction.PARAM_NAME_DEVICE_NAME, "ApereoCAS");
+        val bean = new MultifactorAuthenticationTrustBean().setDeviceName("ApereoCAS");
+        WebUtils.putMultifactorAuthenticationTrustRecord(context, bean);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaSetTrustAction.execute(context).getId());
         val authn = WebUtils.getAuthentication(context);
         assertTrue(authn.getAttributes().containsKey(
@@ -110,7 +111,9 @@ public class MultifactorAuthenticationSetTrustActionTests extends AbstractMultif
     @Test
     public void verifyDeviceTracked() throws Exception {
         MultifactorAuthenticationTrustUtils.setMultifactorAuthenticationTrustedInScope(this.context);
-        request.addParameter(MultifactorAuthenticationSetTrustAction.PARAM_NAME_DEVICE_NAME, "ApereoCAS");
+        val bean = new MultifactorAuthenticationTrustBean().setDeviceName("ApereoCAS");
+        WebUtils.putMultifactorAuthenticationTrustRecord(context, bean);
+
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaSetTrustAction.execute(context).getId());
         val record = mfaTrustEngine.get("casuser-setdevice");
         assertTrue(record.isEmpty());

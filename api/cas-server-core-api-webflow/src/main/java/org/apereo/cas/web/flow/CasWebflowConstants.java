@@ -679,6 +679,10 @@ public interface CasWebflowConstants {
      */
     String VAR_ID_MFA_PROVIDER_ID = "mfaProviderId";
 
+    /**
+     * The flow var id 'mfaTrustRecord'.
+     */
+    String VAR_ID_MFA_TRUST_RECORD = "mfaTrustRecord";
 
     /**
      * Event attribute id 'authenticationWarnings'.

@@ -1,7 +1,9 @@
-package org.apereo.cas.web.flow.configurer;
+package org.apereo.cas.trusted.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.configurer.AbstractCasMultifactorWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -13,9 +15,11 @@ import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link AbstractMultifactorTrustedDeviceWebflowConfigurer}.
@@ -80,6 +84,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         createTransitionForState(verifyAction, CasWebflowConstants.TRANSITION_ID_SKIP, targetStateId);
 
         val submit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
+        
         val success = (Transition) submit.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
         if (enableDeviceRegistration) {
             success.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_PREPARE_REGISTER_TRUSTED_DEVICE));
@@ -107,9 +112,19 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
             ACTION_ID_MFA_PREPARE_TRUST_DEVICE_VIEW_ACTION);
         createTransitionForState(prepareAction, CasWebflowConstants.TRANSITION_ID_SKIP, CasWebflowConstants.STATE_ID_SUCCESS);
         createTransitionForState(prepareAction, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_REGISTER_DEVICE);
+        
+        createFlowVariable(flow, CasWebflowConstants.VAR_ID_MFA_TRUST_RECORD, MultifactorAuthenticationTrustBean.class);
+        val fields = Arrays.stream(MultifactorAuthenticationTrustBean.class.getDeclaredFields())
+            .map(Field::getName)
+            .collect(Collectors.toList());
+        val binder = createStateBinderConfiguration(fields);
+        val viewRegister = createViewState(flow, CasWebflowConstants.STATE_ID_REGISTER_DEVICE, "casMfaRegisterDeviceView", binder);
+        val transition = createTransitionForState(viewRegister, CasWebflowConstants.TRANSITION_ID_SUBMIT,
+            CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE);
 
-        val viewRegister = createViewState(flow, CasWebflowConstants.STATE_ID_REGISTER_DEVICE, "casMfaRegisterDeviceView");
-        createTransitionForState(viewRegister, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE);
+        createStateModelBinding(viewRegister, CasWebflowConstants.VAR_ID_MFA_TRUST_RECORD, MultifactorAuthenticationTrustBean.class);
+        transition.getAttributes().put("bind", Boolean.TRUE);
+        transition.getAttributes().put("validate", Boolean.TRUE);
     }
 
     private void validateFlowDefinitionConfiguration() {

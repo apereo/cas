@@ -15,13 +15,34 @@
             <h2 th:text="#{cas.mfa.registerdevice.label.title}">Register Device</h2>
             <p th:text="#{cas.mfa.registerdevice.label.intro}">Please name the current device.</p>
 
-            <form method="post" id="registerform">
+            <form method="post" id="registerform" th:object="${mfaTrustRecord}" th:action="@{/login}">
                 <div
                     class="mdc-text-field mdc-text-field--with-trailing-icon d-flex caps-check">
                     <input class="mdc-text-field__input pwd" type="text" id="deviceName" name="deviceName" size="25"
-                        autocomplete="off" />
+                        autocomplete="off" th:field="*{deviceName}" />
                     <label for="deviceName" class="mdc-floating-label" th:utext="#{cas.mfa.registerdevice.label.name}">Name</label>
                 </div>
+
+                <div><p>How long should we remember this device?</p></div>
+                <div class="d-flex mt-2">
+                    <div class="mdc-text-field  mr-2">
+                        <input class="mdc-text-field__input" name="expiration" id="expiration"
+                               type="number" th:field="*{expiration}">
+                        <label for="expiration" class="mdc-floating-label">Expiration</label>
+                    </div>
+                    <select name="timeUnit" id="timeUnit" class="custom-select" th:field="*{timeUnit}"
+                            onchange="let hide = this.value!=='FOREVER'; $('#expiration').toggle(hide)">
+                        <option value="SECONDS">Seconds</option>
+                        <option value="MINUTES">Minutes</option>
+                        <option value="HOURS">Hours</option>
+                        <option value="DAYS">Days</option>
+                        <option value="WEEKS">Weeks</option>
+                        <option value="MONTHS">Months</option>
+                        <option value="YEARS">Years</option>
+                        <option value="FOREVER">Forever</option>
+                    </select>
+                </div>
+
                 <div class="d-flex mt-3">
                     <button class="mdc-button mdc-button--raised" accesskey="s"
                         th:value="#{cas.mfa.registerdevice.button.register}">

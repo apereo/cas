@@ -1,7 +1,5 @@
 package org.apereo.cas.trusted.authentication.api;
 
-import org.apereo.cas.util.DateTimeUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,7 +17,6 @@ import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link MultifactorAuthenticationTrustRecord}.
@@ -107,9 +104,8 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
      * @param expiration the expiration
      * @param timeUnit   the time unit
      */
-    public void expireRecordIn(final long expiration, final TimeUnit timeUnit) {
-        val unit = DateTimeUtils.toChronoUnit(timeUnit);
-        val expDate = LocalDateTime.now(ZoneOffset.UTC).plus(expiration, unit);
+    public void expireIn(final long expiration, final ChronoUnit timeUnit) {
+        val expDate = LocalDateTime.now(ZoneOffset.UTC).plus(expiration, timeUnit);
         setExpirationDate(expDate);
     }
 
