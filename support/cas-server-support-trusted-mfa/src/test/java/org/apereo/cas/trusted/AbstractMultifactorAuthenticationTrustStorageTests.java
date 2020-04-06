@@ -7,7 +7,6 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
-import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
@@ -70,9 +69,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY)
     protected DeviceFingerprintStrategy deviceFingerprintStrategy;
 
-    @Autowired
-    @Qualifier("mfaTrustStorageCleaner")
-    protected MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner;
+
 
     protected static MultifactorAuthenticationTrustRecord getMultifactorAuthenticationTrustRecord() {
         val record = new MultifactorAuthenticationTrustRecord();
