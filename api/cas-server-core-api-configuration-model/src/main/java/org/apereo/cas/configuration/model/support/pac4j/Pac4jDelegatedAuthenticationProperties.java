@@ -280,9 +280,15 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
 
         private static final long serialVersionUID = 9217581995885784515L;
 
+        /**
+         * The requested scope from the provider.
+         */
+        private String scope;
+
         public Github() {
             setClientName("Github");
         }
+
     }
 
     @RequiresModule(name = "cas-server-support-pac4j-webflow")

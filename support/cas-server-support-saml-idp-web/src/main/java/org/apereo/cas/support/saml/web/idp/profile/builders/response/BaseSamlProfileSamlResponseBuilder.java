@@ -24,6 +24,8 @@ import org.opensaml.saml.saml2.core.RequestAbstractType;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.Map;
+
 /**
  * The {@link BaseSamlProfileSamlResponseBuilder} is responsible for
  * building the final SAML assertion for the relying party.
@@ -89,7 +91,8 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
                                     final MessageContext messageContext) {
 
         val scratch = messageContext.getSubcontext(ScratchContext.class, true);
-        val encodeResponse = (Boolean) scratch.getMap().getOrDefault(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.TRUE);
+        val map = (Map) scratch.getMap();
+        val encodeResponse = (Boolean) map.getOrDefault(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.TRUE);
 
         if (encodeResponse) {
             val relayState = request != null ? request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE) : StringUtils.EMPTY;

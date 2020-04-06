@@ -679,6 +679,10 @@ public interface CasWebflowConstants {
      */
     String VAR_ID_MFA_PROVIDER_ID = "mfaProviderId";
 
+    /**
+     * The flow var id 'mfaTrustRecord'.
+     */
+    String VAR_ID_MFA_TRUST_RECORD = "mfaTrustRecord";
 
     /**
      * Event attribute id 'authenticationWarnings'.
@@ -785,7 +789,7 @@ public interface CasWebflowConstants {
      *
      * @deprecated Since 6.2
      */
-    @Deprecated(since = "6.2")
+    @Deprecated(since = "6.2.0")
     String ACTION_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
 
     /**

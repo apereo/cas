@@ -20,7 +20,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class OpenIdCredential implements Credential {
     private static final long serialVersionUID = -6535869729412406133L;
 

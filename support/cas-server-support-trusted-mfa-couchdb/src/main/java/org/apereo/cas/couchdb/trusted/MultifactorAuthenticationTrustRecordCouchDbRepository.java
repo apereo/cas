@@ -27,6 +27,7 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
 
     /**
      * Find by recordKey.
+     *
      * @param recordKey record key to search for
      * @return trust records for given input
      */
@@ -38,6 +39,7 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
 
     /**
      * Find by recordDate on of before date.
+     *
      * @param recordDate record key to search for
      * @return trust records for given input
      */
@@ -48,6 +50,7 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
 
     /**
      * Find record created on or after date.
+     *
      * @param onOrAfterDate cutoff date
      * @return records created on or after date
      */
@@ -56,7 +59,19 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
     }
 
     /**
+     * Find record created on or after exp date.
+     *
+     * @param onOrAfterDate cutoff date
+     * @return records created on or after date
+     */
+    @View(name = "by_expirationDate", map = "function(doc) { if (doc.principal && doc.deviceFingerprint && doc.expirationDate) { emit(doc.expirationDate, doc) } }")
+    public List<CouchDbMultifactorAuthenticationTrustRecord> findOnOrAfterExpirationDate(final LocalDateTime onOrAfterDate) {
+        return db.queryView(createQuery("by_expirationDate").startKey(onOrAfterDate), CouchDbMultifactorAuthenticationTrustRecord.class);
+    }
+
+    /**
      * Find by principal name.
+     *
      * @param principal name to search for
      * @return records for given principal
      */
@@ -85,7 +100,8 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
 
     /**
      * Find by principal on or after date.
-     * @param principal Principal to search for
+     *
+     * @param principal     Principal to search for
      * @param onOrAfterDate start date for search
      * @return records for principal after date.
      */
@@ -100,7 +116,19 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
     }
 
     /**
+     * Find all list.
+     *
+     * @return the list
+     */
+    @View(name = "by_all", map = "function(doc) { if (doc.recordKey) { emit([doc.recordKey], doc) } }")
+    public List<CouchDbMultifactorAuthenticationTrustRecord> findAll() {
+        val view = createQuery("by_all");
+        return db.queryView(view, CouchDbMultifactorAuthenticationTrustRecord.class);
+    }
+
+    /**
      * Delete a record without revision checks.
+     *
      * @param record record to be deleted
      */
     @UpdateHandler(name = "delete_record", file = "CouchDbMultifactorAuthenticationTrustRecord_delete.js")
@@ -110,6 +138,7 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
 
     /**
      * Update a record without revision checks.
+     *
      * @param record record to be updated
      */
     @UpdateHandler(name = "update_record", file = "CouchDbMultifactorAuthenticationTrustRecord_update.js")

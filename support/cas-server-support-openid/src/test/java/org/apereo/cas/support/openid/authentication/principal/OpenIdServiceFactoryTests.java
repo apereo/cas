@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @deprecated 6.2
  * @since 4.2
  */
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class OpenIdServiceFactoryTests {
 
     @Test

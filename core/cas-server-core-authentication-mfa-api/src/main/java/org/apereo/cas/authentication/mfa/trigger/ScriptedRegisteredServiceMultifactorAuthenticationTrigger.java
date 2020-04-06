@@ -45,7 +45,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Setter
 @Slf4j
 @RequiredArgsConstructor
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
 

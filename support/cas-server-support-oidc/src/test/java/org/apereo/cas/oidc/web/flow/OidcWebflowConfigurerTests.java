@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasMultifactorAuthenticationWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
-@TestPropertySource(properties = "cas.authn.oidc.jwksFile=classpath:keystore.jwks")
+@TestPropertySource(properties = "cas.authn.oidc.jwks.jwksFile=classpath:keystore.jwks")
 @Tag("OIDC")
 public class OidcWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 

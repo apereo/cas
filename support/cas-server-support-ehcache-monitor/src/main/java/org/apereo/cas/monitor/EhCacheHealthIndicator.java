@@ -5,7 +5,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -32,13 +31,12 @@ public class EhCacheHealthIndicator extends AbstractCacheHealthIndicator {
 
     @Override
     protected CacheStatistics[] getStatistics() {
-        final List<CacheStatistics> list = Arrays.stream(this.ehcacheTicketsCache.getCacheNames())
+        val list = Arrays.stream(this.ehcacheTicketsCache.getCacheNames())
             .map(c -> {
                 val cache = this.ehcacheTicketsCache.getCache(c);
                 return new EhCacheStatistics(cache);
             })
             .collect(Collectors.toList());
-
         return list.toArray(CacheStatistics[]::new);
     }
 }
