@@ -467,7 +467,6 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
             .ticketRegistry(ticketRegistry.getObject())
-            .eventPublisher(applicationContext)
             .applicationContext(applicationContext)
             .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getObject())
             .build();

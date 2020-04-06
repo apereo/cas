@@ -4,8 +4,8 @@ import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
+import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -100,7 +100,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
         }
         return attributeValue;
     }
-    
+
 
     private static Predicate<Object> getBinaryAttributeValuePredicate() {
         return Predicates.instanceOf(byte[].class);

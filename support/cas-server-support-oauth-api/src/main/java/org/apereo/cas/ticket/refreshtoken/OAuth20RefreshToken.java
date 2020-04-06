@@ -20,14 +20,6 @@ public interface OAuth20RefreshToken extends OAuth20Token {
     String PREFIX = "RT";
 
     /**
-     * Client id for whom this refresh token was issued.
-     *
-     * @return client id.
-     * @since 6.2
-     */
-    String getClientId();
-
-    /**
      * Gets descendant OAuth access tokens.
      * The revocation of a refresh token may cause the revocation of related
      * tokens and the underlying authorization grant. If a refresh token is

@@ -30,6 +30,7 @@ public class BaseRestEndpointProperties implements Serializable {
      * specify the username for authentication.
      */
     private String basicAuthUsername;
+
     /**
      * If REST endpoint is protected via basic authentication,
      * specify the password for authentication.

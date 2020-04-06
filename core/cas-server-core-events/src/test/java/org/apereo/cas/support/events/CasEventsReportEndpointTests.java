@@ -21,7 +21,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasEventsReportEndpointTests {
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("casEventRepository")
@@ -69,7 +69,7 @@ public class CasEventsReportEndpointTests {
         val event = new CasAuthenticationTransactionFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()),
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
-        eventPublisher.publishEvent(event);
+        applicationContext.publishEvent(event);
         assertFalse(casEventRepository.load().isEmpty());
 
         val endpoint = new CasEventsReportEndpoint(casProperties, casEventRepository);

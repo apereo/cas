@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow.decorator;
 
-import org.apereo.cas.configuration.model.webapp.WebflowLoginDecoratorProperties;
+import org.apereo.cas.configuration.model.core.web.flow.WebflowLoginDecoratorProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 
