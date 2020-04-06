@@ -75,7 +75,7 @@ public class PolicyBasedAuthenticationManagerTests {
      * @return New mock authentication handler instance.
      */
     private static AuthenticationHandler newMockHandler(final String name, final boolean success) {
-    	return newMockHandler(name, success, false);
+        return newMockHandler(name, success, false);
     }
 
     /**
