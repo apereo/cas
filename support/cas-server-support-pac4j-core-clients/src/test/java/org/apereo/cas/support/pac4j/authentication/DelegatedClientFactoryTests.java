@@ -12,6 +12,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.pac4j.cas.config.CasProtocol;
+import org.pac4j.oauth.client.GitHubClient;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -28,6 +29,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 public class DelegatedClientFactoryTests {
+
+    private static void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
+        props.setId("TestId");
+        props.setSecret("TestSecret");
+    }
 
     @Test
     public void verifyFactoryForIdentifiableClients() {
@@ -88,9 +94,9 @@ public class DelegatedClientFactoryTests {
         val factory = new DelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
-        
+
         assertTrue(SAML2Client.class.cast(clients.iterator().next()).getConfiguration().
-                getSamlMessageStoreFactory() instanceof org.pac4j.saml.store.HttpSessionStoreFactory);
+            getSamlMessageStoreFactory() instanceof org.pac4j.saml.store.HttpSessionStoreFactory);
     }
 
     @Test
@@ -105,6 +111,20 @@ public class DelegatedClientFactoryTests {
         val factory = new DelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
+    }
+
+    @Test
+    public void verifyGithubClient() {
+        val props = new Pac4jDelegatedAuthenticationProperties();
+        configureIdentifiableClient(props.getGithub());
+        props.getGithub().setScope("user");
+        val casSettings = new CasConfigurationProperties();
+        casSettings.getAuthn().setPac4j(props);
+        val factory = new DelegatedClientFactory(casSettings);
+        val clients = factory.build();
+        assertEquals(1, clients.size());
+        val client = (GitHubClient) clients.iterator().next();
+        assertEquals("user", client.getScope());
     }
 
     @Test
@@ -137,10 +157,5 @@ public class DelegatedClientFactoryTests {
         val factory = new DelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(4, clients.size());
-    }
-
-    private static void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
-        props.setId("TestId");
-        props.setSecret("TestSecret");
     }
 }

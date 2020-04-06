@@ -47,6 +47,8 @@ public class FortressAuthenticationConfiguration {
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "fortressAccessManager")
     public AccessMgr fortressAccessManager() {
         val rbacContext = casProperties.getAuthn().getFortress().getRbaccontext();
         LOGGER.trace("Registering fortress access manager with context: [{}]", rbacContext);
@@ -67,7 +69,7 @@ public class FortressAuthenticationConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer fortressAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            LOGGER.info("Registering fortress authentication event execution plan");
+            LOGGER.debug("Registering fortress authentication event execution plan");
             plan.registerAuthenticationHandler(fortressAuthenticationHandler());
         };
     }

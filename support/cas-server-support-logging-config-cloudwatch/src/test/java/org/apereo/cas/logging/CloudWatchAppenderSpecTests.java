@@ -24,58 +24,15 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
+ * This is {@code CloudWatchAppenderSpecTests}
+ * @author Jonathon Johnson
  * @since 6.2.0
  */
 public class CloudWatchAppenderSpecTests {
-    @Test
-    @DisplayName("make sure that log4j plugin file is generated")
-    public void fileGenerated() {
-        ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
-        builder.add(builder.newAppender("cloudwatch", "CloudWatchAppender"));
-        var configuration = builder.build();
-        Configurator.initialize(configuration);
-        assertNotNull(configuration.getAppender("cloudwatch"));
-    }
-
-    @ParameterizedTest(name="case {index}")
-    @MethodSource("generateTestCases")
-    @DisplayName("making sure incoming parameters are set correctly")
-    void specTest(final TestCase tC) {
-        var mock = Mockito.mock(AWSLogs.class);
-        if (tC.logStreamExists) {
-            Mockito.when(mock.describeLogStreams(Mockito.any(DescribeLogStreamsRequest.class))).thenReturn(createDescribeLogStreamsResult());
-        }
-        if (tC.logGroupExists) {
-            Mockito.when(mock.describeLogGroups(Mockito.any(DescribeLogGroupsRequest.class))).thenReturn(createDescribeLogGroupsResult());
-        }
-
-        /*
-          we do this because the lifecycle is a little different for this sort of programmatic configuration
-          not allowing single line comments is lame
-         */
-        var appender = new CloudWatchAppender("test", "test", "test", "30", null, tC.createIfNeeded, tC.createLogGroupIfNeeded, tC.createLogStreamIfNeeded, mock);
-        if (tC.throwsException) {
-            Assertions.assertThrows(RuntimeException.class, appender::initialize);
-        } else {
-            appender.initialize();
-
-            ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
-            var configuration = builder.build();
-            configuration.addAppender(appender);
-            Configurator.initialize(configuration);
-
-            var logger = LogManager.getLogger("test");
-            logger.info("here is a message");
-
-            createLogGroup(mock, Objects.requireNonNullElse(tC.resultCreateLogGroupIfNeeded, Objects.requireNonNullElse(tC.createIfNeeded, true)));
-            createLogStream(mock, Objects.requireNonNullElse(tC.resultCreateLogStreamIfNeeded, Objects.requireNonNullElse(tC.createIfNeeded, true)));
-        }
-
-    }
-
     private static DescribeLogStreamsResult createDescribeLogStreamsResult() {
         var stream = new DescribeLogStreamsResult();
         var logStream = new LogStream();
@@ -148,60 +105,113 @@ public class CloudWatchAppenderSpecTests {
         return testCases;
     }
 
+    @Test
+    @DisplayName("make sure that log4j plugin file is generated")
+    public void fileGenerated() {
+        ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
+        builder.add(builder.newAppender("cloudwatch", "CloudWatchAppender"));
+        var configuration = builder.build();
+        Configurator.initialize(configuration);
+        assertNotNull(configuration.getAppender("cloudwatch"));
+    }
+
+    @ParameterizedTest(name = "case {index}")
+    @MethodSource("generateTestCases")
+    @DisplayName("making sure incoming parameters are set correctly")
+    void specTest(final TestCase tC) {
+        var mock = Mockito.mock(AWSLogs.class);
+        if (tC.logStreamExists) {
+            when(mock.describeLogStreams(Mockito.any(DescribeLogStreamsRequest.class))).thenReturn(createDescribeLogStreamsResult());
+        }
+        if (tC.logGroupExists) {
+            when(mock.describeLogGroups(Mockito.any(DescribeLogGroupsRequest.class))).thenReturn(createDescribeLogGroupsResult());
+        }
+
+        /*
+          we do this because the lifecycle is a little different for this sort of programmatic configuration
+          not allowing single line comments is lame
+         */
+        var appender = new CloudWatchAppender("test", "test", "test", "30", null, tC.createIfNeeded, tC.createLogGroupIfNeeded, tC.createLogStreamIfNeeded, mock);
+        if (tC.throwsException) {
+            Assertions.assertThrows(RuntimeException.class, appender::initialize);
+        } else {
+            appender.initialize();
+
+            ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
+            var configuration = builder.build();
+            configuration.addAppender(appender);
+            Configurator.initialize(configuration);
+
+            var logger = LogManager.getLogger("test");
+            logger.info("here is a message");
+
+            createLogGroup(mock, Objects.requireNonNullElse(tC.resultCreateLogGroupIfNeeded, Objects.requireNonNullElse(tC.createIfNeeded, true)));
+            createLogStream(mock, Objects.requireNonNullElse(tC.resultCreateLogStreamIfNeeded, Objects.requireNonNullElse(tC.createIfNeeded, true)));
+        }
+
+    }
+
     private static class TestCase {
         private final Boolean createIfNeeded;
+
         private final Boolean createLogGroupIfNeeded;
+
         private final Boolean createLogStreamIfNeeded;
+
         private final Boolean resultCreateLogGroupIfNeeded;
+
         private final Boolean resultCreateLogStreamIfNeeded;
+
         private final Boolean logGroupExists;
+
         private final Boolean logStreamExists;
+
         private final Boolean throwsException;
 
         TestCase(
-                final Boolean createIfNeeded,
-                final Boolean createLogGroupIfNeeded,
-                final Boolean createLogStreamIfNeeded,
-                final Boolean resultCreateLogGroupIfNeeded,
-                final Boolean resultCreateLogStreamIfNeeded) {
+            final Boolean createIfNeeded,
+            final Boolean createLogGroupIfNeeded,
+            final Boolean createLogStreamIfNeeded,
+            final Boolean resultCreateLogGroupIfNeeded,
+            final Boolean resultCreateLogStreamIfNeeded) {
             this(
-                    createIfNeeded,
-                    createLogGroupIfNeeded,
-                    createLogStreamIfNeeded,
-                    resultCreateLogGroupIfNeeded,
-                    resultCreateLogStreamIfNeeded,
-                    null,
-                    null,
-                    null);
+                createIfNeeded,
+                createLogGroupIfNeeded,
+                createLogStreamIfNeeded,
+                resultCreateLogGroupIfNeeded,
+                resultCreateLogStreamIfNeeded,
+                null,
+                null,
+                null);
         }
 
         TestCase(
-                final Boolean createIfNeeded,
-                final Boolean createLogGroupIfNeeded,
-                final Boolean createLogStreamIfNeeded,
-                final Boolean resultCreateLogGroupIfNeeded,
-                final Boolean resultCreateLogStreamIfNeeded,
-                final Boolean throwsException) {
+            final Boolean createIfNeeded,
+            final Boolean createLogGroupIfNeeded,
+            final Boolean createLogStreamIfNeeded,
+            final Boolean resultCreateLogGroupIfNeeded,
+            final Boolean resultCreateLogStreamIfNeeded,
+            final Boolean throwsException) {
             this(
-                    createIfNeeded,
-                    createLogGroupIfNeeded,
-                    createLogStreamIfNeeded,
-                    resultCreateLogGroupIfNeeded,
-                    resultCreateLogStreamIfNeeded,
-                    throwsException,
-                    null,
-                    null);
+                createIfNeeded,
+                createLogGroupIfNeeded,
+                createLogStreamIfNeeded,
+                resultCreateLogGroupIfNeeded,
+                resultCreateLogStreamIfNeeded,
+                throwsException,
+                null,
+                null);
         }
 
         TestCase(
-                final Boolean createIfNeeded,
-                final Boolean createLogGroupIfNeeded,
-                final Boolean createLogStreamIfNeeded,
-                final Boolean resultCreateLogGroupIfNeeded,
-                final Boolean resultCreateLogStreamIfNeeded,
-                final Boolean throwsException,
-                final Boolean logGroupExists,
-                final Boolean logStreamExists) {
+            final Boolean createIfNeeded,
+            final Boolean createLogGroupIfNeeded,
+            final Boolean createLogStreamIfNeeded,
+            final Boolean resultCreateLogGroupIfNeeded,
+            final Boolean resultCreateLogStreamIfNeeded,
+            final Boolean throwsException,
+            final Boolean logGroupExists,
+            final Boolean logStreamExists) {
             this.createIfNeeded = createIfNeeded;
             this.createLogGroupIfNeeded = createLogGroupIfNeeded;
             this.createLogStreamIfNeeded = createLogStreamIfNeeded;
