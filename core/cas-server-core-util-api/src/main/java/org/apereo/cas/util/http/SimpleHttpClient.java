@@ -17,6 +17,7 @@ import org.apache.http.impl.client.FutureRequestExecutionService;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.DisposableBean;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -162,7 +163,18 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
      */
     @Override
     public void destroy() {
-        IOUtils.closeQuietly(this.requestExecutorService);
+        LOGGER.debug("destroy");
+        try {
+            this.wrappedHttpClient.close();
+        } catch (final IOException e) {
+            //This is expected
+        }
+        try {
+            this.requestExecutorService.close();
+        } catch (final IOException e) {
+            //This is expected
+        }
+        this.httpClientFactory.destroy();
     }
 
 }
