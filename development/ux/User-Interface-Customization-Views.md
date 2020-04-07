@@ -6,7 +6,7 @@ category: User Interface
 
 # Views
 
-The views are found inside the CAS web application in the `WEB-INF\lib\cas-server-webapp-resources-<cas.version>.jar` in the 
+The views are found inside the CAS web application in the `WEB-INF\lib\cas-server-support-thymeleaf-<cas.version>.jar` in the 
 templates folder. Add any views that require customization to the `src/main/resources/templates` folder in the CAS overlay project.  
 Any files found in that module can be overridden by putting them in the same location under
 `src/main/resources` in the CAS overlay project. The Gradle build script for the overlay has tasks that help get resources 
@@ -46,7 +46,8 @@ Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't off
        type="checkbox" />
 <label for="warn" th:utext="#{screen.welcome.label.warn}"/>
 ...
-```
+```      
+
 ## Custom Fields
 
 CAS allows on the ability to dynamically extend the login form by including additional fields, to be populated by the user.
