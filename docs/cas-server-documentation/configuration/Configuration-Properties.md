@@ -4013,6 +4013,7 @@ and any number of log appenders that might push data to a variety of systems.</p
 # cas.audit.slf4j.auditFormat=DEFAULT|JSON
 # cas.audit.slf4j.singlelineSeparator=|
 # cas.audit.slf4j.useSingleLine=false
+# cas.audit.slf4j.enabled=true
 ```
 
 ### MongoDb Audits

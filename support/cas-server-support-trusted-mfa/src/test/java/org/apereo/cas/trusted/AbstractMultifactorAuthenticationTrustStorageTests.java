@@ -95,20 +95,6 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         assertTrue(getMfaTrustEngine().getAll().isEmpty());
     }
 
-    @Test
-    public void verifyRemoveExpiredRecord() throws Exception {
-        val record = MultifactorAuthenticationTrustRecord.newInstance(UUID.randomUUID().toString(),
-            UUID.randomUUID().toString(), UUID.randomUUID().toString());
-        val expirationDate = LocalDateTime.now(ZoneOffset.UTC).plusSeconds(1);
-        record.setExpirationDate(expirationDate);
-        getMfaTrustEngine().save(record);
-        
-        val records = getMfaTrustEngine().get(record.getPrincipal());
-        assertEquals(1, records.size());
-        Thread.sleep(2000);
-        assertTrue(getMfaTrustEngine().get(record.getPrincipal()).isEmpty());
-    }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
