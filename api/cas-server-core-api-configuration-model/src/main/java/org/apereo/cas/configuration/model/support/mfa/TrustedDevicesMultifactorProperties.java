@@ -49,16 +49,6 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     private boolean deviceRegistrationEnabled = true;
 
     /**
-     * Indicates how long should record/devices be remembered as trusted devices.
-     */
-    private long expiration = 30;
-
-    /**
-     * Indicates the time unit by which record/devices are remembered as trusted devices.
-     */
-    private TimeUnit timeUnit = TimeUnit.DAYS;
-
-    /**
      * Indicates how record keys for trusted devices would be generated
      * so they can be signed/verified on fetch operations.
      * Acceptable values are {@code default}, {@code legacy}.
