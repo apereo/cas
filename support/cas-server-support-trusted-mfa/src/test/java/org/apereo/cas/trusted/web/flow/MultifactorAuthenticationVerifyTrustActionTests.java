@@ -12,19 +12,22 @@ import lombok.Getter;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Collections;
 
@@ -37,21 +40,19 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
-@TestPropertySource(properties = {
-    "cas.authn.mfa.trusted.expiration=30",
-    "cas.authn.mfa.trusted.timeUnit=SECONDS"
-})
 @Getter
 @Tag("Webflow")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DirtiesContext
 public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
+    @Order(1)
     public void verifyDeviceNotTrusted() throws Exception {
         val r = getMultifactorAuthenticationTrustRecord();
-        r.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(5));
+        r.setRecordDate(LocalDateTime.now(ZoneOffset.UTC).minusSeconds(5));
         getMfaTrustEngine().save(r);
 
         val context = new MockRequestContext();
@@ -64,6 +65,7 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
     }
 
     @Test
+    @Order(2)
     public void verifyDeviceTrusted() throws Exception {
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
@@ -95,4 +97,10 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
         assertTrue(MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(context));
         assertTrue(authn.getAttributes().containsKey(casProperties.getAuthn().getMfa().getTrusted().getAuthenticationContextAttribute()));
     }
+
+    @BeforeEach
+    public void emptyTrustEngine() {
+        mfaTrustEngine.getAll().forEach(r -> getMfaTrustEngine().remove(r.getRecordKey()));
+    }
+
 }

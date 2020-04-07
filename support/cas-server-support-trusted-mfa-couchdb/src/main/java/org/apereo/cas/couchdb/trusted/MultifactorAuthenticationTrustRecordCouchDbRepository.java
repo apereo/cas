@@ -66,7 +66,7 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
      */
     @View(name = "by_expirationDate", map = "function(doc) { if (doc.principal && doc.deviceFingerprint && doc.expirationDate) { emit(doc.expirationDate, doc) } }")
     public List<CouchDbMultifactorAuthenticationTrustRecord> findOnOrAfterExpirationDate(final LocalDateTime onOrAfterDate) {
-        return db.queryView(createQuery("by_expirationDate").startKey(onOrAfterDate), CouchDbMultifactorAuthenticationTrustRecord.class);
+        return db.queryView(createQuery("by_expirationDate").endKey(onOrAfterDate), CouchDbMultifactorAuthenticationTrustRecord.class);
     }
 
     /**

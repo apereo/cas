@@ -68,9 +68,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     @Autowired
     @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY)
     protected DeviceFingerprintStrategy deviceFingerprintStrategy;
-
-
-
+    
     protected static MultifactorAuthenticationTrustRecord getMultifactorAuthenticationTrustRecord() {
         val record = new MultifactorAuthenticationTrustRecord();
         record.setDeviceFingerprint(UUID.randomUUID().toString());
@@ -101,8 +99,10 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     public void verifyRemoveExpiredRecord() throws Exception {
         val record = MultifactorAuthenticationTrustRecord.newInstance(UUID.randomUUID().toString(),
             UUID.randomUUID().toString(), UUID.randomUUID().toString());
-        record.setExpirationDate(LocalDateTime.now(ZoneOffset.UTC).plusSeconds(1));
+        val expirationDate = LocalDateTime.now(ZoneOffset.UTC).plusSeconds(1);
+        record.setExpirationDate(expirationDate);
         getMfaTrustEngine().save(record);
+        
         val records = getMfaTrustEngine().get(record.getPrincipal());
         assertEquals(1, records.size());
         Thread.sleep(2000);

@@ -32,6 +32,8 @@ import java.time.temporal.ChronoUnit;
 @RequiredArgsConstructor
 @Getter
 public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
+    private static final int YEARS_TO_KEEP_RECORD_AS_FOREVER = 1000;
+
     private final MultifactorAuthenticationTrustStorage storageService;
 
     private final DeviceFingerprintStrategy deviceFingerprintStrategy;
@@ -99,8 +101,10 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
         record.setName(deviceRecord.getDeviceName());
         if (deviceRecord.getTimeUnit() != ChronoUnit.FOREVER && deviceRecord.getExpiration() > 0) {
             record.expireIn(deviceRecord.getExpiration(), deviceRecord.getTimeUnit());
-            LOGGER.debug("Trusted authentication record will expire at [{}]", record.getExpirationDate());
+        } else {
+            record.setExpirationDate(record.getRecordDate().plusYears(YEARS_TO_KEEP_RECORD_AS_FOREVER));
         }
+        LOGGER.debug("Trusted authentication record will expire at [{}]", record.getExpirationDate());
         this.storageService.save(record);
         LOGGER.debug("Saved trusted authentication record for [{}] under [{}]", principal, record.getName());
     }
