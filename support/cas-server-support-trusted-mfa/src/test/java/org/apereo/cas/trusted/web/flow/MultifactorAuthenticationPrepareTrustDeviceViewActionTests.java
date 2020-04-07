@@ -38,10 +38,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
-@TestPropertySource(properties = {
-    "cas.authn.mfa.trusted.expiration=30",
-    "cas.authn.mfa.trusted.timeUnit=SECONDS"
-})
 @Getter
 @Tag("Webflow")
 public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {

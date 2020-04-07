@@ -19,11 +19,13 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.Expiry;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,6 +38,10 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 /**
  * This is {@link MultifactorAuthnTrustConfiguration}.
@@ -68,10 +74,10 @@ public class MultifactorAuthnTrustConfiguration {
     @RefreshScope
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
         val trusted = casProperties.getAuthn().getMfa().getTrusted();
-        final LoadingCache<String, MultifactorAuthenticationTrustRecord> storage = Caffeine.newBuilder()
+        val storage = Caffeine.newBuilder()
             .initialCapacity(INITIAL_CACHE_SIZE)
             .maximumSize(MAX_CACHE_SIZE)
-            .expireAfterWrite(trusted.getExpiration(), trusted.getTimeUnit())
+            .expireAfter(new MultifactorAuthenticationTrustRecordExpiry())
             .build(s -> {
                 LOGGER.error("Load operation of the cache is not supported.");
                 return null;
@@ -146,4 +152,29 @@ public class MultifactorAuthnTrustConfiguration {
         return new MultifactorAuthenticationTrustReportEndpoint(casProperties, mfaTrustEngine());
     }
 
+    private static class MultifactorAuthenticationTrustRecordExpiry implements Expiry<String, MultifactorAuthenticationTrustRecord> {
+        @Override
+        public long expireAfterCreate(@NonNull final String key,
+                                      @NonNull final MultifactorAuthenticationTrustRecord value,
+                                      final long currentTime) {
+            if (value.getExpirationDate() == null) {
+                return Long.MAX_VALUE;
+            }
+            return value.isExpired()
+                ? 0
+                : Duration.between(LocalDateTime.now(ZoneOffset.UTC), value.getExpirationDate()).toNanosPart();
+        }
+
+        @Override
+        public long expireAfterUpdate(@NonNull final String key, @NonNull final MultifactorAuthenticationTrustRecord value,
+                                      final long currentTime, @NonNegative final long currentDuration) {
+            return expireAfterCreate(key, value, currentTime);
+        }
+
+        @Override
+        public long expireAfterRead(@NonNull final String key, @NonNull final MultifactorAuthenticationTrustRecord value,
+                                    final long currentTime, @NonNegative final long currentDuration) {
+            return expireAfterCreate(key, value, currentTime);
+        }
+    }
 }

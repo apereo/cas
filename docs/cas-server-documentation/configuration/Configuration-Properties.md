@@ -2810,8 +2810,6 @@ To learn more about this topic, [please review this guide](../mfa/Multifactor-Tr
 ```properties
 # cas.authn.mfa.trusted.authenticationContextAttribute=isFromTrustedMultifactorAuthentication
 # cas.authn.mfa.trusted.deviceRegistrationEnabled=true
-# cas.authn.mfa.trusted.expiration=30
-# cas.authn.mfa.trusted.timeUnit=SECONDS|MINUTES|HOURS|DAYS
 # cas.authn.mfa.trusted.keyGeneratorType=DEFAULT|LEGACY
 ```
 

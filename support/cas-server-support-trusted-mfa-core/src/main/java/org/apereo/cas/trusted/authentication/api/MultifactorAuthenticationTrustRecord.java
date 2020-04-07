@@ -88,14 +88,17 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     }
 
     /**
-     * Is record expired ?
+     * Is record expired?
      *
      * @return the boolean
      */
     @JsonIgnore
     public boolean isExpired() {
+        if (this.expirationDate == null) {
+            return false;
+        }
         val expDate = LocalDateTime.now(ZoneOffset.UTC);
-        return expDate.isEqual(getExpirationDate()) || expDate.isAfter(getExpirationDate());
+        return expDate.isEqual(this.expirationDate) || expDate.isAfter(this.expirationDate);
     }
 
     /**

@@ -8,6 +8,8 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.val;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -45,7 +47,8 @@ public class CouchDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
 
     @Override
     public void remove(final LocalDateTime expirationTime) {
-        couchDb.findOnOrAfterExpirationDate(expirationTime).forEach(couchDb::deleteRecord);
+        val records = couchDb.findOnOrAfterExpirationDate(expirationTime);
+        records.forEach(couchDb::deleteRecord);
     }
     
     @Override

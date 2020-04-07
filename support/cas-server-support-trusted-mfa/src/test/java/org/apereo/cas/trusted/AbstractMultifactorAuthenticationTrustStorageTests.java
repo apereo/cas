@@ -7,7 +7,6 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
-import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
@@ -30,6 +29,7 @@ import org.springframework.webflow.execution.Action;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.UUID;
 
 import static org.apereo.cas.trusted.BeanNames.BEAN_DEVICE_FINGERPRINT_STRATEGY;
 import static org.junit.jupiter.api.Assertions.*;
@@ -68,19 +68,15 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     @Autowired
     @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY)
     protected DeviceFingerprintStrategy deviceFingerprintStrategy;
-
-    @Autowired
-    @Qualifier("mfaTrustStorageCleaner")
-    protected MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner;
-
+    
     protected static MultifactorAuthenticationTrustRecord getMultifactorAuthenticationTrustRecord() {
         val record = new MultifactorAuthenticationTrustRecord();
-        record.setDeviceFingerprint("Fingerprint");
+        record.setDeviceFingerprint(UUID.randomUUID().toString());
         record.setName("DeviceName");
-        record.setPrincipal("casuser");
+        record.setPrincipal(UUID.randomUUID().toString());
         record.setId(1000);
         record.setRecordDate(LocalDateTime.now(ZoneOffset.UTC).minusDays(1));
-        record.setRecordKey("RecordKey");
+        record.setRecordKey(UUID.randomUUID().toString());
         record.setExpirationDate(LocalDateTime.now(ZoneOffset.UTC).plusDays(1));
         return record;
     }
@@ -101,13 +97,16 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Test
     public void verifyRemoveExpiredRecord() throws Exception {
-        val record = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
-        record.setExpirationDate(LocalDateTime.now(ZoneOffset.UTC).plusSeconds(1));
+        val record = MultifactorAuthenticationTrustRecord.newInstance(UUID.randomUUID().toString(),
+            UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        val expirationDate = LocalDateTime.now(ZoneOffset.UTC).plusSeconds(1);
+        record.setExpirationDate(expirationDate);
         getMfaTrustEngine().save(record);
-        val records = getMfaTrustEngine().get("casuser");
+        
+        val records = getMfaTrustEngine().get(record.getPrincipal());
         assertEquals(1, records.size());
-        Thread.sleep(1500);
-        assertTrue(getMfaTrustEngine().get("casuser").isEmpty());
+        Thread.sleep(2000);
+        assertTrue(getMfaTrustEngine().get(record.getPrincipal()).isEmpty());
     }
 
     @ImportAutoConfiguration({

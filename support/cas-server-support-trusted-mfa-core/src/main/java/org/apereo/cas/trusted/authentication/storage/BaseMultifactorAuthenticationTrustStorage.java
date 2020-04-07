@@ -46,10 +46,6 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
     @Override
     public MultifactorAuthenticationTrustRecord save(final MultifactorAuthenticationTrustRecord record) {
         record.setRecordKey(generateKey(record));
-        if (record.getExpirationDate() == null) {
-            val unit = DateTimeUtils.toChronoUnit(trustedDevicesMultifactorProperties.getTimeUnit());
-            record.expireIn(trustedDevicesMultifactorProperties.getExpiration(), unit);
-        }
         LOGGER.debug("Storing authentication trust record for [{}]", record);
         return saveInternal(record);
     }
