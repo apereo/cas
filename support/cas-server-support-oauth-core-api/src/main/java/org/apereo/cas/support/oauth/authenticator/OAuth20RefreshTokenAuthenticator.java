@@ -24,6 +24,9 @@ import java.io.Serializable;
 /**
  * This is {@link OAuth20RefreshTokenAuthenticator}.
  *
+ * OAuth20RefreshTokenAuthenticator can only be used for a refresh token request of a "public" client.
+ * An OAuth "public" client is one that does not define a secret like a mobile application.
+ *
  * @author Julien Huon
  * @since 6.2.0
  */
@@ -41,12 +44,12 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
     }
 
     /**
-     * OAuth20RefreshTokenAuthenticator can only be used for a refresh token request of a "public" client.
-     * An OAuth "public" client is one that does not define a secret like a mobile application.
+     * Verify if OAuth20RefreshTokenAuthenticator can authenticate the given context.
      *
      * @param context the context
      * @return true if authenticator can validate credentials.
      */
+    @Override
     protected boolean canAuthenticate(final WebContext context) {
         val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
         val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
