@@ -237,12 +237,13 @@ public class CasCoreAuditConfiguration {
     public AuditPrincipalIdProvider auditPrincipalIdProvider() {
         val resolvers = applicationContext.getBeansOfType(AuditPrincipalIdProvider.class, false, true);
         val providers = new ArrayList<AuditPrincipalIdProvider>(resolvers.values());
-        AnnotationAwareOrderComparator.sort(providers);
+        AnnotationAwareOrderComparator.sortIfNecessary(providers);
         return new ChainingAuditPrincipalIdProvider(providers);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "casAuditTrailExecutionPlanConfigurer")
+    @ConditionalOnProperty(prefix = "cas.audit.slf4j", name = "enabled", havingValue = "true", matchIfMissing = true)
     public AuditTrailExecutionPlanConfigurer casAuditTrailExecutionPlanConfigurer() {
         return plan -> {
             val audit = casProperties.getAudit().getSlf4j();
