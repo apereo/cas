@@ -18,7 +18,6 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link TrustedDevicesMultifactorProperties}.
