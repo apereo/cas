@@ -2,7 +2,6 @@ package org.apereo.cas.web.view;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
-import com.nimbusds.jose.util.StandardCharset;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +20,7 @@ import org.thymeleaf.IEngineConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -68,7 +68,7 @@ public class ThemeFileTemplateResolverTests {
             fail("Unable to create directory " + themeDir);
         }
         val path = new File(themeDir, "casLoginView.html");
-        FileUtils.write(path, "<html><html>", StandardCharset.UTF_8);
+        FileUtils.write(path, "<html><html>", StandardCharsets.UTF_8);
 
         val resolver = new ThemeFileTemplateResolver(casProperties);
         resolver.setSuffix(".html");
