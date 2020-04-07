@@ -61,7 +61,8 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         val results = storage
             .values()
             .stream()
-            .filter(entry -> expirationDate.isEqual(entry.getExpirationDate()) || expirationDate.isAfter(entry.getExpirationDate()))
+            .filter(entry -> entry.getExpirationDate() != null
+                && (expirationDate.isEqual(entry.getExpirationDate()) || expirationDate.isAfter(entry.getExpirationDate())))
             .sorted()
             .collect(Collectors.toCollection(LinkedHashSet::new));
 

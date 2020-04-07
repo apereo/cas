@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
@@ -21,7 +23,10 @@ import java.time.ZoneId;
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
 @Tag("MFA")
 public class MultifactorAuthenticationTrustStorageCleanerTests extends AbstractMultifactorAuthenticationTrustStorageTests {
-
+    @Autowired
+    @Qualifier("mfaTrustStorageCleaner")
+    protected MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner;
+    
     @Test
     public void verifyAction() {
         try {

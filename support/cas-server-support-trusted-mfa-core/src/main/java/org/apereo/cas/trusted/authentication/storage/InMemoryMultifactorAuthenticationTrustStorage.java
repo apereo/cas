@@ -46,7 +46,8 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
         val results = storage.asMap()
             .values()
             .stream()
-            .filter(entry -> expirationDate.isEqual(entry.getExpirationDate()) || expirationDate.isAfter(entry.getExpirationDate()))
+            .filter(entry -> entry.getExpirationDate() != null
+                && (expirationDate.isEqual(entry.getExpirationDate()) || expirationDate.isAfter(entry.getExpirationDate())))
             .sorted()
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
@@ -63,7 +64,8 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
         return storage.asMap()
             .values()
             .stream()
-            .filter(entry -> entry.getRecordDate().isEqual(onOrAfterDate) || entry.getRecordDate().isAfter(onOrAfterDate))
+            .filter(entry -> entry.getExpirationDate() != null
+                && (entry.getRecordDate().isEqual(onOrAfterDate) || entry.getRecordDate().isAfter(onOrAfterDate)))
             .sorted()
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }
