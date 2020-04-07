@@ -40,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @TestPropertySource(properties = {
     "cas.jdbc.showSql=true",
+    "cas.authn.mfa.trusted.cleaner.schedule.enabled=false",
     "cas.jdbc.physicalTableNames.MultifactorAuthenticationTrustRecord=mfaauthntrustedrec"
 })
 public class JpaMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
