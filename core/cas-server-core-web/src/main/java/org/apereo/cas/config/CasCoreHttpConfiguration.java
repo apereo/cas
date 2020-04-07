@@ -62,19 +62,19 @@ public class CasCoreHttpConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "httpClient")
-    @Bean
+    @Bean(destroyMethod = "destroy")
     public FactoryBean<SimpleHttpClient> httpClient() {
         return buildHttpClientFactoryBean();
     }
 
     @ConditionalOnMissingBean(name = "noRedirectHttpClient")
-    @Bean
+    @Bean(destroyMethod = "destroy")
     public HttpClient noRedirectHttpClient() {
         return getHttpClient(false);
     }
 
     @ConditionalOnMissingBean(name = "supportsTrustStoreSslSocketFactoryHttpClient")
-    @Bean
+    @Bean(destroyMethod = "destroy")
     public HttpClient supportsTrustStoreSslSocketFactoryHttpClient() {
         return getHttpClient(true);
     }

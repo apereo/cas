@@ -292,7 +292,11 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
     @Override
     public void destroy() {
         if (this.executorService != null) {
-            this.executorService.shutdownNow();
+            try {
+                this.executorService.awaitTermination(5, TimeUnit.SECONDS);
+            } catch (final InterruptedException e) {
+                //This is expected
+            }
             this.executorService = null;
         }
     }
