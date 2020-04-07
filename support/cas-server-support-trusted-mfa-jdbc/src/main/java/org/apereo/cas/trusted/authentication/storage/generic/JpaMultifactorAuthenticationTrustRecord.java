@@ -1,10 +1,11 @@
-package org.apereo.cas.trusted.authentication.storage;
+package org.apereo.cas.trusted.authentication.storage.generic;
 
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 
 import lombok.Getter;
 import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,9 +18,10 @@ import javax.persistence.Table;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Entity
-@Table(name = "MultifactorAuthenticationTrustRecord")
+@Entity(name = "JpaMultifactorAuthenticationTrustRecord")
+@Table(name = "JpaMultifactorAuthenticationTrustRecord")
 @Getter
+@DiscriminatorValue("JPA")
 public class JpaMultifactorAuthenticationTrustRecord extends MultifactorAuthenticationTrustRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")

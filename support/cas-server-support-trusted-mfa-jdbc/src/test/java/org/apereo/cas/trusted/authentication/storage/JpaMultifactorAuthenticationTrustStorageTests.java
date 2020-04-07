@@ -8,6 +8,7 @@ import org.apereo.cas.trusted.config.JdbcMultifactorAuthnTrustConfiguration;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -41,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.jdbc.showSql=true",
     "cas.authn.mfa.trusted.cleaner.schedule.enabled=false",
-    "cas.jdbc.physicalTableNames.MultifactorAuthenticationTrustRecord=mfaauthntrustedrec"
+    "cas.jdbc.physicalTableNames.JpaMultifactorAuthenticationTrustRecord=mfaauthntrustedrec"
 })
 public class JpaMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
     private static final String PRINCIPAL = "principal";
@@ -52,10 +53,17 @@ public class JpaMultifactorAuthenticationTrustStorageTests extends AbstractMulti
 
     private static final String DEVICE_FINGERPRINT = "deviceFingerprint";
 
+    @BeforeEach
+    public void clearEngine() {
+        getMfaTrustEngine().getAll().forEach(r -> getMfaTrustEngine().remove(r.getRecordKey()));
+    }
+
     @Test
     public void verifyExpireByKey() {
-        getMfaTrustEngine().save(MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT));
-        getMfaTrustEngine().save(MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT));
+        var record = MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT);
+        getMfaTrustEngine().save(record);
+        record = MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT);
+        getMfaTrustEngine().save(record);
         val records = getMfaTrustEngine().get(PRINCIPAL);
         assertEquals(2, records.size());
 

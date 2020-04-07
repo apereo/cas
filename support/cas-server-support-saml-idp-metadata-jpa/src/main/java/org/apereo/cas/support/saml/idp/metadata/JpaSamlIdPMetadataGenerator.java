@@ -18,7 +18,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import java.util.Optional;
 
 /**
@@ -66,7 +65,7 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator im
     @Override
     protected SamlIdPMetadataDocument newSamlIdPMetadataDocument() {
         val jpa = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getMetadata().getJpa();
-        return new JpaSamlIdPMetadataDocumentFactory(jpa).newInstance();
+        return new JpaSamlIdPMetadataDocumentFactory(jpa.getDialect()).newInstance();
     }
 
     @Override

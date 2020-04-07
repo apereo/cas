@@ -32,7 +32,6 @@ import java.time.temporal.ChronoUnit;
 @RequiredArgsConstructor
 @Getter
 public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
-    private static final int YEARS_TO_KEEP_RECORD_AS_FOREVER = 1000;
 
     private final MultifactorAuthenticationTrustStorage storageService;
 
@@ -102,7 +101,7 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
         if (deviceRecord.getTimeUnit() != ChronoUnit.FOREVER && deviceRecord.getExpiration() > 0) {
             record.expireIn(deviceRecord.getExpiration(), deviceRecord.getTimeUnit());
         } else {
-            record.setExpirationDate(record.getRecordDate().plusYears(YEARS_TO_KEEP_RECORD_AS_FOREVER));
+            record.neverExpire();
         }
         LOGGER.debug("Trusted authentication record will expire at [{}]", record.getExpirationDate());
         this.storageService.save(record);

@@ -11,7 +11,6 @@ import lombok.val;
 import org.springframework.data.annotation.Id;
 
 import javax.persistence.Column;
-import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import java.time.LocalDateTime;
@@ -31,6 +30,7 @@ import java.time.temporal.ChronoUnit;
 @Setter
 @EqualsAndHashCode
 public class MultifactorAuthenticationTrustRecord implements Comparable<MultifactorAuthenticationTrustRecord> {
+    private static final int YEARS_TO_KEEP_RECORD_AS_FOREVER = 1000;
 
     @Id
     @Transient
@@ -42,25 +42,23 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     private String principal;
 
     @JsonProperty("deviceFingerprint")
-    @Column(nullable = false, length = 512)
+    @Column(nullable = false, length = 2048, name = "deviceFingerprint")
     private String deviceFingerprint;
 
     @JsonProperty("recordDate")
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    private LocalDateTime recordDate;
+    @Column(name = "recordDate", nullable = false, columnDefinition = "TIMESTAMP")
+    private LocalDateTime recordDate = LocalDateTime.now(ZoneOffset.UTC);
 
-    @Lob
     @JsonProperty("recordKey")
-    @Column(length = Integer.MAX_VALUE, nullable = false)
+    @Column(name = "recordKey", length = 4_000, nullable = false)
     private String recordKey;
 
-    @Lob
     @JsonProperty("name")
-    @Column(length = Integer.MAX_VALUE, nullable = false)
+    @Column(name = "recordName", length = 4_000, nullable = false)
     private String name;
 
     @JsonProperty("expirationDate")
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    @Column(name = "expirationDate", nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime expirationDate;
 
     public MultifactorAuthenticationTrustRecord() {
@@ -84,6 +82,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
         r.setPrincipal(principal);
         r.setDeviceFingerprint(fingerprint);
         r.setName(principal.concat("-").concat(now.toString()).concat("-").concat(geography));
+        r.neverExpire();
         return r;
     }
 
@@ -115,5 +114,10 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     @Override
     public int compareTo(final MultifactorAuthenticationTrustRecord o) {
         return this.recordDate.compareTo(o.getRecordDate());
+    }
+
+    @JsonIgnore
+    public void neverExpire() {
+        setExpirationDate(getRecordDate().plusYears(YEARS_TO_KEEP_RECORD_AS_FOREVER));
     }
 }
