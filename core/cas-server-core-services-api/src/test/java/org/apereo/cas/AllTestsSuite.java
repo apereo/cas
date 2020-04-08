@@ -4,7 +4,6 @@ import org.apereo.cas.services.support.RegisteredServiceReverseMappedRegexAttrib
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializerTests;
 import org.apereo.cas.services.util.RegisteredServiceAccessStrategyAuditableEnforcerTests;
 import org.apereo.cas.services.util.RegisteredServiceNoOpCipherExecutorTests;
-import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutorTests;
 import org.apereo.cas.services.util.RegisteredServiceYamlHttpMessageConverterTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -18,7 +17,6 @@ import org.junit.runner.RunWith;
  * @since 6.0.0-RC3
  */
 @SelectClasses({
-    RegisteredServicePublicKeyCipherExecutorTests.class,
     CasAddonsRegisteredServicesJsonSerializerTests.class,
     RegisteredServiceAccessStrategyAuditableEnforcerTests.class,
     RegisteredServiceReverseMappedRegexAttributeFilterTests.class,

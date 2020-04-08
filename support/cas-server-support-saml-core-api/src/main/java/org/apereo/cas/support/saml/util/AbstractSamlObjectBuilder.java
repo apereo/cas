@@ -17,7 +17,6 @@ import org.jdom2.Document;
 import org.jdom2.input.DOMBuilder;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.XMLOutputter;
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSBase64Binary;
@@ -53,6 +52,7 @@ import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -60,6 +60,7 @@ import java.nio.charset.Charset;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -129,6 +130,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         LOGGER.trace("Attempting to construct an instance of Document from xml: [{}]", xmlString);
         try {
             val builder = new SAXBuilder();
+            builder.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
             builder.setFeature("http://xml.org/sax/features/external-general-entities", false);
             builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             return builder.build(new ByteArrayInputStream(xmlString.getBytes(Charset.defaultCharset())));
@@ -331,7 +333,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         if (XSURI.class.getSimpleName().equalsIgnoreCase(valueType)) {
             val builder = new XSURIBuilder();
             val attrValueObj = builder.buildObject(elementName, XSURI.TYPE_NAME);
-            attrValueObj.setValue(value.toString());
+            attrValueObj.setURI(value.toString());
             LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
             return attrValueObj;
         }
@@ -355,7 +357,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         if (XSDateTime.class.getSimpleName().equalsIgnoreCase(valueType)) {
             val builder = new XSDateTimeBuilder();
             val attrValueObj = builder.buildObject(elementName, XSDateTime.TYPE_NAME);
-            attrValueObj.setValue(DateTime.parse(value.toString()));
+            attrValueObj.setValue(ZonedDateTime.parse(value.toString()).toInstant());
             LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
             return attrValueObj;
         }

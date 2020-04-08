@@ -1,23 +1,20 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.config.MongoDbMultifactorAuthenticationTrustConfiguration;
-import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
-import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import lombok.Getter;
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,44 +25,41 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("MongoDb")
-@SpringBootTest(classes = {
-    MongoDbMultifactorAuthenticationTrustConfiguration.class,
-    MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
-    MultifactorAuthnTrustConfiguration.class,
-    CasCoreAuditConfiguration.class,
-    RefreshAutoConfiguration.class
-},
+@Import(MongoDbMultifactorAuthenticationTrustConfiguration.class)
+@TestPropertySource(
     properties = {
-        "cas.authn.mfa.trusted.mongo.databaseName=mfa-trusted",
+        "cas.authn.mfa.trusted.mongo.database-name=mfa-trusted",
         "cas.authn.mfa.trusted.mongo.host=localhost",
         "cas.authn.mfa.trusted.mongo.port=27017",
-        "cas.authn.mfa.trusted.mongo.userId=root",
+        "cas.authn.mfa.trusted.mongo.userid=root",
         "cas.authn.mfa.trusted.mongo.password=secret",
-        "cas.authn.mfa.trusted.mongo.authenticationDatabaseName=admin",
-        "cas.authn.mfa.trusted.mongo.dropCollection=true"
+        "cas.authn.mfa.trusted.mongo.authentication-database-name=admin",
+        "cas.authn.mfa.trusted.mongo.drop-collection=true"
     })
 @EnabledIfPortOpen(port = 27017)
-public class MongoDbMultifactorAuthenticationTrustStorageTests {
-    @Autowired
-    @Qualifier("mfaTrustEngine")
-    private MultifactorAuthenticationTrustStorage mfaTrustEngine;
+@Getter
+public class MongoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Test
     public void verifySetAnExpireByKey() {
-        mfaTrustEngine.set(MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint"));
-        val records = mfaTrustEngine.get("casuser");
+        getMfaTrustEngine().save(MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint"));
+        val records = getMfaTrustEngine().get("casuser");
         assertEquals(1, records.size());
-        mfaTrustEngine.expire(records.stream().findFirst().get().getRecordKey());
-        assertTrue(mfaTrustEngine.get("casuser").isEmpty());
+        getMfaTrustEngine().remove(records.stream().findFirst().get().getRecordKey());
+        assertTrue(getMfaTrustEngine().get("casuser").isEmpty());
     }
 
     @Test
     public void verifyExpireByDate() {
         val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
-        r.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).minusDays(2));
-        mfaTrustEngine.set(r);
+        r.setRecordDate(LocalDateTime.now(ZoneOffset.UTC).minusDays(2));
+        getMfaTrustEngine().save(r);
+        assertEquals(1, getMfaTrustEngine().get(LocalDateTime.now(ZoneOffset.UTC).minusDays(30)).size());
+        assertEquals(0, getMfaTrustEngine().get(LocalDateTime.now(ZoneOffset.UTC).minusDays(2)).size());
+    }
 
-        assertEquals(1, mfaTrustEngine.get(LocalDateTime.now(ZoneId.systemDefault()).minusDays(30)).size());
-        assertEquals(0, mfaTrustEngine.get(LocalDateTime.now(ZoneId.systemDefault()).minusDays(2)).size());
+    @BeforeEach
+    public void emptyTrustEngine() {
+        getMfaTrustEngine().getAll().forEach(r -> getMfaTrustEngine().remove(r.getRecordKey()));
     }
 }

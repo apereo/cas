@@ -10,8 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jasig.cas.client.util.CommonUtils;
-import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.saml.common.SAMLObjectBuilder;
@@ -27,8 +25,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Objects;
 
 /**
  * This is {@link IdentityProviderInitiatedProfileHandlerController}.
@@ -109,10 +109,9 @@ public class IdentityProviderInitiatedProfileHandlerController extends AbstractS
         authnRequest.setNameIDPolicy(nameIDPolicy);
 
         if (NumberUtils.isCreatable(time)) {
-            val converted = TimeUnit.SECONDS.convert(Duration.ofMillis(Long.parseLong(time)));
-            authnRequest.setIssueInstant(new DateTime(converted, ISOChronology.getInstanceUTC()));
+            authnRequest.setIssueInstant(Instant.ofEpochMilli(Long.parseLong(time)));
         } else {
-            authnRequest.setIssueInstant(new DateTime(DateTime.now(), ISOChronology.getInstanceUTC()));
+            authnRequest.setIssueInstant(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
         }
         authnRequest.setForceAuthn(Boolean.FALSE);
         if (StringUtils.isNotBlank(target)) {
@@ -120,15 +119,13 @@ public class IdentityProviderInitiatedProfileHandlerController extends AbstractS
         }
 
         val ctx = new MessageContext();
-        ctx.setAutoCreateSubcontexts(true);
-
         if (facade.isAuthnRequestsSigned()) {
             getSamlProfileHandlerConfigurationContext().getSamlObjectSigner().encode(authnRequest, registeredService,
                 facade, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest);
         }
         ctx.setMessage(authnRequest);
         val bindingContext = ctx.getSubcontext(SAMLBindingContext.class, true);
-        bindingContext.setHasBindingSignature(false);
+        Objects.requireNonNull(bindingContext).setHasBindingSignature(false);
         SAMLBindingSupport.setRelayState(ctx, target);
 
         val pair = Pair.<SignableSAMLObject, MessageContext>of(authnRequest, ctx);

@@ -20,6 +20,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticato
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ClientIdClientSecretAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ProofKeyCodeExchangeAuthenticator;
+import org.apereo.cas.support.oauth.authenticator.OAuth20RefreshTokenAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20UsernamePasswordAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthAuthenticationClientProvider;
 import org.apereo.cas.support.oauth.profile.CasServerApiBasedTicketValidator;
@@ -41,6 +42,7 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20ClientCredentialsGran
 import org.apereo.cas.support.oauth.validator.token.OAuth20DeviceCodeResponseTypeRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20PasswordGrantTypeTokenRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20RefreshTokenGrantTypeTokenRequestValidator;
+import org.apereo.cas.support.oauth.validator.token.OAuth20RevocationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
 import org.apereo.cas.support.oauth.web.audit.AccessTokenResponseAuditResourceResolver;
@@ -52,6 +54,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20CallbackAuthorizeEndpoi
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20RevocationEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
 import org.apereo.cas.support.oauth.web.mgmt.OAuth20TokenManagementEndpoint;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
@@ -288,6 +291,12 @@ public class CasOAuth20Configuration {
         pkceBasicAuthClient.setName(Authenticators.CAS_OAUTH_CLIENT_BASIC_PROOF_KEY_CODE_EXCHANGE_AUTHN);
         pkceBasicAuthClient.init();
 
+        val refreshTokenFormClient = new DirectFormClient(oAuthRefreshTokenAuthenticator());
+        refreshTokenFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_FORM_REFRESH_TOKEN_AUTHN);
+        refreshTokenFormClient.setUsernameParameter(OAuth20Constants.CLIENT_ID);
+        refreshTokenFormClient.setPasswordParameter(OAuth20Constants.REFRESH_TOKEN);
+        refreshTokenFormClient.init();
+
         val userFormClient = new DirectFormClient(oAuthUserAuthenticator());
         userFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_USER_FORM);
         userFormClient.init();
@@ -297,7 +306,7 @@ public class CasOAuth20Configuration {
         accessTokenClient.setAuthenticator(oAuthAccessTokenAuthenticator());
         accessTokenClient.setName(Authenticators.CAS_OAUTH_CLIENT_ACCESS_TOKEN_AUTHN);
         accessTokenClient.init();
-        
+
         val clientList = new ArrayList<Client>();
 
         val beans = applicationContext.getBeansOfType(OAuthAuthenticationClientProvider.class, false, true);
@@ -310,6 +319,7 @@ public class CasOAuth20Configuration {
         clientList.add(basicAuthClient);
         clientList.add(pkceAuthnFormClient);
         clientList.add(pkceBasicAuthClient);
+        clientList.add(refreshTokenFormClient);
         clientList.add(directFormClient);
         clientList.add(userFormClient);
         clientList.add(accessTokenClient);
@@ -347,6 +357,18 @@ public class CasOAuth20Configuration {
     @RefreshScope
     public Authenticator<UsernamePasswordCredentials> oAuthProofKeyCodeExchangeAuthenticator() {
         return new OAuth20ProofKeyCodeExchangeAuthenticator(this.servicesManager.getObject(),
+            webApplicationServiceFactory.getObject(),
+            registeredServiceAccessStrategyEnforcer.getObject(),
+            ticketRegistry.getObject(),
+            oauthRegisteredServiceCipherExecutor(),
+            defaultPrincipalResolver.getObject());
+    }
+
+    @ConditionalOnMissingBean(name = "oAuthRefreshTokenAuthenticator")
+    @Bean
+    @RefreshScope
+    public Authenticator<UsernamePasswordCredentials> oAuthRefreshTokenAuthenticator() {
+        return new OAuth20RefreshTokenAuthenticator(this.servicesManager.getObject(),
             webApplicationServiceFactory.getObject(),
             registeredServiceAccessStrategyEnforcer.getObject(),
             ticketRegistry.getObject(),
@@ -529,6 +551,15 @@ public class CasOAuth20Configuration {
         return new OAuth20UserProfileEndpointController(context);
     }
 
+    @ConditionalOnMissingBean(name = "oauthRevocationController")
+    @Bean
+    public OAuth20RevocationEndpointController oauthRevocationController() {
+        val context = buildConfigurationContext()
+            .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor())
+            .build();
+        return new OAuth20RevocationEndpointController(context);
+    }
+
     @ConditionalOnMissingBean(name = "oauthAuthorizationResponseBuilders")
     @Bean
     @RefreshScope
@@ -577,6 +608,14 @@ public class CasOAuth20Configuration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "oauthRevocationRequestValidator")
+    @RefreshScope
+    public OAuth20TokenRequestValidator oauthRevocationRequestValidator() {
+        val svcManager = servicesManager.getObject();
+        return new OAuth20RevocationRequestValidator(svcManager);
+    }
+
+    @Bean
     @ConditionalOnMissingBean(name = "oauthRefreshTokenGrantTypeTokenRequestValidator")
     @RefreshScope
     public OAuth20TokenRequestValidator oauthRefreshTokenGrantTypeTokenRequestValidator() {
@@ -619,6 +658,7 @@ public class CasOAuth20Configuration {
         validators.add(oauthRefreshTokenGrantTypeTokenRequestValidator());
         validators.add(oauthPasswordGrantTypeTokenRequestValidator());
         validators.add(oauthClientCredentialsGrantTypeTokenRequestValidator());
+        validators.add(oauthRevocationRequestValidator());
 
         return validators;
     }

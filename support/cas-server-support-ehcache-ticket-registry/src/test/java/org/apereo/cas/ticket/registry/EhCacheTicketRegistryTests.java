@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
     "spring.mail.port=25000"
 })
 @Tag("Ehcache")
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired

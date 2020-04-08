@@ -40,6 +40,7 @@ public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractI
         val failures = Objects.requireNonNull(keys)
             .stream()
             .map((Function<String, BoundValueOperations>) this.redisTemplate::boundValueOps)
+            .map(BoundValueOperations::get)
             .map(AuditActionContext.class::cast)
             .filter(audit ->
                 audit.getPrincipal().equalsIgnoreCase(getUsernameParameterFromRequest(request))

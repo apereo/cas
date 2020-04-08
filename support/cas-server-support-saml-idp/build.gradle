@@ -33,7 +33,6 @@ dependencies {
     compileOnly project(":support:cas-server-support-consent-api")
     
     implementation libraries.casclient
-    implementation libraries.shibidp
     implementation libraries.pac4jcore
     implementation libraries.shibidpjavasupport
 

@@ -28,7 +28,7 @@ import lombok.val;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class ScriptedRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = -678554831202936052L;

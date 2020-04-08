@@ -2,12 +2,22 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 
+import net.shibboleth.utilities.java.support.xml.BasicParserPool;
+import org.apache.velocity.app.VelocityEngine;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.opensaml.core.xml.XMLObjectBuilderFactory;
+import org.opensaml.core.xml.io.MarshallerFactory;
+import org.opensaml.core.xml.io.UnmarshallerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link CoreSamlConfigurationTests}.
@@ -15,7 +25,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
@@ -39,7 +50,37 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @Tag("SAML")
 public class CoreSamlConfigurationTests {
+    @Autowired
+    @Qualifier("shibboleth.VelocityEngine")
+    private VelocityEngine velocityEngineFactoryBean;
+
+    @Autowired
+    @Qualifier("shibboleth.OpenSAMLConfig")
+    private OpenSamlConfigBean openSamlConfigBean;
+
+    @Autowired
+    @Qualifier("shibboleth.ParserPool")
+    private BasicParserPool parserPool;
+
+    @Autowired
+    @Qualifier("shibboleth.BuilderFactory")
+    private XMLObjectBuilderFactory builderFactory;
+
+    @Autowired
+    @Qualifier("shibboleth.MarshallerFactory")
+    private MarshallerFactory marshallerFactory;
+
+    @Autowired
+    @Qualifier("shibboleth.UnmarshallerFactory")
+    private UnmarshallerFactory unmarshallerFactory;
+
     @Test
     public void verify() {
+        assertNotNull(velocityEngineFactoryBean);
+        assertNotNull(openSamlConfigBean);
+        assertNotNull(parserPool);
+        assertNotNull(builderFactory);
+        assertNotNull(marshallerFactory);
+        assertNotNull(unmarshallerFactory);
     }
 }

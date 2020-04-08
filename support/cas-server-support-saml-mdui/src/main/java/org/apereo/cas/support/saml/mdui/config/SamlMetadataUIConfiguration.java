@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -83,7 +84,9 @@ public class SamlMetadataUIConfiguration {
 
             val filters = new ArrayList<MetadataFilter>();
             if (casProperties.getSamlMetadataUi().getMaxValidity() > 0) {
-                filters.add(new RequiredValidUntilFilter(casProperties.getSamlMetadataUi().getMaxValidity()));
+                val filter = new RequiredValidUntilFilter();
+                filter.setMaxValidityInterval(Duration.ofSeconds(casProperties.getSamlMetadataUi().getMaxValidity()));
+                filters.add(filter);
             }
 
             var addResource = true;

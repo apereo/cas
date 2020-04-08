@@ -26,6 +26,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 import org.springframework.context.event.EventListener;
 
+import java.time.Instant;
+
 /**
  * This is {@link CasEurekaServerWebApplication}.
  *
@@ -72,6 +74,6 @@ public class CasEurekaServerWebApplication {
     @EventListener
     public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
         AsciiArtUtils.printAsciiArtReady(LOGGER, StringUtils.EMPTY);
-        LOGGER.info("Ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
+        LOGGER.info("Ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(event.getTimestamp())));
     }
 }

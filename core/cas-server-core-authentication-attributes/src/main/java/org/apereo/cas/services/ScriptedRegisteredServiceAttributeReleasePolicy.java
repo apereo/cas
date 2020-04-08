@@ -35,7 +35,7 @@ import java.util.regex.Matcher;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -979532578142774128L;

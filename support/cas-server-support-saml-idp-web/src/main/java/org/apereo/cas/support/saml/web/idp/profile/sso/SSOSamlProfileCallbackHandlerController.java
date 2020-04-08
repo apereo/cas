@@ -13,7 +13,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -49,8 +48,8 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
         return Pair.of(authnRequest, messageContext);
     }
 
-    private static MessageContext<SAMLObject> bindRelayStateParameter(final HttpServletRequest request) {
-        val messageContext = new MessageContext<SAMLObject>();
+    private static MessageContext bindRelayStateParameter(final HttpServletRequest request) {
+        val messageContext = new MessageContext();
         val relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
         LOGGER.debug("Relay state is [{}]", relayState);
         SAMLBindingSupport.setRelayState(messageContext, relayState);

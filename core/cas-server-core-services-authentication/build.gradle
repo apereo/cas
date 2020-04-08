@@ -1,12 +1,17 @@
 description = "Apereo CAS Core Services/Authentication API"
 dependencies {
+    implementation libraries.bouncycastle
+
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-events")
     api project(":api:cas-server-core-api-web")
     
-    implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-authentication-api")
 
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
+
+    testImplementation project(":core:cas-server-core-services-api")
+    
+    testImplementation project(path: ":core:cas-server-core-services-api", configuration: "tests")
 }

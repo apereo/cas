@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.metadata.resolver.AmazonS3SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
-import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -12,6 +11,7 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("samlIdPAmazonS3RegisteredServiceMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlIdPAmazonS3RegisteredServiceMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurer {
+public class SamlIdPAmazonS3RegisteredServiceMetadataConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -43,8 +43,9 @@ public class SamlIdPAmazonS3RegisteredServiceMetadataConfiguration implements Sa
         return new AmazonS3SamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject(), amazonS3Client.getObject());
     }
 
-    @Override
-    public void configureMetadataResolutionPlan(final SamlRegisteredServiceMetadataResolutionPlan plan) {
-        plan.registerMetadataResolver(amazonS3SamlRegisteredServiceMetadataResolver());
+    @Bean
+    @ConditionalOnMissingBean(name = "amazonS3SamlRegisteredServiceMetadataResolutionPlanConfigurer")
+    public SamlRegisteredServiceMetadataResolutionPlanConfigurer amazonS3SamlRegisteredServiceMetadataResolutionPlanConfigurer() {
+        return plan -> plan.registerMetadataResolver(amazonS3SamlRegisteredServiceMetadataResolver());
     }
 }
