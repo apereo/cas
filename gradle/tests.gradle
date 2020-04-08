@@ -5,8 +5,17 @@ def testCategories = [
     "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
     "Radius", "AmazonWebServices", "RestfulApi", "Groovy",
     "OAuth", "OIDC", "SAML", "UMA", "Oracle", "JMS",
-    "ZooKeeper", "Webflow", "DynamoDb", "MFA"
+    "ZooKeeper", "Webflow", "DynamoDb", "MFA", "Kafka"
 ] as String[]
+
+if (hasTestsOfCategory(project, "Kafka")) {
+    task testKafka(type: Test) {
+        enabled = shouldTest(project, "Kafka")
+        useJUnitPlatform {
+            includeTags "Kafka"
+        }
+    }
+}
 
 if (hasTestsOfCategory(project, "MFA")) {
     task testMFA(type: Test) {
