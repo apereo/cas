@@ -61,7 +61,7 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
             val serviceParam = service.getOriginalUrl();
             if (StringUtils.isNotBlank(sourceParam) && StringUtils.isNotBlank(serviceParam)) {
                 uriBuilder.queryParam(sourceParam, "{service}");
-                queryParams.put("service", serviceParam);
+                queryParams.put(CasProtocolConstants.PARAMETER_SERVICE, serviceParam);
             }
         }
 
@@ -98,8 +98,8 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
      */
     protected String getCssClass(final BaseClient client) {
         val customProperties = client.getCustomProperties();
-        if (customProperties.containsKey(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS)) {
-            return customProperties.get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT).toString();
+        if (customProperties != null && customProperties.containsKey(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS)) {
+            return customProperties.get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS).toString();
         }
         return null;
     }
