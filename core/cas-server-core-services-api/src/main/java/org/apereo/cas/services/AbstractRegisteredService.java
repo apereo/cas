@@ -196,6 +196,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     protected abstract AbstractRegisteredService newInstance();
 
 
+    @Override
     @Deprecated(since = "6.2.0")
     public Set<String> getRequiredHandlers() {
         LOGGER.warn("Assigning a collection of required authentication handlers to a registered service is deprecated. "

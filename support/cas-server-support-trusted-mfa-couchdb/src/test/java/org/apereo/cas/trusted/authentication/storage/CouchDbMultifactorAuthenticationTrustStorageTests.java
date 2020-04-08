@@ -5,6 +5,7 @@ import org.apereo.cas.config.CouchDbMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.trusted.MultifactorAuthenticationTrustRecordCouchDbRepository;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
@@ -18,8 +19,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -66,14 +68,15 @@ public class CouchDbMultifactorAuthenticationTrustStorageTests extends AbstractM
     @Test
     public void verifyExpiration() {
         val record = getMultifactorAuthenticationTrustRecord();
-        record.setRecordDate(LocalDateTime.now(ZoneOffset.UTC));
-        record.setExpirationDate(record.getRecordDate().plusDays(2));
+        record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS));
+        record.setExpirationDate(DateTimeUtils.dateOf(record.getRecordDate().plusDays(2)));
         getMfaTrustEngine().save(record);
 
         assertFalse(getMfaTrustEngine().get(record.getPrincipal(),
             record.getRecordDate().minusDays(1)).isEmpty());
 
-        getMfaTrustEngine().remove(record.getExpirationDate().minusDays(1));
+        val now = DateTimeUtils.zonedDateTimeOf(record.getExpirationDate()).truncatedTo(ChronoUnit.SECONDS).plusDays(1);
+        getMfaTrustEngine().remove(now);
         assertTrue(getMfaTrustEngine().getAll().isEmpty());
     }
 }

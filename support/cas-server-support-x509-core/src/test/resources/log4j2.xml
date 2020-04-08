@@ -7,7 +7,7 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo.cas.adaptors.x509.authentication.principal.X509UPNExtractorUtils" level="debug" />
-        <Logger name="org.apereo" level="error" />
+        <Logger name="org.apereo" level="error" additivity="false" />
         <Root level="error">
             <AppenderRef ref="console"/>
         </Root>

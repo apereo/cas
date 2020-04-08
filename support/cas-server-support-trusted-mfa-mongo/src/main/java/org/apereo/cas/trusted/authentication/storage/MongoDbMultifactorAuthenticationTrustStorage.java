@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -54,7 +54,7 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
     }
 
     @Override
-    public void remove(final LocalDateTime expirationDate) {
+    public void remove(final ZonedDateTime expirationDate) {
         try {
             val query = new Query();
             query.addCriteria(Criteria.where("expirationDate").lte(expirationDate));
@@ -79,7 +79,7 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
     }
 
     @Override
-    public Set<? extends MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final ZonedDateTime onOrAfterDate) {
         remove();
         val query = new Query();
         query.addCriteria(Criteria.where("recordDate").gte(onOrAfterDate));

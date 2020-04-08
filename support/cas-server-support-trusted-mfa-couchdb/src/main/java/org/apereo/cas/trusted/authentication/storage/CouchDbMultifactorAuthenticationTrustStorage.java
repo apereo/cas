@@ -11,7 +11,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.val;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Set;
 
 /**
@@ -46,7 +46,7 @@ public class CouchDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
     }
 
     @Override
-    public void remove(final LocalDateTime expirationTime) {
+    public void remove(final ZonedDateTime expirationTime) {
         val records = couchDb.findOnOrAfterExpirationDate(expirationTime);
         records.forEach(couchDb::deleteRecord);
     }
@@ -63,7 +63,7 @@ public class CouchDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
     }
 
     @Override
-    public Set<? extends MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final ZonedDateTime onOrAfterDate) {
         remove();
         return CollectionUtils.wrapHashSet(couchDb.findOnOrAfterDate(onOrAfterDate));
     }
@@ -75,7 +75,7 @@ public class CouchDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
     }
 
     @Override
-    public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal, final LocalDateTime onOrAfterDate) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal, final ZonedDateTime onOrAfterDate) {
         remove();
         return CollectionUtils.wrapHashSet(couchDb.findByPrincipalAfterDate(principal, onOrAfterDate));
     }

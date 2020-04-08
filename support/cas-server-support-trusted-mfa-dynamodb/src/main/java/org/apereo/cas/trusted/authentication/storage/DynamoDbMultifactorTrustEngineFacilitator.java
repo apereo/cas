@@ -28,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -118,9 +119,9 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
                 record.setPrincipal(item.get(ColumnNames.PRINCIPAL.getColumnName()).getS());
                 record.setRecordKey(item.get(ColumnNames.RECORD_KEY.getColumnName()).getS());
                 val time = Long.parseLong(item.get(ColumnNames.RECORD_DATE.getColumnName()).getS());
-                record.setRecordDate(DateTimeUtils.localDateTimeOf(new Date(time)));
+                record.setRecordDate(DateTimeUtils.zonedDateTimeOf(new Date(time)));
                 val expTime = Long.parseLong(item.get(ColumnNames.EXPIRATION_DATE.getColumnName()).getS());
-                record.setExpirationDate(DateTimeUtils.localDateTimeOf(new Date(expTime)));
+                record.setExpirationDate(new Date(expTime));
 
                 results.add(record);
             });
@@ -160,7 +161,7 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
         val recordDate = DateTimeUtils.dateOf(record.getRecordDate()).getTime();
         values.put(ColumnNames.RECORD_DATE.getColumnName(), new AttributeValue(String.valueOf(recordDate)));
 
-        val expDate = DateTimeUtils.dateOf(record.getExpirationDate()).getTime();
+        val expDate = record.getExpirationDate().getTime();
         values.put(ColumnNames.EXPIRATION_DATE.getColumnName(), new AttributeValue(String.valueOf(expDate)));
 
         LOGGER.debug("Created attribute values [{}] based on [{}]", values, record);
@@ -184,7 +185,7 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
      *
      * @param expirationDate the exp date
      */
-    public void remove(final LocalDateTime expirationDate) {
+    public void remove(final ZonedDateTime expirationDate) {
         val keys = new HashMap<String, AttributeValue>();
         val time = DateTimeUtils.dateOf(expirationDate).getTime();
         keys.put(ColumnNames.EXPIRATION_DATE.getColumnName(), new AttributeValue(String.valueOf(time)));
@@ -210,7 +211,7 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
      * @param onOrAfterDate the on or after date
      * @return the record for date
      */
-    public Set<? extends MultifactorAuthenticationTrustRecord> getRecordForDate(final LocalDateTime onOrAfterDate) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> getRecordForDate(final ZonedDateTime onOrAfterDate) {
         val keys = new HashMap<String, AttributeValue>();
         val time = DateTimeUtils.dateOf(onOrAfterDate).getTime();
         keys.put(ColumnNames.RECORD_DATE.getColumnName(), new AttributeValue(String.valueOf(time)));

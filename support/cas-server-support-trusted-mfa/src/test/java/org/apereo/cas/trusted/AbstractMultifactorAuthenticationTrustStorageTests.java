@@ -11,6 +11,7 @@ import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
+import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.Getter;
 import lombok.val;
@@ -29,6 +30,7 @@ import org.springframework.webflow.execution.Action;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.apereo.cas.trusted.BeanNames.BEAN_DEVICE_FINGERPRINT_STRATEGY;
@@ -75,9 +77,9 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         record.setName("DeviceName");
         record.setPrincipal(UUID.randomUUID().toString());
         record.setId(1000);
-        record.setRecordDate(LocalDateTime.now(ZoneOffset.UTC).minusDays(1));
+        record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusDays(1));
         record.setRecordKey(UUID.randomUUID().toString());
-        record.setExpirationDate(LocalDateTime.now(ZoneOffset.UTC).plusDays(1));
+        record.setExpirationDate(DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1)));
         return record;
     }
 
@@ -87,11 +89,11 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         getMfaTrustEngine().save(record);
         assertFalse(getMfaTrustEngine().getAll().isEmpty());
         assertFalse(getMfaTrustEngine().get(record.getPrincipal()).isEmpty());
-        val now = LocalDateTime.now(ZoneOffset.UTC).minusDays(2);
+        val now = ZonedDateTime.now(ZoneOffset.UTC).minusDays(2);
         assertFalse(getMfaTrustEngine().get(now).isEmpty());
         assertFalse(getMfaTrustEngine().get(record.getPrincipal(), now).isEmpty());
 
-        getMfaTrustEngine().remove(record.getExpirationDate().plusDays(1));
+        getMfaTrustEngine().remove(DateTimeUtils.zonedDateTimeOf(record.getExpirationDate()).plusDays(1));
         assertTrue(getMfaTrustEngine().getAll().isEmpty());
     }
 

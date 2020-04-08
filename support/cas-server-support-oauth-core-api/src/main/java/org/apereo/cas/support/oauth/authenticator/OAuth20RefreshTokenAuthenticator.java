@@ -24,7 +24,7 @@ import java.io.Serializable;
 /**
  * This is {@link OAuth20RefreshTokenAuthenticator}.
  *
- * OAuth20RefreshTokenAuthenticator can only be used for a refresh token request of a "public" client.
+ * {@link OAuth20RefreshTokenAuthenticator} can only be used for a refresh token request of a "public" client.
  * An OAuth "public" client is one that does not define a secret like a mobile application.
  *
  * @author Julien Huon
@@ -67,6 +67,7 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
         return false;
     }
 
+    @Override
     protected void validateCredentials(final UsernamePasswordCredentials credentials,
                                        final OAuthRegisteredService registeredService, final WebContext context) {
         val token = credentials.getPassword();
@@ -75,7 +76,7 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
         val refreshToken = getTicketRegistry().getTicket(token, OAuth20RefreshToken.class);
         val clientId = credentials.getUsername();
         if (refreshToken == null || refreshToken.isExpired() || !StringUtils.equals(refreshToken.getClientId(), clientId)) {
-            LOGGER.error("Provided refresh token [{}] is either not found in the ticket registry, has expired or is not related to the client [{}]", token, clientId);
+            LOGGER.error("Refresh token [{}] is either not found in the ticket registry, has expired or is not related to the client [{}]", token, clientId);
             throw new CredentialsException("Invalid token: " + token);
         }
     }
