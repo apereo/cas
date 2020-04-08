@@ -52,7 +52,8 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential)
+        throws GeneralSecurityException, PreventedException {
         val tokenCredential = (GoogleAuthenticatorTokenCredential) credential;
 
         if (!StringUtils.isNumeric(tokenCredential.getToken())) {

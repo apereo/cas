@@ -16,5 +16,15 @@ dependencies {
     implementation project(":support:cas-server-support-mongo-core")
 
     testImplementation project(":core:cas-server-core-configuration")
+
+    testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-webflow-mfa-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-webflow-mfa", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-u2f", configuration: "tests")
 }

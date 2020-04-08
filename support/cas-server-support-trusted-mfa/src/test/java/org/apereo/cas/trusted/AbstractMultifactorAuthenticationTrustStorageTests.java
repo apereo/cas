@@ -5,13 +5,14 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
-import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 
+import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -27,9 +28,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.webflow.execution.Action;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.UUID;
 
-import static org.apereo.cas.trusted.BeanNames.*;
+import static org.apereo.cas.trusted.BeanNames.BEAN_DEVICE_FINGERPRINT_STRATEGY;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -41,41 +43,57 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
 @Tag("MFA")
+@Getter
 public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
+    @Autowired
+    @Qualifier("mfaTrustEngine")
+    protected MultifactorAuthenticationTrustStorage mfaTrustEngine;
+
+    @Autowired
+    @Qualifier("mfaTrustRecordKeyGenerator")
+    protected MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy;
+
     @Autowired
     @Qualifier("mfaVerifyTrustAction")
     protected Action mfaVerifyTrustAction;
 
     @Autowired
-    @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY)
-    protected DeviceFingerprintStrategy deviceFingerprintStrategy;
+    @Qualifier("mfaSetTrustAction")
+    protected Action mfaSetTrustAction;
 
     @Autowired
-    @Qualifier("mfaTrustStorageCleaner")
-    protected MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner;
+    @Qualifier("mfaPrepareTrustDeviceViewAction")
+    protected Action mfaPrepareTrustDeviceViewAction;
 
+    @Autowired
+    @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY)
+    protected DeviceFingerprintStrategy deviceFingerprintStrategy;
+    
     protected static MultifactorAuthenticationTrustRecord getMultifactorAuthenticationTrustRecord() {
         val record = new MultifactorAuthenticationTrustRecord();
-        record.setDeviceFingerprint("Fingerprint");
+        record.setDeviceFingerprint(UUID.randomUUID().toString());
         record.setName("DeviceName");
-        record.setPrincipal("casuser");
+        record.setPrincipal(UUID.randomUUID().toString());
         record.setId(1000);
-        record.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).plusDays(1));
-        record.setRecordKey("RecordKey");
+        record.setRecordDate(LocalDateTime.now(ZoneOffset.UTC).minusDays(1));
+        record.setRecordKey(UUID.randomUUID().toString());
+        record.setExpirationDate(LocalDateTime.now(ZoneOffset.UTC).plusDays(1));
         return record;
     }
 
     @Test
     public void verifyTrustEngine() {
         val record = getMultifactorAuthenticationTrustRecord();
-        getMfaTrustEngine().set(record);
+        getMfaTrustEngine().save(record);
+        assertFalse(getMfaTrustEngine().getAll().isEmpty());
         assertFalse(getMfaTrustEngine().get(record.getPrincipal()).isEmpty());
-        val now = LocalDateTime.now(ZoneId.systemDefault());
+        val now = LocalDateTime.now(ZoneOffset.UTC).minusDays(2);
         assertFalse(getMfaTrustEngine().get(now).isEmpty());
         assertFalse(getMfaTrustEngine().get(record.getPrincipal(), now).isEmpty());
-    }
 
-    public abstract MultifactorAuthenticationTrustStorage getMfaTrustEngine();
+        getMfaTrustEngine().remove(record.getExpirationDate().plusDays(1));
+        assertTrue(getMfaTrustEngine().getAll().isEmpty());
+    }
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,

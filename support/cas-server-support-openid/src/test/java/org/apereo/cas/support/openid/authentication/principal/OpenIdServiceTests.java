@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @deprecated 6.2
  */
 @Slf4j
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class OpenIdServiceTests extends AbstractOpenIdTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "openIdService.json");
 

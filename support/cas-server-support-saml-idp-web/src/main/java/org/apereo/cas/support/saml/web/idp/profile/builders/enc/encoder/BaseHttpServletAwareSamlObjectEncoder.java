@@ -76,7 +76,7 @@ public abstract class BaseHttpServletAwareSamlObjectEncoder<T extends SAMLObject
      * @return the message context
      */
     protected MessageContext getEncoderMessageContext(final RequestAbstractType request, final T samlObject, final String relayState) {
-        val ctx = new MessageContext<SAMLObject>();
+        val ctx = new MessageContext();
         ctx.setMessage(samlObject);
         SAMLBindingSupport.setRelayState(ctx, relayState);
         SamlIdPUtils.preparePeerEntitySamlEndpointContext(request, ctx, adaptor, getBinding());

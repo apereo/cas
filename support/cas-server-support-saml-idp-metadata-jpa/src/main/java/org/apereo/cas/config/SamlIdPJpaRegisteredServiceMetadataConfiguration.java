@@ -8,7 +8,6 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.metadata.resolver.JpaSamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
-import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -16,6 +15,7 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -41,7 +41,7 @@ import java.util.List;
 @Configuration("samlIdPJpaRegisteredServiceMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-public class SamlIdPJpaRegisteredServiceMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurer {
+public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
 
     @Autowired
     @Qualifier("jpaBeanFactory")
@@ -100,9 +100,10 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration implements SamlReg
         return mgmr;
     }
 
-    @Override
-    public void configureMetadataResolutionPlan(final SamlRegisteredServiceMetadataResolutionPlan plan) {
-        plan.registerMetadataResolver(jpaSamlRegisteredServiceMetadataResolver());
+    @Bean
+    @ConditionalOnMissingBean(name = "jpaSamlRegisteredServiceMetadataResolutionPlanConfigurer")
+    public SamlRegisteredServiceMetadataResolutionPlanConfigurer jpaSamlRegisteredServiceMetadataResolutionPlanConfigurer() {
+        return plan -> plan.registerMetadataResolver(jpaSamlRegisteredServiceMetadataResolver());
     }
 
 }

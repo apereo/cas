@@ -22,7 +22,7 @@ static void main(String[] args) {
             //println("Checking file ${file.name}")
             def matcher = pattern.matcher(text)
             if (matcher.find() && text.contains("@SpringBootTest")) {
-                    def group = matcher.group(2)
+                def group = matcher.group(2)
                 if (!parentClasses.containsKey(group)) {
                     println "Unable to find ${group} as a parent class"
                     System.exit(1);

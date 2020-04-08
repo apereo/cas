@@ -6,8 +6,11 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,8 +24,10 @@ import static org.mockito.Mockito.*;
  */
 @Tag("MFA")
 @DirtiesContext
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AuthenticationAttributeMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
+    @Order(1)
     public void verifyOperationByProvider() {
         val props = new CasConfigurationProperties();
         val mfa = props.getAuthn().getMfa();
@@ -36,6 +41,7 @@ public class AuthenticationAttributeMultifactorAuthenticationTriggerTests extend
     }
 
     @Test
+    @Order(2)
     public void verifyMultipleProvider() {
         val otherProvider = new TestMultifactorAuthenticationProvider();
         otherProvider.setId("mfa-other");

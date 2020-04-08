@@ -1,6 +1,11 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
+import org.apereo.cas.jpa.AbstractJpaEntityFactory;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
+import org.apereo.cas.trusted.authentication.storage.generic.JpaMultifactorAuthenticationTrustRecord;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,16 +33,22 @@ import java.util.Set;
 @Transactional(transactionManager = "transactionManagerMfaAuthnTrust")
 @Slf4j
 public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
-    private static final String TABLE_NAME = JpaMultifactorAuthenticationTrustRecord.class.getSimpleName();
+    private static final String ENTITY_NAME = JpaMultifactorAuthenticationTrustRecord.class.getSimpleName();
 
     @PersistenceContext(unitName = "mfaTrustedAuthnEntityManagerFactory")
     private transient EntityManager entityManager;
 
+    public JpaMultifactorAuthenticationTrustStorage(final TrustedDevicesMultifactorProperties properties,
+                                                    final CipherExecutor<Serializable, String> cipherExecutor,
+                                                    final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy) {
+        super(properties, cipherExecutor, keyGenerationStrategy);
+    }
+
     @Override
-    public void expire(final LocalDateTime onOrBefore) {
+    public void remove(final LocalDateTime expirationDate) {
         try {
-            val count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r WHERE r.recordDate <= :date")
-                .setParameter("date", onOrBefore)
+            val count = this.entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE :date >= r.expirationDate")
+                .setParameter("date", expirationDate)
                 .executeUpdate();
             LOGGER.info("Found and removed [{}] records", count);
         } catch (final NoResultException e) {
@@ -45,22 +57,33 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     }
 
     @Override
-    public void expire(final String key) {
-        try {
-            val count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.recordKey = :key")
-                .setParameter("key", key)
-                .executeUpdate();
-            LOGGER.info("Found and removed [{}] records", count);
-        } catch (final NoResultException e) {
-            LOGGER.info("No trusted authentication records could be found");
-        }
+    public void remove() {
+        remove(LocalDateTime.now(ZoneOffset.UTC));
+    }
+
+    @Override
+    public void remove(final String key) {
+        val count = this.entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE r.recordKey = :key")
+            .setParameter("key", key)
+            .executeUpdate();
+        LOGGER.info("Found and removed [{}] records", count);
+    }
+
+    @Override
+    public Set<? extends MultifactorAuthenticationTrustRecord> getAll() {
+        remove();
+        val query = this.entityManager
+            .createQuery("SELECT r FROM " + ENTITY_NAME + " r", getEntityFactory().getType());
+        val results = query.getResultList();
+        return new HashSet<>(results);
     }
 
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
         try {
+            remove();
             val query = this.entityManager
-                .createQuery("SELECT r FROM " + TABLE_NAME + " r WHERE r.recordDate >= :date", JpaMultifactorAuthenticationTrustRecord.class)
+                .createQuery("SELECT r FROM " + ENTITY_NAME + " r WHERE r.recordDate >= :date", getEntityFactory().getType())
                 .setParameter("date", onOrAfterDate);
             val results = query.getResultList();
             return new HashSet<>(results);
@@ -73,8 +96,9 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal) {
         try {
+            remove();
             val query = this.entityManager
-                .createQuery("SELECT r FROM " + TABLE_NAME + " r where r.principal = :principal", JpaMultifactorAuthenticationTrustRecord.class)
+                .createQuery("SELECT r FROM " + ENTITY_NAME + " r where r.principal = :principal", getEntityFactory().getType())
                 .setParameter("principal", principal);
             val results = query.getResultList();
             return new HashSet<>(results);
@@ -87,8 +111,9 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     @Override
     public MultifactorAuthenticationTrustRecord get(final long id) {
         try {
+            remove();
             val query = this.entityManager
-                .createQuery("SELECT r FROM " + TABLE_NAME + " r WHERE r.id >= :id", JpaMultifactorAuthenticationTrustRecord.class)
+                .createQuery("SELECT r FROM " + ENTITY_NAME + " r WHERE r.id >= :id", getEntityFactory().getType())
                 .setParameter("id", id)
                 .setMaxResults(1);
             return query.getSingleResult();
@@ -100,10 +125,15 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
 
     @SneakyThrows
     @Override
-    public MultifactorAuthenticationTrustRecord setInternal(final MultifactorAuthenticationTrustRecord record) {
-        val destination = new JpaMultifactorAuthenticationTrustRecord();
+    public MultifactorAuthenticationTrustRecord saveInternal(final MultifactorAuthenticationTrustRecord record) {
+        val destination = getEntityFactory().newInstance();
         BeanUtils.copyProperties(destination, record);
-        LOGGER.trace("Persisting multifactor authentication trust record [{}]", destination);
+        LOGGER.trace("Saving multifactor authentication trust record [{}]", destination);
         return this.entityManager.merge(destination);
+    }
+
+    private AbstractJpaEntityFactory<MultifactorAuthenticationTrustRecord> getEntityFactory() {
+        return new JpaMultifactorAuthenticationTrustRecordEntityFactory(
+            getTrustedDevicesMultifactorProperties().getJpa().getDialect());
     }
 }

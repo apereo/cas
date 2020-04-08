@@ -22,7 +22,7 @@ import java.util.List;
  * @since 3.5
  */
 @Setter
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class DelegatingController extends AbstractController {
 
     /**

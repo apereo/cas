@@ -13,10 +13,11 @@ import org.apereo.cas.ticket.device.OAuth20DefaultDeviceToken;
 import org.apereo.cas.ticket.device.OAuth20DefaultDeviceUserCode;
 import org.apereo.cas.ticket.refreshtoken.OAuth20DefaultRefreshToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenExpirationPolicy;
-import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -27,25 +28,28 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "casOAuth20ComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasOAuth20ComponentSerializationConfiguration implements ComponentSerializationPlanConfigurer {
+public class CasOAuth20ComponentSerializationConfiguration {
 
-    @Override
-    public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
-        plan.registerSerializableClass(OAuth20AccessTokenExpirationPolicy.class);
-        plan.registerSerializableClass(OAuth20RefreshTokenExpirationPolicy.class);
-        plan.registerSerializableClass(OAuth20RefreshTokenExpirationPolicy.OAuthRefreshTokenStandaloneExpirationPolicy.class);
-        plan.registerSerializableClass(OAuth20CodeExpirationPolicy.class);
+    @Bean
+    @ConditionalOnMissingBean(name = "oauthComponentSerializationPlanConfigurer")
+    public ComponentSerializationPlanConfigurer oauthComponentSerializationPlanConfigurer() {
+        return plan -> {
+            plan.registerSerializableClass(OAuth20AccessTokenExpirationPolicy.class);
+            plan.registerSerializableClass(OAuth20RefreshTokenExpirationPolicy.class);
+            plan.registerSerializableClass(OAuth20RefreshTokenExpirationPolicy.OAuthRefreshTokenStandaloneExpirationPolicy.class);
+            plan.registerSerializableClass(OAuth20CodeExpirationPolicy.class);
 
-        plan.registerSerializableClass(OAuthRegisteredService.class);
+            plan.registerSerializableClass(OAuthRegisteredService.class);
 
-        plan.registerSerializableClass(DefaultRegisteredServiceOAuthCodeExpirationPolicy.class);
-        plan.registerSerializableClass(DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy.class);
-        plan.registerSerializableClass(DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy.class);
+            plan.registerSerializableClass(DefaultRegisteredServiceOAuthCodeExpirationPolicy.class);
+            plan.registerSerializableClass(DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy.class);
+            plan.registerSerializableClass(DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy.class);
 
-        plan.registerSerializableClass(OAuth20DefaultCode.class);
-        plan.registerSerializableClass(OAuth20DefaultAccessToken.class);
-        plan.registerSerializableClass(OAuth20DefaultRefreshToken.class);
-        plan.registerSerializableClass(OAuth20DefaultDeviceToken.class);
-        plan.registerSerializableClass(OAuth20DefaultDeviceUserCode.class);
+            plan.registerSerializableClass(OAuth20DefaultCode.class);
+            plan.registerSerializableClass(OAuth20DefaultAccessToken.class);
+            plan.registerSerializableClass(OAuth20DefaultRefreshToken.class);
+            plan.registerSerializableClass(OAuth20DefaultDeviceToken.class);
+            plan.registerSerializableClass(OAuth20DefaultDeviceUserCode.class);
+        };
     }
 }

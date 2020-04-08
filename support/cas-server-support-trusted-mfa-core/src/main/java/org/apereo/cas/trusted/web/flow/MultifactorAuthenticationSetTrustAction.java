@@ -1,6 +1,7 @@
 package org.apereo.cas.trusted.web.flow;
 
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDeviceBypassEvaluator;
@@ -19,6 +20,8 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.time.temporal.ChronoUnit;
+
 /**
  * This is {@link MultifactorAuthenticationSetTrustAction}.
  *
@@ -29,12 +32,15 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 @Getter
 public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
-    private static final String PARAM_NAME_DEVICE_NAME = "deviceName";
 
-    private final MultifactorAuthenticationTrustStorage storage;
+    private final MultifactorAuthenticationTrustStorage storageService;
+
     private final DeviceFingerprintStrategy deviceFingerprintStrategy;
+
     private final TrustedDevicesMultifactorProperties trustedProperties;
+
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+
     private final MultifactorAuthenticationTrustedDeviceBypassEvaluator bypassEvaluator;
 
     @Override
@@ -47,34 +53,58 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
 
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val service = WebUtils.getService(requestContext);
-        
+
         if (bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authn)) {
             LOGGER.debug("Trusted device registration is disabled for [{}]", registeredService);
             return success();
         }
 
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(authn);
-        val principal = authn.getPrincipal().getId();
-        val deviceName = requestContext.getRequestParameters().get(PARAM_NAME_DEVICE_NAME, StringUtils.EMPTY);
-        val providedDeviceName = StringUtils.isNotBlank(deviceName);
-        if (providedDeviceName) {
-            if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
-                LOGGER.debug("Attempt to store trusted authentication record for [{}] as device [{}]", principal, deviceName);
-                val fingerprint = deviceFingerprintStrategy.determineFingerprint(principal, requestContext, true);
-                val record = MultifactorAuthenticationTrustRecord.newInstance(principal,
-                    MultifactorAuthenticationTrustUtils.generateGeography(),
-                    fingerprint);
-                record.setName(deviceName);
-                storage.set(record);
-                LOGGER.debug("Saved trusted authentication record for [{}] under [{}]", principal, record.getName());
-            }
-            LOGGER.debug("Trusted authentication session exists for [{}]", principal);
-            MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
-                authn,
-                trustedProperties.getAuthenticationContextAttribute());
-        } else {
-            LOGGER.debug("No device name is provided. Trusted authentication record is not stored and tracked for the session");
+        val deviceBean = WebUtils.getMultifactorAuthenticationTrustRecord(requestContext, MultifactorAuthenticationTrustBean.class);
+        if (deviceBean.isEmpty()) {
+            LOGGER.debug("No device information is provided. Trusted authentication record is not stored and tracked");
+            return success();
         }
+        val deviceRecord = deviceBean.get();
+        if (StringUtils.isBlank(deviceRecord.getDeviceName())) {
+            LOGGER.debug("No device name is provided. Trusted authentication record is not stored and tracked");
+            return success();
+        }
+
+        if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
+            storeTrustedAuthenticationRecord(requestContext, authn, deviceRecord);
+        }
+        LOGGER.debug("Trusted authentication session exists for [{}]", authn.getPrincipal().getId());
+        MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
+            authn,
+            trustedProperties.getAuthenticationContextAttribute());
+        WebUtils.putAuthentication(authn, requestContext);
         return success();
+    }
+
+    /**
+     * Store trusted authentication record.
+     *
+     * @param requestContext the request context
+     * @param authentication the authentication
+     * @param deviceRecord   the device record
+     */
+    protected void storeTrustedAuthenticationRecord(final RequestContext requestContext,
+                                                    final Authentication authentication,
+                                                    final MultifactorAuthenticationTrustBean deviceRecord) {
+        val principal = authentication.getPrincipal().getId();
+        LOGGER.debug("Attempting to store trusted authentication record for [{}] as device [{}]", principal, deviceRecord.getDeviceName());
+        val fingerprint = deviceFingerprintStrategy.determineFingerprint(principal, requestContext, true);
+        val record = MultifactorAuthenticationTrustRecord.newInstance(principal,
+            MultifactorAuthenticationTrustUtils.generateGeography(), fingerprint);
+        record.setName(deviceRecord.getDeviceName());
+        if (deviceRecord.getTimeUnit() != ChronoUnit.FOREVER && deviceRecord.getExpiration() > 0) {
+            record.expireIn(deviceRecord.getExpiration(), deviceRecord.getTimeUnit());
+        } else {
+            record.neverExpire();
+        }
+        LOGGER.debug("Trusted authentication record will expire at [{}]", record.getExpirationDate());
+        this.storageService.save(record);
+        LOGGER.debug("Saved trusted authentication record for [{}] under [{}]", principal, record.getName());
     }
 }

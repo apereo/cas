@@ -39,7 +39,7 @@ npm install -g renovate
 waitloop="while sleep 9m; do echo -e '\n=====[ Build is still running ]====='; done &"
 eval $waitloop
 
-renovate --labels=Bot --git-author=renovatebot@apereo.org --git-fs=https --token=${GH_TOKEN} apereo/cas
+node --max-old-space-size=4096 renovate --labels=Bot --git-author=renovatebot@apereo.org --git-fs=https --token=${GH_TOKEN} apereo/cas
 
 echo -e "***************************************************************************************"
 echo -e "Build finished at `date` with exit code $retVal"

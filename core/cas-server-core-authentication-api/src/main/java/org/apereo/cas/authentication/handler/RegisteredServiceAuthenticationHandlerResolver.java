@@ -66,7 +66,7 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
         val requiredHandlers = registeredService.getAuthenticationPolicy().getRequiredAuthenticationHandlers();
         LOGGER.debug("Authentication transaction requires [{}] for service [{}]", requiredHandlers, service);
         val handlerSet = new LinkedHashSet<AuthenticationHandler>(candidateHandlers);
-        LOGGER.info("Candidate authentication handlers examined this transaction are [{}]", handlerSet);
+        LOGGER.debug("Candidate authentication handlers examined for this transaction are [{}]", handlerSet);
 
         val it = handlerSet.iterator();
         while (it.hasNext()) {
@@ -77,7 +77,7 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
                 it.remove();
             }
         }
-        LOGGER.debug("Authentication handlers for this transaction are [{}]", handlerSet);
+        LOGGER.info("Authentication handlers for this transaction are [{}]", handlerSet);
         return handlerSet;
     }
 }

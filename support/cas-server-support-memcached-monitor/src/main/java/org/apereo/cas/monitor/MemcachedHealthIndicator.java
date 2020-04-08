@@ -2,7 +2,6 @@ package org.apereo.cas.monitor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
 import org.springframework.boot.actuate.health.Health;
@@ -30,7 +29,7 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
         try {
-            val client = (MemcachedClient) getClientFromPool();
+            val client = getClientFromPool();
             if (client.getAvailableServers().isEmpty()) {
                 LOGGER.warn("No available memcached servers can be found");
                 builder.outOfService().withDetail("message", "No memcached servers available.");
@@ -43,7 +42,6 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
                 return;
             }
             super.doHealthCheck(builder);
-            return;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             builder.down()
@@ -53,11 +51,6 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
 
     }
 
-    /**
-     * Get cache statistics for all memcached hosts known to {@link MemcachedClientIF}.
-     *
-     * @return Statistics for all available hosts.
-     */
     @Override
     protected CacheStatistics[] getStatistics() {
         try {

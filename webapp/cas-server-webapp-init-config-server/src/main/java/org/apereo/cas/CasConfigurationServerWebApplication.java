@@ -33,6 +33,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+import java.time.Instant;
+
 /**
  * This is {@link CasConfigurationServerWebApplication}.
  *
@@ -81,7 +83,7 @@ public class CasConfigurationServerWebApplication {
     @EventListener
     public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
         AsciiArtUtils.printAsciiArtReady(LOGGER, StringUtils.EMPTY);
-        LOGGER.info("Ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
+        LOGGER.info("Ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(event.getTimestamp())));
     }
 
     /**

@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MongoDbMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -26,6 +27,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @Configuration("mongoDbMultifactorAuthenticationTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbMultifactorAuthenticationTrustConfiguration {
+
+    @Autowired
+    @Qualifier("mfaTrustRecordKeyGenerator")
+    private ObjectProvider<MultifactorAuthenticationTrustRecordKeyGenerator> keyGenerationStrategy;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -54,12 +59,9 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
     @RefreshScope
     @Bean
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        val mongodb = casProperties.getAuthn().getMfa().getTrusted().getMongo();
-        val m =
-            new MongoDbMultifactorAuthenticationTrustStorage(
-                mongodb.getCollection(),
-                mongoMfaTrustedAuthnTemplate());
-        m.setCipherExecutor(mfaTrustCipherExecutor.getObject());
-        return m;
+        return new MongoDbMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
+            mfaTrustCipherExecutor.getObject(),
+            mongoMfaTrustedAuthnTemplate(),
+            keyGenerationStrategy.getObject());
     }
 }

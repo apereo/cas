@@ -18,6 +18,7 @@ import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
+import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.services.RegisteredServicesEventListener;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
@@ -32,7 +33,6 @@ import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrat
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
-import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.services.util.RegisteredServiceYamlHttpMessageConverter;
 import org.apereo.cas.util.io.CommunicationsManager;
 

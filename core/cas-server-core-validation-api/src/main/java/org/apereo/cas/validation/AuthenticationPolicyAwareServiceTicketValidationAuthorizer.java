@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,6 +31,8 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizer implemen
 
     private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
+    private final ConfigurableApplicationContext applicationContext;
+    
     @Override
     public void authorize(final HttpServletRequest request, final Service service, final Assertion assertion) {
         val registeredService = this.servicesManager.findServiceBy(service);
@@ -52,7 +55,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizer implemen
             try {
                 val simpleName = p.getClass().getSimpleName();
                 LOGGER.trace("Executing authentication policy [{}]", simpleName);
-                if (!p.isSatisfiedBy(primaryAuthentication, assertedHandlers)) {
+                if (!p.isSatisfiedBy(primaryAuthentication, assertedHandlers, applicationContext)) {
                     throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
                 }
             } catch (final Exception e) {
