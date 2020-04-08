@@ -1,6 +1,5 @@
 package org.apereo.cas.trusted.authentication.api;
 
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;

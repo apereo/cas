@@ -5,7 +5,6 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 
-import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +36,8 @@ public class MultifactorAuthenticationTrustReportEndpointTests extends AbstractC
     @Test
     public void verifyOperation() {
         assertNotNull(endpoint);
-        val record = mfaTrustEngine.save(MultifactorAuthenticationTrustRecord.newInstance("casuser",
-            "geography", "fingerprint"));
+        var record = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
+        record = mfaTrustEngine.save(record);
         assertFalse(endpoint.devices().isEmpty());
         assertFalse(endpoint.devicesForUser("casuser").isEmpty());
 

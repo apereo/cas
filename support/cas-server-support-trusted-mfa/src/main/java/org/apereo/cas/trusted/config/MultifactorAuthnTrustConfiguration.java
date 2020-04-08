@@ -41,7 +41,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -162,15 +161,24 @@ public class MultifactorAuthnTrustConfiguration {
                                       @NonNull final MultifactorAuthenticationTrustRecord value,
                                       final long currentTime) {
             if (value.getExpirationDate() == null) {
+                LOGGER.trace("Multifactor trust record [{}] will never expire", value);
                 return Long.MAX_VALUE;
             }
             if (value.isExpired()) {
                 LOGGER.trace("Multifactor trust record [{}] is expired", value);
                 return 0;
             }
-            val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
-            val zonedExp = DateTimeUtils.zonedDateTimeOf(value.getExpirationDate());
-            return Duration.between(now, zonedExp).toNanosPart();
+            try {
+                val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
+                val zonedExp = DateTimeUtils.zonedDateTimeOf(value.getExpirationDate()).truncatedTo(ChronoUnit.SECONDS);
+                val nanos = Duration.between(now, zonedExp).toNanos();
+                LOGGER.trace("Multifactor trust record [{}] expires in [{}] nanoseconds", value, nanos);
+                return nanos;
+            } catch (final Exception e) {
+                LOGGER.trace(e.getMessage(), e);
+            }
+            LOGGER.debug("Multifactor trust record [{}] will never expire", value);
+            return Long.MAX_VALUE;
         }
 
         @Override

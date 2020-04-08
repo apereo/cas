@@ -103,7 +103,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
             return false;
         }
         val expDate = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
-        val zonedExpDate = DateTimeUtils.zonedDateTimeOf(this.expirationDate);
+        val zonedExpDate = DateTimeUtils.zonedDateTimeOf(this.expirationDate).truncatedTo(ChronoUnit.SECONDS);
         return expDate.equals(zonedExpDate) || expDate.isAfter(zonedExpDate);
     }
 
