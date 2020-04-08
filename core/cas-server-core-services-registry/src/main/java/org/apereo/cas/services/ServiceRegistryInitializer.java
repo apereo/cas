@@ -38,7 +38,7 @@ public class ServiceRegistryInitializer {
             + "Consider turning off this behavior via the setting [cas.serviceRegistry.initFromJson=false] "
             + "and explicitly register definitions in the services registry.", this.serviceRegistry.getName());
         
-        val servicesLoaded = this.jsonServiceRegistry.load();
+        val servicesLoaded = jsonServiceRegistry.load();
         val servicesList = servicesLoaded.stream().map(RegisteredService::getName).collect(Collectors.joining(","));
         LOGGER.debug("Loaded JSON services are [{}]", servicesList);
 

@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Postgres")
 public class JdbcSingleRowAttributeRepositoryPostgresTests extends JdbcSingleRowAttributeRepositoryTests {
 
+    @Override
     @Test
     public void verifySingleRowAttributeRepository() {
         assertNotNull(attributeRepository);
@@ -50,6 +51,7 @@ public class JdbcSingleRowAttributeRepositoryPostgresTests extends JdbcSingleRow
         assertFalse(person.getAttributeValues("locations").isEmpty());
     }
 
+    @Override
     @Test
     public void verifyPeopleSingleRowAttributeRepository() {
         assertNotNull(attributeRepository);

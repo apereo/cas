@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 /**
  * This is {@link MultifactorAuthenticationTrustStorageCleanerTests}.
@@ -31,7 +33,7 @@ public class MultifactorAuthenticationTrustStorageCleanerTests extends AbstractM
     public void verifyAction() {
         try {
             val record = getMultifactorAuthenticationTrustRecord();
-            record.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
+            record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusDays(1));
             getMfaTrustEngine().save(record);
             mfaTrustStorageCleaner.clean();
         } catch (final Exception e) {

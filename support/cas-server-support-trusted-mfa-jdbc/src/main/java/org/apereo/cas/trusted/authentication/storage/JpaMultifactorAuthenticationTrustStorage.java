@@ -5,6 +5,7 @@ import org.apereo.cas.jpa.AbstractJpaEntityFactory;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.storage.generic.JpaMultifactorAuthenticationTrustRecord;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.SneakyThrows;
@@ -20,6 +21,8 @@ import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,10 +48,12 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     }
 
     @Override
-    public void remove(final LocalDateTime expirationDate) {
+    public void remove(final ZonedDateTime expirationDate) {
         try {
-            val count = this.entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE :date >= r.expirationDate")
-                .setParameter("date", expirationDate)
+            val value = DateTimeUtils.dateOf(expirationDate);
+            LOGGER.trace("Removing expired records on or after [{}]", value);
+            val count = this.entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE :expirationDate >= r.expirationDate")
+                .setParameter("expirationDate", value)
                 .executeUpdate();
             LOGGER.info("Found and removed [{}] records", count);
         } catch (final NoResultException e) {
@@ -58,7 +63,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
 
     @Override
     public void remove() {
-        remove(LocalDateTime.now(ZoneOffset.UTC));
+        remove(ZonedDateTime.now(ZoneOffset.UTC));
     }
 
     @Override
@@ -79,7 +84,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     }
 
     @Override
-    public Set<? extends MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final ZonedDateTime onOrAfterDate) {
         try {
             remove();
             val query = this.entityManager
