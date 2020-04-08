@@ -194,6 +194,7 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
         }
     }
 
+    @Override
     public void initialize() {
         this.sequenceTokenCache = createLogGroupAndLogStreamIfNeeded();
         super.initialize();

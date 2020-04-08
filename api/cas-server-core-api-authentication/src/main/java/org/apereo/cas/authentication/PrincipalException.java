@@ -29,6 +29,7 @@ public class PrincipalException extends AuthenticationException {
         super(message, handlerErrors, handlerSuccesses);
     }
 
+    @Override
     public String getCode() {
         return CODE;
     }
