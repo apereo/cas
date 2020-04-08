@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.CasServiceRegistryInitializerConfigurationEventListener;
+import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
@@ -75,7 +76,7 @@ public class CasServiceRegistryInitializationConfiguration {
 
     @Autowired
     @Qualifier("serviceRegistry")
-    private ObjectProvider<ServiceRegistry> serviceRegistry;
+    private ObjectProvider<ChainingServiceRegistry> serviceRegistry;
 
     @Lazy(false)
     @Bean
