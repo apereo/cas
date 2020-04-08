@@ -14,6 +14,7 @@ import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenti
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
 import org.apereo.cas.trusted.web.MultifactorAuthenticationTrustReportEndpoint;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -42,6 +43,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  * This is {@link MultifactorAuthnTrustConfiguration}.
@@ -152,6 +155,7 @@ public class MultifactorAuthnTrustConfiguration {
         return new MultifactorAuthenticationTrustReportEndpoint(casProperties, mfaTrustEngine());
     }
 
+    @Slf4j
     private static class MultifactorAuthenticationTrustRecordExpiry implements Expiry<String, MultifactorAuthenticationTrustRecord> {
         @Override
         public long expireAfterCreate(@NonNull final String key,
@@ -160,9 +164,13 @@ public class MultifactorAuthnTrustConfiguration {
             if (value.getExpirationDate() == null) {
                 return Long.MAX_VALUE;
             }
-            return value.isExpired()
-                ? 0
-                : Duration.between(LocalDateTime.now(ZoneOffset.UTC), value.getExpirationDate()).toNanosPart();
+            if (value.isExpired()) {
+                LOGGER.trace("Multifactor trust record [{}] is expired", value);
+                return 0;
+            }
+            val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
+            val zonedExp = DateTimeUtils.zonedDateTimeOf(value.getExpirationDate());
+            return Duration.between(now, zonedExp).toNanosPart();
         }
 
         @Override
