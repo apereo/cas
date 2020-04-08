@@ -17,7 +17,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
 import javax.security.auth.login.FailedLoginException;
-
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -59,7 +58,7 @@ public class PolicyBasedAuthenticationManagerTests {
      * validate all credentials.
      *
      * @param success True to authenticate all credentials, false to fail all credentials.
-     * @param error True if the handle has an error, false if not.
+     * @param error   True if the handle has an error, false if not.
      * @return New mock authentication handler instance.
      */
     private static AuthenticationHandler newMockHandler(final boolean success, final boolean error) {
@@ -85,7 +84,7 @@ public class PolicyBasedAuthenticationManagerTests {
      *
      * @param name    Authentication handler name.
      * @param success True to authenticate all credentials, false to fail all credentials.
-     * @param error True if the handle has an error, false if not.
+     * @param error   True if the handle has an error, false if not.
      * @return New mock authentication handler instance.
      */
     @SneakyThrows
@@ -178,7 +177,7 @@ public class PolicyBasedAuthenticationManagerTests {
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy());
         val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ApplicationEventPublisher.class));
+            false, mock(ConfigurableApplicationContext.class));
 
         assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
     }
