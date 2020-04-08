@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -22,9 +23,9 @@ public class MongoAuthenticationProperties extends SingleCollectionMongoDbProper
     private static final long serialVersionUID = -7304734732383722585L;
 
     /**
-     * Attributes to fetch from Mongo.
+     * Attributes to fetch from Mongo (blank by default to force the pac4j legacy behavior).
      */
-    private String attributes;
+    private String attributes = StringUtils.EMPTY;
 
     /**
      * Attributes that holds the username.
