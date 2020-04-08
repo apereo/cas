@@ -48,6 +48,7 @@ public class EncryptedTranscoder implements Transcoder {
         setCipherBean(cipherBean);
     }
 
+    @Override
     public byte[] encode(final Object o) throws IOException {
         if (o == null) {
             return ArrayUtils.EMPTY_BYTE_ARRAY;
@@ -98,6 +99,7 @@ public class EncryptedTranscoder implements Transcoder {
         }
     }
 
+    @Override
     public Object decode(final byte[] encoded) throws IOException {
         final byte[] data;
         try {
