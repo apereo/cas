@@ -18,7 +18,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;

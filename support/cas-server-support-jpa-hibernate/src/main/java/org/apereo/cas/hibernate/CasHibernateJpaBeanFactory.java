@@ -20,7 +20,6 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import java.nio.charset.StandardCharsets;
-import java.time.ZoneOffset;
 import java.util.Properties;
 
 /**
