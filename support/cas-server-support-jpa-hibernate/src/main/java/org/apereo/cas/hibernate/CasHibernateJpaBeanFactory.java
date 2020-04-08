@@ -20,6 +20,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneOffset;
 import java.util.Properties;
 
 /**
@@ -60,6 +61,7 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
         properties.put("hibernate.connection.useUnicode", Boolean.TRUE);
         properties.put("hibernate.connection.characterEncoding", StandardCharsets.UTF_8.name());
         properties.put("hibernate.connection.charSet", StandardCharsets.UTF_8.name());
+        properties.put("hibernate.jdbc.time_zone", "UTC");
         if (StringUtils.isNotBlank(jpaProperties.getPhysicalNamingStrategyClassName())) {
             try {
                 val clazz = ClassUtils.getClass(JpaBeans.class.getClassLoader(), jpaProperties.getPhysicalNamingStrategyClassName());

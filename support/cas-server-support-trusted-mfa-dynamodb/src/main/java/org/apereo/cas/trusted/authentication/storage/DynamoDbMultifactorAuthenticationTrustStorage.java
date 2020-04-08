@@ -6,7 +6,7 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Set;
 
 /**
@@ -33,7 +33,7 @@ public class DynamoDbMultifactorAuthenticationTrustStorage extends BaseMultifact
     }
 
     @Override
-    public void remove(final LocalDateTime expirationTime) {
+    public void remove(final ZonedDateTime expirationTime) {
         dynamoDbFacilitator.remove(expirationTime);
     }
 
@@ -43,7 +43,7 @@ public class DynamoDbMultifactorAuthenticationTrustStorage extends BaseMultifact
     }
 
     @Override
-    public Set<? extends MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final ZonedDateTime onOrAfterDate) {
         remove();
         return dynamoDbFacilitator.getRecordForDate(onOrAfterDate);
     }

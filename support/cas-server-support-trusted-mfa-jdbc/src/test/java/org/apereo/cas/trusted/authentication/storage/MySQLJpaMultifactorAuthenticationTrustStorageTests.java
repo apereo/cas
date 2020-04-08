@@ -13,6 +13,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {
     "cas.jdbc.showSql=true",
+    "cas.authn.mfa.trusted.jpa.ddlAuto=create-drop",
     "cas.authn.mfa.trusted.jpa.user=root",
     "cas.authn.mfa.trusted.jpa.password=password",
     "cas.authn.mfa.trusted.jpa.driverClass=com.mysql.cj.jdbc.Driver",

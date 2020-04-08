@@ -29,6 +29,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,7 +53,7 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
     @Order(1)
     public void verifyDeviceNotTrusted() throws Exception {
         val r = getMultifactorAuthenticationTrustRecord();
-        r.setRecordDate(LocalDateTime.now(ZoneOffset.UTC).minusSeconds(5));
+        r.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(5));
         getMfaTrustEngine().save(r);
 
         val context = new MockRequestContext();
@@ -81,7 +82,7 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         val record = getMultifactorAuthenticationTrustRecord();
-        record.setRecordDate(LocalDateTime.now(ZoneOffset.UTC).minusSeconds(5));
+        record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(5));
         val deviceFingerprint = deviceFingerprintStrategy.determineFingerprint(record.getPrincipal(), context, true);
         record.setDeviceFingerprint(deviceFingerprint);
         mfaTrustEngine.save(record);

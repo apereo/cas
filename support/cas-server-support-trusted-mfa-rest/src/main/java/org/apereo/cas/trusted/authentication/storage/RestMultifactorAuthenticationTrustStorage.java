@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -40,7 +40,7 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     @Override
-    public Set<? extends MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final ZonedDateTime onOrAfterDate) {
         return getResults(getEndpointUrl(onOrAfterDate.toString()));
     }
 
@@ -60,7 +60,7 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     @Override
-    public void remove(final LocalDateTime expirationDate) {
+    public void remove(final ZonedDateTime expirationDate) {
         val entity = getHttpEntity(expirationDate);
         val restTemplate = new RestTemplate();
         restTemplate.exchange(getEndpointUrl(null), HttpMethod.DELETE, entity, Object.class);
