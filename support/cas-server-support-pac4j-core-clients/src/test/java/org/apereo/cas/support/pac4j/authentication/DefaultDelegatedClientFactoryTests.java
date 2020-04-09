@@ -22,13 +22,13 @@ import java.io.File;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link DelegatedClientFactoryTests}.
+ * This is {@link DefaultDelegatedClientFactoryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
-public class DelegatedClientFactoryTests {
+public class DefaultDelegatedClientFactoryTests {
 
     private static void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
         props.setId("TestId");
@@ -55,7 +55,7 @@ public class DelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DelegatedClientFactory(casSettings);
+        val factory = new DefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(14, clients.size());
     }
@@ -70,7 +70,7 @@ public class DelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DelegatedClientFactory(casSettings);
+        val factory = new DefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
     }
@@ -91,7 +91,7 @@ public class DelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DelegatedClientFactory(casSettings);
+        val factory = new DefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
 
@@ -108,7 +108,7 @@ public class DelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DelegatedClientFactory(casSettings);
+        val factory = new DefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
     }
@@ -120,7 +120,7 @@ public class DelegatedClientFactoryTests {
         props.getGithub().setScope("user");
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DelegatedClientFactory(casSettings);
+        val factory = new DefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
         val client = (GitHubClient) clients.iterator().next();
@@ -154,7 +154,7 @@ public class DelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DelegatedClientFactory(casSettings);
+        val factory = new DefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(4, clients.size());
     }

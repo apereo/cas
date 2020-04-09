@@ -18,7 +18,9 @@ import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.LogoutPostProcessor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
+import org.apereo.cas.support.pac4j.authentication.DefaultDelegatedClientFactory;
 import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
+import org.apereo.cas.support.pac4j.authentication.RestfulDelegatedClientFactory;
 import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandler;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -81,7 +83,11 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactory")
     @RefreshScope
     public DelegatedClientFactory pac4jDelegatedClientFactory() {
-        return new DelegatedClientFactory(casProperties);
+        val rest = casProperties.getAuthn().getPac4j().getRest();
+        if (StringUtils.isNotBlank(rest.getUrl())) {
+            return new RestfulDelegatedClientFactory(casProperties);
+        }
+        return new DefaultDelegatedClientFactory(casProperties);
     }
 
     @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionStore")
@@ -92,6 +98,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "builtClients")
     public Clients builtClients() {
         val clients = pac4jDelegatedClientFactory().build();
         LOGGER.debug("The following clients are built: [{}]", clients);
@@ -105,12 +112,14 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "clientPrincipalFactory")
     @Bean
+    @RefreshScope
     public PrincipalFactory clientPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "clientAuthenticationMetaDataPopulator")
     @Bean
+    @RefreshScope
     public AuthenticationMetaDataPopulator clientAuthenticationMetaDataPopulator() {
         return new ClientAuthenticationMetaDataPopulator();
     }
@@ -168,12 +177,13 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "delegatedAuthenticationAuditResourceResolver")
     @Bean
+    @RefreshScope
     public AuditResourceResolver delegatedAuthenticationAuditResourceResolver() {
         return new DelegatedAuthenticationAuditResourceResolver();
     }
 
-
     @Bean
+    @ConditionalOnMissingBean(name = "delegatedAuthenticationAuditTrailRecordResolutionPlanConfigurer")
     public AuditTrailRecordResolutionPlanConfigurer delegatedAuthenticationAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
             plan.registerAuditActionResolver("DELEGATED_CLIENT_ACTION_RESOLVER", authenticationActionResolver.getObject());
@@ -182,6 +192,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "delegatedAuthenticationLogoutExecutionPlanConfigurer")
     public LogoutExecutionPlanConfigurer delegatedAuthenticationLogoutExecutionPlanConfigurer() {
         return plan -> {
             val sessionStore = getDistributedSessionStore();
