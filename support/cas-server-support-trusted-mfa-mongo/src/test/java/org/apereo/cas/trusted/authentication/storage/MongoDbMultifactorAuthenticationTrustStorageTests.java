@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -58,7 +57,7 @@ public class MongoDbMultifactorAuthenticationTrustStorageTests extends AbstractM
         r.setRecordDate(now.minusDays(2));
         getMfaTrustEngine().save(r);
         assertEquals(1, getMfaTrustEngine().get(now.minusDays(30)).size());
-        assertEquals(0, getMfaTrustEngine().get(now.minusDays(2)).size());
+        assertEquals(0, getMfaTrustEngine().get(now.minusDays(1)).size());
     }
 
     @BeforeEach

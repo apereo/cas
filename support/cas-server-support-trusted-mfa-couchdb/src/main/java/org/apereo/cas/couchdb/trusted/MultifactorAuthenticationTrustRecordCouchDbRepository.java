@@ -6,12 +6,10 @@ import org.apereo.cas.util.DateTimeUtils;
 import lombok.val;
 import org.ektorp.ComplexKey;
 import org.ektorp.CouchDbConnector;
-import org.ektorp.ViewQuery;
 import org.ektorp.support.CouchDbRepositorySupport;
 import org.ektorp.support.UpdateHandler;
 import org.ektorp.support.View;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 

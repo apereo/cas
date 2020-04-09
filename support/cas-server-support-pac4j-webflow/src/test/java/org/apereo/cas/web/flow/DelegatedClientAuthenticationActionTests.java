@@ -33,6 +33,7 @@ import org.apereo.cas.ticket.expiration.builder.TransientSessionTicketExpiration
 import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
@@ -214,7 +215,7 @@ public class DelegatedClientAuthenticationActionTests {
                 val serviceName = uriComponents.getQueryParams().get(CasProtocolConstants.PARAMETER_SERVICE);
                 if (service != null) {
                     assertEquals(1, serviceName.size());
-                    assertTrue(serviceName.contains(MY_SERVICE));
+                    assertTrue(serviceName.contains(EncodingUtils.urlEncode(MY_SERVICE)));
                 } else {
                     assertNull(serviceName);
                 }
