@@ -132,10 +132,5 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
 
     public void close() {
         this.searchOperation.getConnectionFactory().close();
-        try {
-            Thread.sleep(5000);
-        } catch (final InterruptedException e) {
-            //This is expected
-        }
     }
 }

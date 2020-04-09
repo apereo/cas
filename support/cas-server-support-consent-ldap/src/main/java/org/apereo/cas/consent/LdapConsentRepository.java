@@ -262,10 +262,5 @@ public class LdapConsentRepository implements ConsentRepository {
 
     public void close() {
         connectionFactory.close();
-        try {
-            Thread.sleep(5000);
-        } catch (final InterruptedException e) {
-            //This is expected
-        }
     }
 }

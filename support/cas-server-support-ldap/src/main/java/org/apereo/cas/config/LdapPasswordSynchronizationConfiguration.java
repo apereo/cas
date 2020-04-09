@@ -38,11 +38,6 @@ public class LdapPasswordSynchronizationConfiguration {
             public void close() {
                 LOGGER.debug("Closing LDAP connection factories");
                 authenticationProcessors.forEach(LdapPasswordSynchronizationAuthenticationPostProcessor::closeSearchFactory);
-                try {
-                    Thread.sleep(5000);
-                } catch (final InterruptedException e) {
-                    //This is expected
-                }
             }
 
             @Override
