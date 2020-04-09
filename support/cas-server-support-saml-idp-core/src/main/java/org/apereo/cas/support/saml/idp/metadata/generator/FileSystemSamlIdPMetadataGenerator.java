@@ -52,7 +52,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     }
 
     @SneakyThrows
-    private void writeCertificateAndKey(final File certificate, final File key) {
+    protected void writeCertificateAndKey(final File certificate, final File key) {
         if (certificate.exists()) {
             FileUtils.forceDelete(certificate);
         }
