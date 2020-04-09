@@ -34,7 +34,22 @@ to manage the internal state of the configuration. The configuration server that
 is provided by Spring Cloud embedded in CAS is constantly monitoring sources
 that house CAS settings and upon changes will auto-refresh itself.
 
-### Standalone
+### Application Context
+
+The CAS application context and runtime environment that contains all Spring components and bean definitions
+can be reloaded using the following administrative endpoint:
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|----------------------------------------------------------------------------
+| `reloadContext`          | Reloads the CAS application context and all bean definitions where necessary.
+
+### Configuration
+
+Changes in CAS configuration settings and properties can be reloaded using the strategies outlined below.
+
+#### Standalone
 
 In the event that the [standalone configuration profile](Configuration-Server-Management.html#standalone)
 is used to control and direct settings and Spring Cloud configuration server is disabled,
@@ -52,7 +67,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-### Spring Cloud
+#### Spring Cloud
 
 Clients of the configuration server (i.e. CAS server web application) do also expose a `/refresh` endpoint
 that allow one to refresh the configuration based on the current state of the configuration server and reconfigure
