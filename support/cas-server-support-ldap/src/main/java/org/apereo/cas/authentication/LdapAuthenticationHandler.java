@@ -110,7 +110,9 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         val entryResolver = (AbstractSearchEntryResolver) authenticator.getEntryResolver();
         authenticationHandler.getConnectionFactory().close();
         dnResolver.getConnectionFactory().close();
-        entryResolver.getConnectionFactory().close();
+        if (entryResolver != null) {
+            entryResolver.getConnectionFactory().close();
+        }
     }
 
     @Override
