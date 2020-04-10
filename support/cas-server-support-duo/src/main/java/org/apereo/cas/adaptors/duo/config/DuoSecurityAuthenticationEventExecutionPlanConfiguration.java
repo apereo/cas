@@ -101,12 +101,15 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "prepareDuoWebLoginFormAction")
     public Action prepareDuoWebLoginFormAction() {
         return new DuoSecurityPrepareWebLoginFormAction(applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "determineDuoUserAccountAction")
     @Bean
+    @RefreshScope
     public Action determineDuoUserAccountAction() {
         return new DuoSecurityDetermineUserAccountAction(applicationContext);
     }
