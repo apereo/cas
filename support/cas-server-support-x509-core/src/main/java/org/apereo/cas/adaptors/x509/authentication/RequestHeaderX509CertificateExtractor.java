@@ -1,4 +1,4 @@
-package org.apereo.cas.web.extractcert;
+package org.apereo.cas.adaptors.x509.authentication;
 
 import org.apereo.cas.util.crypto.CertUtils;
 
