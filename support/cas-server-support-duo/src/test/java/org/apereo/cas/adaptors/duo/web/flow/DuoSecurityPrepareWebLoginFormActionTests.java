@@ -1,18 +1,17 @@
 package org.apereo.cas.adaptors.duo.web.flow;
 
-import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
-import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
-import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityDetermineUserAccountAction;
+import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityPrepareWebLoginFormAction;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.util.MockServletContext;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -20,24 +19,36 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.ViewState;
+import org.springframework.webflow.execution.ViewFactory;
+import org.springframework.webflow.test.MockFlowExecutionContext;
+import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link DuoSecurityDetermineUserAccountActionTests}.
+ * This is {@link DuoSecurityPrepareWebLoginFormActionTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Tag("Webflow")
-public class DuoSecurityDetermineUserAccountActionTests {
+public class DuoSecurityPrepareWebLoginFormActionTests {
+    @Test
+    public void verifyOperation() throws Exception {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
 
-    @SneakyThrows
-    private static void verifyOperation(final DuoSecurityUserAccountStatus status, final String eventId) {
+        val flowSession = new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN));
+        flowSession.setState(new ViewState(flowSession.getDefinitionInternal(), "viewState", mock(ViewFactory.class)));
+        val exec = new MockFlowExecutionContext(flowSession);
+        val context = new MockRequestContext(exec);
 
-        val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
@@ -46,51 +57,20 @@ public class DuoSecurityDetermineUserAccountActionTests {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         WebUtils.putAuthentication(authentication, context);
 
-        val account = new DuoSecurityUserAccount(authentication.getPrincipal().getId());
-        account.setStatus(status);
-        account.setEnrollPortalUrl("https://example.org");
-
         val duoService = mock(DuoSecurityAuthenticationService.class);
-        when(duoService.getUserAccount(anyString())).thenReturn(account);
         val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(provider.getId()).thenReturn(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
         when(provider.getDuoAuthenticationService()).thenReturn(duoService);
-        when(provider.getRegistrationUrl()).thenReturn("https://registration.duo.com");
         when(provider.matches(anyString())).thenReturn(Boolean.TRUE);
 
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-
+        WebUtils.putCredential(context, new DuoSecurityCredential(authentication.getPrincipal().getId(), UUID.randomUUID().toString(), provider.getId()));
         WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, provider);
 
-        val action = new DuoSecurityDetermineUserAccountAction(applicationContext);
+
+        val action = new DuoSecurityPrepareWebLoginFormAction(applicationContext);
         val event = action.execute(context);
-        assertEquals(eventId, event.getId());
-    }
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
 
-    @Test
-    public void verifyOperationEnroll() {
-        verifyOperation(DuoSecurityUserAccountStatus.ENROLL, CasWebflowConstants.TRANSITION_ID_ENROLL);
-    }
-
-    @Test
-    public void verifyOperationAllow() {
-        verifyOperation(DuoSecurityUserAccountStatus.ALLOW, CasWebflowConstants.TRANSITION_ID_BYPASS);
-    }
-
-    @Test
-    public void verifyOperationDeny() {
-        verifyOperation(DuoSecurityUserAccountStatus.DENY, CasWebflowConstants.TRANSITION_ID_DENY);
-    }
-
-    @Test
-    public void verifyOperationUnavailable() {
-        verifyOperation(DuoSecurityUserAccountStatus.UNAVAILABLE, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
-    }
-
-    @Test
-    public void verifyOperationAuth() {
-        verifyOperation(DuoSecurityUserAccountStatus.AUTH, CasWebflowConstants.TRANSITION_ID_SUCCESS);
     }
 }
