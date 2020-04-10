@@ -1,5 +1,7 @@
-package org.apereo.cas.web.extractcert;
+package org.apereo.cas.adaptors.x509.config;
 
+import org.apereo.cas.adaptors.x509.authentication.RequestHeaderX509CertificateExtractor;
+import org.apereo.cas.adaptors.x509.authentication.X509CertificateExtractor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;

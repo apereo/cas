@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.io.IOException;
@@ -28,6 +29,21 @@ public class X509RestMultipartBodyCredentialFactoryTests {
     private final X509RestMultipartBodyCredentialFactory factory = new X509RestMultipartBodyCredentialFactory();
 
     @Test
+    public void emptyRequestBody() {
+        val requestBody = new LinkedMultiValueMap<String, String>();
+        val cred = factory.fromRequest(new MockHttpServletRequest(), requestBody);
+        assertTrue(cred.isEmpty());
+    }
+
+    @Test
+    public void badCredential() {
+        val requestBody = new LinkedMultiValueMap<String, String>();
+        requestBody.add("cert", "bad-certificate");
+        val cred = factory.fromRequest(new MockHttpServletRequest(), requestBody);
+        assertTrue(cred.isEmpty());
+    }
+
+    @Test
     public void createX509Credential() throws IOException {
         val requestBody = new LinkedMultiValueMap<String, String>();
         @Cleanup
@@ -35,8 +51,7 @@ public class X509RestMultipartBodyCredentialFactoryTests {
         val certStr = scan.useDelimiter("\\Z").next();
         scan.close();
         requestBody.add("cert", certStr);
-
-        val cred = factory.fromRequest(null, requestBody).iterator().next();
+        val cred = factory.fromRequest(new MockHttpServletRequest(), requestBody).iterator().next();
         assertTrue(cred instanceof X509CertificateCredential);
     }
 
@@ -45,7 +60,7 @@ public class X509RestMultipartBodyCredentialFactoryTests {
         val requestBody = new LinkedMultiValueMap<String, String>();
         requestBody.add("username", "name");
         requestBody.add("password", "passwd");
-        val cred = factory.fromRequest(null, requestBody);
+        val cred = factory.fromRequest(new MockHttpServletRequest(), requestBody);
         assertTrue(cred.isEmpty());
     }
 }
