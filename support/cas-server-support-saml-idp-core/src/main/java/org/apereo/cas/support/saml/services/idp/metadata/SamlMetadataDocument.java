@@ -33,7 +33,6 @@ public class SamlMetadataDocument {
     @javax.persistence.Id
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    //@GenericGenerator(name = "native", strategy = "native")
     private long id = -1;
 
     @JsonProperty("name")

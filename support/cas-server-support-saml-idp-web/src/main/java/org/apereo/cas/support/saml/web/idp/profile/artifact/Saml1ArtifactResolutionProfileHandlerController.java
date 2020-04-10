@@ -48,7 +48,7 @@ public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSam
             }
             val facade = adaptor.get();
             verifyAuthenticationContextSignature(ctx, request, artifactMsg, facade);
-            val artifactId = artifactMsg.getArtifact().getArtifact();
+            val artifactId = artifactMsg.getArtifact().getValue();
             val ticketId = getSamlProfileHandlerConfigurationContext().getArtifactTicketFactory().createTicketIdFor(artifactId);
             val ticket = getSamlProfileHandlerConfigurationContext().getTicketRegistry().getTicket(ticketId, SamlArtifactTicket.class);
 

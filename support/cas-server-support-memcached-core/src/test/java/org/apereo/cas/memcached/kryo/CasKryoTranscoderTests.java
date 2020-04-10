@@ -16,6 +16,7 @@ import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.esotericsoftware.kryo.KryoException;
 import lombok.ToString;
@@ -46,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Slf4j
 @Tag("Memcached")
+@EnabledIfPortOpen(port = 11211)
 public class CasKryoTranscoderTests {
     private static final String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";
 

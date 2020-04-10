@@ -20,9 +20,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = {
-    "cas.authn.oidc.jwks-type=ec",
-    "cas.authn.oidc.jwks-key-size=384",
-    "cas.authn.oidc.jwksFile=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks"
+    "cas.authn.oidc.jwks.jwks-type=ec",
+    "cas.authn.oidc.jwks.jwks-key-size=384",
+    "cas.authn.oidc.jwks.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks"
 })
 public class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
     @BeforeAll

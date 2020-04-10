@@ -160,7 +160,6 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
             .build();
 
         LOGGER.trace("Logout request [{}] created for [{}] and ticket id [{}]", logoutRequest, selectedService, ticketId);
-
         if (logoutRequest.getLogoutType() == RegisteredServiceLogoutType.BACK_CHANNEL) {
             if (performBackChannelLogout(logoutRequest)) {
                 logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);

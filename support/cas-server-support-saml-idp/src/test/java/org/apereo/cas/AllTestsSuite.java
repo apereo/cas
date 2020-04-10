@@ -23,6 +23,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignat
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.DefaultSSOSamlHttpRequestExtractorTests;
+import org.apereo.cas.support.saml.web.velocity.SamlTemplatesVelocityEngineTests;
 import org.apereo.cas.ticket.query.DefaultSamlAttributeQueryTicketFactoryTests;
 import org.apereo.cas.web.flow.SamlIdPConsentableAttributeBuilderTests;
 import org.apereo.cas.web.flow.SamlIdPMetadataUIWebflowConfigurerTests;
@@ -62,6 +63,7 @@ import org.junit.runner.RunWith;
     RefedsRSAttributeReleasePolicyTests.class,
     MetadataRequestedAttributesAttributeReleasePolicyTests.class,
     SamlObjectSignatureValidatorTests.class,
+    SamlTemplatesVelocityEngineTests.class,
     EduPersonTargetedIdAttributeReleasePolicyTests.class,
     SamlProfileSaml2ResponseBuilderTests.class
 })

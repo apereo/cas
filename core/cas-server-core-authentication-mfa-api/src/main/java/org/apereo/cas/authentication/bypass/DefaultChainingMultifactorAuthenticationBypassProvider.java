@@ -85,6 +85,7 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
      *
      * @param bypass - the bypass provider
      */
+    @Override
     public void addMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassEvaluator bypass) {
         if (!bypass.isEmpty()) {
             this.multifactorAuthenticationProviderBypassEvaluators.add(bypass);

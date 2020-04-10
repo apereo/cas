@@ -116,7 +116,7 @@ public class SamlIdPObjectSigner {
                                            final RequestAbstractType authnRequest) throws SamlException {
 
         LOGGER.trace("Attempting to encode [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
-        val outboundContext = new MessageContext<T>();
+        val outboundContext = new MessageContext();
         prepareOutboundContext(samlObject, adaptor, outboundContext, binding, authnRequest);
         prepareSecurityParametersContext(adaptor, outboundContext, service);
         prepareEndpointURLSchemeSecurityHandler(outboundContext);
@@ -133,7 +133,7 @@ public class SamlIdPObjectSigner {
      * @param outboundContext the outbound context
      * @throws Exception the exception
      */
-    protected <T extends SAMLObject> void prepareSamlOutboundProtocolMessageSigningHandler(final MessageContext<T> outboundContext) throws Exception {
+    protected <T extends SAMLObject> void prepareSamlOutboundProtocolMessageSigningHandler(final MessageContext outboundContext) throws Exception {
         LOGGER.trace("Attempting to sign the outbound SAML message...");
         val handler = new SAMLOutboundProtocolMessageSigningHandler();
         handler.setSignErrorResponses(casProperties.getAuthn().getSamlIdp().getResponse().isSignError());
@@ -148,7 +148,7 @@ public class SamlIdPObjectSigner {
      * @param outboundContext the outbound context
      * @throws Exception the exception
      */
-    protected <T extends SAMLObject> void prepareSamlOutboundDestinationHandler(final MessageContext<T> outboundContext) throws Exception {
+    protected <T extends SAMLObject> void prepareSamlOutboundDestinationHandler(final MessageContext outboundContext) throws Exception {
         val handlerDest = new SAMLOutboundDestinationHandler();
         handlerDest.initialize();
         handlerDest.invoke(outboundContext);
@@ -161,7 +161,7 @@ public class SamlIdPObjectSigner {
      * @param outboundContext the outbound context
      * @throws Exception the exception
      */
-    protected <T extends SAMLObject> void prepareEndpointURLSchemeSecurityHandler(final MessageContext<T> outboundContext) throws Exception {
+    protected <T extends SAMLObject> void prepareEndpointURLSchemeSecurityHandler(final MessageContext outboundContext) throws Exception {
         val handlerEnd = new EndpointURLSchemeSecurityHandler();
         handlerEnd.initialize();
         handlerEnd.invoke(outboundContext);
@@ -176,7 +176,7 @@ public class SamlIdPObjectSigner {
      * @param service         the service
      */
     protected <T extends SAMLObject> void prepareSecurityParametersContext(final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                                           final MessageContext<T> outboundContext,
+                                                                           final MessageContext outboundContext,
                                                                            final SamlRegisteredService service) {
         val secParametersContext = outboundContext.getSubcontext(SecurityParametersContext.class, true);
         val roleDesc = adaptor.getSsoDescriptor();
@@ -197,7 +197,7 @@ public class SamlIdPObjectSigner {
      */
     protected <T extends SAMLObject> void prepareOutboundContext(final T samlObject,
                                                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                                 final MessageContext<T> outboundContext,
+                                                                 final MessageContext outboundContext,
                                                                  final String binding,
                                                                  final RequestAbstractType authnRequest) throws SamlException {
 

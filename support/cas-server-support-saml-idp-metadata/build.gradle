@@ -23,7 +23,6 @@ dependencies {
     implementation project(":core:cas-server-core-cookie-api")
     
     implementation libraries.casclient
-    implementation libraries.shibidp
     implementation libraries.shibidpjavasupport
 
     testImplementation project(":core:cas-server-core-web")

@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
     <suppress>
+        <cve>CVE-2020-11111</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2020-11112</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2020-11113</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2020-10968</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2020-10969</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2019-15752</cve>
+    </suppress>
+    <suppress>
+        <cv>CVE-2020-1957</cv>
     </suppress>
     <suppress>
         <cve>CVE-2020-10673</cve>

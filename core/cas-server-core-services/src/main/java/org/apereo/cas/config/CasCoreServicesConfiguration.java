@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuil
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.ChainingServicesManager;
+import org.apereo.cas.services.DefaultChainingServiceRegistry;
 import org.apereo.cas.services.DefaultServiceRegistryExecutionPlan;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.ImmutableServiceRegistry;
@@ -196,11 +197,11 @@ public class CasCoreServicesConfiguration {
     @Bean
     @RefreshScope
     @Lazy(false)
-    public ServiceRegistry serviceRegistry() {
+    public ChainingServiceRegistry serviceRegistry() {
         val plan = serviceRegistryExecutionPlan();
         val filter = (Predicate) Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
 
-        val chainingRegistry = new ChainingServiceRegistry(applicationContext);
+        val chainingRegistry = new DefaultChainingServiceRegistry(applicationContext);
         if (plan.find(filter).isEmpty()) {
             LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
                 + "Changes that are made to service definitions during runtime WILL be LOST when the CAS server is restarted. "

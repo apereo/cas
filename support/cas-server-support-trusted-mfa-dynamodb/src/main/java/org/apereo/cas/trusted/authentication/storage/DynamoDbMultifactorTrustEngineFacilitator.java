@@ -27,7 +27,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,6 +46,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class DynamoDbMultifactorTrustEngineFacilitator {
     private final DynamoDbMultifactorTrustProperties dynamoDbProperties;
+
     private final AmazonDynamoDB amazonDynamoDBClient;
 
     /**
@@ -94,12 +95,18 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
         val results = new HashSet<MultifactorAuthenticationTrustRecord>();
         try {
             val scanRequest = new ScanRequest(dynamoDbProperties.getTableName());
-            keys.forEach((k, v) -> {
+            if (keys.isEmpty()) {
                 val cond = new Condition();
                 cond.setComparisonOperator(operator);
-                cond.setAttributeValueList(List.of(v));
-                scanRequest.addScanFilterEntry(k, cond);
-            });
+                scanRequest.addScanFilterEntry(ColumnNames.RECORD_KEY.getColumnName(), cond);
+            } else {
+                keys.forEach((k, v) -> {
+                    val cond = new Condition();
+                    cond.setComparisonOperator(operator);
+                    cond.setAttributeValueList(List.of(v));
+                    scanRequest.addScanFilterEntry(k, cond);
+                });
+            }
 
             LOGGER.debug("Submitting request [{}] to get record with keys [{}]", scanRequest, keys);
             val items = amazonDynamoDBClient.scan(scanRequest).getItems();
@@ -111,7 +118,10 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
                 record.setPrincipal(item.get(ColumnNames.PRINCIPAL.getColumnName()).getS());
                 record.setRecordKey(item.get(ColumnNames.RECORD_KEY.getColumnName()).getS());
                 val time = Long.parseLong(item.get(ColumnNames.RECORD_DATE.getColumnName()).getS());
-                record.setRecordDate(DateTimeUtils.localDateTimeOf(new Date(time)));
+                record.setRecordDate(DateTimeUtils.zonedDateTimeOf(new Date(time)));
+                val expTime = Long.parseLong(item.get(ColumnNames.EXPIRATION_DATE.getColumnName()).getS());
+                record.setExpirationDate(new Date(expTime));
+
                 results.add(record);
             });
         } catch (final Exception e) {
@@ -128,7 +138,7 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
     public void save(final MultifactorAuthenticationTrustRecord record) {
         val values = buildTableAttributeValuesMap(record);
         val putItemRequest = new PutItemRequest(dynamoDbProperties.getTableName(), values);
-        LOGGER.debug("Submitting put request [{}] for record id [{}]", putItemRequest, record.getId());
+        LOGGER.trace("Submitting put request [{}] for record id [{}]", putItemRequest, record.getId());
         val putItemResult = amazonDynamoDBClient.putItem(putItemRequest);
         LOGGER.debug("Record added with result [{}]", putItemResult);
     }
@@ -147,8 +157,11 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
         values.put(ColumnNames.DEVICE_FINGERPRINT.getColumnName(), new AttributeValue(record.getDeviceFingerprint()));
         values.put(ColumnNames.RECORD_KEY.getColumnName(), new AttributeValue(record.getRecordKey()));
 
-        val time = DateTimeUtils.dateOf(record.getRecordDate()).getTime();
-        values.put(ColumnNames.RECORD_DATE.getColumnName(), new AttributeValue(String.valueOf(time)));
+        val recordDate = DateTimeUtils.dateOf(record.getRecordDate()).getTime();
+        values.put(ColumnNames.RECORD_DATE.getColumnName(), new AttributeValue(String.valueOf(recordDate)));
+
+        val expDate = record.getExpirationDate().getTime();
+        values.put(ColumnNames.EXPIRATION_DATE.getColumnName(), new AttributeValue(String.valueOf(expDate)));
 
         LOGGER.debug("Created attribute values [{}] based on [{}]", values, record);
         return values;
@@ -167,14 +180,14 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
     }
 
     /**
-     * Remove.
+     * Remove expired records.
      *
-     * @param onOrBefore the on or before
+     * @param expirationDate the exp date
      */
-    public void remove(final LocalDateTime onOrBefore) {
+    public void remove(final ZonedDateTime expirationDate) {
         val keys = new HashMap<String, AttributeValue>();
-        val time = DateTimeUtils.dateOf(onOrBefore).getTime();
-        keys.put(ColumnNames.RECORD_DATE.getColumnName(), new AttributeValue(String.valueOf(time)));
+        val time = DateTimeUtils.dateOf(expirationDate).getTime();
+        keys.put(ColumnNames.EXPIRATION_DATE.getColumnName(), new AttributeValue(String.valueOf(time)));
         val records = getRecordsByKeys(keys, ComparisonOperator.LE);
         deleteMultifactorTrustRecords(records);
     }
@@ -183,7 +196,8 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
         records.forEach(record -> {
             val del = new DeleteItemRequest()
                 .withTableName(dynamoDbProperties.getTableName())
-                .withKey(CollectionUtils.wrap(ColumnNames.ID.getColumnName(), new AttributeValue(String.valueOf(record.getId()))));
+                .withKey(CollectionUtils.wrap(ColumnNames.ID.getColumnName(),
+                    new AttributeValue(String.valueOf(record.getId()))));
             LOGGER.debug("Submitting delete request [{}] for record [{}]", del, record);
             val res = amazonDynamoDBClient.deleteItem(del);
             LOGGER.debug("Delete request came back with result [{}]", res);
@@ -196,7 +210,7 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
      * @param onOrAfterDate the on or after date
      * @return the record for date
      */
-    public Set<? extends MultifactorAuthenticationTrustRecord> getRecordForDate(final LocalDateTime onOrAfterDate) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> getRecordForDate(final ZonedDateTime onOrAfterDate) {
         val keys = new HashMap<String, AttributeValue>();
         val time = DateTimeUtils.dateOf(onOrAfterDate).getTime();
         keys.put(ColumnNames.RECORD_DATE.getColumnName(), new AttributeValue(String.valueOf(time)));
@@ -216,6 +230,15 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
         return records.stream()
             .findFirst()
             .orElse(null);
+    }
+
+    /**
+     * Gets record for id.
+     *
+     * @return the record for id
+     */
+    public Set<MultifactorAuthenticationTrustRecord> getAll() {
+        return getRecordsByKeys(Map.of(), ComparisonOperator.NOT_NULL);
     }
 
     /**
@@ -240,6 +263,10 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
          * recordDate column.
          */
         RECORD_DATE("recordDate"),
+        /**
+         * expirationDate column.
+         */
+        EXPIRATION_DATE("expirationDate"),
         /**
          * recordKey column.
          */

@@ -9,10 +9,12 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yubico.u2f.data.DeviceRegistration;
+import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -24,6 +26,8 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link U2FRestResourceDeviceRepositoryTests}.
@@ -38,6 +42,7 @@ import java.util.List;
     RefreshAutoConfiguration.class
 }, properties = "cas.authn.mfa.u2f.rest.url=http://localhost:9196")
 @EnabledIfPortOpen(port = 9196)
+@Getter
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     private static final ObjectMapper MAPPER = new ObjectMapper()
@@ -48,7 +53,7 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
 
     @Autowired
     @Qualifier("u2fDeviceRepository")
-    private U2FDeviceRepository u2fDeviceRepository;
+    private U2FDeviceRepository deviceRepository;
 
     @BeforeAll
     public static void beforeClass() throws Exception {
@@ -67,9 +72,9 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
         WEB_SERVER.close();
     }
 
-    @Override
-    protected U2FDeviceRepository getDeviceRepository() {
-        return this.u2fDeviceRepository;
+    @Test
+    public void verifyOperation() {
+        assertNotNull(deviceRepository);
     }
 
     @Override

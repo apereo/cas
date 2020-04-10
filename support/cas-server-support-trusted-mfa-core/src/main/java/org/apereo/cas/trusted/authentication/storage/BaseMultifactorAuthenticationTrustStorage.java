@@ -1,11 +1,13 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
-import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.Setter;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -15,7 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Set;
 
 /**
@@ -28,43 +30,48 @@ import java.util.Set;
 @Transactional(transactionManager = "transactionManagerMfaAuthnTrust")
 @Slf4j
 @ToString
-@Setter
+@RequiredArgsConstructor
+@Getter
 public abstract class BaseMultifactorAuthenticationTrustStorage implements MultifactorAuthenticationTrustStorage {
+    private final TrustedDevicesMultifactorProperties trustedDevicesMultifactorProperties;
 
-    private CipherExecutor<Serializable, String> cipherExecutor;
+    private final CipherExecutor<Serializable, String> cipherExecutor;
+
+    private final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy;
 
     @Audit(action = "TRUSTED_AUTHENTICATION",
         actionResolverName = "TRUSTED_AUTHENTICATION_ACTION_RESOLVER",
         resourceResolverName = "TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER")
     @Override
-    public MultifactorAuthenticationTrustRecord set(final MultifactorAuthenticationTrustRecord record) {
-        LOGGER.debug("Stored authentication trust record for [{}]", record);
+    public MultifactorAuthenticationTrustRecord save(final MultifactorAuthenticationTrustRecord record) {
         record.setRecordKey(generateKey(record));
-        return setInternal(record);
+        LOGGER.debug("Storing authentication trust record for [{}]", record);
+        return saveInternal(record);
     }
 
     @Override
-    public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal, final LocalDateTime onOrAfterDate) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal, final ZonedDateTime onOrAfterDate) {
         val res = get(principal);
         res.removeIf(entry -> {
             if (entry.getRecordDate().isBefore(onOrAfterDate)) {
                 return true;
             }
             val decodedKey = this.cipherExecutor.decode(entry.getRecordKey());
-            val currentKey = MultifactorAuthenticationTrustUtils.generateKey(entry);
+            val currentKey = keyGenerationStrategy.generate(entry);
             return StringUtils.isBlank(decodedKey) || !decodedKey.equals(currentKey);
         });
         return res;
     }
 
     /**
-     * Generate key .
+     * Generate key.
      *
      * @param r the record
      * @return the string
      */
     protected String generateKey(final MultifactorAuthenticationTrustRecord r) {
-        return cipherExecutor.encode(MultifactorAuthenticationTrustUtils.generateKey(r));
+        val key = keyGenerationStrategy.generate(r);
+        return cipherExecutor.encode(key);
     }
 
     /**
@@ -73,5 +80,5 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
      * @param record the record
      * @return the record
      */
-    protected abstract MultifactorAuthenticationTrustRecord setInternal(MultifactorAuthenticationTrustRecord record);
+    protected abstract MultifactorAuthenticationTrustRecord saveInternal(MultifactorAuthenticationTrustRecord record);
 }

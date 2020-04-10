@@ -85,7 +85,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     @Bean
     public List<String> jpaSamlMetadataIdPPackagesToScan() {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
-        val type = new JpaSamlIdPMetadataDocumentFactory(idp.getJpa()).getType();
+        val type = new JpaSamlIdPMetadataDocumentFactory(idp.getJpa().getDialect()).getType();
         return CollectionUtils.wrapList(type.getPackage().getName());
     }
 

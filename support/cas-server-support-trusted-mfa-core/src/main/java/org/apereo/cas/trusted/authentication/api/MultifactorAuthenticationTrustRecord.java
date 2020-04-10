@@ -1,7 +1,8 @@
 package org.apereo.cas.trusted.authentication.api;
 
-import org.apereo.cas.util.jpa.SkippingNanoSecondsLocalDateTimeConverter;
+import org.apereo.cas.util.DateTimeUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
@@ -12,14 +13,14 @@ import lombok.val;
 import org.springframework.data.annotation.Id;
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
 /**
  * This is {@link MultifactorAuthenticationTrustRecord}.
@@ -34,6 +35,7 @@ import java.time.temporal.ChronoUnit;
 @Setter
 @EqualsAndHashCode
 public class MultifactorAuthenticationTrustRecord implements Comparable<MultifactorAuthenticationTrustRecord> {
+    private static final int YEARS_TO_KEEP_RECORD_AS_FOREVER = 100;
 
     @Id
     @Transient
@@ -45,23 +47,25 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     private String principal;
 
     @JsonProperty("deviceFingerprint")
-    @Column(nullable = false, length = 512)
+    @Column(nullable = false, length = 2048, name = "deviceFingerprint")
     private String deviceFingerprint;
 
     @JsonProperty("recordDate")
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    @Convert(converter = SkippingNanoSecondsLocalDateTimeConverter.class)
-    private LocalDateTime recordDate;
+    @Column(name = "recordDate", nullable = false, columnDefinition = "timestamp")
+    private ZonedDateTime recordDate = ZonedDateTime.now(ZoneOffset.UTC);
 
-    @Lob
     @JsonProperty("recordKey")
-    @Column(length = Integer.MAX_VALUE, nullable = false)
+    @Column(name = "recordKey", length = 4_000, nullable = false)
     private String recordKey;
 
-    @Lob
     @JsonProperty("name")
-    @Column(length = Integer.MAX_VALUE, nullable = false)
+    @Column(name = "recordName", length = 4_000, nullable = false)
     private String name;
+
+    @JsonProperty("expirationDate")
+    @Column(name = "expirationDate", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date expirationDate;
 
     public MultifactorAuthenticationTrustRecord() {
         this.id = System.currentTimeMillis();
@@ -79,16 +83,54 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
                                                                    final String geography,
                                                                    final String fingerprint) {
         val r = new MultifactorAuthenticationTrustRecord();
-        val now = LocalDateTime.now(ZoneOffset.UTC);
+        val now = ZonedDateTime.now(ZoneOffset.UTC);
         r.setRecordDate(now.truncatedTo(ChronoUnit.SECONDS));
         r.setPrincipal(principal);
         r.setDeviceFingerprint(fingerprint);
         r.setName(principal.concat("-").concat(now.toString()).concat("-").concat(geography));
+        r.neverExpire();
         return r;
+    }
+
+    /**
+     * Is record expired?
+     *
+     * @return the boolean
+     */
+    @JsonIgnore
+    public boolean isExpired() {
+        if (this.expirationDate == null) {
+            return false;
+        }
+        val expDate = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
+        val zonedExpDate = DateTimeUtils.zonedDateTimeOf(this.expirationDate).truncatedTo(ChronoUnit.SECONDS);
+        return expDate.equals(zonedExpDate) || expDate.isAfter(zonedExpDate);
+    }
+
+    /**
+     * Set expiration date of record in given time.
+     *
+     * @param expiration the expiration
+     * @param timeUnit   the time unit
+     */
+    public void expireIn(final long expiration, final ChronoUnit timeUnit) {
+        val expDate = ZonedDateTime.now(ZoneOffset.UTC).plus(expiration, timeUnit).truncatedTo(ChronoUnit.SECONDS);
+        val zonedExpDate = DateTimeUtils.dateOf(expDate);
+        setExpirationDate(zonedExpDate);
     }
 
     @Override
     public int compareTo(final MultifactorAuthenticationTrustRecord o) {
         return this.recordDate.compareTo(o.getRecordDate());
+    }
+
+    /**
+     * Set the expiration date to never expire the record.
+     */
+    @JsonIgnore
+    public void neverExpire() {
+        val expDate = getRecordDate().plusYears(YEARS_TO_KEEP_RECORD_AS_FOREVER).truncatedTo(ChronoUnit.SECONDS);
+        val zonedExpDate = DateTimeUtils.dateOf(expDate);
+        setExpirationDate(zonedExpDate);
     }
 }

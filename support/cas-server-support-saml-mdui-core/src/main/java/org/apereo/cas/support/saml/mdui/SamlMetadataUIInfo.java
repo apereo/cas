@@ -72,7 +72,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
         val list = new ArrayList<String>(items.size());
         items.forEach(d -> {
             if (d instanceof XSURI) {
-                list.add(((XSURI) d).getValue());
+                list.add(((XSURI) d).getURI());
             } else if (d instanceof XSString) {
                 list.add(((XSString) d).getValue());
             }
@@ -100,7 +100,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
                 value = ((LocalizedName) item).getValue();
             }
             if (item instanceof LocalizedURI) {
-                value = ((LocalizedURI) item).getValue();
+                value = ((LocalizedURI) item).getURI();
             }
             if (item instanceof XSString) {
                 value = ((XSString) item).getValue();
@@ -242,7 +242,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
     public Collection<Logo> getLogoUrls() {
         if (this.uiInfo != null) {
             return this.uiInfo.getLogos().stream()
-                .map(l -> new Logo(l.getURL(), l.getHeight(), l.getWidth())).collect(Collectors.toList());
+                .map(l -> new Logo(l.getURI(), l.getHeight(), l.getWidth())).collect(Collectors.toList());
         }
         return new ArrayList<>(0);
     }

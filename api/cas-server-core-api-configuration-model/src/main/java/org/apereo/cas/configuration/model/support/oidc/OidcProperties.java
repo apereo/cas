@@ -30,9 +30,10 @@ public class OidcProperties implements Serializable {
     private static final long serialVersionUID = 813028615694269276L;
 
     /**
-     * Timeout that indicates how long should the JWKS file be kept in cache.
+     * Configuration properties managing the jwks settings for OIDC.
      */
-    private int jwksCacheInMinutes = 60;
+    @NestedConfigurationProperty
+    private OidcJsonWebKeystoreProperties jwks = new OidcJsonWebKeystoreProperties();
 
     /**
      * OIDC issuer.
@@ -46,28 +47,6 @@ public class OidcProperties implements Serializable {
     private int skew = 5;
 
     /**
-     * Path to the JWKS file resource used to handle signing/encryption of authentication tokens.
-     */
-    @RequiredProperty
-    private String jwksFile = "file:/etc/cas/config/keystore.jwks";
-
-    /**
-     * The key size for the generated jwks. This is an algorithm-specific metric,
-     * such as modulus length, specified in number of bits.
-     * <p>
-     * If the keystore type is {@code EC}, the key size defined here
-     * should switch to one of {@code 256}, {@code 384} or {@code 521}.
-     * If using  {@code EC}, then the size should match the number of bits required.
-     */
-    private int jwksKeySize = 2048;
-
-    /**
-     * The type of the JWKS used to handle signing/encryption of authentication tokens.
-     * Accepted values are {@code RSA} or {@code EC}.
-     */
-    private String jwksType = "RSA";
-
-    /**
      * Whether dynamic registration operates in {@code OPEN} or {@code PROTECTED} mode.
      */
     private String dynamicClientRegistrationMode;
@@ -75,7 +54,8 @@ public class OidcProperties implements Serializable {
     /**
      * List of supported scopes.
      */
-    private List<String> scopes = Stream.of("openid", "profile", "email", "address", "phone", "offline_access").collect(Collectors.toList());
+    private List<String> scopes = Stream.of("openid", "profile", "email", "address", "phone", "offline_access")
+        .collect(Collectors.toList());
 
     /**
      * List of supported claims.
