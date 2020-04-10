@@ -15,7 +15,7 @@ Support is enabled by including the following dependency in the overlay:
 ```xml
 <dependency>
   <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-documentation-swagger</artifactId>
+  <artifactId>cas-server-support-swagger</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```
