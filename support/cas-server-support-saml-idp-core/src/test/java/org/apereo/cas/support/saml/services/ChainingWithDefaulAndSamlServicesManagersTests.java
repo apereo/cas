@@ -52,8 +52,8 @@ public class ChainingWithDefaulAndSamlServicesManagersTests extends ChainingWith
         assertEquals(SamlRegisteredService.class, lookedUpRegSvc.getClass());
     }
 
-    private void createAndSaveServicesFixtures(Consumer<RegexRegisteredService> regexSvcCustomizer,
-                                               Consumer<SamlRegisteredService> samlSvcCustomizer) {
+    private void createAndSaveServicesFixtures(final Consumer<RegexRegisteredService> regexSvcCustomizer,
+                                               final Consumer<SamlRegisteredService> samlSvcCustomizer) {
 
         var regexSvc = new RegexRegisteredService();
         regexSvc.setId(1L);
