@@ -33,25 +33,22 @@ public class EncryptedTranscoderTests {
         ksFactory.setType("JCEKS");
         ksFactory.setPassword("changeit");
 
-        val transcoder1 = new EncryptedTranscoder();
         val cipherBean1 = new AEADBlockCipherBean();
         cipherBean1.setBlockCipherSpec(new AEADBlockCipherSpec("AES", "GCM"));
         cipherBean1.setKeyStore(ksFactory.newInstance());
         cipherBean1.setKeyAlias("aes128");
         cipherBean1.setKeyPassword("changeit");
         cipherBean1.setNonce(new org.cryptacular.generator.sp80038d.RBGNonce());
-        transcoder1.setCipherBean(cipherBean1);
-        transcoder1.setCompression(true);
 
-        val transcoder2 = new EncryptedTranscoder();
+        val transcoder1 = new EncryptedTranscoder(cipherBean1);
+
         val cipherBean2 = new BufferedBlockCipherBean();
         cipherBean2.setBlockCipherSpec(new BufferedBlockCipherSpec("AES", "CBC", "PKCS7"));
         cipherBean2.setKeyStore(ksFactory.newInstance());
         cipherBean2.setKeyAlias("aes128");
         cipherBean2.setKeyPassword("changeit");
         cipherBean2.setNonce(new org.cryptacular.generator.sp80038a.RBGNonce());
-        transcoder2.setCipherBean(cipherBean2);
-        transcoder2.setCompression(false);
+        val transcoder2 = new EncryptedTranscoder(cipherBean2, false);
 
         return Stream.of(
             Arguments.arguments(transcoder1,

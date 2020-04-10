@@ -1,6 +1,7 @@
 package org.apereo.cas.monitor;
 
 import lombok.val;
+import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.List;
@@ -27,8 +28,9 @@ public class MongoDbHealthIndicator extends AbstractCacheHealthIndicator {
         final List<CacheStatistics> list = mongoTemplate.getCollectionNames()
             .stream()
             .map(c -> {
-                val col = this.mongoTemplate.getMongoDbFactory().getLegacyDb().getCollection(c);
-                return new MongoDbCacheStatistics(col);
+                val db = this.mongoTemplate.getMongoDbFactory().getDb();
+                val stats = db.runCommand(new Document("collStats", c));
+                return new MongoDbCacheStatistics(stats, c);
             })
             .collect(Collectors.toList());
 

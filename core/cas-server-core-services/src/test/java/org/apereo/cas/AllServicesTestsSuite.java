@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactoryTests
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProviderTests;
 import org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicyTests;
 import org.apereo.cas.services.ChainingServicesManagerTests;
+import org.apereo.cas.services.DefaultDomainAwareServicesManagerTests;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceDomainExtractorTests;
@@ -18,7 +19,6 @@ import org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPo
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.DefaultServicesManagerByEnvironmentTests;
 import org.apereo.cas.services.DefaultServicesManagerTests;
-import org.apereo.cas.services.DomainServicesManagerTests;
 import org.apereo.cas.services.GroovyAuthenticationHandlerResolverTests;
 import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.GroovyRegisteredServiceMultifactorPolicyTests;
@@ -63,7 +63,7 @@ import org.junit.runner.RunWith;
     DefaultRegisteredServiceUsernameProviderTests.class,
     DefaultRegisteredServiceMultifactorPolicyTests.class,
     DefaultServicesManagerTests.class,
-    DomainServicesManagerTests.class,
+    DefaultDomainAwareServicesManagerTests.class,
     InMemoryServiceRegistryTests.class,
     PrincipalAttributeRegisteredServiceUsernameProviderTests.class,
     RegexRegisteredServiceTests.class,
