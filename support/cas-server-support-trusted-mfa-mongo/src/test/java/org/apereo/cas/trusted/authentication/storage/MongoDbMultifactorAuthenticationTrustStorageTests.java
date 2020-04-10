@@ -13,8 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -52,10 +53,11 @@ public class MongoDbMultifactorAuthenticationTrustStorageTests extends AbstractM
     @Test
     public void verifyExpireByDate() {
         val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
-        r.setRecordDate(LocalDateTime.now(ZoneOffset.UTC).minusDays(2));
+        val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
+        r.setRecordDate(now.minusDays(2));
         getMfaTrustEngine().save(r);
-        assertEquals(1, getMfaTrustEngine().get(LocalDateTime.now(ZoneOffset.UTC).minusDays(30)).size());
-        assertEquals(0, getMfaTrustEngine().get(LocalDateTime.now(ZoneOffset.UTC).minusDays(2)).size());
+        assertEquals(1, getMfaTrustEngine().get(now.minusDays(30)).size());
+        assertEquals(0, getMfaTrustEngine().get(now.minusDays(1)).size());
     }
 
     @BeforeEach

@@ -1,7 +1,8 @@
 package org.apereo.cas.trusted.authentication.api;
 
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
 
 /**
@@ -17,13 +18,13 @@ public interface MultifactorAuthenticationTrustStorage {
      *
      * @param expirationTime the expiration time
      */
-    void remove(LocalDateTime expirationTime);
+    void remove(ZonedDateTime expirationTime);
 
     /**
      * Remove records that are expired by now.
      */
     default void remove() {
-        remove(LocalDateTime.now(ZoneOffset.UTC));
+        remove(ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS));
     }
 
     /**
@@ -46,7 +47,7 @@ public interface MultifactorAuthenticationTrustStorage {
      * @param onOrAfterDate the on or after date
      * @return the records
      */
-    Set<? extends MultifactorAuthenticationTrustRecord> get(LocalDateTime onOrAfterDate);
+    Set<? extends MultifactorAuthenticationTrustRecord> get(ZonedDateTime onOrAfterDate);
 
     /**
      * Get record.
@@ -71,7 +72,7 @@ public interface MultifactorAuthenticationTrustStorage {
      * @param onOrAfterDate the on or after date
      * @return the optional
      */
-    Set<? extends MultifactorAuthenticationTrustRecord> get(String principal, LocalDateTime onOrAfterDate);
+    Set<? extends MultifactorAuthenticationTrustRecord> get(String principal, ZonedDateTime onOrAfterDate);
 
     /**
      * Set trusted record.

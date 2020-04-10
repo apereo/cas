@@ -1,6 +1,7 @@
 package org.apereo.cas.couchdb.trusted;
 
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.val;
 import org.ektorp.ComplexKey;
@@ -9,7 +10,7 @@ import org.ektorp.support.CouchDbRepositorySupport;
 import org.ektorp.support.UpdateHandler;
 import org.ektorp.support.View;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -44,7 +45,7 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
      * @return trust records for given input
      */
     @View(name = "by_recordDate", map = "function(doc) { if (doc.principal && doc.deviceFingerprint && doc.recordDate) { emit(doc.recordDate, doc) } }")
-    public List<CouchDbMultifactorAuthenticationTrustRecord> findOnOrBeforeDate(final LocalDateTime recordDate) {
+    public List<CouchDbMultifactorAuthenticationTrustRecord> findOnOrBeforeDate(final ZonedDateTime recordDate) {
         return db.queryView(createQuery("by_recordDate").endKey(recordDate), CouchDbMultifactorAuthenticationTrustRecord.class);
     }
 
@@ -54,19 +55,21 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
      * @param onOrAfterDate cutoff date
      * @return records created on or after date
      */
-    public List<CouchDbMultifactorAuthenticationTrustRecord> findOnOrAfterDate(final LocalDateTime onOrAfterDate) {
+    public List<CouchDbMultifactorAuthenticationTrustRecord> findOnOrAfterDate(final ZonedDateTime onOrAfterDate) {
         return db.queryView(createQuery("by_recordDate").startKey(onOrAfterDate), CouchDbMultifactorAuthenticationTrustRecord.class);
     }
 
     /**
      * Find record created on or after exp date.
-     *
+     * Remove all records whose expiration date is greater than the given date.
      * @param onOrAfterDate cutoff date
      * @return records created on or after date
      */
     @View(name = "by_expirationDate", map = "function(doc) { if (doc.principal && doc.deviceFingerprint && doc.expirationDate) { emit(doc.expirationDate, doc) } }")
-    public List<CouchDbMultifactorAuthenticationTrustRecord> findOnOrAfterExpirationDate(final LocalDateTime onOrAfterDate) {
-        return db.queryView(createQuery("by_expirationDate").startKey(onOrAfterDate), CouchDbMultifactorAuthenticationTrustRecord.class);
+    public List<CouchDbMultifactorAuthenticationTrustRecord> findOnOrAfterExpirationDate(final ZonedDateTime onOrAfterDate) {
+        val expDate = DateTimeUtils.dateOf(onOrAfterDate);
+        val query = createQuery("by_expirationDate").endKey(expDate);
+        return db.queryView(query, CouchDbMultifactorAuthenticationTrustRecord.class);
     }
 
     /**
@@ -107,7 +110,7 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
      */
     @View(name = "by_principal_date",
         map = "function(doc) { if (doc.recordKey && doc.principal && doc.deviceFingerprint && doc.recordDate) { emit([doc.principal, doc.recordDate], doc) } }")
-    public List<CouchDbMultifactorAuthenticationTrustRecord> findByPrincipalAfterDate(final String principal, final LocalDateTime onOrAfterDate) {
+    public List<CouchDbMultifactorAuthenticationTrustRecord> findByPrincipalAfterDate(final String principal, final ZonedDateTime onOrAfterDate) {
         val view = createQuery("by_principal_date")
             .startKey(ComplexKey.of(principal, onOrAfterDate))
             .endKey(ComplexKey.of(principal, String.valueOf(Long.MAX_VALUE)));

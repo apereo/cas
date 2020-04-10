@@ -126,6 +126,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param xmlString the xml string
      * @return the document
      */
+    @SuppressWarnings("java:S2755")
     public static Document constructDocumentFromXml(final String xmlString) {
         LOGGER.trace("Attempting to construct an instance of Document from xml: [{}]", xmlString);
         try {

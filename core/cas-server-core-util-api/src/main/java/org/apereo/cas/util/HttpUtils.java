@@ -139,7 +139,7 @@ public class HttpUtils {
                                        final Map<String, Object> headers,
                                        final String entity) {
         try {
-            val uri = buildHttpUri(url, parameters);
+            val uri = buildHttpUri(url.trim(), parameters);
             val request = getHttpRequestByMethod(method.toLowerCase().trim(), entity, uri);
             headers.forEach((k, v) -> request.addHeader(k, v.toString()));
             prepareHttpRequest(request, basicAuthUsername, basicAuthPassword);

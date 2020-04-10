@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorP
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
@@ -18,7 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Set;
 
 /**
@@ -46,16 +45,12 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
     @Override
     public MultifactorAuthenticationTrustRecord save(final MultifactorAuthenticationTrustRecord record) {
         record.setRecordKey(generateKey(record));
-        if (record.getExpirationDate() == null) {
-            val unit = DateTimeUtils.toChronoUnit(trustedDevicesMultifactorProperties.getTimeUnit());
-            record.expireIn(trustedDevicesMultifactorProperties.getExpiration(), unit);
-        }
         LOGGER.debug("Storing authentication trust record for [{}]", record);
         return saveInternal(record);
     }
 
     @Override
-    public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal, final LocalDateTime onOrAfterDate) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal, final ZonedDateTime onOrAfterDate) {
         val res = get(principal);
         res.removeIf(entry -> {
             if (entry.getRecordDate().isBefore(onOrAfterDate)) {

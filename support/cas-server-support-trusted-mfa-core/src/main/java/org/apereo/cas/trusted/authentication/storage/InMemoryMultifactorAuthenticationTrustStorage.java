@@ -3,6 +3,7 @@ package org.apereo.cas.trusted.authentication.storage;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -11,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -42,11 +43,15 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
     }
 
     @Override
-    public void remove(final LocalDateTime expirationDate) {
+    public void remove(final ZonedDateTime expirationDate) {
         val results = storage.asMap()
             .values()
             .stream()
-            .filter(entry -> expirationDate.isEqual(entry.getExpirationDate()) || expirationDate.isAfter(entry.getExpirationDate()))
+            .filter(entry -> entry.getExpirationDate() != null)
+            .filter(entry -> {
+                val expDate = DateTimeUtils.dateOf(expirationDate);
+                return expDate.compareTo(entry.getExpirationDate()) >= 0;
+            })
             .sorted()
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
@@ -58,12 +63,13 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
     }
 
     @Override
-    public Set<? extends MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final ZonedDateTime onOrAfterDate) {
         remove();
         return storage.asMap()
             .values()
             .stream()
-            .filter(entry -> entry.getRecordDate().isEqual(onOrAfterDate) || entry.getRecordDate().isAfter(onOrAfterDate))
+            .filter(entry -> entry.getExpirationDate() != null
+                && (entry.getRecordDate().isEqual(onOrAfterDate) || entry.getRecordDate().isAfter(onOrAfterDate)))
             .sorted()
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }

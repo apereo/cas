@@ -21,12 +21,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,10 +37,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
-@TestPropertySource(properties = {
-    "cas.authn.mfa.trusted.expiration=30",
-    "cas.authn.mfa.trusted.timeUnit=SECONDS"
-})
 @Getter
 @Tag("Webflow")
 public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {
@@ -67,7 +62,7 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests extends 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         val record = getMultifactorAuthenticationTrustRecord();
-        record.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(5));
+        record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(5));
         val deviceFingerprint = deviceFingerprintStrategy.determineFingerprint(record.getPrincipal(), context, true);
         record.setDeviceFingerprint(deviceFingerprint);
         mfaTrustEngine.save(record);

@@ -18,7 +18,6 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link TrustedDevicesMultifactorProperties}.
@@ -47,16 +46,6 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
      * or execute it automatically.
      */
     private boolean deviceRegistrationEnabled = true;
-
-    /**
-     * Indicates how long should record/devices be remembered as trusted devices.
-     */
-    private long expiration = 30;
-
-    /**
-     * Indicates the time unit by which record/devices are remembered as trusted devices.
-     */
-    private TimeUnit timeUnit = TimeUnit.DAYS;
 
     /**
      * Indicates how record keys for trusted devices would be generated
