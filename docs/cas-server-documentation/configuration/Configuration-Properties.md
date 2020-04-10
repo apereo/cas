@@ -2810,8 +2810,6 @@ To learn more about this topic, [please review this guide](../mfa/Multifactor-Tr
 ```properties
 # cas.authn.mfa.trusted.authenticationContextAttribute=isFromTrustedMultifactorAuthentication
 # cas.authn.mfa.trusted.deviceRegistrationEnabled=true
-# cas.authn.mfa.trusted.expiration=30
-# cas.authn.mfa.trusted.timeUnit=SECONDS|MINUTES|HOURS|DAYS
 # cas.authn.mfa.trusted.keyGeneratorType=DEFAULT|LEGACY
 ```
 
@@ -3547,6 +3545,15 @@ To learn more about this topic, [please review this guide](../integration/Delega
 # cas.authn.pac4j.replicateSessions=true
 ```
 
+### REST-based Configuration
+
+Identity providers for delegated authentication can be provided to CAS using an external REST endpoint. 
+
+RESTful settings for this feature are 
+available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.pac4j.rest`.
+
+### Default Configuration
+
 The following external identity providers share [common blocks of settings](Configuration-Properties-Common.html#delegated-authentication-settings) 
 under the listed configuration keys listed below:
 
@@ -4015,6 +4022,7 @@ and any number of log appenders that might push data to a variety of systems.</p
 # cas.audit.slf4j.auditFormat=DEFAULT|JSON
 # cas.audit.slf4j.singlelineSeparator=|
 # cas.audit.slf4j.useSingleLine=false
+# cas.audit.slf4j.enabled=true
 ```
 
 ### MongoDb Audits

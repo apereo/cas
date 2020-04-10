@@ -6,7 +6,6 @@ import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDev
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -17,9 +16,6 @@ import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 /**
  * This is {@link MultifactorAuthenticationVerifyTrustAction}.
@@ -33,9 +29,13 @@ import java.time.ZoneId;
 public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
 
     private final MultifactorAuthenticationTrustStorage storage;
+
     private final DeviceFingerprintStrategy deviceFingerprintStrategy;
+
     private final TrustedDevicesMultifactorProperties trustedProperties;
+
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+
     private final MultifactorAuthenticationTrustedDeviceBypassEvaluator bypassEvaluator;
 
     @Override
@@ -52,10 +52,8 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
             return result(CasWebflowConstants.TRANSITION_ID_SKIP);
         }
         val principal = authn.getPrincipal().getId();
-        val unit = DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit());
-        val onOrAfter = LocalDateTime.now(ZoneId.systemDefault()).minus(trustedProperties.getExpiration(), unit);
-        LOGGER.trace("Retrieving trusted authentication records for [{}] that are on/after [{}]", principal, onOrAfter);
-        val results = storage.get(principal, onOrAfter);
+        LOGGER.trace("Retrieving trusted authentication records for [{}]", principal);
+        val results = storage.get(principal);
         if (results.isEmpty()) {
             LOGGER.debug("No valid trusted authentication records could be found for [{}]", principal);
             return no();

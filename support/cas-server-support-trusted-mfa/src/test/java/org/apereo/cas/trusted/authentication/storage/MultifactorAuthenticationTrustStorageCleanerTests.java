@@ -6,10 +6,12 @@ import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 /**
  * This is {@link MultifactorAuthenticationTrustStorageCleanerTests}.
@@ -21,12 +23,15 @@ import java.time.ZoneId;
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
 @Tag("MFA")
 public class MultifactorAuthenticationTrustStorageCleanerTests extends AbstractMultifactorAuthenticationTrustStorageTests {
-
+    @Autowired
+    @Qualifier("mfaTrustStorageCleaner")
+    protected MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner;
+    
     @Test
     public void verifyAction() {
         try {
             val record = getMultifactorAuthenticationTrustRecord();
-            record.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
+            record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusDays(1));
             getMfaTrustEngine().save(record);
             mfaTrustStorageCleaner.clean();
         } catch (final Exception e) {

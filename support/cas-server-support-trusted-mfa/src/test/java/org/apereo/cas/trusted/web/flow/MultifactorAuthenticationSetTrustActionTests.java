@@ -22,7 +22,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
@@ -38,10 +37,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
-@TestPropertySource(properties = {
-    "cas.authn.mfa.trusted.expiration=30",
-    "cas.authn.mfa.trusted.timeUnit=SECONDS"
-})
 @Getter
 @Tag("Webflow")
 public class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {

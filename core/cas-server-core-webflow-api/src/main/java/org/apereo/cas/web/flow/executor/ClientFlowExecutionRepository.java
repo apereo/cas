@@ -38,9 +38,11 @@ public class ClientFlowExecutionRepository implements FlowExecutionRepository, F
      * Client flow storage has not backing store independent from the flow key, so no locking is required.
      */
     private static final FlowExecutionLock NOOP_LOCK = new FlowExecutionLock() {
+        @Override
         public void lock() {
         }
 
+        @Override
         public void unlock() {
         }
     };
@@ -51,6 +53,7 @@ public class ClientFlowExecutionRepository implements FlowExecutionRepository, F
 
     private Transcoder transcoder;
 
+    @Override
     public FlowExecutionKey parseFlowExecutionKey(final String encodedKey) throws FlowExecutionRepositoryException {
         return ClientFlowExecutionKey.parse(encodedKey);
     }

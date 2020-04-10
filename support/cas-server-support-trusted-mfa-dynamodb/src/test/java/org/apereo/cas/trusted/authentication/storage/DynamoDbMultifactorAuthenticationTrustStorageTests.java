@@ -12,8 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,7 +58,7 @@ public class DynamoDbMultifactorAuthenticationTrustStorageTests extends Abstract
     @Test
     public void verifyExpireByDate() {
         val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
-        val now = LocalDateTime.now(ZoneId.systemDefault());
+        val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
         r.setRecordDate(now.minusDays(2));
         getMfaTrustEngine().save(r);
         assertFalse(getMfaTrustEngine().get(r.getPrincipal()).isEmpty());

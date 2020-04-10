@@ -4,10 +4,12 @@ import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.config.JdbcMultifactorAuthnTrustConfiguration;
+import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -16,8 +18,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -40,7 +43,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @TestPropertySource(properties = {
     "cas.jdbc.showSql=true",
-    "cas.jdbc.physicalTableNames.MultifactorAuthenticationTrustRecord=mfaauthntrustedrec"
+    "cas.authn.mfa.trusted.jpa.ddlAuto=create-drop",
+    "cas.authn.mfa.trusted.cleaner.schedule.enabled=false",
+    "cas.jdbc.physicalTableNames.JpaMultifactorAuthenticationTrustRecord=mfaauthntrustedrec"
 })
 public class JpaMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
     private static final String PRINCIPAL = "principal";
@@ -51,10 +56,17 @@ public class JpaMultifactorAuthenticationTrustStorageTests extends AbstractMulti
 
     private static final String DEVICE_FINGERPRINT = "deviceFingerprint";
 
+    @BeforeEach
+    public void clearEngine() {
+        getMfaTrustEngine().getAll().forEach(r -> getMfaTrustEngine().remove(r.getRecordKey()));
+    }
+
     @Test
     public void verifyExpireByKey() {
-        getMfaTrustEngine().save(MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT));
-        getMfaTrustEngine().save(MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT));
+        var record = MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT);
+        getMfaTrustEngine().save(record);
+        record = MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT);
+        getMfaTrustEngine().save(record);
         val records = getMfaTrustEngine().get(PRINCIPAL);
         assertEquals(2, records.size());
 
@@ -64,12 +76,12 @@ public class JpaMultifactorAuthenticationTrustStorageTests extends AbstractMulti
 
     @Test
     public void verifyRetrieveAndExpireByDate() {
-        val now = LocalDateTime.now(ZoneOffset.UTC);
+        val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
         Stream.of(PRINCIPAL, PRINCIPAL2).forEach(p -> {
             for (var offset = 0; offset < 3; offset++) {
                 val record = MultifactorAuthenticationTrustRecord.newInstance(p, GEOGRAPHY, DEVICE_FINGERPRINT);
                 record.setRecordDate(now.minusDays(offset));
-                record.setExpirationDate(now.plusDays(1));
+                record.setExpirationDate(DateTimeUtils.dateOf(now.plusDays(1)));
                 getMfaTrustEngine().save(record);
             }
         });

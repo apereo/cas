@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import com.google.common.base.Predicates;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
@@ -13,39 +14,27 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link ChainingServiceRegistry}.
+ * This is {@link DefaultChainingServiceRegistry}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @Getter
-public class ChainingServiceRegistry extends AbstractServiceRegistry {
+@Slf4j
+public class DefaultChainingServiceRegistry extends AbstractServiceRegistry implements ChainingServiceRegistry {
     private final List<ServiceRegistry> serviceRegistries;
 
-    public ChainingServiceRegistry(final ApplicationEventPublisher eventPublisher) {
+    public DefaultChainingServiceRegistry(final ApplicationEventPublisher eventPublisher) {
         this(eventPublisher, new ArrayList<>(0));
     }
 
-    public ChainingServiceRegistry(final ApplicationEventPublisher eventPublisher,
-                                   final List<ServiceRegistry> serviceRegistries) {
+    public DefaultChainingServiceRegistry(final ApplicationEventPublisher eventPublisher,
+                                          final List<ServiceRegistry> serviceRegistries) {
         super(eventPublisher, new ArrayList<>(0));
         this.serviceRegistries = serviceRegistries;
     }
 
-    /**
-     * Add service registry.
-     *
-     * @param registry the registry
-     */
-    public void addServiceRegistry(final ServiceRegistry registry) {
-        serviceRegistries.add(registry);
-    }
-
-    /**
-     * Add service registries.
-     *
-     * @param registries the registries
-     */
+    @Override
     public void addServiceRegistries(final Collection<ServiceRegistry> registries) {
         serviceRegistries.addAll(registries);
     }
@@ -119,5 +108,34 @@ public class ChainingServiceRegistry extends AbstractServiceRegistry {
             .map(ServiceRegistry::getName)
             .collect(Collectors.joining(","));
         return StringUtils.defaultIfBlank(name, getClass().getSimpleName());
+    }
+
+    @Override
+    public long countServiceRegistries() {
+        return this.serviceRegistries.size();
+    }
+
+    @Override
+    public void synchronize(final RegisteredService service) {
+        this.serviceRegistries
+            .stream()
+            .filter(serviceRegistry -> {
+                if (StringUtils.isNotBlank(service.getServiceId())) {
+                    val match = serviceRegistry.findServiceByExactServiceId(service.getServiceId());
+                    if (match != null) {
+                        LOGGER.debug("Skipping [{}] JSON service definition in [{}] as a matching service [{}] is found in the registry",
+                            service.getName(), serviceRegistry.getName(), match.getName());
+                        return false;
+                    }
+                }
+                val match = serviceRegistry.findServiceById(service.getId());
+                if (match != null) {
+                    LOGGER.debug("Skipping [{}] JSON service definition in [{}] as a matching id [{}] is found in the registry",
+                        service.getName(), serviceRegistry.getName(), match.getId());
+                    return false;
+                }
+                return true;
+            })
+            .forEach(serviceRegistry -> serviceRegistry.save(service));
     }
 }
