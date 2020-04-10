@@ -1,7 +1,8 @@
-package org.apereo.cas.services;
+package org.apereo.cas.support.saml.services;
 
-
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.services.AbstractServicesManager;
+import org.apereo.cas.services.AbstractServicesManagerTests;
+import org.apereo.cas.services.RegisteredService;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -11,11 +12,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @author battags
  * @author Dmitriy Kopylenko
- * @since 3.0.0
+ * @since 6.2.0
  */
-public class DefaultServicesManagerTests extends AbstractServicesManagerTests {
+public class SamlServicesManagerTests extends AbstractServicesManagerTests {
 
     @Override
     protected Supplier<List<RegisteredService>> registeredServicesFixture() {
@@ -29,7 +29,7 @@ public class DefaultServicesManagerTests extends AbstractServicesManagerTests {
     }
 
     @Test
-    public void verifyOnlyLoadsRegexServices() {
+    public void verifyOnlyLoadsSamlServices() {
         assertEquals(1, this.servicesManager.count());
     }
 

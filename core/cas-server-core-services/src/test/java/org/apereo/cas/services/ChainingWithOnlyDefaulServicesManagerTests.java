@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -10,16 +9,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link ChainingServicesManagerTests}.
+ * This is {@link ChainingWithOnlyDefaulServicesManagerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-public class ChainingServicesManagerTests extends AbstractServicesManagerTests {
+public class ChainingWithOnlyDefaulServicesManagerTests extends AbstractServicesManagerTests {
     @Override
     protected ServicesManager getServicesManagerInstance() {
-        val chain = new ChainingServicesManager();
-        val manager = new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class), new HashSet<>());
+        var chain = new ChainingServicesManager();
+        var manager = new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class), new HashSet<>());
         chain.registerServiceManager(manager);
         return chain;
     }

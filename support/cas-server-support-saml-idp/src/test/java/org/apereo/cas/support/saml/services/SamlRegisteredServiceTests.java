@@ -2,12 +2,14 @@ package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
+import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.JsonServiceRegistry;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.util.io.WatcherService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -92,11 +94,14 @@ public class SamlRegisteredServiceTests {
         service.setServiceId("^http://.+");
         service.setMetadataLocation(METADATA_LOCATION);
         val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), List.of(service), new ArrayList<>());
-        val impl = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
-        impl.load();
+        val svcMgr = new SamlServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
+        val chainingSvcMgr = new ChainingServicesManager();
+        chainingSvcMgr.registerServiceManager(svcMgr);
+        chainingSvcMgr.load();
 
-        val s = impl.findServiceBy(new WebApplicationServiceFactory()
-            .createService("http://mmoayyed.unicon.net:8081/sp/saml/SSO"));
+        val samlSvc = new SamlService();
+        samlSvc.setId("http://mmoayyed.unicon.net:8081/sp/saml/SSO");
+        val s = chainingSvcMgr.findServiceBy(samlSvc);
         assertNotNull(s);
     }
 

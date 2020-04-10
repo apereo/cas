@@ -173,9 +173,10 @@ public abstract class AbstractServicesManager implements ServicesManager {
      */
     @Override
     public Collection<RegisteredService> load() {
-        LOGGER.trace("Loading services from [{}]", serviceRegistry.getName());
+        LOGGER.trace("[{}] is loading services from [{}]", getName(), serviceRegistry.getName());
         this.services = this.serviceRegistry.load()
             .stream()
+            .filter(this::filterInternal)
             .collect(Collectors.toConcurrentMap(r -> {
                 LOGGER.debug("Adding registered service [{}] with name [{}] and internal identifier [{}]", r.getServiceId(), r.getName(), r.getId());
                 return r.getId();
@@ -183,7 +184,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         loadInternal();
         publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices()));
         evaluateExpiredServiceDefinitions();
-        LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistry.getName());
+        LOGGER.info("[{}] loaded [{}] service(s) from [{}].", getName(), this.services.size(), this.serviceRegistry.getName());
         return services.values();
     }
 
@@ -263,6 +264,16 @@ public abstract class AbstractServicesManager implements ServicesManager {
      * Load internal.
      */
     protected void loadInternal() {
+    }
+
+    /**
+     * Method filters which services will be loaded into the ServicesManager.
+     *
+     * @param service - the service
+     * @return - true if included in this manager.
+     */
+    protected boolean filterInternal(final RegisteredService service) {
+        return supports(service);
     }
 
     private void publishEvent(final ApplicationEvent event) {

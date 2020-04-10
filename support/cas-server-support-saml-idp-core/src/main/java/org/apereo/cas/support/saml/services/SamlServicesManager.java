@@ -1,26 +1,31 @@
-package org.apereo.cas.services;
+package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.AbstractServicesManager;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
+
 import static java.util.stream.Collectors.toSet;
 
 /**
- * Default implementation of the {@link ServicesManager} interface.
+ * Implementation of the {@link ServicesManager} interface that supports SAML registered services.
  *
- * @author Scott Battaglia
- * @since 3.1
+ * @author Travis Schmidt
+ * @author Dmitriy Kopylenko
+ * @since 6.2.0
  */
-public class DefaultServicesManager extends AbstractServicesManager {
+public class SamlServicesManager extends AbstractServicesManager {
 
-    private final Set<RegisteredService> orderedServices = new ConcurrentSkipListSet<>();
+    private Set<RegisteredService> orderedServices = new ConcurrentSkipListSet<>();
 
-    public DefaultServicesManager(final ServiceRegistry serviceRegistry,
-                                  final ApplicationEventPublisher eventPublisher,
-                                  final Set<String> environments) {
+    public SamlServicesManager(final ServiceRegistry serviceRegistry, final ApplicationEventPublisher eventPublisher, final Set<String> environments) {
         super(serviceRegistry, eventPublisher, environments);
     }
 
@@ -51,19 +56,16 @@ public class DefaultServicesManager extends AbstractServicesManager {
 
     @Override
     public boolean supports(final Service service) {
-        return service != null
-                && !service.getClass().getCanonicalName().equals("org.apereo.cas.support.saml.authentication.principal.SamlService");
-
+        return service instanceof SamlService;
     }
 
     @Override
     public boolean supports(final RegisteredService service) {
-        return service != null
-                && service.getClass().getCanonicalName().equals(RegexRegisteredService.class.getCanonicalName());
+        return service instanceof SamlRegisteredService;
     }
 
     @Override
     public boolean supports(final Class clazz) {
-        return clazz != null && clazz.getCanonicalName().equals(RegexRegisteredService.class.getCanonicalName());
+        return clazz.isAssignableFrom(SamlRegisteredService.class);
     }
 }

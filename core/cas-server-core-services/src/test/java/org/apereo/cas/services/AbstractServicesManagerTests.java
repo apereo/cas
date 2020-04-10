@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -45,7 +46,11 @@ public abstract class AbstractServicesManagerTests {
     }
 
     protected ServiceRegistry getServiceRegistryInstance() {
-        return new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), listOfDefaultServices, new ArrayList<>());
+        return new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), registeredServicesFixture().get(), new ArrayList<>());
+    }
+
+    protected Supplier<List<RegisteredService>> registeredServicesFixture() {
+        return () -> listOfDefaultServices;
     }
 
     @Test

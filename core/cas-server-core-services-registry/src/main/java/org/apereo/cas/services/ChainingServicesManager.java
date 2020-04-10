@@ -165,6 +165,8 @@ public class ChainingServicesManager implements ServicesManager {
             .collect(Collectors.toList());
     }
 
+
+
     @Override
     public boolean supports(final Service service) {
         return findServicesManager(service).isPresent();
