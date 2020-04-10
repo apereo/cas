@@ -1,6 +1,7 @@
 package org.apereo.cas.services.domain;
 
 import org.apereo.cas.services.AbstractServicesManager;
+import org.apereo.cas.services.DomainAwareServicesManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServicesManager;
@@ -12,12 +13,11 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Implementation of the {@link ServicesManager} interface that organizes services by domain into
@@ -27,15 +27,15 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @Slf4j
-public class DomainServicesManager extends AbstractServicesManager {
+public class DefaultDomainAwareServicesManager extends AbstractServicesManager implements DomainAwareServicesManager {
     private final Map<String, TreeSet<RegisteredService>> domains = new ConcurrentHashMap<>();
 
     private final RegisteredServiceDomainExtractor registeredServiceDomainExtractor;
 
-    public DomainServicesManager(final ServiceRegistry serviceRegistry,
-                                 final ApplicationEventPublisher eventPublisher,
-                                 final RegisteredServiceDomainExtractor registeredServiceDomainExtractor,
-                                 final Set<String> environments) {
+    public DefaultDomainAwareServicesManager(final ServiceRegistry serviceRegistry,
+                                             final ApplicationEventPublisher eventPublisher,
+                                             final RegisteredServiceDomainExtractor registeredServiceDomainExtractor,
+                                             final Set<String> environments) {
         super(serviceRegistry, eventPublisher, environments);
         this.registeredServiceDomainExtractor = registeredServiceDomainExtractor;
     }
@@ -51,7 +51,7 @@ public class DomainServicesManager extends AbstractServicesManager {
     }
 
     @Override
-    protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
+    protected Stream<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
         val mappedDomain = StringUtils.isNotBlank(serviceId) ? registeredServiceDomainExtractor.extract(serviceId) : StringUtils.EMPTY;
         LOGGER.trace("Domain mapped to the service identifier is [{}]", mappedDomain);
 
@@ -61,9 +61,9 @@ public class DomainServicesManager extends AbstractServicesManager {
         val registeredServices = getServicesForDomain(domain);
         if (registeredServices == null || registeredServices.isEmpty()) {
             LOGGER.debug("No services could be located for domain [{}]", domain);
-            return new ArrayList<>(0);
+            return Stream.empty();
         }
-        return registeredServices;
+        return registeredServices.stream();
     }
 
     @Override
@@ -80,8 +80,8 @@ public class DomainServicesManager extends AbstractServicesManager {
     }
 
     @Override
-    public List<String> getDomains() {
-        return this.domains.keySet().stream().sorted().collect(Collectors.toList());
+    public Stream<String> getDomains() {
+        return this.domains.keySet().stream().sorted();
     }
 
     @Override

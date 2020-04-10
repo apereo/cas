@@ -1,13 +1,14 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.services.domain.DefaultDomainAwareServicesManager;
 import org.apereo.cas.services.domain.DefaultRegisteredServiceDomainExtractor;
-import org.apereo.cas.services.domain.DomainServicesManager;
 
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -17,13 +18,15 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @NoArgsConstructor
-public class DomainServicesManagerTests extends AbstractServicesManagerTests {
+public class DefaultDomainAwareServicesManagerTests extends AbstractServicesManagerTests {
+    private final DefaultDomainAwareServicesManager defaultDomainAwareServicesManager =
+        new DefaultDomainAwareServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class),
+            new DefaultRegisteredServiceDomainExtractor(),
+            new HashSet<>());
 
     @Override
     protected ServicesManager getServicesManagerInstance() {
-        return new DomainServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class),
-            new DefaultRegisteredServiceDomainExtractor(),
-            new HashSet<>());
+        return this.defaultDomainAwareServicesManager;
     }
 
     @Test
@@ -38,9 +41,10 @@ public class DomainServicesManagerTests extends AbstractServicesManagerTests {
         r.setId(20);
         r.setName("domainService2");
         r.setServiceId("https://www.example.com/two");
-        this.servicesManager.save(r);
+        servicesManager.save(r);
 
-        this.servicesManager.deleteAll();
-        assertTrue(this.servicesManager.getDomains().isEmpty());
+        servicesManager.deleteAll();
+
+        assertTrue(this.defaultDomainAwareServicesManager.getDomains().collect(Collectors.toList()).isEmpty());
     }
 }

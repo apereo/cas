@@ -28,8 +28,8 @@ import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManagerScheduledLoader;
+import org.apereo.cas.services.domain.DefaultDomainAwareServicesManager;
 import org.apereo.cas.services.domain.DefaultRegisteredServiceDomainExtractor;
-import org.apereo.cas.services.domain.DomainServicesManager;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
@@ -247,7 +247,7 @@ public class CasCoreServicesConfiguration {
     public ServicesManagerExecutionPlanConfigurer domainServicesManagerExecutionPlanConfigurer() {
         return () -> {
             val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
-            return new DomainServicesManager(serviceRegistry(), applicationContext,
+            return new DefaultDomainAwareServicesManager(serviceRegistry(), applicationContext,
                 new DefaultRegisteredServiceDomainExtractor(),
                 activeProfiles);
         };
