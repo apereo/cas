@@ -3,7 +3,6 @@ package org.apereo.cas.web.report;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +21,7 @@ public class CasApplicationContextReloadEndpointTests extends AbstractCasEndpoin
 
     @Test
     public void verifyOperation() {
-         assertNotNull(endpoint);
-         assertDoesNotThrow(() -> endpoint.reload());
+        assertNotNull(endpoint);
+        assertDoesNotThrow(() -> endpoint.reload());
     }
 }
