@@ -92,7 +92,8 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
 
     protected OAuth20AccessToken newAccessToken(final TicketGrantingTicket tgt) {
         val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
-        return defaultAccessTokenFactory.create(testService, tgt.getAuthentication(), tgt, new ArrayList<>(), null, new HashMap<>());
+        return defaultAccessTokenFactory.create(testService, tgt.getAuthentication(),
+            tgt, new ArrayList<>(), null, new HashMap<>());
     }
 
     protected OAuth20RefreshToken newRefreshToken(final OAuth20AccessToken at) {

@@ -69,10 +69,10 @@ public class OAuth20AccessTokenExpirationPolicy extends AbstractCasExpirationPol
     }
 
     /**
-     * Is access token expired ?.
+     * Is access token expired ?
      *
      * @param ticketState the ticket state
-     * @return the boolean
+     * @return true/false
      */
     @JsonIgnore
     protected boolean isAccessTokenExpired(final TicketState ticketState) {
