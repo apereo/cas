@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.accepto;
 
+import org.apereo.cas.config.AccepttoMultifactorAuthenticationComponentSerializationConfiguration;
 import org.apereo.cas.config.AccepttoMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.AccepttoMultifactorAuthenticationMultifactorProviderBypassConfiguration;
@@ -47,6 +48,7 @@ public class BaseAcceptoMultifactorAuthenticationTests {
     @Import({
         CasCoreUtilConfiguration.class,
         AccepttoMultifactorAuthenticationConfiguration.class,
+        AccepttoMultifactorAuthenticationComponentSerializationConfiguration.class,
         AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration.class,
         AccepttoMultifactorAuthenticationMultifactorProviderBypassConfiguration.class,
         CasWebflowContextConfiguration.class,
