@@ -42,7 +42,14 @@ import static org.mockito.Mockito.*;
         "cas.authn.mfa.acceptto.secret=thisisasecret",
         "cas.authn.mfa.acceptto.organization-id=thisisatestid",
         "cas.authn.mfa.acceptto.organization-secret=thisisasecret",
-        "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
+        "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem",
+
+        "cas.authn.mfa.acceptto.bypass.principal-attribute-name=nothing",
+        "cas.authn.mfa.acceptto.bypass.authentication-attribute-name=nothing",
+        "cas.authn.mfa.acceptto.bypass.credential-class-type=UsernamePasswordCredential",
+        "cas.authn.mfa.acceptto.bypass.http-request-remote-address=1.2.3.4",
+        "cas.authn.mfa.acceptto.bypass.groovy.location=classpath:GroovyBypass.groovy",
+        "cas.authn.mfa.acceptto.bypass.rest.url=http://localhost:8080/bypass"
     })
 public class AccepttoMultifactorAuthenticationHandlerTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
@@ -52,7 +59,7 @@ public class AccepttoMultifactorAuthenticationHandlerTests {
 
     @Test
     public void verifyOperationApproved() throws Exception {
-        val data = MAPPER.writeValueAsString(CollectionUtils.wrap("device_id", "devicid-test", "status", "approved"));
+        val data = MAPPER.writeValueAsString(CollectionUtils.wrap("device_id", "deviceid-test", "status", "approved"));
         try (val webServer = new MockWebServer(5002,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
