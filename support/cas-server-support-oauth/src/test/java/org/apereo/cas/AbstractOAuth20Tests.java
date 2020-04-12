@@ -62,6 +62,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
+import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
@@ -254,6 +255,10 @@ public abstract class AbstractOAuth20Tests {
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
     protected OAuth20CodeFactory oAuthCodeFactory;
+
+    @Autowired
+    @Qualifier("defaultDeviceTokenFactory")
+    protected OAuth20DeviceTokenFactory defaultDeviceTokenFactory;
 
     @Autowired
     @Qualifier("defaultRefreshTokenFactory")

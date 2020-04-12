@@ -44,7 +44,8 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
      */
     protected final ServicesManager servicesManager;
 
-    public OAuth20DefaultRefreshTokenFactory(final ExpirationPolicyBuilder<OAuth20RefreshToken> expirationPolicy, final ServicesManager servicesManager) {
+    public OAuth20DefaultRefreshTokenFactory(final ExpirationPolicyBuilder<OAuth20RefreshToken> expirationPolicy,
+                                             final ServicesManager servicesManager) {
         this(new DefaultUniqueTicketIdGenerator(), expirationPolicy, servicesManager);
     }
 
