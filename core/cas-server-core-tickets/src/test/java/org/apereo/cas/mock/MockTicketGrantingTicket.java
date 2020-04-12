@@ -62,15 +62,28 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     @Setter
     private ExpirationPolicy expirationPolicy = new TicketGrantingTicketExpirationPolicy(100, 100);
 
-    public MockTicketGrantingTicket(final String principal, final Credential c, final Map<String, List<Object>> attributes) {
+    public MockTicketGrantingTicket(final String principalId, final Credential c, final Map<String, List<Object>> attributes) {
+        this(principalId, c, attributes, Map.of());
+    }
+
+    public MockTicketGrantingTicket(final String principalId, final Map<String, List<Object>> attributes,
+                                    final Map<String, List<Object>> authnAttributes) {
+        this(principalId, CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"),
+            attributes, authnAttributes);
+    }
+    public MockTicketGrantingTicket(final String principalId, final Credential c, final Map<String, List<Object>> attributes,
+                                    final Map<String, List<Object>> authnAttributes) {
         id = ID_GENERATOR.getNewTicketId("TGT");
         val metaData = new BasicCredentialMetaData(c);
-        authentication = new DefaultAuthenticationBuilder(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(principal, attributes))
+        val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(principalId, attributes);
+        authentication = new DefaultAuthenticationBuilder(principal)
             .addCredential(metaData)
+            .setAttributes(authnAttributes)
             .addAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS,
                 List.of(SimpleTestUsernamePasswordAuthenticationHandler.class.getSimpleName()))
             .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
-                new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData)).build();
+                new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData))
+            .build();
         created = ZonedDateTime.now(ZoneOffset.UTC);
     }
 

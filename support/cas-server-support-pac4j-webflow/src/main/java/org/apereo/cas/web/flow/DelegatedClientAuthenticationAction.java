@@ -184,9 +184,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         val clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
         LOGGER.trace("Delegated authentication is handled by client name [{}]", clientName);
 
+        var service = (Service) null;
         if (!isLogoutRequest(request) && singleSignOnSessionExists(context) && StringUtils.isNotBlank(clientName)) {
             LOGGER.trace("Found existing single sign-on session");
-            populateContextWithService(context, webContext, clientName);
+            service = populateContextWithService(context, webContext, clientName);
             if (singleSignOnSessionAuthorizedForService(context)) {
                 val providers = delegatedClientIdentityProvidersFunction.apply(context);
                 LOGGER.trace("Skipping delegation and routing back to CAS authentication flow with providers [{}]", providers);
@@ -203,7 +204,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         }
 
         if (StringUtils.isNotBlank(clientName)) {
-            val service = populateContextWithService(context, webContext, clientName);
+            if (service == null) {
+                service = populateContextWithService(context, webContext, clientName);
+            }
             val client = findDelegatedClientByName(request, clientName, service);
             populateContextWithClientCredential(client, webContext, context);
             return super.doExecute(context);
@@ -305,18 +308,17 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         val logoutEndpoint = isLogoutRequest(webContext.getNativeRequest());
         if (logoutEndpoint) {
             return null;
-        } else {
-            try {
-                val clientResult = this.clients.findClient(clientName);
-                if (clientResult.isPresent()) {
-                    return delegatedClientWebflowManager.retrieve(requestContext, webContext, BaseClient.class.cast(clientResult.get()));
-                }
-                LOGGER.warn("Unable to locate client [{}] in the collection of registered clients", clientName);
-            } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service Unauthorized");
         }
+        try {
+            val clientResult = this.clients.findClient(clientName);
+            if (clientResult.isPresent()) {
+                return delegatedClientWebflowManager.retrieve(requestContext, webContext, BaseClient.class.cast(clientResult.get()));
+            }
+            LOGGER.warn("Unable to locate client [{}] in registered clients", clientName);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
     }
 
     protected boolean singleSignOnSessionAuthorizedForService(final RequestContext context) {
@@ -340,7 +342,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         }
         val ticket = this.centralAuthenticationService.getTicket(tgtId, TicketGrantingTicket.class);
         if (ticket != null && !ticket.isExpired()) {
-            LOGGER.trace("Located a valid ticket-granting ticket. Examining existing single sign-on session strategies...");
+            LOGGER.trace("Located a valid ticket-granting ticket");
             return Optional.of(ticket.getAuthentication());
         }
         return Optional.empty();
