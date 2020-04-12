@@ -21,6 +21,7 @@ import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
@@ -66,7 +67,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowVariable;
@@ -79,6 +79,7 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -295,7 +296,7 @@ public class DelegatedClientAuthenticationActionTests {
                 CollectionUtils.wrapList(facebookClient.getName()), true, false));
 
         val event = getDelegatedClientAction(facebookClient, service, clients, mockRequest, strategy).execute(mockRequestContext);
-        assertEquals("success", event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         assertEquals(MY_THEME, mockRequest.getAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(Locale.getDefault().getCountry(), mockRequest.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(HttpMethod.POST.name(), mockRequest.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
@@ -307,11 +308,100 @@ public class DelegatedClientAuthenticationActionTests {
         assertTrue(credential.getId().startsWith(ClientCredential.NOT_YET_AUTHENTICATED));
     }
 
-    private AbstractAction getDelegatedClientAction(final BaseClient client,
-                                                    final Service service,
-                                                    final Clients clients,
-                                                    final MockHttpServletRequest mockRequest,
-                                                    final RegisteredServiceAccessStrategy accessStrategy) {
+
+    @Test
+    @SneakyThrows
+    public void verifyFailedAuthentication() {
+        val mockRequest = new MockHttpServletRequest();
+        mockRequest.setParameter("error_message", "bad authn");
+        mockRequest.setParameter("error_code", "403");
+        mockRequest.setParameter("error_description", "authentication failed");
+        val service = CoreAuthenticationTestUtils.getService(MY_SERVICE);
+        mockRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+
+        val servletExternalContext = mock(ServletExternalContext.class);
+        when(servletExternalContext.getNativeRequest()).thenReturn(mockRequest);
+        when(servletExternalContext.getNativeResponse()).thenReturn(new MockHttpServletResponse());
+
+        val mockRequestContext = new MockRequestContext();
+        mockRequestContext.setExternalContext(servletExternalContext);
+
+        val facebookClient = new FacebookClient() {
+            @Override
+            protected Optional<OAuth20Credentials> retrieveCredentials(final WebContext context) {
+                return Optional.of(new OAuth20Credentials("fakeVerifier"));
+            }
+        };
+        facebookClient.setName(FacebookClient.class.getSimpleName());
+        val clients = new Clients(MY_LOGIN_URL, facebookClient);
+
+        val strategy = new DefaultRegisteredServiceAccessStrategy();
+        strategy.setDelegatedAuthenticationPolicy(
+            new DefaultRegisteredServiceDelegatedAuthenticationPolicy(
+                CollectionUtils.wrapList(facebookClient.getName()), true, false));
+
+        val action = getDelegatedClientAction(facebookClient, service, clients, mockRequest, strategy);
+        assertThrows(IllegalArgumentException.class, () -> action.execute(mockRequestContext));
+    }
+
+    @Test
+    @SneakyThrows
+    public void verifySsoAuthentication() {
+        val mockRequest = new MockHttpServletRequest();
+        mockRequest.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
+        val service = CoreAuthenticationTestUtils.getService("https://delegated2.example.org");
+        mockRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+
+        val servletExternalContext = mock(ServletExternalContext.class);
+        when(servletExternalContext.getNativeRequest()).thenReturn(mockRequest);
+        when(servletExternalContext.getNativeResponse()).thenReturn(new MockHttpServletResponse());
+
+        val mockRequestContext = new MockRequestContext();
+        mockRequestContext.setExternalContext(servletExternalContext);
+
+        val facebookClient = new FacebookClient() {
+            @Override
+            protected Optional<OAuth20Credentials> retrieveCredentials(final WebContext context) {
+                return Optional.of(new OAuth20Credentials("fakeVerifier"));
+            }
+        };
+        facebookClient.setName(FacebookClient.class.getSimpleName());
+        val clients = new Clients(MY_LOGIN_URL, facebookClient);
+
+        val strategy = new DefaultRegisteredServiceAccessStrategy();
+        strategy.setDelegatedAuthenticationPolicy(
+            new DefaultRegisteredServiceDelegatedAuthenticationPolicy(
+                CollectionUtils.wrapList(facebookClient.getName()), false, false));
+        WebUtils.putTicketGrantingTicketInScopes(mockRequestContext, TGT_ID);
+
+        val action = getDelegatedClientAction(facebookClient, service, clients, mockRequest, strategy);
+        when(action.getCentralAuthenticationService().getTicket(anyString(), any()))
+            .thenReturn(new MockTicketGrantingTicket("casuser"));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(mockRequestContext).getId());
+        
+        val action2 = getDelegatedClientAction(facebookClient, service, clients, mockRequest, strategy);
+        val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
+        accessStrategy.setDelegatedAuthenticationPolicy(
+            new DefaultRegisteredServiceDelegatedAuthenticationPolicy(List.of("UnauthorizedClient"), false, false));
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://delegated2.example.org");
+        action2.getServicesManager().save(registeredService);
+
+        val value = new AuditableExecutionResult();
+        value.setException(new IllegalArgumentException());
+        when(action2.getDelegatedAuthenticationPolicyEnforcer().execute(any())).thenReturn(value);
+        when(action2.getCentralAuthenticationService().getTicket(anyString(), any()))
+            .thenReturn(new MockTicketGrantingTicket("casuser",
+                Map.of(),
+                Map.of(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, List.of("UnauthorizedClient"))));
+        assertThrows(UnauthorizedServiceException.class, () -> action2.execute(mockRequestContext).getId());
+        assertNull(action2.getCentralAuthenticationService().getTicket(TGT_ID));
+    }
+
+    private DelegatedClientAuthenticationAction getDelegatedClientAction(final BaseClient client,
+                                                                         final Service service,
+                                                                         final Clients clients,
+                                                                         final MockHttpServletRequest mockRequest,
+                                                                         final RegisteredServiceAccessStrategy accessStrategy) {
         val tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class), mock(ExpirationPolicy.class));
         val casImpl = mock(CentralAuthenticationService.class);
         when(casImpl.createTicketGrantingTicket(any())).thenReturn(tgt);
