@@ -11,6 +11,7 @@ import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicyTest
 import org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.RefedsRSAttributeReleasePolicyTests;
+import org.apereo.cas.support.saml.services.SamlRegisteredServiceAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaMicrosoftSqlServerTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaPostgresTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaTests;
@@ -52,6 +53,7 @@ import org.junit.runner.RunWith;
     GroovySamlRegisteredServiceAttributeReleasePolicyTests.class,
     SamlRegisteredServiceJpaPostgresTests.class,
     SamlIdPUtilsTests.class,
+    SamlRegisteredServiceAttributeReleasePolicyTests.class,
     SamlIdPConsentableAttributeBuilderTests.class,
     SamlIdPServiceFactoryTests.class,
     SamlIdPMetadataUIWebflowConfigurerTests.class,
