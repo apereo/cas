@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
 public class SamlRegisteredServiceServiceProviderMetadataFacade {
 
     private final SPSSODescriptor ssoDescriptor;
+
     private final EntityDescriptor entityDescriptor;
 
     @Getter
@@ -116,9 +117,10 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
 
     }
 
-    private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getServiceProviderSsoDescriptor(final String entityID,
-                                                                                                                final MetadataResolver chainingMetadataResolver,
-                                                                                                                final EntityDescriptor entityDescriptor) {
+    private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade>
+        getServiceProviderSsoDescriptor(final String entityID,
+                                    final MetadataResolver chainingMetadataResolver,
+                                    final EntityDescriptor entityDescriptor) {
         val ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
         if (ssoDescriptor != null) {
             LOGGER.debug("Located SP SSODescriptor in metadata for [{}]. Metadata is valid until [{}]", entityID,
