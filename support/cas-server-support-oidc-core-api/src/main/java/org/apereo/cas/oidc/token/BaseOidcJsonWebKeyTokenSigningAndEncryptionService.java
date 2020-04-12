@@ -29,6 +29,7 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
      * The default keystore for OIDC tokens.
      */
     protected final LoadingCache<String, Optional<PublicJsonWebKey>> defaultJsonWebKeystoreCache;
+
     /**
      * The service keystore for OIDC tokens.
      */
@@ -73,7 +74,7 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     /**
      * Encrypt token.
      *
-     * @param svc      the svc
+     * @param svc   the svc
      * @param token the inner jwt
      * @return the string
      */
@@ -88,18 +89,21 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
         return jwks.get();
     }
 
-    @SneakyThrows
     @Override
     public JwtClaims decode(final String token, final Optional<OAuthRegisteredService> service) {
-        if (service.isPresent()) {
-            var jwt = JWTParser.parse(token);
-            if (jwt instanceof EncryptedJWT) {
-                val encryptionKey = getJsonWebKeyForEncryption(service.get());
-                val decoded = EncodingUtils.decryptJwtValue(encryptionKey.getPrivateKey(), token);
-                return super.decode(decoded, service);
+        try {
+            if (service.isPresent()) {
+                val jwt = JWTParser.parse(token);
+                if (jwt instanceof EncryptedJWT) {
+                    val encryptionKey = getJsonWebKeyForEncryption(service.get());
+                    val decoded = EncodingUtils.decryptJwtValue(encryptionKey.getPrivateKey(), token);
+                    return super.decode(decoded, service);
+                }
             }
+            return super.decode(token, service);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
         }
-        return super.decode(token, service);
     }
 
     /**
