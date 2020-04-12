@@ -20,6 +20,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.services.logout.SamlIdPSingleLogoutServiceLogoutUrlBuilderTests;
 import org.apereo.cas.support.saml.services.logout.SamlProfileSingleLogoutMessageCreatorTests;
 import org.apereo.cas.support.saml.util.SamlIdPUtilsTests;
+import org.apereo.cas.support.saml.web.idp.metadata.SamlIdPMetadataControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSamlRegisteredServiceAttributeBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidatorTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilderTests;
@@ -54,6 +55,7 @@ import org.junit.runner.RunWith;
     GroovySamlRegisteredServiceAttributeReleasePolicyTests.class,
     SamlRegisteredServiceJpaPostgresTests.class,
     SamlIdPUtilsTests.class,
+    SamlIdPMetadataControllerTests.class,
     SamlRegisteredServiceServiceProviderMetadataFacadeTests.class,
     SamlRegisteredServiceAttributeReleasePolicyTests.class,
     SamlIdPConsentableAttributeBuilderTests.class,
