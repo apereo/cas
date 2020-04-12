@@ -11,6 +11,7 @@ import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("SAML")
 public class SamlRegisteredServiceAttributeReleasePolicyTests {
     @Test
     public void verifyNoSamlService() {

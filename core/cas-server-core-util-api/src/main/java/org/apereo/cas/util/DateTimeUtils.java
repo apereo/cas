@@ -155,7 +155,7 @@ public class DateTimeUtils {
      * @return the zoned date time
      */
     public static ZonedDateTime zonedDateTimeOf(final Instant time) {
-        return ZonedDateTime.from(time.atZone(ZoneOffset.UTC));
+        return time != null ? ZonedDateTime.from(time.atZone(ZoneOffset.UTC)) : null;
     }
 
     /**
