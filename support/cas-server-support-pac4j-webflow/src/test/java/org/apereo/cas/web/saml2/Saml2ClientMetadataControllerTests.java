@@ -1,11 +1,13 @@
 package org.apereo.cas.web.saml2;
 
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.webflow.execution.Action;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,8 +25,13 @@ public class Saml2ClientMetadataControllerTests {
     @Qualifier("saml2ClientMetadataController")
     private Saml2ClientMetadataController saml2ClientMetadataController;
 
+    @Autowired
+    @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION)
+    private Action delegatedAuthenticationAction;
+
     @Test
     public void verifyOperation() {
+        assertNotNull(delegatedAuthenticationAction);
         assertNotNull(saml2ClientMetadataController.getFirstIdentityProviderMetadata());
         assertNotNull(saml2ClientMetadataController.getFirstServiceProviderMetadata());
         assertNotNull(saml2ClientMetadataController.getIdentityProviderMetadataByName("SAML2Client"));
