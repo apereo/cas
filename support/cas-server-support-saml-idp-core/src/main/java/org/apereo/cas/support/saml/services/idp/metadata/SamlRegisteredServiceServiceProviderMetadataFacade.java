@@ -112,9 +112,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
                 return Optional.empty();
             }
         }
-
         return getServiceProviderSsoDescriptor(entityID, chainingMetadataResolver, entityDescriptor);
-
     }
 
     private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade>
