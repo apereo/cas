@@ -260,6 +260,10 @@ public abstract class AbstractOAuth20Tests {
     protected OAuth20RefreshTokenFactory oAuthRefreshTokenFactory;
 
     @Autowired
+    @Qualifier("defaultOAuthCodeFactory")
+    protected OAuth20CodeFactory defaultOAuthCodeFactory;
+
+    @Autowired
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
@@ -311,6 +315,12 @@ public abstract class AbstractOAuth20Tests {
     protected static OAuthRegisteredService getRegisteredService(final String clientId,
                                                                  final String secret) {
         return getRegisteredService("https://oauth.example.org", clientId, secret, Set.of());
+    }
+
+    protected static OAuthRegisteredService getRegisteredService(final String serviceId,
+                                                                 final String clientId,
+                                                                 final String secret) {
+        return getRegisteredService(serviceId, clientId, secret, Set.of());
     }
 
     protected static OAuthRegisteredService getRegisteredService(final String serviceId,
