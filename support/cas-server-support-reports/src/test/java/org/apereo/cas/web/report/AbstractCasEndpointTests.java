@@ -42,7 +42,6 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.health.HealthEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -59,11 +58,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * @since 6.1.0
  */
 @SpringBootTest(classes = AbstractCasEndpointTests.SharedTestConfiguration.class,
-    properties = {
-        "management.endpoints.web.exposure.include=*",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+    properties = "management.endpoints.web.exposure.include=*")
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @DirtiesContext
 @EnableScheduling
@@ -84,7 +79,6 @@ public abstract class AbstractCasEndpointTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         HealthEndpointAutoConfiguration.class,
-        MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration
