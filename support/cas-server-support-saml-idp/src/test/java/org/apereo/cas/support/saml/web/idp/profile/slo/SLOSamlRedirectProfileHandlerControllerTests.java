@@ -7,8 +7,11 @@ import lombok.val;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Issuer;
@@ -27,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SLOSamlRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
 
     @Autowired
@@ -34,6 +38,7 @@ public class SLOSamlRedirectProfileHandlerControllerTests extends BaseSamlIdPCon
     private SLOSamlIdPRedirectProfileHandlerController controller;
 
     @Test
+    @Order(1)
     public void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         request.setMethod("GET");

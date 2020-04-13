@@ -98,6 +98,6 @@ import org.junit.runner.RunWith;
     SamlProfileSaml2ResponseBuilderTests.class
 })
 @RunWith(JUnitPlatform.class)
-public class AllTestsSuite {
+public class AllSamlIdPTestsSuite {
 }
 
