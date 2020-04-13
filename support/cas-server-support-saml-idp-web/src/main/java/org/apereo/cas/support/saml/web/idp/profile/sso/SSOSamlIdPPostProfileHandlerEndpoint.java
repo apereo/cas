@@ -44,31 +44,37 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * This is {@link SSOSamlPostProfileHandlerEndpoint}.
+ * This is {@link SSOSamlIdPPostProfileHandlerEndpoint}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
 @Slf4j
 @RestControllerEndpoint(id = "samlPostProfileResponse", enableByDefault = false)
-public class SSOSamlPostProfileHandlerEndpoint extends BaseCasActuatorEndpoint {
+public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoint {
     private final ServicesManager servicesManager;
+
     private final AuthenticationSystemSupport authenticationSystemSupport;
+
     private final ServiceFactory<WebApplicationService> serviceFactory;
+
     private final PrincipalFactory principalFactory;
+
     private final SamlProfileObjectBuilder<? extends SAMLObject> responseBuilder;
+
     private final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
+
     private final AbstractSaml20ObjectBuilder saml20ObjectBuilder;
 
 
-    public SSOSamlPostProfileHandlerEndpoint(final CasConfigurationProperties casProperties,
-                                             final ServicesManager servicesManager,
-                                             final AuthenticationSystemSupport authenticationSystemSupport,
-                                             final ServiceFactory<WebApplicationService> serviceFactory,
-                                             final PrincipalFactory principalFactory,
-                                             final SamlProfileObjectBuilder<? extends SAMLObject> responseBuilder,
-                                             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-                                             final AbstractSaml20ObjectBuilder saml20ObjectBuilder) {
+    public SSOSamlIdPPostProfileHandlerEndpoint(final CasConfigurationProperties casProperties,
+                                                final ServicesManager servicesManager,
+                                                final AuthenticationSystemSupport authenticationSystemSupport,
+                                                final ServiceFactory<WebApplicationService> serviceFactory,
+                                                final PrincipalFactory principalFactory,
+                                                final SamlProfileObjectBuilder<? extends SAMLObject> responseBuilder,
+                                                final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
+                                                final AbstractSaml20ObjectBuilder saml20ObjectBuilder) {
         super(casProperties);
         this.servicesManager = servicesManager;
         this.authenticationSystemSupport = authenticationSystemSupport;
@@ -101,8 +107,8 @@ public class SSOSamlPostProfileHandlerEndpoint extends BaseCasActuatorEndpoint {
             val authnRequest = new AuthnRequestBuilder().buildObject();
             authnRequest.setIssuer(saml20ObjectBuilder.newIssuer(entityId));
 
-            val adaptorResult = SamlRegisteredServiceServiceProviderMetadataFacade.get(defaultSamlRegisteredServiceCachingMetadataResolver,
-                registeredService, entityId);
+            val adaptorResult = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+                defaultSamlRegisteredServiceCachingMetadataResolver, registeredService, entityId);
             if (adaptorResult.isPresent()) {
                 val adaptor = adaptorResult.get();
                 val messageContext = new MessageContext();

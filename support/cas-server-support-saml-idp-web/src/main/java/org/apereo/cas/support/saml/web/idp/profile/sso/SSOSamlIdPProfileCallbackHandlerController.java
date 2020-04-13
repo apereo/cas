@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
@@ -51,7 +50,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
     private static MessageContext bindRelayStateParameter(final HttpServletRequest request) {
         val messageContext = new MessageContext();
         val relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
-        LOGGER.debug("Relay state is [{}]", relayState);
+        LOGGER.trace("Relay state is [{}]", relayState);
         SAMLBindingSupport.setRelayState(messageContext, relayState);
         return messageContext;
     }
@@ -74,7 +73,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
             return;
         }
 
-        val ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
+        val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
         if (StringUtils.isBlank(ticket)) {
             LOGGER.error("Can not validate the request because no [{}] is provided via the request",
                 CasProtocolConstants.PARAMETER_TICKET);
@@ -92,7 +91,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
                                                           final HttpServletRequest request,
                                                           final Pair<AuthnRequest, MessageContext> pair) throws Exception {
         val authnRequest = pair.getKey();
-        val ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
+        val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
         getSamlProfileHandlerConfigurationContext().getTicketValidator().setRenew(authnRequest.isForceAuthn());
         val serviceUrl = constructServiceUrl(request, response, pair);
         LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
