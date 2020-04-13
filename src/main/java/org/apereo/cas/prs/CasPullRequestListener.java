@@ -34,7 +34,7 @@ public class CasPullRequestListener implements PullRequestListener {
         processMilestoneAssignment(pr);
         processLabelsByFeatures(pr);
         removeLabelWorkInProgress(pr);
-        //mergePullRequestIfPossible(pr);
+        mergePullRequestIfPossible(pr);
     }
 
     private void mergePullRequestIfPossible(final PullRequest pr) {
