@@ -91,6 +91,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column
     private boolean signAssertions;
 
+    @Column
+    private boolean signUnsolicitedAuthnRequest;
+
     @Column(name = "skipGenAssertionNameId")
     private boolean skipGeneratingAssertionNameId;
 

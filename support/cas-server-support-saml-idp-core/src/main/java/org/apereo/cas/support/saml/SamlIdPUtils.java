@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -115,11 +116,15 @@ public class SamlIdPUtils {
         }
 
         if (endpoint == null || StringUtils.isBlank(endpoint.getBinding())) {
-            throw new SamlException("Assertion consumer service is not available or does not define a binding");
+            throw new SamlException("Endpoint for "
+                + authnRequest.getSchemaType().toString()
+                + " is not available or does not define a binding for " + binding);
         }
         val location = StringUtils.isBlank(endpoint.getResponseLocation()) ? endpoint.getLocation() : endpoint.getResponseLocation();
         if (StringUtils.isBlank(location)) {
-            throw new SamlException("Assertion consumer service does not define a target location");
+            throw new SamlException("Endpoint for"
+                + authnRequest.getSchemaType().toString()
+                + " does not define a target location for " + binding);
         }
         return endpoint;
     }

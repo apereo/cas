@@ -26,8 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSamlProfileHandlerController {
 
-    public AbstractSamlSLOProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
-        super(samlProfileHandlerConfigurationContext);
+    public AbstractSamlSLOProfileHandlerController(final SamlProfileHandlerConfigurationContext context) {
+        super(context);
     }
 
     /**
@@ -47,14 +47,15 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
             return;
         }
 
-        val pair = getSamlProfileHandlerConfigurationContext().getSamlHttpRequestExtractor().extract(request, decoder, LogoutRequest.class);
+        val pair = getSamlProfileHandlerConfigurationContext().getSamlHttpRequestExtractor()
+            .extract(request, decoder, LogoutRequest.class);
         val logoutRequest = (LogoutRequest) pair.getKey();
         val ctx = pair.getValue();
 
         if (logout.isForceSignedLogoutRequests() && !SAMLBindingSupport.isMessageSigned(ctx)) {
             throw new SAMLException("Logout request is not signed but should be.");
         }
-
+        
         if (SAMLBindingSupport.isMessageSigned(ctx)) {
             val entityId = SamlIdPUtils.getIssuerFromSamlObject(logoutRequest);
             LOGGER.trace("SAML logout request from entity id [{}] is signed", entityId);
