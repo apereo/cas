@@ -30,7 +30,12 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSa
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLOSamlIdPPostProfileHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLOSamlRedirectProfileHandlerControllerTests;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPHttpRedirectDeflateEncoderTests;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceMessageHandlerTests;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHandlerControllerTests;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHandlerEndpointTests;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostSimpleSignProfileHandlerControllerTests;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPProfileCallbackHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.DefaultSSOSamlHttpRequestExtractorTests;
 import org.apereo.cas.support.saml.web.velocity.SamlTemplatesVelocityEngineTests;
 import org.apereo.cas.ticket.query.DefaultSamlAttributeQueryTicketFactoryTests;
@@ -63,12 +68,14 @@ import org.junit.runner.RunWith;
     SamlIdPUtilsTests.class,
     SamlIdPSingleLogoutServiceMessageHandlerTests.class,
     CasSamlArtifactMapTests.class,
+    SamlIdPHttpRedirectDeflateEncoderTests.class,
     SamlIdPInitiatedProfileHandlerControllerTests.class,
     SamlIdPMetadataControllerTests.class,
     SamlRegisteredServiceServiceProviderMetadataFacadeTests.class,
     SamlRegisteredServiceAttributeReleasePolicyTests.class,
     SamlIdPConsentableAttributeBuilderTests.class,
     SamlIdPServiceFactoryTests.class,
+    SSOSamlIdPProfileCallbackHandlerControllerTests.class,
     SLOSamlIdPPostProfileHandlerControllerTests.class,
     SamlRegisteredServiceCachedMetadataEndpointTests.class,
     SamlIdPMetadataUIWebflowConfigurerTests.class,
@@ -77,10 +84,13 @@ import org.junit.runner.RunWith;
     DefaultSamlAttributeQueryTicketFactoryTests.class,
     DefaultSSOSamlHttpRequestExtractorTests.class,
     InCommonRSAttributeReleasePolicyTests.class,
+    SSOSamlIdPPostSimpleSignProfileHandlerControllerTests.class,
     RefedsRSAttributeReleasePolicyTests.class,
+    SSOSamlIdPPostProfileHandlerEndpointTests.class,
     MetadataRequestedAttributesAttributeReleasePolicyTests.class,
     SamlObjectSignatureValidatorTests.class,
     SamlTemplatesVelocityEngineTests.class,
+    SSOSamlIdPPostProfileHandlerControllerTests.class,
     SLOSamlRedirectProfileHandlerControllerTests.class,
     EduPersonTargetedIdAttributeReleasePolicyTests.class,
     SamlProfileSaml2ResponseBuilderTests.class

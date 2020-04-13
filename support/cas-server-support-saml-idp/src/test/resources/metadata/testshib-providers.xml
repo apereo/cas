@@ -353,9 +353,13 @@
 
             <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
 
-            <AssertionConsumerService index="0" isDefault="true"
+
+            <AssertionConsumerService index="1"
                                       Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
-                                      Location="https://mocky.io/Shibboleth.sso/SAML2/POST"/>
+                                      Location="https://httpbin.org/post"/>
+            <AssertionConsumerService index="2"
+                                      Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
+                                      Location="https://httpbin.org/post"/>
         </SPSSODescriptor>
 
 

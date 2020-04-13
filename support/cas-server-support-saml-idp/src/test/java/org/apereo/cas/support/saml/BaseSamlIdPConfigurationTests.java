@@ -1,6 +1,10 @@
 package org.apereo.cas.support.saml;
 
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -233,11 +237,20 @@ public abstract class BaseSamlIdPConfigurationTests {
     }
 
     @TestConfiguration
-    public static class SamlIdPMetadataTestConfiguration {
+    public static class SamlIdPMetadataTestConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Autowired
+        @Qualifier("defaultPrincipalResolver")
+        private PrincipalResolver defaultPrincipalResolver;
+
         @SneakyThrows
         @Bean
         public SamlIdPMetadataLocator samlIdPMetadataLocator() {
             return new FileSystemSamlIdPMetadataLocator(METADATA_DIRECTORY);
+        }
+
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            plan.registerAuthenticationHandlerWithPrincipalResolver(new SimpleTestUsernamePasswordAuthenticationHandler(), defaultPrincipalResolver);
         }
     }
 

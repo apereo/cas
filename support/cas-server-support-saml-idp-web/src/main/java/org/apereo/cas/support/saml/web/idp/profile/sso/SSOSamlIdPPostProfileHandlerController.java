@@ -79,9 +79,9 @@ public class SSOSamlIdPPostProfileHandlerController extends AbstractSamlIdPProfi
      * @param decoder  the decoder
      * @throws Exception the exception
      */
-    public void handleSsoPostProfileRequest(final HttpServletResponse response,
-                                            final HttpServletRequest request,
-                                            final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
+    protected void handleSsoPostProfileRequest(final HttpServletResponse response,
+                                               final HttpServletRequest request,
+                                               final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
         val authnRequest = getSamlProfileHandlerConfigurationContext().getSamlHttpRequestExtractor()
             .extract(request, decoder, AuthnRequest.class);
         initiateAuthenticationRequest(authnRequest, response, request);
