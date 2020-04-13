@@ -16,17 +16,17 @@ import org.springframework.web.servlet.view.RedirectView;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link DelegatedClientNavigationControllerTests}.
+ * This is {@link DefaultDelegatedAuthenticationNavigationControllerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
-public class DelegatedClientNavigationControllerTests {
+public class DefaultDelegatedAuthenticationNavigationControllerTests {
 
     @Autowired
     @Qualifier("delegatedClientNavigationController")
-    private DelegatedClientNavigationController controller;
+    private DefaultDelegatedAuthenticationNavigationController controller;
 
     @Test
     public void verifyRedirectByParam() {

@@ -15,7 +15,6 @@ import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientU
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
-import org.apereo.cas.logout.LogoutPostProcessor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.DefaultDelegatedClientFactory;
@@ -24,6 +23,7 @@ import org.apereo.cas.support.pac4j.authentication.RestfulDelegatedClientFactory
 import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandler;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -92,8 +92,12 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionStore")
     @Bean
-    public SessionStore delegatedClientDistributedSessionStore() {
-        return getDistributedSessionStore();
+    public SessionStore<JEEContext> delegatedClientDistributedSessionStore() {
+        val replicate = casProperties.getAuthn().getPac4j().isReplicateSessions();
+        if (replicate) {
+            return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(), casProperties);
+        }
+        return new JEESessionStore();
     }
 
     @RefreshScope
@@ -195,18 +199,17 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "delegatedAuthenticationLogoutExecutionPlanConfigurer")
     public LogoutExecutionPlanConfigurer delegatedAuthenticationLogoutExecutionPlanConfigurer() {
         return plan -> {
-            val sessionStore = getDistributedSessionStore();
-            if (sessionStore instanceof LogoutPostProcessor) {
-                plan.registerLogoutPostProcessor(LogoutPostProcessor.class.cast(sessionStore));
+            val replicate = casProperties.getAuthn().getPac4j().isReplicateSessions();
+            if (replicate) {
+                plan.registerLogoutPostProcessor(ticketGrantingTicket -> {
+                    val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+                    val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
+                    if (request != null && response != null) {
+                        val store = delegatedClientDistributedSessionStore();
+                        store.destroySession(new JEEContext(request, response, store));
+                    }
+                });
             }
         };
-    }
-
-    private SessionStore<JEEContext> getDistributedSessionStore() {
-        val replicate = casProperties.getAuthn().getPac4j().isReplicateSessions();
-        if (replicate) {
-            return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(), casProperties);
-        }
-        return new JEESessionStore();
     }
 }
