@@ -6,9 +6,9 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off" additivity="false" />
-        <Logger name="org.opensaml" level="off" />
-        <Logger name="PROTOCOL_MESSAGE" level="off" />
+        <Logger name="org.apereo" level="error" additivity="false" />
+        <Logger name="org.opensaml" level="debug" />
+        <Logger name="PROTOCOL_MESSAGE" level="debug" />
         <Logger name="org.apache.xml.security" level="off" />
         <Root level="off">
             <AppenderRef ref="console"/>

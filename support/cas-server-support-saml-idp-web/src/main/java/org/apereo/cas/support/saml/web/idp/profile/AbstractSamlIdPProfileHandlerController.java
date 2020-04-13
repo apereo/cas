@@ -67,7 +67,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public abstract class AbstractSamlProfileHandlerController {
+public abstract class AbstractSamlIdPProfileHandlerController {
     /**
      * SAML profile configuration context.
      */

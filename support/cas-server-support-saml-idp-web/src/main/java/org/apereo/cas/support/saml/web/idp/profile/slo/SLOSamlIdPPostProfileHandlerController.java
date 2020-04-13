@@ -11,15 +11,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This is {@link SLOSamlPostProfileHandlerController}, responsible for
+ * This is {@link SLOSamlIdPPostProfileHandlerController}, responsible for
  * handling requests for SAML2 SLO.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SLOSamlPostProfileHandlerController extends AbstractSamlSLOProfileHandlerController {
+public class SLOSamlIdPPostProfileHandlerController extends AbstractSamlSLOProfileHandlerController {
 
-    public SLOSamlPostProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
+    public SLOSamlIdPPostProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
         super(samlProfileHandlerConfigurationContext);
     }
 

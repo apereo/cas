@@ -17,16 +17,17 @@ import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaPostgresTest
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacadeTests;
+import org.apereo.cas.support.saml.services.logout.SamlIdPProfileSingleLogoutMessageCreatorTests;
 import org.apereo.cas.support.saml.services.logout.SamlIdPSingleLogoutServiceLogoutUrlBuilderTests;
-import org.apereo.cas.support.saml.services.logout.SamlProfileSingleLogoutMessageCreatorTests;
 import org.apereo.cas.support.saml.util.SamlIdPUtilsTests;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlIdPMetadataControllerTests;
-import org.apereo.cas.support.saml.web.idp.profile.IdentityProviderInitiatedProfileHandlerControllerTests;
+import org.apereo.cas.support.saml.web.idp.profile.SamlIdPInitiatedProfileHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.artifact.CasSamlArtifactMapTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSamlRegisteredServiceAttributeBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidatorTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilderTests;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SLOSamlRedirectProfileHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceMessageHandlerTests;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.DefaultSSOSamlHttpRequestExtractorTests;
 import org.apereo.cas.support.saml.web.velocity.SamlTemplatesVelocityEngineTests;
@@ -50,7 +51,7 @@ import org.junit.runner.RunWith;
     SamlAttributeEncoderTests.class,
     SamlRegisteredServiceJpaTests.class,
     SamlProfileSamlNameIdBuilderTests.class,
-    SamlProfileSingleLogoutMessageCreatorTests.class,
+    SamlIdPProfileSingleLogoutMessageCreatorTests.class,
     SamlIdPSingleLogoutServiceLogoutUrlBuilderTests.class,
     SamlRegisteredServiceJpaMicrosoftSqlServerTests.class,
     PatternMatchingEntityIdAttributeReleasePolicyTests.class,
@@ -60,7 +61,7 @@ import org.junit.runner.RunWith;
     SamlIdPUtilsTests.class,
     SamlIdPSingleLogoutServiceMessageHandlerTests.class,
     CasSamlArtifactMapTests.class,
-    IdentityProviderInitiatedProfileHandlerControllerTests.class,
+    SamlIdPInitiatedProfileHandlerControllerTests.class,
     SamlIdPMetadataControllerTests.class,
     SamlRegisteredServiceServiceProviderMetadataFacadeTests.class,
     SamlRegisteredServiceAttributeReleasePolicyTests.class,
@@ -76,6 +77,7 @@ import org.junit.runner.RunWith;
     MetadataRequestedAttributesAttributeReleasePolicyTests.class,
     SamlObjectSignatureValidatorTests.class,
     SamlTemplatesVelocityEngineTests.class,
+    SLOSamlRedirectProfileHandlerControllerTests.class,
     EduPersonTargetedIdAttributeReleasePolicyTests.class,
     SamlProfileSaml2ResponseBuilderTests.class
 })

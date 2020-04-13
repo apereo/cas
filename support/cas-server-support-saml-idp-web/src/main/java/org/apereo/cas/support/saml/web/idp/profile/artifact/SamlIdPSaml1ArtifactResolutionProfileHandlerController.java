@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.artifact;
 
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
-import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 import org.apereo.cas.util.CollectionUtils;
@@ -17,14 +17,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This is {@link Saml1ArtifactResolutionProfileHandlerController}.
+ * This is {@link SamlIdPSaml1ArtifactResolutionProfileHandlerController}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
-public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSamlProfileHandlerController {
-    public Saml1ArtifactResolutionProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
+public class SamlIdPSaml1ArtifactResolutionProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
+    public SamlIdPSaml1ArtifactResolutionProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
         super(samlProfileHandlerConfigurationContext);
     }
 

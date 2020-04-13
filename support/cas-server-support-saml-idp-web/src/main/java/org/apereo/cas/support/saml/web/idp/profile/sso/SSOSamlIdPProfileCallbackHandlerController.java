@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile.sso;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,16 +22,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This is {@link SSOSamlProfileCallbackHandlerController}, which handles
+ * This is {@link SSOSamlIdPProfileCallbackHandlerController}, which handles
  * the profile callback request to build the final saml response.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
-public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfileHandlerController {
+public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPProfileHandlerController {
 
-    public SSOSamlProfileCallbackHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
+    public SSOSamlIdPProfileCallbackHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
         super(samlProfileHandlerConfigurationContext);
     }
 

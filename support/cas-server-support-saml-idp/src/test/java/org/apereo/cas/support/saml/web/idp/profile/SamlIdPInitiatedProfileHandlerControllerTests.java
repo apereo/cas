@@ -19,16 +19,16 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link IdentityProviderInitiatedProfileHandlerControllerTests}.
+ * This is {@link SamlIdPInitiatedProfileHandlerControllerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Tag("SAML")
-public class IdentityProviderInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
+public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("idpInitiatedSamlProfileHandlerController")
-    private IdentityProviderInitiatedProfileHandlerController idpInitiatedSamlProfileHandlerController;
+    private SamlIdPInitiatedProfileHandlerController idpInitiatedSamlProfileHandlerController;
 
     private SamlRegisteredService samlRegisteredService;
 

@@ -20,14 +20,18 @@ import org.opensaml.xmlsec.context.SecurityParametersContext;
 @Getter
 public class SamlIdPHttpRedirectDeflateLogoutEncoder extends HTTPRedirectDeflateEncoder {
     private final String endpointUrl;
+
     private final LogoutRequest logoutRequest;
 
     private String redirectUrl;
 
+    private MessageContext messageContext;
+
+    private String encodedRequest;
+
     @Override
     protected void doEncode() throws MessageEncodingException {
-        val messageContext = new MessageContext();
-
+        this.messageContext = new MessageContext();
         if (logoutRequest.isSigned()) {
             val signingContext = messageContext.getSubcontext(SecurityParametersContext.class, true);
             val signingParams = new SignatureSigningParameters();
@@ -38,10 +42,10 @@ public class SamlIdPHttpRedirectDeflateLogoutEncoder extends HTTPRedirectDeflate
         }
 
         removeSignature(logoutRequest);
-        val encodedMessage = deflateAndBase64Encode(logoutRequest);
+        encodedRequest = deflateAndBase64Encode(logoutRequest);
         messageContext.setMessage(logoutRequest);
 
-        this.redirectUrl = buildRedirectURL(messageContext, endpointUrl, encodedMessage);
+        this.redirectUrl = buildRedirectURL(messageContext, endpointUrl, encodedRequest);
     }
 
     @Override

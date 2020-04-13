@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.sso;
 
 import org.apereo.cas.support.saml.SamlIdPConstants;
-import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 
 import lombok.extern.slf4j.Slf4j;
@@ -18,15 +18,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The {@link SSOSamlPostProfileHandlerController} is responsible for
+ * The {@link SSOSamlIdPPostProfileHandlerController} is responsible for
  * handling profile requests for SAML2 Web SSO.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
-public class SSOSamlPostProfileHandlerController extends AbstractSamlProfileHandlerController {
-    public SSOSamlPostProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
+public class SSOSamlIdPPostProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
+    public SSOSamlIdPPostProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
         super(samlProfileHandlerConfigurationContext);
     }
 

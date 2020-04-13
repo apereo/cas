@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,14 +31,14 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link ECPProfileHandlerController}.
+ * This is {@link ECPSamlIdPProfileHandlerController}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @Slf4j
-public class ECPProfileHandlerController extends AbstractSamlProfileHandlerController {
-    public ECPProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
+public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
+    public ECPSamlIdPProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
         super(samlProfileHandlerConfigurationContext);
     }
 

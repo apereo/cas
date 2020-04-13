@@ -6,8 +6,8 @@ import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPProfileSingleLogoutMessageCreator;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.slo.SamlProfileSingleLogoutMessageCreator;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -20,17 +20,17 @@ import java.net.URL;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link SamlProfileSingleLogoutMessageCreatorTests}.
+ * This is {@link SamlIdPProfileSingleLogoutMessageCreatorTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
 @Tag("SAML")
-public class SamlProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigurationTests {
+public class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     public void verifyOperation() throws Exception {
-        val creator = new SamlProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
+        val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
             defaultSamlRegisteredServiceCachingMetadataResolver,
             casProperties.getAuthn().getSamlIdp(),
             samlIdPObjectSigner);

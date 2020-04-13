@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.query;
 
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
-import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
 
@@ -17,16 +17,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 
 /**
- * This is {@link Saml2AttributeQueryProfileHandlerController}.
+ * This is {@link SamlIdPSaml2AttributeQueryProfileHandlerController}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
-public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlProfileHandlerController {
+public class SamlIdPSaml2AttributeQueryProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
 
 
-    public Saml2AttributeQueryProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
+    public SamlIdPSaml2AttributeQueryProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
         super(samlProfileHandlerConfigurationContext);
     }
 
