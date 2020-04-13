@@ -9,7 +9,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jasig.cas.client.util.CommonUtils;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.saml.common.SAMLObjectBuilder;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -54,10 +52,10 @@ public class IdentityProviderInitiatedProfileHandlerController extends AbstractS
     protected void handleIdPInitiatedSsoRequest(final HttpServletResponse response,
                                                 final HttpServletRequest request) throws Exception {
 
-        val providerId = CommonUtils.safeGetParameter(request, SamlIdPConstants.PROVIDER_ID);
+        val providerId = request.getParameter(SamlIdPConstants.PROVIDER_ID);
         if (StringUtils.isBlank(providerId)) {
             LOGGER.warn("No providerId parameter given in unsolicited SSO authentication request.");
-            throw new MessageDecodingException("No providerId parameter given in unsolicited SSO authentication request.");
+            throw new MessageDecodingException("Missing providerId");
         }
 
         val registeredService = verifySamlRegisteredService(providerId);
@@ -70,7 +68,7 @@ public class IdentityProviderInitiatedProfileHandlerController extends AbstractS
          The URL of the response location at the SP (called the "Assertion Consumer Service")
          but can be omitted in favor of the IdP picking the default endpoint location from metadata.
           */
-        var shire = CommonUtils.safeGetParameter(request, SamlIdPConstants.SHIRE);
+        var shire = request.getParameter(SamlIdPConstants.SHIRE);
         val facade = adaptor.get();
         if (StringUtils.isBlank(shire)) {
             LOGGER.warn("Resolving service provider assertion consumer service URL for [{}] and binding [{}]",
@@ -86,9 +84,9 @@ public class IdentityProviderInitiatedProfileHandlerController extends AbstractS
             throw new MessageDecodingException("Unable to resolve SP ACS URL for AuthnRequest construction");
         }
 
-        val target = CommonUtils.safeGetParameter(request, SamlIdPConstants.TARGET);
+        val target = request.getParameter(SamlIdPConstants.TARGET);
 
-        val time = CommonUtils.safeGetParameter(request, SamlIdPConstants.TIME);
+        val time = request.getParameter(SamlIdPConstants.TIME);
 
         val builder = (SAMLObjectBuilder) getSamlProfileHandlerConfigurationContext()
             .getOpenSamlConfigBean().getBuilderFactory().getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
@@ -119,7 +117,7 @@ public class IdentityProviderInitiatedProfileHandlerController extends AbstractS
         }
 
         val ctx = new MessageContext();
-        if (facade.isAuthnRequestsSigned()) {
+        if (facade.isAuthnRequestsSigned() || registeredService.isSignUnsolicitedAuthnRequest()) {
             getSamlProfileHandlerConfigurationContext().getSamlObjectSigner().encode(authnRequest, registeredService,
                 facade, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest);
         }
