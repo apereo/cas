@@ -84,7 +84,7 @@ class RepositoryMonitor {
                         && !pr.isLabeledAs(CasLabels.LABEL_BOT)) {
                         val runs = this.repository.getCombinedPullRequestCommitStatuses(pr);
                         if (runs.isCheckStatusFailure(CombinedCommitStatus.TRAVIS_CI)) {
-                            repository.mergePullRequestWithBase(pr);
+                            // repository.mergePullRequestWithBase(pr);
                         }
                     }
                 }
