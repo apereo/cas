@@ -34,7 +34,7 @@ public class ChainingWithDefaulAndSamlServicesManagersTests extends ChainingWith
     public void verifyCorrectRegisteredServiceReturnedForRegularServiceWhenSamlAndRegularTypesDefinedIndependentOfEvalOrder() {
         createAndSaveServicesFixtures(r -> r.setEvaluationOrder(2), s -> s.setEvaluationOrder(1));
 
-        SimpleWebApplicationServiceImpl service = new SimpleWebApplicationServiceImpl();
+        var service = new SimpleWebApplicationServiceImpl();
         service.setId("https://example.com");
 
         var lookedUpRegSvc = this.servicesManager.findServiceBy(service);
@@ -45,7 +45,7 @@ public class ChainingWithDefaulAndSamlServicesManagersTests extends ChainingWith
     public void verifyCorrectRegisteredServiceReturnedForSamlServiceWhenSamlAndRegularTypesDefinedIndependentOfEvalOrder() {
         createAndSaveServicesFixtures(r -> r.setEvaluationOrder(1), s -> s.setEvaluationOrder(2));
 
-        SamlService service = new SamlService();
+        var service = new SamlService();
         service.setId("https://some.saml.sp.com");
 
         var lookedUpRegSvc = this.servicesManager.findServiceBy(service);
