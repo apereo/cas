@@ -29,15 +29,15 @@ import java.time.ZonedDateTime;
 import java.util.Objects;
 
 /**
- * This is {@link IdentityProviderInitiatedProfileHandlerController}.
+ * This is {@link SamlIdPInitiatedProfileHandlerController}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
-public class IdentityProviderInitiatedProfileHandlerController extends AbstractSamlProfileHandlerController {
+public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
 
-    public IdentityProviderInitiatedProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
+    public SamlIdPInitiatedProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
         super(samlProfileHandlerConfigurationContext);
     }
 

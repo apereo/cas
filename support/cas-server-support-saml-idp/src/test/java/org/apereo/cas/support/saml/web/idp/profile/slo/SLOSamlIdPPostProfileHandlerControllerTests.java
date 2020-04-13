@@ -1,10 +1,8 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.util.EncodingUtils;
 
@@ -14,7 +12,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,22 +19,20 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link SLOSamlPostProfileHandlerControllerTests}.
+ * This is {@link SLOSamlIdPPostProfileHandlerControllerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Tag("SAML")
-public class SLOSamlPostProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
+public class SLOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
 
     @Autowired
     @Qualifier("sloPostProfileHandlerController")
-    private SLOSamlPostProfileHandlerController controller;
+    private SLOSamlIdPPostProfileHandlerController controller;
 
     @Test
     public void verifyOperation() throws Exception {
@@ -56,12 +51,12 @@ public class SLOSamlPostProfileHandlerControllerTests extends BaseSamlIdPConfigu
         val issuer = (Issuer) builder.buildObject();
         issuer.setValue(service.getServiceId());
         logoutRequest.setIssuer(issuer);
-        
+
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
             .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
         logoutRequest = samlIdPObjectSigner.encode(logoutRequest, service,
             adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI, logoutRequest);
-        
+
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, logoutRequest).toString();
         request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
         controller.handleSaml2ProfileSLOPostRequest(response, request);

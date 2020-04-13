@@ -4,7 +4,7 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.1.0
  */
 @Slf4j
-public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSamlProfileHandlerController {
+public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
 
     public AbstractSamlSLOProfileHandlerController(final SamlProfileHandlerConfigurationContext context) {
         super(context);

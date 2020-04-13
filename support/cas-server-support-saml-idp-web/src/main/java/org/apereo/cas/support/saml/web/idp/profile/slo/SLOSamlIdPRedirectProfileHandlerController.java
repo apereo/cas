@@ -11,14 +11,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This is {@link SLOSamlRedirectProfileHandlerController}, responsible for
+ * This is {@link SLOSamlIdPRedirectProfileHandlerController}, responsible for
  * handling requests for SAML2 SLO Redirects.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class SLOSamlRedirectProfileHandlerController extends AbstractSamlSLOProfileHandlerController {
-    public SLOSamlRedirectProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
+public class SLOSamlIdPRedirectProfileHandlerController extends AbstractSamlSLOProfileHandlerController {
+    public SLOSamlIdPRedirectProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
         super(samlProfileHandlerConfigurationContext);
     }
 
@@ -30,8 +30,8 @@ public class SLOSamlRedirectProfileHandlerController extends AbstractSamlSLOProf
      * @throws Exception the exception
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SLO_PROFILE_REDIRECT)
-    protected void handleSaml2ProfileSLOPostRequest(final HttpServletResponse response,
-                                                    final HttpServletRequest request) throws Exception {
+    protected void handleSaml2ProfileSLORedirectRequest(final HttpServletResponse response,
+                                                        final HttpServletRequest request) throws Exception {
         val decoder = getSamlProfileHandlerConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.GET);
         handleSloProfileRequest(response, request, decoder);
     }

@@ -12,20 +12,20 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.services.SamlIdPServiceRegistry;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.HttpServletRequestXMLMessageDecodersMap;
-import org.apereo.cas.support.saml.web.idp.profile.IdentityProviderInitiatedProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.SamlIdPInitiatedProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
-import org.apereo.cas.support.saml.web.idp.profile.artifact.Saml1ArtifactResolutionProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.artifact.SamlIdPSaml1ArtifactResolutionProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlIdPObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
-import org.apereo.cas.support.saml.web.idp.profile.ecp.ECPProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.query.Saml2AttributeQueryProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.slo.SLOSamlPostProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.slo.SLOSamlRedirectProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlPostProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlPostSimpleSignProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlProfileCallbackHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.ecp.ECPSamlIdPProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.query.SamlIdPSaml2AttributeQueryProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SLOSamlIdPPostProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SLOSamlIdPRedirectProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostSimpleSignProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPProfileCallbackHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.UrlDecodingHTTPRedirectDeflateDecoder;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.DefaultSSOSamlHttpRequestExtractor;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
@@ -192,12 +192,12 @@ public class SamlIdPEndpointsConfiguration {
 
     @Bean
     @RefreshScope
-    public SSOSamlPostProfileHandlerController ssoPostProfileHandlerController() {
+    public SSOSamlIdPPostProfileHandlerController ssoPostProfileHandlerController() {
         val context = getSamlProfileHandlerConfigurationContextBuilder()
             .responseBuilder(samlProfileSamlResponseBuilder.getObject())
             .samlMessageDecoders(ssoPostProfileHandlerDecoders())
             .build();
-        return new SSOSamlPostProfileHandlerController(context);
+        return new SSOSamlIdPPostProfileHandlerController(context);
     }
 
     @Bean
@@ -212,13 +212,13 @@ public class SamlIdPEndpointsConfiguration {
 
     @Bean
     @RefreshScope
-    public SSOSamlPostSimpleSignProfileHandlerController ssoPostSimpleSignProfileHandlerController() {
+    public SSOSamlIdPPostSimpleSignProfileHandlerController ssoPostSimpleSignProfileHandlerController() {
         val context = getSamlProfileHandlerConfigurationContextBuilder()
             .responseBuilder(samlProfileSamlResponseBuilder.getObject())
             .samlMessageDecoders(ssoPostSimpleSignProfileHandlerDecoders())
             .build();
 
-        return new SSOSamlPostSimpleSignProfileHandlerController(context);
+        return new SSOSamlIdPPostSimpleSignProfileHandlerController(context);
     }
 
     @Bean
@@ -232,11 +232,11 @@ public class SamlIdPEndpointsConfiguration {
 
     @Bean
     @RefreshScope
-    public SLOSamlRedirectProfileHandlerController sloRedirectProfileHandlerController() {
+    public SLOSamlIdPRedirectProfileHandlerController sloRedirectProfileHandlerController() {
         val context = getSamlProfileHandlerConfigurationContextBuilder()
             .samlMessageDecoders(sloRedirectProfileHandlerDecoders())
             .build();
-        return new SLOSamlRedirectProfileHandlerController(context);
+        return new SLOSamlIdPRedirectProfileHandlerController(context);
     }
 
     @Bean
@@ -249,58 +249,58 @@ public class SamlIdPEndpointsConfiguration {
 
     @Bean
     @RefreshScope
-    public SLOSamlPostProfileHandlerController sloPostProfileHandlerController() {
+    public SLOSamlIdPPostProfileHandlerController sloPostProfileHandlerController() {
         val context = getSamlProfileHandlerConfigurationContextBuilder()
             .samlMessageDecoders(sloPostProfileHandlerDecoders())
             .build();
-        return new SLOSamlPostProfileHandlerController(context);
+        return new SLOSamlIdPPostProfileHandlerController(context);
     }
 
     @Bean
     @RefreshScope
-    public IdentityProviderInitiatedProfileHandlerController idpInitiatedSamlProfileHandlerController() {
+    public SamlIdPInitiatedProfileHandlerController idpInitiatedSamlProfileHandlerController() {
         val context = getSamlProfileHandlerConfigurationContextBuilder()
             .samlObjectSignatureValidator(samlIdPObjectSignatureValidator())
             .build();
-        return new IdentityProviderInitiatedProfileHandlerController(context);
+        return new SamlIdPInitiatedProfileHandlerController(context);
     }
 
     @Bean
     @RefreshScope
-    public SSOSamlProfileCallbackHandlerController ssoPostProfileCallbackHandlerController() {
+    public SSOSamlIdPProfileCallbackHandlerController ssoPostProfileCallbackHandlerController() {
         val context = getSamlProfileHandlerConfigurationContextBuilder().build();
-        return new SSOSamlProfileCallbackHandlerController(context);
+        return new SSOSamlIdPProfileCallbackHandlerController(context);
     }
 
     @Bean
     @RefreshScope
-    public ECPProfileHandlerController ecpProfileHandlerController() {
+    public ECPSamlIdPProfileHandlerController ecpProfileHandlerController() {
         val context = getSamlProfileHandlerConfigurationContextBuilder()
             .responseBuilder(samlProfileSamlSoap11ResponseBuilder.getObject())
             .samlFaultResponseBuilder(samlProfileSamlSoap11FaultResponseBuilder.getObject())
             .build();
-        return new ECPProfileHandlerController(context);
+        return new ECPSamlIdPProfileHandlerController(context);
     }
 
     @Bean
     @RefreshScope
-    public Saml1ArtifactResolutionProfileHandlerController saml1ArtifactResolutionController() {
+    public SamlIdPSaml1ArtifactResolutionProfileHandlerController saml1ArtifactResolutionController() {
         val context = getSamlProfileHandlerConfigurationContextBuilder()
             .responseBuilder(samlProfileSamlArtifactResponseBuilder.getObject())
             .samlFaultResponseBuilder(samlProfileSamlArtifactFaultResponseBuilder.getObject())
             .build();
-        return new Saml1ArtifactResolutionProfileHandlerController(context);
+        return new SamlIdPSaml1ArtifactResolutionProfileHandlerController(context);
     }
 
     @ConditionalOnProperty(prefix = "cas.authn.samlIdp", name = "attributeQueryProfileEnabled", havingValue = "true")
     @Bean
     @RefreshScope
-    public Saml2AttributeQueryProfileHandlerController saml2AttributeQueryProfileHandlerController() {
+    public SamlIdPSaml2AttributeQueryProfileHandlerController saml2AttributeQueryProfileHandlerController() {
         val context = getSamlProfileHandlerConfigurationContextBuilder()
             .responseBuilder(samlProfileSamlAttributeQueryResponseBuilder.getObject())
             .samlFaultResponseBuilder(samlProfileSamlAttributeQueryFaultResponseBuilder.getObject())
             .build();
-        return new Saml2AttributeQueryProfileHandlerController(context);
+        return new SamlIdPSaml2AttributeQueryProfileHandlerController(context);
     }
 
     @Bean

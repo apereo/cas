@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.sso;
 
 import org.apereo.cas.support.saml.SamlIdPConstants;
-import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 
 import lombok.val;
@@ -15,14 +15,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The {@link SSOSamlPostSimpleSignProfileHandlerController} is responsible for
+ * The {@link SSOSamlIdPPostSimpleSignProfileHandlerController} is responsible for
  * handling profile requests for SAML2 Web SSO SimpleSign.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class SSOSamlPostSimpleSignProfileHandlerController extends AbstractSamlProfileHandlerController {
-    public SSOSamlPostSimpleSignProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
+public class SSOSamlIdPPostSimpleSignProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
+    public SSOSamlIdPPostSimpleSignProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
         super(samlProfileHandlerConfigurationContext);
     }
 

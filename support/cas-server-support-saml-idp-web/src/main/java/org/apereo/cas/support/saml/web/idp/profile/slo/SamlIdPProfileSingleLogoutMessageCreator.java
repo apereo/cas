@@ -34,13 +34,13 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 
 /**
- * This is {@link SamlProfileSingleLogoutMessageCreator}.
+ * This is {@link SamlIdPProfileSingleLogoutMessageCreator}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
 @Slf4j
-public class SamlProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectBuilder implements SingleLogoutMessageCreator {
+public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectBuilder implements SingleLogoutMessageCreator {
 
     private static final long serialVersionUID = -5895467960534493675L;
 
@@ -68,11 +68,11 @@ public class SamlProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectB
 
     private final transient SOAPObjectBuilder<Body> bodyBuilder;
 
-    public SamlProfileSingleLogoutMessageCreator(final OpenSamlConfigBean configBean,
-                                                 final ServicesManager servicesManager,
-                                                 final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
-                                                 final SamlIdPProperties samlIdPProperties,
-                                                 final SamlIdPObjectSigner samlObjectSigner) {
+    public SamlIdPProfileSingleLogoutMessageCreator(final OpenSamlConfigBean configBean,
+                                                    final ServicesManager servicesManager,
+                                                    final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
+                                                    final SamlIdPProperties samlIdPProperties,
+                                                    final SamlIdPObjectSigner samlObjectSigner) {
         super(configBean);
         this.servicesManager = servicesManager;
         this.samlRegisteredServiceCachingMetadataResolver = samlRegisteredServiceCachingMetadataResolver;
