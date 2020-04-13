@@ -21,7 +21,7 @@ fi
 waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
 eval $waitloop
 echo -e "Installing Groovy...\n"
-groovyVersion=3.0.2
+groovyVersion=3.0.3
 wget https://dl.bintray.com/groovy/maven/apache-groovy-binary-${groovyVersion}.zip -O ./groovy.zip
 unzip ./groovy.zip -d $PWD/.groovy
 export PATH=$PWD/.groovy/groovy-${groovyVersion}/bin:$PATH
