@@ -16,8 +16,11 @@ import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -45,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import(SSOSamlIdPProfileCallbackHandlerControllerTests.SamlIdPTestConfiguration.class)
 @Tag("SAML")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ssoPostProfileCallbackHandlerController")
@@ -80,6 +84,7 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
     }
 
     @Test
+    @Order(1)
     public void verifyValidationByPost() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -96,6 +101,7 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
     }
 
     @Test
+    @Order(2)
     public void verifyValidationByRedirect() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

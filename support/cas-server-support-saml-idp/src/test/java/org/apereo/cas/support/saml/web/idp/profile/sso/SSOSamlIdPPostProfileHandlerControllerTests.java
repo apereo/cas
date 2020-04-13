@@ -13,8 +13,11 @@ import net.shibboleth.utilities.java.support.net.URLBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -36,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ssoPostProfileHandlerController")
@@ -51,6 +55,7 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
     }
 
     @Test
+    @Order(1)
     public void verifyPostSignRequest() throws Exception {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
@@ -63,6 +68,7 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
     }
 
     @Test
+    @Order(2)
     public void verifyRedirectRequest() throws Exception {
         val request = new MockHttpServletRequest();
         request.setMethod("GET");
@@ -83,6 +89,7 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
     }
 
     @Test
+    @Order(3)
     public void verifyPutRequest() {
         val request = new MockHttpServletRequest();
         request.setMethod("PUT");
@@ -92,6 +99,7 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
     }
 
     @Test
+    @Order(4)
     public void verifyPostRequest() throws Exception {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
