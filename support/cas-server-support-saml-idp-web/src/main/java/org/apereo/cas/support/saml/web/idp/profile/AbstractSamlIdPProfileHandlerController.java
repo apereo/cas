@@ -383,14 +383,14 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                                                         final RequestAbstractType authnRequest,
                                                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws Exception {
         if (!SAMLBindingSupport.isMessageSigned(ctx)) {
-            LOGGER.debug("The authentication context is not signed");
+            LOGGER.trace("The authentication context is not signed");
             if (adaptor.isAuthnRequestsSigned()) {
-                LOGGER.error("Metadata for [{}] says authentication requests are signed, yet authentication request is not", adaptor.getEntityId());
-                throw new SAMLException("AuthN request is not signed but should be");
+                LOGGER.error("Metadata for [{}] says authentication requests are signed, yet request is not", adaptor.getEntityId());
+                throw new SAMLException("Request is not signed but should be");
             }
-            LOGGER.debug("Authentication request is not signed, so there is no need to verify its signature.");
+            LOGGER.trace("Request is not signed, so there is no need to verify its signature.");
         } else {
-            LOGGER.debug("The authentication context is signed; Proceeding to validate signatures...");
+            LOGGER.trace("The authentication context is signed; Proceeding to validate signatures...");
             samlProfileHandlerConfigurationContext.getSamlObjectSignatureValidator().verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, ctx);
         }
     }

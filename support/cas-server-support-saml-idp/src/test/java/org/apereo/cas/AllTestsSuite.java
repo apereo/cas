@@ -24,6 +24,7 @@ import org.apereo.cas.support.saml.web.idp.metadata.SamlIdPMetadataControllerTes
 import org.apereo.cas.support.saml.web.idp.metadata.SamlRegisteredServiceCachedMetadataEndpointTests;
 import org.apereo.cas.support.saml.web.idp.profile.SamlIdPInitiatedProfileHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.artifact.CasSamlArtifactMapTests;
+import org.apereo.cas.support.saml.web.idp.profile.artifact.SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSamlRegisteredServiceAttributeBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidatorTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilderTests;
@@ -66,6 +67,7 @@ import org.junit.runner.RunWith;
     GroovySamlRegisteredServiceAttributeReleasePolicyTests.class,
     SamlRegisteredServiceJpaPostgresTests.class,
     SamlIdPUtilsTests.class,
+    SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests.class,
     SamlIdPSingleLogoutServiceMessageHandlerTests.class,
     CasSamlArtifactMapTests.class,
     SamlIdPHttpRedirectDeflateEncoderTests.class,

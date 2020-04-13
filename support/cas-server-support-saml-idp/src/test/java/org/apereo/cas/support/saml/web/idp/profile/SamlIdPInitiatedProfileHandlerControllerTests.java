@@ -8,8 +8,11 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import lombok.val;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("idpInitiatedSamlProfileHandlerController")
@@ -40,6 +44,7 @@ public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPCo
     }
 
     @Test
+    @Order(4)
     public void verifyNoProvider() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -48,6 +53,7 @@ public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPCo
     }
 
     @Test
+    @Order(3)
     public void verifyBadService() {
         val request = new MockHttpServletRequest();
         request.addParameter(SamlIdPConstants.PROVIDER_ID, "xxxxxx");
@@ -57,6 +63,7 @@ public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPCo
     }
 
     @Test
+    @Order(1)
     public void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter(SamlIdPConstants.PROVIDER_ID, samlRegisteredService.getServiceId());
@@ -67,6 +74,7 @@ public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPCo
     }
 
     @Test
+    @Order(2)
     public void verifyOperationWithTime() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter(SamlIdPConstants.PROVIDER_ID, samlRegisteredService.getServiceId());

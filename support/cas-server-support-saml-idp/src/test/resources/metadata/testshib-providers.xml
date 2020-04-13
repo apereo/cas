@@ -314,23 +314,23 @@
                 <ds:KeyInfo>
                     <ds:X509Data>
                         <ds:X509Certificate>
-                            MIIDHjCCAgagAwIBAgIVAMJ/+XnbwGeC3Yep2MVQ77/ZqErSMA0GCSqGSIb3DQEB
-                            CwUAMBoxGDAWBgNVBAMMD2Nhcy5leGFtcGxlLm9yZzAeFw0yMDA0MTIxMjQ1NTJa
-                            Fw00MDA0MTIxMjQ1NTJaMBoxGDAWBgNVBAMMD2Nhcy5leGFtcGxlLm9yZzCCASIw
-                            DQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAIptP29IQjFWkN7uv3+hzaZ3wQad
-                            jy+gC3vpZ8JyeIL1rngsud+pdMxT+4KOx0kb0AAMdTPYl/K7Grc9kQGdmsybrz9B
-                            PMCJSeydvlPGAJYc5oSMs81w2vqmHmBi59mjpC/y75Pw2z6yZj7mtNhWmh5j0PlB
-                            bskaQeG2qsTu/3CK6mXbWRLb5Put16+DdNMLt2Hqmynvxi+VGyLNhgNdzKru/Hi0
-                            3DSN9pmgZ3jcmq0NInNhYEy9o9CzXr6y8pMPAtQ6EvN2YDyrtiZijauYtRDGWrIi
-                            ibJ2hObOphMcj/YJA9/r4s5hTjubRjHi0De6jByg27To3sOMiulu6m//kiUCAwEA
-                            AaNbMFkwHQYDVR0OBBYEFHz0Jmcai6/RldV2cYniptDzn5sxMDgGA1UdEQQxMC+C
+                            MIIDHjCCAgagAwIBAgIVALMbwVFgdeXJstsfQm0+Tj5TNSD7MA0GCSqGSIb3DQEB
+                            CwUAMBoxGDAWBgNVBAMMD2Nhcy5leGFtcGxlLm9yZzAeFw0yMDA0MTMxNjM2MTRa
+                            Fw00MDA0MTMxNjM2MTRaMBoxGDAWBgNVBAMMD2Nhcy5leGFtcGxlLm9yZzCCASIw
+                            DQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMbmthg4aUzFuVCYnNODOz94Vz6y
+                            gClw3KAuFnd8jBDylD/6LXsuy8fxeJ+03fc+gcwVCI1EdK/F/Z7WvQH1qiNwxh5J
+                            xSe1kFQ/pyRs1hY0m7RWITEIHHqB4SF6YRws0LcaO/wbvHxmfx4DO9ARIAMuaJU+
+                            DLmpsjp0XTf9wqb555oxTewxfUIkTBdutH6blVTA7lHtS541zxRJ9FQ1tAixnQYP
+                            jOKnZK5afpMwihdMd3ehxyYAX2qP8JWaj3zsHZckFe6Vpkf3x6eFU1PYg7bK0GrU
+                            qcKpUPwC/T9neX7Z2yPnhceXNx/kGoC5UrHTpjrq5fQw94X0kq9H+xbdtAsCAwEA
+                            AaNbMFkwHQYDVR0OBBYEFJf2+B9GGMet6heHRQaXNrzrtRDbMDgGA1UdEQQxMC+C
                             D2Nhcy5leGFtcGxlLm9yZ4YcY2FzLmV4YW1wbGUub3JnL2lkcC9tZXRhZGF0YTAN
-                            BgkqhkiG9w0BAQsFAAOCAQEAJQ5VMDQQwLMWtFd6uBy6MiOEtUznmil4rg6f1yQM
-                            ZPrKNjgstRSnSrD6w7F6dhspaGheh8QHGmbYwC7yqQdrFmLbogfHW6u8PVFMHrhX
-                            RiwgZvAK7H69mpaSuwvWq9s+RvCIfG6ZhoYW+5jcsy+x4CPBN6WbaH4NYJWBFiF8
-                            5ZTB6FEkMAjOAUQ440yV/jUBAvLfCOO/abycxVRcXuatRWyxVxVsvW1L/oQZr9ug
-                            y5fcLOzMRWCL16Z+V/KmVzX6XLWZMQL8x6b26sxct5ugw5o9QVVuA/JiKjkuKhlV
-                            5sEs0739QfgGX5qs6m3e8erqcMTDUB8BcdfW+LA1ioO+DQ==
+                            BgkqhkiG9w0BAQsFAAOCAQEAIcmTuX5CvoaDlflHtLl1Lom0Aa38VB58ERsnXzbD
+                            YK6oBEdG2eaZz7aqevoLlZM870g/WP09oba4pV5CP/YKfj0fugmIbJJIbEjlQ54R
+                            5/SVfDfVbtqP16+0h6ETBlVWm2JMtURtqaBa8CigdITy7pUe1M67H3TtYPqoLd5y
+                            +E9N0topYi7eAV2JZYXdEnJwXAZcPVhkgTl2ewMo3H5z+2dB2OM+je34xUdfn/YC
+                            sdDgtzlrPpO9InwpYcOpUzrKpHf089d4csIjbGdL6Kb/zDm9hadTZqrGmMGskyXi
+                            b0CfxW374ZqbP6ijIoFtxfSvMjwVtEVX5unLasID1I9fKA==
                         </ds:X509Certificate>
                     </ds:X509Data>
                 </ds:KeyInfo>
@@ -359,6 +359,9 @@
                                       Location="https://httpbin.org/post"/>
             <AssertionConsumerService index="2"
                                       Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
+                                      Location="https://httpbin.org/post"/>
+            <AssertionConsumerService index="3"
+                                      Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
                                       Location="https://httpbin.org/post"/>
         </SPSSODescriptor>
 
