@@ -8,8 +8,11 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -22,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlSingleLogoutServiceMessageHandler")
@@ -43,6 +47,7 @@ public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPCo
     }
 
     @Test
+    @Order(1)
     public void verifySupports() {
         val service = RegisteredServiceTestUtils.getService(samlRegisteredService.getServiceId());
         assertTrue(samlSingleLogoutServiceMessageHandler.supports(service));
@@ -50,6 +55,7 @@ public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPCo
     }
 
     @Test
+    @Order(2)
     public void verifySendByPost() {
         val service = RegisteredServiceTestUtils.getService(samlRegisteredService.getServiceId());
         val result = samlSingleLogoutServiceMessageHandler.handle(service, "ST-1234567890",
@@ -58,6 +64,7 @@ public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPCo
     }
 
     @Test
+    @Order(3)
     public void verifySNoSaml() {
         servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("example.org"));
         val service = RegisteredServiceTestUtils.getService("example.org");
@@ -67,6 +74,7 @@ public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPCo
     }
 
     @Test
+    @Order(4)
     public void verifySendByRedirect() {
         val service = RegisteredServiceTestUtils.getService("https://mocky.io");
         val result = samlSingleLogoutServiceMessageHandler.handle(service, "ST-1234567890",

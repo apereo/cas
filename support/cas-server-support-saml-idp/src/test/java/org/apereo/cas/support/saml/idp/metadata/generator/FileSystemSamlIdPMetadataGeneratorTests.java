@@ -36,10 +36,6 @@ public class FileSystemSamlIdPMetadataGeneratorTests extends BaseSamlIdPConfigur
         assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.resolveSigningKey(Optional.empty()));
-
-        val resource = samlIdPMetadataLocator.resolveMetadata(Optional.empty());
-        FileUtils.forceDelete(resource.getFile());
-        assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
     }
 
     @Test
