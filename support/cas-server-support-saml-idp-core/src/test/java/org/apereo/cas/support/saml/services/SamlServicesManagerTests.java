@@ -28,7 +28,7 @@ public class SamlServicesManagerTests extends AbstractServicesManagerTests {
 
     @Test
     public void verifyOnlyLoadsSamlServices() {
-        assertTrue( this.servicesManager.count() == 1);
+        assertTrue(this.servicesManager.count() == 1);
     }
 
 
