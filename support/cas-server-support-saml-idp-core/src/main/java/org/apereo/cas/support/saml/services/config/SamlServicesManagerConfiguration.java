@@ -4,7 +4,6 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServicesManagerExecutionPlanConfigurer;
 import org.apereo.cas.support.saml.services.SamlServicesManager;
 
-import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
  * @author Dmitriy Kopylenko
  * @since 6.2.0
  */
-@Configuration("casSamlServicesManagerConfiguration")
+@Configuration(value = "casSamlServicesManagerConfiguration", proxyBeanMethods = false)
 public class SamlServicesManagerConfiguration {
 
     @Autowired
@@ -42,7 +41,7 @@ public class SamlServicesManagerConfiguration {
     @ConditionalOnMissingBean(name = "samlServicesManagerExecutionPlanConfigurer")
     public ServicesManagerExecutionPlanConfigurer samlServicesManagerExecutionPlanConfigurer() {
         return () -> {
-            val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
+            var activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
             return new SamlServicesManager(serviceRegistry.getObject(), applicationContext, activeProfiles);
         };
     }

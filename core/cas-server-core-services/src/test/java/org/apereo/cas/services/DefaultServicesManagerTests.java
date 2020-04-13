@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author battags
@@ -20,7 +19,7 @@ public class DefaultServicesManagerTests extends AbstractServicesManagerTests {
     @Override
     protected Supplier<List<RegisteredService>> registeredServicesFixture() {
         return () -> {
-            SamlRegisteredService s = new SamlRegisteredService();
+            var s = new SamlRegisteredService();
             s.setServiceId(".+");
             s.setName("SAML service");
             listOfDefaultServices.add(s);

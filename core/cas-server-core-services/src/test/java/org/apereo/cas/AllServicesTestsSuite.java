@@ -102,7 +102,8 @@ import org.junit.runner.RunWith;
     RegisteredServiceScriptedAttributeFilterTests.class,
     GroovyRegisteredServiceAccessStrategyTests.class,
     ChainingWithOnlyDefaulServicesManagerTests.class,
-    DefaultRegisteredServiceJsonSerializerTests.class
+    DefaultRegisteredServiceJsonSerializerTests.class,
+    DefaultServicesManagerTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllServicesTestsSuite {
