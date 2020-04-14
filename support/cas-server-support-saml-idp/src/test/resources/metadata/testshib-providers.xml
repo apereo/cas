@@ -363,6 +363,9 @@
             <AssertionConsumerService index="3"
                                       Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
                                       Location="https://httpbin.org/post"/>
+            <AssertionConsumerService index="4"
+                                      Binding="urn:oasis:names:tc:SAML:2.0:bindings:PAOS"
+                                      Location="https://httpbin.org/post"/>
         </SPSSODescriptor>
 
 

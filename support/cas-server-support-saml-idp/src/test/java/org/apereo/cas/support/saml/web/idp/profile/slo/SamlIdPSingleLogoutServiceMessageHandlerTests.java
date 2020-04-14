@@ -65,7 +65,7 @@ public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPCo
 
     @Test
     @Order(3)
-    public void verifySNoSaml() {
+    public void verifyNoSaml() {
         servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("example.org"));
         val service = RegisteredServiceTestUtils.getService("example.org");
         val result = samlSingleLogoutServiceMessageHandler.handle(service, "ST-1234567890",
