@@ -29,6 +29,7 @@ public class DefaultServicesManager extends AbstractServicesManager {
 
     @Override
     public boolean supports(final Service service) {
+        //Until more concrete services managers are implemented.
         return service != null
                 && !service.getClass().getCanonicalName().equals("org.apereo.cas.support.saml.authentication.principal.SamlService");
 
@@ -36,7 +37,8 @@ public class DefaultServicesManager extends AbstractServicesManager {
 
     @Override
     public boolean supports(final RegisteredService service) {
+        //Until more concrete services managers are implemented.
         return service != null
-                && service.getClass().getCanonicalName().equals(RegexRegisteredService.class.getCanonicalName());
+                && !service.getClass().getCanonicalName().equals("org.apereo.cas.support.saml.services.SamlRegisteredService");
     }
 }

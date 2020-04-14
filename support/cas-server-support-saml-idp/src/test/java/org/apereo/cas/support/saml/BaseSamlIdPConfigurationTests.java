@@ -36,6 +36,7 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.config.SamlServicesManagerConfiguration;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
@@ -115,7 +116,8 @@ import static org.mockito.Mockito.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CoreSamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasCoreUtilConfiguration.class,
+    SamlServicesManagerConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("SAML")
