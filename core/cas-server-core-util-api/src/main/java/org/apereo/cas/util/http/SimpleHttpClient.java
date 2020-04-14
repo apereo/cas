@@ -157,12 +157,11 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
         return false;
     }
 
-    /**
-     * Shutdown the executor service and close the http client.
-     */
     @Override
     public void destroy() {
+        IOUtils.closeQuietly(this.wrappedHttpClient);
         IOUtils.closeQuietly(this.requestExecutorService);
+        this.httpClientFactory.destroy();
     }
 
 }

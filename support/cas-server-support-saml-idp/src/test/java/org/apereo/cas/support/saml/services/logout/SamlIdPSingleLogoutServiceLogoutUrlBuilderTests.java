@@ -27,6 +27,6 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilderTests extends BaseSamlIdP
         val results = builder.determineLogoutUrl(SamlIdPTestUtils.getSamlRegisteredService(),
             RegisteredServiceTestUtils.getService("https://sp.testshib.org/shibboleth-sp"));
         assertFalse(results.isEmpty());
-        assertEquals("https://sp.testshib.org/Shibboleth.sso/SLO/POST", results.iterator().next().getUrl());
+        assertEquals("https://httpbin.org/post", results.iterator().next().getUrl());
     }
 }

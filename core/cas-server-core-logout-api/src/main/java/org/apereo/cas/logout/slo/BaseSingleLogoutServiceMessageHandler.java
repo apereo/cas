@@ -57,7 +57,8 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
         LOGGER.trace("Processing logout request for service [{}]...", selectedService);
         val registeredService = this.servicesManager.findServiceBy(selectedService);
 
-        LOGGER.debug("Service [{}] supports single logout and is found in the registry as [{}]. Proceeding...", selectedService.getId(), registeredService.getName());
+        LOGGER.debug("Service [{}] supports single logout and is found in the registry as [{}]. Proceeding...",
+            selectedService.getId(), registeredService.getName());
 
         val logoutUrls = this.singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, selectedService);
         LOGGER.debug("Prepared logout url [{}] for service [{}]", logoutUrls, selectedService);

@@ -1,6 +1,10 @@
 package org.apereo.cas.support.saml;
 
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -37,6 +41,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -163,10 +168,14 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlIdPMetadataLocator")
     protected SamlIdPMetadataLocator samlIdPMetadataLocator;
-    
+
     @Autowired
     @Qualifier("samlIdPMetadataGenerator")
     protected SamlIdPMetadataGenerator samlIdPMetadataGenerator;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    protected TicketRegistry ticketRegistry;
 
     @BeforeAll
     public static void beforeClass() {
@@ -201,16 +210,23 @@ public abstract class BaseSamlIdPConfigurationTests {
     }
 
     protected static SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion,
-                                                                        final boolean signResponses) {
+                                                                               final boolean signResponses) {
         return getSamlRegisteredServiceForTestShib(signAssertion, signResponses, false);
     }
 
     protected static SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion,
-                                                                        final boolean signResponses,
-                                                                        final boolean encryptAssertions) {
+                                                                               final boolean signResponses,
+                                                                               final boolean encryptAssertions) {
+        return getSamlRegisteredServiceFor(signAssertion, signResponses, encryptAssertions, "https://sp.testshib.org/shibboleth-sp");
+    }
+
+    protected static SamlRegisteredService getSamlRegisteredServiceFor(final boolean signAssertion,
+                                                                       final boolean signResponses,
+                                                                       final boolean encryptAssertions,
+                                                                       final String entityId) {
         val service = new SamlRegisteredService();
         service.setName("TestShib");
-        service.setServiceId("https://sp.testshib.org/shibboleth-sp");
+        service.setServiceId(entityId);
         service.setId(100);
         service.setSignAssertions(signAssertion);
         service.setSignResponses(signResponses);
@@ -221,18 +237,29 @@ public abstract class BaseSamlIdPConfigurationTests {
     }
 
     @TestConfiguration
-    public static class SamlIdPMetadataTestConfiguration {
+    public static class SamlIdPMetadataTestConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Autowired
+        @Qualifier("defaultPrincipalResolver")
+        private PrincipalResolver defaultPrincipalResolver;
+
         @SneakyThrows
         @Bean
         public SamlIdPMetadataLocator samlIdPMetadataLocator() {
             return new FileSystemSamlIdPMetadataLocator(METADATA_DIRECTORY);
+        }
+
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            plan.registerAuthenticationHandlerWithPrincipalResolver(new SimpleTestUsernamePasswordAuthenticationHandler(), defaultPrincipalResolver);
         }
     }
 
     @Data
     public static class PermissionSamlAttributeValue {
         private final String type;
+
         private final String group;
+
         private final String user;
 
         @Override

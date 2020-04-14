@@ -32,7 +32,7 @@ import org.apereo.cas.support.saml.util.NonInflatingSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlIdPMetadataController;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlRegisteredServiceCachedMetadataEndpoint;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlPostProfileHandlerEndpoint;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHandlerEndpoint;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
@@ -224,8 +224,8 @@ public class SamlIdPMetadataConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public SSOSamlPostProfileHandlerEndpoint ssoSamlPostProfileHandlerEndpoint() {
-        return new SSOSamlPostProfileHandlerEndpoint(casProperties,
+    public SSOSamlIdPPostProfileHandlerEndpoint ssoSamlPostProfileHandlerEndpoint() {
+        return new SSOSamlIdPPostProfileHandlerEndpoint(casProperties,
             servicesManager.getObject(),
             authenticationSystemSupport.getObject(),
             samlIdPServiceFactory.getObject(),

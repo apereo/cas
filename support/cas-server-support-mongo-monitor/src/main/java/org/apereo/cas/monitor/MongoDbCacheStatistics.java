@@ -1,10 +1,10 @@
 package org.apereo.cas.monitor;
 
-import com.mongodb.CommandResult;
-import com.mongodb.DBCollection;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.bson.Document;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 
@@ -18,33 +18,31 @@ import java.io.StringWriter;
  */
 @Slf4j
 @ToString
+@RequiredArgsConstructor
 public class MongoDbCacheStatistics implements CacheStatistics {
-    private final DBCollection collection;
-    private final CommandResult statistics;
 
-    public MongoDbCacheStatistics(final DBCollection collection) {
-        this.collection = collection;
-        this.statistics = collection.getStats();
-    }
+    private final Document statistics;
+
+    private final String collectionName;
 
     @Override
     public long getSize() {
-        return statistics.getLong("size");
+        return statistics.getInteger("size");
     }
 
     @Override
     public long getCapacity() {
-        return statistics.getLong("storageSize");
+        return statistics.getInteger("storageSize");
     }
 
     @Override
     public long getPercentFree() {
-        return getCapacity() - statistics.getLong("totalIndexSize");
+        return getCapacity() - statistics.getInteger("totalIndexSize");
     }
 
     @Override
     public String getName() {
-        return this.collection.getName();
+        return collectionName;
     }
 
     @Override

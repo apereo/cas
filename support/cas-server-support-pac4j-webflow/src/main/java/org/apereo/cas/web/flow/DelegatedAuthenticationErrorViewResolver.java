@@ -33,8 +33,8 @@ public class DelegatedAuthenticationErrorViewResolver implements ErrorViewResolv
         if (exception != null) {
             val cause = ((Throwable) exception).getCause();
             if (cause instanceof UnauthorizedServiceException) {
-                val mvError = new ModelAndView("casDelegatedAuthnErrorView", HttpStatus.FORBIDDEN);
-                LOGGER.warn("Delegated authentication has failed with the following details [{}]; Routing over to [{}]", map, mvError.getViewName());
+                val mvError = new ModelAndView(CasWebflowConstants.VIEW_ID_DELEGATED_AUTHN_ERROR_VIEW, HttpStatus.FORBIDDEN);
+                LOGGER.warn("Delegated authentication failed with the following details [{}]; Routing over to [{}]", map, mvError.getViewName());
                 return mvError;
             }
         }

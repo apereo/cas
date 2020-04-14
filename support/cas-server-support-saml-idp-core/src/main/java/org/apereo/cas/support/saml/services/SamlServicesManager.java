@@ -8,11 +8,10 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.springframework.context.ApplicationEventPublisher;
 
-import java.util.Collection;
+import java.util.Comparator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
-
-import static java.util.stream.Collectors.toSet;
+import java.util.stream.Stream;
 
 /**
  * Implementation of the {@link ServicesManager} interface that supports SAML registered services.
@@ -29,29 +28,8 @@ public class SamlServicesManager extends AbstractServicesManager {
         super(serviceRegistry, eventPublisher, environments);
     }
 
-    @Override
-    protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
-        return this.orderedServices.stream()
-                .filter(r -> r.matches(serviceId))
-                .filter(this::supports)
-                .collect(toSet());
-    }
-
-    @Override
-    protected void deleteInternal(final RegisteredService service) {
-        this.orderedServices.remove(service);
-    }
-
-    @Override
-    protected void saveInternal(final RegisteredService service) {
-        this.orderedServices.clear();
-        this.orderedServices.addAll(getAllServices());
-    }
-
-    @Override
-    protected void loadInternal() {
-        this.orderedServices.clear();
-        this.orderedServices.addAll(getAllServices());
+    protected Stream<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
+        return getServices().values().stream().sorted(Comparator.naturalOrder());
     }
 
     @Override

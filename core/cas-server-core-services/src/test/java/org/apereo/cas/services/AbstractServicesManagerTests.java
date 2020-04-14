@@ -19,10 +19,13 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public abstract class AbstractServicesManagerTests {
+public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     private static final String TEST = "test";
+
     protected final List<RegisteredService> listOfDefaultServices = new ArrayList<>();
+
     protected ServiceRegistry serviceRegistry;
+
     protected ServicesManager servicesManager;
 
     public AbstractServicesManagerTests() {

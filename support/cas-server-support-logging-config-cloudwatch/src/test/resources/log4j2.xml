@@ -24,7 +24,7 @@
         <Logger name="org.apereo.cas.logging.CloudWatchAppender" level="trace" additivity="false">
             <AppenderRef ref="CloudWatchAppender"/>
         </Logger>
-        <Logger name="com.amazonaws" level="trace" />
+        <Logger name="com.amazonaws" level="warn" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>
