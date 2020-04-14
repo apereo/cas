@@ -29,6 +29,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSaml
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidatorTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilderTests;
+import org.apereo.cas.support.saml.web.idp.profile.ecp.ECPSamlIdPProfileHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.query.SamlIdPSaml2AttributeQueryProfileHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLOSamlIdPPostProfileHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLOSamlRedirectProfileHandlerControllerTests;
@@ -93,6 +94,7 @@ import org.junit.runner.RunWith;
     MetadataRequestedAttributesAttributeReleasePolicyTests.class,
     SamlObjectSignatureValidatorTests.class,
     SamlTemplatesVelocityEngineTests.class,
+    ECPSamlIdPProfileHandlerControllerTests.class,
     SamlIdPSaml2AttributeQueryProfileHandlerControllerTests.class,
     SSOSamlIdPPostProfileHandlerControllerTests.class,
     SLOSamlRedirectProfileHandlerControllerTests.class,

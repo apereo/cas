@@ -3,40 +3,12 @@
 clear
 
 printHelp() {
-    echo -e "Usage: ./testcas.sh --category [category1,category2,...] [--help] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--coverage]\n"
+    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--coverage]\n"
     echo -e "Available test categories are:\n"
-    echo -e "\t - simple"
-    echo -e "\t - memcached"
-    echo -e "\t - cassandra"
-    echo -e "\t - groovy"
-    echo -e "\t - ldap"
-    echo -e "\t - rest"
-    echo -e "\t - mfa"
-    echo -e "\t - jdbc"
-    echo -e "\t - mssql"
-    echo -e "\t - oracle"
-    echo -e "\t - radius"
-    echo -e "\t - couchdb"
-    echo -e "\t - mariadb"
-    echo -e "\t - files"
-    echo -e "\t - postgres"
-    echo -e "\t - dynamodb"
-    echo -e "\t - couchbase"
-    echo -e "\t - uma"
-    echo -e "\t - saml"
-    echo -e "\t - mail"
-    echo -e "\t - aws"
-    echo -e "\t - activemq"
-    echo -e "\t - oauth"
-    echo -e "\t - oidc"
-    echo -e "\t - redis"
-    echo -e "\t - webflow"
-    echo -e "\t - mongo"
-    echo -e "\t - ignite"
-    echo -e "\t - influxdb"
-    echo -e "\t - zookeeper"
-    echo -e "\t - mysql"
-    echo -e "\nPlease see the test script for more available categories.\n"
+    echo -e "simple, memcached,cassandra,groovy,kafka,ldap,rest,mfa,jdbc,mssql,oracle,radius,couchdb,\
+mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,activemq,\
+oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql"
+    echo -e "\nPlease see the test script for details.\n"
 }
 
 parallel="--parallel "
@@ -159,6 +131,11 @@ while (( "$#" )); do
             cassandra)
                 task+="testCassandra "
                 category+="CASSANDRA,"
+                flags+=" -DCI=true"
+                ;;
+            kafka)
+                task+="testKafka "
+                category+="KAFKA,"
                 flags+=" -DCI=true"
                 ;;
             oauth)

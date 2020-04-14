@@ -1,11 +1,36 @@
 #!/bin/bash
 
+
 installJdk11() {
+    installJdk "11.0.6" "10"
+}
+
+
+installJdk() {
     echo -e "Installing Java...\n"
-    jdkVersion="11.0.6"
-    jdkRevision="10"
-    jdkDownloadUrl="https://github.com/AdoptOpenJDK/openjdk11-upstream-binaries/releases/download"
+    jdkVersion="$1"
+    jdkRevision="$2"
+
+    jdkRepository="openjdk11-upstream-binaries"
+    case "${jdkVersion}" in
+    ^15)
+        jdkRepository="openjdk15-upstream-binaries"
+        shift
+        ;;
+    ^16)
+        jdkRepository="openjdk16-upstream-binaries"
+        shift
+        ;;
+    ^17)
+        jdkRepository="openjdk17-upstream-binaries"
+        shift
+        ;;
+    esac
+
+    jdkDownloadUrl="https://github.com/AdoptOpenJDK/${jdkRepository}/releases/download"
     url="${jdkDownloadUrl}/jdk-${jdkVersion}%2B${jdkRevision}/OpenJDK11U-jdk_x64_linux_${jdkVersion}_${jdkRevision}.tar.gz"
+    echo "Downloading JDK from ${url}"
+
     wget https://github.com/sormuras/bach/raw/master/install-jdk.sh && chmod +x install-jdk.sh
     for i in {1..5}; do
         export JAVA_HOME=$(./install-jdk.sh --emit-java-home --url ${url} -c | tail --lines 1)
@@ -17,6 +42,8 @@ installJdk11() {
     done
     echo JAVA_HOME=${JAVA_HOME}
 }
+
+installJdk11
 
 currentChangeSetContains() {
     # Turn on for case-insensitive matching
