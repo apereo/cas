@@ -5,7 +5,6 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
-import org.apereo.cas.util.HttpUtils;
 
 import lombok.val;
 import org.apache.http.HttpStatus;

@@ -24,6 +24,7 @@ import org.springframework.beans.factory.DisposableBean;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountNotFoundException;
+import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 
 import java.security.GeneralSecurityException;
@@ -80,11 +81,11 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
             val result = cognitoIdentityProvider.adminInitiateAuth(authRequest);
 
             if ("NEW_PASSWORD_REQUIRED".equalsIgnoreCase(result.getChallengeName())) {
-                throw new AccountPasswordMustChangeException();
+                throw new CredentialExpiredException();
             }
             val authenticationResult = result.getAuthenticationResult();
             val claims = jwtProcessor.process(authenticationResult.getIdToken(), new SimpleSecurityContext());
-            if (StringUtils.isNotBlank(claims.getSubject())) {
+            if (StringUtils.isBlank(claims.getSubject())) {
                 throw new FailedLoginException("Unable to accept the id token with an invalid [sub] claim");
             }
 
@@ -115,6 +116,8 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
         } catch (final UserNotFoundException e) {
             throw new AccountNotFoundException(e.getMessage());
         } catch (final InvalidPasswordException e) {
+            throw new AccountPasswordMustChangeException(e.getMessage());
+        } catch (final CredentialExpiredException e) {
             throw new AccountPasswordMustChangeException(e.getMessage());
         } catch (final Exception e) {
             throw new FailedLoginException(e.getMessage());

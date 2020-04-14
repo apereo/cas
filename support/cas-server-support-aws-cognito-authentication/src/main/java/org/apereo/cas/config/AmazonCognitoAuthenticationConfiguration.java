@@ -98,7 +98,7 @@ public class AmazonCognitoAuthenticationConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "amazonCognitoAuthenticationHandler")
-    @Bean
+    @Bean(destroyMethod = "destroy")
     @RefreshScope
     public AuthenticationHandler amazonCognitoAuthenticationHandler() {
         val cognito = casProperties.getAuthn().getCognito();
