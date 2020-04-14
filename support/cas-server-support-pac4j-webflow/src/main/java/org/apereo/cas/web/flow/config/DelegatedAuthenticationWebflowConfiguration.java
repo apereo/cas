@@ -13,9 +13,9 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
+import org.apereo.cas.web.DefaultDelegatedAuthenticationNavigationController;
 import org.apereo.cas.web.DelegatedAuthenticationWebApplicationServiceFactory;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
-import org.apereo.cas.web.DelegatedClientNavigationController;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -216,8 +216,8 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "delegatedClientNavigationController")
     @Bean
-    public DelegatedClientNavigationController delegatedClientNavigationController() {
-        return new DelegatedClientNavigationController(builtClients.getObject(),
+    public DefaultDelegatedAuthenticationNavigationController delegatedClientNavigationController() {
+        return new DefaultDelegatedAuthenticationNavigationController(builtClients.getObject(),
             delegatedClientWebflowManager(),
             delegatedClientDistributedSessionStore.getObject());
     }

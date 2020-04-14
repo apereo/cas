@@ -270,7 +270,8 @@ public class MultifactorAuthenticationUtils {
      */
     public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderById(final String providerId,
                                                                                                        final ApplicationContext context) {
-        return getAvailableMultifactorAuthenticationProviders(context).values()
+        return getAvailableMultifactorAuthenticationProviders(context)
+            .values()
             .stream()
             .filter(p -> p.matches(providerId))
             .findFirst();

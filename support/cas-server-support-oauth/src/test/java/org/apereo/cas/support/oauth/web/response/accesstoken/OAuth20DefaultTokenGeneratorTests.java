@@ -1,7 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
+import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.val;
