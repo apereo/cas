@@ -1,12 +1,8 @@
 package org.apereo.cas.services;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
-
-import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link ChainingWithOnlyDefaulServicesManagerTests}.
@@ -15,13 +11,6 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 public class ChainingWithOnlyDefaulServicesManagerTests extends AbstractServicesManagerTests {
-    @Override
-    protected ServicesManager getServicesManagerInstance() {
-        var chain = new ChainingServicesManager();
-        var manager = new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class), new HashSet<>());
-        chain.registerServiceManager(manager);
-        return chain;
-    }
 
     @Test
     public void verifySupports() {

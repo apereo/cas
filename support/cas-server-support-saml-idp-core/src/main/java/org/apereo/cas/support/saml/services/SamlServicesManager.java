@@ -10,7 +10,6 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Comparator;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Stream;
 
 /**
@@ -21,8 +20,6 @@ import java.util.stream.Stream;
  * @since 6.2.0
  */
 public class SamlServicesManager extends AbstractServicesManager {
-
-    private Set<RegisteredService> orderedServices = new ConcurrentSkipListSet<>();
 
     public SamlServicesManager(final ServiceRegistry serviceRegistry, final ApplicationEventPublisher eventPublisher, final Set<String> environments) {
         super(serviceRegistry, eventPublisher, environments);

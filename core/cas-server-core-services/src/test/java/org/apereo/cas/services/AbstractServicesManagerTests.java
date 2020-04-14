@@ -45,7 +45,10 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     protected ServicesManager getServicesManagerInstance() {
-        return new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class), new HashSet<>());
+        var chain = new ChainingServicesManager();
+        var manager = new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class), new HashSet<>());
+        chain.registerServiceManager(manager);
+        return chain;
     }
 
     protected ServiceRegistry getServiceRegistryInstance() {

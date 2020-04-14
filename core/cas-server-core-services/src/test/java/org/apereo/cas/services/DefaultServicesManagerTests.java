@@ -29,8 +29,7 @@ public class DefaultServicesManagerTests extends AbstractServicesManagerTests {
 
     @Test
     public void verifyOnlyLoadsRegexServices() {
-        assertTrue(this.servicesManager.count() == 1);
+        assertEquals(1, this.servicesManager.count());
+        assertEquals(RegexRegisteredService.class, this.servicesManager.getAllServices().iterator().next().getClass());
     }
-
-
 }

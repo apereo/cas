@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.apereo.cas.services.AbstractServicesManagerTests;
 import org.apereo.cas.services.ChainingServicesManager;
-import org.apereo.cas.services.ChainingWithOnlyDefaulServicesManagerTests;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
@@ -21,7 +21,8 @@ import static org.mockito.Mockito.mock;
  * @author Dmitriy Kopylenko
  * @since 6.2.0
  */
-public class ChainingWithDefaulAndSamlServicesManagersTests extends ChainingWithOnlyDefaulServicesManagerTests {
+public class ChainingWithDefaulAndSamlServicesManagersTests extends AbstractServicesManagerTests {
+
     @Override
     protected ServicesManager getServicesManagerInstance() {
         var chain = (ChainingServicesManager) super.getServicesManagerInstance();
