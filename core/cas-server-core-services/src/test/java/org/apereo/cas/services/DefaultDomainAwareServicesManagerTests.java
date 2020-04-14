@@ -19,14 +19,14 @@ import static org.mockito.Mockito.*;
  */
 @NoArgsConstructor
 public class DefaultDomainAwareServicesManagerTests extends AbstractServicesManagerTests {
-    private final DefaultDomainAwareServicesManager defaultDomainAwareServicesManager =
-        new DefaultDomainAwareServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class),
-            new DefaultRegisteredServiceDomainExtractor(),
-            new HashSet<>());
+    private DefaultDomainAwareServicesManager defaultDomainAwareServicesManager;
 
     @Override
     protected ServicesManager getServicesManagerInstance() {
-        return this.defaultDomainAwareServicesManager;
+        defaultDomainAwareServicesManager = new DefaultDomainAwareServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class),
+            new DefaultRegisteredServiceDomainExtractor(),
+            new HashSet<>());
+        return defaultDomainAwareServicesManager;
     }
 
     @Test

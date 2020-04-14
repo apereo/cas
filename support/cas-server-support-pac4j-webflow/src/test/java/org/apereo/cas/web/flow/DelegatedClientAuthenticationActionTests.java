@@ -194,7 +194,7 @@ public class DelegatedClientAuthenticationActionTests {
                 CollectionUtils.wrapList(facebookClient.getName()), true, false));
 
         val event = getDelegatedClientAction(facebookClient, service, clients, mockRequest, strategy).execute(mockRequestContext);
-        assertEquals("templates/error", event.getId());
+        assertEquals("error", event.getId());
 
         manager.retrieve(mockRequestContext, webContext, facebookClient);
 

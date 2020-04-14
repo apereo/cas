@@ -27,17 +27,17 @@ public class MongoDbCacheStatistics implements CacheStatistics {
 
     @Override
     public long getSize() {
-        return statistics.getLong("size");
+        return statistics.getInteger("size");
     }
 
     @Override
     public long getCapacity() {
-        return statistics.getLong("storageSize");
+        return statistics.getInteger("storageSize");
     }
 
     @Override
     public long getPercentFree() {
-        return getCapacity() - statistics.getLong("totalIndexSize");
+        return getCapacity() - statistics.getInteger("totalIndexSize");
     }
 
     @Override
