@@ -53,9 +53,6 @@ import java.util.List;
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 public abstract class BaseJwtTokenTicketBuilderTests {
     @Autowired

@@ -116,9 +116,6 @@ public class ClientFlowExecutionRepositoryTests {
 
         @Bean
         public Transcoder transcoder() {
-            val t = new EncryptedTranscoder();
-            t.setCompression(true);
-
             val keystoreFactory = new KeyStoreFactoryBean();
             keystoreFactory.setType("JCEKS");
             keystoreFactory.setPassword("changeit");
@@ -131,8 +128,7 @@ public class ClientFlowExecutionRepositoryTests {
             cipher.setBlockCipherSpec(new AEADBlockCipherSpec("AES", "GCM"));
             cipher.setNonce(new RBGNonce());
 
-            t.setCipherBean(cipher);
-            return t;
+            return new EncryptedTranscoder(cipher);
         }
     }
 }

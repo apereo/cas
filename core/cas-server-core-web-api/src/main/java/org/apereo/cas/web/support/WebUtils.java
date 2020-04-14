@@ -1253,4 +1253,23 @@ public class WebUtils {
     public static String getOpenIdLocalUserId(final RequestContext context) {
         return context.getFlowScope().get("openIdLocalId", String.class);
     }
+
+    /**
+     * Add the mfa provider id into flow scope.
+     *
+     * @param context  request context
+     * @param provider the mfa provider
+     */
+    public static void putMultifactorAuthenticationProviderIdIntoFlowScope(final RequestContext context, final MultifactorAuthenticationProvider provider) {
+        context.getFlowScope().put(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, provider.getId());
+    }
+
+    /**
+     * Get the mfa provider id from flow scope.
+     * @param context request context
+     * @return provider id
+     */
+    public static String getMultifactorAuthenticationProviderById(final RequestContext context) {
+        return context.getFlowScope().get(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, String.class);
+    }
 }

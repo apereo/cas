@@ -4,7 +4,7 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +24,10 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.1.0
  */
 @Slf4j
-public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSamlProfileHandlerController {
+public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
 
-    public AbstractSamlSLOProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
-        super(samlProfileHandlerConfigurationContext);
+    public AbstractSamlSLOProfileHandlerController(final SamlProfileHandlerConfigurationContext context) {
+        super(context);
     }
 
     /**
@@ -47,14 +47,15 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
             return;
         }
 
-        val pair = getSamlProfileHandlerConfigurationContext().getSamlHttpRequestExtractor().extract(request, decoder, LogoutRequest.class);
+        val pair = getSamlProfileHandlerConfigurationContext().getSamlHttpRequestExtractor()
+            .extract(request, decoder, LogoutRequest.class);
         val logoutRequest = (LogoutRequest) pair.getKey();
         val ctx = pair.getValue();
 
         if (logout.isForceSignedLogoutRequests() && !SAMLBindingSupport.isMessageSigned(ctx)) {
             throw new SAMLException("Logout request is not signed but should be.");
         }
-
+        
         if (SAMLBindingSupport.isMessageSigned(ctx)) {
             val entityId = SamlIdPUtils.getIssuerFromSamlObject(logoutRequest);
             LOGGER.trace("SAML logout request from entity id [{}] is signed", entityId);

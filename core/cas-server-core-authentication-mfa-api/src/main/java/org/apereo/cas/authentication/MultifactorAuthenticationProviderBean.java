@@ -61,7 +61,7 @@ public class MultifactorAuthenticationProviderBean<T extends MultifactorAuthenti
      */
     @EventListener
     public void onRefreshScopeRefreshed(final RefreshScopeRefreshedEvent event) {
-        LOGGER.debug("Refreshing MFA Providers...");
+        LOGGER.trace("Refreshing MFA Providers...");
     }
 
 

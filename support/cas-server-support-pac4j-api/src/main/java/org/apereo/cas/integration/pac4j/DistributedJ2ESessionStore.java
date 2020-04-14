@@ -1,13 +1,10 @@
 package org.apereo.cas.integration.pac4j;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.logout.LogoutPostProcessor;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
@@ -31,7 +28,7 @@ import java.util.UUID;
  */
 @Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
-public class DistributedJ2ESessionStore implements SessionStore<JEEContext>, LogoutPostProcessor {
+public class DistributedJ2ESessionStore implements SessionStore<JEEContext> {
     private static final String SESSION_ID_IN_REQUEST_ATTRIBUTE = "sessionIdInRequestAttribute";
 
     private final TicketRegistry ticketRegistry;
@@ -146,14 +143,5 @@ public class DistributedJ2ESessionStore implements SessionStore<JEEContext>, Log
             return null;
         }
         return ticket;
-    }
-
-    @Override
-    public void handle(final TicketGrantingTicket ticketGrantingTicket) {
-        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-        if (request != null && response != null) {
-            destroySession(new JEEContext(request, response, this));
-        }
     }
 }

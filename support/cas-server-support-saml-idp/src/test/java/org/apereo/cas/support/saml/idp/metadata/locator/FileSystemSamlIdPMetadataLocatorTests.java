@@ -4,9 +4,13 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import lombok.val;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.FileSystemResource;
 
+import java.io.File;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,6 +23,18 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML")
 public class FileSystemSamlIdPMetadataLocatorTests extends BaseSamlIdPConfigurationTests {
+    @BeforeAll
+    public static void beforeThisClass() throws Exception {
+        METADATA_DIRECTORY = new FileSystemResource(new File(FileUtils.getTempDirectory(), "metadata"));
+        if (METADATA_DIRECTORY.exists()) {
+            FileUtils.deleteDirectory(METADATA_DIRECTORY.getFile());
+        }
+        val serviceDir = new File(METADATA_DIRECTORY.getFile(), "TestShib-1000");
+        if (!serviceDir.exists()) {
+            serviceDir.mkdirs();
+        }
+    }
+
     @Test
     public void verifyOperation() {
         samlIdPMetadataLocator.initialize();

@@ -1,12 +1,12 @@
 package org.apereo.cas.support.x509.rest.config;
 
+import org.apereo.cas.adaptors.x509.authentication.X509CertificateExtractor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 import org.apereo.cas.support.x509.rest.X509RestHttpRequestHeaderCredentialFactory;
 import org.apereo.cas.support.x509.rest.X509RestMultipartBodyCredentialFactory;
 import org.apereo.cas.support.x509.rest.X509RestTlsClientCertCredentialFactory;
-import org.apereo.cas.web.extractcert.X509CertificateExtractor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

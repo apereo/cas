@@ -23,7 +23,9 @@ import java.io.IOException;
 public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
 
     private final TicketRegistry ticketRegistry;
+
     private final SamlArtifactTicketFactory samlArtifactTicketFactory;
+
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Override

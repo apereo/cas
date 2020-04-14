@@ -7,7 +7,6 @@ import lombok.val;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -41,7 +40,7 @@ public interface ServicesManager {
      *
      * @param services the services
      */
-    default void save(final RegisteredService...services) {
+    default void save(final RegisteredService... services) {
         Arrays.stream(services).forEach(this::save);
     }
 
@@ -172,25 +171,6 @@ public interface ServicesManager {
      */
     default int count() {
         return 0;
-    }
-
-    /**
-     * Return a list of services for the passed domain.
-     *
-     * @param domain the domain name
-     * @return list of services
-     */
-    default Collection<RegisteredService> getServicesForDomain(final String domain) {
-        return getAllServices();
-    }
-
-    /**
-     * Returns a list of domains being managed by the ServiceManager.
-     *
-     * @return list of domain names
-     */
-    default Collection<String> getDomains() {
-        return Stream.of("default").collect(Collectors.toList());
     }
 
     /**

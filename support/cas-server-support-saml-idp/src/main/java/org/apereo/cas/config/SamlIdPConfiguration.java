@@ -40,9 +40,9 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.response.query.SamlP
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11FaultResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11ResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.subject.SamlProfileSamlSubjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPProfileSingleLogoutMessageCreator;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceMessageHandler;
-import org.apereo.cas.support.saml.web.idp.profile.slo.SamlProfileSingleLogoutMessageCreator;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.artifact.DefaultSamlArtifactTicketFactory;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketExpirationPolicyBuilder;
@@ -158,7 +158,7 @@ public class SamlIdPConfiguration {
     @ConditionalOnMissingBean(name = "samlLogoutBuilder")
     @Bean
     public SingleLogoutMessageCreator samlLogoutBuilder() {
-        return new SamlProfileSingleLogoutMessageCreator(
+        return new SamlIdPProfileSingleLogoutMessageCreator(
             openSamlConfigBean.getObject(),
             servicesManager.getObject(),
             defaultSamlRegisteredServiceCachingMetadataResolver.getObject(),

@@ -88,7 +88,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
             val logoutRequest = (LogoutRequest) logoutMessage.getMessage();
             LOGGER.trace("Sending logout response for binding [{}]", binding);
             if (SAMLConstants.SAML2_REDIRECT_BINDING_URI.equalsIgnoreCase(binding)) {
-                val encoder = new SamlIdPHttpRedirectDeflateLogoutEncoder(msg.getUrl().toExternalForm(), logoutRequest);
+                val encoder = new SamlIdPHttpRedirectDeflateEncoder(msg.getUrl().toExternalForm(), logoutRequest);
                 encoder.doEncode();
                 val redirectUrl = encoder.getRedirectUrl();
                 LOGGER.trace("Final logout redirect URL is [{}]", redirectUrl);
