@@ -31,7 +31,7 @@ public class ServiceRegistryInitializerEventListenerTests {
         });
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() throws Throwable {
+            public void execute() {
                 listener.handleRefreshEvent(new EnvironmentChangeEvent(Set.of()));
             }
         });
