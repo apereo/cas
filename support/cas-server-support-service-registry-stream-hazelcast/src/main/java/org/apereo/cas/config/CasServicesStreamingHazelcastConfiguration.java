@@ -48,7 +48,7 @@ public class CasServicesStreamingHazelcastConfiguration {
         return new RegisteredServiceHazelcastDistributedCacheManager(casRegisteredServiceHazelcastInstance());
     }
 
-    @Bean
+    @Bean(destroyMethod = "destroy")
     public RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy() {
         val stream = casProperties.getServiceRegistry().getStream();
         return new DefaultRegisteredServiceReplicationStrategy(registeredServiceDistributedCacheManager(), stream);
