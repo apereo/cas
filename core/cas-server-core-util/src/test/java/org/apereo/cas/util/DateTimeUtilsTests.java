@@ -1,12 +1,16 @@
 package org.apereo.cas.util;
 
 import lombok.val;
+import org.joda.time.DateTime;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -56,6 +60,16 @@ public class DateTimeUtilsTests {
     }
 
     @Test
+    public void verifyConvert() {
+        assertNotNull(DateTimeUtils.convertToZonedDateTime(LocalDateTime.now().toString()));
+        assertNotNull(DateTimeUtils.convertToZonedDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString()));
+        assertNotNull(DateTimeUtils.zonedDateTimeOf(DateTime.now().toInstant()));
+        assertNotNull(DateTimeUtils.zonedDateTimeOf(System.currentTimeMillis()));
+        assertNotNull(DateTimeUtils.localDateTimeOf(new Date()));
+        assertNotNull(DateTimeUtils.localDateTimeOf(System.currentTimeMillis()));
+    }
+
+    @Test
     public void verifyParsingChronoUnit() {
         assertEquals(ChronoUnit.DAYS, DateTimeUtils.toChronoUnit(TimeUnit.DAYS));
         assertEquals(ChronoUnit.HOURS, DateTimeUtils.toChronoUnit(TimeUnit.HOURS));
@@ -64,5 +78,17 @@ public class DateTimeUtilsTests {
         assertEquals(ChronoUnit.MICROS, DateTimeUtils.toChronoUnit(TimeUnit.MICROSECONDS));
         assertEquals(ChronoUnit.MILLIS, DateTimeUtils.toChronoUnit(TimeUnit.MILLISECONDS));
         assertEquals(ChronoUnit.NANOS, DateTimeUtils.toChronoUnit(TimeUnit.NANOSECONDS));
+    }
+
+    @Test
+    public void verifyTimeUnit() {
+        assertEquals(TimeUnit.DAYS, DateTimeUtils.toTimeUnit(ChronoUnit.DAYS));
+        assertEquals(TimeUnit.HOURS, DateTimeUtils.toTimeUnit(ChronoUnit.HOURS));
+        assertEquals(TimeUnit.MINUTES, DateTimeUtils.toTimeUnit(ChronoUnit.MINUTES));
+        assertEquals(TimeUnit.SECONDS, DateTimeUtils.toTimeUnit(ChronoUnit.SECONDS));
+        assertEquals(TimeUnit.MICROSECONDS, DateTimeUtils.toTimeUnit(ChronoUnit.MICROS));
+        assertEquals(TimeUnit.MILLISECONDS, DateTimeUtils.toTimeUnit(ChronoUnit.MILLIS));
+        assertEquals(TimeUnit.NANOSECONDS, DateTimeUtils.toTimeUnit(ChronoUnit.NANOS));
+        assertThrows(UnsupportedOperationException.class, () -> assertNotNull(DateTimeUtils.toTimeUnit(ChronoUnit.WEEKS)));
     }
 }

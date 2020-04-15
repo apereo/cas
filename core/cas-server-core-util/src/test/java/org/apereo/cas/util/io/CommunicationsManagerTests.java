@@ -8,6 +8,7 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,7 @@ public class CommunicationsManagerTests {
         props.setFrom("cas@example.org");
         props.setCc("cc@example.org");
         props.setBcc("bcc@example.org");
+        props.setReplyTo("bcc1@example.org");
 
         assertTrue(communicationsManager.email(props, "sample@example.org", props.getFormattedBody()));
         val p = mock(Principal.class);
@@ -79,5 +81,30 @@ public class CommunicationsManagerTests {
 
         val body = props.getFormattedBody("param1", "param2");
         assertTrue(communicationsManager.email(props, "sample@example.org", body));
+    }
+
+    @Test
+    public void verifyMailNoAtr() {
+        assertTrue(communicationsManager.isMailSenderDefined());
+        assertFalse(communicationsManager.email(mock(Principal.class), "bad-attribute",
+            new EmailProperties(), StringUtils.EMPTY));
+    }
+
+    @Test
+    public void verifySmsNoAtr() {
+        assertFalse(communicationsManager.isSmsSenderDefined());
+        assertFalse(communicationsManager.sms(mock(Principal.class), "bad-attribute",
+            "sms text", StringUtils.EMPTY));
+    }
+
+    @Test
+    public void verifyNoSmsSender() {
+        assertFalse(communicationsManager.isSmsSenderDefined());
+        assertFalse(communicationsManager.sms(StringUtils.EMPTY, null, null));
+    }
+
+    @Test
+    public void verifyValidate() {
+        assertTrue(communicationsManager.validate());
     }
 }
