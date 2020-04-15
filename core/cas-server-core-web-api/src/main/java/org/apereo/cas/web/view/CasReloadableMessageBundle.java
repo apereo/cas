@@ -33,8 +33,8 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
     @Override
     protected String getDefaultMessage(final String code) {
         val messageToReturn = super.getDefaultMessage(code);
-        if (!StringUtils.isBlank(messageToReturn) && messageToReturn.equals(code)) {
-            LOGGER.warn("The code [{}] cannot be found in the default language bundle and will be used as the message itself.", code);
+        if (StringUtils.isNotBlank(messageToReturn) && messageToReturn.equals(code)) {
+            LOGGER.debug("The code [{}] cannot be found in the default language bundle and will be used as the message itself.", code);
         }
         return messageToReturn;
     }
