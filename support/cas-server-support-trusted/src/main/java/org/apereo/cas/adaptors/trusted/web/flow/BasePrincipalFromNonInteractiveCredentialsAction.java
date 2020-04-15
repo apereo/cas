@@ -52,12 +52,12 @@ public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends A
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val remoteUser = getRemotePrincipalId(request);
         if (StringUtils.isNotBlank(remoteUser)) {
-            LOGGER.debug("User [{}] found in HttpServletRequest", remoteUser);
+            LOGGER.debug("User [{}] found in request", remoteUser);
             val attributes = principalAttributesExtractor.getAttributes(request);
-            LOGGER.debug("Attributes [{}] found in HttpServletRequest", attributes);
+            LOGGER.debug("Attributes [{}] found in request", attributes);
             return new PrincipalBearingCredential(this.principalFactory.createPrincipal(remoteUser, attributes));
         }
-        LOGGER.debug("No user found in HttpServletRequest");
+        LOGGER.debug("No user found in request");
         return null;
     }
 
