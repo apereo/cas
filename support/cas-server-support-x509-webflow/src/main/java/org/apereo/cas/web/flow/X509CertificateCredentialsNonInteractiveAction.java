@@ -25,7 +25,6 @@ import java.util.Arrays;
  */
 @Slf4j
 public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonInteractiveCredentialsAction {
-
     /**
      * Attribute to indicate the x509 certificate.
      */

@@ -22,6 +22,10 @@ public abstract class BaseIPAddressIntelligenceService implements IPAddressIntel
      */
     protected final AdaptiveAuthenticationProperties adaptiveAuthenticationProperties;
 
+    private static void trackResponseInRequestContext(final RequestContext context, final IPAddressIntelligenceResponse response) {
+        context.getFlowScope().put("ipAddressIntelligenceResponse", response);
+    }
+
     private boolean isClientIpAddressRejected(final String clientIp) {
         return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectIpAddresses())
             && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectIpAddresses()).matcher(clientIp).find();
@@ -37,10 +41,6 @@ public abstract class BaseIPAddressIntelligenceService implements IPAddressIntel
         val response = examineInternal(context, clientIpAddress);
         trackResponseInRequestContext(context, response);
         return response;
-    }
-
-    private static void trackResponseInRequestContext(final RequestContext context, final IPAddressIntelligenceResponse response) {
-        context.getFlowScope().put("ipAddressIntelligenceResponse", response);
     }
 
     /**

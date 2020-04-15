@@ -7,12 +7,15 @@ import org.apereo.cas.web.flow.DefaultLogoutWebflowConfigurerTests;
 import org.apereo.cas.web.flow.DefaultSingleSignOnParticipationStrategyTests;
 import org.apereo.cas.web.flow.actions.AuthenticationExceptionHandlerActionTests;
 import org.apereo.cas.web.flow.actions.CasDefaultFlowUrlHandlerTests;
+import org.apereo.cas.web.flow.actions.ClearWebflowCredentialActionTests;
 import org.apereo.cas.web.flow.actions.InjectResponseHeadersActionTests;
 import org.apereo.cas.web.flow.actions.RedirectToServiceActionTests;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAbstractTicketExceptionHandlerTests;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAuthenticationExceptionHandlerTests;
 import org.apereo.cas.web.flow.authentication.GenericCasWebflowExceptionHandlerTests;
 import org.apereo.cas.web.flow.authentication.RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTests;
+import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurerTests;
+import org.apereo.cas.web.flow.executor.ClientFlowExecutionKeyTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -30,6 +33,9 @@ import org.junit.runner.RunWith;
     DefaultLoginWebflowConfigurerTests.class,
     DefaultLogoutWebflowConfigurerTests.class,
     RedirectToServiceActionTests.class,
+    ClientFlowExecutionKeyTests.class,
+    ClearWebflowCredentialActionTests.class,
+    AbstractCasWebflowConfigurerTests.class,
     DefaultCasWebflowAbstractTicketExceptionHandlerTests.class,
     DefaultCasWebflowAuthenticationExceptionHandlerTests.class,
     GenericCasWebflowExceptionHandlerTests.class,

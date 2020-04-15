@@ -94,10 +94,10 @@ public class EncryptedTranscoder implements Transcoder {
     @Override
     public Object decode(final byte[] encoded) throws IOException {
         val data = decrypt(encoded);
-        val inBuffer = new ByteArrayInputStream(data);
-        try (val in = this.compression
-            ? new ObjectInputStream(new GZIPInputStream(inBuffer))
-            : new ObjectInputStream(inBuffer)) {
+        try (val inBuffer = new ByteArrayInputStream(data);
+             val in = this.compression
+                 ? new ObjectInputStream(new GZIPInputStream(inBuffer))
+                 : new ObjectInputStream(inBuffer)) {
             return in.readObject();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
