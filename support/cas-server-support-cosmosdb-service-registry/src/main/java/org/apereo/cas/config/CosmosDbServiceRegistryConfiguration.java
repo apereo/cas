@@ -79,7 +79,6 @@ public class CosmosDbServiceRegistryConfiguration {
     public ServiceRegistry cosmosDbServiceRegistry() {
         val cosmosDb = casProperties.getServiceRegistry().getCosmosDb();
         val dbFactory = cosmosDbDocumentDbFactory();
-        val db = cosmosDbDocumentDbTemplate();
 
         if (cosmosDb.isDropCollection()) {
             val collectionLink = CosmosDbObjectFactory.getCollectionLink(cosmosDb.getDatabase(), cosmosDb.getCollection());
@@ -95,6 +94,8 @@ public class CosmosDbServiceRegistryConfiguration {
         val indexingPolicy = new IndexingPolicy();
         indexingPolicy.setAutomatic(true);
         indexingPolicy.setIndexingMode(IndexingMode.valueOf(cosmosDb.getIndexingMode()));
+
+        val db = cosmosDbDocumentDbTemplate();
         db.createCollectionIfNotExists(cosmosDb.getCollection(), PARTITION_KEY_FIELD_NAME,
             cosmosDb.getThroughput(), indexingPolicy);
         return new CosmosDbServiceRegistry(db, dbFactory, cosmosDb.getCollection(),
