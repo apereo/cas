@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     ServiceRegistryInitializerTests.class,
+    ServiceRegistryInitializerEventListenerTests.class,
     DefaultRegisteredServiceResourceNamingStrategyTests.class,
     DeleteResourceBasedRegisteredServiceWatcherTests.class,
     CreateResourceBasedRegisteredServiceWatcherTests.class,
