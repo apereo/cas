@@ -3,7 +3,10 @@ package org.apereo.cas.util.io;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.MockWebServer;
 
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -16,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.nio.charset.StandardCharsets;
 
@@ -44,6 +48,11 @@ public class RestfulSmsSenderTests {
 
     @BeforeEach
     public void initialize() {
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr("185.86.151.11");
+        request.setLocalAddr("185.88.151.11");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+
         this.webServer = new MockWebServer(8132, new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8),
             "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);
@@ -56,7 +65,7 @@ public class RestfulSmsSenderTests {
     }
 
     @Test
-    public void verifyRestAttributeRepository() {
+    public void verifySms() {
         assertTrue(communicationsManager.isSmsSenderDefined());
         assertTrue(communicationsManager.sms("CAS", "CAS", "Hello CAS"));
     }
