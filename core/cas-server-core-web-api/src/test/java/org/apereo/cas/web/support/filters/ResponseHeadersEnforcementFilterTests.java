@@ -33,7 +33,6 @@ public class ResponseHeadersEnforcementFilterTests {
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_XCONTENT_OPTIONS, "true");
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_XSS_PROTECTION, "true");
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_CONTENT_SECURITY_POLICY, "default-src https");
-
         this.filter = new ResponseHeadersEnforcementFilter();
     }
 
@@ -52,6 +51,7 @@ public class ResponseHeadersEnforcementFilterTests {
         assertDoesNotThrow(() -> {
             filter.doFilter(servletRequest, servletResponse, new MockFilterChain());
         });
+        filter.destroy();
         assertNotNull(servletResponse.getHeaderValue("Cache-Control"));
         assertNotNull(servletResponse.getHeaderValue("Pragma"));
         assertNotNull(servletResponse.getHeaderValue("Expires"));
