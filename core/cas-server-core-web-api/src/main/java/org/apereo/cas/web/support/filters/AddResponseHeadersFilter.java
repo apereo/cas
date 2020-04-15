@@ -12,7 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,8 +37,9 @@ import java.util.Map;
 @Getter
 public class AddResponseHeadersFilter extends AbstractSecurityFilter implements Filter {
     private static final int MAP_SIZE = 8;
+
     private Map<String, String> headersMap = new LinkedHashMap<>(MAP_SIZE);
-    
+
     @Override
     public void init(final FilterConfig filterConfig) {
         val initParamNames = filterConfig.getInitParameterNames();
@@ -53,16 +53,12 @@ public class AddResponseHeadersFilter extends AbstractSecurityFilter implements 
     @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
                          final FilterChain filterChain) throws IOException, ServletException {
-        try {
-            if (servletResponse instanceof HttpServletResponse) {
-                val httpServletResponse = (HttpServletResponse) servletResponse;
-                for (val entry : this.headersMap.entrySet()) {
-                    LOGGER.debug("Adding parameter [{}] with value [{}]", entry.getKey(), entry.getValue());
-                    httpServletResponse.addHeader(entry.getKey(), entry.getValue());
-                }
+        if (servletResponse instanceof HttpServletResponse) {
+            val httpServletResponse = (HttpServletResponse) servletResponse;
+            for (val entry : this.headersMap.entrySet()) {
+                LOGGER.debug("Adding parameter [{}] with value [{}]", entry.getKey(), entry.getValue());
+                httpServletResponse.addHeader(entry.getKey(), entry.getValue());
             }
-        } catch (final Exception e) {
-            logException(e);
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
