@@ -30,7 +30,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
      * @param webApplicationService the web application service
      * @return the service itself.
      */
-    private static AbstractWebApplicationService determineWebApplicationFormat(final HttpServletRequest request,
+    protected static AbstractWebApplicationService determineWebApplicationFormat(final HttpServletRequest request,
                                                                                final AbstractWebApplicationService webApplicationService) {
         val format = Optional.ofNullable(request)
             .map(httpServletRequest -> httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_FORMAT))

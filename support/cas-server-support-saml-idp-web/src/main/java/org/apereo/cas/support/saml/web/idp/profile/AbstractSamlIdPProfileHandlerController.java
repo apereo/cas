@@ -110,7 +110,9 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
                 "Could not verify/locate SAML registered service since no serviceId is provided");
         }
-        val service = samlProfileHandlerConfigurationContext.getWebApplicationServiceFactory().createService(serviceId);
+        val factory = samlProfileHandlerConfigurationContext.getWebApplicationServiceFactory();
+        val service = factory.createService(serviceId);
+        //val service = samlProfileHandlerConfigurationContext.getWebApplicationServiceFactory().createService(serviceId);
         LOGGER.debug("Checking service access in CAS service registry for [{}]", service);
         val registeredService = samlProfileHandlerConfigurationContext.getServicesManager().findServiceBy(service, SamlRegisteredService.class);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {

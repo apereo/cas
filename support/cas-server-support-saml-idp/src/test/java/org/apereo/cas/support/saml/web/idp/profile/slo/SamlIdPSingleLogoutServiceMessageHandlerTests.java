@@ -4,6 +4,7 @@ import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import lombok.val;
@@ -49,7 +50,8 @@ public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPCo
     @Test
     @Order(1)
     public void verifySupports() {
-        val service = RegisteredServiceTestUtils.getService(samlRegisteredService.getServiceId());
+        val service = new SamlService();
+        service.setId(samlRegisteredService.getServiceId());
         assertTrue(samlSingleLogoutServiceMessageHandler.supports(service));
         assertEquals(0, samlSingleLogoutServiceMessageHandler.getOrder());
     }
@@ -57,7 +59,8 @@ public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPCo
     @Test
     @Order(2)
     public void verifySendByPost() {
-        val service = RegisteredServiceTestUtils.getService(samlRegisteredService.getServiceId());
+        val service = new SamlService();
+        service.setId(samlRegisteredService.getServiceId());
         val result = samlSingleLogoutServiceMessageHandler.handle(service, "ST-1234567890",
             new MockTicketGrantingTicket("casuser"));
         assertFalse(result.isEmpty());
@@ -76,7 +79,8 @@ public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPCo
     @Test
     @Order(4)
     public void verifySendByRedirect() {
-        val service = RegisteredServiceTestUtils.getService("https://mocky.io");
+        val service = new SamlService();
+        service.setId(samlRegisteredService.getServiceId());
         val result = samlSingleLogoutServiceMessageHandler.handle(service, "ST-1234567890",
             new MockTicketGrantingTicket("casuser"));
         assertFalse(result.isEmpty());

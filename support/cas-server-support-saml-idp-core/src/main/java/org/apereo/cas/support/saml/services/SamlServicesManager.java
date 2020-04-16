@@ -41,6 +41,6 @@ public class SamlServicesManager extends AbstractServicesManager {
 
     @Override
     public boolean supports(final Class clazz) {
-        return clazz.isAssignableFrom(SamlRegisteredService.class);
+        return clazz.equals(SamlRegisteredService.class);
     }
 }
