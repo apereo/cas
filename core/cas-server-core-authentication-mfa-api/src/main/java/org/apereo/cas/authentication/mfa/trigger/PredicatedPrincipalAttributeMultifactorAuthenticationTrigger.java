@@ -69,7 +69,7 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationTrigger implem
             PREDICATE_CTOR_PARAMETERS, args, Predicate.class);
 
         if (predicate == null) {
-            LOGGER.debug("No multifactor authentication provider is determined along by the predicate");
+            LOGGER.debug("No multifactor authentication provider is determined by the predicate");
             return Optional.empty();
         }
 
