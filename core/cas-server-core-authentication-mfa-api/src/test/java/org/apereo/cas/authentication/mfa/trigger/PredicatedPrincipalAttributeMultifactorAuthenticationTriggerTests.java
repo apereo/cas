@@ -31,17 +31,7 @@ import static org.mockito.Mockito.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
-    @Order(1)
-    public void verifyOperationByHeader() {
-        val props = new CasConfigurationProperties();
-        props.getAuthn().getMfa().setGlobalPrincipalAttributePredicate(new ClassPathResource("GroovyPredicate.groovy"));
-        val trigger = new PredicatedPrincipalAttributeMultifactorAuthenticationTrigger(props, this.applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
-        assertTrue(result.isPresent());
-    }
-
-    @Test
-    @Order(2)
+    @Order(0)
     @Tag("DisableProviderRegistration")
     public void verifyNoProviders() throws Exception {
         val props = new CasConfigurationProperties();
@@ -52,6 +42,17 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests e
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isEmpty());
     }
+
+    @Test
+    @Order(1)
+    public void verifyOperationByHeader() {
+        val props = new CasConfigurationProperties();
+        props.getAuthn().getMfa().setGlobalPrincipalAttributePredicate(new ClassPathResource("GroovyPredicate.groovy"));
+        val trigger = new PredicatedPrincipalAttributeMultifactorAuthenticationTrigger(props, this.applicationContext);
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        assertTrue(result.isPresent());
+    }
+
 
     @Test
     @Order(3)

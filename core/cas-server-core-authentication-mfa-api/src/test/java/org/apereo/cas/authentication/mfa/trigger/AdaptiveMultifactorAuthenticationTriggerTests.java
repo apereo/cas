@@ -27,6 +27,18 @@ import static org.mockito.Mockito.*;
 @DirtiesContext
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+
+    @Test
+    @Order(0)
+    @Tag("DisableProviderRegistration")
+    public void verifyNoProviders() {
+        val props = new CasConfigurationProperties();
+        props.getAuthn().getAdaptive().getRequireMultifactor().put("mfa-dummy", ".+London.+");
+        val trigger = new AdaptiveMultifactorAuthenticationTrigger(null, props, this.applicationContext);
+        assertThrows(AuthenticationException.class,
+            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
+    }
+
     @Test
     @Order(1)
     public void verifyOperationByRequestIP() {
@@ -60,16 +72,7 @@ public class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifact
         assertTrue(result.isPresent());
     }
 
-    @Test
-    @Order(4)
-    @Tag("DisableProviderRegistration")
-    public void verifyNoProviders() {
-        val props = new CasConfigurationProperties();
-        props.getAuthn().getAdaptive().getRequireMultifactor().put("mfa-dummy", ".+London.+");
-        val trigger = new AdaptiveMultifactorAuthenticationTrigger(null, props, this.applicationContext);
-        assertThrows(AuthenticationException.class,
-            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
-    }
+
 
     @Test
     @Order(5)
