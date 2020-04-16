@@ -6,13 +6,13 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataResolver;
 import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataHealthIndicator;
@@ -59,7 +59,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ResourceLoader;
 
 import java.net.URL;
-import java.util.Optional;
 
 /**
  * This is {@link SamlIdPMetadataConfiguration}.
@@ -113,17 +112,16 @@ public class SamlIdPMetadataConfiguration {
     @Bean(initMethod = "initialize", destroyMethod = "destroy")
     @DependsOn("samlIdPMetadataGenerator")
     @SneakyThrows
-    @Autowired
-    public MetadataResolver casSamlIdPMetadataResolver(@Qualifier("samlIdPMetadataLocator") final SamlIdPMetadataLocator samlMetadataLocator) {
+    public MetadataResolver casSamlIdPMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        val resolver = new InMemoryResourceMetadataResolver(samlMetadataLocator.resolveMetadata(Optional.empty()),
-            openSamlConfigBean.getObject());
+        val resolver = new SamlIdPMetadataResolver(samlIdPMetadataLocator(), samlIdPMetadataGenerator(), openSamlConfigBean.getObject());
         resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
         resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
         resolver.setId(idp.getEntityId());
         return resolver;
     }
 
+    @Lazy
     @Bean
     @RefreshScope
     public SamlIdPMetadataController samlIdPMetadataController() {
