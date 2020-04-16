@@ -2762,9 +2762,7 @@ To learn more about this topic, [please review this guide](../mfa/Configuring-Mu
 
 ### Multifactor Authentication: REST API Trigger
 
-```properties
-# cas.authn.mfa.restEndpoint=https://entity.example.org/mfa
-```
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.mfa.rest`.
 
 ### Multifactor Authentication: Groovy Trigger
 

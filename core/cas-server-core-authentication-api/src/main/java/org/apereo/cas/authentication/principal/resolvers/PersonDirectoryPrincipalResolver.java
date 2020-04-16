@@ -163,10 +163,6 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         if (principalNameTransformer != null) {
             principalId = principalNameTransformer.transform(principalId);
         }
-        if (StringUtils.isBlank(principalId)) {
-            LOGGER.debug("Principal id [{}] could not be found", principalId);
-            return null;
-        }
         LOGGER.trace("Creating principal for [{}]", principalId);
         if (this.resolveAttributes) {
             val attributes = retrievePersonAttributes(principalId, credential, currentPrincipal, new HashMap<>());

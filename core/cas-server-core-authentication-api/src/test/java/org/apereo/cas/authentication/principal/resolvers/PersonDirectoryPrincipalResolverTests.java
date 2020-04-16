@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.google.common.collect.Maps;
@@ -22,6 +23,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Test cases for {@link PersonDirectoryPrincipalResolver}.
@@ -33,6 +35,26 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PersonDirectoryPrincipalResolverTests {
 
     private static final String ATTR_1 = "attr1";
+
+    @Test
+    public void verifyOp() {
+        val resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository(),
+            PrincipalFactoryUtils.newPrincipalFactory(), true, "cn", true);
+        val credential = mock(Credential.class);
+        val p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+        assertNotNull(p);
+    }
+
+    @Test
+    public void verifyOperation() {
+        val resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository(),
+            PrincipalFactoryUtils.newPrincipalFactory(), false, "cn", true, false);
+        val credential = mock(Credential.class);
+        val p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+        assertNotNull(p);
+    }
 
     @Test
     public void verifyNullPrincipal() {
