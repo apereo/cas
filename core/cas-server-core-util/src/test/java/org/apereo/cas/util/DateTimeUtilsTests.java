@@ -60,6 +60,7 @@ public class DateTimeUtilsTests {
     }
 
     @Test
+    @SuppressWarnings({"PreferJavaTimeOverload", "JavaTimeDefaultTimeZone"})
     public void verifyConvert() {
         assertNotNull(DateTimeUtils.convertToZonedDateTime(LocalDateTime.now().toString()));
         assertNotNull(DateTimeUtils.convertToZonedDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString()));

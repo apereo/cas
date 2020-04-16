@@ -44,6 +44,8 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
+        assertNotNull(registry.getName());
+        assertNotNull(registry.getExtensions());
     }
 
     @Test
