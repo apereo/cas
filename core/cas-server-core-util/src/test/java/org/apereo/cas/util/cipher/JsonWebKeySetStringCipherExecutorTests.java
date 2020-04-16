@@ -13,6 +13,9 @@ import org.springframework.http.MediaType;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,6 +40,10 @@ public class JsonWebKeySetStringCipherExecutorTests {
             webServer.start();
             val token = cipher.encode("Misagh");
             assertEquals("Misagh", cipher.decode(token));
+            Files.setLastModifiedTime(keystoreFile.toPath(), FileTime.from(Instant.now()));
+            Thread.sleep(5_000);
+            cipher.destroy();
         }
+
     }
 }
