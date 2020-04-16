@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicyTest
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtilsTests;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDaoTests;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolverTests;
+import org.apereo.cas.authentication.principal.resolvers.ProxyingPrincipalResolverTests;
 import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategyTests;
 import org.apereo.cas.authentication.support.password.GroovyPasswordEncoderTests;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptorTests;
@@ -47,6 +48,7 @@ import org.junit.runner.RunWith;
     RejectResultCodePasswordPolicyHandlingStrategyTests.class,
     PasswordExpiringWarningMessageDescriptorTests.class,
     OneTimeTokenAccountTests.class,
+    ProxyingPrincipalResolverTests.class,
     CredentialCustomFieldsAttributeMetaDataPopulatorTests.class,
     AuthenticationDateAttributeMetaDataPopulatorTests.class,
     ByCredentialTypeAuthenticationHandlerResolverTests.class,

@@ -64,6 +64,7 @@ public class ChainingPrincipalResolverTests {
             Optional.of(principalOut),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertEquals("output", principal.getId());
+        assertNotNull(resolver.getAttributeRepository());
         val mail = CollectionUtils.firstElement(principal.getAttributes().get("mail"));
         assertTrue(mail.isPresent());
         assertEquals("final@example.com", mail.get());
