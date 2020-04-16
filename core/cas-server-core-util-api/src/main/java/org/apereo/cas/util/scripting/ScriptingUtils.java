@@ -3,7 +3,6 @@ package org.apereo.cas.util.scripting;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 
-import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 import groovy.lang.GroovyShell;
@@ -22,7 +21,6 @@ import org.springframework.core.io.Resource;
 import javax.script.Invocable;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -260,48 +258,6 @@ public class ScriptingUtils {
             LOGGER.trace("Executing groovy script's [{}] method, with parameters [{}]", methodName, args);
             val result = groovyObject.invokeMethod(methodName, args);
             LOGGER.trace("Results returned by the groovy script are [{}]", result);
-            if (!clazz.equals(Void.class)) {
-                return getGroovyScriptExecutionResultOrThrow(clazz, result);
-            }
-        } catch (final Exception e) {
-            var cause = e instanceof InvokerInvocationException ? e.getCause() : e;
-            if (failOnError) {
-                throw cause;
-            }
-            LOGGER.error(cause.getMessage(), cause);
-        }
-        return null;
-    }
-
-    /**
-     * Execute groovy script t.
-     *
-     * @param <T>          the type parameter
-     * @param groovyObject the groovy object
-     * @param args         the args
-     * @param clazz        the clazz
-     * @param failOnError  the fail on error
-     * @return the t
-     */
-    @SneakyThrows
-    public static <T> T executeGroovyScript(final Script groovyObject,
-                                            final Map<String, Object> args,
-                                            final Class<T> clazz,
-                                            final boolean failOnError) {
-        try {
-            LOGGER.trace("Executing groovy script with bindings [{}]", args);
-
-            val binding = new Binding();
-            if (args != null && !args.isEmpty()) {
-                args.forEach(binding::setVariable);
-            }
-            if (!binding.hasVariable("logger")) {
-                binding.setVariable("logger", LOGGER);
-            }
-            groovyObject.setBinding(binding);
-            val result = groovyObject.run();
-            LOGGER.trace("Results returned by the groovy script are [{}]", result);
-
             if (!clazz.equals(Void.class)) {
                 return getGroovyScriptExecutionResultOrThrow(clazz, result);
             }

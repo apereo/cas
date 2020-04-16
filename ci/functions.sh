@@ -1,10 +1,8 @@
 #!/bin/bash
 
-
 installJdk11() {
     installJdk "11.0.6" "10"
 }
-
 
 installJdk() {
     echo -e "Installing Java...\n"
@@ -42,8 +40,6 @@ installJdk() {
     done
     echo JAVA_HOME=${JAVA_HOME}
 }
-
-installJdk11
 
 currentChangeSetContains() {
     # Turn on for case-insensitive matching
