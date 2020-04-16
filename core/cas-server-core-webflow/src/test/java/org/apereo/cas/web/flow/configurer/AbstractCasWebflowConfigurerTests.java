@@ -145,7 +145,8 @@ public class AbstractCasWebflowConfigurerTests {
         val state = mock(ViewState.class);
         when(flow.containsState("viewStateId")).thenReturn(Boolean.TRUE);
         when(flow.getTransitionableState("viewStateId")).thenReturn(state);
-        val viewState = cfg.createViewState(flow, "viewStateId", (Expression) any(), any());
+        val viewState = cfg.createViewState(flow, "viewStateId",
+            mock(Expression.class), mock(BinderConfiguration.class));
         assertNotNull(viewState);
     }
 
