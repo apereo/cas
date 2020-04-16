@@ -52,6 +52,25 @@ public class HttpUtils {
      * @param method            the method
      * @param basicAuthUsername the basic auth username
      * @param basicAuthPassword the basic auth password
+     * @param entity            the entity
+     * @return the http response
+     */
+    public static HttpResponse execute(final String url,
+                                       final String method,
+                                       final String basicAuthUsername,
+                                       final String basicAuthPassword,
+                                       final String entity) {
+        return execute(url, method, basicAuthUsername, basicAuthPassword,
+            new HashMap<>(0), new HashMap<>(0), entity);
+    }
+
+    /**
+     * Execute http response.
+     *
+     * @param url               the url
+     * @param method            the method
+     * @param basicAuthUsername the basic auth username
+     * @param basicAuthPassword the basic auth password
      * @return the http response
      */
     public static HttpResponse execute(final String url, final String method,

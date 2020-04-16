@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.configuration.support.RestEndpointProperties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -68,7 +69,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
      * The body of the response in the event of a successful 200 status code is
      * expected to be the MFA provider id which CAS should activate.
      */
-    private String restEndpoint;
+    private Rest rest = new Rest();
 
     /**
      * MFA can be triggered based on the results of a groovy script of your own design.
@@ -230,4 +231,12 @@ public class MultifactorAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AccepttoMultifactorProperties acceptto = new AccepttoMultifactorProperties();
+
+    @RequiresModule(name = "cas-server-core-authentication", automated = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    public static class Rest extends RestEndpointProperties {
+        private static final long serialVersionUID = 3659099897056632608L;
+    }
 }
