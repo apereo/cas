@@ -7,8 +7,10 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ReaderInputStream;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.AbstractResource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
@@ -37,6 +39,11 @@ import static org.springframework.util.ResourceUtils.FILE_URL_PREFIX;
 @Slf4j
 @UtilityClass
 public class ResourceUtils {
+    /**
+     * Empty resource.
+     */
+    public static final Resource EMPTY_RESOURCE = new ByteArrayResource(ArrayUtils.EMPTY_BYTE_ARRAY);
+
     private static final String HTTP_URL_PREFIX = "http";
 
     /**

@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.idp.metadata.locator;
 
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.Cache;
@@ -42,13 +43,21 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
         return new InputStreamResource(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
     }
 
+    private static String buildCacheKey(final Optional<SamlRegisteredService> registeredService) {
+        if (registeredService.isEmpty()) {
+            return CACHE_KEY_METADATA;
+        }
+        val samlRegisteredService = registeredService.get();
+        return CACHE_KEY_METADATA + '_' + samlRegisteredService.getId() + '_' + samlRegisteredService.getName();
+    }
+
     @Override
     public Resource resolveSigningCertificate(final Optional<SamlRegisteredService> registeredService) {
         val metadataDocument = fetch(registeredService);
         if (metadataDocument != null && metadataDocument.isValid()) {
             return getResource(metadataDocument.getSigningCertificateDecoded());
         }
-        return null;
+        return ResourceUtils.EMPTY_RESOURCE;
     }
 
     @Override
@@ -58,7 +67,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
             val data = metadataDocument.getSigningKey();
             return getResource(metadataCipherExecutor.decode(data));
         }
-        return null;
+        return ResourceUtils.EMPTY_RESOURCE;
     }
 
     @Override
@@ -67,7 +76,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
         if (metadataDocument != null && metadataDocument.isValid()) {
             return getResource(metadataDocument.getMetadataDecoded());
         }
-        return null;
+        return ResourceUtils.EMPTY_RESOURCE;
     }
 
     @Override
@@ -76,7 +85,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
         if (metadataDocument != null && metadataDocument.isValid()) {
             return getResource(metadataDocument.getEncryptionCertificateDecoded());
         }
-        return null;
+        return ResourceUtils.EMPTY_RESOURCE;
     }
 
     @Override
@@ -86,7 +95,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
             val data = metadataDocument.getEncryptionKey();
             return getResource(metadataCipherExecutor.decode(data));
         }
-        return null;
+        return ResourceUtils.EMPTY_RESOURCE;
     }
 
     @Override
@@ -128,13 +137,5 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
                 .expireAfterAccess(Duration.ofHours(1))
                 .build();
         }
-    }
-
-    private static String buildCacheKey(final Optional<SamlRegisteredService> registeredService) {
-        if (registeredService.isEmpty()) {
-            return CACHE_KEY_METADATA;
-        }
-        val samlRegisteredService = registeredService.get();
-        return CACHE_KEY_METADATA + '_' + samlRegisteredService.getId() + '_' + samlRegisteredService.getName();
     }
 }
