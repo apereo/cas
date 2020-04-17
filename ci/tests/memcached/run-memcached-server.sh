@@ -2,7 +2,7 @@
 
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
-echo "Running Couchbase docker image for memcached..."
+echo "Running image for memcached..."
 docker run  -p 11211:11211 --name memcached -d memcached:alpine memcached -m 256
 
 docker ps | grep "memcached"
