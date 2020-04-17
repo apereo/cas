@@ -3,7 +3,6 @@ package org.apereo.cas.memcached;
 import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Slf4j
 @Tag("Memcached")
 @EnabledIfPortOpen(port = 11211)
 public class MemcachedPooledClientConnectionFactoryTests {
