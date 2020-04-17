@@ -166,6 +166,13 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
     }
 
     @Override
+    public int count() {
+        return serviceManagers.stream()
+            .mapToInt(ServicesManager::count)
+            .sum();
+    }
+
+    @Override
     public boolean supports(final Service service) {
         return findServicesManager(service).isPresent();
     }
