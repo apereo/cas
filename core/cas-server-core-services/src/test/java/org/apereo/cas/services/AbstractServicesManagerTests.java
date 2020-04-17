@@ -56,11 +56,11 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     @Test
     public void verifySaveAndGet() {
         val services = new RegexRegisteredService();
-        services.setId(1000);
+        services.setId(1100);
         services.setName(TEST);
         services.setServiceId(TEST);
         servicesManager.save(services);
-        assertNotNull(this.servicesManager.findServiceBy(1000));
+        assertNotNull(this.servicesManager.findServiceBy(1100));
         assertTrue(this.servicesManager.count() > 0);
     }
 
