@@ -34,6 +34,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
+import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponseTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
@@ -46,7 +47,11 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
+import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
@@ -129,6 +134,7 @@ import static org.mockito.Mockito.*;
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasOAuth20Configuration.class,
+    OidcClientRegistrationResponseTests.class,
     CasThrottlingConfiguration.class,
     CasOAuth20ThrottleConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
@@ -138,9 +144,7 @@ import static org.mockito.Mockito.*;
 },
     properties = {
         "cas.authn.oidc.issuer=https://sso.example.org/cas/oidc",
-        "cas.authn.oidc.jwks.jwksFile=classpath:keystore.jwks",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
+        "cas.authn.oidc.jwks.jwksFile=classpath:keystore.jwks"
     })
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -154,6 +158,10 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     protected ResourceLoader resourceLoader;
+
+    @Autowired
+    @Qualifier("oidcImplicitIdTokenAndTokenCallbackUrlBuilder")
+    protected OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenAndTokenCallbackUrlBuilder;
 
     @Autowired
     @Qualifier("oauthRegisteredServiceJwtAccessTokenCipherExecutor")
@@ -172,8 +180,16 @@ public abstract class AbstractOidcTests {
     protected OAuth20UserProfileDataCreator oidcUserProfileDataCreator;
 
     @Autowired
+    @Qualifier("oauthCasClientRedirectActionBuilder")
+    protected OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder;
+
+    @Autowired
     @Qualifier("profileScopeToAttributesFilter")
     protected OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
+
+    @Autowired
+    @Qualifier("oidcUserProfileSigningAndEncryptionService")
+    protected OAuth20TokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService;
 
     @Autowired
     @Qualifier("oidcServiceRegistryListener")
@@ -186,6 +202,10 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
+    @Autowired
+    @Qualifier("callbackAuthorizeViewResolver")
+    protected OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver;
 
     @Autowired
     protected CasConfigurationProperties casProperties;
@@ -233,6 +253,10 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("oidcIdTokenGenerator")
     protected IdTokenGeneratorService oidcIdTokenGenerator;
+
+    @Autowired
+    @Qualifier("consentApprovalViewResolver")
+    protected ConsentApprovalViewResolver consentApprovalViewResolver;
 
     @Autowired
     @Qualifier("accessTokenJwtBuilder")
@@ -312,6 +336,10 @@ public abstract class AbstractOidcTests {
 
     protected static OAuth20AccessToken getAccessToken() {
         return getAccessToken(StringUtils.EMPTY, "clientId");
+    }
+
+    protected static OAuth20AccessToken getAccessToken(final String clientId) {
+        return getAccessToken(StringUtils.EMPTY, clientId);
     }
 
     protected static OAuth20AccessToken getAccessToken(final String idToken, final String clientId) {

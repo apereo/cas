@@ -1,8 +1,8 @@
 package org.apereo.cas.oidc.token;
 
-import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.BaseTokenSigningAndEncryptionService;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.EncodingUtils;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -46,19 +46,16 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     @Override
     @SneakyThrows
     public String encode(final OAuthRegisteredService service, final JwtClaims claims) {
-        LOGGER.trace("Attempting to produce token generated for service [{}]", service);
-        val svc = (OidcRegisteredService) service;
-        LOGGER.debug("Generated claims to put into token are [{}]", claims.toJson());
-
-        var innerJwt = signTokenIfNecessary(claims, svc);
-        if (shouldEncryptToken(svc)) {
-            innerJwt = encryptToken(svc, innerJwt);
+        LOGGER.trace("Attempting to produce token generated for service [{}] with claims [{}]", service, claims.toJson());
+        var innerJwt = signTokenIfNecessary(claims, service);
+        if (shouldEncryptToken(service)) {
+            innerJwt = encryptToken(service, innerJwt);
         }
 
         return innerJwt;
     }
 
-    private String signTokenIfNecessary(final JwtClaims claims, final OidcRegisteredService svc) {
+    private String signTokenIfNecessary(final JwtClaims claims, final OAuthRegisteredService svc) {
         if (shouldSignToken(svc)) {
             LOGGER.debug("Fetching JSON web key to sign the token for : [{}]", svc.getClientId());
             val jsonWebKey = getJsonWebKeySigningKey();
@@ -68,7 +65,8 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
             }
             return signToken(svc, claims, jsonWebKey);
         }
-        return signToken(svc, claims, null);
+        val claimSet = JwtBuilder.parse(claims.toJson());
+        return JwtBuilder.buildPlain(claimSet, Optional.of(svc));
     }
 
     /**
@@ -78,7 +76,7 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
      * @param token the inner jwt
      * @return the string
      */
-    protected abstract String encryptToken(OidcRegisteredService svc, String token);
+    protected abstract String encryptToken(OAuthRegisteredService svc, String token);
 
     @Override
     protected PublicJsonWebKey getJsonWebKeySigningKey() {

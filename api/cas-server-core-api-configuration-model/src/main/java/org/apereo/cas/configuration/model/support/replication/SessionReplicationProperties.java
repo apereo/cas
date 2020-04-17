@@ -30,6 +30,7 @@ public class SessionReplicationProperties implements Serializable {
     @Getter
     @Setter
     @Accessors(chain = true)
+    @RequiresModule(name = "cas-server-support-pac4j-api", automated = true)
     public static class Cookie extends CookieProperties {
         private static final long serialVersionUID = 6165162204295764362L;
 
