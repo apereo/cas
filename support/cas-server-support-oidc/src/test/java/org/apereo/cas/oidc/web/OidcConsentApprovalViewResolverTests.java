@@ -5,17 +5,16 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;                            
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.JEESessionStore;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.UUID;
 
 /**
  * This is {@link OidcConsentApprovalViewResolverTests}.
