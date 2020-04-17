@@ -26,12 +26,12 @@ public class ChainingWithOnlyDefaulServicesManagerTests extends AbstractServices
 
     @Test
     public void verifySaveWithDomains() {
-        val svc = new RegexRegisteredService();
+        var svc = new RegexRegisteredService();
         svc.setId(100);
         svc.setName("domainService2");
         svc.setServiceId("https://www.example.com/two");
         assertNotNull(servicesManager.save(svc, false));
-        val chain = DomainAwareServicesManager.class.cast(this.servicesManager);
+        var chain = DomainAwareServicesManager.class.cast(this.servicesManager);
         assertTrue(chain.getDomains().count() == 0);
         assertTrue(chain.getServicesForDomain("example.org").isEmpty());
     }
