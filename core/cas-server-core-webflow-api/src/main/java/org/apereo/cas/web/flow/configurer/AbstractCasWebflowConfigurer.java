@@ -206,7 +206,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     @Override
-    public DecisionState createDecisionState(final Flow flow, final String id, final String testExpression, final String thenStateId, final String elseStateId) {
+    public DecisionState createDecisionState(final Flow flow, final String id, final String testExpression,
+                                             final String thenStateId, final String elseStateId) {
         if (containsFlowState(flow, id)) {
             LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
             return getTransitionableState(flow, id, DecisionState.class);
@@ -254,10 +255,10 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public EndState createEndState(final Flow flow, final String id, final Expression expression) {
-        val viewFactory = this.flowBuilderServices.getViewFactoryCreator()
-            .createViewFactory(expression, this.flowBuilderServices.getExpressionParser(),
-                this.flowBuilderServices.getConversionService(), null,
-                this.flowBuilderServices.getValidator(), this.flowBuilderServices.getValidationHintResolver());
+        val viewFactory = flowBuilderServices.getViewFactoryCreator()
+            .createViewFactory(expression, flowBuilderServices.getExpressionParser(),
+                flowBuilderServices.getConversionService(), null,
+                flowBuilderServices.getValidator(), flowBuilderServices.getValidationHintResolver());
         return createEndState(flow, id, viewFactory);
     }
 
@@ -340,7 +341,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     /**
      * Handle the initialization of the webflow.
      */
-    protected abstract void doInitialize();
+    protected void doInitialize() {
+    }
 
     /**
      * Create action state action state.
@@ -772,7 +774,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     public TransitionableState getTransitionableState(final Flow flow, final String stateId) {
         if (containsFlowState(flow, stateId)) {
-            return (TransitionableState) flow.getTransitionableState(stateId);
+            return flow.getTransitionableState(stateId);
         }
         return null;
     }
@@ -798,35 +800,13 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param actionStateId the action state id
      * @param actions       the actions
      */
-    public void prependActionsToActionStateExecutionList(final Flow flow, final ActionState actionStateId, final String... actions) {
-        prependActionsToActionStateExecutionList(flow, actionStateId.getId(), actions);
-    }
-
-    /**
-     * Prepend actions to action state execution list.
-     *
-     * @param flow          the flow
-     * @param actionStateId the action state id
-     * @param actions       the actions
-     */
     public void prependActionsToActionStateExecutionList(final Flow flow, final String actionStateId, final String... actions) {
         val evalActions = Arrays.stream(actions)
             .map(this::createEvaluateAction)
             .toArray(EvaluateAction[]::new);
         addActionsToActionStateExecutionListAt(flow, actionStateId, 0, evalActions);
     }
-
-    /**
-     * Prepend actions to action state execution list.
-     *
-     * @param flow          the flow
-     * @param actionStateId the action state id
-     * @param actions       the actions
-     */
-    public void prependActionsToActionStateExecutionList(final Flow flow, final String actionStateId, final EvaluateAction... actions) {
-        addActionsToActionStateExecutionListAt(flow, actionStateId, 0, actions);
-    }
-
+    
     /**
      * Prepend actions to action state execution list.
      *
@@ -838,16 +818,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         addActionsToActionStateExecutionListAt(flow, actionStateId.getId(), 0, actions);
     }
 
-    /**
-     * Append actions to action state execution list.
-     *
-     * @param flow          the flow
-     * @param actionStateId the action state id
-     * @param actions       the actions
-     */
-    public void appendActionsToActionStateExecutionList(final Flow flow, final String actionStateId, final EvaluateAction... actions) {
-        addActionsToActionStateExecutionListAt(flow, actionStateId, Integer.MAX_VALUE, actions);
-    }
 
     /**
      * Add actions to action state execution list at.

@@ -9,14 +9,14 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
 /**
- * This is {@link CasServiceRegistryInitializerConfigurationEventListener}.
+ * This is {@link ServiceRegistryInitializerEventListener}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CasServiceRegistryInitializerConfigurationEventListener {
+public class ServiceRegistryInitializerEventListener {
     private final ServiceRegistryInitializer serviceRegistryInitializer;
 
     /**

@@ -38,6 +38,18 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
 
     @Test
     @SneakyThrows
+    public void verifyRegistry() {
+        val registry = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
+            mock(ApplicationEventPublisher.class),
+            new NoOpRegisteredServiceReplicationStrategy(),
+            new DefaultRegisteredServiceResourceNamingStrategy(),
+            new ArrayList<>());
+        assertNotNull(registry.getName());
+        assertNotNull(registry.getExtensions());
+    }
+
+    @Test
+    @SneakyThrows
     public void verifyLegacyServiceDefinition() {
         val resource = new ClassPathResource("Legacy-10000003.json");
         val serializer = new RegisteredServiceJsonSerializer();

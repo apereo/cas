@@ -1,22 +1,28 @@
 package org.apereo.cas.web.flow.executor;
 
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.cryptacular.bean.AEADBlockCipherBean;
 import org.cryptacular.bean.BufferedBlockCipherBean;
+import org.cryptacular.bean.CipherBean;
 import org.cryptacular.bean.KeyStoreFactoryBean;
 import org.cryptacular.io.FileResource;
 import org.cryptacular.spec.AEADBlockCipherSpec;
 import org.cryptacular.spec.BufferedBlockCipherSpec;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.aop.framework.ProxyFactoryBean;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Test cases for {@link EncryptedTranscoder}.
@@ -71,6 +77,44 @@ public class EncryptedTranscoderTests {
                                    final Object encodable) throws Exception {
         val encoded = transcoder.encode(encodable);
         assertEquals(encodable, transcoder.decode(encoded));
+    }
+
+    @Test
+    public void verifyBadEncoding() throws Exception {
+        val encoder = new EncryptedTranscoder(mock(CipherBean.class));
+        assertNotNull(encoder.encode(null));
+    }
+
+    @Test
+    public void verifyNotSerializable() throws Exception {
+        val encoder = new EncryptedTranscoder(mock(CipherBean.class));
+        assertNull(encoder.encode(new Object()));
+    }
+
+    @Test
+    public void verifyBadDecoding() {
+        val encoder = new EncryptedTranscoder(mock(CipherBean.class));
+        assertThrows(IOException.class, () -> encoder.decode(null));
+    }
+
+    @Test
+    public void verifyBadCipher() {
+        val bean = mock(CipherBean.class);
+        when(bean.decrypt(any())).thenThrow(IllegalArgumentException.class);
+        when(bean.encrypt(any())).thenThrow(IllegalArgumentException.class);
+        val encoder = new EncryptedTranscoder(bean);
+        assertThrows(IOException.class, () -> encoder.decode(ArrayUtils.EMPTY_BYTE_ARRAY));
+        assertThrows(IOException.class, () -> encoder.encode(ArrayUtils.EMPTY_BYTE_ARRAY));
+    }
+
+    @Test
+    public void verifyProxy() {
+        val bean = mock(CipherBean.class);
+        val factory = new ProxyFactoryBean();
+        factory.setTargetClass(CipherBean.class);
+        val proxy = factory.getObject();
+        val encoder = new EncryptedTranscoder(bean);
+        assertDoesNotThrow(() -> encoder.encode(proxy));
     }
 }
 

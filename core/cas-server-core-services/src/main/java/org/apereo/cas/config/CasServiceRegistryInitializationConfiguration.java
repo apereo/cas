@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.CasServiceRegistryInitializerConfigurationEventListener;
 import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryInitializer;
+import org.apereo.cas.services.ServiceRegistryInitializerEventListener;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
@@ -93,8 +93,8 @@ public class CasServiceRegistryInitializationConfiguration {
     }
 
     @Bean
-    public CasServiceRegistryInitializerConfigurationEventListener serviceRegistryInitializerConfigurationEventListener() {
-        return new CasServiceRegistryInitializerConfigurationEventListener(serviceRegistryInitializer());
+    public ServiceRegistryInitializerEventListener serviceRegistryInitializerConfigurationEventListener() {
+        return new ServiceRegistryInitializerEventListener(serviceRegistryInitializer());
     }
     
     @RefreshScope

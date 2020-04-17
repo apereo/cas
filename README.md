@@ -51,7 +51,6 @@ Additional resources are available as follows:
 [![Open Pull Requests](https://img.shields.io/github/issues-pr/apereo/cas.svg?style=flat)][contribute]
 [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg)](https://codecov.io/gh/apereo/cas)
 [![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas)
-[![Build status](https://ci.appveyor.com/api/projects/status/0tl79vsqd2ei9bng?svg=true)](https://ci.appveyor.com/project/apereo/cas)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-core/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-core)
 [![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
 

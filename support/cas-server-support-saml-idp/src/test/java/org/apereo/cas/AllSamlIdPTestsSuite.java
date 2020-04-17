@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.SamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.authentication.SamlIdPServiceFactoryTests;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGeneratorTests;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocatorTests;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataResolverTests;
 import org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicyTests;
@@ -79,6 +80,7 @@ import org.junit.runner.RunWith;
     SamlRegisteredServiceAttributeReleasePolicyTests.class,
     SamlIdPConsentableAttributeBuilderTests.class,
     SamlIdPServiceFactoryTests.class,
+    SamlIdPMetadataResolverTests.class,
     SSOSamlIdPProfileCallbackHandlerControllerTests.class,
     SLOSamlIdPPostProfileHandlerControllerTests.class,
     SamlRegisteredServiceCachedMetadataEndpointTests.class,

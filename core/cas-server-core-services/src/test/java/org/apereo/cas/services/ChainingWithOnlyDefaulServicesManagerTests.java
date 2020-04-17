@@ -23,4 +23,16 @@ public class ChainingWithOnlyDefaulServicesManagerTests extends AbstractServices
         assertTrue(this.servicesManager.supports(r));
         assertTrue(this.servicesManager.supports(RegisteredServiceTestUtils.getService()));
     }
+
+    @Test
+    public void verifySaveWithDomains() {
+        val svc = new RegexRegisteredService();
+        svc.setId(100);
+        svc.setName("domainService2");
+        svc.setServiceId("https://www.example.com/two");
+        assertNotNull(servicesManager.save(svc, false));
+        val chain = DomainAwareServicesManager.class.cast(this.servicesManager);
+        assertTrue(chain.getDomains().count() == 0);
+        assertTrue(chain.getServicesForDomain("example.org").isEmpty());
+    }
 }

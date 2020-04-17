@@ -21,7 +21,8 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAuthenticationAction {
-    private static final String BAD_X509_CREDENTIALS_MSG_CODE = "error.x509.credentials.bad";
+
+    private static final String AUTHN_FAILURE_MESSAGE_CODE = "authenticationFailure.FailedLoginException";
 
     public AbstractNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                    final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
@@ -44,8 +45,8 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAu
     protected void onError(final RequestContext requestContext) {
         val resolver = new MessageBuilder()
             .error()
-            .code(BAD_X509_CREDENTIALS_MSG_CODE)
-            .defaultText(BAD_X509_CREDENTIALS_MSG_CODE)
+            .code(AUTHN_FAILURE_MESSAGE_CODE)
+            .defaultText(AUTHN_FAILURE_MESSAGE_CODE)
             .build();
         requestContext.getMessageContext().addMessage(resolver);
     }

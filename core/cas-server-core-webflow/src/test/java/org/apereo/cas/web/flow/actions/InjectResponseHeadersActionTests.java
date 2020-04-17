@@ -39,9 +39,6 @@ import static org.mockito.Mockito.*;
     MailSenderAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 @Tag("Webflow")
 public class InjectResponseHeadersActionTests {
