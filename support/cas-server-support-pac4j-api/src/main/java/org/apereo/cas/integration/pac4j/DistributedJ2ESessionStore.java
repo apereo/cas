@@ -52,7 +52,7 @@ public class DistributedJ2ESessionStore implements SessionStore<JEEContext> {
         var sessionId = getSessionId(context);
         if (StringUtils.isBlank(sessionId)) {
             sessionId = UUID.randomUUID().toString();
-            LOGGER.debug("Generated session id: [{}]", sessionId);
+            LOGGER.trace("Generated session id: [{}]", sessionId);
             cookieGenerator.addCookie(context.getNativeRequest(), context.getNativeResponse(), sessionId);
             context.setRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE, sessionId);
         }
@@ -62,10 +62,10 @@ public class DistributedJ2ESessionStore implements SessionStore<JEEContext> {
 
     private String getSessionId(final JEEContext context) {
         var sessionId = (String) context.getRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE).orElse(null);
-        if (StringUtils.isNotBlank(sessionId)) {
+        if (StringUtils.isBlank(sessionId)) {
             sessionId = cookieGenerator.retrieveCookieValue(context.getNativeRequest());
         }
-        LOGGER.debug("Generated session id: [{}]", sessionId);
+        LOGGER.trace("Generated session id: [{}]", sessionId);
         return sessionId;
     }
 

@@ -49,12 +49,13 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DistributedJ2ESessionStoreTests {
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
@@ -67,7 +68,7 @@ public class DistributedJ2ESessionStoreTests {
     public void verifyOperation() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val store = new DistributedJ2ESessionStore(this.ticketRegistry, this.ticketFactory, new CasConfigurationProperties());
+        val store = new DistributedJ2ESessionStore(this.ticketRegistry, this.ticketFactory, casProperties);
         val context = new JEEContext(request, response, store);
 
         assertNotNull(request.getSession());
