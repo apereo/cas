@@ -25,6 +25,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.x509.SubjectDnPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
@@ -49,6 +50,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 
+import javax.security.auth.x500.X500Principal;
 import java.net.URI;
 import java.time.Duration;
 import java.util.stream.Collectors;
@@ -239,7 +241,7 @@ public class X509AuthenticationConfiguration {
             principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
             principal.isAttributeResolutionEnabled(),
             org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()),
-            subjectDn.getSubjectDnFormat());
+            getSubjectDnFormat(subjectDn.getFormat()));
     }
 
     @Bean
@@ -369,6 +371,19 @@ public class X509AuthenticationConfiguration {
             return x509CommonNameEDIPIPrincipalResolver();
         }
         return x509SubjectDNPrincipalResolver();
+    }
+
+    private static String getSubjectDnFormat(final SubjectDnPrincipalResolverProperties.SubjectDnFormat format) {
+        switch (format) {
+            case RFC1779:
+                return X500Principal.RFC1779;
+            case RFC2253:
+                return X500Principal.RFC2253;
+            case CANONICAL:
+                return X500Principal.CANONICAL;
+            default:
+                return null;
+        }
     }
 
     private X509SerialNumberPrincipalResolver getX509SerialNumberPrincipalResolver(final X509Properties x509) {

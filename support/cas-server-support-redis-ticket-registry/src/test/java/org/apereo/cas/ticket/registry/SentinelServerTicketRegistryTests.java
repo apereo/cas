@@ -15,6 +15,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.redis.port=6379",
     "cas.ticket.registry.redis.readFrom=MASTER",
     "cas.ticket.registry.redis.pool.max-active=20",
+    "cas.ticket.registry.redis.pool.enabled=true",
     "cas.ticket.registry.redis.sentinel.master=mymaster",
     "cas.ticket.registry.redis.sentinel.node[0]=localhost:26379",
     "cas.ticket.registry.redis.sentinel.node[1]=localhost:26380",

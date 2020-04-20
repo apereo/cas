@@ -15,7 +15,8 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {
     "cas.ticket.registry.redis.host=localhost",
     "cas.ticket.registry.redis.port=6379",
-    "cas.ticket.registry.redis.pool.max-active=20"
+    "cas.ticket.registry.redis.pool.max-active=20",
+    "cas.ticket.registry.redis.pool.enabled=true"
 })
 @EnabledIfPortOpen(port = 6379)
 public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegistryTests {
