@@ -12,6 +12,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.time.Duration;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -57,11 +58,9 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
 
         LOGGER.trace("Current time is [{}]. Ticket last used time is [{}]", currentTime, lastTimeUsed);
 
-        val currentTimeSeconds = currentTime.toEpochSecond();
-        val lastTimeUsedInSeconds = lastTimeUsed.toEpochSecond();
+        val margin = Duration.between(lastTimeUsed, currentTime).toSeconds();
 
-        val margin = currentTimeSeconds - lastTimeUsedInSeconds;
-        LOGGER.trace("Current time in seconds is [{}]. Ticket last used time in seconds is [{}]", currentTimeSeconds, lastTimeUsedInSeconds);
+        LOGGER.trace("The duration in seconds between current time and last used time is [{}]", margin);
 
         if (ticketState.getCountOfUses() == 0 && margin < this.timeToKillInSeconds) {
             LOGGER.debug("Valid [{}]: Usage count is zero and number of seconds since ticket usage time [{}] is less than [{}]",
