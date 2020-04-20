@@ -18,12 +18,12 @@ import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.PublicJsonWebKey;
+import org.jose4j.jwk.RsaJwkGenerator;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 
 import javax.crypto.Cipher;
-
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -330,6 +330,17 @@ public class EncodingUtils {
     @SneakyThrows
     public static JsonWebKey newJsonWebKey(final String json) {
         return JsonWebKey.Factory.newJwk(json);
+    }
+
+    /**
+     * New Json web key.
+     *
+     * @param size the size
+     * @return the json web key
+     */
+    @SneakyThrows
+    public static JsonWebKey newJsonWebKey(final int size) {
+        return RsaJwkGenerator.generateJwk(size, null, RandomUtils.getNativeInstance());
     }
 
     /**

@@ -35,7 +35,7 @@ public class SamlServicesManagerTests extends AbstractServicesManagerTests {
     protected Supplier<List<RegisteredService>> registeredServicesFixture() {
         return () -> {
             var s = new SamlRegisteredService();
-            s.setServiceId(".+");
+            s.setServiceId("https://.+");
             s.setName("SAML service");
             listOfDefaultServices.add(s);
             return listOfDefaultServices;

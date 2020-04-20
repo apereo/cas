@@ -31,14 +31,18 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
     }
 
     @Override
-    protected String encryptToken(final OidcRegisteredService svc,
+    protected String encryptToken(final OAuthRegisteredService service,
                                   final String innerJwt) {
-        val jsonWebKey = getJsonWebKeyForEncryption(svc);
-        return encryptToken(svc.getUserInfoEncryptedResponseAlg(),
-            svc.getUserInfoEncryptedResponseEncoding(),
-            jsonWebKey.getKeyId(),
-            jsonWebKey.getPublicKey(),
-            innerJwt);
+        if (service instanceof OidcRegisteredService) {
+            val svc = OidcRegisteredService.class.cast(service);
+            val jsonWebKey = getJsonWebKeyForEncryption(svc);
+            return encryptToken(svc.getUserInfoEncryptedResponseAlg(),
+                svc.getUserInfoEncryptedResponseEncoding(),
+                jsonWebKey.getKeyId(),
+                jsonWebKey.getPublicKey(),
+                innerJwt);
+        }
+        return innerJwt;
     }
 
     @Override
@@ -63,7 +67,8 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
     public boolean shouldEncryptToken(final OAuthRegisteredService svc) {
         if (svc instanceof OidcRegisteredService) {
             val service = (OidcRegisteredService) svc;
-            return StringUtils.isNotBlank(service.getUserInfoEncryptedResponseAlg());
+            return StringUtils.isNotBlank(service.getUserInfoEncryptedResponseAlg())
+                && !StringUtils.equalsIgnoreCase(service.getUserInfoEncryptedResponseAlg(), AlgorithmIdentifiers.NONE);
         }
         return false;
     }
