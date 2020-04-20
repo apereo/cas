@@ -1,6 +1,7 @@
 package org.apereo.cas.redis.core;
 
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import io.lettuce.core.ReadFrom;
 import lombok.extern.slf4j.Slf4j;
@@ -73,9 +74,11 @@ public class RedisObjectFactory {
      */
     public static RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis,
                                                                    final boolean initialize) {
-        val redisConfiguration = redis.getSentinel() == null
-            ? (RedisConfiguration) getStandaloneConfig(redis)
-            : getSentinelConfig(redis);
+        val sentinel = redis.getSentinel();
+
+        val redisConfiguration = FunctionUtils.doIf(sentinel != null && StringUtils.hasText(sentinel.getMaster()),
+            () -> getSentinelConfig(redis),
+            () -> getStandaloneConfig(redis)).get();
 
         val factory = new LettuceConnectionFactory(redisConfiguration, getRedisPoolConfig(redis));
         if (initialize) {
@@ -94,14 +97,15 @@ public class RedisObjectFactory {
             poolConfig.readFrom(ReadFrom.valueOf(redis.getReadFrom()));
             LOGGER.debug("Redis configuration: readFrom property is set to [{}]", redis.getReadFrom());
         }
-        if (redis.getTimeout() > 0){
+        if (redis.getTimeout() > 0) {
             poolConfig.commandTimeout(Duration.ofMillis(redis.getTimeout()));
             LOGGER.trace("Redis configuration: commandTimeout is set to [{}]ms", redis.getTimeout());
         }
 
-        if (redis.getPool() != null) {
+        val pool = redis.getPool();
+        if (pool != null && pool.isEnabled()) {
             val config = new GenericObjectPoolConfig();
-            val props = redis.getPool();
+            val props = pool;
             config.setMaxTotal(props.getMaxActive());
             config.setMaxIdle(props.getMaxIdle());
             config.setMinIdle(props.getMinIdle());
@@ -127,9 +131,8 @@ public class RedisObjectFactory {
         return poolConfig.build();
     }
 
-    private static RedisStandaloneConfiguration getStandaloneConfig(final BaseRedisProperties redis) {
-        LOGGER.debug("Setting Redis standalone configuration on host [{}] and port [{}]", redis.getHost(),
-                redis.getPort());
+    private static RedisConfiguration getStandaloneConfig(final BaseRedisProperties redis) {
+        LOGGER.debug("Setting Redis standalone configuration on host [{}] and port [{}]", redis.getHost(), redis.getPort());
         val standaloneConfig = new RedisStandaloneConfiguration(redis.getHost(), redis.getPort());
         standaloneConfig.setDatabase(redis.getDatabase());
         if (StringUtils.hasText(redis.getPassword())) {
