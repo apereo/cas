@@ -27,7 +27,6 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.ObjectProvider;
@@ -42,7 +41,6 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import javax.sql.DataSource;
-
 import java.util.List;
 import java.util.Map;
 

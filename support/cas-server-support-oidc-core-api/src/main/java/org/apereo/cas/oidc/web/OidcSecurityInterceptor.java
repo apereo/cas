@@ -39,7 +39,7 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
     @Override
     public boolean preHandle(final HttpServletRequest request,
                              final HttpServletResponse response,
-                             final Object handler) throws Exception {
+                             final Object handler) {
         val ctx = new JEEContext(request, response, this.sessionStore);
 
         var clearCreds = false;

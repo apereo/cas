@@ -2,7 +2,6 @@ package org.apereo.cas.web;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.PropertiesPropertySource;

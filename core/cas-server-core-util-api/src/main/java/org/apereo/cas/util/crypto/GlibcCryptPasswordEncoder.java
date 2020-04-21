@@ -1,7 +1,6 @@
 package org.apereo.cas.util.crypto;
 
 import org.apereo.cas.util.gen.HexRandomStringGenerator;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

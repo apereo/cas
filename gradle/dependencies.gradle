@@ -2208,7 +2208,7 @@ ext.libraries = [
                 }
         ],
         pac4jsaml               : [
-                dependencies.create("org.pac4j:pac4j-saml:$pac4jVersion") {
+                dependencies.create("org.pac4j:pac4j-saml-opensamlv3:$pac4jVersion") {
                     exclude(group: "org.apache.santuario", module: "xmlsec")
                     exclude(group: "org.apache.httpcomponents", module: "httpcore")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")

@@ -639,7 +639,7 @@
     <module name="NewlineAtEndOfFile">
         <property name="fileExtensions" value="java, xml, properties, txt"/>
         <property name="lineSeparator" value="lf"/>
-        <property name="severity" value="error"/>
+        <property name="severity" value="warning"/>
     </module>
     <module name="Translation">
         <property name="severity" value="ignore"/>

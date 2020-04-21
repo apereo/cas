@@ -12,7 +12,6 @@ import org.apereo.cas.web.flow.client.HostNameSpnegoKnownClientSystemsFilterActi
 import org.apereo.cas.web.flow.client.LdapSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,3 +106,4 @@ public class SpnegoWebflowActionsConfiguration {
             spnegoProperties.getSpnegoAttributeName());
     }
 }
+

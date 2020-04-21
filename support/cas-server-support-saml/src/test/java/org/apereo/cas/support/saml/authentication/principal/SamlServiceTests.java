@@ -13,7 +13,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -30,7 +29,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 /**

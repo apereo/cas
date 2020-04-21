@@ -21,7 +21,7 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.state.StaticOrRandomStateGenerator;
+import org.pac4j.core.util.generator.StaticValueGenerator;
 import org.pac4j.oauth.client.OAuth10Client;
 import org.pac4j.oauth.client.OAuth20Client;
 import org.pac4j.oauth.config.OAuth20Configuration;
@@ -89,13 +89,13 @@ public class DelegatedClientWebflowManager {
             val oauthClient = (OAuth20Client) client;
             val config = oauthClient.getConfiguration();
             config.setWithState(true);
-            config.setStateGenerator(new StaticOrRandomStateGenerator(ticketId));
+            config.setStateGenerator(new StaticValueGenerator(ticketId));
         }
         if (client instanceof OidcClient) {
             val oidcClient = (OidcClient) client;
             val config = oidcClient.getConfiguration();
             config.setWithState(true);
-            config.setStateGenerator(new StaticOrRandomStateGenerator(ticketId));
+            config.setStateGenerator(new StaticValueGenerator(ticketId));
         }
         if (client instanceof CasClient) {
             sessionStore.set(webContext, CAS_CLIENT_ID_SESSION_KEY, ticket.getId());

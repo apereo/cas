@@ -12,7 +12,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 /**

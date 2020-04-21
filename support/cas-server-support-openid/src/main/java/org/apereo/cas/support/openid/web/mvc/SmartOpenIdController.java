@@ -3,7 +3,6 @@ package org.apereo.cas.support.openid.web.mvc;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.AbstractDelegateController;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
