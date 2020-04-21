@@ -31,8 +31,6 @@
             <property name="scope" value="protected"/>
             <property name="severity" value="error"/>
             <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF"/>
-            <property name="allowUndeclaredRTE" value="true"/>
-            <property name="allowThrowsTagsForSubclasses" value="true"/>
         </module>
         <module name="JavadocType">
             <property name="severity" value="error"/>

@@ -34,10 +34,12 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
         "cas.server.tomcat.httpProxy.enabled=true",
         "cas.server.tomcat.httpProxy.secure=true",
         "cas.server.tomcat.httpProxy.scheme=https",
+        "cas.server.tomcat.httpProxy.secret=s3cr3t",
         "cas.server.tomcat.http.enabled=true",
         "cas.server.tomcat.http.port=9190",
         "cas.server.tomcat.ajp.enabled=true",
         "cas.server.tomcat.ajp.port=9944",
+        "cas.server.tomcat.ajp.secret=s3cr3t",
         "cas.server.tomcat.basicAuthn.enabled=true",
         "cas.server.tomcat.extAccessLog.enabled=true",
         "cas.server.tomcat.rewriteValve.location=classpath:/container/tomcat/rewrite.config"
