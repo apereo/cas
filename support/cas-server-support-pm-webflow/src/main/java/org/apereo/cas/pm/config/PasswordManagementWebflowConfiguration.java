@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
@@ -54,6 +55,10 @@ public class PasswordManagementWebflowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("ticketRegistry")
@@ -144,7 +149,7 @@ public class PasswordManagementWebflowConfiguration {
     @RefreshScope
     public Action verifyPasswordResetRequestAction() {
         return new VerifyPasswordResetRequestAction(casProperties,
-            passwordManagementService.getObject(), ticketRegistry.getObject());
+            passwordManagementService.getObject(), centralAuthenticationService.getObject());
     }
 
     @ConditionalOnMissingBean(name = "handlePasswordExpirationWarningMessagesAction")
