@@ -34,6 +34,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
+import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponseTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -158,6 +159,10 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     protected ResourceLoader resourceLoader;
+
+    @Autowired
+    @Qualifier("oidcWebFingerDiscoveryService")
+    protected OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService;
 
     @Autowired
     @Qualifier("oidcImplicitIdTokenAndTokenCallbackUrlBuilder")
