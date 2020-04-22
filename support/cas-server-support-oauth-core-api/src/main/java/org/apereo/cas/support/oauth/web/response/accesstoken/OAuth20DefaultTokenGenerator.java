@@ -68,6 +68,17 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      */
     protected final CasConfigurationProperties casProperties;
 
+    private static OAuth20TokenGeneratedResult generateAccessTokenResult(final AccessTokenRequestDataHolder holder,
+                                                                         final Pair<OAuth20AccessToken, OAuth20RefreshToken> pair) {
+        return OAuth20TokenGeneratedResult.builder()
+            .registeredService(holder.getRegisteredService())
+            .accessToken(pair.getKey())
+            .refreshToken(pair.getValue())
+            .grantType(holder.getGrantType())
+            .responseType(holder.getResponseType())
+            .build();
+    }
+
     @Override
     public OAuth20TokenGeneratedResult generate(final AccessTokenRequestDataHolder holder) {
         if (OAuth20ResponseTypes.DEVICE_CODE.equals(holder.getResponseType())) {
@@ -112,7 +123,8 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
 
             if (deviceCodeTicket.getLastTimeUsed() != null) {
                 val interval = Beans.newDuration(casProperties.getAuthn().getOauth().getDeviceToken().getRefreshInterval()).getSeconds();
-                val shouldSlowDown = deviceCodeTicket.getLastTimeUsed().plusSeconds(interval).isAfter(ZonedDateTime.now(ZoneOffset.UTC));
+                val shouldSlowDown = deviceCodeTicket.getLastTimeUsed().plusSeconds(interval)
+                    .isAfter(ZonedDateTime.now(ZoneOffset.UTC));
                 if (shouldSlowDown) {
                     LOGGER.error("Request for user code approval is greater than the configured refresh interval of [{}] second(s)", interval);
                     throw new ThrottledOAuth20DeviceUserCodeApprovalException(deviceCodeTicket.getId());
@@ -148,17 +160,18 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     }
 
     private OAuth20DeviceToken getDeviceTokenFromTicketRegistry(final String deviceCode) {
-        val deviceCodeTicket = this.centralAuthenticationService.getTicket(deviceCode, OAuth20DeviceToken.class);
-        if (deviceCodeTicket == null) {
-            LOGGER.error("Provided device code [{}] is invalid or expired and cannot be found in the ticket registry", deviceCode);
+        try {
+            val deviceCodeTicket = this.centralAuthenticationService.getTicket(deviceCode, OAuth20DeviceToken.class);
+            if (deviceCodeTicket == null || deviceCodeTicket.isExpired()) {
+                LOGGER.error("Provided device code [{}] is invalid or expired and cannot be found in the ticket registry", deviceCode);
+                this.centralAuthenticationService.deleteTicket(deviceCode);
+                throw new InvalidOAuth20DeviceTokenException(deviceCode);
+            }
+            return deviceCodeTicket;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
             throw new InvalidOAuth20DeviceTokenException(deviceCode);
         }
-        if (deviceCodeTicket.isExpired()) {
-            this.centralAuthenticationService.deleteTicket(deviceCode);
-            LOGGER.error("Provided device code [{}] has expired and will be removed from the ticket registry", deviceCode);
-            throw new InvalidOAuth20DeviceTokenException(deviceCode);
-        }
-        return deviceCodeTicket;
     }
 
     private Pair<OAuth20DeviceToken, OAuth20DeviceUserCode> createDeviceTokensInTicketRegistry(final AccessTokenRequestDataHolder holder) {
@@ -219,7 +232,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     /**
      * Update OAuth code.
      *
-     * @param holder the holder
+     * @param holder      the holder
      * @param accessToken the accessToken
      */
     protected void updateOAuthCode(final AccessTokenRequestDataHolder holder, final OAuth20AccessToken accessToken) {
@@ -268,7 +281,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      * Generate refresh token.
      *
      * @param responseHolder the response holder
-     * @param accessToken the related Access token
+     * @param accessToken    the related Access token
      * @return the refresh token
      */
     protected OAuth20RefreshToken generateRefreshToken(final AccessTokenRequestDataHolder responseHolder, final OAuth20AccessToken accessToken) {
@@ -293,16 +306,5 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         LOGGER.debug("Expiring old refresh token [{}]", oldRefreshToken);
         oldRefreshToken.markTicketExpired();
         centralAuthenticationService.deleteTicket(oldRefreshToken);
-    }
-
-    private static OAuth20TokenGeneratedResult generateAccessTokenResult(final AccessTokenRequestDataHolder holder,
-                                                                         final Pair<OAuth20AccessToken, OAuth20RefreshToken> pair) {
-        return OAuth20TokenGeneratedResult.builder()
-            .registeredService(holder.getRegisteredService())
-            .accessToken(pair.getKey())
-            .refreshToken(pair.getValue())
-            .grantType(holder.getGrantType())
-            .responseType(holder.getResponseType())
-            .build();
     }
 }
