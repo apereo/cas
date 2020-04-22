@@ -12,7 +12,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Collection;
 
 /**
@@ -24,7 +23,9 @@ import java.util.Collection;
 @Slf4j
 public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdapter {
     private final HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor;
+
     private final HandlerInterceptorAdapter requiresAuthenticationClientConfigurationInterceptor;
+
     private final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode;
 
     public OidcHandlerInterceptorAdapter(final HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor,

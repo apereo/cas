@@ -7,16 +7,19 @@ import org.apereo.cas.services.RegisteredServiceContact;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.jose4j.jwk.JsonWebKeySet;
 
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -70,10 +73,15 @@ public class OidcClientRegistrationUtils {
                 .collect(Collectors.toList()));
 
         val validator = new SimpleUrlValidatorFactoryBean(false).getObject();
-        if (Objects.requireNonNull(validator).isValid(registeredService.getJwks())) {
-            clientResponse.setJwksUri(registeredService.getJwks());
+        val keystore = registeredService.getJwks();
+        if (Objects.requireNonNull(validator).isValid(keystore)) {
+            clientResponse.setJwksUri(keystore);
+        } else if (ResourceUtils.doesResourceExist(keystore)) {
+            val res = ResourceUtils.getResourceFrom(keystore);
+            val json = IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8);
+            clientResponse.setJwks(new JsonWebKeySet(json).toJson());
         } else {
-            val jwks = new JsonWebKeySet(registeredService.getJwks());
+            val jwks = new JsonWebKeySet(keystore);
             clientResponse.setJwks(jwks.toJson());
         }
         clientResponse.setLogo(registeredService.getLogo());

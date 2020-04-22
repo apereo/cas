@@ -89,6 +89,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.webflow.execution.Action;
 
 import java.time.ZoneOffset;
@@ -159,6 +160,10 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     protected ResourceLoader resourceLoader;
+
+    @Autowired
+    @Qualifier("oauthInterceptor")
+    protected HandlerInterceptorAdapter oauthInterceptor;
 
     @Autowired
     @Qualifier("oidcWebFingerDiscoveryService")
