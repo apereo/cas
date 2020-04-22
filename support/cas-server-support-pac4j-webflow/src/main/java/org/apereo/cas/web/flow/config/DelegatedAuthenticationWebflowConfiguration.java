@@ -201,7 +201,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
     @RefreshScope
     @Bean
     public DelegatedClientWebflowManager delegatedClientWebflowManager() {
-        return new DelegatedClientWebflowManager(ticketRegistry.getObject(),
+        return new DelegatedClientWebflowManager(centralAuthenticationService.getObject(),
             ticketFactory.getObject(),
             casProperties,
             authenticationRequestServiceSelectionStrategies.getObject(),

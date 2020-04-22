@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.config.support.authentication;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.audit.DelegatedAuthenticationAuditResourceResolver;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -13,7 +14,7 @@ import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProf
 import org.apereo.cas.authentication.principal.provision.GroovyDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
+import org.apereo.cas.integration.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
@@ -22,7 +23,6 @@ import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
 import org.apereo.cas.support.pac4j.authentication.RestfulDelegatedClientFactory;
 import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandler;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -76,8 +76,8 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     private ObjectProvider<TicketFactory> ticketFactory;
 
     @Autowired
-    @Qualifier("ticketRegistry")
-    private ObjectProvider<TicketRegistry> ticketRegistry;
+    @Qualifier("centralAuthenticationService")
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactory")
@@ -95,7 +95,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     public SessionStore<JEEContext> delegatedClientDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getPac4j().isReplicateSessions();
         if (replicate) {
-            return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(), casProperties);
+            return new DistributedJEESessionStore(centralAuthenticationService.getObject(), ticketFactory.getObject(), casProperties);
         }
         return new JEESessionStore();
     }

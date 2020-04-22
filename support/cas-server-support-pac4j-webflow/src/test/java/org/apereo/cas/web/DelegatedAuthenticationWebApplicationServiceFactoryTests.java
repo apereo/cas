@@ -1,13 +1,15 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.expiration.builder.TransientSessionTicketExpirationPolicyBuilder;
 import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
-import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
 import lombok.val;
@@ -24,6 +26,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DelegatedAuthenticationWebApplicationServiceFactoryTests}.
@@ -51,8 +54,11 @@ public class DelegatedAuthenticationWebApplicationServiceFactoryTests {
         this.request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
 
-        val ticketRegistry = new DefaultTicketRegistry();
-        this.manager = new DelegatedClientWebflowManager(ticketRegistry,
+        val cas = mock(CentralAuthenticationService.class);
+        val ticket = mock(TransientSessionTicket.class);
+        when(ticket.getService()).thenReturn(RegisteredServiceTestUtils.getService("https://example.org"));
+        when(cas.getTicket(anyString(), any())).thenReturn(ticket);
+        this.manager = new DelegatedClientWebflowManager(cas,
             new DefaultTransientSessionTicketFactory(getExpirationPolicyBuilder()),
             new CasConfigurationProperties(),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),

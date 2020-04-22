@@ -21,6 +21,7 @@ import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.profile.CommonProfile;
 
 import java.security.GeneralSecurityException;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -72,7 +73,8 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
             
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
-            val webContext = new JEEContext(request, response, this.sessionStore);
+            val webContext = new JEEContext(Objects.requireNonNull(request),
+                Objects.requireNonNull(response), this.sessionStore);
 
             var userProfileResult = Optional.ofNullable(clientCredentials.getUserProfile());
             if (userProfileResult.isEmpty()) {

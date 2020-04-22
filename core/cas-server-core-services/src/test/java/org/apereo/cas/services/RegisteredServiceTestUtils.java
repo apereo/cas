@@ -119,6 +119,10 @@ public class RegisteredServiceTestUtils {
         return getRegisteredService(CONST_TEST_URL);
     }
 
+    public static AbstractRegisteredService getRegisteredService(final Map requiredAttributes) {
+        return getRegisteredService(CONST_TEST_URL, requiredAttributes);
+    }
+
     @SneakyThrows
     public static AbstractRegisteredService getRegisteredService(final String id,
                                                                  final Class<? extends RegisteredService> clazz,
