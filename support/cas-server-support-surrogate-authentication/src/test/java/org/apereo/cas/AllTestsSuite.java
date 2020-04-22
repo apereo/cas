@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.SurrogatePrincipalBuilderTests;
 import org.apereo.cas.authentication.SurrogatePrincipalElectionStrategyTests;
 import org.apereo.cas.authentication.SurrogatePrincipalResolverTests;
 import org.apereo.cas.authentication.audit.SurrogateAuditPrincipalIdProviderTests;
+import org.apereo.cas.authentication.audit.SurrogateEligibilityVerificationAuditResourceResolverTests;
 import org.apereo.cas.authentication.rest.SurrogateAuthenticationRestHttpRequestCredentialFactoryTests;
 import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticationServiceTests;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationServiceTests;
@@ -27,6 +28,7 @@ import org.junit.runner.RunWith;
     SurrogateAuthenticationMetaDataPopulatorTests.class,
     SurrogatePrincipalResolverTests.class,
     SurrogatePrincipalBuilderTests.class,
+    SurrogateEligibilityVerificationAuditResourceResolverTests.class,
     SurrogateAuthenticationRestHttpRequestCredentialFactoryTests.class,
     SurrogateAuditPrincipalIdProviderTests.class,
     SimpleSurrogateAuthenticationServiceTests.class,
