@@ -111,13 +111,11 @@ public class OidcAuthorizationRequestSupport {
             .stream()
             .filter(p -> !OidcConstants.PROMPT.equals(p.getName()) || !p.getValue().equalsIgnoreCase(prompt))
             .collect(Collectors.toList());
-        if (!newParams.isEmpty()) {
-            return uriBuilder.removeQuery()
-                .addParameters(newParams)
-                .build()
-                .toASCIIString();
-        }
-        return url;
+        return uriBuilder
+            .removeQuery()
+            .addParameters(newParams)
+            .build()
+            .toASCIIString();
     }
 
     /**
