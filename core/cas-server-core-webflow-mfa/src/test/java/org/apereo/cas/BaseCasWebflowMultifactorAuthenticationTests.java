@@ -81,9 +81,6 @@ import org.springframework.test.annotation.DirtiesContext;
     CasWebflowContextConfiguration.class,
     CasCoreValidationConfiguration.class,
     AdaptiveMultifactorAuthenticationPolicyEventResolverTests.GeoLocationServiceTestConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @DirtiesContext
