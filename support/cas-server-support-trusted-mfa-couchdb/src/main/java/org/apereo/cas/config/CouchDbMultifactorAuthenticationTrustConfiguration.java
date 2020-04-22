@@ -55,8 +55,10 @@ public class CouchDbMultifactorAuthenticationTrustConfiguration {
     @RefreshScope
     public MultifactorAuthenticationTrustRecordCouchDbRepository couchDbTrustRecordRepository(
         @Qualifier("mfaTrustCouchDbFactory") final CouchDbConnectorFactory mfaTrustCouchDbFactory) {
-        return new MultifactorAuthenticationTrustRecordCouchDbRepository(mfaTrustCouchDbFactory.getCouchDbConnector(),
+        val repository = new MultifactorAuthenticationTrustRecordCouchDbRepository(mfaTrustCouchDbFactory.getCouchDbConnector(),
             casProperties.getAuthn().getMfa().getTrusted().getCouchDb().isCreateIfNotExists());
+        repository.initStandardDesignDocument();
+        return repository;
     }
 
     @ConditionalOnMissingBean(name = "couchDbMfaTrustEngine")
