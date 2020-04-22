@@ -19,7 +19,7 @@ import org.springframework.scheduling.annotation.Async;
  * This is {@link SurrogateAuthenticationEventListener}.
  *
  * @author Misagh Moayyed
- * @since 5.2.0
+ * @since 6.2.0
  */
 @Slf4j
 @RequiredArgsConstructor
