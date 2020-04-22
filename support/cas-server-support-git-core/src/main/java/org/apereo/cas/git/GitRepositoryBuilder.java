@@ -115,8 +115,10 @@ public class GitRepositoryBuilder {
             }
         };
         return transport -> {
-            val sshTransport = (SshTransport) transport;
-            sshTransport.setSshSessionFactory(sshSessionFactory);
+            if (transport instanceof SshTransport) {
+                val sshTransport = (SshTransport) transport;
+                sshTransport.setSshSessionFactory(sshSessionFactory);
+            }
         };
     }
 
