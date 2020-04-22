@@ -55,6 +55,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequ
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
@@ -242,8 +243,16 @@ public abstract class AbstractOAuth20Tests {
     protected OAuth20DeviceUserCodeApprovalEndpointController deviceController;
 
     @Autowired
+    @Qualifier("oauthResourceOwnerCredentialsResponseBuilder")
+    protected OAuth20AuthorizationResponseBuilder oauthResourceOwnerCredentialsResponseBuilder;
+
+    @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    protected CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
     @Qualifier("requiresAuthenticationAccessTokenInterceptor")
