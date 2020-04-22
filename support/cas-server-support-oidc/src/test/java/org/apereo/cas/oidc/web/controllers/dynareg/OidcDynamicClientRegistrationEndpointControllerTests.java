@@ -1,9 +1,6 @@
 package org.apereo.cas.oidc.web.controllers.dynareg;
 
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.oidc.AbstractOidcTests;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
