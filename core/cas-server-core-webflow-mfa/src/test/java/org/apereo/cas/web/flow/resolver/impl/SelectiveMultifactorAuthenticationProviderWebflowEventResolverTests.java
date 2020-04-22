@@ -82,7 +82,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests
         WebUtils.putResolvedEventsAsAttribute(context, resolvedEvents);
         val result = selectiveAuthenticationProviderWebflowEventResolver.resolve(context);
         assertNotNull(result);
-        assertEquals("mfa-something", result.iterator().next().getId());
+        assertTrue(result.isEmpty());
     }
 
 }
