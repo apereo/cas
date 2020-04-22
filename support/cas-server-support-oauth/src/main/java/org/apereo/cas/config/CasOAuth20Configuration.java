@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
+import org.apereo.cas.integration.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ClientIdAwareProfileManager;
@@ -477,7 +477,7 @@ public class CasOAuth20Configuration {
         return new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory(),
             defaultDeviceTokenFactory(),
             defaultRefreshTokenFactory(),
-            ticketRegistry.getObject(),
+            centralAuthenticationService.getObject(),
             casProperties);
     }
 
@@ -848,7 +848,7 @@ public class CasOAuth20Configuration {
     public SessionStore<JEEContext> oauthDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getOauth().isReplicateSessions();
         if (replicate) {
-            return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(), casProperties);
+            return new DistributedJEESessionStore(centralAuthenticationService.getObject(), ticketFactory.getObject(), casProperties);
         }
         return new JEESessionStore();
     }

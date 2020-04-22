@@ -69,6 +69,15 @@ public interface CentralAuthenticationService {
     Ticket updateTicket(Ticket ticket);
 
     /**
+     * Add the ticket instance in the underlying storage mechanism.
+     *
+     * @param ticket the ticket
+     * @return the updated ticket
+     * @since 6.2.0
+     */
+    Ticket addTicket(Ticket ticket);
+
+    /**
      * Obtains the given ticket by its id
      * and returns the CAS-representative object. Implementations
      * need to check for the validity of the ticket by making sure
@@ -109,6 +118,19 @@ public interface CentralAuthenticationService {
      * @param ticketId the ticket id
      */
     default void deleteTicket(final String ticketId) {
+    }
+
+    /**
+     * Attempts to delete a ticket from the underlying store
+     * and is allowed to run any number of processing on the ticket
+     * and removal op before invoking it. The ticket id can be associated
+     * with any ticket type that is valid and understood by CAS and the underlying
+     * ticket store.
+     *
+     * @param ticket the ticket id
+     */
+    default void deleteTicket(final Ticket ticket) {
+        deleteTicket(ticket.getId());
     }
 
     /**

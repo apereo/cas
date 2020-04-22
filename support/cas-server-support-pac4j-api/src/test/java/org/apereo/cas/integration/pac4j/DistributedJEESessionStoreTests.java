@@ -1,5 +1,8 @@
 package org.apereo.cas.integration.pac4j;
 
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -10,10 +13,11 @@ import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -30,7 +34,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link DistributedJ2ESessionStoreTests}.
+ * This is {@link DistributedJEESessionStoreTests}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -44,21 +48,25 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreWebConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreConfiguration.class,
     CasCoreHttpConfiguration.class,
+    CasCoreLogoutConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DistributedJ2ESessionStoreTests {
+public class DistributedJEESessionStoreTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
     @Qualifier("defaultTicketFactory")
@@ -68,7 +76,7 @@ public class DistributedJ2ESessionStoreTests {
     public void verifyOperation() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val store = new DistributedJ2ESessionStore(this.ticketRegistry, this.ticketFactory, casProperties);
+        val store = new DistributedJEESessionStore(this.centralAuthenticationService, this.ticketFactory, casProperties);
         val context = new JEEContext(request, response, store);
 
         assertNotNull(request.getSession());

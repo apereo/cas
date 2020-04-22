@@ -1,10 +1,10 @@
 package org.apereo.cas.integration.pac4j;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * This is {@link DistributedJ2ESessionStore}.
+ * This is {@link DistributedJEESessionStore}.
  *
  * @author Misagh Moayyed
  * @author Jerome LELEU
@@ -29,18 +29,19 @@ import java.util.UUID;
  */
 @Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
-public class DistributedJ2ESessionStore implements SessionStore<JEEContext> {
+public class DistributedJEESessionStore implements SessionStore<JEEContext> {
     private static final String SESSION_ID_IN_REQUEST_ATTRIBUTE = "sessionIdInRequestAttribute";
 
-    private final TicketRegistry ticketRegistry;
+    private final CentralAuthenticationService centralAuthenticationService;
 
     private final TicketFactory ticketFactory;
 
     private final CookieRetrievingCookieGenerator cookieGenerator;
 
-    public DistributedJ2ESessionStore(final TicketRegistry ticketRegistry, final TicketFactory ticketFactory,
+    public DistributedJEESessionStore(final CentralAuthenticationService centralAuthenticationService,
+                                      final TicketFactory ticketFactory,
                                       final CasConfigurationProperties casProperties) {
-        this.ticketRegistry = ticketRegistry;
+        this.centralAuthenticationService = centralAuthenticationService;
         this.ticketFactory = ticketFactory;
         val cookie = casProperties.getSessionReplication().getCookie();
         val context = CookieUtils.buildCookieGenerationContext(cookie);
@@ -95,14 +96,14 @@ public class DistributedJ2ESessionStore implements SessionStore<JEEContext> {
         var ticket = getTransientSessionTicketForSession(context);
         if (value == null && ticket != null) {
             ticket.getProperties().remove(key);
-            this.ticketRegistry.updateTicket(ticket);
+            this.centralAuthenticationService.updateTicket(ticket);
         } else if (ticket == null) {
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
             ticket = transientFactory.create(sessionId, properties);
-            this.ticketRegistry.addTicket(ticket);
+            this.centralAuthenticationService.addTicket(ticket);
         } else {
             ticket.getProperties().putAll(properties);
-            this.ticketRegistry.updateTicket(ticket);
+            this.centralAuthenticationService.updateTicket(ticket);
         }
     }
 
@@ -111,7 +112,7 @@ public class DistributedJ2ESessionStore implements SessionStore<JEEContext> {
         try {
             val sessionId = getOrCreateSessionId(context);
             val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
-            this.ticketRegistry.deleteTicket(ticketId);
+            this.centralAuthenticationService.deleteTicket(ticketId);
             cookieGenerator.removeCookie(context.getNativeResponse());
             LOGGER.trace("Removes session cookie and ticket: [{}]", ticketId);
             return true;
@@ -141,15 +142,20 @@ public class DistributedJ2ESessionStore implements SessionStore<JEEContext> {
     }
 
     private TransientSessionTicket getTransientSessionTicketForSession(final JEEContext context) {
-        val sessionId = getOrCreateSessionId(context);
-        val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
+        try {
+            val sessionId = getOrCreateSessionId(context);
+            val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
 
-        LOGGER.trace("fetching ticket: {}", ticketId);
-        val ticket = this.ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
-        if (ticket == null || ticket.isExpired()) {
-            LOGGER.trace("Ticket [{}] does not exist or is expired", ticketId);
-            return null;
+            LOGGER.trace("fetching ticket: {}", ticketId);
+            val ticket = this.centralAuthenticationService.getTicket(ticketId, TransientSessionTicket.class);
+            if (ticket == null || ticket.isExpired()) {
+                LOGGER.trace("Ticket [{}] does not exist or is expired", ticketId);
+                return null;
+            }
+            return ticket;
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
         }
-        return ticket;
+        return null;
     }
 }

@@ -235,6 +235,12 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         return ticket;
     }
 
+    @Override
+    public Ticket addTicket(final Ticket ticket) {
+        this.ticketRegistry.addTicket(ticket);
+        return ticket;
+    }
+
     /**
      * Resolve service from authentication request.
      *
