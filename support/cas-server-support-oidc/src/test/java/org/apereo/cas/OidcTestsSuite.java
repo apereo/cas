@@ -42,6 +42,7 @@ import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseB
 import org.apereo.cas.oidc.web.controllers.OidcIntrospectionEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.OidcLogoutEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.OidcWellKnownEndpointControllerTests;
+import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistrationEndpointControllerTests;
 import org.apereo.cas.oidc.web.flow.OidcAuthenticationContextWebflowEventResolverTests;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIActionTests;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurerTests;
@@ -77,6 +78,7 @@ import org.junit.runner.RunWith;
     OidcJwtAccessTokenEncoderTests.class,
     OidcUserProfileSigningAndEncryptionServiceTests.class,
     OidcJsonWebKeyStoreUtilsTests.class,
+    OidcDynamicClientRegistrationEndpointControllerTests.class,
     OidcUserProfileViewRendererDefaultTests.class,
     OidcUserProfileViewRendererFlatTests.class,
     OidcAccessTokenResponseGeneratorTests.class,
