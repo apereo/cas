@@ -35,16 +35,11 @@ public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicato
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
         var poolBuilder = builder.up();
-        val result = this.executor.submit(new Validator(this, builder));
         var message = StringUtils.EMPTY;
         try {
+            val result = this.executor.submit(new Validator(this, builder));
             poolBuilder = result.get(this.maxWait, TimeUnit.MILLISECONDS);
             message = "OK";
-        } catch (final InterruptedException e) {
-            Thread.currentThread().interrupt();
-            message = "Validator thread interrupted during pool validation";
-            poolBuilder.outOfService();
-            LOGGER.trace(e.getMessage(), e);
         } catch (final TimeoutException e) {
             poolBuilder.down();
             message = String.format("Pool validation timed out. Max wait is %s ms.", this.maxWait);
@@ -91,6 +86,7 @@ public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicato
 
     private static class Validator implements Callable<Health.Builder> {
         private final AbstractPoolHealthIndicator monitor;
+
         private final Health.Builder builder;
 
         /**
