@@ -1,27 +1,34 @@
-package org.apereo.cas.util.services;
+package org.apereo.cas.services.util;
 
 import org.apereo.cas.services.AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy;
 import org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 
+import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link DefaultRegisteredServiceJsonSerializerTests}.
+ * This is {@link RegisteredServiceJsonSerializerTests}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class DefaultRegisteredServiceJsonSerializerTests {
+public class RegisteredServiceJsonSerializerTests {
+
+    @Test
+    public void verifyPrinter() {
+        val zer = new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
+        assertFalse(zer.supports(new File("bad-file")));
+    }
 
     @Test
     public void checkNullability() {
@@ -50,7 +57,7 @@ public class DefaultRegisteredServiceJsonSerializerTests {
 
         val s = new RegexRegisteredService();
         s.setAcceptableUsagePolicy(policyWritten);
-        
+
         val policy = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
         policy.addPolicies(Arrays.asList(
             new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1),

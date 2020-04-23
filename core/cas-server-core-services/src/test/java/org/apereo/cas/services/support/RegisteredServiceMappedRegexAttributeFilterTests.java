@@ -33,34 +33,39 @@ import static org.mockito.Mockito.*;
 public class RegisteredServiceMappedRegexAttributeFilterTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "registeredServiceMappedRegexAttributeFilter.json");
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
     private static final String PHONE = "phone";
+
     private static final String FAMILY_NAME = "familyName";
+
     private static final String GIVEN_NAME = "givenName";
+
     private static final String UID = "uid";
 
-    private final RegisteredServiceMappedRegexAttributeFilter filter;
     private final Map<String, List<Object>> givenAttributesMap;
+
+    private RegisteredServiceMappedRegexAttributeFilter filter;
 
     @Mock
     private RegisteredService registeredService;
 
     public RegisteredServiceMappedRegexAttributeFilterTests() {
-        this.filter = new RegisteredServiceMappedRegexAttributeFilter();
-
-        this.givenAttributesMap = new HashMap<>();
-        this.givenAttributesMap.put(UID, List.of("loggedInTestUid"));
-        this.givenAttributesMap.put(PHONE, List.of("1290"));
-        this.givenAttributesMap.put(FAMILY_NAME, List.of("Smith"));
-        this.givenAttributesMap.put(GIVEN_NAME, List.of("John"));
-        this.givenAttributesMap.put("employeeId", List.of("E1234"));
-        this.givenAttributesMap.put("memberOf", Arrays.asList("math", "science", "chemistry", "marathon"));
-        this.givenAttributesMap.put("setAttribute", Stream.of("math", "science", "chemistry").collect(Collectors.toList()));
+        givenAttributesMap = new HashMap<>();
+        givenAttributesMap.put(UID, List.of("loggedInTestUid"));
+        givenAttributesMap.put(PHONE, List.of("1290"));
+        givenAttributesMap.put(FAMILY_NAME, List.of("Smith"));
+        givenAttributesMap.put(GIVEN_NAME, List.of("John"));
+        givenAttributesMap.put("employeeId", List.of("E1234"));
+        givenAttributesMap.put("memberOf", Arrays.asList("math", "science", "chemistry", "marathon"));
+        givenAttributesMap.put("setAttribute", Stream.of("math", "science", "chemistry").collect(Collectors.toList()));
     }
 
     @BeforeEach
     public void initialize() {
         MockitoAnnotations.initMocks(this);
+        this.filter = new RegisteredServiceMappedRegexAttributeFilter();
         when(this.registeredService.getName()).thenReturn("sample test service");
         when(this.registeredService.getServiceId()).thenReturn("https://www.jasig.org");
     }
@@ -68,8 +73,16 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
     @Test
     public void verifyPatternFilter() {
         this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
-        val attrs = this.filter.filter(this.givenAttributesMap);
-        assertEquals(attrs.size(), this.givenAttributesMap.size());
+        val attrs = this.filter.filter(givenAttributesMap);
+        assertEquals(attrs.size(), givenAttributesMap.size());
+        assertEquals(2, CollectionUtils.toCollection(attrs.get("memberOf")).size());
+    }
+
+    @Test
+    public void verifyPattern() {
+        this.filter = new RegisteredServiceMappedRegexAttributeFilter(Collections.singletonMap("memberOf", "^m"));
+        val attrs = this.filter.filter(givenAttributesMap);
+        assertEquals(attrs.size(), givenAttributesMap.size());
         assertEquals(2, CollectionUtils.toCollection(attrs.get("memberOf")).size());
     }
 
@@ -77,7 +90,7 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
     public void verifyPatternFilterExcludeUnmatched() {
         this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
         this.filter.setExcludeUnmappedAttributes(true);
-        val attrs = this.filter.filter(this.givenAttributesMap);
+        val attrs = this.filter.filter(givenAttributesMap);
         assertEquals(1, attrs.size());
         assertEquals(2, CollectionUtils.toCollection(attrs.get("memberOf")).size());
     }
@@ -86,8 +99,8 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
     public void verifyPatternFilterFullMatch() {
         this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
         this.filter.setCompleteMatch(true);
-        val attrs = this.filter.filter(this.givenAttributesMap);
-        assertEquals(attrs.size(), this.givenAttributesMap.size() - 1);
+        val attrs = this.filter.filter(givenAttributesMap);
+        assertEquals(attrs.size(), givenAttributesMap.size() - 1);
         assertFalse(attrs.containsKey("memberOf"));
     }
 
