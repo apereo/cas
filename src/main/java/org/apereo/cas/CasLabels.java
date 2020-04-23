@@ -100,7 +100,7 @@ public enum CasLabels {
     LABEL_SAML2_PROTOCOL("SAML2 Protocol", "saml2|\\bmetadata\\b|MDQ"),
     LABEL_SAML2_SP("SAML2 SP", "service provider|saml sp"),
     LABEL_SPNEGO("SPNEGO"),
-    LABEL_SSO_COOKIES("SSO & Cookies", "sso sessions|sso session|tgc"),
+    LABEL_SSO_COOKIES("SSO & Cookies", "sso sessions|sso session|tgc|cookie"),
     LABEL_SEE_MAINTENANCE_POLICY("See Maintenance Policy"),
     LABEL_SERVICE_EXPIRATION_POLICY("Service Expiration Policy"),
     LABEL_SERVICES_REGISTRIES("Services & Registries", "\\bservice\\b|service registries|service registry|service files|\\bservices\\b|\\bRegisteredServices\\b"),
