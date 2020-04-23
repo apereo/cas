@@ -26,13 +26,17 @@ import java.util.function.Predicate;
 @RequiredArgsConstructor
 public class DefaultRegisteredServiceReplicationStrategy implements RegisteredServiceReplicationStrategy, DisposableBean {
     private final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> distributedCacheManager;
+
     private final StreamingServiceRegistryProperties properties;
 
-    /**
-     * Destroy the watch service thread.
-     *
-     * @throws Exception the exception
-     */
+    private static boolean isRegisteredServiceMarkedAsDeletedInCache(final DistributedCacheObject<RegisteredService> item) {
+        if (item.containsProperty("event")) {
+            val event = item.getProperty("event", BaseCasRegisteredServiceEvent.class);
+            return event instanceof CasRegisteredServiceDeletedEvent;
+        }
+        return false;
+    }
+    
     @Override
     public void destroy() throws Exception {
         if (this.distributedCacheManager != null) {
@@ -155,13 +159,5 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
             serviceRegistry.save(cachedService);
         }
         services.add(cachedService);
-    }
-
-    private static boolean isRegisteredServiceMarkedAsDeletedInCache(final DistributedCacheObject<RegisteredService> item) {
-        if (item.containsProperty("event")) {
-            val event = item.getProperty("event", BaseCasRegisteredServiceEvent.class);
-            return event instanceof CasRegisteredServiceDeletedEvent;
-        }
-        return false;
     }
 }

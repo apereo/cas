@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,10 +20,13 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public abstract class AbstractServicesManagerTests {
+public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     private static final String TEST = "test";
+
     protected final List<RegisteredService> listOfDefaultServices = new ArrayList<>();
+
     protected ServiceRegistry serviceRegistry;
+
     protected ServicesManager servicesManager;
 
     public AbstractServicesManagerTests() {
@@ -50,13 +55,13 @@ public abstract class AbstractServicesManagerTests {
 
     @Test
     public void verifySaveAndGet() {
-        val r = new RegexRegisteredService();
-        r.setId(1000);
-        r.setName(TEST);
-        r.setServiceId(TEST);
-
-        this.servicesManager.save(r);
-        assertNotNull(this.servicesManager.findServiceBy(1000));
+        val services = new RegexRegisteredService();
+        services.setId(1100);
+        services.setName(TEST);
+        services.setServiceId(TEST);
+        servicesManager.save(services);
+        assertNotNull(this.servicesManager.findServiceBy(1100));
+        assertTrue(this.servicesManager.count() > 0);
     }
 
     @Test
@@ -70,4 +75,36 @@ public abstract class AbstractServicesManagerTests {
         this.servicesManager.delete(r);
         assertNull(this.servicesManager.findServiceBy(r.getId()));
     }
+
+    @Test
+    public void verifyExpiredNotify() {
+        val r = new RegexRegisteredService();
+        r.setId(2000);
+        r.setName(TEST);
+        r.setServiceId(TEST);
+        val expirationPolicy = new DefaultRegisteredServiceExpirationPolicy();
+        expirationPolicy.setNotifyWhenExpired(true);
+        expirationPolicy.setExpirationDate(LocalDateTime.now(ZoneOffset.UTC).minusDays(2).toString());
+        r.setExpirationPolicy(expirationPolicy);
+        this.servicesManager.save(r);
+        assertNotNull(this.servicesManager.findServiceBy(r.getServiceId()));
+    }
+
+    @Test
+    public void verifyExpiredNotifyAndDelete() {
+        val r = new RegexRegisteredService();
+        r.setId(2001);
+        r.setName(TEST);
+        r.setServiceId(TEST);
+        val expirationPolicy = new DefaultRegisteredServiceExpirationPolicy();
+        expirationPolicy.setNotifyWhenExpired(true);
+        expirationPolicy.setExpirationDate(LocalDateTime.now(ZoneOffset.UTC).minusDays(2).toString());
+        expirationPolicy.setDeleteWhenExpired(true);
+        expirationPolicy.setNotifyWhenDeleted(true);
+        r.setExpirationPolicy(expirationPolicy);
+        this.servicesManager.save(r);
+        assertNull(this.servicesManager.findServiceBy(r.getServiceId()));
+    }
+
+
 }

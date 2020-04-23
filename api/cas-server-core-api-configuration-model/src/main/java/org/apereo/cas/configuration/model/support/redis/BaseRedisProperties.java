@@ -57,12 +57,12 @@ public class BaseRedisProperties implements Serializable {
     /**
      * Redis connection pool settings.
      */
-    private Pool pool;
+    private Pool pool = new Pool();
 
     /**
      * Redis Sentinel settings.
      */
-    private Sentinel sentinel;
+    private Sentinel sentinel = new Sentinel();
 
     /**
      * Whether or not to use SSL for connection factory.
@@ -199,6 +199,11 @@ public class BaseRedisProperties implements Serializable {
          * to block indefinitely.
          */
         private int maxWait = -1;
+
+        /**
+         * Enable the pooling configuration.
+         */
+        private boolean enabled;
     }
 
     /**

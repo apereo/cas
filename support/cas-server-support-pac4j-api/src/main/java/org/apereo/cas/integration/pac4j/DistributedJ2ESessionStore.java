@@ -1,18 +1,16 @@
 package org.apereo.cas.integration.pac4j;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.logout.LogoutPostProcessor;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +29,7 @@ import java.util.UUID;
  */
 @Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
-public class DistributedJ2ESessionStore implements SessionStore<JEEContext>, LogoutPostProcessor {
+public class DistributedJ2ESessionStore implements SessionStore<JEEContext> {
     private static final String SESSION_ID_IN_REQUEST_ATTRIBUTE = "sessionIdInRequestAttribute";
 
     private final TicketRegistry ticketRegistry;
@@ -44,23 +42,30 @@ public class DistributedJ2ESessionStore implements SessionStore<JEEContext>, Log
                                       final CasConfigurationProperties casProperties) {
         this.ticketRegistry = ticketRegistry;
         this.ticketFactory = ticketFactory;
-        val context = CookieUtils.buildCookieGenerationContext(casProperties.getSessionReplication().getCookie());
+        val cookie = casProperties.getSessionReplication().getCookie();
+        val context = CookieUtils.buildCookieGenerationContext(cookie);
         this.cookieGenerator = new CookieRetrievingCookieGenerator(context);
     }
 
     @Override
     public String getOrCreateSessionId(final JEEContext context) {
-        var sessionId = (String) context.getRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE).orElse(null);
-        if (sessionId == null) {
-            sessionId = cookieGenerator.retrieveCookieValue(context.getNativeRequest());
-        }
-        LOGGER.trace("Retrieved sessionId: [{}}", sessionId);
-        if (sessionId == null) {
+        var sessionId = getSessionId(context);
+        if (StringUtils.isBlank(sessionId)) {
             sessionId = UUID.randomUUID().toString();
-            LOGGER.debug("Generated sessionId: [{}]", sessionId);
+            LOGGER.trace("Generated session id: [{}]", sessionId);
             cookieGenerator.addCookie(context.getNativeRequest(), context.getNativeResponse(), sessionId);
             context.setRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE, sessionId);
         }
+        return sessionId;
+    }
+
+
+    private String getSessionId(final JEEContext context) {
+        var sessionId = (String) context.getRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE).orElse(null);
+        if (StringUtils.isBlank(sessionId)) {
+            sessionId = cookieGenerator.retrieveCookieValue(context.getNativeRequest());
+        }
+        LOGGER.trace("Generated session id: [{}]", sessionId);
         return sessionId;
     }
 
@@ -112,8 +117,8 @@ public class DistributedJ2ESessionStore implements SessionStore<JEEContext>, Log
             return true;
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
-            return false;
         }
+        return false;
     }
 
     @Override
@@ -146,14 +151,5 @@ public class DistributedJ2ESessionStore implements SessionStore<JEEContext>, Log
             return null;
         }
         return ticket;
-    }
-
-    @Override
-    public void handle(final TicketGrantingTicket ticketGrantingTicket) {
-        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-        if (request != null && response != null) {
-            destroySession(new JEEContext(request, response, this));
-        }
     }
 }

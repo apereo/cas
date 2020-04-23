@@ -19,6 +19,7 @@ import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
@@ -82,6 +83,10 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
     @Qualifier("defaultRefreshTokenFactory")
     protected OAuth20RefreshTokenFactory defaultRefreshTokenFactory;
 
+    @Autowired
+    @Qualifier("servicesManager")
+    protected ServicesManager servicesManager;
+
     protected static TicketGrantingTicket newTicketGrantingTicket() {
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
         return new TicketGrantingTicketImpl(
@@ -92,7 +97,8 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
 
     protected OAuth20AccessToken newAccessToken(final TicketGrantingTicket tgt) {
         val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
-        return defaultAccessTokenFactory.create(testService, tgt.getAuthentication(), tgt, new ArrayList<>(), null, new HashMap<>());
+        return defaultAccessTokenFactory.create(testService, tgt.getAuthentication(),
+            tgt, new ArrayList<>(), null, new HashMap<>());
     }
 
     protected OAuth20RefreshToken newRefreshToken(final OAuth20AccessToken at) {

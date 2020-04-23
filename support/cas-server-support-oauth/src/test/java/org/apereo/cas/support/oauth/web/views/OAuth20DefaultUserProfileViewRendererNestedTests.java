@@ -1,6 +1,6 @@
 package org.apereo.cas.support.oauth.web.views;
 
-import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
+import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 

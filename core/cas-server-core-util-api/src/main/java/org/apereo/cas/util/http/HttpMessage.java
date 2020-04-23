@@ -33,6 +33,7 @@ public class HttpMessage implements Serializable {
     private final URL url;
 
     private final String message;
+
     /**
      * Whether this message should be sent in an asynchronous fashion.
      * Default is true.
@@ -40,6 +41,7 @@ public class HttpMessage implements Serializable {
     private final boolean asynchronous;
 
     private int responseCode;
+
     /**
      * The content type for this message once submitted.
      * Default is {@link MediaType#APPLICATION_FORM_URLENCODED}.

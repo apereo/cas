@@ -797,6 +797,7 @@ The following options related to Redis support in CAS apply equally to a number 
 # ${configurationKey}.redis.useSsl=false
 # ${configurationKey}.redis.readFrom=MASTER
 
+# ${configurationKey}.redis.pool.enabled=false
 # ${configurationKey}.redis.pool.max-active=20
 # ${configurationKey}.redis.pool.maxIdle=8
 # ${configurationKey}.redis.pool.minIdle=0

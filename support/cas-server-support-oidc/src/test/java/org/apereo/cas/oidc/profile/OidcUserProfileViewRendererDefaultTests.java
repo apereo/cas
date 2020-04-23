@@ -14,6 +14,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,5 +47,41 @@ public class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
         val attrs = (Map) result.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES);
         assertTrue(attrs.containsKey("email"));
         assertEquals("casuser@example.org", attrs.get("email"));
+    }
+
+    @Test
+    public void verifyOperationOAuth() throws Exception {
+        val clientId = UUID.randomUUID().toString();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(new MockHttpServletRequest(), response);
+        val accessToken = getAccessToken(clientId);
+        val service = getOAuthRegisteredService(clientId, "https://somthing.com");
+
+        servicesManager.save(service);
+
+        val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
+        val entity = oidcUserProfileViewRenderer.render(data, accessToken, response);
+        assertNotNull(entity);
+        assertNotNull(entity.getBody());
+    }
+
+    @Test
+    public void verifyOperationSigned() throws Exception {
+        val clientId = UUID.randomUUID().toString();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(new MockHttpServletRequest(), response);
+        val accessToken = getAccessToken(clientId);
+        val service = getOidcRegisteredService(clientId);
+        service.setUserInfoEncryptedResponseEncoding(OidcUserProfileSigningAndEncryptionService.USER_INFO_RESPONSE_ENCRYPTION_ENCODING_DEFAULT);
+        service.setUserInfoEncryptedResponseAlg("RSA-OAEP-256");
+        service.setUserInfoSigningAlg("RS256");
+        service.setSignIdToken(true);
+        service.setEncryptIdToken(true);
+        servicesManager.save(service);
+
+        val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
+        val entity = oidcUserProfileViewRenderer.render(data, accessToken, response);
+        assertNotNull(entity);
+        assertNotNull(entity.getBody());
     }
 }

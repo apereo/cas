@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.domain.DomainServicesManager;
 
 import lombok.Getter;
 import lombok.val;
@@ -14,6 +13,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link ChainingServicesManager}.
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * @since 6.2.0
  */
 @Getter
-public class ChainingServicesManager implements ServicesManager {
+public class ChainingServicesManager implements ServicesManager, DomainAwareServicesManager {
 
     private final List<ServicesManager> serviceManagers = new ArrayList<>();
 
@@ -111,7 +111,6 @@ public class ChainingServicesManager implements ServicesManager {
         return serviceManagers.stream()
             .flatMap(s -> s.findServiceBy(clazz).stream())
             .collect(Collectors.toList());
-
     }
 
     @Override
@@ -136,6 +135,14 @@ public class ChainingServicesManager implements ServicesManager {
     }
 
     @Override
+    public Stream<String> getDomains() {
+        return serviceManagers.stream()
+            .filter(mgr -> mgr instanceof DomainAwareServicesManager)
+            .map(DomainAwareServicesManager.class::cast)
+            .flatMap(DomainAwareServicesManager::getDomains);
+    }
+
+    @Override
     public Collection<RegisteredService> getAllServices() {
         return serviceManagers.stream()
             .flatMap(s -> s.getAllServices().stream())
@@ -152,17 +159,17 @@ public class ChainingServicesManager implements ServicesManager {
     @Override
     public Collection<RegisteredService> getServicesForDomain(final String domain) {
         return serviceManagers.stream()
-            .filter(m -> m instanceof DomainServicesManager)
+            .filter(mgr -> mgr instanceof DomainAwareServicesManager)
+            .map(DomainAwareServicesManager.class::cast)
             .flatMap(d -> d.getServicesForDomain(domain).stream())
             .collect(Collectors.toList());
     }
 
     @Override
-    public Collection<String> getDomains() {
+    public int count() {
         return serviceManagers.stream()
-            .filter(m -> m instanceof DomainServicesManager)
-            .flatMap(d -> d.getDomains().stream())
-            .collect(Collectors.toList());
+            .mapToInt(ServicesManager::count)
+            .sum();
     }
 
     @Override

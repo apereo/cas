@@ -14,9 +14,9 @@ dependencies {
     
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-aup-core")
+    
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")
-
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-cookie-api")
     testImplementation project(":core:cas-server-core-services")

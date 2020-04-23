@@ -154,6 +154,7 @@ The following fields are available for SAML services:
 | `metadataSignatureLocation`          | Location of the metadata signing certificate/public key to validate the metadata which must be defined from system files or classpath. If defined, will enforce the `SignatureValidationFilter` validation filter on metadata.
 | `metadataExpirationDuration`         | If defined, will expire metadata in the cache after the indicated duration which will force CAS to retrieve and resolve the metadata again.
 | `requireSignedRoot`                  | Whether incoming metadata's root element is required to be signed. Default is `true`.
+| `signUnsolicitedAuthnRequest`        | When dealing with Unsolicited SSO, determine whether the authentication request should be forcefully signed.
 | `signAssertions`                     | Whether assertions should be signed. Default is `false`.
 | `signResponses`                      | Whether responses should be signed. Default is `true`.
 | `encryptionOptional`                 | Encrypt whenever possible (i.e a compatible key is found in the peer's metadata) or skip encryption otherwise. Default is `false`.

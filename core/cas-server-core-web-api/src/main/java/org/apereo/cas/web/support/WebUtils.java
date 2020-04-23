@@ -634,6 +634,17 @@ public class WebUtils {
     /**
      * Gets http servlet request geo location.
      *
+     * @param context the context
+     * @return the http servlet request geo location
+     */
+    public static GeoLocationRequest getHttpServletRequestGeoLocationFromRequestContext(final RequestContext context) {
+        val servletRequest = getHttpServletRequestFromExternalWebflowContext(context);
+        return getHttpServletRequestGeoLocation(servletRequest);
+    }
+
+    /**
+     * Gets http servlet request geo location.
+     *
      * @param servletRequest the servlet request
      * @return the http servlet request geo location
      */
@@ -1249,8 +1260,29 @@ public class WebUtils {
      *
      * @param context the context
      * @return the open id local user id
+     * @deprecated Since 6.2.0
      */
+    @Deprecated(since = "6.2.0")
     public static String getOpenIdLocalUserId(final RequestContext context) {
         return context.getFlowScope().get("openIdLocalId", String.class);
+    }
+
+    /**
+     * Add the mfa provider id into flow scope.
+     *
+     * @param context  request context
+     * @param provider the mfa provider
+     */
+    public static void putMultifactorAuthenticationProviderIdIntoFlowScope(final RequestContext context, final MultifactorAuthenticationProvider provider) {
+        context.getFlowScope().put(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, provider.getId());
+    }
+
+    /**
+     * Get the mfa provider id from flow scope.
+     * @param context request context
+     * @return provider id
+     */
+    public static String getMultifactorAuthenticationProviderById(final RequestContext context) {
+        return context.getFlowScope().get(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, String.class);
     }
 }

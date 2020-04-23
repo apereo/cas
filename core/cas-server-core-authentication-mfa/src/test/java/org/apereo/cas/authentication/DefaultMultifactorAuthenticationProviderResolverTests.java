@@ -42,7 +42,9 @@ import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -75,9 +77,6 @@ import static org.mockito.Mockito.*;
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCookieConfiguration.class,
     CasPersonDirectoryConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 @DirtiesContext
 @Tag("MFA")
@@ -130,10 +129,55 @@ public class DefaultMultifactorAuthenticationProviderResolverTests {
         val resolver = new DefaultMultifactorAuthenticationProviderResolver(selector);
 
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("authlevel", List.of(provider.getId())));
-        val results = resolver.resolveEventViaPrincipalAttribute(principal,
+        var results = resolver.resolveEventViaPrincipalAttribute(principal,
             List.of("authlevel"), CoreAuthenticationTestUtils.getRegisteredService(),
             Optional.of(context), List.of(provider), input -> input.equalsIgnoreCase(provider.getId()));
         assertNotNull(results);
+        assertNotNull(resolver.getMultifactorAuthenticationProviderSelector());
         assertEquals(provider.getId(), results.iterator().next().getId());
+
+        results = resolver.resolveEventViaPrincipalAttribute(principal,
+            List.of("authlevel"), CoreAuthenticationTestUtils.getRegisteredService(),
+            Optional.of(context), List.of(), input -> input.equalsIgnoreCase(provider.getId()));
+        assertNull(results);
+
+        results = resolver.resolveEventViaPrincipalAttribute(principal,
+            List.of(), CoreAuthenticationTestUtils.getRegisteredService(),
+            Optional.of(context), List.of(), input -> input.equalsIgnoreCase(provider.getId()));
+        assertNull(results);
+    }
+
+    @Test
+    public void verifyNoProvider() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        val selector = mock(MultifactorAuthenticationProviderSelector.class);
+        val resolver = new DefaultMultifactorAuthenticationProviderResolver(selector);
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
+        val results = resolver.resolveEventViaAttribute(principal,
+            Map.of("authlevel", List.of("strong")),
+            List.of(), CoreAuthenticationTestUtils.getRegisteredService(),
+            Optional.of(context), List.of(), Predicate.isEqual(this));
+        assertNull(results);
+    }
+
+    @Test
+    public void verifyNoMatch() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        val selector = mock(MultifactorAuthenticationProviderSelector.class);
+        when(selector.resolve(any(), any(), any())).thenReturn(provider);
+        val resolver = new DefaultMultifactorAuthenticationProviderResolver(selector);
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
+        val results = resolver.resolveEventViaAttribute(principal,
+            Map.of("authlevel", List.of("strong")),
+            List.of(), CoreAuthenticationTestUtils.getRegisteredService(),
+            Optional.of(context), List.of(provider), Predicate.isEqual(this));
+        assertNull(results);
     }
 }

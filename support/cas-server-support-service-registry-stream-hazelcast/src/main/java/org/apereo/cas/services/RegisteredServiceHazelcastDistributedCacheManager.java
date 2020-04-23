@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 public class RegisteredServiceHazelcastDistributedCacheManager extends
     BaseDistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> {
 
-
     private final HazelcastInstance instance;
     private final IMap<String, DistributedCacheObject<RegisteredService>> mapInstance;
 

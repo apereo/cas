@@ -1,8 +1,8 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
+import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;

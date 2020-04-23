@@ -29,6 +29,7 @@ import org.opensaml.xmlsec.signature.support.SignatureValidationParametersCriter
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.w3c.dom.Element;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.OutputKeys;
@@ -52,6 +53,19 @@ import java.util.ArrayList;
 @UtilityClass
 public class SamlUtils {
     private static final int SAML_OBJECT_LOG_ASTERIXLINE_LENGTH = 80;
+
+    /**
+     * Gets root element from resource.
+     *
+     * @param metadataResource the metadata resource
+     * @param configBean       the config bean
+     * @return the root element from
+     */
+    @SneakyThrows
+    public static Element getRootElementFrom(final InputStream metadataResource, final OpenSamlConfigBean configBean) {
+        val document = configBean.getParserPool().parse(metadataResource);
+        return document.getDocumentElement();
+    }
 
     /**
      * Read certificate x 509 certificate.

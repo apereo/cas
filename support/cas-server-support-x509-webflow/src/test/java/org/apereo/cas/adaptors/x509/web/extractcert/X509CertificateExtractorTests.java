@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.x509.web.extractcert;
 
-import org.apereo.cas.web.extractcert.RequestHeaderX509CertificateExtractor;
+import org.apereo.cas.adaptors.x509.authentication.RequestHeaderX509CertificateExtractor;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
