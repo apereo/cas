@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("callbackAuthorizeController")
-    private OAuth20CallbackAuthorizeEndpointController controller;
+    private OAuth20CallbackAuthorizeEndpointController callbackAuthorizeController;
 
     @BeforeEach
     public void initialize() {
@@ -34,6 +34,6 @@ public class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAu
     public void verifyOperation() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        assertNotNull(controller.handleRequest(request, response));
+        assertNotNull(callbackAuthorizeController.handleRequest(request, response));
     }
 }
