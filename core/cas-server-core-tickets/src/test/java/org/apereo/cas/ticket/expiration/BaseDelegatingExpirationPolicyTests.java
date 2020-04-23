@@ -45,6 +45,5 @@ public class BaseDelegatingExpirationPolicyTests {
         assertFalse(policy.isExpired(ticketState));
         assertTrue(policy.getTimeToLive(ticketState) == 0);
         assertNotNull(policy.toString());
-
     }
 }
