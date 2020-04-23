@@ -1,4 +1,8 @@
-package org.apereo.cas.web.support;
+package org.apereo.cas;
+
+import org.apereo.cas.web.support.CookieRetrievingCookieGeneratorTests;
+import org.apereo.cas.web.support.DefaultCasCookieValueManagerTests;
+import org.apereo.cas.web.support.mgmr.EncryptedCookieValueManagerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -12,7 +16,8 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     CookieRetrievingCookieGeneratorTests.class,
-    DefaultCasCookieValueManagerTests.class
+    DefaultCasCookieValueManagerTests.class,
+    EncryptedCookieValueManagerTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class CoreCookieTestsSuite {
