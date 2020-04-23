@@ -69,7 +69,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     @Override
     public long sessionCount() {
-        try (val tgtStream = getTickets().stream().filter(TicketGrantingTicket.class::isInstance)) {
+        try (val tgtStream = getTicketsStream().filter(TicketGrantingTicket.class::isInstance)) {
             return tgtStream.count();
         } catch (final Exception t) {
             LOGGER.trace("sessionCount() operation is not implemented by the ticket registry instance [{}]. "
