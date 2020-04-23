@@ -170,7 +170,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                 LOGGER.warn(e.getMessage());
             }
         } catch (final Exception e) {
-            LOGGER.debug(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
         return null;
     }
