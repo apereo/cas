@@ -228,7 +228,7 @@ public abstract class AbstractOAuth20Tests {
 
     @Autowired
     @Qualifier("accessTokenController")
-    protected OAuth20AccessTokenEndpointController controller;
+    protected OAuth20AccessTokenEndpointController accessTokenController;
 
     @Autowired
     @Qualifier("accessTokenResponseGenerator")
@@ -443,7 +443,7 @@ public abstract class AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
         val mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        val mv = controller.handleRequest(mockRequest, mockResponse);
+        val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertNull(this.ticketRegistry.getTicket(code.getId()));
         assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
 
@@ -546,7 +546,7 @@ public abstract class AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
         val mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        val mv = controller.handleRequest(mockRequest, mockResponse);
+        val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
 
         assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));

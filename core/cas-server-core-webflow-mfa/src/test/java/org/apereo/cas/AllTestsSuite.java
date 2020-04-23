@@ -10,6 +10,7 @@ import org.apereo.cas.web.flow.actions.composite.PrepareMultifactorProviderSelec
 import org.apereo.cas.web.flow.authentication.GroovyScriptMultifactorAuthenticationProviderSelectorTests;
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelectorTests;
 import org.apereo.cas.web.flow.resolver.impl.CompositeProviderSelectionMultifactorWebflowEventResolverTests;
+import org.apereo.cas.web.flow.resolver.impl.RankedMultifactorAuthenticationProviderWebflowEventResolverTests;
 import org.apereo.cas.web.flow.resolver.impl.SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -32,6 +33,7 @@ import org.junit.runner.RunWith;
     AuthenticationAttributeMultifactorAuthenticationPolicyEventResolverTests.class,
     AdaptiveMultifactorAuthenticationPolicyEventResolverTests.class,
     MultifactorAuthenticationTests.class,
+    RankedMultifactorAuthenticationProviderWebflowEventResolverTests.class,
     PrepareMultifactorProviderSelectionActionTests.class,
     CompositeProviderSelectionMultifactorWebflowEventResolverTests.class,
     MultifactorAuthenticationFailureActionOpenTests.class,
