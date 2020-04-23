@@ -68,17 +68,6 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
         this.policies.put(name, policy);
     }
 
-    /**
-     * Add policy.
-     *
-     * @param name   the name
-     * @param policy the policy
-     */
-    public void addPolicy(final Enum name, final ExpirationPolicy policy) {
-        LOGGER.trace("Adding expiration policy [{}] with name [{}]", policy, name);
-        addPolicy(name.name(), policy);
-    }
-
     @Override
     public boolean isExpired(final TicketState ticketState) {
         val match = getExpirationPolicyFor(ticketState);
