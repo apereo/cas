@@ -16,6 +16,7 @@ import org.apereo.cas.ticket.expiration.RememberMeDelegatingExpirationPolicyTest
 import org.apereo.cas.ticket.expiration.ThrottledUseAndTimeoutExpirationPolicyTests;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicyTests;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicyTests;
+import org.apereo.cas.ticket.expiration.builder.TicketGrantingTicketExpirationPolicyBuilderTests;
 import org.apereo.cas.ticket.factory.DefaultProxyTicketFactoryTests;
 import org.apereo.cas.ticket.factory.DefaultServiceTicketFactoryTests;
 import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactoryTests;
@@ -46,6 +47,7 @@ import org.junit.runner.RunWith;
     DefaultProxyTicketFactoryTests.class,
     InvalidTicketExceptionTests.class,
     ServiceTicketImplTests.class,
+    TicketGrantingTicketExpirationPolicyBuilderTests.class,
     DefaultTicketStringSerializationManagerTests.class,
     TicketGrantingTicketImplTests.class,
     UnrecognizableServiceForServiceTicketValidationExceptionTests.class,
