@@ -1,6 +1,8 @@
 package org.apereo.cas.audit.spi;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -18,6 +20,8 @@ import java.util.concurrent.ThreadFactory;
  */
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public abstract class AbstractAuditTrailManager implements AuditTrailManager, DisposableBean {
 
     /**
@@ -25,23 +29,13 @@ public abstract class AbstractAuditTrailManager implements AuditTrailManager, Di
      */
     protected boolean asynchronous;
 
-    private final ExecutorService executorService;
-
-    public AbstractAuditTrailManager() {
-        this(false);
-    }
-
-    public AbstractAuditTrailManager(final boolean asynchronous) {
-        this.asynchronous = asynchronous;
-        this.executorService = Executors.newSingleThreadExecutor(
-            new ThreadFactory() {
-                @Override
-                public Thread newThread(final Runnable r) {
-                    return new Thread(r, "AuditTrailManagerThread");
-                }
-            });
-
-    }
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor(
+        new ThreadFactory() {
+            @Override
+            public Thread newThread(final Runnable r) {
+                return new Thread(r, "AuditTrailManagerThread");
+            }
+        });
 
     @Override
     public void record(final AuditActionContext audit) {
