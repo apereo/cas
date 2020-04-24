@@ -77,7 +77,7 @@ public class LdapMonitorConfiguration {
 
         @Override
         public void destroy() {
-            this.list.forEach(PooledLdapConnectionFactoryHealthIndicator::shutdown);
+            this.list.forEach(PooledLdapConnectionFactoryHealthIndicator::destroy);
         }
     }
 }
