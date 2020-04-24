@@ -27,13 +27,6 @@ public abstract class AbstractAuditTrailManager implements AuditTrailManager, Di
 
     private final ExecutorService executorService;
 
-    static class AuditTrailManagerThreadManager implements ThreadFactory {
-        @Override
-        public Thread newThread(final Runnable r) {
-            return new Thread(r, "AuditTrailManagerThread");
-        }
-    }
-
     public AbstractAuditTrailManager() {
         this(false);
     }
@@ -41,7 +34,12 @@ public abstract class AbstractAuditTrailManager implements AuditTrailManager, Di
     public AbstractAuditTrailManager(final boolean asynchronous) {
         this.asynchronous = asynchronous;
         this.executorService = Executors.newSingleThreadExecutor(
-                                   new AuditTrailManagerThreadManager());
+            new ThreadFactory() {
+                @Override
+                public Thread newThread(final Runnable r) {
+                    return new Thread(r, "AuditTrailManagerThread");
+                }
+            });
 
     }
 
@@ -56,7 +54,7 @@ public abstract class AbstractAuditTrailManager implements AuditTrailManager, Di
 
     @Override
     public void destroy() {
-        executorService.shutdown();
+        this.executorService.shutdown();
     }
 
     /**
