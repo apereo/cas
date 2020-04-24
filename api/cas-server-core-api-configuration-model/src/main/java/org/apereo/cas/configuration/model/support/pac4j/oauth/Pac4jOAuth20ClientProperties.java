@@ -52,6 +52,11 @@ public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientPropert
     private String profileVerb = "POST";
 
     /**
+     * The scope requested from the identity provider.
+     */
+    private String scope;
+
+    /**
      * Profile attributes to request and collect in form of key-value pairs.
      */
     private Map<String, String> profileAttrs = new LinkedHashMap<>();
