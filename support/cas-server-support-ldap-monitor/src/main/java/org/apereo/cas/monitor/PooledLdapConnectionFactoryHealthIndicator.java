@@ -35,7 +35,8 @@ public class PooledLdapConnectionFactoryHealthIndicator extends AbstractPoolHeal
         this.validator = validator;
     }
 
-    public void close() {
+    public void shutdown() {
+        super.shutdown();
         this.connectionFactory.close();
     }
 

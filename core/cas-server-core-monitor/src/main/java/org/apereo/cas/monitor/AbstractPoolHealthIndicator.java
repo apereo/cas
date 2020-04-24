@@ -61,6 +61,14 @@ public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicato
             .withDetail("idleCount", getIdleCount());
     }
 
+    /*
+     * Shuts down the thread pool. Subclasses whose wish to override this method
+     * must call super.shutdown().
+     */
+    public void shutdown() {
+        executor.shutdown();
+    }
+
     /**
      * Performs a health check on a the pool.  The recommended implementation is to
      * obtain a pool resource, validate it, and return it to the pool.
