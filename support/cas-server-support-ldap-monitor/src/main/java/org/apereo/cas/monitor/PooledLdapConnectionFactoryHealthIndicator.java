@@ -35,6 +35,10 @@ public class PooledLdapConnectionFactoryHealthIndicator extends AbstractPoolHeal
         this.validator = validator;
     }
 
+    public void close() {
+        this.connectionFactory.close();
+    }
+
     @Override
     protected Health.Builder checkPool(final Health.Builder builder) throws Exception {
         if (this.connectionFactory != null && this.validator != null) {
