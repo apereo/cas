@@ -506,6 +506,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 && StringUtils.isNotBlank(oauth.getSecret()))
             .forEach(oauth -> {
                 val client = new GenericOAuth20Client();
+                client.setProfileId(StringUtils.defaultIfBlank(oauth.getPrincipalAttributeId(), pac4jProperties.getPrincipalAttributeId()));
                 client.setKey(oauth.getId());
                 client.setSecret(oauth.getSecret());
                 client.setProfileAttrs(oauth.getProfileAttrs());
@@ -514,6 +515,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 client.setProfileVerb(Verb.valueOf(oauth.getProfileVerb().toUpperCase()));
                 client.setTokenUrl(oauth.getTokenUrl());
                 client.setAuthUrl(oauth.getAuthUrl());
+                client.setScope(oauth.getScope());
                 client.setCustomParams(oauth.getCustomParams());
                 if (StringUtils.isBlank(oauth.getClientName())) {
                     val count = index.intValue();
