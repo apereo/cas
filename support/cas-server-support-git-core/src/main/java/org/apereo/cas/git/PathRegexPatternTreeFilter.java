@@ -33,6 +33,6 @@ public class PathRegexPatternTreeFilter extends TreeFilter {
 
     @Override
     public TreeFilter clone() {
-        return this;
+        return new PathRegexPatternTreeFilter(this.pattern);
     }
 }
