@@ -58,7 +58,7 @@ while (( "$#" )); do
             memcached|memcache|kryo)
                 task+="testMemcached "
                 category+="MEMCACHED,"
-                flags+=" -DCI=true"
+
                 ;;
             uma)
                 task+="testUma "
@@ -79,32 +79,32 @@ while (( "$#" )); do
             ignite)
                 task+="testIgnite "
                 category+="Ignite,"
-                flags+=" -DCI=true"
+
                 ;;
             influx|influxdb)
                 task+="testInfluxDb "
                 category+="InfluxDb,"
-                flags+=" -DCI=true"
+
                 ;;
             ldap|ad|activedirectory)
                 task+="testLdap "
                 category+="LDAP,"
-                flags+=" -DCI=true"
+
                 ;;
             couchbase)
                 task+="testCouchbase "
                 category+="COUCHBASE,"
-                flags+=" -DCI=true"
+
                 ;;
             mongo|mongodb)
                 task+="testMongoDb "
                 category+="MONGODB,"
-                flags+=" -DCI=true"
+
                 ;;
             couchdb)
                 task+="testCouchDb "
                 category+="COUCHDB,"
-                flags+=" -DCI=true"
+
                 ;;
             rest|restful|restapi)
                 task+="testRestful "
@@ -117,7 +117,7 @@ while (( "$#" )); do
             maria|mariadb)
                 task+="testMariaDb "
                 category+="MariaDb,"
-                flags+=" -DCI=true"
+
                 ;;
             jdbc|jpa|database|hibernate|rdbms|hsql)
                 task+="testJDBC "
@@ -126,17 +126,17 @@ while (( "$#" )); do
             postgres|pg|postgresql)
                 task+="testPostgres "
                 category+="POSTGRES,"
-                flags+=" -DCI=true"
+
                 ;;
             cassandra)
                 task+="testCassandra "
                 category+="CASSANDRA,"
-                flags+=" -DCI=true"
+
                 ;;
             kafka)
                 task+="testKafka "
                 category+="KAFKA,"
-                flags+=" -DCI=true"
+
                 ;;
             oauth)
                 task+="testOAuth "
@@ -145,7 +145,7 @@ while (( "$#" )); do
             aws)
                 task+="testAWS "
                 category+="AmazonWebServices,"
-                flags+=" -DCI=true"
+
                 ;;
             oidc)
                 task+="testOIDC "
@@ -162,22 +162,22 @@ while (( "$#" )); do
             radius)
                 task+="testRadius "
                 category+="RADIUS,"
-                flags+=" -DCI=true"
+
                 ;;
             mail|email)
                 task+="testMail "
                 category+="MAIL,"
-                flags+=" -DCI=true"
+
                 ;;
             zoo|zookeeper)
                 task+="testZooKeeper "
                 category+="ZOOKEEPER,"
-                flags+=" -DCI=true"
+
                 ;;
             dynamodb|dynamo)
                 task+="testDynamoDb "
                 category+="DYNAMODB,"
-                flags+=" -DCI=true"
+
                 ;;
             webflow|swf)
                 task+="testWebflow "
@@ -186,17 +186,17 @@ while (( "$#" )); do
             oracle)
                 task+="testOracle "
                 category+="ORACLE,"
-                flags+=" -DCI=true"
+
                 ;;
             redis)
                 task+="testRedis "
                 category+="REDIS,"
-                flags+=" -DCI=true"
+                
                 ;;
             activemq|amq)
                 task+="testActiveMQ "
                 category+="ActiveMQ,"
-                flags+=" -DCI=true"
+
                 ;;
             esac
         done

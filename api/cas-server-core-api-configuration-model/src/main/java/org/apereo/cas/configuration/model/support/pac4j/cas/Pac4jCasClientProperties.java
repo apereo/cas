@@ -34,4 +34,8 @@ public class Pac4jCasClientProperties extends Pac4jBaseClientProperties {
      */
     @RequiredProperty
     private String protocol = "CAS20";
+
+    public Pac4jCasClientProperties() {
+        setCallbackUrlType(CallbackUrlTypes.PATH_PARAMETER);
+    }
 }

@@ -1122,7 +1122,16 @@ to an external provider such as Yahoo, given the provider's *configuration key*:
 # ${configurationKey}.cssClass=
 # ${configurationKey}.principalAttributeId=
 # ${configurationKey}.enabled=true
+# ${configurationKey}.callbackUrlType=PATH_PARAMETER|QUERY_PARAMETER|NONE
 ```
+
+The following types are supported with callback URL resolution:
+
+| Type               | Description              
+|--------------------|--------------------------------------------------------------------------------------
+| `PATH_PARAMETER`   | When constructing a callback URL, client name is added to the url as a path parameter.
+| `QUERY_PARAMETER`  | When constructing a callback URL, client name is added to the url as a query parameter.
+| `NONE`             | No client name is added to the url.
 
 ### Delegated Authentication OpenID Connect Settings
 

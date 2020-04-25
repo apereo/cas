@@ -67,4 +67,8 @@ public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientPropert
      * Custom parameters in form of key-value pairs sent along in authZ requests, etc.
      */
     private Map<String, String> customParams = new LinkedHashMap<>(1);
+
+    public Pac4jOAuth20ClientProperties() {
+        setCallbackUrlType(CallbackUrlTypes.PATH_PARAMETER);
+    }
 }
