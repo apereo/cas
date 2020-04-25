@@ -41,6 +41,7 @@ import org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDa
 import org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao;
 import org.jooq.lambda.Unchecked;
 import org.ldaptive.ConnectionFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -260,23 +261,39 @@ public class CasPersonDirectoryConfiguration {
         }
     }
 
-    @Lazy
-    @Bean(name = "CasPersonDirectoryLdapConfigurationLdaptivePersonAttributeDaoConnectionFactory")
-    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public ConnectionFactory newLdaptiveConnectionFactory(final AbstractLdapProperties ldap) {
-        return LdapUtils.newLdaptiveConnectionFactory(ldap);
-    }
-
     @ConditionalOnProperty(name = "cas.authn.attribute-repository.ldap[0].ldapUrl")
     @Configuration("CasPersonDirectoryLdapConfiguration")
     public class CasPersonDirectoryLdapConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
 
+        private class LdapAttributeRepositoriesConnectionFactoryArrayList implements DisposableBean {
+            private ArrayList<ConnectionFactory> connectionFactories = new ArrayList<>();
+
+            public ConnectionFactory newLdaptiveConnectionFactory(final AbstractLdapProperties ldap) {
+                val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
+                connectionFactories.add(connectionFactory);
+                return connectionFactory;
+            }
+
+            @Override
+            public void destroy() {
+                connectionFactories.forEach(ConnectionFactory::close);
+            }
+        }
+
+        @Lazy
+        @Bean
+        public LdapAttributeRepositoriesConnectionFactoryArrayList ldapAttributeRepositoriesConnectionFactoryArrayList() {
+            return new LdapAttributeRepositoriesConnectionFactoryArrayList();
+        }
+
         @ConditionalOnMissingBean(name = "ldapAttributeRepositories")
         @Bean
+        @Autowired
         @RefreshScope
         public List<IPersonAttributeDao> ldapAttributeRepositories() {
             val list = new ArrayList<IPersonAttributeDao>();
             val attrs = casProperties.getAuthn().getAttributeRepository();
+            val ldapAttributeRepositoriesConnectionFactoryArrayList = applicationContext.getBean(LdapAttributeRepositoriesConnectionFactoryArrayList.class);
             attrs.getLdap()
                 .stream()
                 .filter(ldap -> StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl()))
@@ -284,8 +301,8 @@ public class CasPersonDirectoryConfiguration {
                     val ldapDao = new LdaptivePersonAttributeDao();
                     FunctionUtils.doIfNotNull(ldap.getId(), ldapDao::setId);
                     LOGGER.debug("Configured LDAP attribute source for [{}] and baseDn [{}]", ldap.getLdapUrl(), ldap.getBaseDn());
-                    ldapDao.setConnectionFactory(
-                        (ConnectionFactory) applicationContext.getBean("CasPersonDirectoryLdapConfigurationLdaptivePersonAttributeDaoConnectionFactory", ldap));
+                    ldapDao.setConnectionFactory(ldapAttributeRepositoriesConnectionFactoryArrayList
+                                                 .newLdaptiveConnectionFactory(ldap));
                     ldapDao.setBaseDN(ldap.getBaseDn());
 
                     LOGGER.debug("LDAP attributes are fetched from [{}] via filter [{}]", ldap.getLdapUrl(), ldap.getSearchFilter());
