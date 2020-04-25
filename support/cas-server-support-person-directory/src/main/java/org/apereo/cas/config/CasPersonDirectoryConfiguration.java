@@ -265,7 +265,7 @@ public class CasPersonDirectoryConfiguration {
      */
     private static class IPersonAttributeDaoArrayList extends ArrayList<IPersonAttributeDao> {
         @Getter
-        private ArrayList<ConnectionFactory> connectionFactories;
+        private ArrayList<ConnectionFactory> connectionFactories = new ArrayList<>();
 
         public void close() {
             connectionFactories.forEach(ConnectionFactory::close);
