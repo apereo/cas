@@ -22,7 +22,9 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
 import org.pac4j.core.client.IndirectClient;
+import org.pac4j.core.http.callback.NoParameterCallbackUrlResolver;
 import org.pac4j.core.http.callback.PathParameterCallbackUrlResolver;
+import org.pac4j.core.http.callback.QueryParameterCallbackUrlResolver;
 import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
 import org.pac4j.oauth.client.FacebookClient;
@@ -366,7 +368,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
             .filter(cas -> cas.isEnabled() && StringUtils.isNotBlank(cas.getLoginUrl()))
             .forEach(cas -> {
                 val cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol()));
-                var prefix = StringUtils.remove(cas.getLoginUrl(), "/login");
+                val prefix = StringUtils.remove(cas.getLoginUrl(), "/login");
                 cfg.setPrefixUrl(StringUtils.appendIfMissing(prefix, "/"));
                 val client = new CasClient(cfg);
 
@@ -374,7 +376,6 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                     val count = index.intValue();
                     client.setName(client.getClass().getSimpleName() + count);
                 }
-                client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
                 configureClient(client, cas);
 
                 index.incrementAndGet();
@@ -478,7 +479,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 }
 
                 val client = new SAML2Client(cfg);
-
+                
                 if (StringUtils.isBlank(saml.getClientName())) {
                     val count = index.intValue();
                     client.setName(client.getClass().getSimpleName() + count);
@@ -521,7 +522,6 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                     val count = index.intValue();
                     client.setName(client.getClass().getSimpleName() + count);
                 }
-                client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
                 configureClient(client, oauth);
 
                 index.incrementAndGet();
@@ -577,7 +577,6 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
             LOGGER.debug("Building generic OpenID Connect client...");
             val generic = getOidcConfigurationForClient(oidc.getGeneric(), OidcConfiguration.class);
             val oc = new OidcClient<>(generic);
-            oc.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
             configureClient(oc, oidc.getGeneric());
             return oc;
         }
@@ -610,6 +609,18 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
             customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, props.getCssClass());
         }
         client.setCallbackUrl(casProperties.getServer().getLoginUrl());
+        switch (props.getCallbackUrlType()) {
+            case PATH_PARAMETER:
+                client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
+                break;
+            case NONE:
+                client.setCallbackUrlResolver(new NoParameterCallbackUrlResolver());
+                break;
+            case QUERY_PARAMETER:
+            default:
+                client.setCallbackUrlResolver(new QueryParameterCallbackUrlResolver());
+        }
+
         if (!casProperties.getAuthn().getPac4j().isLazyInit()) {
             client.init();
         }
