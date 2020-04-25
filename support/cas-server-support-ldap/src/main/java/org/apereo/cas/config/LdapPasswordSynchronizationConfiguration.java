@@ -30,7 +30,7 @@ public class LdapPasswordSynchronizationConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Bean(destroyMethod = "closeSearchFactory")
+    @Bean
     @Scope("prototype")
     public LdapPasswordSynchronizationAuthenticationPostProcessor ldapPasswordSynchronizationAuthenticationPostProcessor(
             final AbstractLdapSearchProperties properties) {

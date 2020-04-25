@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.CasDisposableBean;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
@@ -24,7 +25,6 @@ import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.SearchDnResolver;
-import org.springframework.beans.factory.DisposableBean;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -47,7 +47,7 @@ import java.util.Map;
 @Slf4j
 @Setter
 @Getter
-public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements DisposableBean {
+public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements CasDisposableBean {
 
     /**
      * Mapping of LDAP attribute name to principal attribute name.

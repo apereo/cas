@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CasDisposableBean;
 import org.apereo.cas.CasEmbeddedValueResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.SchedulingUtils;
@@ -12,13 +13,17 @@ import org.apereo.cas.util.spring.Converters;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -43,6 +48,7 @@ import org.springframework.validation.beanvalidation.BeanValidationPostProcessor
 
 import javax.validation.MessageInterpolator;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
 
 /**
  * This is {@link CasCoreUtilConfiguration}.
@@ -54,6 +60,7 @@ import java.time.ZonedDateTime;
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasCoreUtilConfiguration implements InitializingBean {
     @Autowired
     @Qualifier("mailSender")
@@ -113,6 +120,43 @@ public class CasCoreUtilConfiguration implements InitializingBean {
             return new RestfulSmsSender(rest);
         }
         return SmsSender.noOp();
+    }
+
+    @Bean
+    public BeanPostProcessor getCasDestroyPrototypeBeansPostProcessor() {
+        return new CasDestroyPrototypeBeansPostProcessor();
+    }
+
+    private static class CasDestroyPrototypeBeansPostProcessor implements BeanPostProcessor, DisposableBean {
+        private final HashMap<CasDisposableBean, String> prototypeBeans = new HashMap<>();
+
+        @Override
+        public Object postProcessAfterInitialization(final Object bean, final String beanName)
+                throws BeansException {
+            if (bean instanceof CasDisposableBean) {
+                LOGGER.debug("Registering prototype bean {}", beanName);
+                synchronized (prototypeBeans) {
+                    prototypeBeans.put((CasDisposableBean) bean, beanName);
+                }
+            }
+
+            return bean;
+        }
+
+        @Override
+        public void destroy() {
+            LOGGER.debug("Destroying prototype beans");
+            synchronized (prototypeBeans) {
+                prototypeBeans.forEach((bean, beanName) -> {
+                    try {
+                        LOGGER.debug("Destroying prototype bean {}", beanName);
+                        bean.destroy();
+                    } catch (final Exception e) {
+                        LOGGER.warn("Unable to dispose bean {}: {}", beanName, e.getMessage());
+                    }
+                });
+            }
+        }
     }
 
     /**

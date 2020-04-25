@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.CasDisposableBean;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.util.LdapUtils;
@@ -23,7 +24,7 @@ import java.util.Collections;
  * @since 6.1.0
  */
 @Slf4j
-public class LdapPasswordSynchronizationAuthenticationPostProcessor implements AuthenticationPostProcessor {
+public class LdapPasswordSynchronizationAuthenticationPostProcessor implements AuthenticationPostProcessor, CasDisposableBean {
     private final ConnectionFactory searchFactory;
     private final AbstractLdapSearchProperties ldapProperties;
 
@@ -32,7 +33,8 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessor implements A
         this.searchFactory = LdapUtils.newLdaptiveConnectionFactory(properties);
     }
 
-    public void closeSearchFactory() {
+    @Override
+    public void destroy() {
         searchFactory.close();
     }
 
