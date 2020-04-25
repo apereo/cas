@@ -133,37 +133,48 @@ public class GitRepositoryBuilder {
             val transportCallback = buildTransportConfigCallback();
             val providers = this.credentialsProviders.toArray(CredentialsProvider[]::new);
             if (this.repositoryDirectory.exists()) {
-                val git = Git.open(this.repositoryDirectory);
-                LOGGER.debug("Checking out the branch [{}] at [{}]", this.activeBranch, this.repositoryDirectory);
-                git.checkout()
-                    .setName(this.activeBranch)
-                    .call();
-                return new GitRepository(git, this.credentialsProviders, transportCallback,
-                    this.timeoutInSeconds, this.signCommits);
+                LOGGER.debug("Using existing repository at [{}]", this.repositoryDirectory);
+                return getExistingGitRepository(transportCallback);
             }
-
-            val cloneCommand = Git.cloneRepository()
-                .setProgressMonitor(new LoggingGitProgressMonitor())
-                .setURI(this.repositoryUri)
-                .setDirectory(this.repositoryDirectory)
-                .setBranch(this.activeBranch)
-                .setTimeout((int) this.timeoutInSeconds)
-                .setTransportConfigCallback(transportCallback)
-                .setCredentialsProvider(new ChainingCredentialsProvider(providers));
-
-            if (StringUtils.hasText(this.branchesToClone) || "*".equals(branchesToClone)) {
-                cloneCommand.setCloneAllBranches(true);
-            } else {
-                cloneCommand.setBranchesToClone(StringUtils.commaDelimitedListToSet(this.branchesToClone)
-                    .stream()
-                    .map(GitRepositoryBuilder::getBranchPath)
-                    .collect(Collectors.toList()));
-            }
-            LOGGER.debug("Cloning repository at [{}] with branch [{}]", this.activeBranch, this.repositoryDirectory);
-            return new GitRepository(cloneCommand.call(), credentialsProviders,
-                transportCallback, this.timeoutInSeconds, this.signCommits);
+            return cloneGitRepository(transportCallback, providers);
         } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
             throw new IllegalArgumentException(e.getMessage(), e);
         }
+    }
+
+    private GitRepository cloneGitRepository(final TransportConfigCallback transportCallback,
+                                             final CredentialsProvider[] providers) throws Exception {
+        val cloneCommand = Git.cloneRepository()
+            .setProgressMonitor(new LoggingGitProgressMonitor())
+            .setURI(this.repositoryUri)
+            .setDirectory(this.repositoryDirectory)
+            .setBranch(this.activeBranch)
+            .setTimeout((int) this.timeoutInSeconds)
+            .setTransportConfigCallback(transportCallback)
+            .setCredentialsProvider(new ChainingCredentialsProvider(providers));
+
+        if (StringUtils.hasText(this.branchesToClone) || "*".equals(branchesToClone)) {
+            cloneCommand.setCloneAllBranches(true);
+        } else {
+            cloneCommand.setBranchesToClone(StringUtils.commaDelimitedListToSet(this.branchesToClone)
+                .stream()
+                .map(GitRepositoryBuilder::getBranchPath)
+                .collect(Collectors.toList()));
+        }
+        LOGGER.debug("Cloning repository at [{}] with branch [{}]", this.repositoryDirectory, this.activeBranch);
+        return new GitRepository(cloneCommand.call(), credentialsProviders,
+            transportCallback, this.timeoutInSeconds, this.signCommits);
+    }
+
+
+    private GitRepository getExistingGitRepository(final TransportConfigCallback transportCallback) throws Exception {
+        val git = Git.open(this.repositoryDirectory);
+        LOGGER.debug("Checking out the branch [{}] at [{}]", this.activeBranch, this.repositoryDirectory);
+        git.checkout()
+            .setName(this.activeBranch)
+            .call();
+        return new GitRepository(git, this.credentialsProviders, transportCallback,
+            this.timeoutInSeconds, this.signCommits);
     }
 }
