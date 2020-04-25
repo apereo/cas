@@ -65,16 +65,18 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
         var returnVal = false;
-        var responses = new ArrayList<Optional<Pair<ConnectionFactory, SearchResponse>>>()
-                        .stream();
+        var responses = new ArrayList<Optional<Pair<ConnectionFactory, SearchResponse>>>();
 
         try {
-            responses = aupProperties.getLdap()
+            aupProperties.getLdap()
                 .stream()
                 .sorted(Comparator.comparing(LdapAcceptableUsagePolicyProperties::getName))
                 .map(Unchecked.function(ldap -> searchLdapForId(ldap, credential.getId())))
-                .filter(Optional::isPresent);
-            val response = responses.findFirst();
+                .filter(Optional::isPresent)
+                .forEach(responses::add);
+            val response = responses.stream()
+                                    .filter(Optional::isPresent)
+                                    .findFirst();
 
             if (response.isPresent()) {
                 val result = response.get().get();

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.JdbcPrincipalAttributesProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.persondir.DefaultPersonDirectoryAttributeRepositoryPlan;
@@ -18,7 +19,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -52,6 +52,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.http.HttpMethod;
@@ -85,6 +86,7 @@ public class CasPersonDirectoryConfiguration {
 
     @Autowired
     private ObjectProvider<List<PersonDirectoryAttributeRepositoryPlanConfigurer>> attributeRepositoryConfigurers;
+
     
     @ConditionalOnMissingBean(name = "attributeDefinitionStore")
     @Bean
@@ -258,18 +260,11 @@ public class CasPersonDirectoryConfiguration {
         }
     }
 
-    /*
-     * This is a ugly hack to track all connection factories.
-     * A more proper fix is to add a close method in LdaptivePersonAttributeDao
-     * However LdaptivePersonAttributeDao is under apereo/person-directory
-     */
-    private static class IPersonAttributeDaoArrayList extends ArrayList<IPersonAttributeDao> {
-        @Getter
-        private ArrayList<ConnectionFactory> connectionFactories = new ArrayList<>();
-
-        public void close() {
-            connectionFactories.forEach(ConnectionFactory::close);
-        }
+    @Lazy
+    @Bean(name = "CasPersonDirectoryLdapConfigurationLdaptivePersonAttributeDaoConnectionFactory")
+    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public ConnectionFactory newLdaptiveConnectionFactory(final AbstractLdapProperties ldap) {
+        return LdapUtils.newLdaptiveConnectionFactory(ldap);
     }
 
     @ConditionalOnProperty(name = "cas.authn.attribute-repository.ldap[0].ldapUrl")
@@ -277,10 +272,10 @@ public class CasPersonDirectoryConfiguration {
     public class CasPersonDirectoryLdapConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
 
         @ConditionalOnMissingBean(name = "ldapAttributeRepositories")
-        @Bean(destroyMethod = "close")
+        @Bean
         @RefreshScope
         public List<IPersonAttributeDao> ldapAttributeRepositories() {
-            val list = new IPersonAttributeDaoArrayList();
+            val list = new ArrayList<IPersonAttributeDao>();
             val attrs = casProperties.getAuthn().getAttributeRepository();
             attrs.getLdap()
                 .stream()
@@ -289,8 +284,8 @@ public class CasPersonDirectoryConfiguration {
                     val ldapDao = new LdaptivePersonAttributeDao();
                     FunctionUtils.doIfNotNull(ldap.getId(), ldapDao::setId);
                     LOGGER.debug("Configured LDAP attribute source for [{}] and baseDn [{}]", ldap.getLdapUrl(), ldap.getBaseDn());
-                    val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
-                    ldapDao.setConnectionFactory(connectionFactory);
+                    ldapDao.setConnectionFactory(
+                        (ConnectionFactory) applicationContext.getBean("CasPersonDirectoryLdapConfigurationLdaptivePersonAttributeDaoConnectionFactory", ldap));
                     ldapDao.setBaseDN(ldap.getBaseDn());
 
                     LOGGER.debug("LDAP attributes are fetched from [{}] via filter [{}]", ldap.getLdapUrl(), ldap.getSearchFilter());
@@ -315,7 +310,6 @@ public class CasPersonDirectoryConfiguration {
                     ldapDao.setSearchControls(constraints);
                     ldapDao.setOrder(ldap.getOrder());
                     LOGGER.debug("Adding LDAP attribute source for [{}]", ldap.getLdapUrl());
-                    list.getConnectionFactories().add(connectionFactory);
                     list.add(ldapDao);
                 });
 
