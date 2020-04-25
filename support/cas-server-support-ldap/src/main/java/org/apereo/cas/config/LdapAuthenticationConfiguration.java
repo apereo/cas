@@ -44,6 +44,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 import java.time.Period;
 import java.util.ArrayList;
@@ -154,17 +155,20 @@ public class LdapAuthenticationConfiguration {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-    @Bean(destroyMethod="close")
+    @Bean(name = "ldapAuthenticationConfigurationNewLdapAuthenticationHandler")
+    @Scope("prototype")
+    public LdapAuthenticationHandler newLdapAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                     final PrincipalFactory principalFactory, final Integer order,
+                                     final Authenticator authenticator,
+                                     final AuthenticationPasswordPolicyHandlingStrategy strategy) {
+        return new LdapAuthenticationHandler(name, servicesManager, principalFactory, order,
+                                             authenticator, strategy);
+    }
+
+    @Bean
     @RefreshScope
     public Collection<AuthenticationHandler> ldapAuthenticationHandlers() {
-        val handlers = new HashSet<AuthenticationHandler>() {
-            public void close() {
-                LOGGER.debug("Closing LDAP authentication handlers");
-                stream()
-                    .map(LdapAuthenticationHandler.class::cast)
-                    .forEach(LdapAuthenticationHandler::closeAuthenticationHandler);
-            }
-        };
+        val handlers = new HashSet<AuthenticationHandler>();
 
         casProperties.getAuthn().getLdap()
             .stream()
@@ -192,8 +196,9 @@ public class LdapAuthenticationConfiguration {
                 val strategy = createLdapPasswordPolicyHandlingStrategy(l);
 
                 LOGGER.debug("Creating LDAP authentication handler for [{}]", l.getLdapUrl());
-                val handler = new LdapAuthenticationHandler(l.getName(),
-                    servicesManager.getObject(), ldapPrincipalFactory(),
+                val handler = (LdapAuthenticationHandler) applicationContext.getBean(
+                    "ldapAuthenticationConfigurationNewLdapAuthenticationHandler",
+                    l.getName(), servicesManager.getObject(), ldapPrincipalFactory(),
                     l.getOrder(), authenticator, strategy);
                 handler.setCollectDnAttribute(l.isCollectDnAttribute());
 

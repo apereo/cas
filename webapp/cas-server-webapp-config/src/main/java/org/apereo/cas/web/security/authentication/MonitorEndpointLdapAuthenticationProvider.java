@@ -111,7 +111,7 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
 
             val authenticationHandler = authenticator.getAuthenticationHandler();
             if (authenticationHandler instanceof LdapAuthenticationHandler) {
-                ((LdapAuthenticationHandler) authenticationHandler).closeAuthenticationHandler();
+                ((LdapAuthenticationHandler) authenticationHandler).destroy();
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

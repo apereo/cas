@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.model.core.authentication.passwordsync.LdapP
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 
 import lombok.val;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
