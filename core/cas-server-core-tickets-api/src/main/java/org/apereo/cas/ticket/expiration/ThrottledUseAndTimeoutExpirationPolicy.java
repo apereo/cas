@@ -12,8 +12,8 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.time.Clock;
 import java.time.Duration;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 /**
@@ -44,6 +44,8 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
 
     private long timeInBetweenUsesInSeconds;
 
+    private Clock clock = Clock.systemUTC();
+
     @JsonCreator
     public ThrottledUseAndTimeoutExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds, @JsonProperty("timeToIdle") final long timeInBetweenUsesInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
@@ -54,7 +56,7 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
     public boolean isExpired(final TicketState ticketState) {
         LOGGER.trace("Checking validity of ticket [{}]", ticketState);
         val lastTimeUsed = ticketState.getLastTimeUsed();
-        val currentTime = ZonedDateTime.now(ZoneOffset.UTC);
+        val currentTime = ZonedDateTime.now(clock);
 
         LOGGER.trace("Current time is [{}]. Ticket last used time is [{}]", currentTime, lastTimeUsed);
 

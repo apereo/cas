@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.TicketState;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Clock;
+import java.time.ZoneId;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -63,11 +66,22 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
     }
 
     @Test
-    public void verifyNotWaitingEnoughTime() throws Exception {
+    public void verifyThrottleNotTriggeredWithinOneSecond() {
+        this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
+                true);
+        TicketState state = (TicketState)this.ticket;
+        Clock clock = Clock.fixed(state.getLastTimeUsed().toInstant().plusMillis(999), ZoneId.of("UTC"));
+        expirationPolicy.setClock(clock);
+        assertFalse(this.ticket.isExpired());
+    }
+
+    @Test
+    public void verifyNotWaitingEnoughTime() {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
             true);
-        expirationPolicy.setTimeToKillInSeconds(TIMEOUT);
-        Thread.sleep(1_000);
+        TicketState state = (TicketState)this.ticket;
+        Clock clock = Clock.fixed(state.getLastTimeUsed().toInstant().plusSeconds(1), ZoneId.of("UTC"));
+        expirationPolicy.setClock(clock);
         assertTrue(this.ticket.isExpired());
     }
 
