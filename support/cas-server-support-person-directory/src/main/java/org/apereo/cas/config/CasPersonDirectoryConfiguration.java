@@ -53,7 +53,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.http.HttpMethod;
@@ -280,15 +279,14 @@ public class CasPersonDirectoryConfiguration {
             }
         }
 
-        @Lazy
         @Bean
+        @Scope("prototype")
         public LdapAttributeRepositoriesConnectionFactoryArrayList ldapAttributeRepositoriesConnectionFactoryArrayList() {
             return new LdapAttributeRepositoriesConnectionFactoryArrayList();
         }
 
         @ConditionalOnMissingBean(name = "ldapAttributeRepositories")
         @Bean
-        @Autowired
         @RefreshScope
         public List<IPersonAttributeDao> ldapAttributeRepositories() {
             val list = new ArrayList<IPersonAttributeDao>();

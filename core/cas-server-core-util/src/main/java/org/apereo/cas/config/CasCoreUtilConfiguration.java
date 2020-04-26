@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CasDisposableBean;
 import org.apereo.cas.CasEmbeddedValueResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.SchedulingUtils;
@@ -17,8 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -123,21 +125,32 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     }
 
     @Bean
-    public BeanPostProcessor getCasDestroyPrototypeBeansPostProcessor() {
-        return new CasDestroyPrototypeBeansPostProcessor();
+    public BeanPostProcessor getDestroyPrototypeBeansPostProcessor() {
+        return new DestroyPrototypeBeansPostProcessor();
     }
 
-    private static class CasDestroyPrototypeBeansPostProcessor implements BeanPostProcessor, DisposableBean {
-        private final HashMap<CasDisposableBean, String> prototypeBeans = new HashMap<>();
+    private static class DestroyPrototypeBeansPostProcessor implements BeanPostProcessor, DisposableBean, BeanFactoryAware {
+        private final HashMap<DisposableBean, String> prototypeBeans = new HashMap<>();
+
+        private BeanFactory beanFactory;
+
+        @Override
+        public void setBeanFactory(final BeanFactory beanFactory) throws BeansException {
+            this.beanFactory = beanFactory;
+        }
 
         @Override
         public Object postProcessAfterInitialization(final Object bean, final String beanName)
                 throws BeansException {
-            if (bean instanceof CasDisposableBean) {
-                LOGGER.debug("Registering prototype bean {}", beanName);
-                synchronized (prototypeBeans) {
-                    prototypeBeans.put((CasDisposableBean) bean, beanName);
+            try {
+                if (bean instanceof DisposableBean && beanFactory.isPrototype(beanName)) {
+                    LOGGER.debug("Registering prototype bean {}", beanName);
+                    synchronized (prototypeBeans) {
+                        prototypeBeans.put((DisposableBean) bean, beanName);
+                    }
                 }
+            } catch (final NoSuchBeanDefinitionException e) {
+                //This is expected
             }
 
             return bean;
@@ -152,7 +165,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
                         LOGGER.debug("Destroying prototype bean {}", beanName);
                         bean.destroy();
                     } catch (final Exception e) {
-                        LOGGER.warn("Unable to dispose bean {}: {}", beanName, e.getMessage());
+                        LOGGER.warn("Unable to dispose prototype bean {}: {}", beanName, e.getMessage());
                     }
                 });
             }

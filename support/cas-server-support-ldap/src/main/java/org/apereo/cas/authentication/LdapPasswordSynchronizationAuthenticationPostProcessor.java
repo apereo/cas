@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.CasDisposableBean;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.util.LdapUtils;
@@ -14,6 +13,7 @@ import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.ResultCode;
 import org.ldaptive.ad.UnicodePwdAttribute;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.util.Collections;
 
@@ -24,7 +24,7 @@ import java.util.Collections;
  * @since 6.1.0
  */
 @Slf4j
-public class LdapPasswordSynchronizationAuthenticationPostProcessor implements AuthenticationPostProcessor, CasDisposableBean {
+public class LdapPasswordSynchronizationAuthenticationPostProcessor implements AuthenticationPostProcessor, DisposableBean {
     private final ConnectionFactory searchFactory;
     private final AbstractLdapSearchProperties ldapProperties;
 

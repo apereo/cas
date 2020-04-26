@@ -1,7 +1,5 @@
 package org.apereo.cas.monitor;
 
-import org.apereo.cas.CasDisposableBean;
-
 import lombok.val;
 import org.ldaptive.ConnectionValidator;
 import org.ldaptive.PooledConnectionFactory;
@@ -16,7 +14,7 @@ import java.util.concurrent.ExecutorService;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public class PooledLdapConnectionFactoryHealthIndicator extends AbstractPoolHealthIndicator implements HealthContributor, CasDisposableBean {
+public class PooledLdapConnectionFactoryHealthIndicator extends AbstractPoolHealthIndicator implements HealthContributor {
 
     /**
      * Source of connections to validate.
