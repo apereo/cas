@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.cookie.CookieValueManager;
+import org.apereo.cas.web.support.InvalidCookieException;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 
@@ -163,7 +164,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
             return Optional.ofNullable(cookie)
                 .map(ck -> this.casCookieValueManager.obtainCookieValue(ck, request))
                 .orElse(null);
-        } catch (final IllegalStateException e) {
+        } catch (final InvalidCookieException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.warn(e.getMessage(), e);
             } else {
