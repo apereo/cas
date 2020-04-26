@@ -280,7 +280,6 @@ public class CasPersonDirectoryConfiguration {
         }
 
         @Bean
-        @Scope("prototype")
         public LdapAttributeRepositoriesConnectionFactoryArrayList ldapAttributeRepositoriesConnectionFactoryArrayList() {
             return new LdapAttributeRepositoriesConnectionFactoryArrayList();
         }
