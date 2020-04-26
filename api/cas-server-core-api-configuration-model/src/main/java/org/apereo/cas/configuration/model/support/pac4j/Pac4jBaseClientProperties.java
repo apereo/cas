@@ -60,8 +60,9 @@ public class Pac4jBaseClientProperties implements Serializable {
      *     <li>{@code QUERY_PARAMETER}: The client name is added to the path of a query parameter.</li>
      *     <li>{@code NONE}: No name is added to the callback URL to be able to distinguish the client.</li>
      * </ul>
+     * Default is {@link CallbackUrlTypes#QUERY_PARAMETER}.
      */
-    private CallbackUrlTypes callbackUrlType;
+    private CallbackUrlTypes callbackUrlType = CallbackUrlTypes.QUERY_PARAMETER;
     
     /**
      * The callback url types.
