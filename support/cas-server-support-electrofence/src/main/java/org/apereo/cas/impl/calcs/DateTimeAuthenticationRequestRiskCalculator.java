@@ -49,7 +49,9 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
                 val zdt = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
                 return zdt.getHour();
             })
-            .filter(hour -> hour <= hoursFromNow && hour >= hoursBeforeNow)
+            .filter(hour ->
+                hoursBeforeNow <= hoursFromNow ? (hour >= hoursBeforeNow && hour <= hoursFromNow) : (hour >= hoursBeforeNow || hour <= hoursFromNow)
+            )
             .count();
 
         LOGGER.debug("Total authentication events found for [{}] in a [{}]h window: [{}]", timestamp, windowInHours, count);
