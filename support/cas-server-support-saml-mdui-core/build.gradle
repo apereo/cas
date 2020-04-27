@@ -11,7 +11,7 @@ dependencies {
 
     implementation libraries.opensaml
     implementation libraries.dropwizard
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
     
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

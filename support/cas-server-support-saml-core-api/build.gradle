@@ -7,7 +7,7 @@ dependencies {
     api libraries.xmlapis
     api libraries.apachevelocity
 
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
     
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-services-api")

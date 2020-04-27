@@ -20,7 +20,7 @@ dependencies {
     
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
 
     testImplementation project(":support:cas-server-support-person-directory")
     
