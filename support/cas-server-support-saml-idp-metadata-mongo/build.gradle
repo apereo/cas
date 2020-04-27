@@ -19,7 +19,7 @@ dependencies {
     implementation project(":support:cas-server-support-mongo-core")
     
     implementation libraries.mongo
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
 
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-web")

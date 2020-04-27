@@ -23,7 +23,7 @@ dependencies {
     implementation project(":support:cas-server-support-saml-mdui-core")
     implementation project(":support:cas-server-support-saml-idp-core")
 
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
     implementation libraries.opensaml
     implementation libraries.dropwizard
     implementation libraries.pac4jcore

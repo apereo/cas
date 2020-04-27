@@ -19,7 +19,7 @@ dependencies {
     implementation project(":support:cas-server-support-couchdb-core")
 
     implementation libraries.ektorp
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
     implementation libraries.pac4jcore
     implementation libraries.pac4jjwt
     implementation libraries.nimbus

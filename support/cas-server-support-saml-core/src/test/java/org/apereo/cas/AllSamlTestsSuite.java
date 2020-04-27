@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.config.CoreSamlConfigurationTests;
 import org.apereo.cas.support.saml.SamlUtilsTests;
+import org.apereo.cas.support.saml.authentication.SamlRestServiceTicketResourceEntityResponseFactoryTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -15,6 +16,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     CoreSamlConfigurationTests.class,
+    SamlRestServiceTicketResourceEntityResponseFactoryTests.class,
     SamlUtilsTests.class
 })
 @RunWith(JUnitPlatform.class)

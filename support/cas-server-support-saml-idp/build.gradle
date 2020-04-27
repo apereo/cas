@@ -34,7 +34,7 @@ dependencies {
     
     implementation libraries.casclient
     implementation libraries.pac4jcore
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
 
     testImplementation libraries.pac4j
     testImplementation libraries.pac4jsaml

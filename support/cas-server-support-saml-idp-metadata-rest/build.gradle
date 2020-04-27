@@ -17,7 +17,7 @@ dependencies {
     implementation project(":support:cas-server-support-saml-idp-ticket")
     implementation project(":support:cas-server-support-saml-idp")
     
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
 
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-web")

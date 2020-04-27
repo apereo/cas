@@ -23,7 +23,7 @@ dependencies {
     implementation project(":support:cas-server-support-saml-idp-ticket")
     
     implementation libraries.casclient
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
     implementation libraries.pac4jcore
 
     testImplementation project(":core:cas-server-core-web")
