@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.util.serialization.SerializationUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -101,6 +102,13 @@ public class TicketGrantingTicketExpirationPolicyTests {
         MAPPER.writeValue(JSON_FILE, policy);
         val policyRead = MAPPER.readValue(JSON_FILE, TicketGrantingTicketExpirationPolicy.class);
         assertEquals(policy, policyRead);
+    }
+
+    @Test
+    public void verifySerialization() {
+        val result = SerializationUtils.serialize(expirationPolicy);
+        val policyRead = SerializationUtils.deserialize(result, TicketGrantingTicketExpirationPolicy.class);
+        assertEquals(expirationPolicy, policyRead);
     }
 
     private static class MovingTimeTicketExpirationPolicy extends TicketGrantingTicketExpirationPolicy {
