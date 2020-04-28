@@ -13,8 +13,12 @@ import org.opensaml.core.xml.io.MarshallerFactory;
 import org.opensaml.core.xml.io.UnmarshallerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,54 +29,33 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreAuthenticationPolicyConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationHandlersConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CoreSamlConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCoreConfiguration.class
-})
+@SpringBootTest(classes = CoreSamlConfigurationTests.SharedTestConfiguration.class)
 @EnableScheduling
 @Tag("SAML")
 public class CoreSamlConfigurationTests {
     @Autowired
     @Qualifier("shibboleth.VelocityEngine")
-    private VelocityEngine velocityEngineFactoryBean;
+    protected VelocityEngine velocityEngineFactoryBean;
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
-    private OpenSamlConfigBean openSamlConfigBean;
+    protected OpenSamlConfigBean openSamlConfigBean;
 
     @Autowired
     @Qualifier("shibboleth.ParserPool")
-    private BasicParserPool parserPool;
+    protected BasicParserPool parserPool;
 
     @Autowired
     @Qualifier("shibboleth.BuilderFactory")
-    private XMLObjectBuilderFactory builderFactory;
+    protected XMLObjectBuilderFactory builderFactory;
 
     @Autowired
     @Qualifier("shibboleth.MarshallerFactory")
-    private MarshallerFactory marshallerFactory;
+    protected MarshallerFactory marshallerFactory;
 
     @Autowired
     @Qualifier("shibboleth.UnmarshallerFactory")
-    private UnmarshallerFactory unmarshallerFactory;
+    protected UnmarshallerFactory unmarshallerFactory;
 
     @Test
     public void verify() {
@@ -82,5 +65,34 @@ public class CoreSamlConfigurationTests {
         assertNotNull(builderFactory);
         assertNotNull(marshallerFactory);
         assertNotNull(unmarshallerFactory);
+    }
+
+    @ImportAutoConfiguration({
+        RefreshAutoConfiguration.class,
+        AopAutoConfiguration.class
+    })
+    @SpringBootConfiguration
+    @Import({
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CoreSamlConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreConfiguration.class
+    })
+    public static class SharedTestConfiguration {
     }
 }
