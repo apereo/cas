@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.UUID;
@@ -121,6 +123,20 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
                     repo.save(account.getUsername(), account.getSecretKey(), 0, List.of());
                 }
             });
+        }
+    }
+
+    @Test
+    public void verifySaveFail() throws Exception {
+        val props = new GoogleAuthenticatorMultifactorProperties();
+        props.getRest().setEndpointUrl("http://localhost:8554");
+        val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
+            props, CipherExecutor.noOpOfStringToString());
+        val account = repo.create(UUID.randomUUID().toString());
+        try (val webServer = new MockWebServer(8554,
+            new ByteArrayResource(StringUtils.EMPTY.getBytes(UTF_8), "Output"), HttpStatus.CREATED)) {
+            webServer.start();
+            assertNull(repo.update(account));
         }
     }
 }
