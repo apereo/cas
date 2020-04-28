@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.expiration;
 
+import org.apereo.cas.util.serialization.SerializationUtils;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -24,6 +26,14 @@ public class HardTimeoutExpirationPolicyTests {
         val policyWritten = new HardTimeoutExpirationPolicy();
         MAPPER.writeValue(JSON_FILE, policyWritten);
         val policyRead = MAPPER.readValue(JSON_FILE, HardTimeoutExpirationPolicy.class);
+        assertEquals(policyWritten, policyRead);
+    }
+
+    @Test
+    public void verifySerialization() {
+        val policyWritten = new HardTimeoutExpirationPolicy();
+        val result = SerializationUtils.serialize(policyWritten);
+        val policyRead = SerializationUtils.deserialize(result, HardTimeoutExpirationPolicy.class);
         assertEquals(policyWritten, policyRead);
     }
 }

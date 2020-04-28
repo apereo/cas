@@ -12,6 +12,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.time.Clock;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -43,8 +44,11 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
 
     private long timeInBetweenUsesInSeconds;
 
+    private Clock clock = Clock.systemUTC();
+
     @JsonCreator
-    public ThrottledUseAndTimeoutExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds, @JsonProperty("timeToIdle") final long timeInBetweenUsesInSeconds) {
+    public ThrottledUseAndTimeoutExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds,
+                                                  @JsonProperty("timeToIdle") final long timeInBetweenUsesInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
         this.timeInBetweenUsesInSeconds = timeInBetweenUsesInSeconds;
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.expiration;
 
+import org.apereo.cas.util.serialization.SerializationUtils;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -22,11 +24,16 @@ public class NeverExpiresExpirationPolicyTests {
     @Test
     public void verifySerializeANeverExpiresExpirationPolicyToJson() throws IOException {
         val policyWritten = NeverExpiresExpirationPolicy.INSTANCE;
-
         MAPPER.writeValue(JSON_FILE, policyWritten);
-
         val policyRead = MAPPER.readValue(JSON_FILE, NeverExpiresExpirationPolicy.class);
+        assertEquals(policyWritten, policyRead);
+    }
 
+    @Test
+    public void verifySerialization() {
+        val policyWritten = new NeverExpiresExpirationPolicy();
+        val result = SerializationUtils.serialize(policyWritten);
+        val policyRead = SerializationUtils.deserialize(result, NeverExpiresExpirationPolicy.class);
         assertEquals(policyWritten, policyRead);
     }
 }
