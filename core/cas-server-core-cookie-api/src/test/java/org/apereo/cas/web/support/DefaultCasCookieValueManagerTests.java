@@ -79,28 +79,28 @@ public class DefaultCasCookieValueManagerTests {
     public void verifyBadValue() {
         val props = new TicketGrantingCookieProperties();
         val mgr = new DefaultCasCookieValueManager(CipherExecutor.noOp(), props);
-        assertThrows(IllegalStateException.class, () -> mgr.obtainCookieValue("something", new MockHttpServletRequest()));
+        assertThrows(InvalidCookieException.class, () -> mgr.obtainCookieValue("something", new MockHttpServletRequest()));
     }
 
     @Test
     public void verifyBadCookie() {
         val props = new TicketGrantingCookieProperties();
         val mgr = new DefaultCasCookieValueManager(CipherExecutor.noOp(), props);
-        assertThrows(IllegalStateException.class, () -> mgr.obtainCookieValue("something@1@", new MockHttpServletRequest()));
+        assertThrows(InvalidCookieException.class, () -> mgr.obtainCookieValue("something@1@", new MockHttpServletRequest()));
     }
 
     @Test
     public void verifyBadIp() {
         val props = new TicketGrantingCookieProperties();
         val mgr = new DefaultCasCookieValueManager(CipherExecutor.noOp(), props);
-        assertThrows(IllegalStateException.class, () -> mgr.obtainCookieValue("something@1@agent", new MockHttpServletRequest()));
+        assertThrows(InvalidCookieException.class, () -> mgr.obtainCookieValue("something@1@agent", new MockHttpServletRequest()));
     }
 
     @Test
     public void verifyBadAgent() {
         val props = new TicketGrantingCookieProperties();
         val mgr = new DefaultCasCookieValueManager(CipherExecutor.noOp(), props);
-        assertThrows(IllegalStateException.class, () -> mgr.obtainCookieValue("something@"
+        assertThrows(InvalidCookieException.class, () -> mgr.obtainCookieValue("something@"
             + ClientInfoHolder.getClientInfo().getClientIpAddress() + "@agent", new MockHttpServletRequest()));
     }
 }
