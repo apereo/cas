@@ -20,6 +20,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.DefaultDelegatedClientFactory;
 import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
+import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactoryCustomizer;
 import org.apereo.cas.support.pac4j.authentication.RestfulDelegatedClientFactory;
 import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandler;
 import org.apereo.cas.ticket.TicketFactory;
@@ -40,8 +41,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
 
@@ -58,6 +61,9 @@ import java.util.ArrayList;
 public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -87,7 +93,10 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         if (StringUtils.isNotBlank(rest.getUrl())) {
             return new RestfulDelegatedClientFactory(casProperties);
         }
-        return new DefaultDelegatedClientFactory(casProperties);
+        val customizers = applicationContext.getBeansOfType(DelegatedClientFactoryCustomizer.class,
+            false, true).values();
+        AnnotationAwareOrderComparator.sortIfNecessary(customizers);
+        return new DefaultDelegatedClientFactory(casProperties, customizers);
     }
 
     @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionStore")
@@ -95,7 +104,8 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     public SessionStore<JEEContext> delegatedClientDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getPac4j().isReplicateSessions();
         if (replicate) {
-            return new DistributedJEESessionStore(centralAuthenticationService.getObject(), ticketFactory.getObject(), casProperties);
+            return new DistributedJEESessionStore(centralAuthenticationService.getObject(),
+                ticketFactory.getObject(), casProperties);
         }
         return new JEESessionStore();
     }

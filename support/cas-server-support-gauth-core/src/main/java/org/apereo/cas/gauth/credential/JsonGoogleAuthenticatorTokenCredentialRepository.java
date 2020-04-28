@@ -40,18 +40,18 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     @Override
     public OneTimeTokenAccount get(final String username) {
         try {
-            if (!this.location.getFile().exists()) {
-                LOGGER.warn("JSON account repository file [{}] is not found.", this.location.getFile());
+            if (!location.getFile().exists()) {
+                LOGGER.warn("JSON account repository file [{}] is not found.", location.getFile());
                 return null;
             }
 
-            if (this.location.getFile().length() <= 0) {
-                LOGGER.warn("JSON account repository file location [{}] is empty.", this.location.getFile());
+            if (location.getFile().length() <= 0) {
+                LOGGER.warn("JSON account repository file location [{}] is empty.", location.getFile());
                 return null;
             }
-            val map = this.serializer.from(this.location.getFile());
+            val map = this.serializer.from(location.getFile());
             if (map == null) {
-                LOGGER.debug("JSON account repository file [{}] is empty.", this.location.getFile());
+                LOGGER.debug("JSON account repository file [{}] is empty.", location.getFile());
                 return null;
             }
 
@@ -68,13 +68,9 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     @Override
     public void save(final String userName, final String secretKey,
                      final int validationCode, final List<Integer> scratchCodes) {
-        try {
-            LOGGER.debug("Storing google authenticator account for [{}]", userName);
-            val account = new OneTimeTokenAccount(userName, secretKey, validationCode, scratchCodes);
-            update(account);
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        LOGGER.debug("Storing google authenticator account for [{}]", userName);
+        val account = new OneTimeTokenAccount(userName, secretKey, validationCode, scratchCodes);
+        update(account);
     }
 
     @Override
@@ -133,20 +129,20 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
 
     @SneakyThrows
     private void writeAccountsToJsonRepository(final Map<String, OneTimeTokenAccount> accounts) {
-        LOGGER.debug("Saving [{}] google authenticator accounts back to the JSON file at [{}]", accounts.size(), this.location.getFile());
-        this.serializer.to(this.location.getFile(), accounts);
+        LOGGER.debug("Saving [{}] google authenticator accounts back to the JSON file at [{}]", accounts.size(), location.getFile());
+        this.serializer.to(location.getFile(), accounts);
     }
 
     private Map<String, OneTimeTokenAccount> readAccountsFromJsonRepository() throws IOException {
-        LOGGER.debug("Ensuring JSON repository file exists at [{}]", this.location.getFile());
-        val result = this.location.getFile().createNewFile();
+        LOGGER.debug("Ensuring JSON repository file exists at [{}]", location.getFile());
+        val result = location.getFile().createNewFile();
         if (result) {
-            LOGGER.debug("Created JSON repository file at [{}]", this.location.getFile());
+            LOGGER.debug("Created JSON repository file at [{}]", location.getFile());
         }
-        if (this.location.getFile().length() > 0) {
-            LOGGER.debug("Reading JSON repository file at [{}]", this.location.getFile());
-            val accounts = this.serializer.from(this.location.getFile());
-            LOGGER.debug("Read [{}] accounts from JSON repository file at [{}]", accounts.size(), this.location.getFile());
+        if (location.getFile().length() > 0) {
+            LOGGER.debug("Reading JSON repository file at [{}]", location.getFile());
+            val accounts = this.serializer.from(location.getFile());
+            LOGGER.debug("Read [{}] accounts from JSON repository file at [{}]", accounts.size(), location.getFile());
             return accounts;
         }
         return new HashMap<>(0);

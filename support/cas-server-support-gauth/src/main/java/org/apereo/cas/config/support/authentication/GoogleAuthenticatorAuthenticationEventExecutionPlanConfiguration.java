@@ -47,7 +47,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.webflow.execution.Action;
 
 import java.util.concurrent.TimeUnit;
@@ -90,6 +89,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
 
     @Bean
+    @ConditionalOnMissingBean(name = "googleAuthenticatorInstance")
     public IGoogleAuthenticator googleAuthenticatorInstance() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
@@ -166,7 +166,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         }
         if (StringUtils.isNotBlank(gauth.getRest().getEndpointUrl())) {
             return new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance(),
-                new RestTemplate(), gauth, googleAuthenticatorAccountCipherExecutor());
+                gauth, googleAuthenticatorAccountCipherExecutor());
         }
         return new InMemoryGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorAccountCipherExecutor(), googleAuthenticatorInstance());
     }
