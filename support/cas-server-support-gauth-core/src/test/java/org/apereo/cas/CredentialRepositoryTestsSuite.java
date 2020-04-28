@@ -2,7 +2,6 @@ package org.apereo.cas;
 
 import org.apereo.cas.gauth.GoogleAuthenticatorAuthenticationHandlerTests;
 import org.apereo.cas.gauth.credential.InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests;
-import org.apereo.cas.gauth.credential.RestGoogleAuthenticatorTokenCredentialRepositoryTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -16,7 +15,6 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests.class,
-    RestGoogleAuthenticatorTokenCredentialRepositoryTests.class,
     GoogleAuthenticatorAuthenticationHandlerTests.class
 })
 @RunWith(JUnitPlatform.class)

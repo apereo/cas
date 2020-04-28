@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth;
 
+import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredentialRepositoryEndpointTests;
 import org.apereo.cas.gauth.credential.JsonGoogleAuthenticatorTokenCredentialRepositoryTests;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurerTests;
 
@@ -15,6 +16,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     GoogleAuthenticatorMultifactorWebflowConfigurerTests.class,
+    GoogleAuthenticatorTokenCredentialRepositoryEndpointTests.class,
     JsonGoogleAuthenticatorTokenCredentialRepositoryTests.class
 })
 @RunWith(JUnitPlatform.class)

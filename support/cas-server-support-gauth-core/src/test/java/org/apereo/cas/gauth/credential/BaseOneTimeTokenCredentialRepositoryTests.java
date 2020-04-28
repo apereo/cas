@@ -22,6 +22,7 @@ import org.springframework.context.ApplicationContext;
 import javax.annotation.PostConstruct;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -35,7 +36,7 @@ import static org.mockito.Mockito.*;
 @Getter
 @Tag("MFA")
 public abstract class BaseOneTimeTokenCredentialRepositoryTests {
-    public static final String CASUSER = "casusergauth";
+    public static final String CASUSER = UUID.randomUUID().toString();
     public static final String PLAIN_SECRET = "plain_secret";
 
     private IGoogleAuthenticator google;

@@ -68,7 +68,8 @@ import java.util.stream.Collectors;
 @Getter
 public class DefaultDelegatedClientFactory implements DelegatedClientFactory<IndirectClient> {
     private final CasConfigurationProperties casProperties;
-
+    private final Collection<DelegatedClientFactoryCustomizer> customizers;
+    
     @SneakyThrows
     private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc, final Class<T> clazz) {
         val cfg = clazz.getDeclaredConstructor().newInstance();
@@ -620,7 +621,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
             default:
                 client.setCallbackUrlResolver(new QueryParameterCallbackUrlResolver());
         }
-
+        this.customizers.forEach(customizer -> customizer.customize(client));
         if (!casProperties.getAuthn().getPac4j().isLazyInit()) {
             client.init();
         }
