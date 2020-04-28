@@ -448,10 +448,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         }
 
         val decodedBytes = EncodingUtils.decodeBase64(encodedRequestXmlString);
-        if (decodedBytes == null) {
-            return null;
-        }
-
         return inflateAuthnRequest(decodedBytes);
     }
 
