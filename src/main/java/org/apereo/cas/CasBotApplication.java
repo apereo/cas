@@ -24,8 +24,10 @@ import org.apereo.cas.github.RegexLinkParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -64,6 +66,15 @@ public class CasBotApplication {
                                                final MonitoredRepository repository,
                                                final List<PullRequestListener> pullRequestListeners) {
         return new RepositoryMonitor(gitHub, repository, pullRequestListeners);
+    }
+    
+    @EventListener
+    public void applicationReady(final ApplicationReadyEvent event) {
+        log.info("CAS GitHub bot is now ready");
+
+        val repository = event.getApplicationContext().getBean(MonitoredRepository.class);
+        log.info("Current version in master branch: {}", repository.getCurrentVersionInMaster());
+        log.info("Current milestone for master branch: {}", repository.getMilestoneForMaster());
     }
 
     @RestController

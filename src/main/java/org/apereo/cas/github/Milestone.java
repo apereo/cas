@@ -22,6 +22,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.time.ZonedDateTime;
+
 /**
  * Note: this class has a natural ordering that is inconsistent with equals.
  */
@@ -35,19 +37,30 @@ public class Milestone implements Comparable<Milestone> {
     private final String url;
     private final String number;
 
+    private final ZonedDateTime createdDate;
+    private final ZonedDateTime updatedDate;
+    private final ZonedDateTime dueDate;
+
     @JsonCreator
     public Milestone(@JsonProperty("title") final String title,
                      @JsonProperty("description") final String description,
                      @JsonProperty("url") final String url,
-                     @JsonProperty("number") final String number) {
+                     @JsonProperty("number") final String number,
+                     @JsonProperty("created_at") final ZonedDateTime created,
+                     @JsonProperty("updated_at") final ZonedDateTime updated,
+                     @JsonProperty("due_on") final ZonedDateTime dueOn) {
         this.title = title;
         this.description = description;
         this.url = url;
         this.number = number;
+        
+        this.createdDate = created;
+        this.updatedDate = updated;
+        this.dueDate = dueOn;
     }
 
     @Override
     public int compareTo(final Milestone o) {
-        return this.number.compareTo(o.getNumber());
+        return this.dueDate.compareTo(o.getDueDate());
     }
 }

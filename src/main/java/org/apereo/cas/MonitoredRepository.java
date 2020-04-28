@@ -55,8 +55,11 @@ public class MonitoredRepository {
             val entity = rest.getForEntity(uri, String.class);
             val properties = new Properties();
             properties.load(new StringReader(Objects.requireNonNull(entity.getBody())));
-            currentVersionInMaster = Version.valueOf(properties.get("version").toString());
+            final String version = properties.get("version").toString();
+            log.info("Version found in CAS codebase is {}", version);
+            currentVersionInMaster = Version.valueOf(version);
             log.info("Current master version is {}", currentVersionInMaster);
+            return currentVersionInMaster;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

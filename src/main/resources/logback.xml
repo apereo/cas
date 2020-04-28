@@ -9,6 +9,7 @@
         </layout>
     </appender>
 
+    <logger name="ch.qos.logback" level="off" />
     <root level="debug">
         <appender-ref ref="STDOUT" />
     </root>
