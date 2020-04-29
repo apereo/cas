@@ -10,7 +10,7 @@ category: High Availability
 
 ### Setup
 
-A fundamental feature of Locust is that you describe all your tests in Python code. No need for clunky UIs or bloated XML, just plain code. For this to work, you will need to [download Python](https://www.python.org/downloads/). Next download the Locust test suite [from here](https://github.com/apereo/cas/raw/master/etc/loadtests/locustfiles.tgz) and [configure a virtual environment](https://virtualenv.pypa.io/en/stable/) to install modules:
+A fundamental feature of Locust is that you describe all your tests in Python code. No need for clunky UIs or bloated XML, just plain code. For this to work, you will need to [download Python](https://www.python.org/downloads/). Next download the Locust test suite [from here](https://github.com/apereo/cas/raw/master/etc/loadtests) and [configure a virtual environment](https://virtualenv.pypa.io/en/stable/) to install modules:
 
 ```bash
 pip install virtualenv
@@ -35,7 +35,7 @@ echo casuser,Mellon > cas5/credentials.csv
 Run the script as such:
 
 ```bash
-locust -f cas5/locustfile.py --host=https://cas.example.org
+locust -f cas5/casLocust.py --host=https://cas.example.org
 ...
 [2017-05-02 16:31:49,742] test/INFO/locust.main: Starting web monitor at *:8089
 [2017-05-02 16:31:49,744] test/INFO/locust.main: Starting Locust 0.8a2

@@ -18,6 +18,7 @@ bin/
 overlays/
 pom.xml.versionsBackup
 build.xml
+mylocustenv/
 *.log
 rebel.xml
 **/.checkstyle
@@ -32,7 +33,7 @@ MANIFEST.MF
 classes/
 *.bin
 **/gpg-*.txt
-
+**/__pycache__/
 out
 ajcore.*
 reports
