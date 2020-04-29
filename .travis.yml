@@ -79,6 +79,9 @@ jobs:
       script: ./ci/push-docs-ghpages.sh
       if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       name: "Publish Documentation"
+    - stage: publish
+      script: ./ci/perftests-locust.sh
+      name: "Performance Tests - Locust"
       ############################################
     - stage: validate
       script: ./ci/html-proofer-docs.sh
