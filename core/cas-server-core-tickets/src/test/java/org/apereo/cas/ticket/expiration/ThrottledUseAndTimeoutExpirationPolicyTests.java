@@ -34,7 +34,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
 
     private ThrottledUseAndTimeoutExpirationPolicy expirationPolicy;
 
-    private TicketGrantingTicket ticket;
+    private TicketGrantingTicketImpl ticket;
 
     @BeforeEach
     public void initialize() {
@@ -69,8 +69,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
     public void verifyThrottleNotTriggeredWithinOneSecond() {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
                 true);
-        val state = (TicketState) this.ticket;
-        val clock = Clock.fixed(state.getLastTimeUsed().toInstant().plusMillis(999), ZoneId.of("UTC"));
+        val clock = Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusMillis(999), ZoneId.of("UTC"));
         expirationPolicy.setClock(clock);
         assertFalse(this.ticket.isExpired());
     }
@@ -79,8 +78,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
     public void verifyNotWaitingEnoughTime() {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
             true);
-        val state = (TicketState) this.ticket;
-        val clock = Clock.fixed(state.getLastTimeUsed().toInstant().plusSeconds(1), ZoneId.of("UTC"));
+        val clock = Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusSeconds(1), ZoneId.of("UTC"));
         expirationPolicy.setClock(clock);
         assertTrue(this.ticket.isExpired());
     }
