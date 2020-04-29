@@ -2,6 +2,7 @@ package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
@@ -15,7 +16,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ApplicationContext;
 
+import javax.annotation.PostConstruct;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -123,4 +128,15 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     public abstract OneTimeTokenCredentialRepository getRegistry();
+
+    @TestConfiguration
+    public static class BaseTestConfiguration {
+        @Autowired
+        protected ApplicationContext applicationContext;
+
+        @PostConstruct
+        public void init() {
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+        }
+    }
 }

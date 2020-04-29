@@ -98,7 +98,6 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         props.getRest().setEndpointUrl("http://localhost:8552");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
             props, CipherExecutor.noOpOfStringToString());
-        val account = repo.create(UUID.randomUUID().toString());
         try (val webServer = new MockWebServer(8552,
             new ByteArrayResource("1".getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
