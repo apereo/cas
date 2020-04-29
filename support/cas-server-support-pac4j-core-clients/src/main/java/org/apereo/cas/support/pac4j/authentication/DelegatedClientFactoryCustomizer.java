@@ -20,7 +20,6 @@ public interface DelegatedClientFactoryCustomizer<T extends Client> extends Orde
      * Customize the client.
      *
      * @param client the client
-     * @return the customized client
      */
-    T customize(T client);
+    void customize(T client);
 }
