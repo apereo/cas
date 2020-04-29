@@ -65,7 +65,7 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
         Assert.isTrue(this.maxTimeToLiveInSeconds >= this.timeToKillInSeconds,
             "maxTimeToLiveInSeconds must be greater than or equal to timeToKillInSeconds.");
 
-        val currentSystemTime = getCurrentSystemTime();
+        val currentSystemTime = ZonedDateTime.now(getClock());
         val creationTime = ticketState.getCreationTime();
         val lastTimeUsed = ticketState.getLastTimeUsed();
         val expirationTime = creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
@@ -79,16 +79,6 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
             return true;
         }
         return super.isExpired(ticketState);
-    }
-
-    /**
-     * Gets current system time.
-     *
-     * @return the current system time
-     */
-    @JsonIgnore
-    protected ZonedDateTime getCurrentSystemTime() {
-        return ZonedDateTime.now(ZoneOffset.UTC);
     }
 
     @Override

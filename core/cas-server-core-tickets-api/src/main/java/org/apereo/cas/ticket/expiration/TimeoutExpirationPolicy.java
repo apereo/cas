@@ -61,13 +61,10 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
         if (ticketState == null) {
             return true;
         }
-        val now = ZonedDateTime.now(ZoneOffset.UTC);
+        val now = ZonedDateTime.now(getClock());
         val expirationTime = ticketState.getLastTimeUsed().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
         val expired = now.isAfter(expirationTime);
-        if (!expired) {
-            return super.isExpired(ticketState);
-        }
-        return expired;
+        return expired ? true : super.isExpired(ticketState);
     }
 
     @JsonIgnore

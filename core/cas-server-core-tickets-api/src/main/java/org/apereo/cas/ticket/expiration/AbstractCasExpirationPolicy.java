@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
 
+import java.time.Clock;
 import java.util.UUID;
 
 /**
@@ -29,6 +30,8 @@ public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
     private static final long serialVersionUID = 8042104336580063690L;
 
     private String name;
+
+    private Clock clock = Clock.systemUTC();
 
     public AbstractCasExpirationPolicy() {
         this.name = this.getClass().getSimpleName() + '-' + UUID.randomUUID().toString();

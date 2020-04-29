@@ -56,7 +56,7 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
             return true;
         }
         val expiringTime = ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-        val expired = expiringTime.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
+        val expired = expiringTime.isBefore(ZonedDateTime.now(getClock()));
         if (!expired) {
             return super.isExpired(ticketState);
         }
