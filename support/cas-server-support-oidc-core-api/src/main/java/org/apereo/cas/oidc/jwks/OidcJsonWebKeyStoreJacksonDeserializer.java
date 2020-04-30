@@ -11,12 +11,12 @@ import org.jose4j.jwk.JsonWebKeySet;
 import java.io.IOException;
 
 /**
- * This is {@link OidcJsonWebKeyStoreJacksonSerializer}.
+ * This is {@link OidcJsonWebKeyStoreJacksonDeserializer}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-public class OidcJsonWebKeyStoreJacksonSerializer extends JsonDeserializer<JsonWebKeySet> {
+public class OidcJsonWebKeyStoreJacksonDeserializer extends JsonDeserializer<JsonWebKeySet> {
 
     @Override
     @SneakyThrows

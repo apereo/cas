@@ -499,13 +499,20 @@ public class OidcConfiguration implements WebMvcConfigurer {
         return new OidcJwksEndpointController(context, oidcJsonWebKeystoreGeneratorService());
     }
 
-    @Autowired
     @RefreshScope
     @Bean
-    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory") final OidcServerDiscoverySettings discoverySettings) {
+    @Autowired
+    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcWebFingerDiscoveryService")
+                                                                   final OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService) {
         val context = buildConfigurationContext();
-        return new OidcWellKnownEndpointController(
-            context, new OidcWebFingerDiscoveryService(oidcWebFingerUserInfoRepository(), discoverySettings));
+        return new OidcWellKnownEndpointController(context, oidcWebFingerDiscoveryService);
+    }
+
+    @RefreshScope
+    @Bean
+    public OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService(@Qualifier("oidcServerDiscoverySettingsFactory")
+                                                                        final OidcServerDiscoverySettings discoverySettings) {
+        return new OidcWebFingerDiscoveryService(oidcWebFingerUserInfoRepository(), discoverySettings);
     }
 
     @Bean

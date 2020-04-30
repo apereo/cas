@@ -1279,10 +1279,31 @@ public class WebUtils {
 
     /**
      * Get the mfa provider id from flow scope.
+     *
      * @param context request context
      * @return provider id
      */
     public static String getMultifactorAuthenticationProviderById(final RequestContext context) {
         return context.getFlowScope().get(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, String.class);
+    }
+
+    /**
+     * Put selectable multifactor authentication providers.
+     *
+     * @param requestContext the request context
+     * @param mfaProviders   the mfa providers
+     */
+    public static void putSelectableMultifactorAuthenticationProviders(final RequestContext requestContext, final List<String> mfaProviders) {
+        requestContext.getViewScope().put("mfaSelectableProviders", mfaProviders);
+    }
+
+    /**
+     * Gets selectable multifactor authentication providers.
+     *
+     * @param requestContext the request context
+     * @return the selectable multifactor authentication providers
+     */
+    public static List<String> getSelectableMultifactorAuthenticationProviders(final RequestContext requestContext) {
+        return requestContext.getViewScope().get("mfaSelectableProviders", List.class);
     }
 }

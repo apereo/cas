@@ -1,6 +1,6 @@
 description = "Apereo CAS SAML Identity Provider Core"
 dependencies {
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
     
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")

@@ -74,11 +74,9 @@ import org.springframework.context.annotation.Bean;
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
-}, properties = {
-    "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
+}, properties = 
+    "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate"
+)
 public class BaseSurrogateInitialAuthenticationActionTests {
     @TestConfiguration
     public static class TestAuthenticationConfiguration {

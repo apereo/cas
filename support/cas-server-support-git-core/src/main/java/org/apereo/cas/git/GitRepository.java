@@ -36,6 +36,7 @@ import java.util.List;
 public class GitRepository implements DisposableBean {
     private final Git gitInstance;
 
+    @Getter
     private final List<CredentialsProvider> credentialsProvider;
 
     private final TransportConfigCallback transportConfigCallback;
@@ -51,16 +52,6 @@ public class GitRepository implements DisposableBean {
      */
     public File getRepositoryDirectory() {
         return this.gitInstance.getRepository().getDirectory().getParentFile();
-    }
-
-    /**
-     * Gets repository file.
-     *
-     * @param gitObject the git object
-     * @return the repository file
-     */
-    public File getRepositoryFile(final GitObject gitObject) {
-        return new File(getRepositoryDirectory(), gitObject.getTreeWalk().getPathString());
     }
 
     /**
@@ -189,7 +180,9 @@ public class GitRepository implements DisposableBean {
     @Getter
     public static class GitObject {
         private final String content;
+
         private final TreeWalk treeWalk;
+
         private final ObjectId objectId;
     }
 }

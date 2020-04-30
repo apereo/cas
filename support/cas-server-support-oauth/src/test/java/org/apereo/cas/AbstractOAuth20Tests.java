@@ -55,6 +55,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequ
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
@@ -227,7 +228,7 @@ public abstract class AbstractOAuth20Tests {
 
     @Autowired
     @Qualifier("accessTokenController")
-    protected OAuth20AccessTokenEndpointController controller;
+    protected OAuth20AccessTokenEndpointController accessTokenController;
 
     @Autowired
     @Qualifier("accessTokenResponseGenerator")
@@ -242,8 +243,16 @@ public abstract class AbstractOAuth20Tests {
     protected OAuth20DeviceUserCodeApprovalEndpointController deviceController;
 
     @Autowired
+    @Qualifier("oauthResourceOwnerCredentialsResponseBuilder")
+    protected OAuth20AuthorizationResponseBuilder oauthResourceOwnerCredentialsResponseBuilder;
+
+    @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    protected CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
     @Qualifier("requiresAuthenticationAccessTokenInterceptor")
@@ -338,15 +347,15 @@ public abstract class AbstractOAuth20Tests {
                                                                  final String clientId,
                                                                  final String secret,
                                                                  final Set<OAuth20GrantTypes> grantTypes) {
-        val registeredServiceImpl = new OAuthRegisteredService();
-        registeredServiceImpl.setName("The registered service name");
-        registeredServiceImpl.setServiceId(serviceId);
-        registeredServiceImpl.setClientId(clientId);
-        registeredServiceImpl.setClientSecret(secret);
-        registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        registeredServiceImpl.setSupportedGrantTypes(
+        val service = new OAuthRegisteredService();
+        service.setName("The registered service name");
+        service.setServiceId(serviceId);
+        service.setClientId(clientId);
+        service.setClientSecret(secret);
+        service.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        service.setSupportedGrantTypes(
             grantTypes.stream().map(OAuth20GrantTypes::getType).collect(Collectors.toCollection(HashSet::new)));
-        return registeredServiceImpl;
+        return service;
     }
 
     protected static Principal createPrincipal() {
@@ -434,7 +443,7 @@ public abstract class AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
         val mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        val mv = controller.handleRequest(mockRequest, mockResponse);
+        val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertNull(this.ticketRegistry.getTicket(code.getId()));
         assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
 
@@ -537,7 +546,7 @@ public abstract class AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
         val mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        val mv = controller.handleRequest(mockRequest, mockResponse);
+        val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
 
         assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));

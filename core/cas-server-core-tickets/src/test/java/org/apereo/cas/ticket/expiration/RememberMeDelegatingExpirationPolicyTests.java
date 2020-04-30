@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.SerializationUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -110,6 +111,13 @@ public class RememberMeDelegatingExpirationPolicyTests {
     public void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
         MAPPER.writeValue(JSON_FILE, expirationPolicy);
         val policyRead = MAPPER.readValue(JSON_FILE, RememberMeDelegatingExpirationPolicy.class);
+        assertEquals(expirationPolicy, policyRead);
+    }
+
+    @Test
+    public void verifySerialization() {
+        val result = SerializationUtils.serialize(expirationPolicy);
+        val policyRead = SerializationUtils.deserialize(result, RememberMeDelegatingExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);
     }
 }

@@ -18,4 +18,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class Pac4jGenericOidcClientProperties extends BasePac4jOidcClientProperties {
     private static final long serialVersionUID = 3359382317533639638L;
+
+    public Pac4jGenericOidcClientProperties() {
+        setCallbackUrlType(CallbackUrlTypes.PATH_PARAMETER);
+    }
 }

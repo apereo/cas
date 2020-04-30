@@ -22,9 +22,6 @@ import java.util.concurrent.ConcurrentHashMap;
     AopAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
     CasCoreUtilConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 @Tag("MFA")
 public class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {

@@ -19,7 +19,7 @@ dependencies {
     implementation project(":support:cas-server-support-aws")
 
     implementation libraries.awss3
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-cookie")

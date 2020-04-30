@@ -16,8 +16,6 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.core.io.Resource;
 
 import javax.crypto.SecretKey;
-import java.io.IOException;
-import java.security.KeyException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
@@ -63,7 +61,7 @@ public class BasicResourceCredentialFactoryBean implements FactoryBean<BasicCred
     /**
      * The SecretKey encoding used.
      */
-    private SecretKeyEncoding secretKeyEncoding = SecretKeyEncoding.base64;
+    private SecretKeyEncoding secretKeyEncoding = SecretKeyEncoding.BASE64;
 
     @Override
     public boolean isSingleton() {
@@ -127,11 +125,11 @@ public class BasicResourceCredentialFactoryBean implements FactoryBean<BasicCred
 
     private byte[] decodeSecretKey(final byte[] data) {
         switch (getSecretKeyEncoding()) {
-            case binary:
+            case BINARY:
                 return data;
-            case hex:
+            case HEX:
                 return Hex.decode(data);
-            case base64:
+            case BASE64:
                 return Base64.decodeBase64(data);
             default:
                 throw new IllegalArgumentException("Unsupported encoding");
@@ -145,7 +143,7 @@ public class BasicResourceCredentialFactoryBean implements FactoryBean<BasicCred
         }
         try (val is = getSecretKeyInfo().getInputStream()) {
             return KeySupport.decodeSecretKey(decodeSecretKey(ByteStreams.toByteArray(is)), getSecretKeyAlgorithm());
-        } catch (final KeyException | IOException e) {
+        } catch (final Exception e) {
             throw new BeanCreationException("Could not decode secret key", e);
         }
     }
@@ -157,14 +155,14 @@ public class BasicResourceCredentialFactoryBean implements FactoryBean<BasicCred
         /**
          * Raw binary encoding.
          */
-        binary,
+        BINARY,
         /**
          * Hexidecimal encoding.
          */
-        hex,
+        HEX,
         /**
          * Base64 encoding.
          */
-        base64
+        BASE64
     }
 }

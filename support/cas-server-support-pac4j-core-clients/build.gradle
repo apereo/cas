@@ -19,7 +19,7 @@ dependencies {
     implementation libraries.nimbus
     implementation libraries.opensaml
     implementation libraries.dropwizard
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
     
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-authentication")

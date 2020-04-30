@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -24,6 +26,7 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -35,8 +38,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
@@ -49,6 +54,7 @@ import org.springframework.test.annotation.DirtiesContext;
  */
 @SpringBootTest(classes = {
     AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
+    BaseCasWebflowMultifactorAuthenticationTests.TestAuthenticationConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
@@ -81,9 +87,6 @@ import org.springframework.test.annotation.DirtiesContext;
     CasWebflowContextConfiguration.class,
     CasCoreValidationConfiguration.class,
     AdaptiveMultifactorAuthenticationPolicyEventResolverTests.GeoLocationServiceTestConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @DirtiesContext
@@ -95,4 +98,12 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
+
+    @TestConfiguration("TestAuthenticationConfiguration")
+    public static class TestAuthenticationConfiguration {
+        @Bean
+        public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() {
+            return plan -> plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler(CollectionUtils.wrap("casuser", "Mellon")));
+        }
+    }
 }

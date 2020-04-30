@@ -33,7 +33,6 @@ public class AcceptableUsagePolicyVerifyActionTests extends BaseAcceptableUsageP
     @Qualifier("acceptableUsagePolicyVerifyAction")
     private Action acceptableUsagePolicyVerifyAction;
 
-    @Override
     @Test
     public void verifyAction() throws Exception {
         val context = new MockRequestContext();

@@ -8,7 +8,7 @@
 
 language: java
 os: linux
-dist: trusty
+dist: bionic
 services:
   - docker
 branches:
@@ -244,6 +244,9 @@ jobs:
     - stage: test
       script: ./ci/tests/zookeeper/run-tests-zookeeper.sh
       name: "Apache ZooKeeper Tests"
+    - stage: test
+      script: ./ci/perftests-locust.sh
+      name: "Performance Tests via Locust"
       ############################################
     - stage: finalize
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)

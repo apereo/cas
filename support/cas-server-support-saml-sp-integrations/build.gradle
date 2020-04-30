@@ -13,7 +13,7 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
 
     implementation libraries.casclient
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
 
     testImplementation project(path: ":support:cas-server-support-saml-idp", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-saml-core", configuration: "tests")

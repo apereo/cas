@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.util.serialization.SerializationUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -52,6 +53,13 @@ public class TimeoutExpirationPolicyTests {
     public void verifyTicketIsExpired() {
         ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils.getAuthentication(), new TimeoutExpirationPolicy(-100));
         assertTrue(ticket.isExpired());
+    }
+
+    @Test
+    public void verifySerialization() {
+        val result = SerializationUtils.serialize(expirationPolicy);
+        val policyRead = SerializationUtils.deserialize(result, TimeoutExpirationPolicy.class);
+        assertEquals(expirationPolicy, policyRead);
     }
 
     @Test

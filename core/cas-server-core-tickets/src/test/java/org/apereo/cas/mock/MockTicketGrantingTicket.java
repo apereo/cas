@@ -62,20 +62,22 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     @Setter
     private ExpirationPolicy expirationPolicy = new TicketGrantingTicketExpirationPolicy(100, 100);
 
-    public MockTicketGrantingTicket(final String principalId, final Credential c, final Map<String, List<Object>> attributes) {
-        this(principalId, c, attributes, Map.of());
+    public MockTicketGrantingTicket(final String principalId, final Credential c,
+                                    final Map<String, List<Object>> principalAttributes) {
+        this(principalId, c, principalAttributes, Map.of());
     }
 
-    public MockTicketGrantingTicket(final String principalId, final Map<String, List<Object>> attributes,
+    public MockTicketGrantingTicket(final String principalId, final Map<String, List<Object>> principalAttributes,
                                     final Map<String, List<Object>> authnAttributes) {
-        this(principalId, CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"),
-            attributes, authnAttributes);
+        this(principalId,
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"),
+            principalAttributes, authnAttributes);
     }
-    public MockTicketGrantingTicket(final String principalId, final Credential c, final Map<String, List<Object>> attributes,
+    public MockTicketGrantingTicket(final String principalId, final Credential c, final Map<String, List<Object>> principalAttributes,
                                     final Map<String, List<Object>> authnAttributes) {
         id = ID_GENERATOR.getNewTicketId("TGT");
         val metaData = new BasicCredentialMetaData(c);
-        val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(principalId, attributes);
+        val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(principalId, principalAttributes);
         authentication = new DefaultAuthenticationBuilder(principal)
             .addCredential(metaData)
             .setAttributes(authnAttributes)
@@ -91,8 +93,10 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
         this(principal, new HashMap<>());
     }
 
-    public MockTicketGrantingTicket(final String principal, final Map attributes) {
-        this(principal, CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"), attributes);
+    public MockTicketGrantingTicket(final String principal, final Map principalAttributes) {
+        this(principal,
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"),
+            principalAttributes);
     }
 
     public ServiceTicket grantServiceTicket(final Service service) {

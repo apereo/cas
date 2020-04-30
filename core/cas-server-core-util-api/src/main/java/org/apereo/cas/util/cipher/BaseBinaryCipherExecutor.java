@@ -3,6 +3,7 @@ package org.apereo.cas.util.cipher;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.DecryptionException;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -13,9 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -74,14 +73,13 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     }
 
     @Override
-    @SneakyThrows
     public byte[] decode(final byte[] value, final Object[] parameters) {
-        val verifiedValue = verifySignature(value);
-        val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
-        aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey, IV_SPEC);
         try {
+            val verifiedValue = verifySignature(value);
+            val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
+            aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey, IV_SPEC);
             return aesCipher.doFinal(verifiedValue);
-        } catch (final IllegalBlockSizeException | BadPaddingException e) {
+        } catch (final Exception e) {
             if (LOGGER.isTraceEnabled()) {
                 throw new DecryptionException(e);
             }

@@ -60,6 +60,7 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
         properties.put("hibernate.connection.useUnicode", Boolean.TRUE);
         properties.put("hibernate.connection.characterEncoding", StandardCharsets.UTF_8.name());
         properties.put("hibernate.connection.charSet", StandardCharsets.UTF_8.name());
+        properties.put(Environment.AUTOCOMMIT, jpaProperties.isAutocommit());
         properties.put("hibernate.jdbc.time_zone", "UTC");
         if (StringUtils.isNotBlank(jpaProperties.getPhysicalNamingStrategyClassName())) {
             try {

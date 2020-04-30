@@ -38,6 +38,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public abstract class AbstractServicesManager implements ServicesManager {
 
     private final ServiceRegistry serviceRegistry;
@@ -133,7 +134,6 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .sorted()
             .peek(RegisteredService::initialize)
             .collect(Collectors.toList());
-
     }
 
     @Override
@@ -170,9 +170,6 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .collect(Collectors.toList());
     }
 
-    /**
-     * Load services that are provided by the DAO.
-     */
     @Override
     public Collection<RegisteredService> load() {
         LOGGER.trace("Loading services from [{}]", serviceRegistry.getName());
