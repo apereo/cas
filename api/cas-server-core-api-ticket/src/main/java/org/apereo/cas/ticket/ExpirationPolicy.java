@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
@@ -62,5 +63,6 @@ public interface ExpirationPolicy extends Serializable {
      *
      * @return the clock
      */
+    @JsonIgnore
     Clock getClock();
 }
