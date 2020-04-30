@@ -27,6 +27,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-trusted-mfa")
     testImplementation project(":support:cas-server-support-reports")
     testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-services")
