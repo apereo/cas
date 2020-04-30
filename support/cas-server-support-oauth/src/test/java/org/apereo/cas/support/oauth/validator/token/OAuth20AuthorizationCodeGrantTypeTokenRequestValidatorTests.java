@@ -29,6 +29,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -125,6 +126,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
             .ticketRegistry(mockingTicketRegistry)
             .webApplicationServiceServiceFactory(new WebApplicationServiceFactory())
             .registeredServiceAccessStrategyEnforcer(new RegisteredServiceAccessStrategyAuditableEnforcer())
+            .sessionStore(new JEESessionStore())
             .build();
 
         this.validator = new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(context);
