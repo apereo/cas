@@ -44,18 +44,22 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     @Override
     public OneTimeTokenAccount get(final String username) {
         try {
-            val r = this.entityManager.createQuery("SELECT r FROM "
-                + ENTITY_NAME + " r where r.username = :username", JpaGoogleAuthenticatorAccount.class)
-                .setParameter("username", username)
-                .getSingleResult();
-            this.entityManager.detach(r);
-            return decode(r);
+            val account = fetchAccount(username);
+            this.entityManager.detach(account);
+            return decode(account);
         } catch (final NoResultException e) {
             LOGGER.debug("No record could be found for google authenticator id [{}]", username);
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
         }
         return null;
+    }
+
+    private JpaGoogleAuthenticatorAccount fetchAccount(final String username) {
+        return this.entityManager.createQuery("SELECT r FROM "
+            + ENTITY_NAME + " r where r.username = :username", JpaGoogleAuthenticatorAccount.class)
+            .setParameter("username", username)
+            .getSingleResult();
     }
 
     @Override
@@ -106,10 +110,9 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
 
     @Override
     public void delete(final String username) {
-        val count = this.entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE r.username= :username")
-            .setParameter("username", username)
-            .executeUpdate();
-        LOGGER.debug("Deleted [{}] record(s)", count);
+        val acct = fetchAccount(username);
+        this.entityManager.remove(acct);
+        LOGGER.debug("Deleted account record for [{}]", username);
     }
 
     @Override

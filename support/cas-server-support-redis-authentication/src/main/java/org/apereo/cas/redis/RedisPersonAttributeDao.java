@@ -67,7 +67,7 @@ public class RedisPersonAttributeDao extends BasePersonAttributeDao {
     public Set<String> getPossibleUserAttributeNames(final IPersonAttributeDaoFilter filter) {
         return new LinkedHashSet<>(0);
     }
-
+    
     @Override
     public Set<String> getAvailableQueryAttributes(final IPersonAttributeDaoFilter filter) {
         return new LinkedHashSet<>(0);

@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    RestfulServiceRegistryTests.RestServicesTestConfiguration.class,
+    RestfulServiceRegistryTests.RestfulServiceRegistryTestConfiguration.class,
     CasCoreServicesConfiguration.class,
     RestServiceRegistryConfiguration.class,
     CasCoreUtilConfiguration.class,
@@ -86,7 +86,7 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @TestConfiguration
-    public static class RestServicesTestConfiguration {
+    public static class RestfulServiceRegistryTestConfiguration {
 
         @RestController("servicesController")
         @RequestMapping("/")
