@@ -26,7 +26,7 @@ public class ChainingServicesManagerTests extends AbstractServicesManagerTests {
 
     @Test
     public void verifySupports() {
-        var r = new RegexRegisteredService();
+        val r = new RegexRegisteredService();
         r.setId(10);
         r.setName("domainService1");
         r.setServiceId("https://www.example.com/one");
