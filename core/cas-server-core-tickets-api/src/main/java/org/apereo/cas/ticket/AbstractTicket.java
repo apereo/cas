@@ -17,7 +17,6 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 

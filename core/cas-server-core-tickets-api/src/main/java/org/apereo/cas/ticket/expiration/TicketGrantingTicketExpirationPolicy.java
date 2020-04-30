@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.expiration;
 import org.apereo.cas.ticket.TicketState;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Builder;
@@ -14,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.Assert;
 
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
