@@ -18,6 +18,7 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectory;
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectoryClientBuilder;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -85,23 +86,24 @@ public class CloudDirectoryAuthenticationConfiguration {
     @RefreshScope
     public AmazonCloudDirectory amazonCloudDirectory() {
         val cloud = casProperties.getAuthn().getCloudDirectory();
-
-        val endpoint = new AwsClientBuilder.EndpointConfiguration(
-            cloud.getEndpoint(), cloud.getRegion());
-        return AmazonCloudDirectoryClientBuilder
+        val builder = AmazonCloudDirectoryClientBuilder
             .standard()
             .withCredentials(ChainingAWSCredentialsProvider.getInstance(cloud.getCredentialAccessKey(),
                 cloud.getCredentialSecretKey(), cloud.getCredentialsPropertiesFile(),
-                cloud.getProfilePath(), cloud.getProfileName()))
-            .withRegion(cloud.getRegion())
-            .withEndpointConfiguration(endpoint)
-            .build();
-
+                cloud.getProfilePath(), cloud.getProfileName()));
+        val endpoint = new AwsClientBuilder.EndpointConfiguration(
+            cloud.getEndpoint(), cloud.getRegion());
+        builder.withEndpointConfiguration(endpoint);
+        if (StringUtils.isBlank(cloud.getEndpoint())) {
+            builder.withRegion(cloud.getRegion());
+        }
+        return builder.build();
     }
 
     @ConditionalOnMissingBean(name = "cloudDirectoryAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer cloudDirectoryAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(cloudDirectoryAuthenticationHandler(), defaultPrincipalResolver.getObject());
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(cloudDirectoryAuthenticationHandler(),
+            defaultPrincipalResolver.getObject());
     }
 }
