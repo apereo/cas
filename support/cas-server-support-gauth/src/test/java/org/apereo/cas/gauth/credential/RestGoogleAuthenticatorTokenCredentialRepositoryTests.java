@@ -86,7 +86,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         val account = repo.create(UUID.randomUUID().toString());
         val entity = MAPPER.writeValueAsString(account);
         try (val webServer = new MockWebServer(8552,
-            new ByteArrayResource(entity.getBytes(UTF_8), "Output"), OK)) {
+            new ByteArrayResource(entity.getBytes(UTF_8), "Results"), OK)) {
             webServer.start();
             assertNotNull(repo.get(account.getUsername()));
         }
