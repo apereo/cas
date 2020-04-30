@@ -50,17 +50,15 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCookieConfiguration.class,
-    CasCoreConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreUtilConfiguration.class,
     RestServicesConfiguration.class
 }, properties = {
     "cas.rest.attribute-name=attr-name",
-    "cas.rest.attribute-value=attr-name"
+    "cas.rest.attribute-value=attr-v"
 })
 public class RestServicesConfigurationTests {
     @Autowired
