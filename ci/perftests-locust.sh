@@ -22,22 +22,25 @@ echo -e "***********************************************"
 echo -e "Build started at `date`"
 echo -e "***********************************************"
 
-echo -e "Python version is: `python3 --version`\n"
+echo -e "Switching Python version..."
+pyenv global 3.6.3
+
+echo -e "Python version is: `python --version`\n"
 
 cd etc/loadtests/locust
 echo -e "Current directory contains: \n\n`ls`"
 
 echo -e "Installing virtual environment..."
-pip3 install virtualenv
+pip install virtualenv
 
 echo -e "Configuring virtual environment for mylocustenv..."
 virtualenv mylocustenv
 
 echo -e "Installing requirements..."
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 
 echo -e "Installing locust..."
-pip3 install locustio
+pip install locustio
 
 echo -e "\nRunning locust...\n"
 locust -f cas/casLocust.py --no-web --host=https://casserver.herokuapp.com --hatch-rate 3 --clients 10 --run-time 5s --exit-code-on-error 1
