@@ -52,10 +52,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasPersonDirectoryTestConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 public abstract class BaseAcceptableUsagePolicyActionTests {
-    public abstract void verifyAction() throws Exception;
 }

@@ -23,7 +23,7 @@ echo -e "Build started at `date`"
 echo -e "***********************************************"
 
 echo -e "Switching Python version..."
-pyenv global 3.6.3
+pyenv global 3.8.1
 
 echo -e "Python version is: `python --version`\n"
 

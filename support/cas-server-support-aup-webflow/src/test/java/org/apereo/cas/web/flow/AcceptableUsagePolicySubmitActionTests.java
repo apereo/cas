@@ -33,7 +33,6 @@ public class AcceptableUsagePolicySubmitActionTests extends BaseAcceptableUsageP
     @Qualifier("acceptableUsagePolicySubmitAction")
     private Action acceptableUsagePolicySubmitAction;
 
-    @Override
     @Test
     @SneakyThrows
     public void verifyAction() {
