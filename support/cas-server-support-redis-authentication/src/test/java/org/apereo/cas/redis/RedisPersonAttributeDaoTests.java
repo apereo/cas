@@ -27,8 +27,6 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -37,7 +35,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import redis.embedded.RedisServer;
 
 import java.util.HashMap;
 
@@ -50,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Redis")
-@EnabledIfPortOpen(port = 6329)
+@EnabledIfPortOpen(port = 6379)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     RedisAuthenticationConfiguration.class,
@@ -75,29 +72,16 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "cas.authn.attributeRepository.redis[0].host=localhost",
-        "cas.authn.attributeRepository.redis[0].port=6329"
+        "cas.authn.attributeRepository.redis[0].port=6379"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RedisPersonAttributeDaoTests {
-    private static RedisServer REDIS_SERVER;
-
     @Autowired
     @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @BeforeAll
-    public static void startRedis() throws Exception {
-        REDIS_SERVER = new RedisServer(6329);
-        REDIS_SERVER.start();
-    }
-
-    @AfterAll
-    public static void stopRedis() {
-        REDIS_SERVER.stop();
-    }
 
     @BeforeEach
     public void initialize() {
