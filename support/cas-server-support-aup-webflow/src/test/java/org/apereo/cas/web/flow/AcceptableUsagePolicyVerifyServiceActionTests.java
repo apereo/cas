@@ -65,7 +65,7 @@ public class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptabl
         WebUtils.putRegisteredService(context, registeredService);
         WebUtils.putServiceIntoFlowScope(context, service);
 
-        assertNotNull(acceptableUsagePolicyVerifyAction.execute(context));
+        assertNull(acceptableUsagePolicyVerifyAction.execute(context));
     }
 
     @Test
