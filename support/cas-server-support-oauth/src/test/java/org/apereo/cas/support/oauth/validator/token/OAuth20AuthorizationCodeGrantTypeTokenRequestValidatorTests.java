@@ -52,7 +52,9 @@ import static org.mockito.Mockito.*;
 @DirtiesContext
 public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends AbstractOAuth20Tests {
     private static final String SUPPORTING_SERVICE_TICKET = "OC-SUPPORTING";
+
     private static final String NON_SUPPORTING_SERVICE_TICKET = "OC-NON-SUPPORTING";
+
     private static final String PROMISCUOUS_SERVICE_TICKET = "OC-PROMISCUOUS";
 
     private OAuth20TokenRequestValidator validator;
@@ -143,7 +145,8 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
         profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
         val session = request.getSession(true);
         assertNotNull(session);
-        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        session.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
         request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
@@ -161,13 +164,15 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
         request.setParameter(OAuth20Constants.CODE, NON_SUPPORTING_SERVICE_TICKET);
         request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL2);
         profile.setId(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
-        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        session.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
         assertFalse(this.validator.validate(new JEEContext(request, response)));
 
         request.setParameter(OAuth20Constants.CODE, PROMISCUOUS_SERVICE_TICKET);
         profile.setId(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
         request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL3);
-        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        session.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
         assertTrue(this.validator.validate(new JEEContext(request, response)));
     }
 }

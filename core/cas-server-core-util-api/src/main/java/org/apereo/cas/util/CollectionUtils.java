@@ -531,6 +531,20 @@ public class CollectionUtils {
     }
 
     /**
+     * Wrap linked hash map.
+     *
+     * @param <T>    the type parameter
+     * @param key    the key
+     * @param source the source
+     * @return the array list
+     */
+    public static <T> Map<String, T> wrapLinkedHashMap(final String key, final T source) {
+        val list = new LinkedHashMap<String, T>(MAP_SIZE);
+        list.put(key, source);
+        return list;
+    }
+
+    /**
      * As multi value map.
      *
      * @param innerMap the inner map

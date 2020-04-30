@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.val;
@@ -113,7 +114,9 @@ public class OidcAuthorizationRequestSupportTests {
         request.setRequestURI("https://www.example.org");
         request.setQueryString("param=value");
         val context = new JEEContext(request, new MockHttpServletResponse(), mock(SessionStore.class));
-        context.setRequestAttribute(Pac4jConstants.USER_PROFILES, new CommonProfile());
+        val profile = new CommonProfile();
+        context.setRequestAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
         assertTrue(OidcAuthorizationRequestSupport.isAuthenticationProfileAvailable(context).isPresent());
     }
 

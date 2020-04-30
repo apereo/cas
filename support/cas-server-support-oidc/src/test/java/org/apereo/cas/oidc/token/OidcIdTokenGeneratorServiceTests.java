@@ -61,7 +61,8 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         profile.setClientName("OIDC");
         profile.setId("casuser");
 
-        request.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        request.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         val response = new MockHttpServletResponse();
 
@@ -111,7 +112,8 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         val profile = new CommonProfile();
         profile.setClientName("OIDC");
         profile.setId("casuser");
-        request.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        request.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         val response = new MockHttpServletResponse();
 
@@ -152,7 +154,8 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         val profile = new CommonProfile();
         profile.setClientName("OIDC");
         profile.setId("casuser");
-        request.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        request.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         val response = new MockHttpServletResponse();
 
