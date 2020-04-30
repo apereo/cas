@@ -39,7 +39,7 @@ locust -f cas/casLocust.py --host=https://cas.example.org
 [2017-05-02 16:31:49,744] test/INFO/locust.main: Starting Locust 0.8a2
 ```
 
-Navigate to [http://localhost:8089](`http://localhost:8089`) and proceed with starting the test swarm.
+Navigate to [http://localhost:8089](http://localhost:8089) and proceed with starting the test swarm.
 
 For additional options, use:
 

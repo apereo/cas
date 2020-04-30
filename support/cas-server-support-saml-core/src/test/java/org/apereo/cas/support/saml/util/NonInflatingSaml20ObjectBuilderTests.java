@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.util;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CoreSamlConfigurationTests;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.util.EncodingUtils;
@@ -18,6 +19,8 @@ import org.opensaml.core.xml.schema.XSInteger;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.XSURI;
 import org.opensaml.saml.saml2.core.NameID;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.security.PrivateKey;
@@ -39,8 +42,11 @@ import static org.mockito.Mockito.*;
  */
 @Tag("SAML")
 @SpringBootTest(classes = CoreSamlConfigurationTests.SharedTestConfiguration.class)
-public class NonInflatingSaml20ObjectBuilderTests extends CoreSamlConfigurationTests {
-
+public class NonInflatingSaml20ObjectBuilderTests {
+    @Autowired
+    @Qualifier("shibboleth.OpenSAMLConfig")
+    private OpenSamlConfigBean openSamlConfigBean;
+    
     @Test
     public void verifyAttrValueTypeString() {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
@@ -126,7 +132,8 @@ public class NonInflatingSaml20ObjectBuilderTests extends CoreSamlConfigurationT
         val attr3 = builder.newAttribute("cn-name", "cn",
             List.of("casuser"),
             formats, "basic", Map.of());
-        assertNull(attr3);
+        assertNotNull(attr3);
+        assertNull(attr3.getNameFormat());
     }
 
     @Test
@@ -142,7 +149,6 @@ public class NonInflatingSaml20ObjectBuilderTests extends CoreSamlConfigurationT
     @Test
     public void verifyQName() {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
-        builder.getSamlObjectQName(Object.class);
         assertThrows(IllegalStateException.class,
             () -> builder.getSamlObjectQName(Object.class));
     }
