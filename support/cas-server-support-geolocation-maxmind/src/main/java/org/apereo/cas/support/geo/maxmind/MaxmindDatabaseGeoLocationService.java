@@ -23,11 +23,16 @@ import java.net.InetAddress;
 @RequiredArgsConstructor
 public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationService {
     private final DatabaseReader cityDatabaseReader;
+
     private final DatabaseReader countryDatabaseReader;
 
     @Override
     public GeoLocationResponse locate(final InetAddress address) {
         try {
+            if (cityDatabaseReader == null && countryDatabaseReader == null) {
+                throw new IllegalArgumentException("No geolocation services have been defined for Maxmind");
+            }
+
             val location = new GeoLocationResponse();
             if (this.cityDatabaseReader != null) {
                 val response = this.cityDatabaseReader.city(address);
