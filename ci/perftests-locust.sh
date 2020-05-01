@@ -43,7 +43,7 @@ echo -e "Installing locust..."
 pip install locustio
 
 echo -e "\nRunning locust...\n"
-locust -f cas/casLocust.py --no-web --host=https://casserver.herokuapp.com --hatch-rate 3 --clients 10 --run-time 5s --exit-code-on-error 1
+locust -f cas/casLocust.py --no-web --host=https://casserver.herokuapp.com --hatch-rate 3 --clients 10 --run-time 30s --exit-code-on-error 1
 
 retVal=$?
 
