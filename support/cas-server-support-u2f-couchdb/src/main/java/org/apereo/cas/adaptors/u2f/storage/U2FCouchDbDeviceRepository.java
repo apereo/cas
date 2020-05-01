@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -18,6 +19,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -30,13 +32,19 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 @Setter
-public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository {
+public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository implements DisposableBean {
 
     private final U2FDeviceRegistrationCouchDbRepository couchDb;
     private final long expirationTime;
     private final TimeUnit expirationTimeUnit;
     private boolean asynchronous;
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor(
+        new ThreadFactory() {
+            @Override
+            public Thread newThread(final Runnable r) {
+                return new Thread(r, "U2FCouchDbDeviceRepositoryThread");
+            }
+        });
 
     public U2FCouchDbDeviceRepository(final LoadingCache<String, String> requestStorage, final U2FDeviceRegistrationCouchDbRepository couchDb,
                                       final long expirationTime, final TimeUnit expirationTimeUnit, final boolean asynchronous) {
@@ -103,5 +111,10 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository {
         } else {
             couchDb.deleteAll();
         }
+    }
+
+    @Override
+    public void destroy() {
+        this.executorService.shutdown();
     }
 }
