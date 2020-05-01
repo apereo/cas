@@ -57,9 +57,6 @@ public abstract class BaseCasSamlSPConfigurationTests {
     public static void beforeThisClass() throws Exception {
         BaseSamlIdPConfigurationTests.setMetadataDirectory(
             new FileSystemResource(new File(FileUtils.getTempDirectory(), "idp-metadata-sps")));
-        if (BaseSamlIdPConfigurationTests.getMetadataDirectory().exists()) {
-            FileUtils.deleteDirectory(BaseSamlIdPConfigurationTests.getMetadataDirectory().getFile());
-        }
     }
 
     @AfterEach
