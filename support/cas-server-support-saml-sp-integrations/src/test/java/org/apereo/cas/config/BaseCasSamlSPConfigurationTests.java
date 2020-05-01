@@ -4,8 +4,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
-import lombok.val;
-import org.apache.commons.lang3.NotImplementedException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -42,7 +40,7 @@ public abstract class BaseCasSamlSPConfigurationTests {
         registry.add("cas.samlSp." + SERVICE_PROVIDER + ".nameIdAttribute", () -> "cn");
         registry.add("cas.samlSp." + SERVICE_PROVIDER + ".nameIdFormat", () -> "transient");
     }
-    
+
     @AfterEach
     public void afterEach() {
         servicesManager.deleteAll();
