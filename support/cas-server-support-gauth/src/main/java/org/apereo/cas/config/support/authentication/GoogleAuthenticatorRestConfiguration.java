@@ -5,6 +5,7 @@ import org.apereo.cas.gauth.rest.GoogleAuthenticatorRestHttpRequestCredentialFac
 import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,7 @@ import org.springframework.context.annotation.Configuration;
 public class GoogleAuthenticatorRestConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean(name = "googleAuthenticatorRestHttpRequestCredentialFactoryConfigurer")
     public RestHttpRequestCredentialFactoryConfigurer googleAuthenticatorRestHttpRequestCredentialFactoryConfigurer() {
         return factory -> factory.registerCredentialFactory(new GoogleAuthenticatorRestHttpRequestCredentialFactory());
     }
