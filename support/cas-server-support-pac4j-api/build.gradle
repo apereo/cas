@@ -1,5 +1,8 @@
-description = "Apereo CAS Support for Pac4j"
+description = "Apereo CAS Support for Pac4j APIs"
 dependencies {
+    implementation libraries.pac4jcore
+    implementation libraries.nimbus
+
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-util-api")
@@ -9,10 +12,7 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-services-authentication")
-
-    implementation libraries.pac4jcore
-    implementation libraries.nimbus
-
+    
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

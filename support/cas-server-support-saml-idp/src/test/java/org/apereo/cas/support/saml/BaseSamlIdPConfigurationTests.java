@@ -170,6 +170,14 @@ public abstract class BaseSamlIdPConfigurationTests {
         return authnRequest;
     }
 
+    public static void setMetadataDirectory(final FileSystemResource metadataDirectory) {
+        METADATA_DIRECTORY = metadataDirectory;
+    }
+
+    public static FileSystemResource getMetadataDirectory() {
+        return METADATA_DIRECTORY;
+    }
+
     protected static SamlRegisteredService getSamlRegisteredServiceForTestShib() {
         return getSamlRegisteredServiceForTestShib(false, false, false);
     }
@@ -277,7 +285,9 @@ public abstract class BaseSamlIdPConfigurationTests {
     })
     public static class SharedTestConfiguration {
         static {
-            METADATA_DIRECTORY = new FileSystemResource("src/test/resources/metadata");
+            if (METADATA_DIRECTORY == null) {
+                METADATA_DIRECTORY = new FileSystemResource("src/test/resources/metadata");
+            }
         }
     }
 }
