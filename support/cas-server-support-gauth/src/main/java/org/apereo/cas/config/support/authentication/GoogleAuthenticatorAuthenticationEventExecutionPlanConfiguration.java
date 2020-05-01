@@ -117,6 +117,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "googleAuthenticatorMultifactorAuthenticationProvider")
     public MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         val p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
@@ -130,6 +131,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "googleAuthenticatorAuthenticationMetaDataPopulator")
     public AuthenticationMetaDataPopulator googleAuthenticatorAuthenticationMetaDataPopulator() {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
@@ -140,6 +142,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "googleAccountRegistrationAction")
     public Action googleAccountRegistrationAction() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         return new OneTimeTokenAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry.getObject(),

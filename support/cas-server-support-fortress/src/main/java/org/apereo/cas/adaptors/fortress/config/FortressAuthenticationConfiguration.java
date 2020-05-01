@@ -67,6 +67,7 @@ public class FortressAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "fortressAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer fortressAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             LOGGER.debug("Registering fortress authentication event execution plan");
