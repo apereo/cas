@@ -51,7 +51,7 @@ public class CasSamlSPInCommonConfiguration implements InitializingBean {
             new Thread(() -> {
                 LOGGER.debug("Loading InCommon metadata at [{}]...", service.getMetadataLocation());
                 resolver.resolve(service, new CriteriaSet());
-            }).start();
+            }, getClass().getSimpleName()).start();
         }
     }
 }

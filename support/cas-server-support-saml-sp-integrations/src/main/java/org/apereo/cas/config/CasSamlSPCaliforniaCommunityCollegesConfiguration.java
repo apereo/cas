@@ -49,7 +49,7 @@ public class CasSamlSPCaliforniaCommunityCollegesConfiguration implements Initia
             new Thread(() -> {
                 LOGGER.debug("Loading CCC metadata at [{}]...", service.getMetadataLocation());
                 resolver.resolve(service, new CriteriaSet());
-            }).start();
+            }, getClass().getSimpleName()).start();
         }
     }
 }
