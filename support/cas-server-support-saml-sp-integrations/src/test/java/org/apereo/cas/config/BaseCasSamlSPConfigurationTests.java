@@ -35,6 +35,7 @@ public abstract class BaseCasSamlSPConfigurationTests {
     private ServicesManager servicesManager;
 
     @DynamicPropertySource
+    @SuppressWarnings("UnusedMethod")
     private static void configurePropertySource(final DynamicPropertyRegistry registry) {
         registry.add("cas.samlSp." + SERVICE_PROVIDER + ".metadata", () -> "classpath:/metadata/sp-metadata.xml");
         registry.add("cas.samlSp." + SERVICE_PROVIDER + ".nameIdAttribute", () -> "cn");
