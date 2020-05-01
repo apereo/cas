@@ -53,7 +53,7 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
             LdapUtils.newLdaptiveConnectionFactory(gua.getLdap()),
             gua.getLdap().getBaseDn(),
             filter,
-            0,
+            gua.getLdap().getPageSize(),
             new String[]{gua.getLdap().getImageAttribute()},
             ReturnAttributes.ALL_USER.value());
     }

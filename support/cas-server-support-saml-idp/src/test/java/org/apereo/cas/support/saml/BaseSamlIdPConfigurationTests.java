@@ -56,7 +56,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -64,12 +63,16 @@ import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.FileSystemResource;
 
 import java.util.ArrayList;
@@ -83,40 +86,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@SpringBootTest(classes = {
-    BaseSamlIdPConfigurationTests.SamlIdPMetadataTestConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
-    CasCoreAuthenticationPolicyConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationHandlersConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCoreWebflowConfiguration.class,
-    CasWebflowContextConfiguration.class,
-    SamlIdPConfiguration.class,
-    SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
-    SamlIdPEndpointsConfiguration.class,
-    SamlIdPMetadataConfiguration.class,
-    RefreshAutoConfiguration.class,
-    AopAutoConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCookieConfiguration.class,
-    CasCoreValidationConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CoreSamlConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class
-})
+@SpringBootTest(classes = BaseSamlIdPConfigurationTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("SAML")
 public abstract class BaseSamlIdPConfigurationTests {
@@ -176,11 +146,6 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
-
-    @BeforeAll
-    public static void beforeClass() {
-        METADATA_DIRECTORY = new FileSystemResource("src/test/resources/metadata");
-    }
 
     protected static Assertion getAssertion() {
         val attributes = new LinkedHashMap<String, Object>(CoreAuthenticationTestUtils.getAttributes());
@@ -269,6 +234,50 @@ public abstract class BaseSamlIdPConfigurationTests {
                 .append("group", group)
                 .append("type", type)
                 .build();
+        }
+    }
+
+    @ImportAutoConfiguration({
+        RefreshAutoConfiguration.class,
+        MailSenderAutoConfiguration.class,
+        AopAutoConfiguration.class
+    })
+    @SpringBootConfiguration
+    @Import({
+        SamlIdPMetadataTestConfiguration.class,
+        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasCoreWebflowConfiguration.class,
+        CasWebflowContextConfiguration.class,
+        SamlIdPConfiguration.class,
+        SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
+        SamlIdPEndpointsConfiguration.class,
+        SamlIdPMetadataConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCookieConfiguration.class,
+        CasCoreValidationConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CoreSamlConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        CasCoreUtilConfiguration.class
+    })
+    public static class SharedTestConfiguration {
+        static {
+            METADATA_DIRECTORY = new FileSystemResource("src/test/resources/metadata");
         }
     }
 }

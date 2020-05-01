@@ -77,6 +77,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("DynamoDb")
 public class DynamoDbTicketRegistryFacilitatorTests {
 
+    static {
+        System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");
+        System.setProperty("aws.secretKey", "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");
+    }
+    
     @Autowired
     @Qualifier("dynamoDbTicketRegistryFacilitator")
     private DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator;

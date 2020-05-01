@@ -1,5 +1,6 @@
 package org.apereo.cas.couchdb.gauth.credential;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.DocumentNotFoundException;
@@ -16,6 +17,7 @@ import java.util.List;
  * @since 6.0.0
  */
 @View(name = "all", map = "function(doc) { if(doc.secretKey) { emit(doc._id, doc) } }")
+@Slf4j
 public class GoogleAuthenticatorAccountCouchDbRepository extends CouchDbRepositorySupport<CouchDbGoogleAuthenticatorAccount> {
 
     public GoogleAuthenticatorAccountCouchDbRepository(final CouchDbConnector db, final boolean createIfNotExists) {
@@ -45,7 +47,8 @@ public class GoogleAuthenticatorAccountCouchDbRepository extends CouchDbReposito
     public List<CouchDbGoogleAuthenticatorAccount> findByUsername(final String username) {
         try {
             return queryView("by_username", username);
-        } catch (final DocumentNotFoundException ignored) {
+        } catch (final DocumentNotFoundException e) {
+            LOGGER.trace(e.getMessage(), e);
             return null;
         }
     }
@@ -65,6 +68,7 @@ public class GoogleAuthenticatorAccountCouchDbRepository extends CouchDbReposito
      */
     @View(name = "count", map = "function(doc) { if(doc.secretKey) { emit(doc._id, doc) } }", reduce = "_count")
     public long count() {
-        return db.queryView(createQuery("count")).getRows().get(0).getValueAsInt();
+        val rows = db.queryView(createQuery("count")).getRows();
+        return rows.isEmpty() ? 0 : rows.get(0).getValueAsInt();
     }
 }
