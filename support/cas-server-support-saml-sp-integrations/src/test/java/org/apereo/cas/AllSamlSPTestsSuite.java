@@ -67,7 +67,7 @@ import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
 
 /**
- * This is {@link AllTestsSuite}.
+ * This is {@link AllSamlSPTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -136,5 +136,5 @@ import org.junit.runner.RunWith;
     SamlSPUtilsTests.class
 })
 @RunWith(JUnitPlatform.class)
-public class AllTestsSuite {
+public class AllSamlSPTestsSuite {
 }

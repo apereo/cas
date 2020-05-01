@@ -17,4 +17,9 @@ public class CasSamlSPArmsSoftwareConfigurationTests extends BaseCasSamlSPConfig
     public static void beforeAll() {
         SERVICE_PROVIDER = "armsSoftware";
     }
+    
+    @Override
+    protected String getServiceProviderId() {
+        return casProperties.getSamlSp().getArmsSoftware().getEntityIds().get(0);
+    }
 }

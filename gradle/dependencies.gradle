@@ -1993,7 +1993,7 @@ ext.libraries = [
                     
                 }
         ],
-        pac4j                   : [
+        pac4joidcoauth                   : [
                 dependencies.create("org.pac4j:pac4j-oidc:$pac4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")

@@ -17,4 +17,9 @@ public class CasSamlSPCraniumCafeConfigurationTests extends BaseCasSamlSPConfigu
     public static void beforeAll() {
         SERVICE_PROVIDER = "craniumCafe";
     }
+
+    @Override
+    protected String getServiceProviderId() {
+        return casProperties.getSamlSp().getCraniumCafe().getEntityIds().get(0);
+    }
 }

@@ -36,7 +36,7 @@ dependencies {
     implementation libraries.pac4jcore
     implementation libraries.shibutiljavasupport
 
-    testImplementation libraries.pac4j
+    testImplementation libraries.pac4joidcoauth
     testImplementation libraries.pac4jsaml
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

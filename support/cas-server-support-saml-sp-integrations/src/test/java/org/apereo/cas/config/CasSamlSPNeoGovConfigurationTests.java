@@ -15,6 +15,11 @@ import org.springframework.context.annotation.Import;
 public class CasSamlSPNeoGovConfigurationTests extends BaseCasSamlSPConfigurationTests {
     @BeforeAll
     public static void beforeAll() {
-        SERVICE_PROVIDER = "neogov";
+        SERVICE_PROVIDER = "neoGov";
+    }
+
+    @Override
+    protected String getServiceProviderId() {
+        return casProperties.getSamlSp().getNeoGov().getEntityIds().get(0);
     }
 }

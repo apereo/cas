@@ -20,15 +20,16 @@ dependencies {
     implementation project(":support:cas-server-support-pac4j-core-clients")
     implementation project(":support:cas-server-support-pac4j-core")
     
-    implementation libraries.pac4j
-    implementation libraries.pac4jsaml
-    implementation libraries.pac4jcore
-    implementation libraries.pac4jcas
+    api libraries.pac4joidcoauth
+    api libraries.pac4jsaml
+    api libraries.pac4jcore
+    api libraries.pac4jcas
+    api libraries.opensaml
+    api libraries.shibutiljavasupport
+    
     implementation libraries.nimbus
     implementation libraries.apachevelocity
-    implementation libraries.opensaml
     implementation libraries.dropwizard
-    implementation libraries.shibutiljavasupport
     
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-authentication")
