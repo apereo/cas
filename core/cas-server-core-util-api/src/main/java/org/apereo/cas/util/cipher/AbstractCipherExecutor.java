@@ -8,25 +8,41 @@ import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.provider.JCEECPrivateKey;
+import org.bouncycastle.jce.provider.JCEECPublicKey;
+import org.jooq.lambda.Unchecked;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.RsaKeyUtil;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.Key;
 import java.security.KeyFactory;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
+import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
+import java.security.spec.ECGenParameterSpec;
+import java.security.spec.ECParameterSpec;
+import java.security.spec.ECPoint;
+import java.security.spec.ECPublicKeySpec;
+import java.security.spec.EllipticCurve;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Abstract cipher to provide common operations around signing objects.
@@ -42,8 +58,131 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
     private static final int MAP_SIZE = 8;
     private static final BigInteger RSA_PUBLIC_KEY_EXPONENT = BigInteger.valueOf(65537);
 
+    private static Map<PrivateKey, PublicKey> KEYPAIRMAP = new LinkedHashMap<>();
+
+    @RequiredArgsConstructor
+    private static class CasECParameterSpec {
+        private int cofactor;
+        private EllipticCurve curve;
+        private ECPoint generator;
+        private BigInteger order;
+
+        CasECParameterSpec(final ECParameterSpec param) {
+            this.cofactor = param.getCofactor();
+            this.curve = param.getCurve();
+            this.generator = param.getGenerator();
+            this.order = param.getOrder();
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (obj != null && obj instanceof CasECParameterSpec) {
+                val spec2 = (CasECParameterSpec) obj;
+                return this.cofactor == spec2.cofactor
+                    && this.curve.equals(spec2.curve)
+                    && this.generator.equals(spec2.generator)
+                    && this.order.equals(spec2.order);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return Integer.valueOf(cofactor).hashCode()
+                   ^ this.curve.hashCode()
+                   ^ this.generator.hashCode()
+                   ^ this.order.hashCode();
+        }
+    }
+
+    @FunctionalInterface
+    private interface SignJwsAlgorithmLookupInterface {
+        EncodingUtils.SignJwsAlgorithm getSignJwsAlgorithm(Key key);
+    }
+
+    @FunctionalInterface
+    private interface GeneratePublicKeyFromPrivateKeyInterface {
+        PublicKey generatePublicKey(PrivateKey privateKey)
+            throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException;
+    }
+
+    private static Map<String, SignJwsAlgorithmLookupInterface> SIGN_JWS_ALGORITHM_LOOKUP_INTERFACE_MAP = new LinkedHashMap<>();
+
+    private static Map<CasECParameterSpec, EncodingUtils.SignJwsAlgorithm> SIGN_JWS_ALGORITHM_EC_MAP = new LinkedHashMap<>();
+
+    private static final Map<String, GeneratePublicKeyFromPrivateKeyInterface> GENERATE_PUBLIC_KEY_FROM_PRIVATE_KEY_INTERFACE_MAP
+        = new LinkedHashMap<>();
+
     static {
         Security.addProvider(new BouncyCastleProvider());
+
+        try {
+            /* generate all EC curves parameters for comparision */
+            val keyPairGenerator = KeyPairGenerator.getInstance("EC");
+
+            keyPairGenerator.initialize(new ECGenParameterSpec("secp256r1"));
+            val secp256r1 = new CasECParameterSpec(((ECPrivateKey) keyPairGenerator.genKeyPair().getPrivate()).getParams());
+            SIGN_JWS_ALGORITHM_EC_MAP.put(secp256r1, EncodingUtils.SIGN_JWS_EC_P256);
+
+            keyPairGenerator.initialize(new ECGenParameterSpec("secp384r1"));
+            val secp384r1 = new CasECParameterSpec(((ECPrivateKey) keyPairGenerator.genKeyPair().getPrivate()).getParams());
+            SIGN_JWS_ALGORITHM_EC_MAP.put(secp384r1, EncodingUtils.SIGN_JWS_EC_P384);
+
+            keyPairGenerator.initialize(new ECGenParameterSpec("secp521r1"));
+            val secp521r1 = new CasECParameterSpec(((ECPrivateKey) keyPairGenerator.genKeyPair().getPrivate()).getParams());
+            SIGN_JWS_ALGORITHM_EC_MAP.put(secp521r1, EncodingUtils.SIGN_JWS_EC_P521);
+
+
+            /* SIGN_JWS_ALGORITHM_LOOKUP_INTERFACE_MAP method definitions */
+            SIGN_JWS_ALGORITHM_LOOKUP_INTERFACE_MAP.put("RSA", key -> EncodingUtils.SIGN_JWS_RSA_SHA512);
+
+            SIGN_JWS_ALGORITHM_LOOKUP_INTERFACE_MAP.put("EC", key -> {
+                if (key != null && key instanceof ECPrivateKey) {
+                    val param = new CasECParameterSpec(((ECPrivateKey) key).getParams());
+                    val result = SIGN_JWS_ALGORITHM_EC_MAP.get((CasECParameterSpec) param);
+                    if (result != null) {
+                        return result;
+                    }
+                }
+                throw new IllegalArgumentException("Unsupported EC parameter");
+            });
+
+
+            /* GENERATE_PUBLIC_KEY_FROM_PRIVATE_KEY_INTERFACE_MAP method definitions */
+            GENERATE_PUBLIC_KEY_FROM_PRIVATE_KEY_INTERFACE_MAP.put("RSA", key -> {
+                val privKey = (RSAPrivateKey) key;
+                val keySpec = new RSAPublicKeySpec(privKey.getModulus(), RSA_PUBLIC_KEY_EXPONENT);
+                val newPubKey = KeyFactory.getInstance("RSA", BouncyCastleProvider.PROVIDER_NAME).generatePublic(keySpec);
+                synchronized(KEYPAIRMAP) {
+                    KEYPAIRMAP.put(privKey, newPubKey);
+                }
+                return newPubKey;
+            });
+
+            GENERATE_PUBLIC_KEY_FROM_PRIVATE_KEY_INTERFACE_MAP.put("EC", key -> {
+                val privKey = new JCEECPrivateKey((ECPrivateKey) key);
+                val ecKeyParam = privKey.getParameters();
+                val ecPointQ = ecKeyParam.getG().multiply(privKey.getD());
+                val bPubKeySpec = new org.bouncycastle.jce.spec.ECPublicKeySpec(ecPointQ, ecKeyParam);
+                val bPubKey = new JCEECPublicKey("EC", bPubKeySpec);
+                val jPubKeySpec = new ECPublicKeySpec(bPubKey.getW(), bPubKey.getParams());
+                val newPubKey = KeyFactory.getInstance("EC").generatePublic(jPubKeySpec);
+                synchronized(KEYPAIRMAP) {
+                    KEYPAIRMAP.put(privKey, newPubKey);
+                }
+                return newPubKey;
+            });
+
+            GENERATE_PUBLIC_KEY_FROM_PRIVATE_KEY_INTERFACE_MAP.put("ECDSA", GENERATE_PUBLIC_KEY_FROM_PRIVATE_KEY_INTERFACE_MAP.get("EC"));
+        } catch (final NoSuchAlgorithmException e) {
+            /* should never reach this line */
+            LOGGER.error("Unable to create KeyPairGenerator");
+            throw new IllegalArgumentException(e);
+        } catch (final InvalidAlgorithmParameterException e) {
+            /* should never reach this line too */
+            LOGGER.error("Unable to create KeyPairGenerator");
+            throw new IllegalArgumentException(e);
+        }
     }
     
     private Key signingKey;
@@ -92,11 +231,11 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         if (this.signingKey == null) {
             return value;
         }
-        if ("RSA".equalsIgnoreCase(this.signingKey.getAlgorithm())) {
-            return EncodingUtils.signJwsRSASha512(this.signingKey, value, this.customHeaders);
-        }
-        return EncodingUtils.signJwsHMACSha512(this.signingKey, value, this.customHeaders);
-
+        val keyAlgorithm = this.signingKey.getAlgorithm();
+        return SIGN_JWS_ALGORITHM_LOOKUP_INTERFACE_MAP
+            .getOrDefault(keyAlgorithm, anyKey -> EncodingUtils.SIGN_JWS_HMAC_SHA512)
+            .getSignJwsAlgorithm(this.signingKey)
+            .signJws(this.signingKey, value, this.customHeaders);
     }
 
     /**
@@ -142,10 +281,17 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
             return value;
         }
         try {
-            if (this.signingKey instanceof RSAPrivateKey) {
-                val privKey = RSAPrivateKey.class.cast(this.signingKey);
-                val keySpec = new RSAPublicKeySpec(privKey.getModulus(), RSA_PUBLIC_KEY_EXPONENT);
-                val pubKey = KeyFactory.getInstance("RSA").generatePublic(keySpec);
+            if (this.signingKey instanceof PrivateKey) {
+                val privKey = (PrivateKey) this.signingKey;
+                PublicKey pubKey = Optional.ofNullable(KEYPAIRMAP.get(privKey))
+                    .orElseGet(Unchecked.supplier(() -> {
+                        val newPubKey = GENERATE_PUBLIC_KEY_FROM_PRIVATE_KEY_INTERFACE_MAP.get(privKey.getAlgorithm())
+                            .generatePublicKey(privKey);
+                        if (newPubKey == null) {
+                            throw new IllegalArgumentException("Unsupported key algorithm");
+                        }
+                        return newPubKey;
+                    }));
                 return EncodingUtils.verifyJwsSignature(pubKey, value);
             }
             return EncodingUtils.verifyJwsSignature(this.signingKey, value);

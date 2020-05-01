@@ -50,11 +50,52 @@ public class EncodingUtils {
      */
     public static final String JSON_WEB_KEY = "k";
 
+    /**
+     * Sign JWS using HMAC_SHA512.
+     */
+    public static final SignJwsAlgorithm SIGN_JWS_HMAC_SHA512 = (key, value, headers) -> signJws(key, value, AlgorithmIdentifiers.HMAC_SHA512, headers);
+    /**
+     * Sign JWS using HMAC_SHA256.
+     */
+    public static final SignJwsAlgorithm SIGN_JWS_HMAC_SHA256 = (key, value, headers) -> signJws(key, value, AlgorithmIdentifiers.HMAC_SHA256, headers);
+    /**
+     * Sign JWS using RSA_SHA512.
+     */
+    public static final SignJwsAlgorithm SIGN_JWS_RSA_SHA512 = (key, value, headers) -> signJws(key, value, AlgorithmIdentifiers.RSA_USING_SHA512, headers);
+    /**
+     * Sign JWS using P-256.
+     */
+    public static final SignJwsAlgorithm SIGN_JWS_EC_P256 = (key, value, headers) -> signJws(key, value, AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256, headers);
+    /**
+     * Sign JWS using P-384.
+     */
+    public static final SignJwsAlgorithm SIGN_JWS_EC_P384 = (key, value, headers) -> signJws(key, value, AlgorithmIdentifiers.ECDSA_USING_P384_CURVE_AND_SHA384, headers);
+    /**
+     * Sign JWS using P-521.
+     */
+    public static final SignJwsAlgorithm SIGN_JWS_EC_P521 = (key, value, headers) -> signJws(key, value, AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512, headers);
+
     private static final Base32 BASE32_CHUNKED_ENCODER = new Base32(76, new byte[]{10});
     private static final Base32 BASE32_UNCHUNKED_ENCODER = new Base32(0, new byte[]{10});
 
     private static final Base64 BASE64_CHUNKED_ENCODER = new Base64(76, new byte[]{10});
     private static final Base64 BASE64_UNCHUNKED_ENCODER = new Base64(0, new byte[]{10});
+
+    /**
+     * functional interface to wrap various signing algorithms.
+     **/
+    @FunctionalInterface
+    public interface SignJwsAlgorithm {
+        /**
+         * Sign jws.
+         *
+         * @param key     the key
+         * @param value   the value
+         * @param headers the headers
+         * @return the byte []
+         */
+        byte[] signJws(Key key, byte[] value, Map<String, Object> headers);
+    }
 
     /**
      * Hex decode string.
@@ -379,43 +420,6 @@ public class EncodingUtils {
     public static Key generateJsonWebKey(final Map<String, Object> params) {
         val jwk = JsonWebKey.Factory.newJwk(params);
         return jwk.getKey();
-    }
-
-
-    /**
-     * Sign jws.
-     *
-     * @param key     the key
-     * @param value   the value
-     * @param headers the headers
-     * @return the byte []
-     */
-    public static byte[] signJwsHMACSha512(final Key key, final byte[] value, final Map<String, Object> headers) {
-        return signJws(key, value, AlgorithmIdentifiers.HMAC_SHA512, headers);
-    }
-
-    /**
-     * Sign jws hmac sha 256.
-     *
-     * @param key     the key
-     * @param value   the value
-     * @param headers the headers
-     * @return the byte [ ]
-     */
-    public static byte[] signJwsHMACSha256(final Key key, final byte[] value, final Map<String, Object> headers) {
-        return signJws(key, value, AlgorithmIdentifiers.HMAC_SHA256, headers);
-    }
-
-    /**
-     * Sign jws.
-     *
-     * @param key     the key
-     * @param value   the value
-     * @param headers the headers
-     * @return the byte []
-     */
-    public static byte[] signJwsRSASha512(final Key key, final byte[] value, final Map<String, Object> headers) {
-        return signJws(key, value, AlgorithmIdentifiers.RSA_USING_SHA512, headers);
     }
 
     /**
