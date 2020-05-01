@@ -109,13 +109,17 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepositoryTests extends Ba
     private GoogleAuthenticatorAccountCouchDbRepository couchDbRepository;
 
     @BeforeEach
-    public void setUp() {
+    @Override
+    public void initialize() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
+        super.initialize();
     }
 
     @AfterEach
-    public void tearDown() {
+    @Override
+    public void afterEach() {
+        super.afterEach();
         couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
     }
 }
