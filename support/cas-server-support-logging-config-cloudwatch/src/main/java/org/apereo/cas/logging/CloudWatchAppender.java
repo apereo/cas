@@ -313,7 +313,6 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
             }
         }
 
-        //TODO - Here is where the issue is occurring.
         var logSequenceToken = StringUtils.EMPTY;
         var createLogStream = true;
         LOGGER.debug("Attempting to locate the log stream [{}] for group [{}]", logStreamName, logGroupName);

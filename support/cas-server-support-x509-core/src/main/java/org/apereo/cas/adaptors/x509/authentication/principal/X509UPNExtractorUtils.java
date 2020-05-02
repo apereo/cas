@@ -86,7 +86,6 @@ public class X509UPNExtractorUtils {
      * X509Certificate#getSubjectAlternativeNames</a>
      */
     private ASN1Sequence getOtherNameTypeSAN(final List<?> sanItem) {
-        //Should not be the case, but still, a extra "safety" check
         if (sanItem.size() < 2) {
             LOGGER.error("Subject Alternative Name List does not contain at least two required elements. Returning null principal id...");
             return null;

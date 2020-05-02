@@ -185,7 +185,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
         @Autowired
         @Qualifier("principalElectionStrategy")
         private ObjectProvider<PrincipalElectionStrategy> principalElectionStrategy;
-
+  
         @Bean
         public Action testWebflowSerialization() {
             //CHECKSTYLE:OFF
