@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
@@ -115,7 +116,10 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public void deleteAll() {
-        this.redisTemplate.delete(getPatternYubiKeyDevices());
+        val keys = (Set<String>) this.redisTemplate.keys(getPatternYubiKeyDevices());
+        if (keys != null) {
+            this.redisTemplate.delete(keys);
+        }
     }
 
     private Stream<String> getYubiKeyDevicesStream() {
