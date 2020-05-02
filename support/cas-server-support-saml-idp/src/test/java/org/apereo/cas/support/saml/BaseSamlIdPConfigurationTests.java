@@ -28,6 +28,8 @@ import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.SamlIdPConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
+import org.apereo.cas.config.SamlIdPTicketCatalogConfiguration;
+import org.apereo.cas.config.SamlIdpComponentSerializationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -269,6 +271,8 @@ public abstract class BaseSamlIdPConfigurationTests {
         CasCoreWebflowConfiguration.class,
         CasWebflowContextConfiguration.class,
         SamlIdPConfiguration.class,
+        SamlIdpComponentSerializationConfiguration.class,
+        SamlIdPTicketCatalogConfiguration.class,
         SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
         SamlIdPEndpointsConfiguration.class,
         SamlIdPMetadataConfiguration.class,
