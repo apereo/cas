@@ -40,7 +40,7 @@ public class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
             + "Java reflection is used to disable the OpenSAML bootstrapping process. This approach is prone to error, "
             + "and may be revisited in future versions of CAS, "
             + "once the wss4j library opens up its OpenSAML bootstrapping API in more extensible ways";
-        LOGGER.warn(warningMessage);
+        LOGGER.info(warningMessage);
 
         LOGGER.trace("Initializing WS provider configuration...");
         WSProviderConfig.init();

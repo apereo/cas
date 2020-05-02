@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.SecurityTokenServiceTokenFetcherTests;
+import org.apereo.cas.config.CoreWsSecuritySecurityTokenServiceConfigurationTests;
 import org.apereo.cas.ws.idp.web.flow.WSFederationIdentityProviderWebflowConfigurerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -15,6 +16,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     WSFederationIdentityProviderWebflowConfigurerTests.class,
+    CoreWsSecuritySecurityTokenServiceConfigurationTests.class,
     SecurityTokenServiceTokenFetcherTests.class
 })
 @RunWith(JUnitPlatform.class)

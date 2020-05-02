@@ -1,6 +1,7 @@
 package org.apereo.cas.ws.idp.web.flow;
 
 import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
+import org.apereo.cas.config.CasWsSecurityTokenTicketComponentSerializationConfiguration;
 import org.apereo.cas.config.CoreWsSecurityIdentityProviderConfiguration;
 import org.apereo.cas.config.CoreWsSecurityIdentityProviderWebflowConfiguration;
 import org.apereo.cas.config.CoreWsSecuritySecurityTokenServiceConfiguration;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import({
     CasWsSecurityTokenTicketCatalogConfiguration.class,
+    CasWsSecurityTokenTicketComponentSerializationConfiguration.class,
     CoreWsSecuritySecurityTokenServiceConfiguration.class,
     CoreWsSecurityIdentityProviderConfiguration.class,
     CoreWsSecurityIdentityProviderWebflowConfiguration.class,
@@ -32,11 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.authn.wsfedIdp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",
     "cas.authn.wsfedIdp.idp.realmName=CAS",
-
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-
-
+    
     "cas.authn.wsfedIdp.sts.signingKeystoreFile=classpath:ststrust.jks",
     "cas.authn.wsfedIdp.sts.signingKeystorePassword=storepass",
 
