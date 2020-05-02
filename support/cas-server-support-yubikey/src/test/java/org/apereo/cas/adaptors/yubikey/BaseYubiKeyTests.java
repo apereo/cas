@@ -19,6 +19,8 @@ import org.apereo.cas.config.YubiKeyConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.authentication.YubiKeyAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.support.authentication.YubiKeyAuthenticationMultifactorProviderBypassConfiguration;
+import org.apereo.cas.config.support.authentication.YubiKeyComponentSerializationConfiguration;
+import org.apereo.cas.config.support.authentication.YubiKeyRestConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
@@ -48,9 +50,7 @@ import org.springframework.context.annotation.Import;
     properties = {
         "cas.authn.mfa.yubikey.clientId=18423",
         "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As=",
-        "cas.authn.mfa.yubikey.jsonFile=file:/tmp/yubikey.json",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
+        "cas.authn.mfa.yubikey.jsonFile=file:/tmp/yubikey.json"
     })
 @Tag("MFA")
 public abstract class BaseYubiKeyTests {
@@ -68,6 +68,8 @@ public abstract class BaseYubiKeyTests {
         JsonYubiKeyAccountRegistryTests.JsonYubiKeyAccountRegistryTestConfiguration.class,
         YubiKeyAuthenticationEventExecutionPlanConfiguration.class,
         YubiKeyAuthenticationMultifactorProviderBypassConfiguration.class,
+        YubiKeyComponentSerializationConfiguration.class,
+        YubiKeyRestConfiguration.class,
         YubiKeyConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasWebflowContextConfiguration.class,

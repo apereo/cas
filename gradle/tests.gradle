@@ -325,7 +325,7 @@ tasks.withType(Test) {
 
     doFirst {
         maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 4)
-        if (maxParallelForks != 2) {
+        if (maxParallelForks != 4) {
             logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
         }
     }
