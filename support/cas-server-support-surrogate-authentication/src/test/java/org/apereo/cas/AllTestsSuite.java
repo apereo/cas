@@ -1,6 +1,7 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.SurrogateAuthenticationExpirationPolicyBuilderTests;
 import org.apereo.cas.authentication.SurrogateAuthenticationMetaDataPopulatorTests;
 import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessorTests;
 import org.apereo.cas.authentication.SurrogatePrincipalBuilderTests;
@@ -29,6 +30,7 @@ import org.junit.runner.RunWith;
     SurrogateAuthenticationMetaDataPopulatorTests.class,
     SurrogatePrincipalResolverTests.class,
     SurrogatePrincipalBuilderTests.class,
+    SurrogateAuthenticationExpirationPolicyBuilderTests.class,
     SurrogateAuthenticationEventListenerTests.class,
     SurrogateEligibilityVerificationAuditResourceResolverTests.class,
     SurrogateAuthenticationRestHttpRequestCredentialFactoryTests.class,
