@@ -20,6 +20,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.SwivelAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.SwivelAuthenticationMultifactorProviderBypassConfiguration;
+import org.apereo.cas.config.SwivelComponentSerializationConfiguration;
 import org.apereo.cas.config.SwivelConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -86,6 +87,7 @@ public abstract class BaseSwivelAuthenticationTests {
         MultifactorAuthnTrustWebflowConfiguration.class,
 
         SwivelConfiguration.class,
+        SwivelComponentSerializationConfiguration.class,
         SwivelConfiguration.SwivelMultifactorTrustConfiguration.class,
         SwivelAuthenticationMultifactorProviderBypassConfiguration.class,
         SwivelAuthenticationEventExecutionPlanConfiguration.class

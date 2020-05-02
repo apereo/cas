@@ -1,15 +1,9 @@
 package org.apereo.cas.ws.idp.web.flow;
 
 import org.apereo.cas.BaseCoreWsSecurityIdentityProviderConfigurationTests;
-import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
-import org.apereo.cas.config.CasWsSecurityTokenTicketComponentSerializationConfiguration;
-import org.apereo.cas.config.CoreWsSecurityIdentityProviderConfiguration;
-import org.apereo.cas.config.CoreWsSecurityIdentityProviderWebflowConfiguration;
-import org.apereo.cas.config.CoreWsSecuritySecurityTokenServiceConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.MockServletContext;
-import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
@@ -21,10 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
