@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509;
 
+import org.apereo.cas.adaptors.x509.config.X509AuthenticationComponentSerializationConfiguration;
 import org.apereo.cas.adaptors.x509.config.X509AuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -42,6 +43,7 @@ public abstract class BaseX509Tests {
     @SpringBootConfiguration
     @Import({
         X509AuthenticationConfiguration.class,
+        X509AuthenticationComponentSerializationConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,
