@@ -37,6 +37,7 @@ public class YubiKeyAccountRegistryEndpointTests extends BaseYubiKeyTests {
 
     @Test
     public void verifyOperation() {
+        endpoint.deleteAll();
         val username = UUID.randomUUID().toString();
         assertTrue(endpoint.load().isEmpty());
         assertNull(endpoint.get(username));
