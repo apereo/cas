@@ -9,7 +9,6 @@
 language: java
 os: linux
 dist: bionic
-arch: arm64
 services:
   - docker
 branches:

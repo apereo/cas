@@ -32,8 +32,6 @@ import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfigu
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.val;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +44,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import redis.embedded.RedisServer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -102,22 +99,9 @@ public class RedisYubiKeyAccountRegistryTests {
 
     private static final String BAD_TOKEN = "123456";
 
-    private static RedisServer REDIS_SERVER;
-
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")
     private YubiKeyAccountRegistry yubiKeyAccountRegistry;
-
-    @BeforeAll
-    public static void startRedis() throws Exception {
-        REDIS_SERVER = new RedisServer(6111);
-        REDIS_SERVER.start();
-    }
-
-    @AfterAll
-    public static void stopRedis() {
-        REDIS_SERVER.stop();
-    }
 
     @Test
     public void verifyAccountNotRegistered() {
