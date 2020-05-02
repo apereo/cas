@@ -463,7 +463,7 @@
             <property name="id" value="singlelineComment"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Convert single-line comments into Javadocs"/>
             <property name="severity" value="error"/>
-            <property name="format" value="^\s*//\s*.*"/>
+            <property name="format" value="^\s*\/\/(?!CHECKSTYLE)\s*.*"/>
             <property name="message" value="Avoid single-line comments. Turn notes and explanations into public javadocs. "/>
         </module>
 
