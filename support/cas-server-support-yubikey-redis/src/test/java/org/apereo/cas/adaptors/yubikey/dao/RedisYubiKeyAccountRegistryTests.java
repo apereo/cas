@@ -32,6 +32,7 @@ import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfigu
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.val;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,9 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -110,25 +114,45 @@ public class RedisYubiKeyAccountRegistryTests {
 
     @Test
     public void verifyAccountNotRegisteredWithBadToken() {
-        assertFalse(yubiKeyAccountRegistry.registerAccountFor("casuser", BAD_TOKEN));
-        assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuser"));
+        val id = UUID.randomUUID().toString();
+        assertFalse(yubiKeyAccountRegistry.registerAccountFor(id, BAD_TOKEN));
+        assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor(id));
+    }
+
+    @AfterEach
+    public void afterEach() {
+        yubiKeyAccountRegistry.deleteAll();
     }
 
     @Test
     public void verifyAccountRegistered() {
         assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser2", OTP));
-        assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", OTP));
-        assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", OTP + OTP));
-        assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuser"));
-        val account = yubiKeyAccountRegistry.getAccount("casuser");
+
+        val id = UUID.randomUUID().toString();
+        assertTrue(yubiKeyAccountRegistry.registerAccountFor(id, OTP));
+        assertTrue(yubiKeyAccountRegistry.registerAccountFor(id, OTP + OTP));
+        assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor(id));
+        val account = yubiKeyAccountRegistry.getAccount(id);
         account.ifPresent(acct -> assertEquals(2, acct.getDeviceIdentifiers().size()));
     }
 
     @Test
     public void verifyEncryptedAccount() {
-        assertTrue(yubiKeyAccountRegistry.registerAccountFor("encrypteduser", OTP));
-        assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("encrypteduser",
+        val id = UUID.randomUUID().toString();
+        assertTrue(yubiKeyAccountRegistry.registerAccountFor(id, OTP));
+        assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor(id,
             yubiKeyAccountRegistry.getAccountValidator().getTokenPublicId(OTP)));
+    }
+
+    @Test
+    public void verifyAccounts() {
+        val id = UUID.randomUUID().toString();
+        assertTrue(yubiKeyAccountRegistry.registerAccountFor(id, OTP));
+        assertFalse(yubiKeyAccountRegistry.getAccounts().isEmpty());
+        yubiKeyAccountRegistry.delete(id);
+        assertFalse(yubiKeyAccountRegistry.getAccount(id).isPresent());
+        yubiKeyAccountRegistry.deleteAll();
+        assertTrue(yubiKeyAccountRegistry.getAccounts().isEmpty());
     }
 
     @TestConfiguration("RedisYubiKeyAccountRegistryTestConfiguration")
