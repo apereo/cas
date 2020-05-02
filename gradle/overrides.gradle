@@ -18,7 +18,7 @@ ext["springSessionMongoVersion"] = "2.2.1.RELEASE"
 ext["springBootTomcatVersion"] = "9.0.34"
 
 ext["jacksonVersion"] = "2.11.0"
-ext["jacksonCoreVersion"] = "2.10.2"
+ext["jacksonCoreVersion"] = "2.11.0"
 ext["thymeleafVersion"] = "3.0.11.RELEASE"
 ext["thymeleafDialectVersion"] = "2.4.1"
 ext["hsqlVersion"] = "2.5.0"
