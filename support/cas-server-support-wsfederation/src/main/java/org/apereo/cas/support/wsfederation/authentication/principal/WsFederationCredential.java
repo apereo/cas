@@ -50,7 +50,7 @@ public class WsFederationCredential implements Credential {
     private Map<String, List<Object>> attributes;
 
     /**
-     * isValid validates the credential.
+     * Validates the credential.
      *
      * @param expectedAudience the audience that the token was issued to (CAS Server)
      * @param expectedIssuer   the issuer of the token (the IdP)
@@ -66,18 +66,18 @@ public class WsFederationCredential implements Credential {
             LOGGER.warn("Issuer [{}] is invalid since the expected issuer should be [{}]", this.issuer, expectedIssuer);
             return false;
         }
-        val retrievedOnTimeDrift = this.getRetrievedOn().minus(timeDrift, ChronoUnit.MILLIS);
-        if (this.issuedOn.isBefore(retrievedOnTimeDrift)) {
+        val retrievedOnTimeDrift = getRetrievedOn().minus(timeDrift, ChronoUnit.MILLIS);
+        if (getIssuedOn().isBefore(retrievedOnTimeDrift)) {
             LOGGER.warn("Ticket is issued before the allowed drift. Issued on [{}] while allowed drift is [{}]", this.issuedOn, retrievedOnTimeDrift);
             return false;
         }
-        val retrievedOnTimeAfterDrift = this.retrievedOn.plus(timeDrift, ChronoUnit.MILLIS);
-        if (this.issuedOn.isAfter(retrievedOnTimeAfterDrift)) {
-            LOGGER.warn("Ticket is issued after the allowed drift. Issued on [{}] while allowed drift is [{}]", this.issuedOn, retrievedOnTimeAfterDrift);
+        val retrievedOnTimeAfterDrift = getRetrievedOn().plus(timeDrift, ChronoUnit.MILLIS);
+        if (getIssuedOn().isAfter(retrievedOnTimeAfterDrift)) {
+            LOGGER.warn("Ticket is issued after the allowed drift. Issued on [{}] while allowed drift is [{}]", getIssuedOn(), retrievedOnTimeAfterDrift);
             return false;
         }
-        if (this.retrievedOn.isAfter(this.notOnOrAfter)) {
-            LOGGER.warn("Ticket is too late because it's retrieved on [{}] which is after [{}].", this.retrievedOn, this.notOnOrAfter);
+        if (getRetrievedOn().isAfter(this.notOnOrAfter)) {
+            LOGGER.warn("Ticket is too late because it's retrieved on [{}] which is after [{}].", getRetrievedOn(), this.notOnOrAfter);
             return false;
         }
         LOGGER.debug("WsFed Credential is validated for [{}] and [{}].", expectedAudience, expectedIssuer);

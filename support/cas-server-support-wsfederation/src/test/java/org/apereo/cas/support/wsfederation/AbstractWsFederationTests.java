@@ -68,6 +68,7 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
         standardCred.setIssuedOn(ZonedDateTime.now(ZoneOffset.UTC));
         standardCred.setIssuer(ISSUER);
         standardCred.setAudience(AUDIENCE);
+        standardCred.setRetrievedOn(ZonedDateTime.now(ZoneOffset.UTC));
         standardCred.setId("_6257b2bf-7361-4081-ae1f-ec58d4310f61");
         standardCred.setRetrievedOn(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(1));
 
