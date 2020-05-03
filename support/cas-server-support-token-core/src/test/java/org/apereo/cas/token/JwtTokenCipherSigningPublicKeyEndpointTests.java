@@ -4,7 +4,6 @@ import org.apereo.cas.config.TokenCoreConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 
 import lombok.val;
@@ -34,13 +33,9 @@ public class JwtTokenCipherSigningPublicKeyEndpointTests extends AbstractCasEndp
     @Qualifier("jwtTokenCipherSigningPublicKeyEndpoint")
     private JwtTokenCipherSigningPublicKeyEndpoint endpoint;
 
-    @Autowired
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
-
     @Test
     public void verifyOperation() throws Exception {
-        val service = RegisteredServiceTestUtils.getService("https://publickey.service");
+        val service = RegisteredServiceTestUtils.getService("httpJwtTokenCipherSigningPublicKeyEndpointTestss://publickey.service");
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
 
         val signingKey = new DefaultRegisteredServiceProperty();
