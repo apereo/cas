@@ -28,19 +28,17 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceRepository {
-
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .findAndRegisterModules()
+        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
 
     private final U2FMultifactorProperties.Rest restProperties;
-    private final ObjectMapper mapper;
 
     public U2FRestResourceDeviceRepository(final LoadingCache<String, String> requestStorage,
                                            final long expirationTime, final TimeUnit expirationTimeUnit,
                                            final U2FMultifactorProperties.Rest restProperties) {
         super(requestStorage, expirationTime, expirationTimeUnit);
         this.restProperties = restProperties;
-        mapper = new ObjectMapper()
-            .findAndRegisterModules()
-            .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
     }
 
     @Override
@@ -50,7 +48,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
             response = HttpUtils.executeGet(restProperties.getUrl(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
             if (Objects.requireNonNull(response).getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
-                return mapper.readValue(response.getEntity().getContent(),
+                return MAPPER.readValue(response.getEntity().getContent(),
                     new TypeReference<>() {
                     });
             }
@@ -68,7 +66,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
         try (val writer = new StringWriter()) {
             val newDevices = new HashMap<String, List<U2FDeviceRegistration>>();
             newDevices.put(MAP_KEY_DEVICES, list);
-            mapper.writer(new MinimalPrettyPrinter()).writeValue(writer, newDevices);
+            MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, newDevices);
             response = HttpUtils.executePost(restProperties.getUrl(),
                 restProperties.getBasicAuthUsername(),
                 restProperties.getBasicAuthPassword(),

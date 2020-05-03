@@ -27,14 +27,17 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    private final U2F u2f = new U2F();
+    private final U2F u2f;
     private final U2FDeviceRepository u2FDeviceRepository;
 
-    public U2FAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public U2FAuthenticationHandler(final String name,
+                                    final ServicesManager servicesManager,
                                     final PrincipalFactory principalFactory,
                                     final U2FDeviceRepository u2FDeviceRepository,
+                                    final U2F u2f,
                                     final Integer order) {
         super(name, servicesManager, principalFactory, order);
+        this.u2f = u2f;
         this.u2FDeviceRepository = u2FDeviceRepository;
     }
 

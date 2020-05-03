@@ -78,11 +78,9 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class
-}, properties = {
-    "cas.authn.mfa.u2f.json.location=file:src/test/resources/u2f-accounts.json",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
+}, properties =
+    "cas.authn.mfa.u2f.json.location=file:src/test/resources/u2f-accounts.json"
+)
 @DirtiesContext
 @Tag("MFA")
 public class U2FAuthenticationHandlerTests {

@@ -91,7 +91,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
         try {
             val device = new U2FDeviceRegistration();
             device.setUsername(username);
-            device.setRecord(registration.toJson());
+            device.setRecord(registration.toJsonWithAttestationCert());
             device.setCreatedDate(LocalDate.now(ZoneId.systemDefault()));
 
             val devices = readDevicesFromResource();

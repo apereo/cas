@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.yubico.u2f.U2F;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -16,16 +17,14 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@RequiredArgsConstructor
 public class U2FStartAuthenticationAction extends AbstractAction {
 
-    private final U2F u2f = new U2F();
-    private final String serverAddress;
-    private final U2FDeviceRepository u2FDeviceRepository;
+    private final U2F u2f;
 
-    public U2FStartAuthenticationAction(final String serverAddress, final U2FDeviceRepository u2FDeviceRepository) {
-        this.serverAddress = serverAddress;
-        this.u2FDeviceRepository = u2FDeviceRepository;
-    }
+    private final String serverAddress;
+
+    private final U2FDeviceRepository u2FDeviceRepository;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
@@ -35,7 +34,8 @@ public class U2FStartAuthenticationAction extends AbstractAction {
 
         if (!requestData.getSignRequests().isEmpty()) {
             val req = requestData.getSignRequests().get(0);
-            requestContext.getFlowScope().put("u2fAuth", new U2FAuthentication(req.getChallenge(), req.getAppId(), req.getKeyHandle()));
+            val u2fAuth = new U2FAuthentication(req.getChallenge(), req.getAppId(), req.getKeyHandle());
+            requestContext.getFlowScope().put("u2fAuth", u2fAuth);
             return success();
         }
         return error();

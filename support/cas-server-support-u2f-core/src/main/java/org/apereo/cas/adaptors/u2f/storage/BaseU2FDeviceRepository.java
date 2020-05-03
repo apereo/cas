@@ -4,6 +4,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 
@@ -17,16 +18,13 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
+@RequiredArgsConstructor
 public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
 
     private final LoadingCache<String, String> requestStorage;
 
     private CipherExecutor<Serializable, String> cipherExecutor;
-
-    public BaseU2FDeviceRepository(final LoadingCache<String, String> requestStorage) {
-        this.requestStorage = requestStorage;
-    }
-
+    
     @Override
     public String getDeviceRegistrationRequest(final String requestId, final String username) {
         val request = requestStorage.get(requestId);
