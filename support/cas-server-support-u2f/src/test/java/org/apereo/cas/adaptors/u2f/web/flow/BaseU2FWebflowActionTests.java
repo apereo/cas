@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
@@ -23,10 +24,13 @@ import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.config.U2FWebflowConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.authentication.U2FAuthenticationComponentSerializationConfiguration;
+import org.apereo.cas.config.support.authentication.U2FAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.support.authentication.U2FAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.yubico.u2f.U2F;
@@ -103,9 +107,13 @@ public abstract class BaseU2FWebflowActionTests {
         CasCoreTicketsSchedulingConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
+        CasCoreMultifactorAuthenticationConfiguration.class,
+        CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCoreConfiguration.class,
         U2FConfiguration.class,
         U2FAuthenticationComponentSerializationConfiguration.class,
+        U2FAuthenticationEventExecutionPlanConfiguration.class,
+        U2FAuthenticationMultifactorProviderBypassConfiguration.class,
         U2FWebflowConfiguration.class
     })
     public static class SharedTestConfiguration {

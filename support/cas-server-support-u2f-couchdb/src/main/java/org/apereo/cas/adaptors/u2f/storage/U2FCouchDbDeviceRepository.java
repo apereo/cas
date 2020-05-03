@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -35,19 +34,20 @@ import java.util.stream.Collectors;
 public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository implements DisposableBean {
 
     private final U2FDeviceRegistrationCouchDbRepository couchDb;
-    private final long expirationTime;
-    private final TimeUnit expirationTimeUnit;
-    private boolean asynchronous;
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor(
-        new ThreadFactory() {
-            @Override
-            public Thread newThread(final Runnable r) {
-                return new Thread(r, "U2FCouchDbDeviceRepositoryThread");
-            }
-        });
 
-    public U2FCouchDbDeviceRepository(final LoadingCache<String, String> requestStorage, final U2FDeviceRegistrationCouchDbRepository couchDb,
-                                      final long expirationTime, final TimeUnit expirationTimeUnit, final boolean asynchronous) {
+    private final long expirationTime;
+
+    private final TimeUnit expirationTimeUnit;
+
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor(
+        r -> new Thread(r, "U2FCouchDbDeviceRepositoryThread"));
+
+    private boolean asynchronous;
+
+    public U2FCouchDbDeviceRepository(final LoadingCache<String, String> requestStorage,
+                                      final U2FDeviceRegistrationCouchDbRepository couchDb,
+                                      final long expirationTime, final TimeUnit expirationTimeUnit,
+                                      final boolean asynchronous) {
         super(requestStorage);
         this.couchDb = couchDb;
         this.expirationTime = expirationTime;
@@ -72,11 +72,6 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository implemen
 
     @Override
     public void registerDevice(final String username, final DeviceRegistration registration) {
-        authenticateDevice(username, registration);
-    }
-
-    @Override
-    public void authenticateDevice(final String username, final DeviceRegistration registration) {
         val record = new U2FDeviceRegistration();
         record.setUsername(username);
         record.setRecord(getCipherExecutor().encode(registration.toJsonWithAttestationCert()));

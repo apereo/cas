@@ -1,8 +1,10 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.yubico.u2f.data.DeviceRegistration;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -49,5 +51,15 @@ public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
     @Override
     public void requestDeviceAuthentication(final String requestId, final String username, final String registrationJsonData) {
         requestStorage.put(requestId, registrationJsonData);
+    }
+
+    @Override
+    public void authenticateDevice(final String username, final DeviceRegistration registration) {
+        val devices = getRegisteredDevices(username);
+        val matched = devices.stream().anyMatch(d -> d.equals(registration));
+        if (!matched) {
+            throw new AuthenticationException("Failed to authenticate U2F device because "
+                + "no matching record was found. Is device registered?");
+        }
     }
 }

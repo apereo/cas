@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 public abstract class BaseSurrogateAuthenticationServiceTests {
-    public static final String CASUSER = UUID.randomUUID().toString();
+    public static final String CASUSER = "casuser";
 
     public static final String BANDERSON = "banderson";
 
