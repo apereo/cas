@@ -1,7 +1,7 @@
 #!/bin/bash
 
 installJdk11() {
-    installJdk "11.0.6" "10"
+    installJdk "11.0.7" "10"
 }
 
 installJdk() {
