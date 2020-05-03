@@ -64,7 +64,6 @@
         </module>
         <module name="EmptyCatchBlock">
             <property name="severity" value="error"/>
-            <property name="commentFormat" value="This is expected"/>
         </module>
         <module name="ClassFanOutComplexity">
             <property name="max" value="120"/>

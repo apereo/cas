@@ -150,7 +150,9 @@ public class CasCoreUtilConfiguration implements InitializingBean {
                     }
                 }
             } catch (final NoSuchBeanDefinitionException e) {
-                //This is expected
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace("Bean {} not found", beanName);
+                }
             }
 
             return bean;
