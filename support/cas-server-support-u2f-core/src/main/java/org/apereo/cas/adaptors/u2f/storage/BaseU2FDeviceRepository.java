@@ -8,6 +8,7 @@ import com.yubico.u2f.data.DeviceRegistration;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serializable;
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@Slf4j
 public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
 
     private final LoadingCache<String, String> requestStorage;
@@ -56,10 +58,11 @@ public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
     @Override
     public void authenticateDevice(final String username, final DeviceRegistration registration) {
         val devices = getRegisteredDevices(username);
+        LOGGER.trace("Located devices [{}] for username [{}]", devices, username);
         val matched = devices.stream().anyMatch(d -> d.equals(registration));
         if (!matched) {
             throw new AuthenticationException("Failed to authenticate U2F device because "
-                + "no matching record was found. Is device registered?");
+                + "no matching record was found. Is the device registered?");
         }
     }
 }
