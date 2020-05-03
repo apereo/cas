@@ -52,7 +52,8 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public Collection<? extends DeviceRegistration> getRegisteredDevices(final String username) {
         try {
-            val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+            val expirationDate = LocalDate.now(ZoneId.systemDefault())
+                .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             return this.entityManager.createQuery(
                 SELECT_QUERY.concat("where r.username = :username and r.createdDate >= :expdate"),
                 U2FJpaDeviceRegistration.class)
@@ -80,11 +81,6 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public void registerDevice(final String username, final DeviceRegistration registration) {
-        authenticateDevice(username, registration);
-    }
-
-    @Override
-    public void authenticateDevice(final String username, final DeviceRegistration registration) {
         val jpa = new U2FJpaDeviceRegistration();
         jpa.setUsername(username);
         jpa.setRecord(getCipherExecutor().encode(registration.toJsonWithAttestationCert()));

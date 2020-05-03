@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.Collection;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,10 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class AbstractU2FDeviceRepositoryTests {
     private static final String CASUSER = "casuser";
 
-    protected static void verifyDevicesAvailable(final Collection<? extends DeviceRegistration> devs) {
-        assertEquals(2, devs.size());
-    }
-
     @AfterEach
     public void afterEach() throws Exception {
         val deviceRepository = getDeviceRepository();
@@ -36,15 +30,11 @@ public abstract class AbstractU2FDeviceRepositoryTests {
 
     @Test
     public void verifyDeviceSaved() {
-        try {
-            val deviceRepository = getDeviceRepository();
-            registerDevices(deviceRepository);
-            val devices = deviceRepository.getRegisteredDevices(CASUSER);
-            verifyDevicesAvailable(devices);
-            deviceRepository.clean();
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
-        }
+        val deviceRepository = getDeviceRepository();
+        registerDevices(deviceRepository);
+        val devices = deviceRepository.getRegisteredDevices(CASUSER);
+        assertEquals(2, devices.size());
+        deviceRepository.clean();
     }
 
     @SneakyThrows
