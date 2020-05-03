@@ -6,7 +6,7 @@ import org.apereo.cas.web.support.WebUtils;
 import com.yubico.u2f.U2F;
 import com.yubico.u2f.data.messages.RegisterRequestData;
 import com.yubico.u2f.data.messages.RegisterResponse;
-import lombok.SneakyThrows;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -18,17 +18,14 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@RequiredArgsConstructor
 public class U2FAccountSaveRegistrationAction extends AbstractAction {
-    private final U2F u2f = new U2F();
+    private final U2F u2f;
+
     private final U2FDeviceRepository u2FDeviceRepository;
 
-    public U2FAccountSaveRegistrationAction(final U2FDeviceRepository u2FDeviceRepository) {
-        this.u2FDeviceRepository = u2FDeviceRepository;
-    }
-
     @Override
-    @SneakyThrows
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecute(final RequestContext requestContext) throws Exception {
         val p = WebUtils.getAuthentication(requestContext).getPrincipal();
         val response = requestContext.getRequestParameters().get("tokenResponse");
         val registerResponse = RegisterResponse.fromJson(response);

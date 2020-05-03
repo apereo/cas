@@ -55,7 +55,7 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
     public void registerDevice(final String username, final DeviceRegistration registration) {
         val values = userStorage.get(username);
         if (values != null) {
-            values.put(registration.getKeyHandle(), registration.toJson());
+            values.put(registration.getKeyHandle(), registration.toJsonWithAttestationCert());
         }
     }
 
@@ -63,7 +63,7 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
     public void authenticateDevice(final String username, final DeviceRegistration registration) {
         val values = userStorage.get(username);
         if (values != null) {
-            values.put(registration.getKeyHandle(), registration.toJson());
+            values.put(registration.getKeyHandle(), registration.toJsonWithAttestationCert());
         }
     }
 

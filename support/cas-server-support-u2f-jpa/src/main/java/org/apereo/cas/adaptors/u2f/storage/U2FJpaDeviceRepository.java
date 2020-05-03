@@ -87,7 +87,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     public void authenticateDevice(final String username, final DeviceRegistration registration) {
         val jpa = new U2FJpaDeviceRegistration();
         jpa.setUsername(username);
-        jpa.setRecord(getCipherExecutor().encode(registration.toJson()));
+        jpa.setRecord(getCipherExecutor().encode(registration.toJsonWithAttestationCert()));
         jpa.setCreatedDate(LocalDate.now(ZoneId.systemDefault()));
         this.entityManager.merge(jpa);
     }

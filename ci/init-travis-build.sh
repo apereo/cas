@@ -36,7 +36,7 @@ sudo service postgresql stop
 echo -e "Setting build environment...\n"
 sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
 
-# installJdk11
+ installJdk11
 
 chmod -R 777 ./ci/*.sh
 

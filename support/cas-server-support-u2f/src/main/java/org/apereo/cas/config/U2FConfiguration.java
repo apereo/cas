@@ -13,6 +13,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.yubico.u2f.U2F;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -57,6 +58,12 @@ public class U2FConfiguration {
     public U2FDeviceRepositoryCleanerScheduler u2fDeviceRepositoryCleanerScheduler(
         @Qualifier("u2fDeviceRepository") final U2FDeviceRepository storage) {
         return new U2FDeviceRepositoryCleanerScheduler(storage);
+    }
+
+    @ConditionalOnMissingBean(name = "u2fService")
+    @Bean
+    public U2F u2fService() {
+        return new U2F();
     }
 
     @ConditionalOnMissingBean(name = "u2fDeviceRepository")

@@ -79,7 +79,7 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository implemen
     public void authenticateDevice(final String username, final DeviceRegistration registration) {
         val record = new U2FDeviceRegistration();
         record.setUsername(username);
-        record.setRecord(getCipherExecutor().encode(registration.toJson()));
+        record.setRecord(getCipherExecutor().encode(registration.toJsonWithAttestationCert()));
         record.setCreatedDate(LocalDate.now(ZoneId.systemDefault()));
         if (asynchronous) {
             this.executorService.execute(() -> couchDb.add(new CouchDbU2FDeviceRegistration(record)));

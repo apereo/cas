@@ -632,8 +632,8 @@ task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
         fileTree(dir: it,
                 include: '**/*.class',
                 exclude: [
-                        '**/**ConfigurationMetadataGenerator**',
-                        '**/**Application.class',
+                        '**/**ConfigurationMetadata**',
+                        '**/**Application**',
                         '**/**Application$**',
                         '**/**Exception$**',
                         '**/**Properties.class',

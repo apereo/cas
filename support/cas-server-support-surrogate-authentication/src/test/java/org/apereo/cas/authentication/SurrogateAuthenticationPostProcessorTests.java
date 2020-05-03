@@ -15,6 +15,7 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationAuditConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationConfiguration;
+import org.apereo.cas.config.SurrogateAuthenticationRestConfiguration;
 import org.apereo.cas.config.SurrogateComponentSerializationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -44,6 +45,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     SurrogateAuthenticationConfiguration.class,
     SurrogateComponentSerializationConfiguration.class,
+    SurrogateAuthenticationRestConfiguration.class,
     SurrogateAuthenticationAuditConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesConfiguration.class,

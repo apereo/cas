@@ -37,7 +37,7 @@ public class U2FGroovyResourceDeviceRepository extends BaseResourceU2FDeviceRepo
 
     @Override
     public void writeDevicesBackToResource(final List<U2FDeviceRegistration> list) {
-        val args = new Object[]{LOGGER};
+        val args = new Object[]{list, LOGGER};
         this.watchableScript.execute("write", Boolean.class, args);
         LOGGER.debug("Saved [{}] device(s) into repository [{}]", list.size(), watchableScript.getResource());
     }

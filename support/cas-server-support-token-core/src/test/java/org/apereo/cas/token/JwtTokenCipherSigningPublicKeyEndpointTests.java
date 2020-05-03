@@ -35,7 +35,7 @@ public class JwtTokenCipherSigningPublicKeyEndpointTests extends AbstractCasEndp
 
     @Test
     public void verifyOperation() throws Exception {
-        val service = RegisteredServiceTestUtils.getService("httpJwtTokenCipherSigningPublicKeyEndpointTestss://publickey.service");
+        val service = RegisteredServiceTestUtils.getService("https://publickey.service");
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
 
         val signingKey = new DefaultRegisteredServiceProperty();
