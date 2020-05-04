@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 gradle="./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel "
