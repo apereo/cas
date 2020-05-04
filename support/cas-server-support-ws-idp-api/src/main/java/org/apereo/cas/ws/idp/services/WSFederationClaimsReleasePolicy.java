@@ -62,7 +62,7 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
 
     private static void mapSimpleSingleAttributeDefinition(final String attributeName,
                                                            final String mappedAttributeName,
-                                                           final Object attributeValue,
+                                                           final List<Object> attributeValue,
                                                            final Map<String, List<Object>> attributesToRelease) {
         if (attributeValue != null) {
             LOGGER.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
@@ -91,10 +91,10 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
             .filter(entry -> WSFederationClaims.contains(entry.getKey().toUpperCase()))
             .forEach(entry -> {
                 val claimName = entry.getKey();
-                val attributeValue = entry.getValue();
+                val attributeValue = resolvedAttributes.get(entry.getValue());
                 val claim = WSFederationClaims.valueOf(claimName.toUpperCase());
                 LOGGER.trace("Evaluating claim [{}] mapped to attribute value [{}]", claim.getUri(), attributeValue);
-                mapSingleAttributeDefinition(claim.getUri(), attributeValue, attributeValue, resolvedAttributes, attributesToRelease);
+                mapSingleAttributeDefinition(claim.getUri(), entry.getValue(), attributeValue, resolvedAttributes, attributesToRelease);
             });
         return attributesToRelease;
     }
@@ -129,7 +129,7 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
 
     private void mapSingleAttributeDefinition(final String attributeName,
                                               final String mappedAttributeName,
-                                              final Object attributeValue,
+                                              final List<Object> attributeValue,
                                               final Map<String, List<Object>> resolvedAttributes,
                                               final Map<String, List<Object>> attributesToRelease) {
         if (attributeScriptCache.containsKey(attributeName)) {
