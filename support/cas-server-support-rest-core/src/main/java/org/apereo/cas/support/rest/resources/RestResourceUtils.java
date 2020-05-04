@@ -39,8 +39,12 @@ public class RestResourceUtils {
             .findAndRegisterModules()
             .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-            .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
-            .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+            .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        MAPPER.activateDefaultTyping(
+                MAPPER.getPolymorphicTypeValidator(),
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                JsonTypeInfo.As.PROPERTY
+        );
     }
 
     /**
@@ -76,7 +80,7 @@ public class RestResourceUtils {
                                                 final Throwable ex) {
         val authnMsg = StringUtils.defaultIfBlank(ex.getMessage(), "Authentication Failure: " + authnhandlerErrors.getMessage());
         val authnBundleMsg = getTranslatedMessageForExceptionClass(ex.getClass().getSimpleName(), request, applicationContext);
-        return String.format("%s:%s:%s", ex.getClass().getSimpleName(), authnMsg, authnBundleMsg);
+        return String.format("%s:%s", authnMsg, authnBundleMsg);
     }
 
     private String getTranslatedMessageForExceptionClass(final String className,
