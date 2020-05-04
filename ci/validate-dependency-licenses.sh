@@ -20,14 +20,14 @@ fi
 
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --version "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 gradleBuild="$gradleBuild checkLicense -x javadoc -x check  \
-    -DskipNestedConfigMetadataGen=true --parallel"
+    -DskipNestedConfigMetadataGen=true --parallel --max-workers=8 "
 
 tasks="$gradle $gradleBuildOptions $gradleBuild"
 echo -e "***************************************************************************************"

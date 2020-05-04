@@ -28,7 +28,7 @@ echo -e "***********************************************"
 
 gradleBuild="$gradleBuild spotbugsMain -x test -x javadoc \
      -DskipNestedConfigMetadataGen=true \
-     -DshowStandardStreams=true "
+     -DshowStandardStreams=true --version "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
     gradleBuild="$gradleBuild --rerun-tasks "

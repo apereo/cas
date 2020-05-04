@@ -3,7 +3,7 @@
 
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --version "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
@@ -35,7 +35,6 @@ else
     waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
     eval $waitloop
     waitRetVal=$?
-
 
     eval $tasks
     retVal=$?
