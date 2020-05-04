@@ -38,6 +38,7 @@ public class GoogleRecaptchaProperties implements Serializable {
 
     /**
      * Indicate the version of the recaptcha api.
+     * Accepted values are: {@code V2, V3}.
      */
     private RecaptchaVersions version = RecaptchaVersions.V2;
 
