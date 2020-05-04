@@ -1,13 +1,9 @@
 #!/bin/bash
 
-installJdk11() {
-    installJdk "11.0.7" "10"
-}
-
 installJdk() {
     echo -e "Installing Java...\n"
-    jdkVersion="$1"
-    jdkRevision="$2"
+    jdkVersion="11.0.7"
+    jdkRevision="10"
 
     jdkRepository="openjdk11-upstream-binaries"
     case "${jdkVersion}" in
@@ -27,7 +23,7 @@ installJdk() {
 
     jdkDownloadUrl="https://github.com/AdoptOpenJDK/${jdkRepository}/releases/download"
     url="${jdkDownloadUrl}/jdk-${jdkVersion}%2B${jdkRevision}/OpenJDK11U-jdk_x64_linux_${jdkVersion}_${jdkRevision}.tar.gz"
-    echo "Downloading JDK from ${url}"
+    echo "Downloading JDK from ${url}\n"
 
     wget https://github.com/sormuras/bach/raw/master/install-jdk.sh && chmod +x install-jdk.sh
     for i in {1..5}; do
@@ -98,3 +94,5 @@ currentChangeSetAffectsSnapshots() {
     currentChangeSetContains "\.(java|groovy|yml|gradle|properties|xml|json)"
     return `(expr "$?" + 0)`
 }
+
+installJdk
