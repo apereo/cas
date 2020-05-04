@@ -49,7 +49,7 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
 
         val redirectView = (RedirectView) result;
         val redirectUrl = redirectView.getUrl();
-        assertEquals("https://cas.example.org:8443/cas/logout?state=abcd1234", redirectUrl);
+        assertEquals("https://cas.example.org:8443/cas/logout", redirectUrl);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
 
         val redirectView = (RedirectView) result;
         val redirectUrl = redirectView.getUrl();
-        assertEquals("https://cas.example.org:8443/cas/logout?service=https://oauth.example.org/logout&state=abcd1234", redirectUrl);
+        assertEquals("https://cas.example.org:8443/cas/logout?service=https://oauth.example.org/logout?state=abcd1234", redirectUrl);
     }
 
     @Test
@@ -100,7 +100,7 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
 
         val redirectView = (RedirectView) result;
         val redirectUrl = redirectView.getUrl();
-        assertEquals("https://cas.example.org:8443/cas/logout?service=https://logout&state=abcd1234", redirectUrl);
+        assertEquals("https://cas.example.org:8443/cas/logout?service=https://logout?state=abcd1234", redirectUrl);
     }
 
     @Test
@@ -117,6 +117,6 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
 
         val redirectView = (RedirectView) result;
         val redirectUrl = redirectView.getUrl();
-        assertEquals("https://cas.example.org:8443/cas/logout?service=https://oauth.example.org/logout&state=abcd1234", redirectUrl);
+        assertEquals("https://cas.example.org:8443/cas/logout?service=https://oauth.example.org/logout?state=abcd1234", redirectUrl);
     }
 }

@@ -21,6 +21,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Optional;
 
 /**
@@ -88,12 +90,41 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
     private View getLogoutRedirectView(final String state, final String redirectUrl) {
         val builder = UriComponentsBuilder.fromHttpUrl(getOAuthConfigurationContext().getCasProperties().getServer().getLogoutUrl());
         if (StringUtils.isNotBlank(redirectUrl)) {
-            builder.queryParam(getOAuthConfigurationContext().getCasProperties().getLogout().getRedirectParameter(), redirectUrl);
+            builder.queryParam(getOAuthConfigurationContext().getCasProperties().getLogout().getRedirectParameter(), constructRedirectUrl(redirectUrl, state));
         }
         if (StringUtils.isNotBlank(state)) {
             builder.queryParam(OAuth20Constants.STATE, state);
         }
         val logoutUrl = builder.build().toUriString();
         return new RedirectView(logoutUrl);
+    }
+
+    /**
+     * Constructs the URL to use to redirect to the calling server.
+     *
+     * @param redirectUrl the actual service's url.
+     * @param state       whether we should send.
+     * @return the fully constructed redirect url.
+     */
+    private String constructRedirectUrl(final String redirectUrl, final String state) {
+        var builder = UriComponentsBuilder.fromHttpUrl(redirectUrl);
+        if (StringUtils.isNotBlank(state)) {
+            builder.queryParam(OAuth20Constants.STATE, state);
+        }
+        return urlEncode(builder.build().toUriString());
+    }
+
+    /**
+     * Url encode a value using UTF-8 encoding.
+     *
+     * @param value the value to encode.
+     * @return the encoded value.
+     */
+    private String urlEncode(String value) {
+        try {
+            return URLEncoder.encode(value, "UTF-8");
+        } catch (final UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
