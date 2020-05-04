@@ -611,8 +611,19 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @return the binder configuration
      */
     public BinderConfiguration createStateBinderConfiguration(final List<String> properties) {
+        return createStateBinderConfiguration(properties, true);
+    }
+
+    /**
+     * Create state model bindings.
+     *
+     * @param properties the properties
+     * @param required   are properties required
+     * @return the binder configuration
+     */
+    public BinderConfiguration createStateBinderConfiguration(final List<String> properties, final boolean required) {
         val binder = new BinderConfiguration();
-        properties.forEach(p -> binder.addBinding(new BinderConfiguration.Binding(p, null, true)));
+        properties.forEach(p -> binder.addBinding(new BinderConfiguration.Binding(p, null, required)));
         return binder;
     }
 

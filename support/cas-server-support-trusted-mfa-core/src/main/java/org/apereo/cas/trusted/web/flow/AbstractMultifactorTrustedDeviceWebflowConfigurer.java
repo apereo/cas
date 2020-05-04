@@ -117,7 +117,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         val fields = Arrays.stream(MultifactorAuthenticationTrustBean.class.getDeclaredFields())
             .map(Field::getName)
             .collect(Collectors.toList());
-        val binder = createStateBinderConfiguration(fields);
+        val binder = createStateBinderConfiguration(fields, false);
         val viewRegister = createViewState(flow, CasWebflowConstants.STATE_ID_REGISTER_DEVICE, "casMfaRegisterDeviceView", binder);
         val transition = createTransitionForState(viewRegister, CasWebflowConstants.TRANSITION_ID_SUBMIT,
             CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE);
