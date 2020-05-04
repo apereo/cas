@@ -30,7 +30,7 @@ echo -e "***********************************************"
 ./ci/tests/mongodb/run-mongodb-server.sh
 
 gradleBuild="$gradleBuild testMongoDb jacocoRootReport -x test -x javadoc -x check \
-    --parallel \
+    --parallel --version \
     -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

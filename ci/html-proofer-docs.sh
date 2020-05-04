@@ -1,5 +1,4 @@
 #!/bin/bash
-
 source ./ci/functions.sh
 
 runBuild=false
