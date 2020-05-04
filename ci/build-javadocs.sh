@@ -28,7 +28,7 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 gradleBuild="$gradleBuild javadoc -x test -x check \
-     --max-workers=8 --version \
+     --max-workers=8  \
      -DskipNestedConfigMetadataGen=true --parallel "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

@@ -14,7 +14,7 @@ echo -e "***********************************************"
 echo "Running dependency analysis..."
 
 gradleBuild="$gradleBuild verifySpringConfigurationCanDisableBeanProxying -x javadoc -x check \
-   --parallel  --version \
+   --parallel   \
    -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

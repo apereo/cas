@@ -30,7 +30,7 @@ echo -e "***********************************************"
 ./ci/tests/radius/run-radius-server.sh
 
 gradleBuild="$gradleBuild testRadius jacocoRootReport -x test -x javadoc -x check \
-    --parallel --version \
+    --parallel  \
     -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
