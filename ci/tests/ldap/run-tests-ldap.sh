@@ -31,8 +31,7 @@ echo -e "***********************************************"
 ./ci/tests/ldap/run-ad-server.sh true
 
 gradleBuild="$gradleBuild testLdap jacocoRootReport -x test -x javadoc -x check \
-    -DshowStandardStreams=true \
-    \
+    -DshowStandardStreams=true --version \
     -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
@@ -55,8 +54,7 @@ else
     waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
     eval $waitloop
     waitRetVal=$?
-
-
+    
     eval $tasks
     retVal=$?
 
