@@ -17,6 +17,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -96,7 +97,7 @@ public class OAuth20JwtAccessTokenEncoder {
         attributes.putAll(authentication.getPrincipal().getAttributes());
         
         val builder = JwtBuilder.JwtRequest.builder();
-        val dt = authentication.getAuthenticationDate().plusSeconds(accessToken.getExpirationPolicy().getTimeToLive());
+        val dt = ZonedDateTime.now().plusSeconds(accessToken.getExpirationPolicy().getTimeToLive());
         return builder
             .serviceAudience(service.getId())
             .issueDate(DateTimeUtils.dateOf(authentication.getAuthenticationDate()))
