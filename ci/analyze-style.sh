@@ -28,7 +28,7 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 gradleBuild="$gradleBuild checkstyleMain checkstyleTest -x test -x javadoc \
-     -DskipNestedConfigMetadataGen=true --max-workers=8 \
+     -DskipNestedConfigMetadataGen=true  \
      --parallel -DshowStandardStreams=true  "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then

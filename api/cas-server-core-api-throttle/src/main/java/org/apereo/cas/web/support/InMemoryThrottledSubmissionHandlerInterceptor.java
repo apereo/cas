@@ -15,7 +15,7 @@ public interface InMemoryThrottledSubmissionHandlerInterceptor extends Throttled
      * Construct key to be used by the throttling agent to track requests.
      *
      * @param request the request
-     * @return the string
+     * @return the key
      */
     String constructKey(HttpServletRequest request);
 
