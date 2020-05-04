@@ -11,13 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.MapKeyColumn;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -142,19 +136,19 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column(name = "white_black_list_prec")
     private String whiteListBlackListPrecedence;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "SamlRegisteredService_AttributeNameFormats")
     @MapKeyColumn(name = "attribute_name")
     @Column(name = "attribute_value")
     private Map<String, String> attributeNameFormats = new TreeMap<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "SamlRegisteredService_AttributeFriendlyNames")
     @MapKeyColumn(name = "attribute_name")
     @Column(name = "attribute_value")
     private Map<String, String> attributeFriendlyNames = new TreeMap<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "SamlRegisteredService_AttributeValueTypes")
     @MapKeyColumn(name = "attribute_name")
     @Column(name = "attribute_type")
