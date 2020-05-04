@@ -29,7 +29,7 @@ echo -e "***********************************************"
 
 gradleBuild="$gradleBuild checkstyleMain checkstyleTest -x test -x javadoc \
      -DskipNestedConfigMetadataGen=true --max-workers=8 \
-     --parallel -DshowStandardStreams=true --version "
+     --parallel -DshowStandardStreams=true  "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
     gradleBuild="$gradleBuild --rerun-tasks "

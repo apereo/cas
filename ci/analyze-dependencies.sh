@@ -35,7 +35,7 @@ echo -e "***********************************************"
 echo "Running dependency analysis..."
 
 gradleBuild="$gradleBuild dependencyCheckAggregate -x javadoc -x check \
-   --parallel  --version --max-workers=8 \
+   --parallel   --max-workers=8 \
    -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

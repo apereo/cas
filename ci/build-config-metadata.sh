@@ -19,7 +19,7 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 gradleBuild="$gradleBuild :api:cas-server-core-api-configuration-model:build \
-     -x check -x test -x javadoc --version --max-workers=8 "
+     -x check -x test -x javadoc  --max-workers=8 "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "

@@ -27,7 +27,7 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 gradleBuild="$gradleBuild build assemble -x test -x javadoc -x check \
-    -DskipNestedConfigMetadataGen=true --parallel --version "
+    -DskipNestedConfigMetadataGen=true --parallel  "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "

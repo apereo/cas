@@ -9,7 +9,7 @@ echo "Current CAS version is $casVersion"
 
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --version \
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon  \
                     -Dorg.gradle.internal.http.socketTimeout=180000 \
                     -Dorg.gradle.internal.http.connectionTimeout=180000 "
 
