@@ -120,7 +120,7 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
      * @param value the value to encode.
      * @return the encoded value.
      */
-    private String urlEncode(String value) {
+    private String urlEncode(final String value) {
         try {
             return URLEncoder.encode(value, "UTF-8");
         } catch (final UnsupportedEncodingException e) {
