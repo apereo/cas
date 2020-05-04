@@ -23,7 +23,7 @@ public abstract class AbstractU2FDeviceRepositoryTests {
     private static final String CASUSER = "casuser";
 
     @AfterEach
-    public void afterEach() throws Exception {
+    public void tearDown() throws Exception {
         val deviceRepository = getDeviceRepository();
         deviceRepository.removeAll();
     }
