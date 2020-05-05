@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serializable;
-
+         
 /**
  * This is {@link BaseU2FDeviceRepository}.
  *
@@ -28,7 +28,7 @@ public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
     private final LoadingCache<String, String> requestStorage;
 
     private CipherExecutor<Serializable, String> cipherExecutor;
-    
+
     @Override
     public String getDeviceRegistrationRequest(final String requestId, final String username) {
         val request = requestStorage.get(requestId);
