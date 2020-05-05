@@ -59,7 +59,6 @@ public class OidcClientSecretJwtAuthenticator extends BaseOidcJwtAuthenticator {
             params.put(OAuth20Constants.CLIENT_ASSERTION_TYPE, List.of(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER));
             params.put(OAuth20Constants.CLIENT_ASSERTION, List.of(credentials.getPassword()));
             val jwt = ClientSecretJWT.parse(params);
-
             val userProfile = new CommonProfile(true);
             userProfile.setId(jwt.getClientID().getValue());
             credentials.setUserProfile(userProfile);

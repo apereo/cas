@@ -28,7 +28,7 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 gradleBuild="$gradleBuild dependencyUpdates -Drevision=release -x javadoc -x check  \
-    -DskipNestedConfigMetadataGen=true --max-workers \
+    -DskipNestedConfigMetadataGen=true \
     --parallel -DgradleReleaseChannel=current "
     
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
