@@ -69,6 +69,15 @@ ext {
     generateGitProperties = Boolean.getBoolean("generateGitProperties")
 
     continuousIntegrationBuild = System.getenv("CI") || Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
+
+    excludedFilesFromTestCoverage = [
+        '**/**ConfigurationMetadata**',
+        '**/**Application**',
+        '**/**Application$**',
+        '**/**Exception$**',
+        '**/**Properties**',
+        '**/**Properties$**'
+    ]
 }
 
 def isArtifactSigningRequired = {
@@ -402,6 +411,21 @@ subprojects {
         }
     }
 
+    jacocoTestReport {
+        reports {
+            xml.enabled(true)
+            html.enabled(true)
+        }
+
+        jacocoTestReport {
+            afterEvaluate {
+                classDirectories.setFrom(files(classDirectories.files.collect {
+                    fileTree(dir: it, exclude: rootProject.excludedFilesFromTestCoverage)
+                }))
+            }
+        }
+    }
+
     sourceSets {
         main {
             java {
@@ -616,7 +640,7 @@ task jacocoMerge(type: JacocoMerge) {
 }
 
 task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
-    description = 'Generates an aggregate report from all subprojects'
+    description = 'Generates an aggregate report from all projects'
 
     subprojects.each {
         if (!it.path.contains(":docs")) {
@@ -629,16 +653,7 @@ task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
     additionalSourceDirs.from(files(publishedProjects.sourceSets.main.allSource.srcDirs))
     sourceDirectories.from(files(publishedProjects.sourceSets.main.allSource.srcDirs))
     classDirectories.from(files(subprojects.sourceSets.main.output)).collect {
-        fileTree(dir: it,
-                include: '**/*.class',
-                exclude: [
-                        '**/**ConfigurationMetadata**',
-                        '**/**Application**',
-                        '**/**Application$**',
-                        '**/**Exception$**',
-                        '**/**Properties.class',
-                        '**/**Properties$**'
-                ])
+        fileTree(dir: it, exclude: rootProject.excludedFilesFromTestCoverage)
     }
     executionData jacocoMerge.destinationFile
     reports {

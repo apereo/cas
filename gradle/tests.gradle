@@ -349,6 +349,9 @@ tasks.withType(Test) {
             failOnPassedAfterRetry = false
         }
     }
+    jacoco {
+        excludes = rootProject.excludedFilesFromTestCoverage
+    }
 }
 
 def shouldTest(Project project, String category) {

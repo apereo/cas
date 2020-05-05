@@ -19,7 +19,15 @@ flags="--build-cache -x javadoc -x check -DignoreTestFailures=false -DskipNested
 while (( "$#" )); do
     case "$1" in
     --coverage)
-        coverage="jacocoRootReport "
+        currentDir=`pwd`
+        case "${currentDir}" in
+            *api*|*core*|*support*|*webapp*)
+                coverage="jacocoTestReport "
+                ;;
+            *)
+                coverage="jacocoRootReport "
+                ;;
+        esac
         shift
         ;;
     --no-wrapper)
@@ -224,4 +232,3 @@ printf "$cmdstring \e[0m\n"
 
 cmd="$gradleCmd $task -DtestCategoryType=$category $tests $flags ${coverage} ${debug} ${parallel}"
 eval "$cmd"
-
