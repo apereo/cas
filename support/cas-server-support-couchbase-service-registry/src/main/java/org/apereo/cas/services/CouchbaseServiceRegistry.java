@@ -63,7 +63,7 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
         this.registeredServiceJsonSerializer.to(stringWriter, service);
         val document = RawJsonDocument.create(String.valueOf(service.getId()), 0, stringWriter.toString());
         invokeServiceRegistryListenerPreSave(service);
-        val savedDocument= couchbase.getBucket().upsert(document, couchbase.getTimeout(), TimeUnit.MILLISECONDS);
+        val savedDocument= couchbase.getBucket().upsert(document, couchbase.getConnectionTimeout(), TimeUnit.MILLISECONDS);
         val savedService = registeredServiceJsonSerializer.from(savedDocument.content());
         LOGGER.debug("Saved service [{}] as [{}]", service.getName(), savedService.getName());
         publishEvent(new CouchbaseRegisteredServiceSavedEvent(this));
@@ -73,7 +73,7 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
     @Override
     public boolean delete(final RegisteredService service) {
         LOGGER.debug("Deleting service [{}]", service.getName());
-        this.couchbase.getBucket().remove(String.valueOf(service.getId()), couchbase.getTimeout(), TimeUnit.MILLISECONDS);
+        this.couchbase.getBucket().remove(String.valueOf(service.getId()), couchbase.getConnectionTimeout(), TimeUnit.MILLISECONDS);
         publishEvent(new CouchbaseRegisteredServiceDeletedEvent(this));
         return true;
     }
@@ -111,7 +111,7 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
             .where("REGEX_CONTAINS(" + Expression.i("@class") + ", \".*RegisteredService$\")");
 
         val n1q1Query = N1qlQuery.simple(statement);
-        val queryResult = theBucket.query(n1q1Query, couchbase.getTimeout(), TimeUnit.MILLISECONDS);
+        val queryResult = theBucket.query(n1q1Query, couchbase.getConnectionTimeout(), TimeUnit.MILLISECONDS);
         if (!queryResult.finalSuccess()) {
             throw new CouchbaseException(queryResult.status() + ": " + queryResult.errors().toString());
         }

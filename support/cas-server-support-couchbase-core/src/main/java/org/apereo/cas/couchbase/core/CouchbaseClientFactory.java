@@ -1,11 +1,14 @@
 package org.apereo.cas.couchbase.core;
 
+import org.apereo.cas.configuration.model.support.couchbase.BaseCouchbaseProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.document.json.JsonObject;
+import com.couchbase.client.java.env.DefaultCouchbaseEnvironment;
 import com.couchbase.client.java.error.DesignDocumentDoesNotExistException;
 import com.couchbase.client.java.query.N1qlQuery;
 import com.couchbase.client.java.query.N1qlQueryResult;
@@ -25,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -44,62 +46,31 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 public class CouchbaseClientFactory {
-    private static final long DEFAULT_TIMEOUT_MILLIS = TimeUnit.SECONDS.toMillis(15);
-
     static {
         System.setProperty("com.couchbase.queryEnabled", "true");
     }
 
     private final Collection<View> views;
-    private final Set<String> nodes;
+
     /* Design document and views to create in the bucket, if any. */
     private final String designDocument;
+
+    private final BaseCouchbaseProperties properties;
+
     private Cluster cluster;
+
     private Bucket bucket;
 
-    /* The name of the bucket, will use the default getBucket unless otherwise specified. */
-    private final String bucketName;
-
-    /* Password for the bucket if any. */
-    private final String bucketPassword;
-    private final long timeout;
-
-    /**
-     * Instantiates a new Couchbase client factory.
-     *
-     * @param nodes          cluster nodes
-     * @param bucketName     getBucket name
-     * @param bucketPassword the bucket password
-     * @param timeout        connection timeout
-     * @param documentName   the document name
-     * @param views          the views
-     */
-    public CouchbaseClientFactory(final Set<String> nodes, final String bucketName,
-                                  final String bucketPassword, final long timeout,
+    public CouchbaseClientFactory(final BaseCouchbaseProperties properties,
                                   final String documentName, final Collection<View> views) {
-        this.nodes = nodes;
-        this.bucketName = bucketName;
-        this.bucketPassword = bucketPassword;
-        this.timeout = timeout;
+        this.properties = properties;
         this.designDocument = documentName;
         this.views = views;
         initializeCluster();
     }
 
-    public CouchbaseClientFactory(final Set<String> nodes, final String bucketName,
-                                  final String bucketPassword, final long timeout) {
-        this(nodes, bucketName, bucketPassword, timeout, null, null);
-    }
-
-    /**
-     * Instantiates a new Couchbase client factory.
-     *
-     * @param nodes          the nodes
-     * @param bucketName     the bucket name
-     * @param bucketPassword the bucket password
-     */
-    public CouchbaseClientFactory(final Set<String> nodes, final String bucketName, final String bucketPassword) {
-        this(nodes, bucketName, bucketPassword, DEFAULT_TIMEOUT_MILLIS, null, null);
+    public CouchbaseClientFactory(final BaseCouchbaseProperties properties) {
+        this(properties, null, null);
     }
 
     /**
@@ -115,11 +86,18 @@ public class CouchbaseClientFactory {
     }
 
     private void initializeCluster() {
-        if (this.cluster != null) {
-            shutdown();
-        }
-        LOGGER.debug("Initializing Couchbase cluster for nodes [{}]", this.nodes);
-        this.cluster = CouchbaseCluster.create(new ArrayList<>(this.nodes));
+        shutdown();
+        val nodes = org.springframework.util.StringUtils.commaDelimitedListToSet(properties.getNodeSet());
+        LOGGER.debug("Initializing Couchbase cluster for nodes [{}]", nodes);
+        val listOfNodes = new ArrayList<>(nodes);
+        var env = DefaultCouchbaseEnvironment.builder()
+            .connectTimeout(getConnectionTimeout())
+            .socketConnectTimeout(getSocketTimeout())
+            .queryTimeout(getQueryTimeout())
+            .searchTimeout(getSearchTimeout())
+            .build();
+
+        this.cluster = CouchbaseCluster.create(env, listOfNodes);
     }
 
     /**
@@ -133,6 +111,22 @@ public class CouchbaseClientFactory {
         }
         initializeBucket();
         return this.bucket;
+    }
+
+    public long getConnectionTimeout() {
+        return Beans.newDuration(properties.getConnectionTimeout()).toMillis();
+    }
+
+    public long getSearchTimeout() {
+        return Beans.newDuration(properties.getSearchTimeout()).toMillis();
+    }
+
+    public long getQueryTimeout() {
+        return Beans.newDuration(properties.getQueryTimeout()).toMillis();
+    }
+
+    public int getSocketTimeout() {
+        return (int) Beans.newDuration(properties.getSocketTimeout()).toMillis();
     }
 
     /**
@@ -152,7 +146,7 @@ public class CouchbaseClientFactory {
         LOGGER.debug("Running query [{}] on bucket [{}]", statement.toString(), theBucket.name());
 
         val query = N1qlQuery.simple(statement);
-        val result = theBucket.query(query, timeout, TimeUnit.MILLISECONDS);
+        val result = theBucket.query(query, getConnectionTimeout(), TimeUnit.MILLISECONDS);
         if (!result.finalSuccess()) {
             LOGGER.error("Couchbase query failed with [{}]", result.errors()
                 .stream()
@@ -204,16 +198,18 @@ public class CouchbaseClientFactory {
 
     private void openBucket() {
         try {
-            LOGGER.trace("Trying to connect to couchbase bucket [{}]", this.bucketName);
-            if (StringUtils.isBlank(this.bucketPassword)) {
-                this.bucket = this.cluster.openBucket(this.bucketName, this.timeout, TimeUnit.MILLISECONDS);
+            LOGGER.trace("Trying to connect to couchbase bucket [{}]", properties.getBucket());
+            if (StringUtils.isBlank(properties.getPassword())) {
+                this.bucket = this.cluster.openBucket(properties.getBucket(),
+                    getConnectionTimeout(), TimeUnit.MILLISECONDS);
             } else {
-                this.bucket = this.cluster.openBucket(this.bucketName, this.bucketPassword, this.timeout, TimeUnit.MILLISECONDS);
+                this.bucket = this.cluster.openBucket(properties.getBucket(), properties.getPassword(),
+                    getConnectionTimeout(), TimeUnit.MILLISECONDS);
             }
         } catch (final Exception e) {
-            throw new IllegalArgumentException("Failed to connect to Couchbase bucket " + this.bucketName, e);
+            throw new IllegalArgumentException("Failed to connect to Couchbase bucket " + properties.getBucket(), e);
         }
-        LOGGER.info("Connected to Couchbase bucket [{}]", this.bucketName);
+        LOGGER.info("Connected to Couchbase bucket [{}]", properties.getBucket());
     }
 }
 

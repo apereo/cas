@@ -1,4 +1,7 @@
 description = "Apereo CAS Couchbase Authentication Support"
+ext {
+    maxParallelForksForTests = 1
+}
 dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-api")
