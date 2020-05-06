@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.CouchbaseTicketRegistry;
@@ -17,7 +16,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
 
 /**
  * This is {@link CouchbaseTicketRegistryConfiguration}.
@@ -36,10 +34,7 @@ public class CouchbaseTicketRegistryConfiguration {
     @Bean
     public CouchbaseClientFactory ticketRegistryCouchbaseClientFactory() {
         val cb = casProperties.getTicket().getRegistry().getCouchbase();
-        val nodes = StringUtils.commaDelimitedListToSet(cb.getNodeSet());
-        return new CouchbaseClientFactory(nodes, cb.getBucket(),
-            cb.getPassword(),
-            Beans.newDuration(cb.getTimeout()).toMillis(),
+        return new CouchbaseClientFactory(cb,
             CouchbaseTicketRegistry.UTIL_DOCUMENT,
             CouchbaseTicketRegistry.ALL_VIEWS);
     }

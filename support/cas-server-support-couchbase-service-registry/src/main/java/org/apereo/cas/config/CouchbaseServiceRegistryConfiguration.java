@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.services.CouchbaseServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
@@ -19,7 +18,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
 
 import java.util.Collection;
 
@@ -47,10 +45,7 @@ public class CouchbaseServiceRegistryConfiguration {
     @Bean
     public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory() {
         val couchbase = casProperties.getServiceRegistry().getCouchbase();
-        val nodes = StringUtils.commaDelimitedListToSet(couchbase.getNodeSet());
-        return new CouchbaseClientFactory(nodes, couchbase.getBucket(),
-            couchbase.getPassword(),
-            Beans.newDuration(couchbase.getTimeout()).toMillis());
+        return new CouchbaseClientFactory(couchbase);
     }
 
     @Bean

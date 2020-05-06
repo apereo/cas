@@ -65,8 +65,7 @@ public class CouchbaseAuthenticationConfiguration {
     @Bean
     public CouchbaseClientFactory authenticationCouchbaseClientFactory() {
         val couchbase = casProperties.getAuthn().getCouchbase();
-        val nodes = org.springframework.util.StringUtils.commaDelimitedListToSet(couchbase.getNodeSet());
-        return new CouchbaseClientFactory(nodes, couchbase.getBucket(), couchbase.getPassword());
+        return new CouchbaseClientFactory(couchbase);
     }
 
     @ConditionalOnMissingBean(name = "couchbaseAuthenticationHandler")

@@ -926,7 +926,7 @@ The following options are shared and apply when CAS is configured to integrate w
 # ${configurationKey}.password=
 # ${configurationKey}.queryEnabled=true
 # ${configurationKey}.bucket=default
-# ${configurationKey}.timeout=PT30S
+# ${configurationKey}.connectionTimeout=PT60S
 ```
 
 ## Amazon Integration Settings
