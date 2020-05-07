@@ -34,6 +34,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.time.Clock;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -425,7 +427,9 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
     @Test
     public void verifyDestroyRemoteRegistry() throws AbstractTicketException, AuthenticationException {
         val registry = new MockOnlyOneTicketRegistry();
-        val tgt = new TicketGrantingTicketImpl("TGT-1", mock(Authentication.class), mock(ExpirationPolicy.class));
+        val expirationPolicy = mock(ExpirationPolicy.class);
+        when(expirationPolicy.getClock()).thenReturn(Clock.systemUTC());
+        val tgt = new TicketGrantingTicketImpl("TGT-1", mock(Authentication.class), expirationPolicy);
         val logoutManager = mock(LogoutManager.class);
         when(logoutManager.performLogout(any(TicketGrantingTicket.class)))
             .thenAnswer(invocation -> {
