@@ -54,12 +54,14 @@ public class Pac4jDelegatedAuthenticationConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer() {
         return new DelegatedAuthenticationServiceTicketValidationAuthorizer(servicesManager.getObject(),
             registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer());
     }
 
     @Bean
+    @RefreshScope
     public ServiceTicketValidationAuthorizerConfigurer pac4jServiceTicketValidationAuthorizerConfigurer() {
         return plan -> plan.registerAuthorizer(pac4jServiceTicketValidationAuthorizer());
     }

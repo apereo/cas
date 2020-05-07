@@ -101,6 +101,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionStore")
     @Bean
+    @RefreshScope
     public SessionStore<JEEContext> delegatedClientDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getPac4j().isReplicateSessions();
         if (replicate) {
@@ -178,6 +179,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "pac4jAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer pac4jAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             if (!builtClients().findAllClients().isEmpty()) {
@@ -198,6 +200,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "delegatedAuthenticationAuditTrailRecordResolutionPlanConfigurer")
+    @RefreshScope
     public AuditTrailRecordResolutionPlanConfigurer delegatedAuthenticationAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
             plan.registerAuditActionResolver("DELEGATED_CLIENT_ACTION_RESOLVER", authenticationActionResolver.getObject());
@@ -206,6 +209,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "delegatedAuthenticationLogoutExecutionPlanConfigurer")
     public LogoutExecutionPlanConfigurer delegatedAuthenticationLogoutExecutionPlanConfigurer() {
         return plan -> {

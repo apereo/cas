@@ -30,7 +30,11 @@ public class TwilioSmsSender implements SmsSender {
                 message).create();
             return StringUtils.isNotBlank(msg.getSid());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return false;
     }

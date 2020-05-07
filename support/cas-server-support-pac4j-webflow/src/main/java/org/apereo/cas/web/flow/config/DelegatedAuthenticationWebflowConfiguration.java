@@ -44,7 +44,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -87,7 +86,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -150,7 +149,6 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "delegatedAuthenticationClientLogoutAction")
     @Bean
-    @Lazy
     @RefreshScope
     public Action delegatedAuthenticationClientLogoutAction() {
         return new DelegatedAuthenticationClientLogoutAction(builtClients.getObject(),
@@ -160,7 +158,6 @@ public class DelegatedAuthenticationWebflowConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION)
     @Bean
-    @Lazy
     public Action delegatedAuthenticationAction() {
         return new DelegatedClientAuthenticationAction(
             initialAuthenticationAttemptWebflowEventResolver.getObject(),
@@ -225,6 +222,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
 
     @Bean
+    @RefreshScope
     public Function<RequestContext, Set<DelegatedClientIdentityProviderConfiguration>> delegatedClientIdentityProviderConfigurationFunction() {
         val helper = new DelegatedAuthenticationAccessStrategyHelper(this.servicesManager.getObject(),
             registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer.getObject());
