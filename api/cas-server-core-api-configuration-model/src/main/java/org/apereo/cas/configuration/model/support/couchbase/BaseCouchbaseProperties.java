@@ -24,10 +24,10 @@ public abstract class BaseCouchbaseProperties implements Serializable {
     private static final long serialVersionUID = 6550895842866988551L;
 
     /**
-     * Nodeset name.
+     * Node addresses.
      */
     @RequiredProperty
-    private String nodeSet = "localhost:8091";
+    private String nodeSet = "localhost";
 
     /**
      * String representation of connection timeout.
@@ -45,15 +45,31 @@ public abstract class BaseCouchbaseProperties implements Serializable {
     private String queryTimeout = "PT30S";
 
     /**
-     * String representation of socket timeout.
+     * String representation of view timeout.
      */
-    private String socketTimeout = "PT30S";
+    private String viewTimeout = "PT30S";
 
     /**
-     * Password.
+     * String representation of KV timeout.
+     */
+    private String kvTimeout = "PT30S";
+
+    /**
+     * Cluster username.
      */
     @RequiredProperty
-    private String password = "password";
+    private String clusterUsername;
+
+    /**
+     * Cluster password.
+     */
+    @RequiredProperty
+    private String clusterPassword;
+
+    /**
+     * Maximum number of connections made to the cluster.
+     */
+    private int maxHttpConnections = 5;
 
     /**
      * Bucket name.

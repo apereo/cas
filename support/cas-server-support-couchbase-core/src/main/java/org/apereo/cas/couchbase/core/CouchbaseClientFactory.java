@@ -4,31 +4,30 @@ import org.apereo.cas.configuration.model.support.couchbase.BaseCouchbasePropert
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 
-import com.couchbase.client.java.Bucket;
+import com.couchbase.client.core.env.IoConfig;
+import com.couchbase.client.core.env.NetworkResolution;
+import com.couchbase.client.core.env.SeedNode;
+import com.couchbase.client.core.env.TimeoutConfig;
 import com.couchbase.client.java.Cluster;
-import com.couchbase.client.java.CouchbaseCluster;
-import com.couchbase.client.java.document.json.JsonObject;
-import com.couchbase.client.java.env.DefaultCouchbaseEnvironment;
-import com.couchbase.client.java.error.DesignDocumentDoesNotExistException;
-import com.couchbase.client.java.query.N1qlQuery;
-import com.couchbase.client.java.query.N1qlQueryResult;
-import com.couchbase.client.java.query.Select;
-import com.couchbase.client.java.query.dsl.Expression;
-import com.couchbase.client.java.view.DesignDocument;
-import com.couchbase.client.java.view.View;
+import com.couchbase.client.java.ClusterOptions;
+import com.couchbase.client.java.env.ClusterEnvironment;
+import com.couchbase.client.java.json.JsonObject;
+import com.couchbase.client.java.kv.MutationResult;
+import com.couchbase.client.java.query.QueryOptions;
+import com.couchbase.client.java.query.QueryResult;
+import com.couchbase.client.java.query.QueryStatus;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.util.StringUtils;
 
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -50,27 +49,14 @@ public class CouchbaseClientFactory {
         System.setProperty("com.couchbase.queryEnabled", "true");
     }
 
-    private final Collection<View> views;
-
-    /* Design document and views to create in the bucket, if any. */
-    private final String designDocument;
-
     private final BaseCouchbaseProperties properties;
 
     private Cluster cluster;
 
-    private Bucket bucket;
-
-    public CouchbaseClientFactory(final BaseCouchbaseProperties properties,
-                                  final String documentName, final Collection<View> views) {
-        this.properties = properties;
-        this.designDocument = documentName;
-        this.views = views;
-        initializeCluster();
-    }
-
     public CouchbaseClientFactory(final BaseCouchbaseProperties properties) {
-        this(properties, null, null);
+        this.properties = properties;
+
+        initializeCluster();
     }
 
     /**
@@ -87,74 +73,78 @@ public class CouchbaseClientFactory {
 
     private void initializeCluster() {
         shutdown();
-        val nodes = org.springframework.util.StringUtils.commaDelimitedListToSet(properties.getNodeSet());
+        val nodes = StringUtils.commaDelimitedListToSet(properties.getNodeSet());
         LOGGER.debug("Initializing Couchbase cluster for nodes [{}]", nodes);
-        val listOfNodes = new ArrayList<>(nodes);
-        var env = DefaultCouchbaseEnvironment.builder()
-            .connectTimeout(getConnectionTimeout())
-            .socketConnectTimeout(getSocketTimeout())
-            .queryTimeout(getQueryTimeout())
-            .searchTimeout(getSearchTimeout())
+
+        val env = ClusterEnvironment
+            .builder()
+            .timeoutConfig(TimeoutConfig
+                .connectTimeout(getConnectionTimeout())
+                .kvTimeout(getKvTimeout())
+                .queryTimeout(getQueryTimeout())
+                .searchTimeout(getSearchTimeout())
+                .viewTimeout(getViewTimeout()))
+            .ioConfig(IoConfig
+                .maxHttpConnections(properties.getMaxHttpConnections())
+                .networkResolution(NetworkResolution.AUTO))
             .build();
 
-        this.cluster = CouchbaseCluster.create(env, listOfNodes);
+        val listOfNodes = nodes.stream()
+            .map(SeedNode::create)
+            .collect(Collectors.toSet());
+
+        val options = ClusterOptions
+            .clusterOptions(properties.getClusterUsername(), properties.getClusterPassword())
+            .environment(env);
+        this.cluster = Cluster.connect(listOfNodes, options);
+    }
+
+    public Duration getConnectionTimeout() {
+        return Beans.newDuration(properties.getConnectionTimeout());
+    }
+
+    public Duration getSearchTimeout() {
+        return Beans.newDuration(properties.getSearchTimeout());
+    }
+
+    public Duration getQueryTimeout() {
+        return Beans.newDuration(properties.getQueryTimeout());
+    }
+
+    public Duration getViewTimeout() {
+        return Beans.newDuration(properties.getViewTimeout());
+    }
+
+    public Duration getKvTimeout() {
+        return Beans.newDuration(properties.getKvTimeout());
     }
 
     /**
-     * Retrieve the Couchbase getBucket.
+     * Query with parameters.
      *
-     * @return the getBucket.
+     * @param query      the query
+     * @param parameters the parameters
+     * @return the query result
      */
-    public Bucket getBucket() {
-        if (this.bucket != null) {
-            return this.bucket;
+    public QueryResult query(final String query, final Optional<JsonObject> parameters) {
+        val formattedQuery = String.format("SELECT * FROM `%s` WHERE %s", properties.getBucket(), query);
+        val result = parameters.isPresent()
+            ? cluster.query(formattedQuery, QueryOptions.queryOptions().parameters(parameters.get()))
+            : cluster.query(formattedQuery);
+        if (result.metaData().status() == QueryStatus.ERRORS) {
+            throw new CouchbaseException("Could not execute query");
         }
-        initializeBucket();
-        return this.bucket;
-    }
-
-    public long getConnectionTimeout() {
-        return Beans.newDuration(properties.getConnectionTimeout()).toMillis();
-    }
-
-    public long getSearchTimeout() {
-        return Beans.newDuration(properties.getSearchTimeout()).toMillis();
-    }
-
-    public long getQueryTimeout() {
-        return Beans.newDuration(properties.getQueryTimeout()).toMillis();
-    }
-
-    public int getSocketTimeout() {
-        return (int) Beans.newDuration(properties.getSocketTimeout()).toMillis();
+        return result;
     }
 
     /**
      * Query and get a result by username.
      *
-     * @param usernameAttribute the username attribute
-     * @param usernameValue     the username value
+     * @param statement the query
      * @return the n1ql query result
-     * @throws GeneralSecurityException the general security exception
      */
-    public N1qlQueryResult query(final String usernameAttribute, final String usernameValue) throws GeneralSecurityException {
-        val theBucket = getBucket();
-        val statement = Select.select("*")
-            .from(Expression.i(theBucket.name()))
-            .where(Expression.x(usernameAttribute).eq('\'' + usernameValue + '\''));
-
-        LOGGER.debug("Running query [{}] on bucket [{}]", statement.toString(), theBucket.name());
-
-        val query = N1qlQuery.simple(statement);
-        val result = theBucket.query(query, getConnectionTimeout(), TimeUnit.MILLISECONDS);
-        if (!result.finalSuccess()) {
-            LOGGER.error("Couchbase query failed with [{}]", result.errors()
-                .stream()
-                .map(JsonObject::toString)
-                .collect(Collectors.joining(",")));
-            throw new GeneralSecurityException("Could not locate account for user " + usernameValue);
-        }
-        return result;
+    public QueryResult query(final String statement) {
+        return query(statement, Optional.empty());
     }
 
     /**
@@ -164,7 +154,8 @@ public class CouchbaseClientFactory {
      * @param filter          the filter
      * @return the map
      */
-    public Map<String, List<Object>> collectAttributesFromEntity(final JsonObject couchbaseEntity, final Predicate<String> filter) {
+    public Map<String, List<Object>> collectAttributesFromEntity(final JsonObject couchbaseEntity,
+                                                                 final Predicate<String> filter) {
         return couchbaseEntity.getNames()
             .stream()
             .filter(filter)
@@ -172,44 +163,37 @@ public class CouchbaseClientFactory {
             .collect(Collectors.toMap(Pair::getKey, s -> CollectionUtils.wrapList(s.getValue())));
     }
 
-    private void initializeBucket() {
-        openBucket();
-        createDesignDocumentAndViewIfNeeded();
+    /**
+     * Bucket upsert default collection.
+     *
+     * @param content the content
+     * @return the mutation result
+     */
+    public MutationResult bucketUpsertDefaultCollection(final String content) {
+        val id = UUID.randomUUID().toString();
+        val document = JsonObject.fromJson(content);
+        return bucketUpsertDefaultCollection(id, document);
     }
 
-    private void createDesignDocumentAndViewIfNeeded() {
-        if (this.views != null && this.designDocument != null) {
-            LOGGER.debug("Ensure that indexes exist in bucket [{}]", this.bucket.name());
-            val bucketManager = this.bucket.bucketManager();
-            val newDocument = DesignDocument.create(this.designDocument, new ArrayList<>(views));
-            try {
-                if (!newDocument.equals(bucketManager.getDesignDocument(this.designDocument))) {
-                    LOGGER.warn("Missing indexes in bucket [{}] for document [{}]", this.bucket.name(), this.designDocument);
-                    bucketManager.upsertDesignDocument(newDocument);
-                }
-            } catch (final DesignDocumentDoesNotExistException e) {
-                LOGGER.debug("Design document in bucket [{}] for document [{}] should be created", this.bucket.name(), this.designDocument);
-                bucketManager.upsertDesignDocument(newDocument);
-            } catch (final Exception e) {
-                throw new IllegalArgumentException(e.getMessage(), e);
-            }
-        }
+    /**
+     * Bucket upsert default collection.
+     *
+     * @param id       the id
+     * @param document the document
+     * @return the mutation result
+     */
+    public MutationResult bucketUpsertDefaultCollection(final String id, final Object document) {
+        val bucket = this.cluster.bucket(properties.getBucket());
+        return bucket.defaultCollection().upsert(id, document);
     }
 
-    private void openBucket() {
-        try {
-            LOGGER.trace("Trying to connect to couchbase bucket [{}]", properties.getBucket());
-            if (StringUtils.isBlank(properties.getPassword())) {
-                this.bucket = this.cluster.openBucket(properties.getBucket(),
-                    getConnectionTimeout(), TimeUnit.MILLISECONDS);
-            } else {
-                this.bucket = this.cluster.openBucket(properties.getBucket(), properties.getPassword(),
-                    getConnectionTimeout(), TimeUnit.MILLISECONDS);
-            }
-        } catch (final Exception e) {
-            throw new IllegalArgumentException("Failed to connect to Couchbase bucket " + properties.getBucket(), e);
-        }
-        LOGGER.info("Connected to Couchbase bucket [{}]", properties.getBucket());
+    /**
+     * Gets bucket.
+     *
+     * @return the bucket
+     */
+    public String getBucket() {
+        return properties.getBucket();
     }
 }
 

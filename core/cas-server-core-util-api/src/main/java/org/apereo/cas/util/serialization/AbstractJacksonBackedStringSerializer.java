@@ -53,6 +53,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     private static final long serialVersionUID = -8415599777321259365L;
 
     private final ObjectMapper objectMapper;
+    
     private final transient PrettyPrinter prettyPrinter;
 
     /**

@@ -29,7 +29,7 @@ ext["log4jVersion"] = "2.13.2"
 ext["commonsBeansVersion"] = "1.9.4"
 ext["logbackVersion"] = "1.3.0-alpha5"
 ext["caffeinVersion"] = "2.8.2"
-ext["couchbaseVersion"] = "2.7.11"
+ext["couchbaseVersion"] = "3.0.3"
 
 ext["mysqlVersion"] = "8.0.20"
 ext["postgresqlVersion"] = "42.2.12"

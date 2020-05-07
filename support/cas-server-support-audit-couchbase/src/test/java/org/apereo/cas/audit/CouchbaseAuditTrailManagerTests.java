@@ -6,6 +6,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasSupportCouchbaseAuditConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
@@ -30,8 +31,9 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     RefreshAutoConfiguration.class,
     CasCoreWebConfiguration.class
 }, properties = {
-    "cas.audit.couchbase.password=password",
     "cas.audit.couchbase.bucket=testbucket",
+    "cas.audit.couchbase.clusterUsername=admin",
+    "cas.audit.couchbase.clusterPassword=password",
     "cas.audit.couchbase.asynchronous=false"
 })
 @Tag("Couchbase")
@@ -42,4 +44,8 @@ public class CouchbaseAuditTrailManagerTests extends BaseAuditConfigurationTests
     @Autowired
     @Qualifier("couchbaseAuditTrailManager")
     private AuditTrailManager auditTrailManager;
+
+    @Autowired
+    @Qualifier("auditsCouchbaseClientFactory")
+    private CouchbaseClientFactory auditsCouchbaseClientFactory;
 }
