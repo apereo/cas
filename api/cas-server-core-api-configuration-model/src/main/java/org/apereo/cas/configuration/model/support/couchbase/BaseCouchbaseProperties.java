@@ -32,7 +32,22 @@ public abstract class BaseCouchbaseProperties implements Serializable {
     /**
      * String representation of connection timeout.
      */
-    private String timeout = "PT30S";
+    private String connectionTimeout = "PT60S";
+
+    /**
+     * String representation of search timeout.
+     */
+    private String searchTimeout = "PT30S";
+
+    /**
+     * String representation of query timeout.
+     */
+    private String queryTimeout = "PT30S";
+
+    /**
+     * String representation of socket timeout.
+     */
+    private String socketTimeout = "PT30S";
 
     /**
      * Password.

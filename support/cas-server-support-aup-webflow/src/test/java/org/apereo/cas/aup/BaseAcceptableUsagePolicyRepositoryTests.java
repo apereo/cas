@@ -19,6 +19,7 @@ import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -55,15 +56,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@SpringBootTest(classes = BaseAcceptableUsagePolicyRepositoryTests.SharedTestConfiguration.class,
-    properties = {
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+@SpringBootTest(classes = BaseAcceptableUsagePolicyRepositoryTests.SharedTestConfiguration.class)
 public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     protected ObjectProvider<TicketRegistry> ticketRegistry;
+
+    @Autowired
+    protected CasConfigurationProperties casProperties;
 
     public abstract AcceptableUsagePolicyRepository getAcceptableUsagePolicyRepository();
 

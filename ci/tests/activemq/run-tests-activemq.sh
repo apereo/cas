@@ -30,8 +30,7 @@ echo -e "***********************************************"
 ./ci/tests/activemq/run-activemq-server.sh
 
 gradleBuild="$gradleBuild testJMS jacocoRootReport -x test -x javadoc -x check \
-    --parallel \
-    -DskipNestedConfigMetadataGen=true "
+    --parallel -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "
