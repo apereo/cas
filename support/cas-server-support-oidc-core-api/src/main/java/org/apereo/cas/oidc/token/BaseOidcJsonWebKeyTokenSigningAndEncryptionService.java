@@ -87,6 +87,18 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
         return jwks.get();
     }
 
+    /**
+     * Get the default JWK signing algorithm.
+     *
+     * @param svc the svc
+     * @return JWK signing algorithm
+     */
+    @Override
+    public String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService svc) {
+        val jsonKey = getJsonWebKeySigningKey();
+        return getJsonWebKeySigningAlgorithm(jsonKey);
+    }
+
     @Override
     public JwtClaims decode(final String token, final Optional<OAuthRegisteredService> service) {
         try {

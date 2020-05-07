@@ -11,12 +11,16 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwk.EllipticCurveJsonWebKey;
 import org.jose4j.jwk.PublicJsonWebKey;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.keys.EllipticCurves;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -29,7 +33,48 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Getter
 public abstract class BaseTokenSigningAndEncryptionService implements OAuth20TokenSigningAndEncryptionService {
+
+    @FunctionalInterface
+    private interface AlgorithmIdentifierMap {
+        String getAlgorithmIdentifier(PublicJsonWebKey jsonKey);
+    }
+
+    private static final Map<String, AlgorithmIdentifierMap> ALGORITHM_IDENTIFIER_INTERFACE_MAP = new HashMap<>();
+    private static final Map<String, String> ALGORITHM_IDENTIFIER_EC_MAP = new HashMap<>();
+
+    static {
+        ALGORITHM_IDENTIFIER_EC_MAP.put(EllipticCurves.P_256, AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256);
+        ALGORITHM_IDENTIFIER_EC_MAP.put(EllipticCurves.P_384, AlgorithmIdentifiers.ECDSA_USING_P384_CURVE_AND_SHA384);
+        ALGORITHM_IDENTIFIER_EC_MAP.put(EllipticCurves.P_521, AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512);
+
+        ALGORITHM_IDENTIFIER_INTERFACE_MAP.put("RSA", jwk -> AlgorithmIdentifiers.RSA_USING_SHA256);
+        ALGORITHM_IDENTIFIER_INTERFACE_MAP.put("EC", jwk -> {
+            if (jwk != null && jwk instanceof EllipticCurveJsonWebKey) {
+                val curve = ((EllipticCurveJsonWebKey) jwk).getCurveName();
+                val algorithmIdentifier = ALGORITHM_IDENTIFIER_EC_MAP.get(curve);
+                if (algorithmIdentifier != null) {
+                    return algorithmIdentifier;
+                }
+            }
+            throw new IllegalArgumentException("Unsupported JSON key type");
+        });
+    }
+
     private final String issuer;
+
+    /**
+     * Get JWK signing algorithm.
+     *
+     * @param jsonKey JSON Web Key
+     * @return        Algorithm
+     */
+    protected String getJsonWebKeySigningAlgorithm(final PublicJsonWebKey jsonKey) {
+        val algorithmIdentifiersInterfaceMap = ALGORITHM_IDENTIFIER_INTERFACE_MAP.get(jsonKey.getKeyType());
+        if (algorithmIdentifiersInterfaceMap != null) {
+            return algorithmIdentifiersInterfaceMap.getAlgorithmIdentifier(jsonKey);
+        }
+        throw new IllegalArgumentException("Unsupported JSON key type");
+    }
 
     /**
      * Create json web encryption json web encryption.

@@ -54,4 +54,10 @@ public class UmaRequestingPartyTokenSigningService extends BaseTokenSigningAndEn
     protected PublicJsonWebKey getJsonWebKeySigningKey() {
         return jsonWebKey;
     }
+
+    @Override
+    public String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService svc) {
+        return getJsonWebKeySigningAlgorithm(jsonWebKey);
+    }
+
 }
