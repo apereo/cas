@@ -170,7 +170,6 @@ Groovy scripts whether inlined or external will receive and have access to the f
 - `service`: The service object that is matched by the registered service definition.
 - `logger`: A logger object, able to provide `logger.info(...)` operations, etc.
 
-
 ### Inline
 
 Embed the groovy script directly inside the service configuration.
@@ -184,11 +183,14 @@ Embed the groovy script directly inside the service configuration.
   "description" : "sample",
   "usernameAttributeProvider" : {
     "@class" : "org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider",
-    "groovyScript" : "groovy { return attributes['uid'] + '123456789' }",
+    "groovyScript" : "groovy { return attributes['uid'][0] + '123456789' }",
     "canonicalizationMode" : "UPPER"
   }
 }
 ```
+
+Note that the `uid` attribute in the above example is resolved internally as a multivalued attribute, as should all attributes when fetched by CAS. So 
+the above example uses the `[0]` syntax to fetch the first value of the attribute.
 
 ### External
 
