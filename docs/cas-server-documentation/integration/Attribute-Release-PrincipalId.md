@@ -177,7 +177,7 @@ Embed the groovy script directly inside the service configuration.
   "description" : "sample",
   "usernameAttributeProvider" : {
     "@class" : "org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider",
-    "groovyScript" : "groovy { return attributes['uid'] + '123456789' }",
+    "groovyScript" : "groovy { return attributes['uid'][0] + '123456789' }",
     "canonicalizationMode" : "UPPER"
   }
 }
