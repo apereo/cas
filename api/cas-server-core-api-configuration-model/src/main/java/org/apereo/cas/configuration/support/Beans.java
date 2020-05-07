@@ -13,6 +13,7 @@ import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -89,5 +90,10 @@ public class Beans {
             return Duration.ofSeconds(Long.parseLong(length));
         }
         return Duration.parse(length);
+    }
+
+    @SneakyThrows
+    public static String getTempFilePath(final String prefix, final String suffix) {
+        return File.createTempFile(prefix, suffix).getCanonicalPath();
     }
 }

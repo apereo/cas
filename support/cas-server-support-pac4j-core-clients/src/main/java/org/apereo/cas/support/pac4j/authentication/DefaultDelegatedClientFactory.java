@@ -395,7 +395,8 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
         val index = new AtomicInteger();
         pac4jProperties.getSaml()
             .stream()
-            .filter(saml -> saml.isEnabled() && StringUtils.isNotBlank(saml.getKeystorePath())
+            .filter(saml -> saml.isEnabled()
+                && StringUtils.isNotBlank(saml.getKeystorePath())
                 && StringUtils.isNotBlank(saml.getIdentityProviderMetadataPath())
                 && StringUtils.isNotBlank(saml.getServiceProviderEntityId())
                 && StringUtils.isNotBlank(saml.getServiceProviderMetadataPath()))
