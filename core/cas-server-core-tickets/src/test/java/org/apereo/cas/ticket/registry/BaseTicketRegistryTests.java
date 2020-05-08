@@ -318,7 +318,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    public void verifyTicketCountsEqualToTicketsAdded() {
+    public void verifyTicketCountsEqualToTicketsAdded() throws Exception {
         assumeTrue(isIterableRegistry());
         val tgts = new ArrayList<Ticket>();
         val sts = new ArrayList<Ticket>();
@@ -335,6 +335,7 @@ public abstract class BaseTicketRegistryTests {
             sts.add(st);
             ticketRegistry.addTicket(ticketGrantingTicket);
             ticketRegistry.addTicket(st);
+            Thread.sleep(500);
         }
 
         val sessionCount = this.ticketRegistry.sessionCount();

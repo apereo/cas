@@ -49,7 +49,7 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
     @SneakyThrows
     public IPersonAttributes getPerson(final String uid, final IPersonAttributeDaoFilter filter) {
         val query = String.format("%s = '%s'", couchbaseProperties.getUsernameAttribute(), uid);
-        val result = couchbase.query(query);
+        val result = couchbase.select(query);
         val attributes = new LinkedHashMap<String, Object>();
         if (result.rowsAsObject().isEmpty()) {
             LOGGER.debug("Couchbase query did not return any results/rows.");
@@ -59,7 +59,7 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
                 .filter(row -> row.containsKey(couchbase.getBucket()))
                 .map(row -> {
                     val document = row.getObject(couchbase.getBucket());
-                    val results = couchbase.collectAttributesFromEntity(document, s -> true);
+                    val results = CouchbaseClientFactory.collectAttributesFromEntity(document, s -> true);
                     return results.entrySet();
                 })
                 .flatMap(Collection::stream)

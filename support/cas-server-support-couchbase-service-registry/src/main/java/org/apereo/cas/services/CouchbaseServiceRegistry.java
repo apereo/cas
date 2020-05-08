@@ -96,15 +96,6 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
         }
     }
 
-    private QueryResult queryForAllServices() {
-        val query = String.format("REGEX_CONTAINS(%s, \"@class.*:.*RegisteredService\")", couchbase.getBucket());
-        val queryResult = couchbase.query(query);
-        if (!queryResult.metaData().status().equals(QueryStatus.SUCCESS)) {
-            throw new CouchbaseException(queryResult.metaData().toString());
-        }
-        return queryResult;
-    }
-
     @Override
     public RegisteredService findServiceById(final long id) {
         try {
@@ -132,5 +123,14 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
     @Override
     public long size() {
         return queryForAllServices().rowsAsObject().size();
+    }
+
+    private QueryResult queryForAllServices() {
+        val query = String.format("REGEX_CONTAINS(%s.`@class`, \".*RegisteredService$\")", couchbase.getBucket());
+        val queryResult = couchbase.select(query);
+        if (!queryResult.metaData().status().equals(QueryStatus.SUCCESS)) {
+            throw new CouchbaseException(queryResult.metaData().toString());
+        }
+        return queryResult;
     }
 }
