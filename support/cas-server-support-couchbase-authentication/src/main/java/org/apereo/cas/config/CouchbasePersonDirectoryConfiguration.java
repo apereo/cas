@@ -6,7 +6,6 @@ import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer
 import org.apereo.cas.persondir.support.CouchbasePersonAttributeDao;
 import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -26,7 +25,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("couchbasePersonDirectoryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CouchbasePersonDirectoryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

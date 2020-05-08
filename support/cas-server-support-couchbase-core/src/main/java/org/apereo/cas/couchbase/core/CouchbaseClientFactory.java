@@ -8,6 +8,7 @@ import com.couchbase.client.core.env.IoConfig;
 import com.couchbase.client.core.env.NetworkResolution;
 import com.couchbase.client.core.env.SeedNode;
 import com.couchbase.client.core.env.TimeoutConfig;
+import com.couchbase.client.core.error.DocumentNotFoundException;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.ClusterOptions;
 import com.couchbase.client.java.env.ClusterEnvironment;
@@ -18,13 +19,14 @@ import com.couchbase.client.java.kv.MutationResult;
 import com.couchbase.client.java.kv.UpsertOptions;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.query.QueryResult;
+import com.couchbase.client.java.query.QueryScanConsistency;
 import com.couchbase.client.java.query.QueryStatus;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.util.List;
@@ -48,10 +50,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 public class CouchbaseClientFactory {
-    static {
-        System.setProperty("com.couchbase.queryEnabled", "true");
-    }
-
     private final BaseCouchbaseProperties properties;
 
     private Cluster cluster;
@@ -158,9 +156,9 @@ public class CouchbaseClientFactory {
      */
     public long count(final String query, final Optional<JsonObject> parameters) {
         val formattedQuery = String.format("SELECT count(*) as count FROM `%s` WHERE %s", properties.getBucket(), query);
-        val result = parameters.isPresent()
-            ? cluster.query(formattedQuery, QueryOptions.queryOptions().parameters(parameters.get()))
-            : cluster.query(formattedQuery);
+        val options = QueryOptions.queryOptions().scanConsistency(QueryScanConsistency.valueOf(properties.getScanConsistency()));
+        parameters.ifPresent(options::parameters);
+        val result = executeQuery(options, formattedQuery);
         if (result.metaData().status() == QueryStatus.ERRORS) {
             throw new CouchbaseException("Could not execute query");
         }
@@ -176,9 +174,8 @@ public class CouchbaseClientFactory {
      */
     public QueryResult select(final String query, final Optional<JsonObject> parameters) {
         val formattedQuery = String.format("SELECT * FROM `%s` WHERE %s", properties.getBucket(), query);
-        val options = parameters.isPresent()
-            ? QueryOptions.queryOptions().parameters(parameters.get())
-            : QueryOptions.queryOptions();
+        val options = QueryOptions.queryOptions().scanConsistency(QueryScanConsistency.valueOf(properties.getScanConsistency()));
+        parameters.ifPresent(options::parameters);
         return executeQuery(options, formattedQuery);
     }
 
@@ -190,7 +187,23 @@ public class CouchbaseClientFactory {
      * @return the query result
      */
     public QueryResult select(final String query, final QueryOptions options) {
-        val formattedQuery = String.format("SELECT * FROM `%s` WHERE %s", properties.getBucket(), query);
+        return select(query, options, true);
+    }
+
+    /**
+     * Select query result.
+     *
+     * @param query                  the query
+     * @param options                the options
+     * @param includeResultsInBucket the include results in bucket
+     * @return the query result
+     */
+    public QueryResult select(final String query,
+                              final QueryOptions options,
+                              final boolean includeResultsInBucket) {
+        val formattedQuery = String.format("SELECT %s* FROM `%s` WHERE %s",
+            includeResultsInBucket ? StringUtils.EMPTY : properties.getBucket() + '.',
+            properties.getBucket(), query);
         return executeQuery(options, formattedQuery);
     }
 
@@ -213,9 +226,9 @@ public class CouchbaseClientFactory {
      */
     public QueryResult remove(final String query, final Optional<JsonObject> parameters) {
         val formattedQuery = String.format("DELETE FROM `%s` WHERE %s", properties.getBucket(), query);
-        val options = parameters.isPresent()
-            ? QueryOptions.queryOptions().parameters(parameters.get())
-            : QueryOptions.queryOptions();
+        val options = QueryOptions.queryOptions()
+            .scanConsistency(QueryScanConsistency.valueOf(properties.getScanConsistency()));
+        parameters.ifPresent(options::parameters);
         return executeQuery(options, formattedQuery);
     }
 
@@ -281,9 +294,14 @@ public class CouchbaseClientFactory {
      * @param id the id
      * @return the mutation result
      */
-    public MutationResult bucketRemoveFromDefaultCollection(final String id) {
+    public Optional<MutationResult> bucketRemoveFromDefaultCollection(final String id) {
         val bucket = this.cluster.bucket(properties.getBucket());
-        return bucket.defaultCollection().remove(id);
+        try {
+            return Optional.of(bucket.defaultCollection().remove(id));
+        } catch (final DocumentNotFoundException e) {
+            LOGGER.trace(e.getMessage(), e);
+        }
+        return Optional.empty();
     }
 
     /**
@@ -312,8 +330,7 @@ public class CouchbaseClientFactory {
 
     private void initializeCluster() {
         shutdown();
-        val nodes = StringUtils.commaDelimitedListToSet(properties.getNodeSet());
-        LOGGER.debug("Initializing Couchbase cluster for nodes [{}]", nodes);
+        LOGGER.debug("Initializing Couchbase cluster for nodes [{}]", properties.getAddresses());
 
         val env = ClusterEnvironment
             .builder()
@@ -328,7 +345,8 @@ public class CouchbaseClientFactory {
                 .networkResolution(NetworkResolution.AUTO))
             .build();
 
-        val listOfNodes = nodes.stream()
+        val listOfNodes = properties.getAddresses()
+            .stream()
             .map(SeedNode::create)
             .collect(Collectors.toSet());
 
@@ -340,6 +358,14 @@ public class CouchbaseClientFactory {
 
     private QueryResult executeQuery(final QueryOptions options,
                                      final String formattedQuery) {
+        LOGGER.trace("Executing query [{}]", formattedQuery);
+        options
+            .scanConsistency(QueryScanConsistency.valueOf(properties.getScanConsistency()))
+            .timeout(getConnectionTimeout())
+            .scanWait(Beans.newDuration(properties.getScanWaitTimeout()));
+        if (properties.getMaxParallelism() > 0) {
+            options.maxParallelism(properties.getMaxParallelism());
+        }
         val result = cluster.query(formattedQuery, options);
         if (result.metaData().status() == QueryStatus.ERRORS) {
             throw new CouchbaseException("Could not execute query");

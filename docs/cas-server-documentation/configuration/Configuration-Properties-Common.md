@@ -922,11 +922,19 @@ RESTful settings are available [here](#restful-integrations) under the configura
 The following options are shared and apply when CAS is configured to integrate with Couchbase (i.e ticket registry, etc), given the provider's *configuration key*:
 
 ```properties
-# ${configurationKey}.nodeSet=localhost:8091
-# ${configurationKey}.password=
-# ${configurationKey}.queryEnabled=true
-# ${configurationKey}.bucket=default
+# ${configurationKey}.addresses[0]=localhost
+# ${configurationKey}.clusterUsername=
+# ${configurationKey}.clusterPassword= 
+
+# ${configurationKey}.bucket=testbucket    
+
 # ${configurationKey}.connectionTimeout=PT60S
+# ${configurationKey}.searchTimeout=PT30S
+# ${configurationKey}.queryTimeout=PT30S
+# ${configurationKey}.viewTimeout=PT30S
+# ${configurationKey}.kvTimeout=PT30S 
+# ${configurationKey}.maxHttpConnections=PT30S
+# ${configurationKey}.scanConsistency=NOT_BOUNDED|REQUEST_PLUS
 ```
 
 ## Amazon Integration Settings

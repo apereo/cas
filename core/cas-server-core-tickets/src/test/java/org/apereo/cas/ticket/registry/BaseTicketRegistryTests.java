@@ -91,22 +91,6 @@ public abstract class BaseTicketRegistryTests {
 
     private TicketRegistry ticketRegistry;
 
-    protected static ExpirationPolicyBuilder neverExpiresExpirationPolicyBuilder() {
-        return new ExpirationPolicyBuilder() {
-            private static final long serialVersionUID = -9043565995104313970L;
-
-            @Override
-            public ExpirationPolicy buildTicketExpirationPolicy() {
-                return NeverExpiresExpirationPolicy.INSTANCE;
-            }
-
-            @Override
-            public Class<Ticket> getTicketType() {
-                return null;
-            }
-        };
-    }
-
     @BeforeEach
     public void initialize(final RepetitionInfo info) {
         this.ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
@@ -124,26 +108,6 @@ public abstract class BaseTicketRegistryTests {
             ticketRegistry.deleteAll();
             setUpEncryption();
         }
-    }
-
-    protected abstract TicketRegistry getNewTicketRegistry();
-
-    private void setUpEncryption() {
-        var registry = (AbstractTicketRegistry) AopTestUtils.getTargetObject(ticketRegistry);
-        if (this.useEncryption) {
-            val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(
-                new EncryptionRandomizedSigningJwtCryptographyProperties(), "[tests]");
-            registry.setCipherExecutor(cipher);
-        } else {
-            registry.setCipherExecutor(CipherExecutor.noOp());
-        }
-    }
-
-    /**
-     * Determine whether the tested registry is able to iterate its tickets.
-     */
-    protected boolean isIterableRegistry() {
-        return true;
     }
 
     @RepeatedTest(2)
@@ -294,7 +258,7 @@ public abstract class BaseTicketRegistryTests {
     public void verifyGetTicketsFromRegistryEqualToTicketsAdded() {
         assumeTrue(isIterableRegistry());
         val tickets = new ArrayList<Ticket>();
-
+        
         for (var i = 0; i < TICKETS_IN_REGISTRY; i++) {
             val ticketGrantingTicket = new TicketGrantingTicketImpl(ticketGrantingTicketId + "-" + i,
                 CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
@@ -335,9 +299,7 @@ public abstract class BaseTicketRegistryTests {
             sts.add(st);
             ticketRegistry.addTicket(ticketGrantingTicket);
             ticketRegistry.addTicket(st);
-            Thread.sleep(500);
         }
-
         val sessionCount = this.ticketRegistry.sessionCount();
         assertEquals(tgts.size(), sessionCount,
             "The sessionCount is not the same as the collection.");
@@ -475,6 +437,17 @@ public abstract class BaseTicketRegistryTests {
         assertEquals(6, c);
     }
 
+    private void setUpEncryption() {
+        var registry = (AbstractTicketRegistry) AopTestUtils.getTargetObject(ticketRegistry);
+        if (this.useEncryption) {
+            val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(
+                new EncryptionRandomizedSigningJwtCryptographyProperties(), "[tests]");
+            registry.setCipherExecutor(cipher);
+        } else {
+            registry.setCipherExecutor(CipherExecutor.noOp());
+        }
+    }
+
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class
@@ -503,5 +476,30 @@ public abstract class BaseTicketRegistryTests {
         CasWebApplicationServiceFactoryConfiguration.class
     })
     static class SharedTestConfiguration {
+    }
+
+    protected static ExpirationPolicyBuilder neverExpiresExpirationPolicyBuilder() {
+        return new ExpirationPolicyBuilder() {
+            private static final long serialVersionUID = -9043565995104313970L;
+
+            @Override
+            public ExpirationPolicy buildTicketExpirationPolicy() {
+                return NeverExpiresExpirationPolicy.INSTANCE;
+            }
+
+            @Override
+            public Class<Ticket> getTicketType() {
+                return null;
+            }
+        };
+    }
+
+    protected abstract TicketRegistry getNewTicketRegistry();
+
+    /**
+     * Determine whether the tested registry is able to iterate its tickets.
+     */
+    protected boolean isIterableRegistry() {
+        return true;
     }
 }

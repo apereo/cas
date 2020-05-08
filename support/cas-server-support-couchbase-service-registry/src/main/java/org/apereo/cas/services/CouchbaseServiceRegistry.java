@@ -126,7 +126,7 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
     }
 
     private QueryResult queryForAllServices() {
-        val query = String.format("REGEX_CONTAINS(%s.`@class`, \".*RegisteredService$\")", couchbase.getBucket());
+        val query = String.format("REGEX_CONTAINS(%s, \"@class.*:.*RegisteredService\")", couchbase.getBucket());
         val queryResult = couchbase.select(query);
         if (!queryResult.metaData().status().equals(QueryStatus.SUCCESS)) {
             throw new CouchbaseException(queryResult.metaData().toString());
