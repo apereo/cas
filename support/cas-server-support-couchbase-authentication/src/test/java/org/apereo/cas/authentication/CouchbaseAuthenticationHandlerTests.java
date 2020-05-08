@@ -49,6 +49,10 @@ public class CouchbaseAuthenticationHandlerTests {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val result = handler.authenticate(c);
         assertNotNull(result);
+        val attributes = result.getPrincipal().getAttributes();
+        assertEquals(2, attributes.size());
+        assertTrue(attributes.containsKey("firstname"));
+        assertTrue(attributes.containsKey("lastname"));
     }
 
     @Test
