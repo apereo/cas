@@ -7,14 +7,16 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * This is {@link JdbcServletContextListener} that properly
- * deregisters JDBC drivers.
- *
- * Ref: https://github.com/apereo/cas/pull/4812
- * Note that Slf4j does not work in contextDestroyed.
+ * deregisters JDBC drivers in this context's ClassLoader.
+ * <p>
+ * Note that Slf4j logging does not work in contextDestroyed,
+ * likely due to the fact that the logging framework as
+ * shutdown and its context is destroyed sooner than this listener.
  * We need to stick to old-school logging method.
  *
  * @author leeyc0
@@ -27,13 +29,10 @@ public class JdbcServletContextListener implements ServletContextListener {
     public void contextInitialized(final ServletContextEvent sce) {
     }
 
-    /*
-     * Deregister JDBC drivers in this context's ClassLoader
-     */
     @Override
     public final void contextDestroyed(final ServletContextEvent sce) {
-        val logger = Logger.getLogger("org.apereo.cas");
-        logger.fine("Unregistering JdbcServletContextListener");
+        val logger = Logger.getLogger(CentralAuthenticationService.NAMESPACE);
+        logger.fine("Unregistering JDBC drivers...");
 
         val cl = Thread.currentThread().getContextClassLoader();
         val drivers = DriverManager.getDrivers();
@@ -41,12 +40,13 @@ public class JdbcServletContextListener implements ServletContextListener {
             val driver = drivers.nextElement();
             if (driver.getClass().getClassLoader() == cl) {
                 try {
+                    logger.fine("Attempting to deregister JDBC driver " + driver);
                     DriverManager.deregisterDriver(driver);
                 } catch (final SQLException ex) {
-                    logger.warning("Error deregistering JDBC driver " + ex);
+                    logger.log(Level.WARNING, "Error deregistering JDBC driver ", ex);
                 }
             } else {
-                logger.fine("Not deregistering JDBC driver as it does not belong to this webapp's ClassLoader: " + driver);
+                logger.fine("Not deregistering JDBC driver as it does not belong to this classloader: " + driver);
             }
         }
     }
