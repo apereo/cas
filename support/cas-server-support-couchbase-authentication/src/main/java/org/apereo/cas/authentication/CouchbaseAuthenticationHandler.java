@@ -40,7 +40,7 @@ public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuth
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
                                                                                         final String originalPassword) throws GeneralSecurityException {
         val query = String.format("%s = '%s'", couchbaseProperties.getUsernameAttribute(), transformedCredential.getUsername());
-        val result = couchbase.query(query);
+        val result = couchbase.select(query);
         val results = result.rowsAsObject();
         if (results.isEmpty()) {
             LOGGER.error("Couchbase query did not return any results/rows.");
@@ -65,7 +65,7 @@ public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuth
             throw new FailedLoginException();
         }
 
-        val attributes = couchbase.collectAttributesFromEntity(row, s ->
+        val attributes = CouchbaseClientFactory.collectAttributesFromEntity(row, s ->
             !s.equals(couchbaseProperties.getPasswordAttribute()) && !s.equals(couchbaseProperties.getUsernameAttribute()));
         val principal = this.principalFactory.createPrincipal(transformedCredential.getId(), attributes);
         return createHandlerResult(transformedCredential, principal, new ArrayList<>(0));

@@ -21,7 +21,8 @@ import org.springframework.boot.test.context.SpringBootTest;
     BaseTicketRegistryTests.SharedTestConfiguration.class
 },
     properties = {
-        "cas.ticket.registry.couchbase.password=password",
+        "cas.ticket.registry.couchbase.clusterPassword=password",
+        "cas.ticket.registry.couchbase.clusterUsername=admin",
         "cas.ticket.registry.couchbase.bucket=testbucket"
     })
 public class CouchbaseTicketRegistryTests extends BaseTicketRegistryTests {
@@ -34,10 +35,4 @@ public class CouchbaseTicketRegistryTests extends BaseTicketRegistryTests {
     public TicketRegistry getNewTicketRegistry() {
         return ticketRegistry;
     }
-
-    @Override
-    protected boolean isIterableRegistry() {
-        return false;
-    }
-
 }
