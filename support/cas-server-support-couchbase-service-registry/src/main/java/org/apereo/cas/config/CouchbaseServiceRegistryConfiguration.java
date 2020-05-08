@@ -43,6 +43,7 @@ public class CouchbaseServiceRegistryConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "serviceRegistryCouchbaseClientFactory")
     public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory() {
         val couchbase = casProperties.getServiceRegistry().getCouchbase();
         return new CouchbaseClientFactory(couchbase);
@@ -56,6 +57,7 @@ public class CouchbaseServiceRegistryConfiguration {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "couchbaseServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer couchbaseServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(couchbaseServiceRegistry());
