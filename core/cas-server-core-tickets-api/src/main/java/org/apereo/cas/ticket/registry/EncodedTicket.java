@@ -58,6 +58,7 @@ public class EncodedTicket implements Ticket {
      *
      * @param encodedTicket   the encoded ticket that will be decoded from base64
      * @param encodedTicketId the encoded ticket id
+     * @param prefix          the ticket prefix
      */
     @SneakyThrows
     @JsonCreator
