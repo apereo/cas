@@ -1260,7 +1260,8 @@ with the following configured properties:
 
 ### Couchbase
 
-This option will fetch attributes from a Couchbase database for a given CAS principal. To learn more about this topic, [please review this guide](../installation/Couchbase-Authentication.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.attribute-repository.couchbase`.
+This option will fetch attributes from a Couchbase database for a given CAS principal. To learn more about this topic, [please review this guide](../installation/Couchbase-Authentication.html). 
+Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.attribute-repository.couchbase`.
 
 ```properties
 # cas.authn.attribute-repository.couchbase.usernameAttribute=username

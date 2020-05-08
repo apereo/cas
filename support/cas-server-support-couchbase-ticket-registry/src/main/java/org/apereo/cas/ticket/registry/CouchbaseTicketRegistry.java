@@ -11,6 +11,7 @@ import com.couchbase.client.java.kv.GetOptions;
 import com.couchbase.client.java.kv.UpsertOptions;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.query.QueryResult;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -37,7 +38,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
+        .findAndRegisterModules();
 
     private final CouchbaseClientFactory couchbase;
 
@@ -93,13 +96,14 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     @SneakyThrows
     @Override
     public void destroy() {
-        LOGGER.debug("Shutting down Couchbase");
+        LOGGER.trace("Shutting down Couchbase");
         this.couchbase.shutdown();
     }
 
     @Override
     public Collection<? extends Ticket> getTickets() {
-        return queryForTickets()
+        val results = queryForTickets();
+        return results
             .rowsAs(Ticket.class)
             .stream()
             .map(ticket -> {
@@ -146,7 +150,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     private String getQueryForAllTickets() {
-        return String.format("REGEX_CONTAINS(%s.`@class`, \".*Ticket$\")", couchbase.getBucket());
+        return String.format("REGEX_CONTAINS(%s.`@class`, \".*Ticket.*\")", couchbase.getBucket());
     }
 
     /**
@@ -162,7 +166,8 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
 
     private QueryResult queryForTickets() {
         val query = getQueryForAllTickets();
-        return couchbase.select(query, QueryOptions.queryOptions());
+        return couchbase.select(query,
+            QueryOptions.queryOptions().serializer(JacksonJsonSerializer.create(MAPPER)), false);
     }
 }
 
