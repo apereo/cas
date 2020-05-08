@@ -5,12 +5,9 @@ import org.apereo.cas.couchbase.core.CouchbaseException;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.serialization.StringSerializer;
 
-import com.couchbase.client.java.document.RawJsonDocument;
-import com.couchbase.client.java.query.N1qlQuery;
-import com.couchbase.client.java.query.N1qlQueryResult;
-import com.couchbase.client.java.query.N1qlQueryRow;
-import com.couchbase.client.java.query.Select;
-import com.couchbase.client.java.query.dsl.Expression;
+import com.couchbase.client.core.error.DocumentNotFoundException;
+import com.couchbase.client.java.query.QueryResult;
+import com.couchbase.client.java.query.QueryStatus;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,15 +21,13 @@ import java.util.Objects;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
  * This is {@link CouchbaseServiceRegistry}.
  * A Service Registry storage backend which uses the memcached protocol.
- * This may seem like a weird idea until you realize that CouchBase is a
- * multi host NoSQL database with a memcached interface to persistent
+ * CouchBase is a multi host NoSQL database with a memcached interface to persistent
  * storage which also is quite usable as a replicated ticket storage
  * engine for multiple front end CAS servers.
  *
@@ -43,9 +38,11 @@ import java.util.stream.StreamSupport;
 @Slf4j
 public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements DisposableBean {
     private final CouchbaseClientFactory couchbase;
+
     private final StringSerializer<RegisteredService> registeredServiceJsonSerializer;
 
-    public CouchbaseServiceRegistry(final ApplicationEventPublisher eventPublisher, final CouchbaseClientFactory couchbase,
+    public CouchbaseServiceRegistry(final ApplicationEventPublisher eventPublisher,
+                                    final CouchbaseClientFactory couchbase,
                                     final StringSerializer<RegisteredService> registeredServiceJsonSerializer,
                                     final Collection<ServiceRegistryListener> serviceRegistryListeners) {
         super(eventPublisher, serviceRegistryListeners);
@@ -55,25 +52,23 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
 
     @Override
     public RegisteredService save(final RegisteredService service) {
-        LOGGER.trace("Saving service [{}] [{}]", service.getClass().getName(), service.getName());
+        LOGGER.trace("Saving service [{}]:[{}]", service.getClass().getName(), service.getName());
         if (service.getId() == AbstractRegisteredService.INITIAL_IDENTIFIER_VALUE) {
             service.setId(UUID.randomUUID().getLeastSignificantBits());
         }
         val stringWriter = new StringWriter();
         this.registeredServiceJsonSerializer.to(stringWriter, service);
-        val document = RawJsonDocument.create(String.valueOf(service.getId()), 0, stringWriter.toString());
         invokeServiceRegistryListenerPreSave(service);
-        val savedDocument= couchbase.getBucket().upsert(document, couchbase.getConnectionTimeout(), TimeUnit.MILLISECONDS);
-        val savedService = registeredServiceJsonSerializer.from(savedDocument.content());
-        LOGGER.debug("Saved service [{}] as [{}]", service.getName(), savedService.getName());
+        couchbase.bucketUpsertDefaultCollection(String.valueOf(service.getId()), stringWriter.toString());
+        LOGGER.debug("Saved service [{}] as [{}]", service.getName(), service.getName());
         publishEvent(new CouchbaseRegisteredServiceSavedEvent(this));
-        return savedService;
+        return service;
     }
 
     @Override
     public boolean delete(final RegisteredService service) {
-        LOGGER.debug("Deleting service [{}]", service.getName());
-        this.couchbase.getBucket().remove(String.valueOf(service.getId()), couchbase.getConnectionTimeout(), TimeUnit.MILLISECONDS);
+        LOGGER.trace("Deleting service [{}]", service.getName());
+        this.couchbase.bucketRemoveFromDefaultCollection(String.valueOf(service.getId()));
         publishEvent(new CouchbaseRegisteredServiceDeletedEvent(this));
         return true;
     }
@@ -81,15 +76,12 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
     @Override
     public Collection<RegisteredService> load() {
         try {
-            val allKeys = executeViewQueryForAllServices();
-            val bucketName = couchbase.getBucket().name();
-            val spliterator = Spliterators.spliteratorUnknownSize(allKeys.iterator(), Spliterator.ORDERED);
+            val allServices = queryForAllServices().rowsAsObject();
+            val spliterator = Spliterators.spliteratorUnknownSize(allServices.iterator(), Spliterator.ORDERED);
             return StreamSupport.stream(spliterator, false)
-                .map(N1qlQueryRow::value)
-                .filter(Objects::nonNull)
-                .filter(document -> document.containsKey(bucketName))
+                .filter(document -> document.containsKey(couchbase.getBucket()))
                 .map(document -> {
-                    val json = document.getObject(bucketName).toString();
+                    val json = document.getString(couchbase.getBucket());
                     LOGGER.trace("Found service: [{}]", json);
                     return this.registeredServiceJsonSerializer.from(json);
                 })
@@ -104,21 +96,11 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
         }
     }
 
-    private N1qlQueryResult executeViewQueryForAllServices() {
-        val theBucket = couchbase.getBucket();
-        val statement = Select.select("*")
-            .from(Expression.i(theBucket.name()))
-            .where("REGEX_CONTAINS(" + Expression.i("@class") + ", \".*RegisteredService$\")");
-
-        val n1q1Query = N1qlQuery.simple(statement);
-        val queryResult = theBucket.query(n1q1Query, couchbase.getConnectionTimeout(), TimeUnit.MILLISECONDS);
-        if (!queryResult.finalSuccess()) {
-            throw new CouchbaseException(queryResult.status() + ": " + queryResult.errors().toString());
-        }
-        if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("executeViewQueryForAllServices() [");
-            queryResult.allRows().forEach(r -> LOGGER.trace("[{}]", r));
-            LOGGER.trace("]");
+    private QueryResult queryForAllServices() {
+        val query = String.format("REGEX_CONTAINS(%s, \"@class.*:.*RegisteredService\")", couchbase.getBucket());
+        val queryResult = couchbase.query(query);
+        if (!queryResult.metaData().status().equals(QueryStatus.SUCCESS)) {
+            throw new CouchbaseException(queryResult.metaData().toString());
         }
         return queryResult;
     }
@@ -126,22 +108,21 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
     @Override
     public RegisteredService findServiceById(final long id) {
         try {
-            LOGGER.debug("Lookup for service long: [{}]", id);
-            val document = couchbase.getBucket().get(String.valueOf(id), RawJsonDocument.class);
+            val document = couchbase.bucketGet(String.valueOf(id));
             if (document != null) {
-                val json = document.content();
-                val stringReader = new StringReader(json);
-                return registeredServiceJsonSerializer.from(stringReader);
+                val json = document.contentAs(String.class);
+                try (val stringReader = new StringReader(json)) {
+                    return registeredServiceJsonSerializer.from(stringReader);
+                }
             }
+        } catch (final DocumentNotFoundException e) {
+            LOGGER.debug(e.getMessage(), e);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
 
-    /**
-     * Stops the couchbase client and cancels the initialization task if uncompleted.
-     */
     @SneakyThrows
     @Override
     public void destroy() {
@@ -150,6 +131,6 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
 
     @Override
     public long size() {
-        return executeViewQueryForAllServices().allRows().size();
+        return queryForAllServices().rowsAsObject().size();
     }
 }

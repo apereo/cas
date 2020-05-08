@@ -32,7 +32,8 @@ import org.springframework.context.event.EventListener;
     CouchbaseServiceRegistryConfiguration.class
 },
     properties = {
-        "cas.serviceRegistry.couchbase.password=password",
+        "cas.serviceRegistry.couchbase.clusterPassword=password",
+        "cas.serviceRegistry.couchbase.clusterUsername=admin",
         "cas.serviceRegistry.couchbase.bucket=testbucket"
     })
 @Tag("Couchbase")

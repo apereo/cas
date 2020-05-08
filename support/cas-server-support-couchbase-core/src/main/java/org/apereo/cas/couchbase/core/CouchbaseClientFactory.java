@@ -12,6 +12,7 @@ import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.ClusterOptions;
 import com.couchbase.client.java.env.ClusterEnvironment;
 import com.couchbase.client.java.json.JsonObject;
+import com.couchbase.client.java.kv.GetResult;
 import com.couchbase.client.java.kv.MutationResult;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.query.QueryResult;
@@ -188,12 +189,34 @@ public class CouchbaseClientFactory {
     }
 
     /**
+     * Bucket remove from default collection.
+     *
+     * @param id the id
+     * @return the mutation result
+     */
+    public MutationResult bucketRemoveFromDefaultCollection(final String id) {
+        val bucket = this.cluster.bucket(properties.getBucket());
+        return bucket.defaultCollection().remove(id);
+    }
+
+    /**
      * Gets bucket.
      *
      * @return the bucket
      */
     public String getBucket() {
         return properties.getBucket();
+    }
+
+    /**
+     * Bucket get get result.
+     *
+     * @param id the id
+     * @return the get result
+     */
+    public GetResult bucketGet(final String id) {
+        val bucket = this.cluster.bucket(properties.getBucket());
+        return bucket.defaultCollection().get(id);
     }
 }
 
