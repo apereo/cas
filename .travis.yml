@@ -254,10 +254,10 @@ jobs:
       name: "Locust Performance Tests via Embedded Apache Tomcat"
     - stage: performance
       script: ./ci/tests/perftests-locust.sh jetty
-      name: "Locust Performance Tests via Jetty"
+      name: "Locust Performance Tests via Embedded Jetty"
     - stage: performance
       script: ./ci/tests/perftests-locust.sh undertow
-      name: "Locust Performance Tests via Undertow"
+      name: "Locust Performance Tests via Embedded Undertow"
       ############################################
     - stage: finalize
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
