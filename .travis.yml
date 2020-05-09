@@ -16,8 +16,11 @@ branches:
     - master
 before_cache:
   - rm -rf $HOME/.gradle/caches/7.0.*/
-  - rm -rf $HOME/.gradle/caches/6.3.*/
-  - rm -rf $HOME/.gradle/caches/6.2.*/
+  - rm -rf $HOME/.gradle/caches/7.1.*/
+  - rm -rf $HOME/.gradle/caches/7.2.*/
+  - rm -rf $HOME/.gradle/caches/6.4.*/
+  - rm -rf $HOME/.gradle/caches/6.5.*/
+  - rm -rf $HOME/.gradle/caches/6.6.*/
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
   - find ~/.gradle/caches/ -name "*.lock" -type f -delete
 cache:

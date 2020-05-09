@@ -3,7 +3,6 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Principal;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.Ordered;
@@ -27,7 +26,6 @@ public class SurrogatePrincipalElectionStrategy extends DefaultPrincipalElection
         return principal.getAttributes();
     }
 
-    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     @Override
     protected Principal getPrincipalFromAuthentication(final Collection<Authentication> authentications) {
         LOGGER.trace("Calculating principal from authentications [{}]", authentications);
