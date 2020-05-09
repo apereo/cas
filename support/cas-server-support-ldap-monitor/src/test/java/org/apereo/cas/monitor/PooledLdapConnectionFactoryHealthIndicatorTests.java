@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 },
     properties = {
-        "cas.monitor.ldap[0].ldapUrl=ldap://localhost:10389",
+        "cas.monitor.ldap[0].ldap-url=ldap://localhost:10389",
         "cas.monitor.ldap[0].name=LDAP"
     })
 @Tag("Ldap")

@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Ldap")
 @EnabledIfPortOpen(port = 10389)
 @TestPropertySource(properties = {
-    "cas.authn.passwordless.accounts.ldap.ldapUrl=ldap://localhost:10389",
+    "cas.authn.passwordless.accounts.ldap.ldap-url=ldap://localhost:10389",
     "cas.authn.passwordless.accounts.ldap.baseDn=ou=people,dc=example,dc=org",
     "cas.authn.passwordless.accounts.ldap.searchFilter=cn={0}",
     "cas.authn.passwordless.accounts.ldap.bindDn=cn=Directory Manager",

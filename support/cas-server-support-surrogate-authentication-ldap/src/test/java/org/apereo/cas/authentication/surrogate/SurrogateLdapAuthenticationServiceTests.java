@@ -80,7 +80,7 @@ import org.springframework.core.io.ClassPathResource;
     CasThemesConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 }, properties = {
-    "cas.authn.surrogate.ldap.ldapUrl=ldap://localhost:10389",
+    "cas.authn.surrogate.ldap.ldap-url=ldap://localhost:10389",
     "cas.authn.surrogate.ldap.baseDn=ou=surrogates,dc=example,dc=org",
     "cas.authn.surrogate.ldap.bindDn=cn=Directory Manager",
     "cas.authn.surrogate.ldap.bindCredential=password",

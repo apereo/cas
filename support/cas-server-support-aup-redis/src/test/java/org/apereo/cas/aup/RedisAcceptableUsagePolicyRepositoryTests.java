@@ -26,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(CasAcceptableUsagePolicyRedisConfiguration.class)
 @EnabledIfPortOpen(port = 6379)
 @TestPropertySource(properties = {
-    "cas.acceptableUsagePolicy.redis.host=localhost",
-    "cas.acceptableUsagePolicy.redis.port=6379",
-    "cas.acceptableUsagePolicy.aupAttributeName=accepted"
+    "cas.acceptable-usage-policy.redis.host=localhost",
+    "cas.acceptable-usage-policy.redis.port=6379",
+    "cas.acceptable-usage-policy.aupAttributeName=accepted"
 })
 @Getter
 public class RedisAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {

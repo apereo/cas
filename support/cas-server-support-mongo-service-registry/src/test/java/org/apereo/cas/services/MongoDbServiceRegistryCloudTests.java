@@ -30,13 +30,13 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 },
     properties = {
-        "cas.serviceRegistry.mongo.databaseName=service-registry",
-        "cas.serviceRegistry.mongo.host=localhost",
-        "cas.serviceRegistry.mongo.port=27017",
-        "cas.serviceRegistry.mongo.userId=root",
-        "cas.serviceRegistry.mongo.password=secret",
-        "cas.serviceRegistry.mongo.authenticationDatabaseName=admin",
-        "cas.serviceRegistry.mongo.dropCollection=true"
+        "cas.service-registry.mongo.databaseName=service-registry",
+        "cas.service-registry.mongo.host=localhost",
+        "cas.service-registry.mongo.port=27017",
+        "cas.service-registry.mongo.userId=root",
+        "cas.service-registry.mongo.password=secret",
+        "cas.service-registry.mongo.authenticationDatabaseName=admin",
+        "cas.service-registry.mongo.dropCollection=true"
     })
 @Tag("MongoDb")
 @EnabledIfPortOpen(port = 27017)

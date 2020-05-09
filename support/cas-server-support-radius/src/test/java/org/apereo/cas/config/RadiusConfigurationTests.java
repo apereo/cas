@@ -68,7 +68,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "cas.authn.radius.client.sharedSecret=NoSecret",
-        "cas.authn.radius.client.inetAddress=localhost,localguest",
+        "cas.authn.radius.client.inet-address=localhost,localguest",
         "cas.authn.mfa.radius.id=" + TestMultifactorAuthenticationProvider.ID
     })
 @Tag("Radius")

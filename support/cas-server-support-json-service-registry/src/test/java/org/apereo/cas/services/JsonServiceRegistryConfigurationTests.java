@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     JsonServiceRegistryConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 },
-properties = "cas.serviceRegistry.json.location=classpath:/services")
+properties = "cas.service-registry.json.location=classpath:/services")
 @Tag("FileSystem")
 public class JsonServiceRegistryConfigurationTests {
     @Autowired

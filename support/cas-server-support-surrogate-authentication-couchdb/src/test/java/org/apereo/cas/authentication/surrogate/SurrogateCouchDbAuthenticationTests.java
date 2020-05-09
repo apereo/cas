@@ -79,7 +79,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketsConfiguration.class
     }, properties = {
-        "cas.authn.surrogate.couchDb.username=cas",
+        "cas.authn.surrogate.couch-db.username=cas",
         "cas.authn.surrogate.couchdb.password=password"
     })
 @Getter

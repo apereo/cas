@@ -39,11 +39,11 @@ import org.springframework.context.annotation.Bean;
 }, properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
-    "cas.serviceRegistry.sms.text=Service %s has expired in CAS service registry",
-    "cas.serviceRegistry.sms.from=3477563421",
-    "cas.serviceRegistry.mail.from=admin@example.org",
-    "cas.serviceRegistry.mail.subject=Sample Subject",
-    "cas.serviceRegistry.mail.text=Service %s has expired in CAS service registry"
+    "cas.service-registry.sms.text=Service %s has expired in CAS service registry",
+    "cas.service-registry.sms.from=3477563421",
+    "cas.service-registry.mail.from=admin@example.org",
+    "cas.service-registry.mail.subject=Sample Subject",
+    "cas.service-registry.mail.text=Service %s has expired in CAS service registry"
 })
 @Tag("Mail")
 @EnabledIfPortOpen(port = 25000)

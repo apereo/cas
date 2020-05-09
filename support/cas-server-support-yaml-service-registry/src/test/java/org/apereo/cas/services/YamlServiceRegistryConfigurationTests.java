@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     YamlServiceRegistryConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 },
-    properties = "cas.serviceRegistry.yaml.location=classpath:/services")
+    properties = "cas.service-registry.yaml.location=classpath:/services")
 @Tag("FileSystem")
 public class YamlServiceRegistryConfigurationTests {
     @Autowired

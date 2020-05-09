@@ -35,10 +35,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {
-    "cas.authn.mfa.duo[0].duoSecretKey=1234567890",
-    "cas.authn.mfa.duo[0].duoApplicationKey=abcdefghijklmnop",
-    "cas.authn.mfa.duo[0].duoIntegrationKey=QRSTUVWXYZ",
-    "cas.authn.mfa.duo[0].duoApiHost=http://localhost:6556"
+    "cas.authn.mfa.duo[0].duo-secret.key=1234567890",
+    "cas.authn.mfa.duo[0].duo-application-key=abcdefghijklmnop",
+    "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
+    "cas.authn.mfa.duo[0].duo-api-host=http://localhost:6556"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("MFA")

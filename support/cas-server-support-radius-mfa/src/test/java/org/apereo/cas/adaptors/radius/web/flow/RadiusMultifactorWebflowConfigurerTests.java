@@ -19,11 +19,11 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
         "cas.authn.mfa.trusted.deviceRegistrationEnabled=true",
 
         "cas.authn.radius.client.sharedSecret=NoSecret",
-        "cas.authn.radius.client.inetAddress=localhost,localguest",
+        "cas.authn.radius.client.inet-address=localhost,localguest",
         
-        "cas.authn.mfa.radius.trustedDeviceEnabled=true",
+        "cas.authn.mfa.radius.trusted-device-enabled=true",
         "cas.authn.mfa.radius.client.sharedSecret=NoSecret",
-        "cas.authn.mfa.radius.client.inetAddress=localhost,localguest",
+        "cas.authn.mfa.radius.client.inet-address=localhost,localguest",
 
         "cas.webflow.crypto.encryption.key=qLhvLuaobvfzMmbo9U_bYA",
         "cas.webflow.crypto.signing.key=oZeAR5pEXsolruu4OQYsQKxf-FCvFzSsKlsVaKmfIl6pNzoPm6zPW94NRS1af7vT-0bb3DpPBeksvBXjloEsiA"

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.server.name=https://sso.example.org",
     "cas.server.prefix=https://sso.example.org/cas",
     "cas.person-directory.attribute-definition-store.json.location=file:/defn-test.json",
-    "cas.authn.attribute-repository.ldap[0].ldapUrl=ldap://localhost:1389"
+    "cas.authn.attribute-repository.ldap[0].ldap-url=ldap://localhost:1389"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreConfigurationUtilsTests {
@@ -33,6 +33,6 @@ public class CasCoreConfigurationUtilsTests {
         assertEquals("https://sso.example.org", map.get("cas.server.name"));
         assertEquals("https://sso.example.org/cas", map.get("cas.server.prefix"));
         assertEquals("file:/defn-test.json", map.get("cas.personDirectory.attributeDefinitionStore.json.location"));
-        assertEquals("ldap://localhost:1389", map.get("cas.authn.attributeRepository.ldap[0].ldapUrl"));
+        assertEquals("ldap://localhost:1389", map.get("cas.authn.attributeRepository.ldap[0].ldap-url"));
     }
 }

@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 }, properties = {
     "cas.authn.attribute-repository.ldap[0].baseDn=dc=example,dc=org",
-    "cas.authn.attribute-repository.ldap[0].ldapUrl=ldap://localhost:10389",
+    "cas.authn.attribute-repository.ldap[0].ldap-url=ldap://localhost:10389",
     "cas.authn.attribute-repository.ldap[0].searchFilter=cn={user}",
     "cas.authn.attribute-repository.ldap[0].attributes.cn=cn",
     "cas.authn.attribute-repository.ldap[0].attributes.description=description",

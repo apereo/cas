@@ -690,7 +690,7 @@ when `failoverOnException` is set.
 # ${configurationKey}.client.authenticationPort=1812
 # ${configurationKey}.client.sharedSecret=N0Sh@ar3d$ecReT
 # ${configurationKey}.client.socketTimeout=0
-# ${configurationKey}.client.inetAddress=localhost
+# ${configurationKey}.client.inet-address=localhost
 # ${configurationKey}.client.accountingPort=1813
 
 # ${configurationKey}.failoverOnException=false
@@ -702,32 +702,32 @@ when `failoverOnException` is set.
 The following options related to CouchDb support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
 
 ```properties
-# ${configurationKey}.couchDb.url=http://localhost:5984
-# ${configurationKey}.couchDb.username=
-# ${configurationKey}.couchDb.password=
-# ${configurationKey}.couchDb.socketTimeout=10000
-# ${configurationKey}.couchDb.connectionTimeout=1000
-# ${configurationKey}.couchDb.dropCollection=false
-# ${configurationKey}.couchDb.maxConnections=20
-# ${configurationKey}.couchDb.enableSSL=
-# ${configurationKey}.couchDb.relaxedSSLSettings=
-# ${configurationKey}.couchDb.caching=true
-# ${configurationKey}.couchDb.maxCacheEntries=1000
-# ${configurationKey}.couchDb.maxObjectSizeBytes=8192
-# ${configurationKey}.couchDb.useExpectContinue=true
-# ${configurationKey}.couchDb.cleanupIdleConnections=true
-# ${configurationKey}.couchDb.createIfNotExists=true
-# ${configurationKey}.couchDb.proxyHost=
-# ${configurationKey}.couchDb.proxyPort=-1
+# ${configurationKey}.couch-db.url=http://localhost:5984
+# ${configurationKey}.couch-db.username=
+# ${configurationKey}.couch-db.password=
+# ${configurationKey}.couch-db.socketTimeout=10000
+# ${configurationKey}.couch-db.connectionTimeout=1000
+# ${configurationKey}.couch-db.dropCollection=false
+# ${configurationKey}.couch-db.maxConnections=20
+# ${configurationKey}.couch-db.enableSSL=
+# ${configurationKey}.couch-db.relaxedSSLSettings=
+# ${configurationKey}.couch-db.caching=true
+# ${configurationKey}.couch-db.maxCacheEntries=1000
+# ${configurationKey}.couch-db.maxObjectSizeBytes=8192
+# ${configurationKey}.couch-db.useExpectContinue=true
+# ${configurationKey}.couch-db.cleanupIdleConnections=true
+# ${configurationKey}.couch-db.createIfNotExists=true
+# ${configurationKey}.couch-db.proxyHost=
+# ${configurationKey}.couch-db.proxyPort=-1
 
 # Defaults are based on the feature name.
-# ${configurationKey}.couchDb.dbName=
+# ${configurationKey}.couch-db.dbName=
 
 # For the few features that can't have update conflicts automatically resolved.
-# ${configurationKey}.couchDb.retries=5
+# ${configurationKey}.couch-db.retries=5
 
 # Depending on the feature at hand, CAS may perform some actions asynchronously.
-# ${configurationKey}.couchDb.asynchronous=true
+# ${configurationKey}.couch-db.asynchronous=true
 ```
 
 ## MongoDb Configuration
@@ -1167,7 +1167,7 @@ to an external OpenID Connect provider such as Azure AD, given the provider's *c
 The following  options apply  to features that integrate with an LDAP server (i.e. authentication, attribute resolution, etc) given the provider's *configuration key*:
 
 ```properties
-#${configurationKey}.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+#${configurationKey}.ldap-url=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 #${configurationKey}.bindDn=cn=Directory Manager,dc=example,dc=org
 #${configurationKey}.bindCredential=Password
 

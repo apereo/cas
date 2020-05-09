@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = {
         "cas.authn.gua.ldap.baseDn=dc=example,dc=org",
-        "cas.authn.gua.ldap.ldapUrl=ldap://localhost:10389",
+        "cas.authn.gua.ldap.ldap-url=ldap://localhost:10389",
         "cas.authn.gua.ldap.searchFilter=cn={user}",
         "cas.authn.gua.ldap.imageAttribute=jpegPhoto",
         "cas.authn.gua.ldap.bindDn=cn=Directory Manager",

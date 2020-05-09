@@ -280,7 +280,7 @@ public class SamlObjectSignatureValidator {
         val samlIdp = casProperties.getAuthn().getSamlIdp();
 
         if (this.overrideBlackListedSignatureAlgorithms != null
-            && !samlIdp.getAlgs().getOverrideBlackListedSignatureSigningAlgorithms().isEmpty()) {
+            && !saml-idp.getAlgs().getOverrideBlackListedSignatureSigningAlgorithms().isEmpty()) {
             config.setBlacklistedAlgorithms(this.overrideBlackListedSignatureAlgorithms);
             config.setWhitelistMerge(true);
         }

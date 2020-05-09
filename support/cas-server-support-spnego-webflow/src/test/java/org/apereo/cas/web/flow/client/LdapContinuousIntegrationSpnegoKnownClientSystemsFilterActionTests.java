@@ -18,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 @Tag("Ldap")
 @EnabledIfPortOpen(port = 10389)
 @TestPropertySource(properties = {
-    "cas.authn.spnego.ldap.ldapUrl=ldap://localhost:10389",
+    "cas.authn.spnego.ldap.ldap-url=ldap://localhost:10389",
     "cas.authn.spnego.ldap.baseDn=ou=people,dc=example,dc=org",
     "cas.authn.spnego.ldap.searchFilter=host={host}",
     "cas.authn.spnego.ldap.bindDn=cn=Directory Manager",
