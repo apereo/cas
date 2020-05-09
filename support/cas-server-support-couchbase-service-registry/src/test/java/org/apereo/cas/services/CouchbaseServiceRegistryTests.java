@@ -32,9 +32,9 @@ import org.springframework.context.event.EventListener;
     CouchbaseServiceRegistryConfiguration.class
 },
     properties = {
-        "cas.serviceRegistry.couchbase.clusterPassword=password",
-        "cas.serviceRegistry.couchbase.clusterUsername=admin",
-        "cas.serviceRegistry.couchbase.bucket=testbucket"
+        "cas.service-registry.couchbase.clusterPassword=password",
+        "cas.service-registry.couchbase.clusterUsername=admin",
+        "cas.service-registry.couchbase.bucket=testbucket"
     })
 @Tag("Couchbase")
 @EnabledIfPortOpen(port = 8091)

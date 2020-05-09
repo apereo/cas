@@ -67,8 +67,8 @@ import static org.mockito.Mockito.*;
 },
     properties = {
         "server.port=9303",
-        "cas.serviceRegistry.rest.url=http://localhost:9303",
-        "cas.serviceRegistry.initFromJson=false"
+        "cas.service-registry.rest.url=http://localhost:9303",
+        "cas.service-registry.initFromJson=false"
     },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)

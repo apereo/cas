@@ -33,9 +33,9 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseAcceptableUsagePolicyRepositoryTests.SharedTestConfiguration.class
 })
 @TestPropertySource(properties = {
-    "cas.acceptableUsagePolicy.couchDb.asynchronous=false",
-    "cas.acceptableUsagePolicy.couchDb.username=cas",
-    "cas.acceptableUsagePolicy.couchdb.password=password"
+    "cas.acceptable-usage-policy.couch-db.asynchronous=false",
+    "cas.acceptable-usage-policy.couch-db.username=cas",
+    "cas.acceptable-usage-policy.couchdb.password=password"
 })
 @Tag("CouchDb")
 @Getter

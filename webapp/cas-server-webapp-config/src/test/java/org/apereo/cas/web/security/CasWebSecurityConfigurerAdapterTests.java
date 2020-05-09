@@ -39,7 +39,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
         "cas.monitor.endpoints.jaas.login-config=classpath:/jaas-endpoints.conf",
         "cas.monitor.endpoints.jaas.login-context-name=CAS",
 
-        "cas.monitor.endpoints.ldap.ldapUrl=ldap://localhost:10389",
+        "cas.monitor.endpoints.ldap.ldap-url=ldap://localhost:10389",
         "cas.monitor.endpoints.ldap.baseDn=ou=people,dc=example,dc=org",
         "cas.monitor.endpoints.ldap.searchFilter=uid={user}",
         "cas.monitor.endpoints.ldap.bindDn=cn=Directory Manager",

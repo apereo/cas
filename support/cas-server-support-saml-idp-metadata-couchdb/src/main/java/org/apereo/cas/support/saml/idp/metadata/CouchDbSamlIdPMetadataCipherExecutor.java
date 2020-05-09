@@ -29,11 +29,11 @@ public class CouchDbSamlIdPMetadataCipherExecutor extends BaseStringCipherExecut
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.authn.samlIdp.metadata.couchDb.crypto.encryption.key";
+        return "cas.authn.saml-idp.metadata.couch-db.crypto.encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.authn.samlIdp.metadata.couchDb.crypto.signing.key";
+        return "cas.authn.saml-idp.metadata.couch-db.crypto.signing.key";
     }
 }

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = {
-        "cas.authn.passwordSync.ldap[0].ldapUrl=ldap://localhost:10389",
+        "cas.authn.passwordSync.ldap[0].ldap-url=ldap://localhost:10389",
         "cas.authn.passwordSync.ldap[0].baseDn=dc=example,dc=org",
         "cas.authn.passwordSync.ldap[0].searchFilter=cn={user}",
         "cas.authn.passwordSync.ldap[0].bindDn=cn=Directory Manager",

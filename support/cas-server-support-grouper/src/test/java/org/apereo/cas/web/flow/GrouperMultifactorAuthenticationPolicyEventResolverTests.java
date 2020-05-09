@@ -89,11 +89,7 @@ import static org.mockito.Mockito.*;
     CasPersonDirectoryTestConfiguration.class,
     GrouperMultifactorAuthenticationPolicyEventResolverTests.GrouperTestConfiguration.class,
     GrouperMultifactorAuthenticationConfiguration.class
-}, properties = {
-    "cas.authn.mfa.grouperGroupField=name",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
+}, properties = "cas.authn.mfa.grouper-group-field=name")
 @Tag("Webflow")
 public class GrouperMultifactorAuthenticationPolicyEventResolverTests {
     @Autowired

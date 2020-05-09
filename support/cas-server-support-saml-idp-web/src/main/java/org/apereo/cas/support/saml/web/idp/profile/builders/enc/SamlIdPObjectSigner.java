@@ -254,7 +254,7 @@ public class SamlIdPObjectSigner {
         val privateKey = getSigningPrivateKey(service);
 
         val kekCredentialResolver = new MetadataCredentialResolver();
-        val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, samlIdp.getMetadata().isRequireValidMetadata());
+        val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, saml-idp.getMetadata().isRequireValidMetadata());
         kekCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
         kekCredentialResolver.setKeyInfoCredentialResolver(DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
         kekCredentialResolver.initialize();
@@ -262,7 +262,7 @@ public class SamlIdPObjectSigner {
         val criteriaSet = new CriteriaSet();
         criteriaSet.add(new SignatureSigningConfigurationCriterion(config));
         criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
-        criteriaSet.add(new EntityIdCriterion(samlIdp.getEntityId()));
+        criteriaSet.add(new EntityIdCriterion(saml-idp.getEntityId()));
         criteriaSet.add(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
 
         val credentials = Sets.<Credential>newLinkedHashSet(kekCredentialResolver.resolve(criteriaSet));
@@ -296,7 +296,7 @@ public class SamlIdPObjectSigner {
         LOGGER.trace("Default signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
 
         val samlIdp = casProperties.getAuthn().getSamlIdp();
-        val globalAlgorithms = samlIdp.getAlgs();
+        val globalAlgorithms = saml-idp.getAlgs();
 
         val overrideSignatureReferenceDigestMethods = service.getSigningSignatureReferenceDigestMethods().isEmpty()
             ? globalAlgorithms.getOverrideSignatureReferenceDigestMethods()
@@ -349,7 +349,7 @@ public class SamlIdPObjectSigner {
         try {
             val samlIdp = casProperties.getAuthn().getSamlIdp();
             val credType = SamlIdPResponseProperties.SignatureCredentialTypes.valueOf(
-                StringUtils.defaultIfBlank(service.getSigningCredentialType(), samlIdp.getResponse().getCredentialType().name()).toUpperCase());
+                StringUtils.defaultIfBlank(service.getSigningCredentialType(), saml-idp.getResponse().getCredentialType().name()).toUpperCase());
             LOGGER.trace("Requested credential type [{}] is found for service [{}]", credType, service.getName());
 
             switch (credType) {
@@ -390,7 +390,7 @@ public class SamlIdPObjectSigner {
         val privateKeyFactoryBean = new PrivateKeyFactoryBean();
         privateKeyFactoryBean.setLocation(signingKey);
         if (StringUtils.isBlank(registeredService.getSigningKeyAlgorithm())) {
-            privateKeyFactoryBean.setAlgorithm(samlIdp.getMetadata().getPrivateKeyAlgName());
+            privateKeyFactoryBean.setAlgorithm(saml-idp.getMetadata().getPrivateKeyAlgName());
         } else {
             privateKeyFactoryBean.setAlgorithm(registeredService.getSigningKeyAlgorithm());
         }

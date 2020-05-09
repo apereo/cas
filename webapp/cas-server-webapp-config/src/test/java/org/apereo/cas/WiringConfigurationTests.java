@@ -101,7 +101,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
-    "cas.httpWebRequest.cors.enabled=true"
+    "cas.http-web-request.cors.enabled=true"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @WebAppConfiguration

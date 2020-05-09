@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     "cas.authn.ldap[0].type=AUTHENTICATED",
     "cas.authn.ldap[0].bindDn=Administrator@cas.example.org",
     "cas.authn.ldap[0].bindCredential=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_ADMIN_PASSWORD,
-    "cas.authn.ldap[0].ldapUrl=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_LDAP_URL,
+    "cas.authn.ldap[0].ldap-url=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_LDAP_URL,
     "cas.authn.ldap[0].useStartTls=true",
     "cas.authn.ldap[0].subtreeSearch=true",
     "cas.authn.ldap[0].baseDn=dc=cas,dc=example,dc=org",

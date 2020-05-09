@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(
     properties = {
         "cas.authn.mfa.trusted.cleaner.schedule.enabled=false",
-        "cas.authn.mfa.trusted.couchDb.username=cas",
+        "cas.authn.mfa.trusted.couch-db.username=cas",
         "cas.authn.mfa.trusted.couchdb.password=password"
     })
 @Getter

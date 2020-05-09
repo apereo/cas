@@ -28,7 +28,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     CasCoreUtilConfiguration.class,
     RefreshAutoConfiguration.class
 },
-    properties = "cas.serviceRegistry.cassandra.keyspace=cas")
+    properties = "cas.service-registry.cassandra.keyspace=cas")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @Tag("Cassandra")

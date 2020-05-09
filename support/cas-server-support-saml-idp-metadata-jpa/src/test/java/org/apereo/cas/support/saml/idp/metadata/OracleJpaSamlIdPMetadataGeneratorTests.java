@@ -13,11 +13,11 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {
     "cas.jdbc.showSql=true",
-    "cas.authn.samlIdp.metadata.jpa.user=system",
-    "cas.authn.samlIdp.metadata.jpa.password=Oradoc_db1",
-    "cas.authn.samlIdp.metadata.jpa.driverClass=oracle.jdbc.driver.OracleDriver",
-    "cas.authn.samlIdp.metadata.jpa.url=jdbc:oracle:thin:@localhost:1521:ORCLCDB",
-    "cas.authn.samlIdp.metadata.jpa.dialect=org.hibernate.dialect.Oracle12cDialect"
+    "cas.authn.saml-idp.metadata.jpa.user=system",
+    "cas.authn.saml-idp.metadata.jpa.password=Oradoc_db1",
+    "cas.authn.saml-idp.metadata.jpa.driverClass=oracle.jdbc.driver.OracleDriver",
+    "cas.authn.saml-idp.metadata.jpa.url=jdbc:oracle:thin:@localhost:1521:ORCLCDB",
+    "cas.authn.saml-idp.metadata.jpa.dialect=org.hibernate.dialect.Oracle12cDialect"
 })
 @EnabledIfPortOpen(port = 1521)
 @Tag("Oracle")

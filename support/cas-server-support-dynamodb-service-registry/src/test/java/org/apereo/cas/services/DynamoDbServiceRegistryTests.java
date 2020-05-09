@@ -25,10 +25,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreAuthenticationMetadataConfiguration.class,
     RefreshAutoConfiguration.class},
     properties = {
-        "cas.serviceRegistry.dynamoDb.endpoint=http://localhost:8000",
-        "cas.serviceRegistry.dynamoDb.dropTablesOnStartup=true",
-        "cas.serviceRegistry.dynamoDb.localInstance=true",
-        "cas.serviceRegistry.dynamoDb.region=us-east-1"
+        "cas.service-registry.dynamoDb.endpoint=http://localhost:8000",
+        "cas.service-registry.dynamoDb.dropTablesOnStartup=true",
+        "cas.service-registry.dynamoDb.localInstance=true",
+        "cas.service-registry.dynamoDb.region=us-east-1"
     })
 @Tag("DynamoDb")
 @EnabledIfPortOpen(port = 8000)

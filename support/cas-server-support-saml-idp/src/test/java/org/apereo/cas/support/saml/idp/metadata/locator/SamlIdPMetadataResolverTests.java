@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("SAML")
-@TestPropertySource(properties = "cas.authn.samlIdp.entityId=https://cas.example.org/idp")
+@TestPropertySource(properties = "cas.authn.saml-idp.entityId=https://cas.example.org/idp")
 @EnableRetry
 public class SamlIdPMetadataResolverTests extends BaseSamlIdPConfigurationTests {
     @BeforeAll

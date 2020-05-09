@@ -73,12 +73,12 @@ import static org.junit.jupiter.api.Assertions.*;
     AmazonS3SamlIdPMetadataConfiguration.class,
     SamlIdPMetadataConfiguration.class
 }, properties = {
-    "cas.authn.samlIdp.metadata.amazonS3.idpMetadataBucketName=thebucket",
-    "cas.authn.samlIdp.metadata.amazonS3.endpoint=http://127.0.0.1:4572",
-    "cas.authn.samlIdp.metadata.amazonS3.credentialAccessKey=test",
-    "cas.authn.samlIdp.metadata.amazonS3.credentialSecretKey=test",
-    "cas.authn.samlIdp.metadata.amazonS3.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
-    "cas.authn.samlIdp.metadata.amazonS3.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
+    "cas.authn.saml-idp.metadata.amazon-s3.idp-metadata-bucket-name=thebucket",
+    "cas.authn.saml-idp.metadata.amazon-s3.endpoint=http://127.0.0.1:4572",
+    "cas.authn.saml-idp.metadata.amazon-s3.credentialAccessKey=test",
+    "cas.authn.saml-idp.metadata.amazon-s3.credentialSecretKey=test",
+    "cas.authn.saml-idp.metadata.amazon-s3.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
+    "cas.authn.saml-idp.metadata.amazon-s3.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
 })
 @EnabledIfPortOpen(port = 4572)
 @Tag("AmazonWebServices")

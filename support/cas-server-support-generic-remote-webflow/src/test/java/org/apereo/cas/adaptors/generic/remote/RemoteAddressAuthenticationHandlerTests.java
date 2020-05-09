@@ -77,7 +77,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasRemoteAuthenticationConfiguration.class
 },
     properties = {
-        "cas.authn.remoteAddress.ipAddressRange=192.168.1.0/255.255.255.0",
+        "cas.authn.remote-address.ipAddressRange=192.168.1.0/255.255.255.0",
         "spring.mail.host=localhost",
         "spring.mail.port=25000"
     })

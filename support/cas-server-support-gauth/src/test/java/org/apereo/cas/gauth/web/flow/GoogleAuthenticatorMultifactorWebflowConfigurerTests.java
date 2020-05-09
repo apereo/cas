@@ -18,7 +18,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 @SpringBootTest(classes = BaseGoogleAuthenticatorTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.gauth.json.location=classpath:/repository.json",
-        "cas.authn.mfa.gauth.trustedDeviceEnabled=true",
+        "cas.authn.mfa.gauth.trusted-device-enabled=true",
         "cas.authn.mfa.trusted.deviceRegistrationEnabled=true"
     })
 @Tag("Webflow")

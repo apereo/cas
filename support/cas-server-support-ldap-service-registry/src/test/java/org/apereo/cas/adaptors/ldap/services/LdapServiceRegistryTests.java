@@ -12,10 +12,10 @@ import org.springframework.test.context.TestPropertySource;
  * @since 4.0.0
  */
 @TestPropertySource(properties = {
-    "cas.serviceRegistry.ldap.poolPassivator=NONE",
-    "cas.serviceRegistry.ldap.bindDn=cn=Directory Manager",
-    "cas.serviceRegistry.ldap.bindCredential=password",
-    "cas.serviceRegistry.ldap.objectClass=account"
+    "cas.service-registry.ldap.poolPassivator=NONE",
+    "cas.service-registry.ldap.bindDn=cn=Directory Manager",
+    "cas.service-registry.ldap.bindCredential=password",
+    "cas.service-registry.ldap.objectClass=account"
 })
 @EnabledIfPortOpen(port = 10389)
 public class LdapServiceRegistryTests extends BaseLdapServiceRegistryTests {

@@ -24,8 +24,8 @@ import org.springframework.boot.test.context.SpringBootTest;
     BaseTicketRegistryTests.SharedTestConfiguration.class
 },
     properties = {
-        "cas.ticket.registry.couchDb.username=cas",
-        "cas.ticket.registry.couchDb.password=password"
+        "cas.ticket.registry.couch-db.username=cas",
+        "cas.ticket.registry.couch-db.password=password"
     })
 @Tag("CouchDb")
 @EnabledIfPortOpen(port = 5984)

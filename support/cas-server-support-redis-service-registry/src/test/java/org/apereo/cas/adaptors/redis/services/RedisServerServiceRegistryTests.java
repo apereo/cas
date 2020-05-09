@@ -11,8 +11,8 @@ import org.springframework.test.context.TestPropertySource;
  * @since 4.0.0
  */
 @TestPropertySource(properties = {
-    "cas.serviceRegistry.redis.host=localhost",
-    "cas.serviceRegistry.redis.port=6379"
+    "cas.service-registry.redis.host=localhost",
+    "cas.service-registry.redis.port=6379"
 })
 @EnabledIfPortOpen(port = 6379)
 public class RedisServerServiceRegistryTests extends BaseRedisSentinelServiceRegistryTests {

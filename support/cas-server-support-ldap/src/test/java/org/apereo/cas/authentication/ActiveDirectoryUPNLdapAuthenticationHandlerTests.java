@@ -17,7 +17,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {
     "cas.authn.ldap[0].type=AD",
-    "cas.authn.ldap[0].ldapUrl=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_LDAP_URL,
+    "cas.authn.ldap[0].ldap-url=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_LDAP_URL,
     "cas.authn.ldap[0].useStartTls=true",
     "cas.authn.ldap[0].subtreeSearch=true",
     "cas.authn.ldap[0].baseDn=cn=Users,dc=cas,dc=example,dc=org",

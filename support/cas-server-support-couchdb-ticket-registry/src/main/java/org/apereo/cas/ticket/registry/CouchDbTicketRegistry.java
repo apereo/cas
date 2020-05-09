@@ -85,7 +85,7 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
         }
 
         try {
-            val document = this.couchDb.get(encTicketId);
+            val document = this.couch-db.get(encTicketId);
             val t = document.getTicket();
             LOGGER.debug("Got ticket [{}] from the registry.", t);
 

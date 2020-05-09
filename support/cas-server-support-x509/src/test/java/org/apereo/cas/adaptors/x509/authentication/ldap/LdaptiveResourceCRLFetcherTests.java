@@ -42,7 +42,7 @@ import java.net.URI;
         "cas.authn.x509.principalType=SERIAL_NO_DN",
         "cas.authn.policy.any.tryAll=true",
         "cas.authn.x509.crlFetcher=ldap",
-        "cas.authn.x509.ldap.ldapUrl=ldap://localhost:1389",
+        "cas.authn.x509.ldap.ldap-url=ldap://localhost:1389",
         "cas.authn.x509.ldap.baseDn=ou=people,dc=example,dc=org",
         "cas.authn.x509.ldap.searchFilter=cn=X509",
         "cas.authn.x509.ldap.bindDn=cn=Directory Manager,dc=example,dc=org",

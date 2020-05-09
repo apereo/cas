@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasServicesStreamingConfiguration.class
-}, properties = "cas.serviceRegistry.stream.enabled=true")
+}, properties = "cas.service-registry.stream.enabled=true")
 public class CasServicesRegistryStreamingEventListenerTests {
     @Autowired
     @Qualifier("casServicesRegistryStreamingEventListener")

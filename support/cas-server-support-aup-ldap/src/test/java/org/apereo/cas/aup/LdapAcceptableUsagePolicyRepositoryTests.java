@@ -36,12 +36,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(CasAcceptableUsagePolicyLdapConfiguration.class)
 @EnabledIfPortOpen(port = 10389)
 @TestPropertySource(properties = {
-    "cas.acceptableUsagePolicy.ldap[0].ldapUrl=ldap://localhost:10389",
-    "cas.acceptableUsagePolicy.ldap[0].baseDn=ou=people,dc=example,dc=org",
-    "cas.acceptableUsagePolicy.ldap[0].searchFilter=cn={0}",
-    "cas.acceptableUsagePolicy.ldap[0].bindDn=cn=Directory Manager",
-    "cas.acceptableUsagePolicy.ldap[0].bindCredential=password",
-    "cas.acceptableUsagePolicy.aupAttributeName=carLicense"
+    "cas.acceptable-usage-policy.ldap[0].ldap-url=ldap://localhost:10389",
+    "cas.acceptable-usage-policy.ldap[0].baseDn=ou=people,dc=example,dc=org",
+    "cas.acceptable-usage-policy.ldap[0].searchFilter=cn={0}",
+    "cas.acceptable-usage-policy.ldap[0].bindDn=cn=Directory Manager",
+    "cas.acceptable-usage-policy.ldap[0].bindCredential=password",
+    "cas.acceptable-usage-policy.aupAttributeName=carLicense"
 })
 @Getter
 public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
