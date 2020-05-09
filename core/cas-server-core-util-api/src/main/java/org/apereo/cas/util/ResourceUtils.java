@@ -132,16 +132,16 @@ public class ResourceUtils {
      * @throws IOException the exception
      */
     public static AbstractResource getResourceFrom(final String location) throws IOException {
-        val metadataLocationResource = getRawResourceFrom(location);
-        if (!metadataLocationResource.exists() || !metadataLocationResource.isReadable()) {
+        val resource = getRawResourceFrom(location);
+        if (!resource.exists() || !resource.isReadable()) {
             throw new FileNotFoundException("Resource " + location + " does not exist or is unreadable");
         }
-        return metadataLocationResource;
+        return resource;
     }
 
     @SneakyThrows
     public static Resource exportClasspathResourceToFile(final File parentDirectory, final Resource resource) {
-        LOGGER.trace("Preparing possible classpath resource [{}]", resource);
+        LOGGER.trace("Preparing classpath resource [{}]", resource);
         if (resource == null) {
             LOGGER.warn("No resource defined to prepare. Returning null");
             return null;
