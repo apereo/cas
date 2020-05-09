@@ -22,13 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CasEmbeddedContainerUtilsTests {
 
     @Test
-    public void verifyRuntimeProperties() {
-        val map = CasEmbeddedContainerUtils.getRuntimeProperties(true);
-        assertEquals(1, map.size());
-        assertTrue(map.containsKey(CasEmbeddedContainerUtils.EMBEDDED_CONTAINER_CONFIG_ACTIVE));
-    }
-
-    @Test
     public void verifyCasBanner() {
         val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
         assertNotNull(banner);

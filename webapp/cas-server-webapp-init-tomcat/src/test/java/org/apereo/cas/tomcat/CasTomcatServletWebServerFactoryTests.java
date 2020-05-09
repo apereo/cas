@@ -1,6 +1,5 @@
 package org.apereo.cas.tomcat;
 
-import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.config.CasEmbeddedContainerTomcatConfiguration;
 import org.apereo.cas.config.CasEmbeddedContainerTomcatFiltersConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -67,9 +66,6 @@ public class CasTomcatServletWebServerFactoryTests {
     @Qualifier("casTomcatEmbeddedServletContainerCustomizer")
     private ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer;
 
-    static {
-        System.setProperty(CasEmbeddedContainerUtils.EMBEDDED_CONTAINER_CONFIG_ACTIVE, "true");
-    }
 
     @Test
     public void verifyOperation() {
