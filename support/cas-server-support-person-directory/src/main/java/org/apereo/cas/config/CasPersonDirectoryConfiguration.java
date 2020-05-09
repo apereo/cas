@@ -256,7 +256,7 @@ public class CasPersonDirectoryConfiguration {
         }
     }
 
-    @ConditionalOnProperty(name = "cas.authn.attribute-repository.ldap[0].ldapUrl")
+    @ConditionalOnProperty(name = "cas.authn.attribute-repository.ldap[0].ldap-url")
     @Configuration("CasPersonDirectoryLdapConfiguration")
     public class CasPersonDirectoryLdapConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
 

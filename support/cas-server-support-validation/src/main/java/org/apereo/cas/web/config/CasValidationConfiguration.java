@@ -225,7 +225,7 @@ public class CasValidationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "proxyController")
-    @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
     public ProxyController proxyController() {
         return new ProxyController(cas2ProxySuccessView(),
             cas2ProxyFailureView(),
@@ -292,7 +292,7 @@ public class CasValidationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "v3ProxyValidateControllerValidationSpecification")
-    @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
     public CasProtocolValidationSpecification v3ProxyValidateControllerValidationSpecification() {
         val validationChain = new ChainingCasProtocolValidationSpecification();
         validationChain.addSpecification(cas20ProtocolValidationSpecification.getObject());
@@ -301,7 +301,7 @@ public class CasValidationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "v3ProxyValidateController")
-    @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
     public V3ProxyValidateController v3ProxyValidateController() {
         val context = getServiceValidateConfigurationContextBuilder()
             .validationSpecifications(CollectionUtils.wrapSet(v3ProxyValidateControllerValidationSpecification()))
@@ -377,7 +377,7 @@ public class CasValidationConfiguration {
             casProperties.getView().getCas2().getFailure());
     }
 
-    @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
     @Bean
     public View cas2ProxyFailureView() {
         return casProtocolViewFactory.getObject().create(applicationContext,
@@ -385,7 +385,7 @@ public class CasValidationConfiguration {
             MediaType.APPLICATION_XML_VALUE);
     }
 
-    @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
     @Bean
     public View cas2ProxySuccessView() {
         return casProtocolViewFactory.getObject().create(applicationContext,

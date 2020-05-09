@@ -173,7 +173,7 @@ public class CasCoreServicesConfiguration {
         return plan;
     }
 
-    @ConditionalOnProperty(prefix = "cas.serviceRegistry.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.service-registry.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
     @Bean
     public Runnable servicesManagerScheduledLoader() {
         val plan = serviceRegistryExecutionPlan();
@@ -233,7 +233,7 @@ public class CasCoreServicesConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "defaultServicesManagerExecutionPlanConfigurer")
-    @ConditionalOnProperty(prefix = "cas.serviceRegistry", name = "managementType", havingValue = "DEFAULT", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.service-registry", name = "management-type", havingValue = "DEFAULT", matchIfMissing = true)
     public ServicesManagerExecutionPlanConfigurer defaultServicesManagerExecutionPlanConfigurer() {
         return () -> {
             val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
@@ -243,7 +243,7 @@ public class CasCoreServicesConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "domainServicesManagerExecutionPlanConfigurer")
-    @ConditionalOnProperty(prefix = "cas.serviceRegistry", name = "managementType", havingValue = "DOMAIN")
+    @ConditionalOnProperty(prefix = "cas.service-registry", name = "management-type", havingValue = "DOMAIN")
     public ServicesManagerExecutionPlanConfigurer domainServicesManagerExecutionPlanConfigurer() {
         return () -> {
             val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());

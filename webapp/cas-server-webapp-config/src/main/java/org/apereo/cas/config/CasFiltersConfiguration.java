@@ -81,7 +81,7 @@ public class CasFiltersConfiguration {
         return bean;
     }
 
-    @ConditionalOnProperty(prefix = "cas.httpWebRequest.cors", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "cas.http-web-request.cors", name = "enabled", havingValue = "true")
     @Bean
     @RefreshScope
     public FilterRegistrationBean casCorsFilter() {
@@ -102,7 +102,7 @@ public class CasFiltersConfiguration {
         return bean;
     }
 
-    @ConditionalOnProperty(prefix = "cas.httpWebRequest.header", name = "enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.http-web-request.header", name = "enabled", havingValue = "true", matchIfMissing = true)
     @RefreshScope
     @Bean
     public FilterRegistrationBean responseHeadersSecurityFilter() {

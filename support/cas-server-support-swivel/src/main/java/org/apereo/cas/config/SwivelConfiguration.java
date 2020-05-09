@@ -153,7 +153,7 @@ public class SwivelConfiguration {
      * The swivel multifactor trust configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.swivel", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.swivel", name = "trusted-device-enabled", havingValue = "true", matchIfMissing = true)
     @Configuration("swivelMultifactorTrustConfiguration")
     public class SwivelMultifactorTrustConfiguration {
 

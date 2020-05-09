@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casServicesStreamingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.serviceRegistry.stream", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "cas.service-registry.stream", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasServicesStreamingConfiguration {
 
     @Bean

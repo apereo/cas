@@ -34,7 +34,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @Configuration("samlIdPMongoDbIdPMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.authn.samlIdp.metadata.mongo", name = "idpMetadataCollection")
+@ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.mongo", name = "idp-metadata-collection")
 @Slf4j
 public class SamlIdPMongoDbIdPMetadataConfiguration {
 
