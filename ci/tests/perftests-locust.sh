@@ -1,5 +1,5 @@
 #!/bin/bash
-source ./ci/functions.sh
+#source ./ci/functions.sh
 
 gradle="./gradlew "
 gradleBuild=""
@@ -31,7 +31,7 @@ if [ $retVal == 0 ]; then
     echo "Launching CAS web application ${webAppServerType} server..."
     casOutput="/tmp/logs/cas.log"
     cmd="java -jar webapp/cas-server-webapp-${webAppServerType}/build/libs/cas.war \\
-      --server.ssl.key-store=${keystore}"
+      --server.ssl.key-store=${keystore} --cas.service-registry.init-from-json=true --logging.level.org.apereo.cas=info"
     exec $cmd > ${casOutput} 2>&1 &
     pid=$!
     echo "Launched CAS with pid ${pid}. Waiting for CAS server to come online..."
@@ -58,7 +58,7 @@ if [ $retVal == 0 ]; then
     pip install locustio
 
     echo -e "\nRunning locust...\n"
-    locust -f cas/casLocust.py --no-web --host=https://localhost:8443 --hatch-rate 3 --clients 10 --run-time 5m --exit-code-on-error 1
+    locust -f cas/casLocust.py --no-web --host=https://localhost:8443 --hatch-rate 3 --clients 10 --run-time 10m --exit-code-on-error 1
 
     retVal=$?
 
