@@ -32,7 +32,7 @@ import org.springframework.core.io.ResourceLoader;
  */
 @Configuration("SamlIdPRestfulIdPMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.authn.samlIdp.metadata.rest", name = "idpMetadataEnabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.rest", name = "idp-metadata-enabled", havingValue = "true")
 @Slf4j
 public class SamlIdPRestfulIdPMetadataConfiguration {
 

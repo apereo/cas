@@ -46,7 +46,7 @@ public class X509RestConfiguration {
         return new X509RestHttpRequestHeaderCredentialFactory(x509CertificateExtractor.getObject());
     }
 
-    @ConditionalOnProperty(prefix = "cas.rest", name = "tlsClientAuth", havingValue = "true")
+    @ConditionalOnProperty(prefix = "cas.rest", name = "tls-client-auth", havingValue = "true")
     @Bean
     public RestHttpRequestCredentialFactory x509RestTlsClientCert() {
         return new X509RestTlsClientCertCredentialFactory();

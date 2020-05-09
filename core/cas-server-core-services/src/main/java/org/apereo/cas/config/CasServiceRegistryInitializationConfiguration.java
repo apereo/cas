@@ -59,7 +59,7 @@ import java.util.Collection;
     "org.apereo.cas.services.YamlServiceRegistry"
 })
 @ConditionalOnBean(ServicesManager.class)
-@ConditionalOnProperty(prefix = "cas.serviceRegistry", name = "initFromJson", havingValue = "true")
+@ConditionalOnProperty(prefix = "cas.service-registry", name = "init-from-json", havingValue = "true")
 @Slf4j
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableAsync

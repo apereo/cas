@@ -34,7 +34,7 @@ import java.util.Collection;
 @Configuration("jsonServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 1)
-@ConditionalOnProperty(prefix = "cas.serviceRegistry.json", name = "location")
+@ConditionalOnProperty(prefix = "cas.service-registry.json", name = "location")
 public class JsonServiceRegistryConfiguration {
 
     @Autowired

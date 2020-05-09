@@ -256,14 +256,14 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
     @ConditionalOnMissingBean(name = "proxy10Handler")
     @Bean
-    @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
     public ProxyHandler proxy10Handler() {
         return new Cas10ProxyHandler();
     }
 
     @ConditionalOnMissingBean(name = "proxy20Handler")
     @Bean
-    @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
     public ProxyHandler proxy20Handler() {
         return new Cas20ProxyHandler(httpClient.getObject(), proxy20TicketUniqueIdGenerator());
     }

@@ -40,7 +40,7 @@ public class CasEmbeddedContainerTomcatFiltersConfiguration {
         return bean;
     }
 
-    @ConditionalOnProperty(prefix = "cas.server.tomcat.remoteAddr", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "cas.server.tomcat.remote-addr", name = "enabled", havingValue = "true")
     @RefreshScope
     @Bean
     public FilterRegistrationBean tomcatRemoteAddressFilter() {

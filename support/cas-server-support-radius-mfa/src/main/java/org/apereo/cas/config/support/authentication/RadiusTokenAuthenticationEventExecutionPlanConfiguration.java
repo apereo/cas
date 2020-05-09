@@ -45,7 +45,7 @@ import java.util.List;
  */
 @Configuration("radiusTokenAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(name = "cas.authn.mfa.radius.client.inetAddress")
+@ConditionalOnProperty(name = "cas.authn.mfa.radius.client.inet-address")
 public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired

@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration("casServicesStreamingHazelcastConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.serviceRegistry.stream", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "cas.service-registry.stream", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Slf4j
 public class CasServicesStreamingHazelcastConfiguration {
     @Autowired
