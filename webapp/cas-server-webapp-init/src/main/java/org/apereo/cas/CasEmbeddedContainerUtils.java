@@ -13,9 +13,6 @@ import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 import org.springframework.boot.Banner;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * This is {@link CasEmbeddedContainerUtils}.
  *
@@ -25,22 +22,6 @@ import java.util.Map;
 @Slf4j
 @UtilityClass
 public class CasEmbeddedContainerUtils {
-    /**
-     * Property to dictate to the environment whether embedded container is running CAS.
-     */
-    public static final String EMBEDDED_CONTAINER_CONFIG_ACTIVE = "CasEmbeddedContainerConfigurationActive";
-
-    /**
-     * Gets runtime properties.
-     *
-     * @param embeddedContainerActive the embedded container active
-     * @return the runtime properties
-     */
-    public static Map<String, Object> getRuntimeProperties(final Boolean embeddedContainerActive) {
-        val properties = new HashMap<String, Object>();
-        properties.put(EMBEDDED_CONTAINER_CONFIG_ACTIVE, embeddedContainerActive);
-        return properties;
-    }
 
     /**
      * Gets cas banner instance.
@@ -50,9 +31,9 @@ public class CasEmbeddedContainerUtils {
     public static Banner getCasBannerInstance() {
         val packageName = CasEmbeddedContainerUtils.class.getPackage().getName();
         val reflections = new Reflections(new ConfigurationBuilder()
-                .filterInputsBy(new FilterBuilder().includePackage(packageName))
-                .setUrls(ClasspathHelper.forPackage(packageName))
-                .setScanners(new SubTypesScanner(true)));
+            .filterInputsBy(new FilterBuilder().includePackage(packageName))
+            .setUrls(ClasspathHelper.forPackage(packageName))
+            .setScanners(new SubTypesScanner(true)));
 
         val subTypes = reflections.getSubTypesOf(AbstractCasBanner.class);
         subTypes.remove(DefaultCasBanner.class);
