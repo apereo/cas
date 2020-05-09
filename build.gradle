@@ -39,7 +39,7 @@ buildscript {
         classpath "io.spring.gradle:propdeps-plugin:$gradlePropDepsVersion"
         classpath "net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:$gradleErrorProneVersion"
         classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
-        classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
+        classpath "gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
         classpath "net.rdrei.android.buildtimetracker:gradle-plugin:$gradleTimeTrackerVersion"
     }
@@ -504,28 +504,25 @@ subprojects {
         }
     }
 
-    if (!Boolean.getBoolean("skipFindbugs") && projectShouldBePublished(project)) {
+    if (!Boolean.getBoolean("skipSpotbugs") && projectShouldBePublished(project)) {
         apply plugin: "com.github.spotbugs"
         apply from: rootProject.file("gradle/spotbugs.gradle")
         spotbugs {
             toolVersion = "${spotbugsVersion}"
-            sourceSets = [sourceSets.main]
-            ignoreFailures = true
-            reportsDir = file("$project.buildDir/findbugsReports")
+            showProgress = true
+            ignoreFailures = false
+            reportsDir = file("$project.buildDir/spotbugs")
             effort = "max"
             reportLevel = "low"
-            includeFilter = file("$rootProject.projectDir/style/findbugs-rules.xml")
-            excludeFilter = file("$rootProject.projectDir/style/findbugs-excludes.xml")
-            //jvmArgs = ["-Xms2g", "-Xmx4g"]
-            extraArgs = ["maxHeap 4000"]
+            includeFilter = file("$rootProject.projectDir/style/spotbugs-includes.xml")
+            excludeFilter = file("$rootProject.projectDir/style/spotbugs-excludes.xml")
+            maxHeapSize = "2g"
         }
 
         [spotbugsMain, spotbugsTest].each {
             it.reports {
                 xml.enabled = true
-                html.enabled = !rootProject.continuousIntegrationBuild
             }
-            it.pluginClasspath = project.configurations.spotbugsPlugins
             it.finalizedBy outputSpotbugsReports
         }
     }
@@ -555,10 +552,7 @@ subprojects {
 
         api libraries.javax
 
-        if (!Boolean.getBoolean("skipFindbugs") && projectShouldBePublished(project)) {
-            spotbugs libraries.findbugs
-            spotbugs configurations.spotbugsPlugins.dependencies
-
+        if (!Boolean.getBoolean("skipSpotbugs") && projectShouldBePublished(project)) {
             spotbugsPlugins libraries.findbugscontrib
             spotbugsPlugins libraries.findbugssec
         }
@@ -569,7 +563,7 @@ subprojects {
         }
         testImplementation libraries.tests
         testImplementation libraries.log4j
-        compileOnly libraries.findbugsannotations
+        compileOnly libraries.spotbugsannotations
     }
 }
 

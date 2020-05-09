@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -29,7 +28,6 @@ public class ServiceRegistryInitializer {
     /**
      * Init service registry if necessary.
      */
-    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     public void initServiceRegistryIfNecessary() {
         LOGGER.debug("Total count of service registries is [{}]1 which contain [{}] service definition(s)",
             serviceRegistry.countServiceRegistries(), serviceRegistry.size());

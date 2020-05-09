@@ -1,13 +1,16 @@
 task outputSpotbugsReports(description: "Display Spotbugs output") {
     doFirst {
-        printSpotbugsReportToConsole(spotbugsMain.reports.xml.destination)
+        def main = spotbugsMain.reports.findByName("XML").destination
+        printSpotbugsReportToConsole(main)
+        def test = spotbugsTest.reports.findByName("XML").destination
+        printSpotbugsReportToConsole(test)
     }
 }
 
 def printSpotbugsReportToConsole(File file) {
-    println "Reviewing file $file"
-    if (file.exists()) {
-        println "Processing found file $file"
+    logger.debug "Reviewing file $file"
+    if (file.exists() && file.length() > 0) {
+        logger.debug "Processing found file $file"
         def slurper = new XmlSlurper().parse(file)
         def bugsFound = slurper.BugInstance.size()
         if (bugsFound > 0) {
@@ -40,7 +43,7 @@ def printSpotbugsReportToConsole(File file) {
                 throw new GradleException(msg)
             }
         } else {
-            println "$file contains no bug instances"
+            logger.debug "$file contains no bug instances"
         }
     } else {
         println "$file does not exist"
