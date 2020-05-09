@@ -29,18 +29,20 @@ public class ServiceRegistryInitializer {
      * Init service registry if necessary.
      */
     public void initServiceRegistryIfNecessary() {
-        LOGGER.debug("Total count of service registries is [{}]1 which contain [{}] service definition(s)",
+        LOGGER.debug("Total count of service registries is [{}] which contain [{}] service definition(s)",
             serviceRegistry.countServiceRegistries(), serviceRegistry.size());
 
-        LOGGER.warn("Service registries [{}] will be auto-initialized from JSON service definitions. "
-            + "This behavior is only useful for testing purposes and MAY NOT be appropriate for production. "
-            + "Consider turning off this behavior via the setting [cas.service-registry.init-from-json=false] "
+        LOGGER.info("Service registries [{}] will be auto-initialized from JSON service definitions. "
+            + "You can turn off this behavior via the setting [cas.service-registry.init-from-json=false] "
             + "and explicitly register definitions in the services registry.", serviceRegistry.getName());
 
         val servicesLoaded = jsonServiceRegistry.load();
         if (LOGGER.isDebugEnabled()) {
-            val servicesList = servicesLoaded.stream().map(RegisteredService::getName).collect(Collectors.joining(","));
-            LOGGER.debug("Loaded JSON services are [{}]", servicesList);
+            val servicesList = servicesLoaded
+                .stream()
+                .map(RegisteredService::getName)
+                .collect(Collectors.joining(","));
+            LOGGER.debug("Loaded JSON service definitions are [{}]", servicesList);
         }
 
         servicesLoaded
@@ -48,6 +50,7 @@ public class ServiceRegistryInitializer {
             .sorted(Comparator.naturalOrder())
             .forEach(serviceRegistry::synchronize);
         this.servicesManager.load();
-        LOGGER.info("Service registry [{}] contains [{}] service definitions", this.serviceRegistry.getName(), this.servicesManager.count());
+        LOGGER.info("Service registry [{}] contains [{}] service definitions",
+            this.serviceRegistry.getName(), this.servicesManager.count());
     }
 }
