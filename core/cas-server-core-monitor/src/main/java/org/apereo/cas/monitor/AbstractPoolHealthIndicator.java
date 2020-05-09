@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 
@@ -20,7 +21,7 @@ import java.util.concurrent.TimeoutException;
  */
 @Slf4j
 @RequiredArgsConstructor
-public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicator {
+public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicator implements DisposableBean {
 
     /**
      * Maximum amount of time in ms to wait while validating pool resources.
@@ -54,6 +55,15 @@ public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicato
             .withDetail("name", getClass().getSimpleName())
             .withDetail("activeCount", getActiveCount())
             .withDetail("idleCount", getIdleCount());
+    }
+
+    /**
+     * Shuts down the thread pool. Subclasses whose wish to override this method
+     * must call super.destroy().
+     */
+    @Override
+    public void destroy() {
+        executor.shutdown();
     }
 
     /**
