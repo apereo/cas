@@ -63,6 +63,7 @@ stages:
   - validate
   - publish
   - test
+  - performance
   - finalize
 jobs:
   include:
@@ -230,14 +231,14 @@ jobs:
       script: ./ci/tests/ignite/run-tests-ignite.sh
       name: "Apache Ignite Tests"
     - stage: test
+      script: ./ci/tests/couchdb/run-tests-couchdb.sh
+      name: "Apache CouchDb Tests"
+    - stage: test
       script: ./ci/tests/influxdb/run-tests-influxdb.sh
       name: "InfluxDb Tests"
     - stage: test
       script: ./ci/tests/mail/run-tests-mail.sh
       name: "Mail Tests"
-    - stage: test
-      script: ./ci/tests/couchdb/run-tests-couchdb.sh
-      name: "Apache CouchDb Tests"
     - stage: test
       script: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
       name: "Azure CosmosDb Tests"
@@ -247,9 +248,16 @@ jobs:
     - stage: test
       script: ./ci/tests/zookeeper/run-tests-zookeeper.sh
       name: "Apache ZooKeeper Tests"
-    - stage: test
-      script: ./ci/perftests-locust.sh
-      name: "Performance Tests via Locust"
+      ############################################
+    - stage: performance
+      script: ./ci/tests/perftests-locust.sh tomcat
+      name: "Locust Performance Tests via Embedded Apache Tomcat"
+    - stage: performance
+      script: ./ci/tests/perftests-locust.sh jetty
+      name: "Locust Performance Tests via Jetty"
+    - stage: performance
+      script: ./ci/tests/perftests-locust.sh undertow
+      name: "Locust Performance Tests via Undertow"
       ############################################
     - stage: finalize
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
@@ -266,8 +274,8 @@ jobs:
     - stage: finalize
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/analyze-bugs-main.sh
-      name: "Spotbugs Main Analysis"
+      name: "SpotBugs Main Analysis"
     - stage: finalize
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/analyze-bugs-tests.sh
-      name: "Spotbugs Tests Analysis"
+      name: "SpotBugs Tests Analysis"
