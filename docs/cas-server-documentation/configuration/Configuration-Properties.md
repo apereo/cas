@@ -2543,42 +2543,42 @@ To fetch CRLs, the following options are available:
 | `LDAP`                  | A CRL resource may be fetched from a pre-configured attribute, in the event that the CRL resource location is an LDAP URI
 
 ```properties
-# cas.authn.x509.crlExpiredPolicy=DENY|ALLOW|THRESHOLD
-# cas.authn.x509.crlUnavailablePolicy=DENY|ALLOW|THRESHOLD
-# cas.authn.x509.crlResourceExpiredPolicy=DENY|ALLOW|THRESHOLD
-# cas.authn.x509.crlResourceUnavailablePolicy=DENY|ALLOW|THRESHOLD
+# cas.authn.x509.crl-expired-policy=DENY|ALLOW|THRESHOLD
+# cas.authn.x509.crl-unavailable-policy=DENY|ALLOW|THRESHOLD
+# cas.authn.x509.crl-resource-expired-policy=DENY|ALLOW|THRESHOLD
+# cas.authn.x509.crl-resource-unavailable-policy=DENY|ALLOW|THRESHOLD
 
-# cas.authn.x509.revocationChecker=NONE|CRL|RESOURCE
-# cas.authn.x509.crlFetcher=RESOURCE|LDAP
+# cas.authn.x509.revocation-checker=NONE|CRL|RESOURCE
+# cas.authn.x509.crl-fetcher=RESOURCE|LDAP
 
-# cas.authn.x509.crlResources[0]=file:/...
+# cas.authn.x509.crl-resources[0]=file:/...
 
-# cas.authn.x509.cacheMaxElementsInMemory=1000
-# cas.authn.x509.cacheDiskOverflow=false
-# cas.authn.x509.cacheDiskSize=100MB
-# cas.authn.x509.cacheEternal=false
-# cas.authn.x509.cacheTimeToLiveSeconds=7200
+# cas.authn.x509.cache-max-elements-in-memory=1000
+# cas.authn.x509.cache-disk-overflow=false
+# cas.authn.x509.cache-disk-size=100MB
+# cas.authn.x509.cache-eternal=false
+# cas.authn.x509.cache-time-to-live-seconds=7200
 
-# cas.authn.x509.checkKeyUsage=false
-# cas.authn.x509.revocationPolicyThreshold=172800
+# cas.authn.x509.check-key-usage=false
+# cas.authn.x509.revocation-policy-threshold=172800
 
-# cas.authn.x509.regExSubjectDnPattern=.+
-# cas.authn.x509.regExTrustedIssuerDnPattern=.+
+# cas.authn.x509.reg-ex-subject-dn-pattern=.+
+# cas.authn.x509.reg-ex-trusted-issuer-dn-pattern=.+
 
 # cas.authn.x509.name=
 # cas.authn.x509.order=
 
-# cas.authn.x509.principalDescriptor=
-# cas.authn.x509.maxPathLength=1
-# cas.authn.x509.throwOnFetchFailure=false
+# cas.authn.x509.principal-descriptor=
+# cas.authn.x509.max-path-length=1
+# cas.authn.x509.throw-on-fetch-failure=false
 
-# cas.authn.x509.checkAll=false
-# cas.authn.x509.requireKeyUsage=false
-# cas.authn.x509.refreshIntervalSeconds=3600
-# cas.authn.x509.maxPathLengthAllowUnspecified=false
+# cas.authn.x509.check-all=false
+# cas.authn.x509.require-key-usage=false
+# cas.authn.x509.refresh-interval-seconds=3600
+# cas.authn.x509.max-path-length-allow-unspecified=false
 
 # SUBJECT_DN
-# cas.authn.x509.subjectDn.format=[DEFAULT,RFC1779,RFC2253,CANONICAL]
+# cas.authn.x509.subject-dn.format=[DEFAULT,RFC1779,RFC2253,CANONICAL]
 ```
 | Type          | Description
 |---------------|----------------------------------------------------------------------
@@ -2589,21 +2589,21 @@ To fetch CRLs, the following options are available:
 
 ```properties
 # SERIAL_NO_DN
-# cas.authn.x509.serialNoDn.serialNumberPrefix=SERIALNUMBER=
-# cas.authn.x509.serialNoDn.valueDelimiter=,
+# cas.authn.x509.serial-no-dn.serial-number-prefix=SERIALNUMBER=
+# cas.authn.x509.serial-no-dn.value-delimiter=,
 
 # SERIAL_NO
-# cas.authn.x509.serialNo.principalSNRadix=10
-# cas.authn.x509.serialNo.principalHexSNZeroPadding=false
+# cas.authn.x509.serial-no.principal-s-n-radix=10
+# cas.authn.x509.serial-no.principal-hex-s-n-zero-padding=false
 
 # SUBJECT_ALT_NAME
-# cas.authn.x509.subjectAltName.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal|x509Rfc822Email]
+# cas.authn.x509.subject-alt-name.alternate-principal-attribute=[sigAlgOid|subjectDn|subjectX500Principal|x509Rfc822Email]
 
 # CN_EDIPI 
-# cas.authn.x509.cnEdipi.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal|x509Rfc822Email|x509subjectUPN]
+# cas.authn.x509.cn-edipi.alternate-principal-attribute=[sigAlgOid|subjectDn|subjectX500Principal|x509Rfc822Email|x509subjectUPN]
 
 # RFC822_EMAIL 
-# cas.authn.x509.rfc822Email.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal|x509subjectUPN]
+# cas.authn.x509.rfc822-email.alternate-principal-attribute=[sigAlgOid|subjectDn|subjectX500Principal|x509subjectUPN]
 ```
 
 ### X509 Certificate Extraction
@@ -2616,8 +2616,8 @@ be bypassed by users and that the proxy ensures the header
 never originates from the browser.
 
 ```properties
-# cas.authn.x509.extractCert=false
-# cas.authn.x509.sslHeaderName=ssl_client_cert
+# cas.authn.x509.extract-cert=false
+# cas.authn.x509.ssl-header-name=ssl_client_cert
 ```
 
 The specific parsing logic for the certificate is compatible
@@ -2627,7 +2627,7 @@ Apache HTTPD, Nginx, Haproxy, BigIP F5, etc.
 ### X509 Principal Resolution
 
 ```properties
-# cas.authn.x509.principalType=SERIAL_NO|SERIAL_NO_DN|SUBJECT|SUBJECT_ALT_NAME|SUBJECT_DN
+# cas.authn.x509.principal-type=SERIAL_NO|SERIAL_NO_DN|SUBJECT|SUBJECT_ALT_NAME|SUBJECT_DN
 ```
 
 Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.x509.principal`.
@@ -2659,8 +2659,8 @@ Principal transformation settings for this feature are available [here](Configur
 Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.shiro`.
 
 ```properties
-# cas.authn.shiro.requiredPermissions=value1,value2,...
-# cas.authn.shiro.requiredRoles=value1,value2,...
+# cas.authn.shiro.required-permissions=value1,value2,...
+# cas.authn.shiro.required-roles=value1,value2,...
 # cas.authn.shiro.location=classpath:shiro.ini
 # cas.authn.shiro.name=
 ```
@@ -2672,7 +2672,7 @@ To learn more about this topic, [please review this guide](../installation/Trust
 ```properties
 # cas.authn.trusted.name=
 # cas.authn.trusted.order=
-# cas.authn.trusted.remotePrincipalHeader=
+# cas.authn.trusted.remote-principal-header=
 ```
 
 ## WS-Fed Delegated Authentication
@@ -2691,26 +2691,26 @@ strategies when collecting principal attributes:
 | `BOTH`               | Combine both the above options, where CAS attribute repositories take precedence over WS-Fed.
 
 ```properties
-# cas.authn.wsfed[0].identityProviderUrl=https://adfs.example.org/adfs/ls/
-# cas.authn.wsfed[0].identityProviderIdentifier=https://adfs.example.org/adfs/services/trust
-# cas.authn.wsfed[0].relyingPartyIdentifier=urn:cas:localhost
-# cas.authn.wsfed[0].signingCertificateResources=classpath:adfs-signing.crt
-# cas.authn.wsfed[0].identityAttribute=upn
+# cas.authn.wsfed[0].identity-provider-url=https://adfs.example.org/adfs/ls/
+# cas.authn.wsfed[0].identity-provider-identifier=https://adfs.example.org/adfs/services/trust
+# cas.authn.wsfed[0].relying-party-identifier=urn:cas:localhost
+# cas.authn.wsfed[0].signing-certificate-resources=classpath:adfs-signing.crt
+# cas.authn.wsfed[0].identity-attribute=upn
 
-# cas.authn.wsfed[0].attributesType=WSFED
+# cas.authn.wsfed[0].attributes-type=WSFED
 # cas.authn.wsfed[0].tolerance=10000
-# cas.authn.wsfed[0].attributeResolverEnabled=true
-# cas.authn.wsfed[0].autoRedirect=true
+# cas.authn.wsfed[0].attribute-resolver-enabled=true
+# cas.authn.wsfed[0].auto-redirect=true
 # cas.authn.wsfed[0].name=
-# cas.authn.wsfed[0].attributeMutatorScript.location=file:/etc/cas/config/wsfed-attr.groovy
+# cas.authn.wsfed[0].attribute-mutator-script.location=file:/etc/cas/config/wsfed-attr.groovy
 
-# cas.authn.wsfed[0].principal.principalAttribute=
-# cas.authn.wsfed[0].principal.returnNull=false
+# cas.authn.wsfed[0].principal.principal-attribute=
+# cas.authn.wsfed[0].principal.return-null=false
 
 # Private/Public keypair used to decrypt assertions, if any.
-# cas.authn.wsfed[0].encryptionPrivateKey=classpath:private.key
-# cas.authn.wsfed[0].encryptionCertificate=classpath:certificate.crt
-# cas.authn.wsfed[0].encryptionPrivateKeyPassword=NONE
+# cas.authn.wsfed[0].encryption-private-key=classpath:private.key
+# cas.authn.wsfed[0].encryption-certificate=classpath:certificate.crt
+# cas.authn.wsfed[0].encryption-private-key-password=NONE
 ```
 
 ### Signing & Encryption
@@ -2724,7 +2724,7 @@ To learn more about this topic, [please review this guide](../mfa/Configuring-Mu
 
 ```properties
 # Describe the global failure mode in case provider cannot be reached
-# cas.authn.mfa.globalFailureMode=CLOSED
+# cas.authn.mfa.global-failure-mode=CLOSED
 
 # Design the attribute chosen to communicate the authentication context
 # cas.authn.mfa.authentication-context-attribute=authnContextClass
