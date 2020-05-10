@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.acceptable-usage-policy.jdbc.aupColumn=aup",
     "cas.acceptable-usage-policy.jdbc.principalIdColumn=mail",
     "cas.acceptable-usage-policy.jdbc.principalIdAttribute=email",
-    "cas.acceptable-usage-policy.jdbc.sqlUpdateAUP=UPDATE %s SET %s=true WHERE lower(%s)=lower(?)"
+    "cas.acceptable-usage-policy.jdbc.sqlUpdate=UPDATE %s SET %s=true WHERE lower(%s)=lower(?)"
 })
 @Tag("JDBC")
 public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {

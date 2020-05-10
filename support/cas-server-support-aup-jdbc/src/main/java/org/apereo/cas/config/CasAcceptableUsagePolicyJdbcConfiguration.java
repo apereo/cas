@@ -55,7 +55,7 @@ public class CasAcceptableUsagePolicyJdbcConfiguration {
             throw new BeanCreationException("Database table for acceptable usage policy must be specified.");
         }
 
-        if (StringUtils.isBlank(properties.getJdbc().getSqlUpdateAUP())) {
+        if (StringUtils.isBlank(properties.getJdbc().getSqlUpdate())) {
             throw new BeanCreationException("SQL to update acceptable usage policy must be specified.");
         }
 

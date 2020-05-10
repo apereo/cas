@@ -103,7 +103,7 @@ Load settings from external properties/yaml configuration files.
 # spring.profiles.active=native
 
 # The configuration directory where CAS should monitor to locate settings.
-# spring.cloud.config.server.native.searchLocations=file:///etc/cas/config
+# spring.cloud.config.server.native.search-locations=file:///etc/cas/config
 ```
 
 ### Git Repository
@@ -136,11 +136,12 @@ Allow the CAS Spring Cloud configuration server to load settings from [HashiCorp
 ```properties
 # spring.cloud.consul.config.enabled=true
 # spring.cloud.consul.config.prefix=configuration
-# spring.cloud.consul.config.defaultContext=apps
-# spring.cloud.consul.config.profileSeparator=::
+# spring.cloud.consul.config.default-context=apps
+# spring.cloud.consul.config.profile-separator=::
 
 # spring.cloud.consul.config.watch.delay=1000
 # spring.cloud.consul.config.watch.enabled=false
+
 ```
 
 ### Vault
@@ -150,8 +151,8 @@ Allow the CAS Spring Cloud configuration server to load settings from [HashiCorp
 ```properties
 # spring.cloud.vault.host=127.0.0.1
 # spring.cloud.vault.port=8200
-# spring.cloud.vault.connectionTimeout=3000
-# spring.cloud.vault.readTimeout=5000
+# spring.cloud.vault.connection-timeout=3000
+# spring.cloud.vault.read-timeout=5000
 # spring.cloud.vault.enabled=true
 # spring.cloud.vault.fail-fast=true
 # spring.cloud.vault.scheme=http
@@ -243,17 +244,17 @@ Allow the CAS Spring Cloud configuration server to load settings from Microsoft 
 Allow the CAS Spring Cloud configuration server to load settings from an Apache ZooKeeper instance.
 
 ```properties
-# spring.cloud.zookeeper.connectString=localhost:2181
+# spring.cloud.zookeeper.connect-string=localhost:2181
 # spring.cloud.zookeeper.enabled=true
 # spring.cloud.zookeeper.config.enabled=true
-# spring.cloud.zookeeper.maxRetries=10
+# spring.cloud.zookeeper.max-retries=10
 # spring.cloud.zookeeper.config.root=cas/config
 ```
 
 ### Amazon Secrets Manager
 
 Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
-under the configuration key `cas.spring.cloud.aws.secretsManager`.
+under the configuration key `cas.spring.cloud.aws.secrets-manager`.
 
 ### Amazon Parameter Store
 
@@ -275,7 +276,7 @@ under the configuration key `cas.spring.cloud.aws.s3`.
 ### DynamoDb
 
 Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
-under the configuration key `cas.spring.cloud.dynamoDb`. 
+under the configuration key `cas.spring.cloud.dynamo-db`. 
 
 ### JDBC
 
@@ -2848,10 +2849,10 @@ Common configuration settings for this feature are available [here](Configuratio
 under the configuration key `cas.authn.mfa.trusted`.
 
 AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
-under the configuration key `cas.authn.mfa.trusted.dynamoDb`.
+under the configuration key `cas.authn.mfa.trusted.dynamo-db`.
 
 ```properties
-# cas.authn.mfa.trusted.dynamoDb.tableName=DynamoDbCasMfaTrustRecords
+# cas.authn.mfa.trusted.dynamo-db.tableName=DynamoDbCasMfaTrustRecords
 ```
 
 #### REST Storage
@@ -4073,10 +4074,10 @@ Common configuration settings for this feature are available [here](Configuratio
 under the configuration key `cas.audit`.
 
 AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
-under the configuration key `cas.audit.dynamoDb`.
+under the configuration key `cas.audit.dynamo-db`.
 
 ```properties
-# cas.audit.dynamoDb.asynchronous=true
+# cas.audit.dynamo-db.asynchronous=true
 ```
 
 ### Database Audits
@@ -4226,12 +4227,12 @@ cas.events.enabled=true
 ### InfluxDb Events
 
 Decide how CAS should store authentication events inside an InfluxDb instance. Common 
-configuration settings for this feature are available [here](Configuration-Properties-Common.html#influxdb-configuration) under the configuration key `cas.events.influxDb`.
+configuration settings for this feature are available [here](Configuration-Properties-Common.html#influxdb-configuration) under the configuration key `cas.events.influx-db`.
 
 ### CouchDb Events
 
 Decide how CAS should store authentication events inside a CouchDb instance. Common
-configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.events.couchDb`.
+configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.events.couch-db`.
 
 ### Database Events
 
@@ -4251,35 +4252,35 @@ Control how CAS should respond and validate incoming HTTP requests.
 # cas.http-web-request.header.enabled=true
 
 # cas.http-web-request.header.xframe=true
-# cas.http-web-request.header.xframeOptions=DENY
+# cas.http-web-request.header.xframe-options=DENY
 
 # cas.http-web-request.header.xss=true
-# cas.http-web-request.header.xssOptions=1; mode=block
+# cas.http-web-request.header.xss-options=1; mode=block
 
 # cas.http-web-request.header.hsts=true
 # cas.http-web-request.header.xcontent=true
 # cas.http-web-request.header.cache=true
-# cas.http-web-request.header.contentSecurityPolicy=
+# cas.http-web-request.header.content-security-policy=
 
 # cas.http-web-request.cors.enabled=false
-# cas.http-web-request.cors.allowCredentials=false
-# cas.http-web-request.cors.allowOrigins[0]=
-# cas.http-web-request.cors.allowMethods[0]=*
-# cas.http-web-request.cors.allowHeaders[0]=*
-# cas.http-web-request.cors.maxAge=3600
-# cas.http-web-request.cors.exposedHeaders[0]=
+# cas.http-web-request.cors.allow-credentials=false
+# cas.http-web-request.cors.allow-origins[0]=
+# cas.http-web-request.cors.allow-methods[0]=*
+# cas.http-web-request.cors.allow-headers[0]=*
+# cas.http-web-request.cors.max-age=3600
+# cas.http-web-request.cors.exposed-headers[0]=
 
-# cas.http-web-request.web.forceEncoding=true
+# cas.http-web-request.web.force-encoding=true
 # cas.http-web-request.web.encoding=UTF-8
 
-# cas.http-web-request.allowMultiValueParameters=false
-# cas.http-web-request.onlyPostParams=username,password
-# cas.http-web-request.paramsToCheck=ticket,service,renew,gateway,warn,method,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token
-# cas.http-web-request.patternToBlock=
-# cas.http-web-request.charactersToForbid=none
+# cas.http-web-request.allow-multi-value-parameters=false
+# cas.http-web-request.only-post-params=username,password
+# cas.http-web-request.params-to-check=ticket,service,renew,gateway,warn,method,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token
+# cas.http-web-request.pattern-to-block=
+# cas.http-web-request.characters-to-forbid=none
 
-# cas.http-web-request.customHeaders.headerName1=headerValue1
-# cas.http-web-request.customHeaders.headerName2=headerValue2
+# cas.http-web-request.custom-headers.header-name1=headerValue1
+# cas.http-web-request.custom-headers.header-name2=headerValue2
 
 # spring.http.encoding.charset=UTF-8
 # spring.http.encoding.force=true
@@ -4295,20 +4296,20 @@ In the event that local certificates are to be imported into the CAS running env
 a local truststore is provided by CAS to improve portability of configuration across environments.
 
 ```properties
-# cas.httpClient.connectionTimeout=5000
-# cas.httpClient.asyncTimeout=5000
-# cas.httpClient.readTimeout=5000 
+# cas.http-client.connection-timeout=5000
+# cas.http-client.async-timeout=5000
+# cas.http-client.read-timeout=5000 
 
-# cas.httpClient.proxyHost=
-# cas.httpClient.proxyPort=0 
+# cas.http-client.proxy-host=
+# cas.http-client.proxy-port=0 
 
-# cas.httpClient.hostNameVerifier=NONE|DEFAULT
-# cas.httpClient.allowLocalLogoutUrls=false
-# cas.httpClient.authorityValidationRegEx=
-# cas.httpClient.authorityValidationRegExCaseSensitive=true
+# cas.http-client.host-name-verifier=NONE|DEFAULT
+# cas.http-client.allow-local-logout-urls=false
+# cas.http-client.authority-validation-reg-ex=
+# cas.http-client.authority-validation-reg-ex-case-sensitive=true
 
-# cas.httpClient.truststore.psw=changeit
-# cas.httpClient.truststore.file=classpath:/truststore.jks
+# cas.http-client.truststore.psw=changeit
+# cas.http-client.truststore.file=classpath:/truststore.jks
 ```
 
 ### Hostname Verification
@@ -4325,12 +4326,12 @@ The default options are available for hostname verification:
 See [this guide](../services/Service-Management.html) to learn more.
 
 ```properties
-# cas.service-registry.watcherEnabled=true
+# cas.service-registry.watcher-enabled=true
 
 # Auto-initialize the registry from default JSON service definitions
-# cas.service-registry.initFromJson=false
+# cas.service-registry.init-from-json=false
 
-# cas.service-registry.managementType=DEFAULT|DOMAIN
+# cas.service-registry.management-type=DEFAULT|DOMAIN
 ```
 
 Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.service-registry`.
@@ -4368,17 +4369,17 @@ To learn more about this topic, [please review this guide](../services/YAML-Serv
 Works with git repository to fetch and manage service registry definitions.
 
 ```properties
-# cas.service-registry.git.repositoryUrl=https://github.com/repository
-# cas.service-registry.git.branchesToClone=master
-# cas.service-registry.git.activeBranch=master
-# cas.service-registry.git.signCommits=false
+# cas.service-registry.git.repository-url=https://github.com/repository
+# cas.service-registry.git.branches-to-clone=master
+# cas.service-registry.git.active-branch=master
+# cas.service-registry.git.sign-commits=false
 # cas.service-registry.git.username=
 # cas.service-registry.git.password=
-# cas.service-registry.git.cloneDirectory=file:/tmp/cas-service-registry
-# cas.service-registry.git.pushChanges=false
-# cas.service-registry.git.privateKeyPassphrase=
-# cas.service-registry.git.privateKeyPath=
-# cas.service-registry.git.sshSessionPassword=
+# cas.service-registry.git.clone-directory=file:/tmp/cas-service-registry
+# cas.service-registry.git.push-changes=false
+# cas.service-registry.git.private-key-passphrase=
+# cas.service-registry.git.private-key-path=
+# cas.service-registry.git.ssh-session-password=
 # cas.service-registry.git.timeout=PT10S
 ```
 
@@ -4390,8 +4391,8 @@ To learn more about this topic, [please review this guide](../services/REST-Serv
 
 ```properties
 # cas.service-registry.rest.url=https://example.api.org
-# cas.service-registry.rest.basicAuthUsername=
-# cas.service-registry.rest.basicAuthPassword=
+# cas.service-registry.rest.basic-auth-username=
+# cas.service-registry.rest.basic-auth-password=
 ```
 
 ### CouchDb Service Registry
@@ -4407,13 +4408,13 @@ To learn more about this topic, [please review this guide](../services/Redis-Ser
 To learn more about this topic, [please review this guide](../services/CosmosDb-Service-Management.html).
 
 ```properties
-# cas.service-registry.cosmosDb.uri=
-# cas.service-registry.cosmosDb.key=
-# cas.service-registry.cosmosDb.database=
-# cas.service-registry.cosmosDb.collection=
-# cas.service-registry.cosmosDb.throughput=10000
-# cas.service-registry.cosmosDb.dropCollection=true
-# cas.service-registry.cosmosDb.consistencyLevel=Session
+# cas.service-registry.cosmos-db.uri=
+# cas.service-registry.cosmos-db.key=
+# cas.service-registry.cosmos-db.database=
+# cas.service-registry.cosmos-db.collection=
+# cas.service-registry.cosmos-db.throughput=10000
+# cas.service-registry.cosmos-db.drop-collection=true
+# cas.service-registry.cosmos-db.consistency-level=Session
 ```
 
 ### DynamoDb Service Registry
@@ -4422,10 +4423,10 @@ To learn more about this topic, [please review this guide](../services/DynamoDb-
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
 under the configuration key `cas.service-registry`.
 AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
-under the configuration key `cas.service-registry.dynamoDb`.
+under the configuration key `cas.service-registry.dynamo-db`.
 
 ```properties
-# cas.service-registry.dynamoDb.tableName=DynamoDbCasServices
+# cas.service-registry.dynamo-db.table-name=DynamoDbCasServices
 ```
 
 ### Cassandra Service Registry
@@ -4445,11 +4446,11 @@ Control how CAS services should be found inside an LDAP instance.
 To learn more about this topic, [please review this guide](../services/LDAP-Service-Management.html).  LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.service-registry.ldap`.
 
 ```properties
-# cas.service-registry.ldap.serviceDefinitionAttribute=description
-# cas.service-registry.ldap.idAttribute=uid
-# cas.service-registry.ldap.objectClass=casRegisteredService
-# cas.service-registry.ldap.searchFilter=(%s={0})
-# cas.service-registry.ldap.loadFilter=(objectClass=%s)
+# cas.service-registry.ldap.service-definition-attribute=description
+# cas.service-registry.ldap.id-attribute=uid
+# cas.service-registry.ldap.object-class=casRegisteredService
+# cas.service-registry.ldap.search-filter=(%s={0})
+# cas.service-registry.ldap.load-filter=(objectClass=%s)
 ```
 
 ### Couchbase Service Registry
@@ -4480,7 +4481,7 @@ Replication modes may be configured per the following options:
 
 ```properties
 # cas.service-registry.stream.enabled=true
-# cas.service-registry.stream.replicationMode=ACTIVE_ACTIVE|ACTIVE_PASSIVE
+# cas.service-registry.stream.replication-mode=ACTIVE_ACTIVE|ACTIVE_PASSIVE
 ```
 
 ## Service Registry Replication Hazelcast
@@ -4513,15 +4514,15 @@ available [here](Configuration-Properties-Common.html#job-scheduling) under the 
 To learn more about this topic, [please review this guide](../ticketing/JPA-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.ticket.registry.jpa`.
 
 ```properties
-# cas.ticket.registry.jpa.ticketLockType=NONE
-# cas.ticket.registry.jpa.jpaLockingTimeout=3600
+# cas.ticket.registry.jpa.ticket-lock-type=NONE
+# cas.ticket.registry.jpa.jpa-locking-timeout=3600
 ```
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.jpa`.
 
 ### CouchDb Ticket Registry
 
-To learn more about this topic, [please review this guide](../ticketing/CouchDb-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.ticket.registry.couchdb`.
+To learn more about this topic, [please review this guide](../ticketing/CouchDb-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.ticket.registry.couch-db`.
 
 ### Couchbase Ticket Registry
 
@@ -4536,7 +4537,7 @@ To learn more about this topic, [please review this guide](../ticketing/Hazelcas
 Common Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.ticket.registry.hazelcast`.
 
 ```properties
-# cas.ticket.registry.hazelcast.pageSize=500
+# cas.ticket.registry.hazelcast.page-size=500
 ```
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.hazelcast`.
@@ -4550,7 +4551,7 @@ Common Cassandra settings for this feature are available [here](Configuration-Pr
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.cassandra`.
 
 ```properties
-# cas.ticket.registry.cassandra.dropTablesOnStartup=false
+# cas.ticket.registry.cassandra.drop-tables-on-startup=false
 ```
 
 ### Infinispan Ticket Registry
@@ -4558,8 +4559,8 @@ Signing & encryption settings for this registry are available [here](Configurati
 To learn more about this topic, [please review this guide](../ticketing/Infinispan-Ticket-Registry.html).
 
 ```properties
-# cas.ticket.registry.infinispan.cacheName=
-# cas.ticket.registry.infinispan.configLocation=/infinispan.xml
+# cas.ticket.registry.infinispan.cache-name=
+# cas.ticket.registry.infinispan.config-location=/infinispan.xml
 ```
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.infinispan`.
@@ -4571,11 +4572,11 @@ are kept inside the runtime environment memory.
 
 ```properties
 # Enable the backing map to be cacheable
-# cas.ticket.registry.inMemory.cache=true
+# cas.ticket.registry.in-memory.cache=true
 
-# cas.ticket.registry.inMemory.loadFactor=1
-# cas.ticket.registry.inMemory.concurrency=20
-# cas.ticket.registry.inMemory.initialCapacity=1000
+# cas.ticket.registry.in-memory.load-factor=1
+# cas.ticket.registry.in-memory.concurrency=20
+# cas.ticket.registry.in-memory.initial-capacity=1000
 ```
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.inMemory`.
@@ -4625,28 +4626,28 @@ Theses properties are for the module that uses version 2.x of the Ehcache librar
 To learn more about this topic, [please review this guide](../ticketing/Ehcache-Ticket-Registry.html).
 
 ```properties
-# cas.ticket.registry.ehcache.replicateUpdatesViaCopy=true
-# cas.ticket.registry.ehcache.cacheManagerName=ticketRegistryCacheManager
-# cas.ticket.registry.ehcache.replicatePuts=true
-# cas.ticket.registry.ehcache.replicateUpdates=true
-# cas.ticket.registry.ehcache.memoryStoreEvictionPolicy=LRU
-# cas.ticket.registry.ehcache.configLocation=classpath:/ehcache-replicated.xml
-# cas.ticket.registry.ehcache.maximumBatchSize=100
+# cas.ticket.registry.ehcache.replicate-updates-via-copy=true
+# cas.ticket.registry.ehcache.cache-manager-name=ticketRegistryCacheManager
+# cas.ticket.registry.ehcache.replicate-puts=true
+# cas.ticket.registry.ehcache.replicate-updates=true
+# cas.ticket.registry.ehcache.memory-store-eviction-policy=LRU
+# cas.ticket.registry.ehcache.config-location=classpath:/ehcache-replicated.xml
+# cas.ticket.registry.ehcache.maximum-batch-size=100
 # cas.ticket.registry.ehcache.shared=false
-# cas.ticket.registry.ehcache.replicationInterval=10000
-# cas.ticket.registry.ehcache.cacheTimeToLive=2147483647
-# cas.ticket.registry.ehcache.diskExpiryThreadIntervalSeconds=0
-# cas.ticket.registry.ehcache.replicateRemovals=true
-# cas.ticket.registry.ehcache.maxChunkSize=5000000
-# cas.ticket.registry.ehcache.maxElementsOnDisk=0
-# cas.ticket.registry.ehcache.maxElementsInCache=0
-# cas.ticket.registry.ehcache.maxElementsInMemory=10000
+# cas.ticket.registry.ehcache.replication-interval=10000
+# cas.ticket.registry.ehcache.cache-time-to-live=2147483647
+# cas.ticket.registry.ehcache.disk-expiry-thread-interval-seconds=0
+# cas.ticket.registry.ehcache.replicate-removals=true
+# cas.ticket.registry.ehcache.max-chunk-size=5000000
+# cas.ticket.registry.ehcache.max-elements-on-disk=0
+# cas.ticket.registry.ehcache.max-elements-in-cache=0
+# cas.ticket.registry.ehcache.max-elements-in-memory=10000
 # cas.ticket.registry.ehcache.eternal=false
-# cas.ticket.registry.ehcache.loaderAsync=true
-# cas.ticket.registry.ehcache.replicatePutsViaCopy=true
-# cas.ticket.registry.ehcache.cacheTimeToIdle=0
+# cas.ticket.registry.ehcache.loader-async=true
+# cas.ticket.registry.ehcache.replicate-puts-via-copy=true
+# cas.ticket.registry.ehcache.cache-time-to-idle=0
 # cas.ticket.registry.ehcache.persistence=LOCALTEMPSWAP|NONE|LOCALRESTARTABLE|DISTRIBUTED
-# cas.ticket.registry.ehcache.synchronousWrites=
+# cas.ticket.registry.ehcache.synchronous-writes=
 
 # The systemprops allows a map of properties to be set as system properties before configLocation config is processed.
 # These properties may be referenced in the ehcache XML config via ${key}
@@ -4662,19 +4663,19 @@ To learn more about this topic, [please review this guide](../ticketing/Ehcache-
 
 ```properties
 # cas.ticket.registry.ehcache3.enabled=true
-# cas.ticket.registry.ehcache3.maxElementsInMemory=10000
-# cas.ticket.registry.ehcache3.perCacheSizeOnDisk=20MB
+# cas.ticket.registry.ehcache3.max-elements-in-memory=10000
+# cas.ticket.registry.ehcache3.per-cache-size-on-disk=20MB
 # cas.ticket.registry.ehcache3.eternal=false
-# cas.ticket.registry.ehcache3.enableStatistics=true
-# cas.ticket.registry.ehcache3.enableManagement=true
-# cas.ticket.registry.ehcache3.terracottaClusterUri=
-# cas.ticket.registry.ehcache3.defaultServerResource=main
-# cas.ticket.registry.ehcache3.resourcePoolName=cas-ticket-pool
-# cas.ticket.registry.ehcache3.resourcePoolSize=15MB
-# cas.ticket.registry.ehcache3.rootDirectory=/tmp/cas/ehcache3
-# cas.ticket.registry.ehcache3.clusterConnectionTimeout=150
-# cas.ticket.registry.ehcache3.clusterReadWriteTimeout=5
-# cas.ticket.registry.ehcache3.clusteredCacheConsistency=STRONG
+# cas.ticket.registry.ehcache3.enable-statistics=true
+# cas.ticket.registry.ehcache3.enable-management=true
+# cas.ticket.registry.ehcache3.terracotta-cluster-uri=
+# cas.ticket.registry.ehcache3.default-server-resource=main
+# cas.ticket.registry.ehcache3.resource-pool-name=cas-ticket-pool
+# cas.ticket.registry.ehcache3.resource-pool-size=15MB
+# cas.ticket.registry.ehcache3.root-directory=/tmp/cas/ehcache3
+# cas.ticket.registry.ehcache3.cluster-connection-timeout=150
+# cas.ticket.registry.ehcache3.cluster-read-write-timeout=5
+# cas.ticket.registry.ehcache3.clustered-cache-consistency=STRONG
 ```                                              
 
 There is no default value for the Terracota Cluster URI but the format is `terracotta://host1.company.org:9410,host2.company.org:9410/cas-application`
@@ -4686,29 +4687,29 @@ Signing & encryption settings for this registry are available [here](Configurati
 To learn more about this topic, [please review this guide](../ticketing/Ignite-Ticket-Registry.html).
 
 ```properties
-# cas.ticket.registry.ignite.keyAlgorithm=
+# cas.ticket.registry.ignite.key-algorithm=
 # cas.ticket.registry.ignite.protocol=
-# cas.ticket.registry.ignite.trustStorePassword=
-# cas.ticket.registry.ignite.keyStoreType=
-# cas.ticket.registry.ignite.keyStoreFilePath=
-# cas.ticket.registry.ignite.keyStorePassword=
-# cas.ticket.registry.ignite.trustStoreType=
-# cas.ticket.registry.ignite.igniteAddress[0]=localhost:47500
-# cas.ticket.registry.ignite.igniteAddress[1]=
-# cas.ticket.registry.ignite.trustStoreFilePath=
-# cas.ticket.registry.ignite.ackTimeout=2000
-# cas.ticket.registry.ignite.joinTimeout=1000
-# cas.ticket.registry.ignite.localAddress=
-# cas.ticket.registry.ignite.localPort=-1
-# cas.ticket.registry.ignite.networkTimeout=5000
-# cas.ticket.registry.ignite.socketTimeout=5000
-# cas.ticket.registry.ignite.threadPriority=10
-# cas.ticket.registry.ignite.forceServerMode=false
-# cas.ticket.registry.ignite.clientMode=false
+# cas.ticket.registry.ignite.trust-store-password=
+# cas.ticket.registry.ignite.key-store-type=
+# cas.ticket.registry.ignite.key-store-file-path=
+# cas.ticket.registry.ignite.key-store-password=
+# cas.ticket.registry.ignite.trust-store-type=
+# cas.ticket.registry.ignite.ignite-address[0]=localhost:47500
+# cas.ticket.registry.ignite.ignite-address[1]=
+# cas.ticket.registry.ignite.trust-store-file-path=
+# cas.ticket.registry.ignite.ack-timeout=2000
+# cas.ticket.registry.ignite.join-timeout=1000
+# cas.ticket.registry.ignite.local-address=
+# cas.ticket.registry.ignite.local-port=-1
+# cas.ticket.registry.ignite.network-timeout=5000
+# cas.ticket.registry.ignite.socket-timeout=5000
+# cas.ticket.registry.ignite.thread-priority=10
+# cas.ticket.registry.ignite.force-server-mode=false
+# cas.ticket.registry.ignite.client-mode=false
 
-# cas.ticket.registry.ignite.ticketsCache.writeSynchronizationMode=FULL_SYNC
-# cas.ticket.registry.ignite.ticketsCache.atomicityMode=TRANSACTIONAL
-# cas.ticket.registry.ignite.ticketsCache.cacheMode=REPLICATED
+# cas.ticket.registry.ignite.tickets-cache.write-synchronization-mode=FULL_SYNC
+# cas.ticket.registry.ignite.tickets-cache.atomicity-mode=TRANSACTIONAL
+# cas.ticket.registry.ignite.tickets-cache.cache-mode=REPLICATED
 ```
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.ignite`.
@@ -4727,17 +4728,17 @@ Common configuration settings for this feature are available [here](Configuratio
 under the configuration key `cas.ticket.registry`. 
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) 
-under the configuration key `cas.ticket.registry.dynamoDb`.
+under the configuration key `cas.ticket.registry.dynamo-db`.
 
 AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
-under the configuration key `cas.ticket.registry.dynamoDb`.
+under the configuration key `cas.ticket.registry.dynamo-db`.
 
 ```properties
-# cas.ticket.registry.dynamoDb.serviceTicketsTableName=serviceTicketsTable
-# cas.ticket.registry.dynamoDb.proxyTicketsTableName=proxyTicketsTable
-# cas.ticket.registry.dynamoDb.ticketGrantingTicketsTableName=ticketGrantingTicketsTable
-# cas.ticket.registry.dynamoDb.proxyGrantingTicketsTableName=proxyGrantingTicketsTable
-# cas.ticket.registry.dynamoDb.transientSessionTicketsTableName=transientSessionTicketsTable
+# cas.ticket.registry.dynamo-db.service-tickets-table-name=serviceTicketsTable
+# cas.ticket.registry.dynamo-db.proxy-tickets-table-name=proxyTicketsTable
+# cas.ticket.registry.dynamo-db.ticket-granting-tickets-table-name=ticketGrantingTicketsTable
+# cas.ticket.registry.dynamo-db.proxy-granting-tickets-table-name=proxyGrantingTicketsTable
+# cas.ticket.registry.dynamo-db.transient-session-tickets-table-name=transientSessionTicketsTable
 ```
 
 ### MongoDb Ticket Registry
@@ -4766,37 +4767,37 @@ feature are available [here](Configuration-Properties-Common.html#signing--encry
 Controls the expiration policy of service tickets, as well as other properties applicable to STs.
 
 ```properties
-# cas.ticket.st.maxLength=20
+# cas.ticket.st.max-length=20
 
-# cas.ticket.st.numberOfUses=1
-# cas.ticket.st.timeToKillInSeconds=10
+# cas.ticket.st.number-of-uses=1
+# cas.ticket.st.time-to-kill-in-seconds=10
 ```
 
 ## Proxy Granting Tickets Behavior
 
 ```properties
-# cas.ticket.pgt.maxLength=50
+# cas.ticket.pgt.max-length=50
 ```
 
 ## Proxy Tickets Behavior
 
 ```properties
-# cas.ticket.pt.timeToKillInSeconds=10
-# cas.ticket.pt.numberOfUses=1
+# cas.ticket.pt.time-to-kill-in-seconds=10
+# cas.ticket.pt.number-of-uses=1
 ```
 
 
 ## Transient Session Tickets Behavior
 
 ```properties
-# cas.ticket.tst.timeToKillInSeconds=300
+# cas.ticket.tst.time-to-kill-in-seconds=300
 ```
 
 ## Ticket Granting Tickets Behavior
 
 ```properties
-# cas.ticket.tgt.onlyTrackMostRecentSession=true
-# cas.ticket.tgt.maxLength=50
+# cas.ticket.tgt.only-track-most-recent-session=true
+# cas.ticket.tgt.max-length=50
 ```
 
 ## TGT Expiration Policy
@@ -4827,15 +4828,15 @@ Provides a hard-time out as well as a sliding window.
 
 ```properties
 # Set to a negative value to never expire tickets
-# cas.ticket.tgt.maxTimeToLiveInSeconds=28800
-# cas.ticket.tgt.timeToKillInSeconds=7200
+# cas.ticket.tgt.max-time-to-live-in-seconds=28800
+# cas.ticket.tgt.time-to-kill-in-seconds=7200
 ```
 
 ### Remember Me
 
 ```properties
-# cas.ticket.tgt.rememberMe.enabled=true
-# cas.ticket.tgt.rememberMe.timeToKillInSeconds=28800
+# cas.ticket.tgt.remember-me.enabled=true
+# cas.ticket.tgt.remember-me.time-to-kill-in-seconds=28800
 ```
 
 ### Timeout
@@ -4843,7 +4844,7 @@ Provides a hard-time out as well as a sliding window.
 The expiration policy applied to TGTs provides for most-recently-used expiration policy, similar to a Web server session timeout.
 
 ```properties
-# cas.ticket.tgt.timeout.maxTimeToLiveInSeconds=28800
+# cas.ticket.tgt.timeout.max-time-to-live-in-seconds=28800
 ```
 
 ### Throttled Timeout
@@ -4860,7 +4861,7 @@ The throttled timeout policy extends the Timeout policy with the concept of thro
 The hard timeout policy provides for finite ticket lifetime as measured from the time of creation.
 
 ```properties
-# cas.ticket.tgt.hardTimeout.timeToKillInSeconds=28800
+# cas.ticket.tgt.hard-timeout.time-to-kill-in-seconds=28800
 ```
 
 ## Google reCAPTCHA Integration
@@ -4869,8 +4870,8 @@ Display Google's reCAPTCHA widget on the CAS login page.
 
 ```properties
 # cas.google-recaptcha.enabled=true
-# cas.google-recaptcha.verifyUrl=https://www.google.com/recaptcha/api/siteverify
-# cas.google-recaptcha.siteKey=
+# cas.google-recaptcha.verify-url=https://www.google.com/recaptcha/api/siteverify
+# cas.google-recaptcha.site-key=
 # cas.google-recaptcha.secret=
 # cas.google-recaptcha.invisible=
 # cas.google-recaptcha.position=bottomright
@@ -4890,8 +4891,8 @@ The common cookie settings applicable to this feature are [available here](Confi
 under the configuration key `cas.googleAnalytics.cookie`.
 
 ```properties
-cas.googleAnalytics.cookie.attributeName=
-cas.googleAnalytics.cookie.attributeValuePattern=.+
+cas.google-analytics.cookie.attribute-name=
+cas.google-analytics.cookie.attribute-value-pattern=.+
 ```
 
 ## Spring Webflow
@@ -4902,11 +4903,11 @@ and all other webflow related settings.
 To learn more about this topic, [please review this guide](../webflow/Webflow-Customization.html).
 
 ```properties
-# cas.webflow.alwaysPauseRedirect=false
+# cas.webflow.always-pause-redirect=false
 # cas.webflow.refresh=true
-# cas.webflow.redirectSameState=false
+# cas.webflow.redirect-same-state=false
 # cas.webflow.autoconfigure=true
-# cas.webflow.basePath=
+# cas.webflow.base-path=
 ```
 
 ### Spring Webflow Login Decorations
@@ -4914,7 +4915,7 @@ To learn more about this topic, [please review this guide](../webflow/Webflow-Cu
 #### Groovy
 
 ```properties
-# cas.webflow.loginDecorator.groovy.location=file:/etc/cas/config/LoginDecorator.groovy
+# cas.webflow.login-decorator.groovy.location=file:/etc/cas/config/LoginDecorator.groovy
 ```
 
 #### REST
@@ -4942,9 +4943,9 @@ Control the Spring Webflow context via a custom Groovy script.
 To learn more about this topic, [see this guide](../webflow/Webflow-Customization-Sessions.html).
 
 ```properties
-# cas.webflow.session.lockTimeout=30
+# cas.webflow.session.lock-timeout=30
 # cas.webflow.session.compress=false
-# cas.webflow.session.maxConversations=5
+# cas.webflow.session.max-conversations=5
 
 # Enable server-side session management
 # cas.webflow.session.storage=false
@@ -4961,7 +4962,7 @@ Signing & encryption settings for this feature are available [here](Configuratio
 #### Spring Webflow Hazelcast Server-Side Session
 
 ```properties
-# cas.webflow.session.hzLocation=classpath:/hazelcast.xml
+# cas.webflow.session.hz-location=classpath:/hazelcast.xml
 ```
 
 #### Spring Webflow MongoDb Server-Side Session
@@ -5017,8 +5018,8 @@ Interrupt the authentication flow to reach out to external services. To learn mo
 #### Authentication Interrupt Regex Attributes
 
 ```properties
-# cas.interrupt.attributeName=attribute-name-pattern
-# cas.interrupt.attributeValue=attribute-value-pattern
+# cas.interrupt.attribute-name=attribute-name-pattern
+# cas.interrupt.attribute-value=attribute-value-pattern
 ```
 
 #### Authentication Interrupt Groovy
@@ -5038,8 +5039,8 @@ Decide how CAS should attempt to determine whether AUP is accepted.
 To learn more about this topic, [please review this guide](../webflow/Webflow-Customization-AUP.html).
 
 ```properties
-# cas.acceptable-usage-policy.aupAttributeName=aupAccepted
-# cas.acceptable-usage-policy.aupPolicyTermsAttributeName=membership
+# cas.acceptable-usage-policy.aup-attribute-name=aupAccepted
+# cas.acceptable-usage-policy.aup-policy-terms-attribute-name=membership
 ```
 
 #### Default
@@ -5070,11 +5071,11 @@ RESTful settings for this feature are available [here](Configuration-Properties-
 If AUP is controlled via JDBC, decide how choices should be remembered back inside the database instance. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.acceptable-usage-policy.jdbc`.
 
 ```properties
-# cas.acceptable-usage-policy.jdbc.tableName=usage_policies_table
-# cas.acceptable-usage-policy.jdbc.aupColumn=
-# cas.acceptable-usage-policy.jdbc.principalIdColumn=username
-# cas.acceptable-usage-policy.jdbc.principalIdAttribute=
-# cas.acceptable-usage-policy.jdbc.sqlUpdateAUP=UPDATE %s SET %s=true WHERE %s=?
+# cas.acceptable-usage-policy.jdbc.table-name=usage_policies_table
+# cas.acceptable-usage-policy.jdbc.aup-column=
+# cas.acceptable-usage-policy.jdbc.principal-id-column=username
+# cas.acceptable-usage-policy.jdbc.principal-id-attribute=
+# cas.acceptable-usage-policy.jdbc.sql-update=UPDATE %s SET %s=true WHERE %s=?
 ```
 
 #### CouchDb
@@ -5106,10 +5107,10 @@ cas.acceptable-usage-policy.enabled=true
 To learn more about this topic, [please review this guide](../protocol/REST-Protocol.html).
 
 ```properties
-# cas.rest.attributeName=
-# cas.rest.attributeValue=
-# cas.rest.headerAuth=
-# cas.rest.bodyAuth=
+# cas.rest.attribute-name=
+# cas.rest.attribute-value=
+# cas.rest.header-auth=
+# cas.rest.body-auth=
 # cas.rest.tls-client-auth=
 ```
 
@@ -5267,11 +5268,11 @@ in the event that CAS is handling authentication for an external SAML2 IdP.
 To learn more about this topic, [please review this guide](../integration/Shibboleth.html).
 
 ```properties
-# cas.samlMetadataUi.requireValidMetadata=true
-# cas.samlMetadataUi.resources=classpath:/sp-metadata::classpath:/pub.key,http://md.incommon.org/InCommon/InCommon-metadata.xml::classpath:/inc-md-pub.key
-# cas.samlMetadataUi.maxValidity=0
-# cas.samlMetadataUi.requireSignedRoot=false
-# cas.samlMetadataUi.parameter=entityId
+# cas.saml-metadata-ui.require-valid-metadata=true
+# cas.saml-metadata-ui.resources=classpath:/sp-metadata::classpath:/pub.key,http://md.incommon.org/InCommon/InCommon-metadata.xml::classpath:/inc-md-pub.key
+# cas.saml-metadata-ui.max-validity=0
+# cas.saml-metadata-ui.require-signed-root=false
+# cas.saml-metadata-ui.parameter=entityId
 ```         
 
 Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.samlMetadataUi`.
@@ -5281,11 +5282,11 @@ Scheduler settings for this feature are available [here](Configuration-Propertie
 To learn more about this topic, [please review this guide](../installation/Service-Discovery-Guide-Eureka.html).
 
 ```properties
-# eureka.client.serviceUrl.defaultZone=${EUREKA_SERVER_HOST:http://localhost:8761}/eureka/
+# eureka.client.service-url.default-zone=${EUREKA_SERVER_HOST:http://localhost:8761}/eureka/
 # eureka.client.enabled=true
-# eureka.instance.statusPageUrl=${cas.server.prefix}/actuator/info
-# eureka.instance.healthCheckUrl=${cas.server.prefix}/actuator/health
-# eureka.instance.homePageUrl=${cas.server.prefix}/
+# eureka.instance.status-page-url=${cas.server.prefix}/actuator/info
+# eureka.instance.health-check-url=${cas.server.prefix}/actuator/health
+# eureka.instance.home-page-url=${cas.server.prefix}/
 # eureka.client.healthcheck.enabled=true
 
 # spring.cloud.config.discovery.enabled=false
@@ -5300,13 +5301,13 @@ To learn more about this topic, [please review this guide](../installation/Servi
 # spring.cloud.consul.enabled=true
 # spring.cloud.consul.host=localhost
 
-# spring.cloud.consul.discovery.healthCheckPath=<health-endpoint-url>
-# spring.cloud.consul.discovery.healthCheckPath=15s
-# spring.cloud.consul.discovery.instanceId=${spring.application.name}:${random.value}
+# spring.cloud.consul.discovery.health-check-path=<health-endpoint-url>
+# spring.cloud.consul.discovery.health-check-path=15s
+# spring.cloud.consul.discovery.instance-id=${spring.application.name}:${random.value}
 
 # spring.cloud.consul.discovery.heartbeat.enabled=true
-# spring.cloud.consul.discovery.heartbeat.ttlValue=60
-# spring.cloud.consul.discovery.heartbeat.ttlUnit=s
+# spring.cloud.consul.discovery.heartbeat.ttl-value=60
+# spring.cloud.consul.discovery.heartbeat.ttl-unit=s
 ```
 
 ## Provisioning
@@ -5331,7 +5332,7 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 
 ```properties
 # cas.consent.reminder=30
-# cas.consent.reminderTimeUnit=HOURS|DAYS|MONTHS
+# cas.consent.reminder-time-unit=HOURS|DAYS|MONTHS
 ```
 
 Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.consent`. The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
@@ -5362,7 +5363,7 @@ Database settings for this feature are available [here](Configuration-Properties
 LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.consent.ldap`.
 
 ```properties
-# cas.consent.ldap.consentAttributeName=casConsentDecision
+# cas.consent.ldap.consent-attribute-name=casConsentDecision
 ```
 
 ### MongoDb Attribute Consent
@@ -5397,7 +5398,7 @@ Configure settings relevant to the Java CAS client configured to handle inbound 
 
 ```properties
 # cas.client.prefix=https://sso.example.org/cas
-# cas.client.validatorType=CAS10|CAS20|CAS30
+# cas.client.validator-type=CAS10|CAS20|CAS30
 ```
 
 ## Password Synchronization
@@ -5411,7 +5412,7 @@ Common LDAP settings for this feature are available [here](Configuration-Propert
 the configuration key `cas.authn.passwordSync.ldap[0]`.
 
 ```properties
-# cas.authn.passwordSync.ldap[0].enabled=false
+# cas.authn.password-sync.ldap[0].enabled=false
 ``` 
 
 ## Password Management
@@ -5423,16 +5424,16 @@ To learn more about this topic, [please review this guide](../installation/Passw
 # cas.authn.pm.enabled=true
 
 # Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character
-# cas.authn.pm.policyPattern=^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}
+# cas.authn.pm.policy-pattern=^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}
 
 # cas.authn.pm.reset.expirationMinutes=1
-# cas.authn.pm.reset.securityQuestionsEnabled=true
+# cas.authn.pm.reset.security-questions-enabled=true
 # Whether the Password Management Token will contain the client or server IP Address.
-# cas.authn.pm.reset.includeServerIpAddress=true
-# cas.authn.pm.reset.includeClientIpAddress=true
+# cas.authn.pm.reset.include-server-ip-address=true
+# cas.authn.pm.reset.include-client-ip-address=true
 
 # Automatically log in after successful password change
-# cas.authn.pm.autoLogin=false
+# cas.authn.pm.auto-login=false
 ```
 
 Common email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
@@ -5476,12 +5477,12 @@ under the configuration key `cas.authn.pm.ldap[0]`.
 
 ```properties
 # cas.authn.pm.ldap[0].type=AD|GENERIC|EDirectory|FreeIPA
-# cas.authn.pm.ldap[0].usernameAttribute=uid
+# cas.authn.pm.ldap[0].username-attribute=uid
 
 # Attributes that should be fetched to indicate security questions and answers
-# cas.authn.pm.ldap[0].securityQuestionsAttributes.attrQuestion1=attrAnswer1
-# cas.authn.pm.ldap[0].securityQuestionsAttributes.attrQuestion2=attrAnswer2
-# cas.authn.pm.ldap[0].securityQuestionsAttributes.attrQuestion3=attrAnswer3
+# cas.authn.pm.ldap[0].security-questions-attributes.attr-question1=attrAnswer1
+# cas.authn.pm.ldap[0].security-questions-attributes.attr-question2=attrAnswer2
+# cas.authn.pm.ldap[0].security-questions-attributes.attr-question3=attrAnswer3
 ```
 
 ### JDBC Password Management
@@ -5492,22 +5493,22 @@ feature are available [here](Configuration-Properties-Common.html#password-encod
 
 ```properties
 # The two fields indicated below are expected to be returned
-# cas.authn.pm.jdbc.sqlSecurityQuestions=SELECT question, answer FROM table WHERE user=?
+# cas.authn.pm.jdbc.sql-security-questions=SELECT question, answer FROM table WHERE user=?
 
-# cas.authn.pm.jdbc.sqlFindEmail=SELECT email FROM table WHERE user=?
-# cas.authn.pm.jdbc.sqlFindPhone=SELECT phone FROM table WHERE user=?
-# cas.authn.pm.jdbc.sqlFindUser=SELECT user FROM table WHERE email=?
-# cas.authn.pm.jdbc.sqlChangePassword=UPDATE table SET password=? WHERE user=?
+# cas.authn.pm.jdbc.sql-find-email=SELECT email FROM table WHERE user=?
+# cas.authn.pm.jdbc.sql-find-phone=SELECT phone FROM table WHERE user=?
+# cas.authn.pm.jdbc.sql-find-user=SELECT user FROM table WHERE email=?
+# cas.authn.pm.jdbc.sql-change-password=UPDATE table SET password=? WHERE user=?
 ```
 
 ### REST Password Management
 
 ```properties
-# cas.authn.pm.rest.endpointUrlEmail=
-# cas.authn.pm.rest.endpointUrlPhone=
-# cas.authn.pm.rest.endpointUrlUser=
-# cas.authn.pm.rest.endpointUrlSecurityQuestions=
-# cas.authn.pm.rest.endpointUrlChange=
-# cas.authn.pm.rest.endpointUsername=
-# cas.authn.pm.rest.endpointPassword=
+# cas.authn.pm.rest.endpoint-url-email=
+# cas.authn.pm.rest.endpoint-url-phone=
+# cas.authn.pm.rest.endpoint-url-user=
+# cas.authn.pm.rest.endpoint-url-security-questions=
+# cas.authn.pm.rest.endpoint-url-change=
+# cas.authn.pm.rest.endpoint-username=
+# cas.authn.pm.rest.endpoint-password=
 ```
