@@ -11,6 +11,7 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter implements DisposableBean {
     /**
      * Endpoint url used for admin-level form-login of endpoints.
      */
@@ -44,6 +45,15 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
     private final CasWebSecurityExpressionHandler casWebSecurityExpressionHandler;
 
     private final PathMappedEndpoints pathMappedEndpoints;
+
+    private MonitorEndpointLdapAuthenticationProvider monitorEndpointLdapAuthenticationProvider;
+
+    @Override
+    public void destroy() {
+        if (monitorEndpointLdapAuthenticationProvider != null) {
+            monitorEndpointLdapAuthenticationProvider.destroy();
+        }
+    }
 
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
@@ -118,8 +128,8 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      */
     protected void configureLdapAuthenticationProvider(final AuthenticationManagerBuilder auth, final MonitorProperties.Endpoints.LdapSecurity ldap) {
         if (isLdapAuthorizationActive()) {
-            val p = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties);
-            auth.authenticationProvider(p);
+            monitorEndpointLdapAuthenticationProvider = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties);
+            auth.authenticationProvider(monitorEndpointLdapAuthenticationProvider);
         } else {
             LOGGER.trace("LDAP authorization is undefined, given no LDAP url, base-dn, search filter or role/group filter is configured");
         }
