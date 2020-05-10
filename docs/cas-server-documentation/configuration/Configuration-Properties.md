@@ -3623,14 +3623,14 @@ Delegate authentication to an generic OAuth2 server. Common settings for this
 identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.oauth2[0]`.
 
 ```properties
-# cas.authn.pac4j.oauth2[0].authUrl=
-# cas.authn.pac4j.oauth2[0].tokenUrl=
-# cas.authn.pac4j.oauth2[0].profileUrl=
-# cas.authn.pac4j.oauth2[0].profilePath=
+# cas.authn.pac4j.oauth2[0].auth-url=
+# cas.authn.pac4j.oauth2[0].token-url=
+# cas.authn.pac4j.oauth2[0].profile-url=
+# cas.authn.pac4j.oauth2[0].profile-path=
 # cas.authn.pac4j.oauth2[0].scope=
-# cas.authn.pac4j.oauth2[0].profileVerb=GET|POST
-# cas.authn.pac4j.oauth2[0].profileAttrs.attr1=path-to-attr-in-profile
-# cas.authn.pac4j.oauth2[0].customParams.param1=value1
+# cas.authn.pac4j.oauth2[0].profile-verb=GET|POST
+# cas.authn.pac4j.oauth2[0].profile-attrs.attr1=path-to-attr-in-profile
+# cas.authn.pac4j.oauth2[0].custom-params.param1=value1
 ```
 
 ### OpenID Connect
@@ -3663,7 +3663,7 @@ under the configuration key `cas.authn.pac4j.oidc[0].keycloak`.
 
 ```properties
 # cas.authn.pac4j.oidc[0].keycloak.realm=
-# cas.authn.pac4j.oidc[0].keycloak.baseUri=
+# cas.authn.pac4j.oidc[0].keycloak.base-uri=
 ```                                     
 
 #### Generic
@@ -3673,61 +3673,58 @@ under the configuration key `cas.authn.pac4j.oidc[0].generic`.
 
 ### SAML2
 
-Delegate authentication to an external SAML2 IdP (do not use the `resource:` or `classpath:`
-prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
+Delegate authentication to an external SAML2 IdP.
 
 ```properties
-# cas.authn.pac4j.saml[0].keystorePassword=
-# cas.authn.pac4j.saml[0].privateKeyPassword=
-# cas.authn.pac4j.saml[0].keystorePath=
-# cas.authn.pac4j.saml[0].keystoreAlias=
+# cas.authn.pac4j.saml[0].keystore-password=
+# cas.authn.pac4j.saml[0].private-key-password=
+# cas.authn.pac4j.saml[0].keystore-path=
+# cas.authn.pac4j.saml[0].keystore-alias=
 
-# cas.authn.pac4j.saml[0].serviceProviderEntityId=
-# cas.authn.pac4j.saml[0].serviceProviderMetadataPath=
+# cas.authn.pac4j.saml[0].service-provider-entity-id=
+# cas.authn.pac4j.saml[0].service-provider-metadata-path=
 
-# cas.authn.pac4j.saml[0].certificateNameToAppend=
+# cas.authn.pac4j.saml[0].certificate-name-to-append=
 
-# cas.authn.pac4j.saml[0].maximumAuthenticationLifetime=3600
-# cas.authn.pac4j.saml[0].maximumAuthenticationLifetime=300
-# cas.authn.pac4j.saml[0].destinationBinding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
+# cas.authn.pac4j.saml[0].maximum-authentication-lifetime=3600
+# cas.authn.pac4j.saml[0].maximum-authentication-lifetime=300
+# cas.authn.pac4j.saml[0].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
 
-# Path/URL to delegated IdP metadata
-# cas.authn.pac4j.saml[0].identityProviderMetadataPath=
+# cas.authn.pac4j.saml[0].identity-provider-metadata-path=
 
-# cas.authn.pac4j.saml[0].authnContextClassRef[0]=
-# cas.authn.pac4j.saml[0].authnContextComparisonType=
-# cas.authn.pac4j.saml[0].nameIdPolicyFormat=
-# cas.authn.pac4j.saml[0].forceAuth=false
+# cas.authn.pac4j.saml[0].authn-context-class-ref[0]=
+# cas.authn.pac4j.saml[0].authn-context-comparison-type=
+# cas.authn.pac4j.saml[0].name-id-policy-format=
+# cas.authn.pac4j.saml[0].force-auth=false
 # cas.authn.pac4j.saml[0].passive=false
 
-# cas.authn.pac4j.saml[0].wantsAssertionsSigned=
-# cas.authn.pac4j.saml[0].allSignatureValidationDisabled=false
-# cas.authn.pac4j.saml[0].signServiceProviderMetadata=false
-# cas.authn.pac4j.saml[0].principalIdAttribute=eduPersonPrincipalName
-# cas.authn.pac4j.saml[0].useNameQualifier=true
-# cas.authn.pac4j.saml[0].attributeConsumingServiceIndex=
-# cas.authn.pac4j.saml[0].assertionConsumerServiceIndex=-1
+# cas.authn.pac4j.saml[0].wants-assertions-signed=
+# cas.authn.pac4j.saml[0].all-signature-validation-disabled=false
+# cas.authn.pac4j.saml[0].sign-service-provider-metadata=false
+# cas.authn.pac4j.saml[0].principal-id-attribute=eduPersonPrincipalName
+# cas.authn.pac4j.saml[0].use-name-qualifier=true
+# cas.authn.pac4j.saml[0].attribute-consuming-service-index=
+# cas.authn.pac4j.saml[0].assertion-consumer-service-index=-1
 # cas.authn.pac4j.saml[0].provider-name=
-# cas.authn.pac4j.saml[0].nameIdPolicyAllowCreate=TRUE|FALSE|UNDEFINED
+# cas.authn.pac4j.saml[0].name-id-policy-allow-create=TRUE|FALSE|UNDEFINED
 
-# properties to configure how signing AuthnRequest
-# cas.authn.pac4j.saml[0].signAuthnRequest=false
-# cas.authn.pac4j.saml[0].signServiceProviderLogoutRequest=false
-# cas.authn.pac4j.saml[0].blackListedSignatureSigningAlgorithms[0]=
-# cas.authn.pac4j.saml[0].signatureAlgorithms[0]=
-# cas.authn.pac4j.saml[0].signatureReferenceDigestMethods[0]=
-# cas.authn.pac4j.saml[0].signatureCanonicalizationAlgorithm=
 
-# cas.authn.pac4j.saml[0].requestedAttributes[0].name=
-# cas.authn.pac4j.saml[0].requestedAttributes[0].friendlyName=
-# cas.authn.pac4j.saml[0].requestedAttributes[0].nameFormat=urn:oasis:names:tc:SAML:2.0:attrname-format:uri
-# cas.authn.pac4j.saml[0].requestedAttributes[0].required=false
+# cas.authn.pac4j.saml[0].sign-authn-request=false
+# cas.authn.pac4j.saml[0].sign-service-provider-logout-request=false
+# cas.authn.pac4j.saml[0].black-listed-signature-signing-algorithms[0]=
+# cas.authn.pac4j.saml[0].signature-algorithms[0]=
+# cas.authn.pac4j.saml[0].signature-reference-digest-methods[0]=
+# cas.authn.pac4j.saml[0].signature-canonicalization-algorithm=
 
-# cas.authn.pac4j.saml[0].mappedAttributes[0].name=urn:oid:2.5.4.42
-# cas.authn.pac4j.saml[0].mappedAttributes[0].mappedAs=displayName
+# cas.authn.pac4j.saml[0].requested-attributes[0].name=
+# cas.authn.pac4j.saml[0].requested-attributes[0].friendly-name=
+# cas.authn.pac4j.saml[0].requested-attributes[0].name-format=urn:oasis:names:tc:SAML:2.0:attrname-format:uri
+# cas.authn.pac4j.saml[0].requested-attributes[0].required=false
 
-# cas.authn.pac4j.saml[0].messageStoreFactory=org.pac4j.saml.store.EmptyStoreFactory
+# cas.authn.pac4j.saml[0].mapped-attributes[0].name=urn:oid:2.5.4.42
+# cas.authn.pac4j.saml[0].mapped-attributes[0].mapped-as=displayName
 
+# cas.authn.pac4j.saml[0].message-store-factory=org.pac4j.saml.store.EmptyStoreFactory
 ```
 
 Examine the generated metadata after accessing the CAS login screen to ensure all 
@@ -3736,7 +3733,7 @@ ports and endpoints are correctly adjusted. Finally, share the CAS SP metadata w
 #### SAML2 Identity Provider Discovery
 
 ```properties
-cas.authn.pac4j.samlDiscovery.resource[0].location=file:/etc/cas/config/json-feed.json
+cas.authn.pac4j.saml-discovery.resource[0].location=file:/etc/cas/config/json-feed.json
 ```
 
 ### Facebook
@@ -3753,7 +3750,7 @@ Delegate authentication to Facebook. Common settings for this identity provider 
 Delegate authentication to HiOrg Server. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.hiOrgServer`.
 
 ```properties
-# cas.authn.pac4j.hiOrgServer.scope=eigenedaten
+# cas.authn.pac4j.hi-org-server.scope=eigenedaten
 ```
 
 ### LinkedIn
@@ -3761,14 +3758,14 @@ Delegate authentication to HiOrg Server. Common settings for this identity provi
 Delegate authentication to LinkedIn. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.linkedin`.
 
 ```properties
-# cas.authn.pac4j.linkedIn.scope=
+# cas.authn.pac4j.linked-in.scope=
 ```
 
 ### Twitter
 Delegate authentication to Twitter.  Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.twitter`.
 
 ```properties
-# cas.authn.pac4j.twitter.includeEmail=false
+# cas.authn.pac4j.twitter.include-email=false
 ```
 
 ## WS Federation
@@ -3779,35 +3776,35 @@ to support the WS-Federation protocol.
 To learn more about this topic, [please review this guide](../protocol/WS-Federation-Protocol.html)
 
 ```properties
-# cas.authn.wsfedIdp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS
-# cas.authn.wsfedIdp.idp.realmName=CAS
+# cas.authn.wsfed-idp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS
+# cas.authn.wsfed-idp.idp.realm-name=CAS
 
-# cas.authn.wsfedIdp.sts.signingKeystoreFile=/etc/cas/config/ststrust.jks
-# cas.authn.wsfedIdp.sts.signingKeystorePassword=storepass
-# cas.authn.wsfedIdp.sts.encryptionKeystoreFile=/etc/cas/config/stsencrypt.jks
-# cas.authn.wsfedIdp.sts.encryptionKeystorePassword=storepass
+# cas.authn.wsfed-idp.sts.signing-keystore-file=/etc/cas/config/ststrust.jks
+# cas.authn.wsfed-idp.sts.signing-keystore-password=storepass
+# cas.authn.wsfed-idp.sts.encryption-keystore-file=/etc/cas/config/stsencrypt.jks
+# cas.authn.wsfed-idp.sts.encryption-keystore-password=storepass
 
-# cas.authn.wsfedIdp.sts.subjectNameIdFormat=unspecified
-# cas.authn.wsfedIdp.sts.subjectNameQualifier=http://cxf.apache.org/sts
-# cas.authn.wsfedIdp.sts.encryptTokens=true
-# cas.authn.wsfedIdp.sts.signTokens=true
-   
-# cas.authn.wsfedIdp.sts.conditionsAcceptClientLifetime=true
-# cas.authn.wsfedIdp.sts.conditionsFailLifetimeExceedance=false
-# cas.authn.wsfedIdp.sts.conditionsFutureTimeToLive=PT60S
-# cas.authn.wsfedIdp.sts.conditionsLifetime=PT30M
-# cas.authn.wsfedIdp.sts.conditionsMaxLifetime=PT12H
+# cas.authn.wsfed-idp.sts.subject-name-id-format=unspecified
+# cas.authn.wsfed-idp.sts.subject-name-qualifier=http://cxf.apache.org/sts
+# cas.authn.wsfed-idp.sts.encrypt-tokens=true
+# cas.authn.wsfed-idp.sts.sign-tokens=true
 
-# cas.authn.wsfedIdp.sts.realm.keystoreFile=/etc/cas/config/stscasrealm.jks
-# cas.authn.wsfedIdp.sts.realm.keystorePassword=storepass
-# cas.authn.wsfedIdp.sts.realm.keystoreAlias=realmcas
-# cas.authn.wsfedIdp.sts.realm.keyPassword=cas
-# cas.authn.wsfedIdp.sts.realm.issuer=CAS
+# cas.authn.wsfed-idp.sts.conditions-accept-client-lifetime=true
+# cas.authn.wsfed-idp.sts.conditions-fail-lifetime-exceedance=false
+# cas.authn.wsfed-idp.sts.conditions-future-time-to-live=PT60S
+# cas.authn.wsfed-idp.sts.conditions-lifetime=PT30M
+# cas.authn.wsfed-idp.sts.conditions-max-lifetime=PT12H
+
+# cas.authn.wsfed-idp.sts.realm.keystore-file=/etc/cas/config/stscasrealm.jks
+# cas.authn.wsfed-idp.sts.realm.keystore-password=storepass
+# cas.authn.wsfed-idp.sts.realm.keystore-alias=realmcas
+# cas.authn.wsfed-idp.sts.realm.key-password=cas
+# cas.authn.wsfed-idp.sts.realm.issuer=CAS
 ```
 
 ### Signing & Encryption
 
-The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.  These come into play in order to secure authentication requests between the IdP and STS. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.wsfedIdp.sts`.
+The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.  These come into play in order to secure authentication requests between the IdP and STS. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.wsfed-idp.sts`.
 
 ## OAuth2
 
@@ -3819,52 +3816,52 @@ under the configuration key `cas.authn.oauth`.
 To learn more about this topic, [please review this guide](../installation/OAuth-OpenId-Authentication.html).
 
 ```properties
-# cas.authn.oauth.replicateSessions=false 
-# cas.authn.oauth.grants.resourceOwner.requireServiceHeader=true
-# cas.authn.oauth.userProfileViewType=NESTED|FLAT
+# cas.authn.oauth.replicate-sessions=false 
+# cas.authn.oauth.grants.resource-owner.require-service-header=true
+# cas.authn.oauth.user-profile-view-type=NESTED|FLAT
 ```
 
 ### Refresh Tokens
 
 ```properties
-# cas.authn.oauth.refreshToken.timeToKillInSeconds=2592000
+# cas.authn.oauth.refresh-token.time-to-kill-in-seconds=2592000
 ```
 
 ### Codes
 
 ```properties
-# cas.authn.oauth.code.timeToKillInSeconds=30
-# cas.authn.oauth.code.numberOfUses=1
+# cas.authn.oauth.code.time-to-kill-in-seconds=30
+# cas.authn.oauth.code.number-of-uses=1
 ```
 
 ### Access Tokens
 
 ```properties
-# cas.authn.oauth.accessToken.timeToKillInSeconds=7200
-# cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
+# cas.authn.oauth.access-token.time-to-kill-in-seconds=7200
+# cas.authn.oauth.access-token.max-time-to-live-in-seconds=28800
 ```
 
 ### Device Tokens
  
 ```
-# cas.authn.oauth.deviceToken.timeToKillInSeconds=2592000
-# cas.authn.oauth.deviceToken.refreshInterval=PT15S 
+# cas.authn.oauth.device-token.time-to-kill-in-seconds=2592000
+# cas.authn.oauth.device-token.refresh-interval=PT15S 
 ```
 
 ### Device User Codes
 
 ```
-# cas.authn.oauth.deviceUserCode.timeToKillInSeconds=2592000
-# cas.authn.oauth.deviceUserCode.userCodeLength=8
+# cas.authn.oauth.device-user-code.time-to-kill-in-seconds=2592000
+# cas.authn.oauth.device-user-code.user-code-length=8
 ```
 
 
 ### OAuth2 JWT Access Tokens
 
 ```properties
-# cas.authn.oauth.accessToken.createAsJwt=false
-# cas.authn.oauth.accessToken.crypto.encryptionEnabled=true
-# cas.authn.oauth.accessToken.crypto.signingEnabled=true
+# cas.authn.oauth.access-token.create-as-jwt=false
+# cas.authn.oauth.access-token.crypto.encryption-enabled=true
+# cas.authn.oauth.access-token.crypto.signing-enabled=true
 ```
 
 The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
@@ -3878,10 +3875,10 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 ```properties
 # cas.authn.uma.issuer=http://localhost:8080/cas
 
-# cas.authn.uma.requestingPartyToken.maxTimeToLiveInSeconds=PT3M
-# cas.authn.uma.requestingPartyToken.jwksFile=file:/etc/cas/config/uma-keystore.jwks
+# cas.authn.uma.requesting-party-token.max-time-to-live-in-seconds=PT3M
+# cas.authn.uma.requesting-party-token.jwks-file=file:/etc/cas/config/uma-keystore.jwks
 
-# cas.authn.uma.permissionTicket.maxTimeToLiveInSeconds=PT3M
+# cas.authn.uma.permission-ticket.max-time-to-live-in-seconds=PT3M
 ```
 
 #### OAuth2 UMA JPA
@@ -3893,8 +3890,8 @@ Database settings for this feature are available [here](Configuration-Properties
 To learn more about this topic, [please review this guide](../ux/User-Interface-Customization-Localization.html).
 
 ```properties
-# cas.locale.paramName=locale
-# cas.locale.defaultValue=en
+# cas.locale.param-name=locale
+# cas.locale.default-value=en
 ```
 
 If the user changes the language, a special cookie is created by CAS to contain the selected language. Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-settings) under the configuration key `cas.locale.cookie`.
@@ -3902,11 +3899,11 @@ If the user changes the language, a special cookie is created by CAS to contain 
 ## Global SSO Behavior
 
 ```properties
-# cas.sso.allowMissingServiceParameter=true
-# cas.sso.createSsoCookieOnRenewAuthn=true
+# cas.sso.allow-missing-service-parameter=true
+# cas.sso.create-sso-cookie-on-renew-authn=true
 # cas.sso.proxy-authn-enabled=true
-# cas.sso.renewAuthnEnabled=true
-# cas.sso.requiredServicePattern=
+# cas.sso.renew-authn-enabled=true
+# cas.sso.required-service-pattern=
 ```
 
 ## Warning Cookie
@@ -3922,9 +3919,9 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-settings) under the configuration key `cas.tgc`.
 
 ```properties
-# cas.tgc.pinToSession=true
-# cas.tgc.rememberMeMaxAge=P14D
-# cas.tgc.autoConfigureCookiePath=true
+# cas.tgc.pin-to-session=true
+# cas.tgc.remember-me-max-age=P14D
+# cas.tgc.auto-configure-cookie-path=true
 ```
 
 ### Signing & Encryption
@@ -3938,11 +3935,11 @@ Signing & encryption settings for this feature are available [here](Configuratio
 Control various settings related to CAS logout functionality. To learn more about this topic, [please review this guide](../installation/Logout-Single-Signout.html).
 
 ```properties
-# cas.logout.followServiceRedirects=false
-# cas.logout.redirectParameter=service
-# cas.logout.redirectUrl=https://www.github.com
-# cas.logout.confirmLogout=false
-# cas.logout.removeDescendantTickets=false
+# cas.logout.follow-service-redirects=false
+# cas.logout.redirect-parameter=service
+# cas.logout.redirect-url=https://www.github.com
+# cas.logout.confirm-logout=false
+# cas.logout.remove-descendant-tickets=false
 ```
 
 ## Single Logout
@@ -3964,7 +3961,7 @@ Think <strong>VERY CAREFULLY</strong> before turning on this feature, as it <str
 the last resort in getting an integration to work...maybe not even then.</p></div>
 
 ```properties
-# cas.clearpass.cacheCredential=false
+# cas.clearpass.cache-credential=false
 ```
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.clearpass`.
@@ -3975,12 +3972,12 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 The baseNames are message bundle base names representing files that either end in .properties or _xx.properties where xx is a country locale code. The commonNames are not actually message bundles but they are properties files that are merged together and contain keys that are only used if they are not found in the message bundles. Keys from the later files in the list will be preferred over keys from the earlier files.
 
 ```properties
-# cas.messageBundle.encoding=UTF-8
-# cas.messageBundle.fallbackSystemLocale=false
-# cas.messageBundle.cacheSeconds=180
-# cas.messageBundle.useCodeMessage=true
-# cas.messageBundle.baseNames=classpath:custom_messages,classpath:messages
-# cas.messageBundle.commonNames=classpath:/common_messages.properties,file:/etc/cas/config/common_messages.properties
+# cas.message-bundle.encoding=UTF-8
+# cas.message-bundle.fallback-system-locale=false
+# cas.message-bundle.cache-seconds=180
+# cas.message-bundle.use-code-message=true
+# cas.message-bundle.base-names=classpath:custom_messages,classpath:messages
+# cas.message-bundle.common-names=classpath:/common_messages.properties,file:/etc/cas/config/common_messages.properties
 ```
 
 ## Audits
@@ -3990,16 +3987,16 @@ To learn more about this topic, [please review this guide](../installation/Audit
 
 ```properties 
 # cas.audit.enabled=true
-# cas.audit.ignoreAuditFailures=false
-# cas.audit.appCode=CAS
-# cas.audit.numberOfDaysInHistory=30
-# cas.audit.includeValidationAssertion=false
-# cas.audit.alternateServerAddrHeaderName=
-# cas.audit.alternateClientAddrHeaderName=X-Forwarded-For
-# cas.audit.useServerHostAddress=false  
+# cas.audit.ignore-audit-failures=false
+# cas.audit.app-code=CAS
+# cas.audit.number-of-days-in-history=30
+# cas.audit.include-validation-assertion=false
+# cas.audit.alternate-server-addr-header-name=
+# cas.audit.alternate-client-addr-header-name=X-Forwarded-For
+# cas.audit.use-server-host-address=false  
 
-# cas.audit.supportedActions=*
-# cas.audit.excludedActions=
+# cas.audit.supported-actions=*
+# cas.audit.excluded-actions=
 ```
 
 ### Slf4j Audits
@@ -4020,9 +4017,9 @@ able to read the audit data back given the abstraction layer between CAS, the lo
 and any number of log appenders that might push data to a variety of systems.</p></div>
 
 ```properties
-# cas.audit.slf4j.auditFormat=DEFAULT|JSON
-# cas.audit.slf4j.singlelineSeparator=|
-# cas.audit.slf4j.useSingleLine=false
+# cas.audit.slf4j.audit-format=DEFAULT|JSON
+# cas.audit.slf4j.singleline-separator=|
+# cas.audit.slf4j.use-single-line=false
 # cas.audit.slf4j.enabled=true
 ```
 
@@ -4087,8 +4084,8 @@ under the configuration key `cas.audit.jdbc`.
 
 ```properties
 # cas.audit.jdbc.asynchronous=true
-# cas.audit.jdbc.maxAgeDays=180
-# cas.audit.jdbc.columnLength=100
+# cas.audit.jdbc.max-age-days=180
+# cas.audit.jdbc.column-length=100
 ```
 
 Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.audit.jdbc`.
@@ -4111,7 +4108,7 @@ To learn more about this topic, [please review this guide](../monitoring/Monitor
 # spring.sleuth.enabled=true
 
 # spring.zipkin.enabled=true
-# spring.zipkin.baseUrl=http://localhost:9411/
+# spring.zipkin.base-url=http://localhost:9411/
 ```
 
 ## Monitoring
@@ -4124,7 +4121,7 @@ Decide how CAS should monitor the generation of TGTs.
 
 ```properties
 # cas.monitor.tgt.warn.threshold=10
-# cas.monitor.tgt.warn.evictionThreshold=0
+# cas.monitor.tgt.warn.eviction-threshold=0
 ```
 
 ### Service Tickets
@@ -4149,7 +4146,7 @@ Decide how CAS should monitor the internal state of various cache storage servic
 
 ```properties
 # cas.monitor.warn.threshold=10
-# cas.monitor.warn.evictionThreshold=0
+# cas.monitor.warn.eviction-threshold=0
 ```
 
 ### Memcached Monitors
@@ -4171,8 +4168,8 @@ for authentication or attribute retrieval. Database settings for this feature ar
 available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.monitor.jdbc`.
 
 ```properties
-# cas.monitor.jdbc.validationQuery=SELECT 1
-# cas.monitor.jdbc.maxWait=5000
+# cas.monitor.jdbc.validation-query=SELECT 1
+# cas.monitor.jdbc.max-wait=5000
 ```
 
 ### LDAP Server Monitoring
@@ -4186,9 +4183,9 @@ The following properties are specific to the ldap monitor and configure the thre
 that will ping on the LDAP monitor connection pool.
 
 ```properties
-# cas.monitor.ldap[0].maxWait=5000
-# cas.monitor.ldap[0].pool.minSize=0
-# cas.monitor.ldap[0].pool.maxSize=18
+# cas.monitor.ldap[0].max-wait=5000
+# cas.monitor.ldap[0].pool.min-size=0
+# cas.monitor.ldap[0].pool.max-size=18
 # cas.monitor.ldap[0].pool.enabled=true
 ```
 
@@ -4197,7 +4194,7 @@ that will ping on the LDAP monitor connection pool.
 Decide how CAS should monitor the internal state of JVM memory available at runtime.
 
 ```properties
-# cas.monitor.freeMemThreshold=10
+# cas.monitor.free-mem-threshold=10
 ```
 
 ## Themes
@@ -4205,8 +4202,8 @@ Decide how CAS should monitor the internal state of JVM memory available at runt
 To learn more about this topic, [please review this guide](../ux/User-Interface-Customization-Themes.html).
 
 ```properties
-# cas.theme.paramName=theme
-# cas.theme.defaultThemeName=cas-theme-default
+# cas.theme.param-name=theme
+# cas.theme.default-theme-name=cas-theme-default
 ```
 
 ## Events
@@ -4218,7 +4215,7 @@ To learn more about this topic, [please review this guide](../installation/Confi
 cas.events.enabled=true
 
 # Whether geolocation tracking should be turned on and requested from the browser.
-# cas.events.trackGeolocation=false
+# cas.events.track-geolocation=false
 
 # Control whether CAS should monitor configuration files and auto-refresh context.
 # cas.events.track-configuration-modifications=true
