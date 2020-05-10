@@ -3878,7 +3878,7 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 # cas.locale.default-value=en
 ```
 
-If the user changes the language, a special cookie is created by CAS to contain the selected language. Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-settings) under the configuration key `cas.locale.cookie`.
+If the user changes the language, a special cookie is created by CAS to contain the selected language. Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-properties) under the configuration key `cas.locale.cookie`.
 
 ## Global SSO Behavior
 
@@ -3892,7 +3892,7 @@ If the user changes the language, a special cookie is created by CAS to contain 
 
 ## Warning Cookie
 
-Created by CAS if and when users are to be warned when accessing CAS protected services. Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-settings) under the configuration key `cas.warningCookie`.
+Created by CAS if and when users are to be warned when accessing CAS protected services. Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-properties) under the configuration key `cas.warningCookie`.
 
 ```properties
 # cas.warningCookie.autoConfigureCookiePath=true
@@ -3900,7 +3900,7 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 
 ## Ticket Granting Cookie
 
-Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-settings) under the configuration key `cas.tgc`.
+Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-properties) under the configuration key `cas.tgc`.
 
 ```properties
 # cas.tgc.pin-to-session=true

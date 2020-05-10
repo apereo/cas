@@ -95,15 +95,4 @@ currentChangeSetAffectsSnapshots() {
     return `(expr "$?" + 0)`
 }
 
-uploadToS3SharedStorage() {
-    echo -e "Uploading to S3 shared storage..."
-    expires=$(date -v +1d -u +"%Y-%m-%dT%H:%M:%SZ")
-    aws s3 sync s3://travis-build-stages-shared-storage-test/cas-${TRAVIS_BUILD_NUMBER} . --exclude "*" --include "*.jar" --expires "${expires}"
-}
-
-downloadFromS3SharedStorage() {
-    echo -e "Downloading from S3 shared storage..."
-    aws s3 sync . s3://travis-build-stages-shared-storage-test/cas-${TRAVIS_BUILD_NUMBER} --exclude "*" --include "*.jar"
-}
-
 installJdk

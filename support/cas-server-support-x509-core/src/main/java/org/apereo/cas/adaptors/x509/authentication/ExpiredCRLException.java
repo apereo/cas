@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.security.GeneralSecurityException;
 import java.time.ZonedDateTime;
-import java.util.Optional;
 
 /**
  * Exception describing an expired CRL condition.
@@ -43,14 +42,7 @@ public class ExpiredCRLException extends GeneralSecurityException {
     public ExpiredCRLException(final String identifier, final ZonedDateTime expirationDate) {
         this(identifier, expirationDate, 0);
     }
-
-    /**
-     * @return Returns the expirationDate.
-     */
-    public ZonedDateTime getExpirationDate() {
-        return Optional.ofNullable(this.expirationDate).map(ZonedDateTime::from).orElse(null);
-    }
-
+    
     @Override
     public String getMessage() {
         if (this.leniency > 0) {
