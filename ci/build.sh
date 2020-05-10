@@ -62,8 +62,6 @@ else
 
     if [ $retVal == 0 ]; then
         echo "Gradle build finished successfully."
-
-        uploadToS3SharedStorage
         exit 0
     else
         echo "Gradle build did NOT finish successfully."

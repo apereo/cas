@@ -22,9 +22,6 @@ public class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalReso
 
     private static final int DEFAULT_RADIX = 10;
 
-    /**
-     * Radix to use in {@code toString} method.
-     */
     private final int radix;
 
     private final boolean zeroPadding;
