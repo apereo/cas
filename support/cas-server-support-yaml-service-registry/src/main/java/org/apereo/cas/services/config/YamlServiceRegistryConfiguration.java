@@ -32,7 +32,7 @@ import java.util.Collection;
  */
 @Configuration("yamlServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.service-segistry.yaml", name = "location")
+@ConditionalOnProperty(prefix = "cas.service-registry.yaml", name = "location")
 public class YamlServiceRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
