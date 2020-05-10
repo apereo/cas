@@ -56,7 +56,7 @@ public class RadiusProperties implements Serializable {
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
     /**
-     * Principal transoformation settings.
+     * Principal transformation settings.
      */
     @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
