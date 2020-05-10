@@ -1,4 +1,3 @@
-
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandlerTests;
@@ -29,7 +28,6 @@ import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataP
 import org.apereo.cas.authentication.principal.SimplePrincipalFactoryTests;
 import org.apereo.cas.authentication.principal.SimplePrincipalTests;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtilsTests;
-import org.apereo.cas.util.TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -42,7 +40,6 @@ import org.junit.runner.RunWith;
  * @since 6.0.0-RC3
  */
 @SelectClasses({
-    TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests.class,
     SimplePrincipalTests.class,
     ChainingPrincipalResolverTests.class,
     NullPrincipalTests.class,

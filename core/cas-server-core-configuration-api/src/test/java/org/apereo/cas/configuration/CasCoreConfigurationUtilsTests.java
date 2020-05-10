@@ -33,6 +33,6 @@ public class CasCoreConfigurationUtilsTests {
         assertEquals("https://sso.example.org", map.get("cas.server.name"));
         assertEquals("https://sso.example.org/cas", map.get("cas.server.prefix"));
         assertEquals("file:/defn-test.json", map.get("cas.personDirectory.attributeDefinitionStore.json.location"));
-        assertEquals("ldap://localhost:1389", map.get("cas.authn.attributeRepository.ldap[0].ldap-url"));
+        assertEquals("ldap://localhost:1389", map.get("cas.authn.attributeRepository.ldap[0].ldapUrl"));
     }
 }
