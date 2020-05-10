@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -57,7 +55,7 @@ public class SamlIdPMetadataProperties implements Serializable {
      * This directory will be used to hold the configuration files.
      */
     @RequiredProperty
-    private transient Resource location = new FileSystemResource("/etc/cas/saml");
+    private String location = "file:/etc/cas/saml";
 
     /**
      * Properties pertaining to mongo db saml metadata resolvers.

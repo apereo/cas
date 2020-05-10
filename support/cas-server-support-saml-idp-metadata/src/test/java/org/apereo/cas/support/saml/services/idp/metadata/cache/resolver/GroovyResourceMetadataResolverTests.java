@@ -20,12 +20,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Groovy")
 public class GroovyResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
-
-
     @Test
-    public void verifyResolverSupports() {
+    public void verifyResolverSupports() throws Exception {
         val props = new SamlIdPProperties();
-        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
+        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         val resolver = new GroovyResourceMetadataResolver(props, openSamlConfigBean);
         val service = new SamlRegisteredService();
         service.setMetadataLocation("classpath:GroovyMetadataResolver.groovy");
@@ -33,9 +31,9 @@ public class GroovyResourceMetadataResolverTests extends BaseSamlIdPServicesTest
     }
 
     @Test
-    public void verifyResolverResolves() {
+    public void verifyResolverResolves() throws Exception {
         val props = new SamlIdPProperties();
-        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
+        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         val resolver = new GroovyResourceMetadataResolver(props, openSamlConfigBean);
         val service = new SamlRegisteredService();
         service.setName("TestShib");

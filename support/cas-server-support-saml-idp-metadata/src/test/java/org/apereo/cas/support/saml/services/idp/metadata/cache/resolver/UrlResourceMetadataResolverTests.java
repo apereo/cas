@@ -26,9 +26,9 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     public static final String MDQ_URL = "https://mdq.incommon.org/entities/{0}";
 
     @Test
-    public void verifyResolverSupports() {
+    public void verifyResolverSupports() throws Exception {
         val props = new SamlIdPProperties();
-        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
+        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         val resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
         val service = new SamlRegisteredService();
         service.setMetadataLocation(METADATA_URL);
@@ -40,9 +40,9 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     }
 
     @Test
-    public void verifyResolverResolves() {
+    public void verifyResolverResolves() throws Exception {
         val props = new SamlIdPProperties();
-        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
+        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         val service = new SamlRegisteredService();
         val resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
         service.setName("TestShib");
