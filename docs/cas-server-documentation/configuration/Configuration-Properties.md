@@ -2727,39 +2727,39 @@ To learn more about this topic, [please review this guide](../mfa/Configuring-Mu
 # cas.authn.mfa.globalFailureMode=CLOSED
 
 # Design the attribute chosen to communicate the authentication context
-# cas.authn.mfa.authenticationContextAttribute=authnContextClass
+# cas.authn.mfa.authentication-context-attribute=authnContextClass
 
 # Identify the request content type for non-browser MFA requests
-# cas.authn.mfa.contentType=application/cas
+# cas.authn.mfa.content-type=application/cas
 ```
 
 ### Multifactor Authentication: Global Trigger
 
 ```properties
 # Activate MFA globally for all, regardless of other settings
-# cas.authn.mfa.globalProviderId=mfa-duo
+# cas.authn.mfa.global-provider-id=mfa-duo
 ```
 
 ### Multifactor Authentication: Authentication Attribute Trigger
 
 ```properties
 # Activate MFA globally based on authentication metadata attributes
-# cas.authn.mfa.globalAuthenticationAttributeNameTriggers=customAttributeName
-# cas.authn.mfa.globalAuthenticationAttributeValueRegex=customRegexValue
+# cas.authn.mfa.global-authentication-attribute-name-triggers=customAttributeName
+# cas.authn.mfa.global-authentication-attribute-value-regex=customRegexValue
 ```
 
 ### Multifactor Authentication: Principal Attribute Trigger
 
 ```properties
 # Activate MFA globally based on principal attributes
-# cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
+# cas.authn.mfa.global-principal-attribute-name-triggers=memberOf,eduPersonPrimaryAffiliation
 
 # Specify the regular expression pattern to trigger multifactor when working with a single provider.
 # Comment out the setting when working with multiple multifactor providers
-# cas.authn.mfa.globalPrincipalAttributeValueRegex=faculty|staff
+# cas.authn.mfa.global-principal-attribute-value-regex=faculty|staff
 
 # Activate MFA globally based on principal attributes and a groovy-based predicate
-# cas.authn.mfa.globalPrincipalAttributePredicate=file:/etc/cas/PredicateExample.groovy
+# cas.authn.mfa.global-principal-attribute-predicate=file:/etc/cas/PredicateExample.groovy
 ```
 
 ### Multifactor Authentication: REST API Trigger
@@ -2777,27 +2777,22 @@ RESTful settings for this feature are available [here](Configuration-Properties-
 
 ```properties
 # Activate MFA based on Internet2's Grouper
-# cas.authn.mfa.grouperGroupField=NAME|EXTENSION|DISPLAY_NAME|DISPLAY_EXTENSION
+# cas.authn.mfa.grouper-group-field=NAME|EXTENSION|DISPLAY_NAME|DISPLAY_EXTENSION
 ```
 
 ### Multifactor Authentication: Http Request Trigger
 
 ```properties
-# Activate MFA based on an optional request parameter
-# cas.authn.mfa.requestParameter=authn_method
-
-# Activate MFA based on an optional request header
-# cas.authn.mfa.requestHeader=authn_method
-
-# Activate MFA based on an optional request/session attribute
-# cas.authn.mfa.sessionAttribute=authn_method
+# cas.authn.mfa.request-parameter=authn_method
+# cas.authn.mfa.request-header=authn_method
+# cas.authn.mfa.session-attribute=authn_method
 ```
 
 ### Multifactor Authentication: Provider Selection
 
 ```properties
 # Select MFA provider, if resolved more than one, via Groovy script
-# cas.authn.mfa.providerSelectorGroovyScript=file:/etc/cas/mfaGroovySelector.groovy
+# cas.authn.mfa.provider-selector-groovy-script=file:/etc/cas/mfaGroovySelector.groovy
 
 # Enable provider selection menu, if resolved more than one
 cas.authn.mfa.provider-selection-enabled=true
@@ -2808,9 +2803,9 @@ cas.authn.mfa.provider-selection-enabled=true
 To learn more about this topic, [please review this guide](../mfa/Multifactor-TrustedDevice-Authentication.html).
 
 ```properties
-# cas.authn.mfa.trusted.authenticationContextAttribute=isFromTrustedMultifactorAuthentication
-# cas.authn.mfa.trusted.deviceRegistrationEnabled=true
-# cas.authn.mfa.trusted.keyGeneratorType=DEFAULT|LEGACY
+# cas.authn.mfa.trusted.authentication-context-attribute=isFromTrustedMultifactorAuthentication
+# cas.authn.mfa.trusted.device-registration-enabled=true
+# cas.authn.mfa.trusted.key-generator-type=DEFAULT|LEGACY
 ```
 
 The following strategies can be used to generate keys for trusted device records:
@@ -2896,8 +2891,8 @@ To learn more about this topic, [please review this guide](../mfa/Simple-Multifa
 ```properties
 # cas.authn.mfa.simple.name=
 # cas.authn.mfa.simple.order=
-# cas.authn.mfa.simple.timeToKillInSeconds=30
-# cas.authn.mfa.simple.tokenLength=6
+# cas.authn.mfa.simple.time-to-kill-in-seconds=30
+# cas.authn.mfa.simple.token-length=6
 ```
 
 Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
@@ -2915,9 +2910,9 @@ To learn more about this topic, [please review this guide](../mfa/GoogleAuthenti
 # cas.authn.mfa.gauth.issuer=
 # cas.authn.mfa.gauth.label=
 
-# cas.authn.mfa.gauth.windowSize=3
-# cas.authn.mfa.gauth.codeDigits=6
-# cas.authn.mfa.gauth.timeStepSize=30
+# cas.authn.mfa.gauth.window-size=3
+# cas.authn.mfa.gauth.code-digits=6
+# cas.authn.mfa.gauth.time-step-size=30
 # cas.authn.mfa.gauth.rank=0
 # cas.authn.mfa.gauth.trusted-device-enabled=false
 
@@ -2947,7 +2942,7 @@ Configuration settings for this feature are available [here](Configuration-Prope
 #### Google Authenticator Rest
 
 ```properties
-# cas.authn.mfa.gauth.rest.endpointUrl=https://somewhere.gauth.com
+# cas.authn.mfa.gauth.rest.endpoint-url=https://somewhere.gauth.com
 ```
 
 #### Google Authenticator MongoDb
@@ -2955,7 +2950,7 @@ Configuration settings for this feature are available [here](Configuration-Prope
  Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.gauth`.  The following settings are additionally available for this feature:
 
 ```properties
-# cas.authn.mfa.gauth.mongo.tokenCollection=MongoDbGoogleAuthenticatorTokenRepository
+# cas.authn.mfa.gauth.mongo.token-collection=MongoDbGoogleAuthenticatorTokenRepository
 ```
 
 #### Google Authenticator Redis
@@ -2973,10 +2968,10 @@ Database settings for this feature are available [here](Configuration-Properties
 To learn more about this topic, [please review this guide](../mfa/YubiKey-Authentication.html).
 
 ```properties
-# cas.authn.mfa.yubikey.clientId=
-# cas.authn.mfa.yubikey.secretKey=
+# cas.authn.mfa.yubikey.client-id=
+# cas.authn.mfa.yubikey.secret-key=
 # cas.authn.mfa.yubikey.rank=0
-# cas.authn.mfa.yubikey.apiUrls=
+# cas.authn.mfa.yubikey.api-urls=
 # cas.authn.mfa.yubikey.trusted-device-enabled=false
 
 # cas.authn.mfa.yubikey.name=
@@ -2988,14 +2983,14 @@ Multifactor authentication bypass settings for this provider are available [here
 #### YubiKey JSON Device Store
 
 ```properties
-# cas.authn.mfa.yubikey.jsonFile=file:/etc/cas/deviceRegistrations.json
+# cas.authn.mfa.yubikey.json-file=file:/etc/cas/deviceRegistrations.json
 ```
 
 #### YubiKey Whitelist Device Store
 
 ```properties
-# cas.authn.mfa.yubikey.allowedDevices.uid1=yubikeyPublicId1
-# cas.authn.mfa.yubikey.allowedDevices.uid2=yubikeyPublicId2
+# cas.authn.mfa.yubikey.allowed-devices.uid1=yubikeyPublicId1
+# cas.authn.mfa.yubikey.allowed-devices.uid2=yubikeyPublicId2
 ```
 
 #### YubiKey Registration Records Encryption and Signing
@@ -3030,7 +3025,7 @@ To learn more about this topic, [please review this guide](../mfa/RADIUS-Authent
 ```properties
 # cas.authn.mfa.radius.rank=0
 # cas.authn.mfa.radius.trusted-device-enabled=false
-# cas.authn.mfa.radius.allowedAuthenticationAttempts=-1
+# cas.authn.mfa.radius.allowed-authentication-attempts=-1
 # cas.authn.mfa.radius.name=
 # cas.authn.mfa.radius.order=
 ```
@@ -3051,7 +3046,7 @@ To learn more about this topic, [please review this guide](../mfa/DuoSecurity-Au
 # cas.authn.mfa.duo[0].duo-api-host=
 # cas.authn.mfa.duo[0].trusted-device-enabled=false
 # cas.authn.mfa.duo[0].id=mfa-duo
-# cas.authn.mfa.duo[0].registrationUrl=https://registration.example.org/duo-enrollment
+# cas.authn.mfa.duo[0].registration-url=https://registration.example.org/duo-enrollment
 # cas.authn.mfa.duo[0].name=
 # cas.authn.mfa.duo[0].order=
 ```
@@ -3075,10 +3070,10 @@ To learn more about this topic, [please review this guide](../mfa/FIDO-U2F-Authe
 # cas.authn.mfa.u2f.name=
 # cas.authn.mfa.u2f.order=
 
-# cas.authn.mfa.u2f.expireRegistrations=30
-# cas.authn.mfa.u2f.expireRegistrationsTimeUnit=SECONDS
-# cas.authn.mfa.u2f.expireDevices=30
-# cas.authn.mfa.u2f.expireDevicesTimeUnit=DAYS
+# cas.authn.mfa.u2f.expire-registrations=30
+# cas.authn.mfa.u2f.expire-registrations-time-unit=SECONDS
+# cas.authn.mfa.u2f.expire-devices=30
+# cas.authn.mfa.u2f.expire-devices-time-unit=DAYS
 ```
 
 Multifactor authentication bypass settings for this provider are
@@ -3129,10 +3124,10 @@ RESTful settings for this feature are available [here](Configuration-Properties-
 To learn more about this topic, [please review this guide](../mfa/SwivelSecure-Authentication.html).
 
 ```properties
-# cas.authn.mfa.swivel.swivelTuringImageUrl=https://turing.example.edu/TURingImage
-# cas.authn.mfa.swivel.swivelUrl=https://swivel.example.org/pinsafe
-# cas.authn.mfa.swivel.sharedSecret=Th3Sh@r3d$ecret
-# cas.authn.mfa.swivel.ignoreSslErrors=false
+# cas.authn.mfa.swivel.swivel-turing-image-url=https://turing.example.edu/TURingImage
+# cas.authn.mfa.swivel.swivel-url=https://swivel.example.org/pinsafe
+# cas.authn.mfa.swivel.shared-secret=Th3Sh@r3d$ecret
+# cas.authn.mfa.swivel.ignore-ssl-errors=false
 # cas.authn.mfa.swivel.rank=0
 # cas.authn.mfa.swivel.name=
 # cas.authn.mfa.swivel.order=
@@ -3146,12 +3141,12 @@ Multifactor authentication bypass settings for this provider are available [here
 To learn more about this topic, [please review this guide](../mfa/AuthyAuthenticator-Authentication.html).
 
 ```properties
-# cas.authn.mfa.authy.apiKey=
-# cas.authn.mfa.authy.apiUrl=
-# cas.authn.mfa.authy.phoneAttribute=phone
-# cas.authn.mfa.authy.mailAttribute=mail
-# cas.authn.mfa.authy.countryCode=1
-# cas.authn.mfa.authy.forceVerification=true
+# cas.authn.mfa.authy.api-key=
+# cas.authn.mfa.authy.api-url=
+# cas.authn.mfa.authy.phone-attribute=phone
+# cas.authn.mfa.authy.mail-attribute=mail
+# cas.authn.mfa.authy.country-code=1
+# cas.authn.mfa.authy.force-verification=true
 # cas.authn.mfa.authy.trusted-device-enabled=false
 # cas.authn.mfa.authy.name=
 # cas.authn.mfa.authy.order=
@@ -3165,20 +3160,20 @@ Multifactor authentication bypass settings for this provider are available [here
 To learn more about this topic, [please review this guide](../mfa/Acceptto-Authentication.html).
 
 ```properties
-# cas.authn.mfa.acceptto.applicationId=
+# cas.authn.mfa.acceptto.application-id=
 # cas.authn.mfa.acceptto.secret=
-# cas.authn.mfa.acceptto.organizationId=
-# cas.authn.mfa.acceptto.organizationSecret=
+# cas.authn.mfa.acceptto.organization-id=
+# cas.authn.mfa.acceptto.organization-secret=
 
-# cas.authn.mfa.acceptto.authnSelectionUrl=https://mfa.acceptto.com/mfa/index
+# cas.authn.mfa.acceptto.authn-selection-url=https://mfa.acceptto.com/mfa/index
 # cas.authn.mfa.acceptto.api-url=https://mfa.acceptto.com/api/v9/
 # cas.authn.mfa.acceptto.message=Do you want to login via CAS?
 # cas.authn.mfa.acceptto.timeout=120
-# cas.authn.mfa.acceptto.emailAttribute=mail    
-# cas.authn.mfa.acceptto.groupAttribute=    
+# cas.authn.mfa.acceptto.email-attribute=mail    
+# cas.authn.mfa.acceptto.group-attribute=    
 
-# cas.authn.mfa.acceptto.registrationApiUrl=https://mfa.acceptto.com/api/integration/v1/mfa/authenticate
-# cas.authn.mfa.acceptto.registrationApiPublicKey=file:/path/to/publickey.pem
+# cas.authn.mfa.acceptto.registration-api-url=https://mfa.acceptto.com/api/integration/v1/mfa/authenticate
+# cas.authn.mfa.acceptto.registration-api-public-key=file:/path/to/publickey.pem
 
 # cas.authn.mfa.acceptto.name=
 # cas.authn.mfa.acceptto.order=
@@ -3192,12 +3187,12 @@ Multifactor authentication bypass settings for this provider are available [here
 Control core SAML functionality within CAS.
 
 ```properties
-# cas.samlCore.ticketidSaml2=false
-# cas.samlCore.skewAllowance=5
-# cas.samlCore.issueLength=30
-# cas.samlCore.attributeNamespace=http://www.ja-sig.org/products/cas/
-# cas.samlCore.issuer=localhost
-# cas.samlCore.securityManager=org.apache.xerces.util.SecurityManager
+# cas.saml-core.ticketid-saml2=false
+# cas.saml-core.skew-allowance=5
+# cas.saml-core.issue-length=30
+# cas.saml-core.attribute-namespace=http://www.ja-sig.org/products/cas/
+# cas.saml-core.issuer=localhost
+# cas.saml-core.security-manager=org.apache.xerces.util.SecurityManager
 ```
 
 ## SAML IdP
@@ -3207,12 +3202,12 @@ Allow CAS to become a SAML2 identity provider.
 To learn more about this topic, [please review this guide](../installation/Configuring-SAML2-Authentication.html).
 
 ```properties
-# cas.authn.saml-idp.entityId=https://cas.example.org/idp
+# cas.authn.saml-idp.entity-id=https://cas.example.org/idp
 
-# cas.authn.saml-idp.authenticationContextClassMappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
-# cas.authn.saml-idp.authenticationContextClassMappings[1]=https://refeds.org/profile/mfa->mfa-gauth
+# cas.authn.saml-idp.authentication-context-class-mappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
+# cas.authn.saml-idp.authentication-context-class-mappings[1]=https://refeds.org/profile/mfa->mfa-gauth
 
-# cas.authn.saml-idp.attributeFriendlyNames[0]=urn:oid:1.3.6.1.4.1.5923.1.1.1.6->eduPersonPrincipalName
+# cas.authn.saml-idp.attribute-friendly-names[0]=urn:oid:1.3.6.1.4.1.5923.1.1.1.6->eduPersonPrincipalName
   
 # cas.authn.saml-idp.attribute-query-profile-enabled=true
 ```
@@ -3234,15 +3229,15 @@ A given attribute that is to be encoded in the final SAML response may contain a
 ```properties
 # cas.authn.saml-idp.metadata.location=file:/etc/cas/saml
 
-# cas.authn.saml-idp.metadata.cacheExpirationMinutes=30
-# cas.authn.saml-idp.metadata.failFast=true
-# cas.authn.saml-idp.metadata.privateKeyAlgName=RSA
-# cas.authn.saml-idp.metadata.requireValidMetadata=true
-# cas.authn.saml-idp.metadata.forceMetadataRefresh=true
+# cas.authn.saml-idp.metadata.cache-expiration-minutes=30
+# cas.authn.saml-idp.metadata.fail-fast=true
+# cas.authn.saml-idp.metadata.private-key-alg-name=RSA
+# cas.authn.saml-idp.metadata.require-valid-metadata=true
+# cas.authn.saml-idp.metadata.force-metadata-refresh=true
 
-# cas.authn.saml-idp.metadata.basicAuthnUsername=
-# cas.authn.saml-idp.metadata.basicAuthnPassword=
-# cas.authn.saml-idp.metadata.supportedContentTypes=
+# cas.authn.saml-idp.metadata.basic-authn-username=
+# cas.authn.saml-idp.metadata.basic-authn-password=
+# cas.authn.saml-idp.metadata.supported-content-types=
 
 ```
 
@@ -3304,7 +3299,7 @@ The signing key and the encryption key [are both JWKs](Configuration-Properties-
 settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.saml-idp.metadata.amazon-s3`.
  
 ```properties
-# cas.authn.saml-idp.metadata.amazon-s3.bucketName=saml-sp-bucket
+# cas.authn.saml-idp.metadata.amazon-s3.bucket-name=saml-sp-bucket
 # cas.authn.saml-idp.metadata.mongo.idp-metadata-bucket-name=saml-idp-bucket
 ```
 
@@ -3318,40 +3313,40 @@ settings for this feature are available [here](Configuration-Properties-Common.h
 ### SAML Algorithms & Security
 
 ```properties
-# cas.authn.saml-idp.algs.overrideSignatureCanonicalizationAlgorithm=
-# cas.authn.saml-idp.algs.overrideDataEncryptionAlgorithms=
-# cas.authn.saml-idp.algs.overrideKeyEncryptionAlgorithms=
-# cas.authn.saml-idp.algs.overrideBlackListedEncryptionAlgorithms=
-# cas.authn.saml-idp.algs.overrideWhiteListedAlgorithms=
-# cas.authn.saml-idp.algs.overrideSignatureReferenceDigestMethods=
-# cas.authn.saml-idp.algs.overrideSignatureAlgorithms=
-# cas.authn.saml-idp.algs.overrideBlackListedSignatureSigningAlgorithms=
-# cas.authn.saml-idp.algs.overrideWhiteListedSignatureSigningAlgorithms=
+# cas.authn.saml-idp.algs.override-signature-canonicalization-algorithm=
+# cas.authn.saml-idp.algs.override-data-encryption-algorithms=
+# cas.authn.saml-idp.algs.override-key-encryption-algorithms=
+# cas.authn.saml-idp.algs.override-black-listed-encryption-algorithms=
+# cas.authn.saml-idp.algs.override-white-listed-algorithms=
+# cas.authn.saml-idp.algs.override-signature-reference-digest-methods=
+# cas.authn.saml-idp.algs.override-signature-algorithms=
+# cas.authn.saml-idp.algs.override-black-listed-signature-signing-algorithms=
+# cas.authn.saml-idp.algs.override-white-listed-signature-signing-algorithms=
 ```
 
 ### SAML Response
 
 ```properties
-# cas.authn.saml-idp.response.defaultAuthenticationContextClass=
-# cas.authn.saml-idp.response.defaultAttributeNameFormat=uri
-# cas.authn.saml-idp.response.signError=false
-# cas.authn.saml-idp.response.signingCredentialType=X509|BASIC
-# cas.authn.saml-idp.response.attributeNameFormats=attributeName->basic|uri|unspecified|custom-format-etc,...
+# cas.authn.saml-idp.response.default-authentication-context-class=
+# cas.authn.saml-idp.response.default-attribute-name-format=uri
+# cas.authn.saml-idp.response.sign-error=false
+# cas.authn.saml-idp.response.signing-credential-type=X509|BASIC
+# cas.authn.saml-idp.response.attribute-name-formats=attributeName->basic|uri|unspecified|custom-format-etc,...
 ```
 
 ### SAML Ticket
 
 ```properties
-# cas.authn.saml-idp.ticket.samlArtifactsCacheStorageName=samlArtifactsCache
-# cas.authn.saml-idp.ticket.samlAttributeQueryCacheStorageName=samlAttributeQueryCache
+# cas.authn.saml-idp.ticket.saml-artifacts-cache-storage-name=samlArtifactsCache
+# cas.authn.saml-idp.ticket.saml-attribute-query-cache-storage-name=samlAttributeQueryCache
 ```
 
 ### SAML Profiles
 
 ```properties
-# cas.authn.saml-idp.profile.slo.urlDecodeRedirectRequest=false
-# cas.authn.saml-idp.profile.sso.urlDecodeRedirectRequest=false
-# cas.authn.saml-idp.profile.ssoPostSimpleSign.urlDecodeRedirectRequest=false
+# cas.authn.saml-idp.profile.slo.url-decode-redirect-request=false
+# cas.authn.saml-idp.profile.sso.url-decode-redirect-request=false
+# cas.authn.saml-idp.profile.sso-post-simple-sign.url-decode-redirect-request=false
 ```
 
 ## SAML SPs
@@ -3365,67 +3360,67 @@ Configuration settings for all SAML2 service providers are [available here](Conf
 
 | Service Provider      | Configuration Key     | Attributes
 |-----------------------|-----------------------|----------------------------------
-| Gitlab                | `cas.samlSp.gitlab`   | `last_name`,`first_name`,`name`
-| Hipchat               | `cas.samlSp.hipchat`  | `last_name`,`first_name`,`title`
-| Dropbox               | `cas.samlSp.dropbox`  | `mail`
-| OpenAthens            | `cas.samlSp.openAthens`   | `email`, `eduPersonPrincipalName`
-| Egnyte                | `cas.samlSp.egnyte`       | N/A
-| EverBridge            | `cas.samlSp.everBridge`   | N/A
-| Simplicity            | `cas.samlSp.simplicity`   | N/A
-| App Dynamics          | `cas.samlSp.appDynamics`  | `User.OpenIDName`, `User.email`, `User.fullName`, `AccessControl`, `Groups-Membership`
-| Yuja                  | `cas.samlSp.yuja`         | N/A
-| Simplicity            | `cas.samlSp.simplicity`   | N/A
-| New Relic             | `cas.samlSp.newRelic`     | N/A
-| Sunshine State Education & Research Computing Alliance | `cas.samlSp.sserca` | N/A
-| CherWell              | `cas.samlSp.cherWell`         | N/A
-| FAMIS                 | `cas.samlSp.famis`            | N/A
-| Bynder                | `cas.samlSp.bynder`           | N/A
-| Web Advisor           | `cas.samlSp.webAdvisor`       | `uid`
-| Adobe Creative Cloud  | `cas.samlSp.adobeCloud`       | `firstName`, `lastName`, `email`
-| Securing The Human    | `cas.samlSp.sansSth`          | `firstName`, `lastName`, `scopedUserId`, `department`, `reference`, `email`
-| Easy IEP              | `cas.samlSp.easyIep`          | `employeeId`
-| Infinite Campus       | `cas.samlSp.infiniteCampus`   | `employeeId`
-| Slack                 | `cas.samlSp.slack`        | `User.Email`, `User.Username`, `first_name`, `last_name`, `employeeId`
-| Zendesk               | `cas.samlSp.zendesk`      | `organization`, `tags`, `phone`, `role`, `email`
-| Gartner               | `cas.samlSp.gartner`      | `urn:oid:2.5.4.42`, `urn:oid:2.5.4.4`, `urn:oid:0.9.2342.19200300.100.1.3`
-| Arc GIS               | `cas.samlSp.arcGIS`       | `arcNameId`, `mail`, `givenName`
-| Benefit Focus         | `cas.samlSp.benefitFocus` | `benefitFocusUniqueId`
-| Office365             | `cas.samlSp.office365`    | `IDPEmail`, `ImmutableID`
-| SAManage              | `cas.samlSp.saManage`     | `mail`
-| Salesforce            | `cas.samlSp.salesforce`   | `eduPersonPrincipalName`
-| Workday               | `cas.samlSp.workday`      | N/A
-| Academic Works            | `cas.samlSp.academicWorks`    | `displayName`
-| ZOOM                      | `cas.samlSp.zoom`             | `mail`, `sn`, `givenName`
-| Evernote                  | `cas.samlSp.evernote`         | `email`
-| Tableau                   | `cas.samlSp.tableau`          | `username`
-| Asana                     | `cas.samlSp.asana`            | `email`
-| Box                       | `cas.samlSp.box`              | `email`, `firstName`, `lastName`
-| Service Now               | `cas.samlSp.serviceNow`   | `eduPersonPrincipalName`
-| Net Partner               | `cas.samlSp.netPartner`   | `studentId`
-| Webex                     | `cas.samlSp.webex`        | `firstName`, `lastName`
-| InCommon                  | `cas.samlSp.inCommon`     | `eduPersonPrincipalName`
-| Amazon                    | `cas.samlSp.amazon`       | `awsRoles`, `awsRoleSessionName`
-| Concur Solutions          | `cas.samlSp.concurSolutions`  | `email`
-| PollEverywhere            | `cas.samlSp.pollEverywhere`   | `email`
-| DocuSign                  | `cas.samlSp.docuSign`   | `email`, `givenName`, `surname`, `employeeNumber`
-| SafariOnline              | `cas.samlSp.safariOnline`   | `email`, `givenName`, `surname`, `employeeNumber`,`eduPersonAffiliation`
-| BlackBaud                 | `cas.samlSp.blackBaud`    | `email`, `eduPersonPrincipalName`
-| GiveCampus                | `cas.samlSp.giveCampus`   | `email`, `givenName`, `surname`, `displayName`
-| WarpWire                  | `cas.samlSp.warpWire`     | `email`, `givenName`, `eduPersonPrincipalName`, `surname`, `eduPersonScopedAffiliation`, `employeeNumber`
-| RocketChat                | `cas.samlSp.rocketChat`   | `email`, `cn`, `username`
-| ArmsSoftware              | `cas.samlSp.armsSoftware` | `email`, `uid`, `eduPersonPrincipalName`
-| TopHat                    | `cas.samlSp.topHat` | `email`, `eduPersonPrincipalName`
-| Academic HealthPlans      | `cas.samlSp.academicHealthPlans` | `email`, `givenName`, `surname`, `studentId`
-| Confluence                | `cas.samlSp.confluence` | `email`, `givenName`, `surname`, `uid`, `displayName`
-| JIRA                      | `cas.samlSp.jira` | `email`, `givenName`, `surname`, `uid`, `displayName`
-| CrashPlan                 | `cas.samlSp.crashPlan` | `email`, `givenName`, `surname`
-| Emma                      | `cas.samlSp.emma` | `email`, `givenName`, `surname`
-| Qualtrics                 | `cas.samlSp.qualtrics` | `email`, `givenName`, `surname`, `employeeNumber`, `eduPersonPrincipalName`
-| NeoGov                    | `cas.samlSp.neoGov` | `email`, `ImmutableID`
-| Zimbra                    | `cas.samlSp.zimbra` | `email`
-| PagerDuty                 | `cas.samlSp.pagerDuty` | `email`
-| CraniumCafe               | `cas.samlSp.craniumCafe` | `email`, `eduPersonPrincipalName`, `displayName`, `eduPersonScopedAffiliation`, `studentId`
-| CCC Central               | `cas.samlSp.cccco` | `email`, `eduPersonPrincipalName`, `displayName`, `eduPersonScopedAffiliation`, `uid`, `givenName`, `commonName`, `surname`, `eduPersonPrimaryffiliation`
+| Gitlab                | `cas.saml-sp.gitlab`   | `last_name`,`first_name`,`name`
+| Hipchat               | `cas.saml-sp.hipchat`  | `last_name`,`first_name`,`title`
+| Dropbox               | `cas.saml-sp.dropbox`  | `mail`
+| OpenAthens            | `cas.saml-sp.openAthens`   | `email`, `eduPersonPrincipalName`
+| Egnyte                | `cas.saml-sp.egnyte`       | N/A
+| EverBridge            | `cas.saml-sp.ever-bridge`   | N/A
+| Simplicity            | `cas.saml-sp.simplicity`   | N/A
+| App Dynamics          | `cas.saml-sp.app-dynamics`  | `User.OpenIDName`, `User.email`, `User.fullName`, `AccessControl`, `Groups-Membership`
+| Yuja                  | `cas.saml-sp.yuja`         | N/A
+| Simplicity            | `cas.saml-sp.simplicity`   | N/A
+| New Relic             | `cas.saml-sp.new-relic`     | N/A
+| Sunshine State Education & Research Computing Alliance | `cas.saml-sp.sserca` | N/A
+| CherWell              | `cas.saml-sp.cherWell`         | N/A
+| FAMIS                 | `cas.saml-sp.famis`            | N/A
+| Bynder                | `cas.saml-sp.bynder`           | N/A
+| Web Advisor           | `cas.saml-sp.webAdvisor`       | `uid`
+| Adobe Creative Cloud  | `cas.saml-sp.adobe-cloud`       | `firstName`, `lastName`, `email`
+| Securing The Human    | `cas.saml-sp.sans-sth`          | `firstName`, `lastName`, `scopedUserId`, `department`, `reference`, `email`
+| Easy IEP              | `cas.saml-sp.easy-iep`          | `employeeId`
+| Infinite Campus       | `cas.saml-sp.infinite-campus`   | `employeeId`
+| Slack                 | `cas.saml-sp.slack`        | `User.Email`, `User.Username`, `first_name`, `last_name`, `employeeId`
+| Zendesk               | `cas.saml-sp.zendesk`      | `organization`, `tags`, `phone`, `role`, `email`
+| Gartner               | `cas.saml-sp.gartner`      | `urn:oid:2.5.4.42`, `urn:oid:2.5.4.4`, `urn:oid:0.9.2342.19200300.100.1.3`
+| Arc GIS               | `cas.saml-sp.arcGIS`       | `arcNameId`, `mail`, `givenName`
+| Benefit Focus         | `cas.saml-sp.benefit-focus` | `benefitFocusUniqueId`
+| Office365             | `cas.saml-sp.office365`    | `IDPEmail`, `ImmutableID`
+| SAManage              | `cas.saml-sp.sa-manage`     | `mail`
+| Salesforce            | `cas.saml-sp.salesforce`   | `eduPersonPrincipalName`
+| Workday               | `cas.saml-sp.workday`      | N/A
+| Academic Works            | `cas.saml-sp.academic-works`    | `displayName`
+| ZOOM                      | `cas.saml-sp.zoom`             | `mail`, `sn`, `givenName`
+| Evernote                  | `cas.saml-sp.evernote`         | `email`
+| Tableau                   | `cas.saml-sp.tableau`          | `username`
+| Asana                     | `cas.saml-sp.asana`            | `email`
+| Box                       | `cas.saml-sp.box`              | `email`, `firstName`, `lastName`
+| Service Now               | `cas.saml-sp.service-now`   | `eduPersonPrincipalName`
+| Net Partner               | `cas.saml-sp.net-partner`   | `studentId`
+| Webex                     | `cas.saml-sp.webex`        | `firstName`, `lastName`
+| InCommon                  | `cas.saml-sp.in-common`     | `eduPersonPrincipalName`
+| Amazon                    | `cas.saml-sp.amazon`       | `awsRoles`, `awsRoleSessionName`
+| Concur Solutions          | `cas.saml-sp.concur-solutions`  | `email`
+| PollEverywhere            | `cas.saml-sp.poll-everywhere`   | `email`
+| DocuSign                  | `cas.saml-sp.docuSign`   | `email`, `givenName`, `surname`, `employeeNumber`
+| SafariOnline              | `cas.saml-sp.safari-online`   | `email`, `givenName`, `surname`, `employeeNumber`,`eduPersonAffiliation`
+| BlackBaud                 | `cas.saml-sp.black-baud`    | `email`, `eduPersonPrincipalName`
+| GiveCampus                | `cas.saml-sp.give-campus`   | `email`, `givenName`, `surname`, `displayName`
+| WarpWire                  | `cas.saml-sp.warp-wire`     | `email`, `givenName`, `eduPersonPrincipalName`, `surname`, `eduPersonScopedAffiliation`, `employeeNumber`
+| RocketChat                | `cas.saml-sp.rocket-chat`   | `email`, `cn`, `username`
+| ArmsSoftware              | `cas.saml-sp.arms-software` | `email`, `uid`, `eduPersonPrincipalName`
+| TopHat                    | `cas.saml-sp.top-hat` | `email`, `eduPersonPrincipalName`
+| Academic HealthPlans      | `cas.saml-sp.academic-health-plans` | `email`, `givenName`, `surname`, `studentId`
+| Confluence                | `cas.saml-sp.confluence` | `email`, `givenName`, `surname`, `uid`, `displayName`
+| JIRA                      | `cas.saml-sp.jira` | `email`, `givenName`, `surname`, `uid`, `displayName`
+| CrashPlan                 | `cas.saml-sp.crash-plan` | `email`, `givenName`, `surname`
+| Emma                      | `cas.saml-sp.emma` | `email`, `givenName`, `surname`
+| Qualtrics                 | `cas.saml-sp.qualtrics` | `email`, `givenName`, `surname`, `employeeNumber`, `eduPersonPrincipalName`
+| NeoGov                    | `cas.saml-sp.neoGov` | `email`, `ImmutableID`
+| Zimbra                    | `cas.saml-sp.zimbra` | `email`
+| PagerDuty                 | `cas.saml-sp.pager-duty` | `email`
+| CraniumCafe               | `cas.saml-sp.cranium-cafe` | `email`, `eduPersonPrincipalName`, `displayName`, `eduPersonScopedAffiliation`, `studentId`
+| CCC Central               | `cas.saml-sp.cccco` | `email`, `eduPersonPrincipalName`, `displayName`, `eduPersonScopedAffiliation`, `uid`, `givenName`, `commonName`, `surname`, `eduPersonPrimaryffiliation`
                                 
 **Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to 
 filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds 
@@ -3438,35 +3433,33 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 
 ```properties
 # cas.authn.oidc.issuer=http://localhost:8080/cas/oidc
-
-# Skew ID tokens in minutes
 # cas.authn.oidc.skew=5
 
-# cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
+# cas.authn.oidc.dynamic-client-registration-mode=OPEN|PROTECTED
 
-# cas.authn.oidc.subjectTypes=public,pairwise
+# cas.authn.oidc.subject-types=public,pairwise
 # cas.authn.oidc.scopes=openid,profile,email,address,phone,offline_access
 # cas.authn.oidc.claims=sub,name,preferred_username,family_name, \
 #    given_name,middle_name,given_name,profile, \
 #    picture,nickname,website,zoneinfo,locale,updated_at,birthdate, \
 #    email,email_verified,phone_number,phone_number_verified,address
 
-# cas.authn.oidc.responseTypesSupported=code,token,id_token token
-# cas.authn.oidc.introspectionSupportedAuthenticationMethods=client_secret_basic
-# cas.authn.oidc.claimTypesSupported=normal
-# cas.authn.oidc.grantTypesSupported=authorization_code,password,client_credentials,refresh_token
-# cas.authn.oidc.tokenEndpointAuthMethodsSupported=client_secret_basic,client_secret_post,private_key_jwt,client_secret_jwt
-# cas.authn.oidc.codeChallengeMethodsSupported=plain,S256
+# cas.authn.oidc.response-types-supported=code,token,id_token token
+# cas.authn.oidc.introspection-supported-authentication-methods=client_secret_basic
+# cas.authn.oidc.claim-types-supported=normal
+# cas.authn.oidc.grant-types-supported=authorization_code,password,client_credentials,refresh_token
+# cas.authn.oidc.token-endpoint-auth-methods-supported=client_secret_basic,client_secret_post,private_key_jwt,client_secret_jwt
+# cas.authn.oidc.code-challenge-methods-supported=plain,S256
 
-# cas.authn.oidc.idTokenSigningAlgValuesSupported=none,RS256,RS384,RS512,PS256,PS384,PS512,ES256,ES384,ES512,HS256,HS384,HS512
-# cas.authn.oidc.idTokenEncryptionAlgValuesSupported=RSA1_5,RSA-OAEP,RSA-OAEP-256,A128KW,A192KW,A256KW,\
+# cas.authn.oidc.id-token-signing-alg-values-supported=none,RS256,RS384,RS512,PS256,PS384,PS512,ES256,ES384,ES512,HS256,HS384,HS512
+# cas.authn.oidc.id-token-encryption-alg-values-supported=RSA1_5,RSA-OAEP,RSA-OAEP-256,A128KW,A192KW,A256KW,\
     A128GCMKW,A192GCMKW,A256GCMKW,ECDH-ES,ECDH-ES+A128KW,ECDH-ES+A192KW,ECDH-ES+A256KW
-# cas.authn.oidc.idTokenEncryptionEncodingValuesSupported=A128CBC-HS256,A192CBC-HS384,A256CBC-HS512,A128GCM,A192GCM,A256GCM
+# cas.authn.oidc.id-token-encryption-encoding-values-supported=A128CBC-HS256,A192CBC-HS384,A256CBC-HS512,A128GCM,A192GCM,A256GCM
 
-# cas.authn.oidc.userInfoSigningAlgValuesSupported=none,RS256,RS384,RS512,PS256,PS384,PS512,ES256,ES384,ES512,HS256,HS384,HS512
-# cas.authn.oidc.userInfoEncryptionAlgValuesSupported=RSA1_5,RSA-OAEP,RSA-OAEP-256,A128KW,A192KW,A256KW,\
+# cas.authn.oidc.user-info-signing-alg-values-supported=none,RS256,RS384,RS512,PS256,PS384,PS512,ES256,ES384,ES512,HS256,HS384,HS512
+# cas.authn.oidc.user-info-encryption-alg-values-supported=RSA1_5,RSA-OAEP,RSA-OAEP-256,A128KW,A192KW,A256KW,\
     A128GCMKW,A192GCMKW,A256GCMKW,ECDH-ES,ECDH-ES+A128KW,ECDH-ES+A192KW,ECDH-ES+A256KW
-# cas.authn.oidc.userInfoEncryptionEncodingValuesSupported=A128CBC-HS256,A192CBC-HS384,A256CBC-HS512,A128GCM,A192GCM,A256GCM
+# cas.authn.oidc.user-info-encryption-encoding-values-supported=A128CBC-HS256,A192CBC-HS384,A256CBC-HS512,A128GCM,A192GCM,A256GCM
 ```
   
 ### OpenID Connect JWKS
@@ -3497,12 +3490,12 @@ under the configuration key `cas.authn.oidc.jwks.rest`.
 
 ```properties
 # Define custom scopes and claims
-# cas.authn.oidc.userDefinedScopes.scope1=cn,givenName,photos,customAttribute
-# cas.authn.oidc.userDefinedScopes.scope2=cn,givenName,photos,customAttribute2
+# cas.authn.oidc.user-defined-scopes.scope1=cn,givenName,photos,customAttribute
+# cas.authn.oidc.user-defined-scopes.scope2=cn,givenName,photos,customAttribute2
 
 # Map fixed claims to CAS attributes
-# cas.authn.oidc.claimsMap.given_name=custom-given-name
-# cas.authn.oidc.claimsMap.preferred_username=global-user-attribute
+# cas.authn.oidc.claims-map.given_name=custom-given-name
+# cas.authn.oidc.claims-map.preferred_username=global-user-attribute
 ```
 
 ### OpenID Connect WebFinger
@@ -3527,8 +3520,8 @@ under the configuration key `cas.authn.oidc.webfinger.userInfo.rest`.
 The supported logout channels can be defined via the following properties:
 
 ```properties
-# cas.authn.oidc.logout.backchannelLogoutSupported=true
-# cas.authn.oidc.logout.frontchannelLogoutSupported=true
+# cas.authn.oidc.logout.backchannel-logout-supported=true
+# cas.authn.oidc.logout.frontchannel-logout-supported=true
 ```
 
 ## Pac4j Delegated AuthN
@@ -3537,12 +3530,12 @@ Act as a proxy, and delegate authentication to external identity providers.
 To learn more about this topic, [please review this guide](../integration/Delegate-Authentication.html).
 
 ```properties
-# cas.authn.pac4j.typedIdUsed=false
-# cas.authn.pac4j.principalAttributeId=
+# cas.authn.pac4j.typed-id-used=false
+# cas.authn.pac4j.principal-attribute-id=
 # cas.authn.pac4j.name=
 # cas.authn.pac4j.order=
-# cas.authn.pac4j.lazyInit=true
-# cas.authn.pac4j.replicateSessions=true
+# cas.authn.pac4j.lazy-init=true
+# cas.authn.pac4j.replicate-sessions=true
 ```
 
 ### REST-based Configuration
@@ -3567,9 +3560,9 @@ under the listed configuration keys listed below:
 | Dropbox                   | `cas.authn.pac4j.dropbox`
 | GitHub                    | `cas.authn.pac4j.github`
 | Foursquare                | `cas.authn.pac4j.foursquare`
-| WindowsLive               | `cas.authn.pac4j.windowsLive`
+| WindowsLive               | `cas.authn.pac4j.windows-live`
 | Google                    | `cas.authn.pac4j.google`
-| HiOrg-Server              | `cas.authn.pac4j.hiOrgServer`
+| HiOrg-Server              | `cas.authn.pac4j.hi-org-server`
 
 See below for other identity providers such as CAS, SAML2 and more.
 
@@ -3613,7 +3606,7 @@ In addition to the [common block of settings](Configuration-Properties-Common.ht
 Delegate authentication to an external CAS server.
 
 ```properties
-# cas.authn.pac4j.cas[0].loginUrl=
+# cas.authn.pac4j.cas[0].login-url=
 # cas.authn.pac4j.cas[0].protocol=
 ```
 
