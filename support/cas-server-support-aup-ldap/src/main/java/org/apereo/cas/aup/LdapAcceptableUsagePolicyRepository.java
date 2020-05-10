@@ -13,9 +13,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchResponse;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
 
@@ -30,12 +32,17 @@ import java.util.Set;
  * @since 4.2
  */
 @Slf4j
-public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository {
+public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository implements DisposableBean {
     private static final long serialVersionUID = 1600024683199961892L;
+
+    private HashMap<LdapAcceptableUsagePolicyProperties, ConnectionFactory> connectionFactoryList = new HashMap<>();
 
     public LdapAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
                                                final AcceptableUsagePolicyProperties aupProperties) {
         super(ticketRegistrySupport, aupProperties);
+        aupProperties.getLdap().forEach(ldap -> {
+            connectionFactoryList.put(ldap, LdapUtils.newLdaptiveConnectionFactory(ldap));
+        });
     }
 
     /**
@@ -52,7 +59,7 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
             CollectionUtils.wrap(id));
         LOGGER.debug("Constructed LDAP filter [{}]", filter);
-        val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
+        val connectionFactory = connectionFactoryList.get(ldap);
         val response = LdapUtils.executeSearchOperation(connectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
         if (LdapUtils.containsResultEntry(response)) {
             LOGGER.debug("LDAP query located an entry for [{}] and responded with [{}]", id, response);
@@ -84,5 +91,12 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             LOGGER.error(e.getMessage(), e);
         }
         return false;
+    }
+
+    @Override
+    public void destroy() {
+        connectionFactoryList.forEach((ldap, connectionFactory) -> {
+            connectionFactory.close();
+        });
     }
 }
