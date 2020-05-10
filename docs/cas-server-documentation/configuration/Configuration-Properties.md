@@ -3238,7 +3238,7 @@ Database settings for this feature are available [here](Configuration-Properties
 under the configuration key `cas.authn.saml-idp.metadata.jpa`.
 
 ```properties
-# cas.authn.saml-idp.metadata.jpa.idp-metadata.enabled=true
+# cas.authn.saml-idp.metadata.jpa.idp-metadata-enabled=true
 ```
  
 The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & 
@@ -3250,7 +3250,7 @@ Common configuration settings for this feature are available [here](Configuratio
 under the configuration key `cas.authn.saml-idp.metadata`.
  
 ```properties
-# cas.authn.saml-idp.metadata.couch-db.idp-metadata.enabled=true
+# cas.authn.saml-idp.metadata.couch-db.idp-metadata-enabled=true
 ```
 
 The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption 
@@ -3274,7 +3274,7 @@ RESTful settings for this feature are available [here](Configuration-Properties-
 under the configuration key `cas.authn.saml-idp.metadata.rest`.
 
 ```properties
-# cas.authn.saml-idp.metadata.rest.idp-metadata.enabled=true
+# cas.authn.saml-idp.metadata.rest.idp-metadata-enabled=true
 ```
 
 The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & 

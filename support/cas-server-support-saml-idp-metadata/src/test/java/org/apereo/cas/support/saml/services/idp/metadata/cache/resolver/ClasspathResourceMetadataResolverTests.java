@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ClasspathResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
 
     @Test
-    public void verifyResolverSupports() {
+    public void verifyResolverSupports() throws Exception {
         val props = new SamlIdPProperties();
-        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
+        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         val resolver = new ClasspathResourceMetadataResolver(props, openSamlConfigBean);
         val service = new SamlRegisteredService();
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
@@ -34,9 +34,9 @@ public class ClasspathResourceMetadataResolverTests extends BaseSamlIdPServicesT
     }
 
     @Test
-    public void verifyResolverResolves() {
+    public void verifyResolverResolves() throws Exception {
         val props = new SamlIdPProperties();
-        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
+        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         val resolver = new ClasspathResourceMetadataResolver(props, openSamlConfigBean);
         val service = new SamlRegisteredService();
         service.setName("TestShib");

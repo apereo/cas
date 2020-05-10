@@ -11,6 +11,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.SneakyThrows;
@@ -63,7 +64,9 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         super(samlIdPProperties, configBean);
 
         val md = samlIdPProperties.getMetadata();
-        this.metadataBackupDirectory = new File(md.getLocation().getFile(), DIRNAME_METADATA_BACKUPS);
+        val location = ResourceUtils.getResourceFrom(
+            SpringExpressionLanguageValueResolver.getInstance().resolve(md.getLocation()));
+        this.metadataBackupDirectory = new File(location.getFile(), DIRNAME_METADATA_BACKUPS);
         try {
             FileUtils.forceMkdir(this.metadataBackupDirectory);
         } catch (final Exception e) {

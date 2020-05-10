@@ -1,4 +1,7 @@
 #!/bin/bash
+source ./ci/functions.sh
+
+
 
 
 gradle="./gradlew $@"

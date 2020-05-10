@@ -31,7 +31,7 @@ public class JsonResourceMetadataResolverTests extends BaseSamlIdPServicesTests 
     @Test
     public void verifyResolverResolves() throws Exception {
         val props = new SamlIdPProperties();
-        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
+        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         FileUtils.copyFile(new ClassPathResource("saml-sp-metadata.json").getFile(),
             new File(FileUtils.getTempDirectory(), "saml-sp-metadata.json"));
         val service = new SamlRegisteredService();
