@@ -54,12 +54,12 @@ public abstract class BaseCouchDbProperties implements Serializable {
     /**
      * Use TLS. Only needed if not specified by URL.
      */
-    private boolean enableSSL;
+    private boolean enableSsl;
 
     /**
      * Relax TLS settings–like certificate verification.
      */
-    private boolean relaxedSSLSettings;
+    private boolean relaxedSslSettings;
 
     /**
      * Use a local cache to reduce fetches..
