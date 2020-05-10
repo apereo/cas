@@ -6,12 +6,13 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 
 import com.google.common.io.ByteSource;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchResponse;
+import org.springframework.beans.factory.DisposableBean;
 
 /**
  * This is {@link LdapUserGraphicalAuthenticationRepository}.
@@ -20,11 +21,23 @@ import org.ldaptive.SearchResponse;
  * @since 5.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
-public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalAuthenticationRepository {
+public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalAuthenticationRepository, DisposableBean {
     private static final long serialVersionUID = 421732017215881244L;
 
     private final CasConfigurationProperties casProperties;
+
+    private ConnectionFactory connectionFactory;
+
+    public LdapUserGraphicalAuthenticationRepository(final CasConfigurationProperties casProperties) {
+        this.casProperties = casProperties;
+        this.connectionFactory = LdapUtils.newLdaptiveConnectionFactory(
+            casProperties.getAuthn().getGua().getLdap());
+    }
+
+    @Override
+    public void destroy() {
+        this.connectionFactory.close();
+    }
 
     @Override
     public ByteSource getGraphics(final String username) {
@@ -50,7 +63,7 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
             CollectionUtils.wrap(id));
         return LdapUtils.executeSearchOperation(
-            LdapUtils.newLdaptiveConnectionFactory(gua.getLdap()),
+            this.connectionFactory,
             gua.getLdap().getBaseDn(),
             filter,
             gua.getLdap().getPageSize(),
