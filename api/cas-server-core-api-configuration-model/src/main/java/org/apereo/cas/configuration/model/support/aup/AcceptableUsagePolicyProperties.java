@@ -134,19 +134,19 @@ public class AcceptableUsagePolicyProperties implements Serializable {
 
         /**
          * The column to store the AUP attribute. May differ from the profile attribute defined by {@link #aupAttributeName}.
-         * SQL query can be further customized by setting {@link #sqlUpdateAUP}.
+         * SQL query can be further customized by setting {@link #sqlUpdate}.
          */
         private String aupColumn;
 
         /**
          * The column to identify the principal.
-         * SQL query can be further customized by setting {@link #sqlUpdateAUP}.
+         * SQL query can be further customized by setting {@link #sqlUpdate}.
          */
         private String principalIdColumn = "username";
 
         /**
          * The profile attribute to extract the value for the {@link #principalIdColumn} used in the WHERE clause
-         * of {@link #sqlUpdateAUP}. If empty, the principal ID will be used.
+         * of {@link #sqlUpdate}. If empty, the principal ID will be used.
          */
         private String principalIdAttribute;
 
@@ -154,7 +154,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
          * The query template to update the AUP attribute.
          * %s placeholders represent {@link #tableName}, {@link #aupColumn}, {@link #principalIdColumn} settings.
          */
-        private String sqlUpdateAUP = "UPDATE %s SET %s=true WHERE %s=?";
+        private String sqlUpdate = "UPDATE %s SET %s=true WHERE %s=?";
     }
 
     @RequiresModule(name = "cas-server-support-aup-rest")
