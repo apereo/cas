@@ -1,3 +1,4 @@
+.vscode
 argfile*
 .classpath
 !/.project
