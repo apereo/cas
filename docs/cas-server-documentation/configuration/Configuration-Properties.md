@@ -3030,7 +3030,7 @@ Multifactor authentication bypass settings for this provider are available [here
 To learn more about this topic, [please review this guide](../mfa/DuoSecurity-Authentication.html).
 
 ```properties
-# cas.authn.mfa.duo[0].duo-secret.key=
+# cas.authn.mfa.duo[0].duo-secret-key=
 # cas.authn.mfa.duo[0].rank=0
 # cas.authn.mfa.duo[0].duo-application-key=
 # cas.authn.mfa.duo[0].duo-integration-key=

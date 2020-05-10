@@ -39,7 +39,6 @@ if [ $retVal == 0 ]; then
 
     echo -e "Switching Python version..."
     pyenv global 3.8.1
-
     echo -e "Python version is: `python --version`\n"
 
     cd etc/loadtests/locust

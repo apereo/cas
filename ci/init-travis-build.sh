@@ -33,6 +33,11 @@ echo -e "Stopping current services...\n"
 sudo service mysql stop
 sudo service postgresql stop
 
+echo -e "Switching Python version..."
+pyenv global 3.8.1
+echo -e "Python version is: `python --version`\n"
+pip install --user awscli
+
 echo -e "Setting build environment...\n"
 sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
 
