@@ -952,7 +952,7 @@ To learn more about this topic, [please review this guide](../logging/Logging.ht
 # logging.config=file:/etc/cas/log4j2.xml
 # server.servlet.contextParameters.isLog4jAutoInitializationDisabled=true
        
-# cas.logging.mdcEnabled=true
+# cas.logging.mdc-enabled=true
 
 # Control log levels via properties
 # logging.level.org.apereo.cas=DEBUG
@@ -2077,11 +2077,11 @@ Password encoding  settings for this feature are available [here](Configuration-
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn`.
 
 ```properties
-# cas.authn.couchDb.attributes=
-# cas.authn.couchDb.usernameAttribute=username
-# cas.authn.couchDb.passwordAttribute=password
-# cas.authn.couchDb.name=
-# cas.authn.couchDb.order=
+# cas.authn.couch-db.attributes=
+# cas.authn.couch-db.usernameAttribute=username
+# cas.authn.couch-db.passwordAttribute=password
+# cas.authn.couch-db.name=
+# cas.authn.couch-db.order=
 ```
 
 ## Redis Authentication
@@ -2863,23 +2863,23 @@ under the configuration key `cas.authn.mfa.trusted.dynamoDb`.
 #### Trusted Device Fingerprint
 
 ```properties
-# cas.authn.mfa.trusted.deviceFingerprint.componentSeparator=@  
+# cas.authn.mfa.trusted.device-fingerprint.componentSeparator=@  
 
-# cas.authn.mfa.trusted.deviceFingerprint.cookie.enabled=true
-# cas.authn.mfa.trusted.deviceFingerprint.cookie.order=1
+# cas.authn.mfa.trusted.device-fingerprint.cookie.enabled=true
+# cas.authn.mfa.trusted.device-fingerprint.cookie.order=1
 
-# cas.authn.mfa.trusted.deviceFingerprint.clientIp.enabled=true
-# cas.authn.mfa.trusted.deviceFingerprint.clientIp.order=2
+# cas.authn.mfa.trusted.device-fingerprint.client-ip.enabled=true
+# cas.authn.mfa.trusted.device-fingerprint.client-ip.order=2
 
-# cas.authn.mfa.trusted.deviceFingerprint.geolocation.enabled=false
-# cas.authn.mfa.trusted.deviceFingerprint.geolocation.order=4
+# cas.authn.mfa.trusted.device-fingerprint.geolocation.enabled=false
+# cas.authn.mfa.trusted.device-fingerprint.geolocation.order=4
 ```
 
-The device fingerprint cookie component can be configured with the common cookie properties found [here](Configuration-Properties-Common.html#cookie-properties) under the configuration key `cas.authn.mfa.trusted.deviceFingerprint.cookie`.
+The device fingerprint cookie component can be configured with the common cookie properties found [here](Configuration-Properties-Common.html#cookie-properties) under the configuration key `cas.authn.mfa.trusted.device-fingerprint.cookie`.
 The default cookie name is set to `MFATRUSTED` and the default maxAge is set to `2592000`.
 
 The device fingerprint cookie component supports signing & encryption. The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
-The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.mfa.trusted.deviceFingerprint.cookie`.
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.mfa.trusted.device-fingerprint.cookie`.
 
 #### Cleaner
 
@@ -2918,7 +2918,7 @@ To learn more about this topic, [please review this guide](../mfa/GoogleAuthenti
 # cas.authn.mfa.gauth.codeDigits=6
 # cas.authn.mfa.gauth.timeStepSize=30
 # cas.authn.mfa.gauth.rank=0
-# cas.authn.mfa.gauth.trustedDeviceEnabled=false
+# cas.authn.mfa.gauth.trusted-device-enabled=false
 
 # cas.authn.mfa.gauth.name=
 # cas.authn.mfa.gauth.order=
@@ -2976,7 +2976,7 @@ To learn more about this topic, [please review this guide](../mfa/YubiKey-Authen
 # cas.authn.mfa.yubikey.secretKey=
 # cas.authn.mfa.yubikey.rank=0
 # cas.authn.mfa.yubikey.apiUrls=
-# cas.authn.mfa.yubikey.trustedDeviceEnabled=false
+# cas.authn.mfa.yubikey.trusted-device-enabled=false
 
 # cas.authn.mfa.yubikey.name=
 # cas.authn.mfa.yubikey.order=
@@ -3028,7 +3028,7 @@ To learn more about this topic, [please review this guide](../mfa/RADIUS-Authent
 
 ```properties
 # cas.authn.mfa.radius.rank=0
-# cas.authn.mfa.radius.trustedDeviceEnabled=false
+# cas.authn.mfa.radius.trusted-device-enabled=false
 # cas.authn.mfa.radius.allowedAuthenticationAttempts=-1
 # cas.authn.mfa.radius.name=
 # cas.authn.mfa.radius.order=
@@ -3043,12 +3043,12 @@ Multifactor authentication bypass settings for this provider are available [here
 To learn more about this topic, [please review this guide](../mfa/DuoSecurity-Authentication.html).
 
 ```properties
-# cas.authn.mfa.duo[0].duoSecretKey=
+# cas.authn.mfa.duo[0].duo-secret.key=
 # cas.authn.mfa.duo[0].rank=0
-# cas.authn.mfa.duo[0].duoApplicationKey=
-# cas.authn.mfa.duo[0].duoIntegrationKey=
-# cas.authn.mfa.duo[0].duoApiHost=
-# cas.authn.mfa.duo[0].trustedDeviceEnabled=false
+# cas.authn.mfa.duo[0].duo-application-key=
+# cas.authn.mfa.duo[0].duo-integration-key=
+# cas.authn.mfa.duo[0].duo-api-host=
+# cas.authn.mfa.duo[0].trusted-device-enabled=false
 # cas.authn.mfa.duo[0].id=mfa-duo
 # cas.authn.mfa.duo[0].registrationUrl=https://registration.example.org/duo-enrollment
 # cas.authn.mfa.duo[0].name=
@@ -3151,7 +3151,7 @@ To learn more about this topic, [please review this guide](../mfa/AuthyAuthentic
 # cas.authn.mfa.authy.mailAttribute=mail
 # cas.authn.mfa.authy.countryCode=1
 # cas.authn.mfa.authy.forceVerification=true
-# cas.authn.mfa.authy.trustedDeviceEnabled=false
+# cas.authn.mfa.authy.trusted-device-enabled=false
 # cas.authn.mfa.authy.name=
 # cas.authn.mfa.authy.order=
 ```
@@ -3206,14 +3206,14 @@ Allow CAS to become a SAML2 identity provider.
 To learn more about this topic, [please review this guide](../installation/Configuring-SAML2-Authentication.html).
 
 ```properties
-# cas.authn.samlIdp.entityId=https://cas.example.org/idp
+# cas.authn.saml-idp.entityId=https://cas.example.org/idp
 
-# cas.authn.samlIdp.authenticationContextClassMappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
-# cas.authn.samlIdp.authenticationContextClassMappings[1]=https://refeds.org/profile/mfa->mfa-gauth
+# cas.authn.saml-idp.authenticationContextClassMappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
+# cas.authn.saml-idp.authenticationContextClassMappings[1]=https://refeds.org/profile/mfa->mfa-gauth
 
-# cas.authn.samlIdp.attributeFriendlyNames[0]=urn:oid:1.3.6.1.4.1.5923.1.1.1.6->eduPersonPrincipalName
+# cas.authn.saml-idp.attributeFriendlyNames[0]=urn:oid:1.3.6.1.4.1.5923.1.1.1.6->eduPersonPrincipalName
   
-# cas.authn.samlIdp.attributeQueryProfileEnabled=true
+# cas.authn.saml-idp.attribute-query-profile-enabled=true
 ```
 
 ### Attributes Name Formats
@@ -3231,126 +3231,126 @@ A given attribute that is to be encoded in the final SAML response may contain a
 ### SAML Metadata
 
 ```properties
-# cas.authn.samlIdp.metadata.location=file:/etc/cas/saml
+# cas.authn.saml-idp.metadata.location=file:/etc/cas/saml
 
-# cas.authn.samlIdp.metadata.cacheExpirationMinutes=30
-# cas.authn.samlIdp.metadata.failFast=true
-# cas.authn.samlIdp.metadata.privateKeyAlgName=RSA
-# cas.authn.samlIdp.metadata.requireValidMetadata=true
-# cas.authn.samlIdp.metadata.forceMetadataRefresh=true
+# cas.authn.saml-idp.metadata.cacheExpirationMinutes=30
+# cas.authn.saml-idp.metadata.failFast=true
+# cas.authn.saml-idp.metadata.privateKeyAlgName=RSA
+# cas.authn.saml-idp.metadata.requireValidMetadata=true
+# cas.authn.saml-idp.metadata.forceMetadataRefresh=true
 
-# cas.authn.samlIdp.metadata.basicAuthnUsername=
-# cas.authn.samlIdp.metadata.basicAuthnPassword=
-# cas.authn.samlIdp.metadata.supportedContentTypes=
+# cas.authn.saml-idp.metadata.basicAuthnUsername=
+# cas.authn.saml-idp.metadata.basicAuthnPassword=
+# cas.authn.saml-idp.metadata.supportedContentTypes=
 
 ```
 
 #### SAML Metadata JPA
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
-under the configuration key `cas.authn.samlIdp.metadata.jpa`.
+under the configuration key `cas.authn.saml-idp.metadata.jpa`.
 
 ```properties
-# cas.authn.samlIdp.metadata.jpa.idpMetadataEnabled=true
+# cas.authn.saml-idp.metadata.jpa.idp-metadata.enabled=true
 ```
  
 The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & 
-encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.samlIdp.metadata.jpa`.
+encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.saml-idp.metadata.jpa`.
  
 #### SAML Metadata CouchDb
 
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) 
-under the configuration key `cas.authn.samlIdp.metadata`.
+under the configuration key `cas.authn.saml-idp.metadata`.
  
 ```properties
-# cas.authn.samlIdp.metadata.couchDb.idpMetadataEnabled=true
+# cas.authn.saml-idp.metadata.couch-db.idp-metadata.enabled=true
 ```
 
 The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption 
-settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.samlIdp.metadata.mongo`.
+settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.saml-idp.metadata.mongo`.
 
 #### SAML Metadata MongoDb
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.samlIdp.metadata`.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.saml-idp.metadata`.
  
 ```properties
-# cas.authn.samlIdp.metadata.mongo.idpMetadataCollection=saml-idp-metadata
+# cas.authn.saml-idp.metadata.mongo.idp-metadata-collection=saml-idp-metadata
 ```
  
 The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & 
 encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the 
-configuration key `cas.authn.samlIdp.metadata.mongo`.
+configuration key `cas.authn.saml-idp.metadata.mongo`.
  
 #### SAML Metadata REST
  
 RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
-under the configuration key `cas.authn.samlIdp.metadata.rest`.
+under the configuration key `cas.authn.saml-idp.metadata.rest`.
 
 ```properties
-# cas.authn.samlIdp.metadata.rest.idpMetadataEnabled=true
+# cas.authn.saml-idp.metadata.rest.idp-metadata.enabled=true
 ```
 
 The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & 
 encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the 
-configuration key `cas.authn.samlIdp.metadata.rest`.
+configuration key `cas.authn.saml-idp.metadata.rest`.
 
 #### SAML Metadata Amazon S3
  
 Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
-under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
+under the configuration key `cas.authn.saml-idp.metadata.amazon-s3`.
 
 The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption 
-settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
+settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.saml-idp.metadata.amazon-s3`.
  
 ```properties
-# cas.authn.samlIdp.metadata.amazonS3.bucketName=saml-sp-bucket
-# cas.authn.samlIdp.metadata.mongo.idpMetadataBucketName=saml-idp-bucket
+# cas.authn.saml-idp.metadata.amazon-s3.bucketName=saml-sp-bucket
+# cas.authn.saml-idp.metadata.mongo.idp-metadata-bucket-name=saml-idp-bucket
 ```
 
 ### SAML Logout
 
 ```properties
-# cas.authn.samlIdp.logout.forceSignedLogoutRequests=true
-# cas.authn.samlIdp.logout.singleLogoutCallbacksDisabled=false
+# cas.authn.saml-idp.logout.forceSignedLogoutRequests=true
+# cas.authn.saml-idp.logout.singleLogoutCallbacksDisabled=false
 ```
 
 ### SAML Algorithms & Security
 
 ```properties
-# cas.authn.samlIdp.algs.overrideSignatureCanonicalizationAlgorithm=
-# cas.authn.samlIdp.algs.overrideDataEncryptionAlgorithms=
-# cas.authn.samlIdp.algs.overrideKeyEncryptionAlgorithms=
-# cas.authn.samlIdp.algs.overrideBlackListedEncryptionAlgorithms=
-# cas.authn.samlIdp.algs.overrideWhiteListedAlgorithms=
-# cas.authn.samlIdp.algs.overrideSignatureReferenceDigestMethods=
-# cas.authn.samlIdp.algs.overrideSignatureAlgorithms=
-# cas.authn.samlIdp.algs.overrideBlackListedSignatureSigningAlgorithms=
-# cas.authn.samlIdp.algs.overrideWhiteListedSignatureSigningAlgorithms=
+# cas.authn.saml-idp.algs.overrideSignatureCanonicalizationAlgorithm=
+# cas.authn.saml-idp.algs.overrideDataEncryptionAlgorithms=
+# cas.authn.saml-idp.algs.overrideKeyEncryptionAlgorithms=
+# cas.authn.saml-idp.algs.overrideBlackListedEncryptionAlgorithms=
+# cas.authn.saml-idp.algs.overrideWhiteListedAlgorithms=
+# cas.authn.saml-idp.algs.overrideSignatureReferenceDigestMethods=
+# cas.authn.saml-idp.algs.overrideSignatureAlgorithms=
+# cas.authn.saml-idp.algs.overrideBlackListedSignatureSigningAlgorithms=
+# cas.authn.saml-idp.algs.overrideWhiteListedSignatureSigningAlgorithms=
 ```
 
 ### SAML Response
 
 ```properties
-# cas.authn.samlIdp.response.defaultAuthenticationContextClass=
-# cas.authn.samlIdp.response.defaultAttributeNameFormat=uri
-# cas.authn.samlIdp.response.signError=false
-# cas.authn.samlIdp.response.signingCredentialType=X509|BASIC
-# cas.authn.samlIdp.response.attributeNameFormats=attributeName->basic|uri|unspecified|custom-format-etc,...
+# cas.authn.saml-idp.response.defaultAuthenticationContextClass=
+# cas.authn.saml-idp.response.defaultAttributeNameFormat=uri
+# cas.authn.saml-idp.response.signError=false
+# cas.authn.saml-idp.response.signingCredentialType=X509|BASIC
+# cas.authn.saml-idp.response.attributeNameFormats=attributeName->basic|uri|unspecified|custom-format-etc,...
 ```
 
 ### SAML Ticket
 
 ```properties
-# cas.authn.samlIdp.ticket.samlArtifactsCacheStorageName=samlArtifactsCache
-# cas.authn.samlIdp.ticket.samlAttributeQueryCacheStorageName=samlAttributeQueryCache
+# cas.authn.saml-idp.ticket.samlArtifactsCacheStorageName=samlArtifactsCache
+# cas.authn.saml-idp.ticket.samlAttributeQueryCacheStorageName=samlAttributeQueryCache
 ```
 
 ### SAML Profiles
 
 ```properties
-# cas.authn.samlIdp.profile.slo.urlDecodeRedirectRequest=false
-# cas.authn.samlIdp.profile.sso.urlDecodeRedirectRequest=false
-# cas.authn.samlIdp.profile.ssoPostSimpleSign.urlDecodeRedirectRequest=false
+# cas.authn.saml-idp.profile.slo.urlDecodeRedirectRequest=false
+# cas.authn.saml-idp.profile.sso.urlDecodeRedirectRequest=false
+# cas.authn.saml-idp.profile.ssoPostSimpleSign.urlDecodeRedirectRequest=false
 ```
 
 ## SAML SPs
@@ -3885,7 +3885,7 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 
 #### OAuth2 UMA JPA
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.uma.resourceSet.jpa`.
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.uma.resource-set.jpa`.
 
 ## Localization
 
@@ -3903,7 +3903,7 @@ If the user changes the language, a special cookie is created by CAS to contain 
 ```properties
 # cas.sso.allowMissingServiceParameter=true
 # cas.sso.createSsoCookieOnRenewAuthn=true
-# cas.sso.proxyAuthnEnabled=true
+# cas.sso.proxy-authn-enabled=true
 # cas.sso.renewAuthnEnabled=true
 # cas.sso.requiredServicePattern=
 ```
@@ -4220,7 +4220,7 @@ cas.events.enabled=true
 # cas.events.trackGeolocation=false
 
 # Control whether CAS should monitor configuration files and auto-refresh context.
-# cas.events.trackConfigurationModifications=true
+# cas.events.track-configuration-modifications=true
 ```
 
 ### InfluxDb Events
@@ -4248,38 +4248,38 @@ configuration settings for this feature are available [here](Configuration-Prope
 Control how CAS should respond and validate incoming HTTP requests.
 
 ```properties
-# cas.httpWebRequest.header.enabled=true
+# cas.http-web-request.header.enabled=true
 
-# cas.httpWebRequest.header.xframe=true
-# cas.httpWebRequest.header.xframeOptions=DENY
+# cas.http-web-request.header.xframe=true
+# cas.http-web-request.header.xframeOptions=DENY
 
-# cas.httpWebRequest.header.xss=true
-# cas.httpWebRequest.header.xssOptions=1; mode=block
+# cas.http-web-request.header.xss=true
+# cas.http-web-request.header.xssOptions=1; mode=block
 
-# cas.httpWebRequest.header.hsts=true
-# cas.httpWebRequest.header.xcontent=true
-# cas.httpWebRequest.header.cache=true
-# cas.httpWebRequest.header.contentSecurityPolicy=
+# cas.http-web-request.header.hsts=true
+# cas.http-web-request.header.xcontent=true
+# cas.http-web-request.header.cache=true
+# cas.http-web-request.header.contentSecurityPolicy=
 
-# cas.httpWebRequest.cors.enabled=false
-# cas.httpWebRequest.cors.allowCredentials=false
-# cas.httpWebRequest.cors.allowOrigins[0]=
-# cas.httpWebRequest.cors.allowMethods[0]=*
-# cas.httpWebRequest.cors.allowHeaders[0]=*
-# cas.httpWebRequest.cors.maxAge=3600
-# cas.httpWebRequest.cors.exposedHeaders[0]=
+# cas.http-web-request.cors.enabled=false
+# cas.http-web-request.cors.allowCredentials=false
+# cas.http-web-request.cors.allowOrigins[0]=
+# cas.http-web-request.cors.allowMethods[0]=*
+# cas.http-web-request.cors.allowHeaders[0]=*
+# cas.http-web-request.cors.maxAge=3600
+# cas.http-web-request.cors.exposedHeaders[0]=
 
-# cas.httpWebRequest.web.forceEncoding=true
-# cas.httpWebRequest.web.encoding=UTF-8
+# cas.http-web-request.web.forceEncoding=true
+# cas.http-web-request.web.encoding=UTF-8
 
-# cas.httpWebRequest.allowMultiValueParameters=false
-# cas.httpWebRequest.onlyPostParams=username,password
-# cas.httpWebRequest.paramsToCheck=ticket,service,renew,gateway,warn,method,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token
-# cas.httpWebRequest.patternToBlock=
-# cas.httpWebRequest.charactersToForbid=none
+# cas.http-web-request.allowMultiValueParameters=false
+# cas.http-web-request.onlyPostParams=username,password
+# cas.http-web-request.paramsToCheck=ticket,service,renew,gateway,warn,method,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token
+# cas.http-web-request.patternToBlock=
+# cas.http-web-request.charactersToForbid=none
 
-# cas.httpWebRequest.customHeaders.headerName1=headerValue1
-# cas.httpWebRequest.customHeaders.headerName2=headerValue2
+# cas.http-web-request.customHeaders.headerName1=headerValue1
+# cas.http-web-request.customHeaders.headerName2=headerValue2
 
 # spring.http.encoding.charset=UTF-8
 # spring.http.encoding.force=true
@@ -4325,21 +4325,21 @@ The default options are available for hostname verification:
 See [this guide](../services/Service-Management.html) to learn more.
 
 ```properties
-# cas.serviceRegistry.watcherEnabled=true
+# cas.service-registry.watcherEnabled=true
 
 # Auto-initialize the registry from default JSON service definitions
-# cas.serviceRegistry.initFromJson=false
+# cas.service-registry.initFromJson=false
 
-# cas.serviceRegistry.managementType=DEFAULT|DOMAIN
+# cas.service-registry.managementType=DEFAULT|DOMAIN
 ```
 
-Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.serviceRegistry`.
+Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.service-registry`.
 
 ### Service Registry Notifications
 
 Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
-under the configuration key `cas.serviceRegistry`. SMS notifications settings for this feature are 
-available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.serviceRegistry`.
+under the configuration key `cas.service-registry`. SMS notifications settings for this feature are 
+available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.service-registry`.
 
 ### JSON Service Registry
 
@@ -4347,7 +4347,7 @@ If the underlying service registry is using local system resources
 to locate JSON service definitions, decide how those resources should be found.
 
 ```properties
-# cas.serviceRegistry.json.location=classpath:/services
+# cas.service-registry.json.location=classpath:/services
 ```
 
 To learn more about this topic, [please review this guide](../services/JSON-Service-Management.html).
@@ -4358,7 +4358,7 @@ If the underlying service registry is using local system resources
 to locate YAML service definitions, decide how those resources should be found.
 
 ```properties
-# cas.serviceRegistry.yaml.location=classpath:/services
+# cas.service-registry.yaml.location=classpath:/services
 ```
 
 To learn more about this topic, [please review this guide](../services/YAML-Service-Management.html).
@@ -4368,18 +4368,18 @@ To learn more about this topic, [please review this guide](../services/YAML-Serv
 Works with git repository to fetch and manage service registry definitions.
 
 ```properties
-# cas.serviceRegistry.git.repositoryUrl=https://github.com/repository
-# cas.serviceRegistry.git.branchesToClone=master
-# cas.serviceRegistry.git.activeBranch=master
-# cas.serviceRegistry.git.signCommits=false
-# cas.serviceRegistry.git.username=
-# cas.serviceRegistry.git.password=
-# cas.serviceRegistry.git.cloneDirectory=file:/tmp/cas-service-registry
-# cas.serviceRegistry.git.pushChanges=false
-# cas.serviceRegistry.git.privateKeyPassphrase=
-# cas.serviceRegistry.git.privateKeyPath=
-# cas.serviceRegistry.git.sshSessionPassword=
-# cas.serviceRegistry.git.timeout=PT10S
+# cas.service-registry.git.repositoryUrl=https://github.com/repository
+# cas.service-registry.git.branchesToClone=master
+# cas.service-registry.git.activeBranch=master
+# cas.service-registry.git.signCommits=false
+# cas.service-registry.git.username=
+# cas.service-registry.git.password=
+# cas.service-registry.git.cloneDirectory=file:/tmp/cas-service-registry
+# cas.service-registry.git.pushChanges=false
+# cas.service-registry.git.privateKeyPassphrase=
+# cas.service-registry.git.privateKeyPath=
+# cas.service-registry.git.sshSessionPassword=
+# cas.service-registry.git.timeout=PT10S
 ```
 
 To learn more about this topic, [please review this guide](../services/Git-Service-Management.html).
@@ -4389,67 +4389,67 @@ To learn more about this topic, [please review this guide](../services/Git-Servi
 To learn more about this topic, [please review this guide](../services/REST-Service-Management.html).
 
 ```properties
-# cas.serviceRegistry.rest.url=https://example.api.org
-# cas.serviceRegistry.rest.basicAuthUsername=
-# cas.serviceRegistry.rest.basicAuthPassword=
+# cas.service-registry.rest.url=https://example.api.org
+# cas.service-registry.rest.basicAuthUsername=
+# cas.service-registry.rest.basicAuthPassword=
 ```
 
 ### CouchDb Service Registry
 
-To learn more about this topic, [please review this guide](../services/CouchDb-Service-Management.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.serviceRegistry`.
+To learn more about this topic, [please review this guide](../services/CouchDb-Service-Management.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.service-registry`.
 
 ### Redis Service Registry
 
-To learn more about this topic, [please review this guide](../services/Redis-Service-Management.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.serviceRegistry`.
+To learn more about this topic, [please review this guide](../services/Redis-Service-Management.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.service-registry`.
 
 ### CosmosDb Service Registry
 
 To learn more about this topic, [please review this guide](../services/CosmosDb-Service-Management.html).
 
 ```properties
-# cas.serviceRegistry.cosmosDb.uri=
-# cas.serviceRegistry.cosmosDb.key=
-# cas.serviceRegistry.cosmosDb.database=
-# cas.serviceRegistry.cosmosDb.collection=
-# cas.serviceRegistry.cosmosDb.throughput=10000
-# cas.serviceRegistry.cosmosDb.dropCollection=true
-# cas.serviceRegistry.cosmosDb.consistencyLevel=Session
+# cas.service-registry.cosmosDb.uri=
+# cas.service-registry.cosmosDb.key=
+# cas.service-registry.cosmosDb.database=
+# cas.service-registry.cosmosDb.collection=
+# cas.service-registry.cosmosDb.throughput=10000
+# cas.service-registry.cosmosDb.dropCollection=true
+# cas.service-registry.cosmosDb.consistencyLevel=Session
 ```
 
 ### DynamoDb Service Registry
 
 To learn more about this topic, [please review this guide](../services/DynamoDb-Service-Management.html).
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
-under the configuration key `cas.serviceRegistry`.
+under the configuration key `cas.service-registry`.
 AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
-under the configuration key `cas.serviceRegistry.dynamoDb`.
+under the configuration key `cas.service-registry.dynamoDb`.
 
 ```properties
-# cas.serviceRegistry.dynamoDb.tableName=DynamoDbCasServices
+# cas.service-registry.dynamoDb.tableName=DynamoDbCasServices
 ```
 
 ### Cassandra Service Registry
 
 To learn more about this topic, [please review this guide](../services/Cassandra-Service-Management.html).
 
-Common Cassandra settings for this feature are available [here](Configuration-Properties-Common.html#cassandra-configuration) under the configuration key `cas.serviceRegistry.cassandra`.
+Common Cassandra settings for this feature are available [here](Configuration-Properties-Common.html#cassandra-configuration) under the configuration key `cas.service-registry.cassandra`.
 
 ### MongoDb Service Registry
 
 Store CAS service definitions inside a MongoDb instance. To learn more about this topic, [please review this guide](../services/MongoDb-Service-Management.html).
- Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.serviceRegistry`.
+ Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.service-registry`.
 
 ### LDAP Service Registry
 
 Control how CAS services should be found inside an LDAP instance.
-To learn more about this topic, [please review this guide](../services/LDAP-Service-Management.html).  LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.serviceRegistry.ldap`.
+To learn more about this topic, [please review this guide](../services/LDAP-Service-Management.html).  LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.service-registry.ldap`.
 
 ```properties
-# cas.serviceRegistry.ldap.serviceDefinitionAttribute=description
-# cas.serviceRegistry.ldap.idAttribute=uid
-# cas.serviceRegistry.ldap.objectClass=casRegisteredService
-# cas.serviceRegistry.ldap.searchFilter=(%s={0})
-# cas.serviceRegistry.ldap.loadFilter=(objectClass=%s)
+# cas.service-registry.ldap.serviceDefinitionAttribute=description
+# cas.service-registry.ldap.idAttribute=uid
+# cas.service-registry.ldap.objectClass=casRegisteredService
+# cas.service-registry.ldap.searchFilter=(%s={0})
+# cas.service-registry.ldap.loadFilter=(objectClass=%s)
 ```
 
 ### Couchbase Service Registry
@@ -4457,14 +4457,14 @@ To learn more about this topic, [please review this guide](../services/LDAP-Serv
 Control how CAS services should be found inside a Couchbase instance.
 To learn more about this topic, [please review this guide](../services/Couchbase-Service-Management.html). 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) 
-under the configuration key `cas.serviceRegistry.couchbase`.
+under the configuration key `cas.service-registry.couchbase`.
 
 ### Database Service Registry
 
 Control how CAS services should be found inside a database instance.
 To learn more about this topic, [please review this guide](../services/JPA-Service-Management.html). 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
-under the configuration key `cas.serviceRegistry.jpa`.
+under the configuration key `cas.service-registry.jpa`.
 
 ## Service Registry Replication
 
@@ -4479,8 +4479,8 @@ Replication modes may be configured per the following options:
 | `ACTIVE_PASSIVE`    | Default. One master node keeps definitions and streams changes to other passive nodes.
 
 ```properties
-# cas.serviceRegistry.stream.enabled=true
-# cas.serviceRegistry.stream.replicationMode=ACTIVE_ACTIVE|ACTIVE_PASSIVE
+# cas.service-registry.stream.enabled=true
+# cas.service-registry.stream.replicationMode=ACTIVE_ACTIVE|ACTIVE_PASSIVE
 ```
 
 ## Service Registry Replication Hazelcast
@@ -4488,10 +4488,10 @@ Replication modes may be configured per the following options:
 Control how CAS services definition files should be replicated across a CAS cluster backed by a distributed Hazelcast cache.
 To learn more about this topic, [please review this guide](../services/Configuring-Service-Replication.html).
 
-Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.serviceRegistry.stream.hazelcast.config`.
+Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.service-registry.stream.hazelcast.config`.
 
 ```properties
-# cas.serviceRegistry.stream.hazelcast.duration=PT1M
+# cas.service-registry.stream.hazelcast.duration=PT1M
 ```
 
 ## Ticket Registry
@@ -4868,12 +4868,12 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 Display Google's reCAPTCHA widget on the CAS login page.
 
 ```properties
-# cas.googleRecaptcha.enabled=true
-# cas.googleRecaptcha.verifyUrl=https://www.google.com/recaptcha/api/siteverify
-# cas.googleRecaptcha.siteKey=
-# cas.googleRecaptcha.secret=
-# cas.googleRecaptcha.invisible=
-# cas.googleRecaptcha.position=bottomright
+# cas.google-recaptcha.enabled=true
+# cas.google-recaptcha.verifyUrl=https://www.google.com/recaptcha/api/siteverify
+# cas.google-recaptcha.siteKey=
+# cas.google-recaptcha.secret=
+# cas.google-recaptcha.invisible=
+# cas.google-recaptcha.position=bottomright
 ```
 
 ## Google Analytics
@@ -5038,14 +5038,14 @@ Decide how CAS should attempt to determine whether AUP is accepted.
 To learn more about this topic, [please review this guide](../webflow/Webflow-Customization-AUP.html).
 
 ```properties
-# cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
-# cas.acceptableUsagePolicy.aupPolicyTermsAttributeName=membership
+# cas.acceptable-usage-policy.aupAttributeName=aupAccepted
+# cas.acceptable-usage-policy.aupPolicyTermsAttributeName=membership
 ```
 
 #### Default
 
 ```properties
-# cas.acceptableUsagePolicy.in-memory.scope=GLOBAL|AUTHENTICATION
+# cas.acceptable-usage-policy.in-memory.scope=GLOBAL|AUTHENTICATION
 ```                                                    
 
 The following scopes are supported:
@@ -5058,47 +5058,47 @@ The following scopes are supported:
 #### Groovy
 
 ```properties
-# cas.acceptableUsagePolicy.groovy.location=file:/etc/cas/config/aup.groovy
+# cas.acceptable-usage-policy.groovy.location=file:/etc/cas/config/aup.groovy
 ```
 
 #### REST
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.acceptableUsagePolicy.rest`.
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.acceptable-usage-policy.rest`.
 
 #### JDBC
 
-If AUP is controlled via JDBC, decide how choices should be remembered back inside the database instance. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.acceptableUsagePolicy.jdbc`.
+If AUP is controlled via JDBC, decide how choices should be remembered back inside the database instance. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.acceptable-usage-policy.jdbc`.
 
 ```properties
-# cas.acceptableUsagePolicy.jdbc.tableName=usage_policies_table
-# cas.acceptableUsagePolicy.jdbc.aupColumn=
-# cas.acceptableUsagePolicy.jdbc.principalIdColumn=username
-# cas.acceptableUsagePolicy.jdbc.principalIdAttribute=
-# cas.acceptableUsagePolicy.jdbc.sqlUpdateAUP=UPDATE %s SET %s=true WHERE %s=?
+# cas.acceptable-usage-policy.jdbc.tableName=usage_policies_table
+# cas.acceptable-usage-policy.jdbc.aupColumn=
+# cas.acceptable-usage-policy.jdbc.principalIdColumn=username
+# cas.acceptable-usage-policy.jdbc.principalIdAttribute=
+# cas.acceptable-usage-policy.jdbc.sqlUpdateAUP=UPDATE %s SET %s=true WHERE %s=?
 ```
 
 #### CouchDb
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.acceptableUsagePolicy`. This feature uses the `asynchronous` setting.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.acceptable-usage-policy`. This feature uses the `asynchronous` setting.
 
 #### MongoDb
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.acceptableUsagePolicy`.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.acceptable-usage-policy`.
 
 #### Redis
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.acceptableUsagePolicy`.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.acceptable-usage-policy`.
 
 #### LDAP
 
-If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance. LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.acceptableUsagePolicy.ldap[0]`.
+If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance. LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.acceptable-usage-policy.ldap[0]`.
 
 #### Disable Acceptable Usage Policy
 
 Allow acceptable usage policy webflow to be disabled - requires restart.
 
 ```properties
-cas.acceptableUsagePolicy.enabled=true
+cas.acceptable-usage-policy.enabled=true
 ```
 
 ## REST API
@@ -5110,7 +5110,7 @@ To learn more about this topic, [please review this guide](../protocol/REST-Prot
 # cas.rest.attributeValue=
 # cas.rest.headerAuth=
 # cas.rest.bodyAuth=
-# cas.rest.tlsClientAuth=
+# cas.rest.tls-client-auth=
 ```
 
 ## Metrics
