@@ -30,18 +30,18 @@ public class RevokedCertificateException extends GeneralSecurityException {
      */
     public static final String CRL_REASON_OID = "2.5.29.21";
 
-    /**
-     * The Constant serialVersionUID.
-     */
     private static final long serialVersionUID = 8827788431199129708L;
+
     /**
      * The revocation date.
      */
     private final ZonedDateTime revocationDate;
+
     /**
      * The serial.
      */
     private final BigInteger serial;
+
     /**
      * The reason.
      */
@@ -67,6 +67,24 @@ public class RevokedCertificateException extends GeneralSecurityException {
     }
 
     /**
+     * Gets the revocation date.
+     *
+     * @return Returns the revocationDate.
+     */
+    public ZonedDateTime getRevocationDate() {
+        return Optional.ofNullable(this.revocationDate).map(ZonedDateTime::from).orElse(null);
+    }
+
+    @Override
+    public String getMessage() {
+        if (this.reason != null) {
+            return String.format("Certificate %s revoked on %s for reason %s",
+                this.serial, this.revocationDate, this.reason);
+        }
+        return String.format("Certificate %s revoked on %s", this.serial, this.revocationDate);
+    }
+
+    /**
      * Get reason from the x509 entry.
      *
      * @param entry the entry
@@ -85,24 +103,6 @@ public class RevokedCertificateException extends GeneralSecurityException {
             }
         }
         return null;
-    }
-
-    /**
-     * Gets the revocation date.
-     *
-     * @return Returns the revocationDate.
-     */
-    public ZonedDateTime getRevocationDate() {
-        return Optional.ofNullable(this.revocationDate).map(ZonedDateTime::from).orElse(null);
-    }
-
-    @Override
-    public String getMessage() {
-        if (this.reason != null) {
-            return String.format("Certificate %s revoked on %s for reason %s",
-                this.serial, this.revocationDate, this.reason);
-        }
-        return String.format("Certificate %s revoked on %s", this.serial, this.revocationDate);
     }
 
     /**
