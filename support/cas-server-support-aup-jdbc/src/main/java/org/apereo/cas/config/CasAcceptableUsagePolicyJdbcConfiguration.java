@@ -13,6 +13,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -41,6 +42,8 @@ public class CasAcceptableUsagePolicyJdbcConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "acceptableUsagePolicyDataSource")
     public DataSource acceptableUsagePolicyDataSource() {
         val jdbc = casProperties.getAcceptableUsagePolicy().getJdbc();
         return JpaBeans.newDataSource(jdbc);

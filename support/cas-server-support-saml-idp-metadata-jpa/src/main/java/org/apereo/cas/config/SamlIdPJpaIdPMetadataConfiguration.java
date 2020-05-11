@@ -77,6 +77,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "dataSourceSamlMetadataIdP")
     public DataSource dataSourceSamlMetadataIdP() {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
         return JpaBeans.newDataSource(idp.getJpa());

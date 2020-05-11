@@ -62,6 +62,8 @@ public class GoogleAuthenticatorJpaConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "dataSourceGoogleAuthenticator")
+    @RefreshScope
     public DataSource dataSourceGoogleAuthenticator() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getGauth().getJpa());
     }

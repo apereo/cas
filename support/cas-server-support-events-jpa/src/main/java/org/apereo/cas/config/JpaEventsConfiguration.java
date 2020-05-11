@@ -56,6 +56,8 @@ public class JpaEventsConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "dataSourceEvent")
+    @RefreshScope
     public DataSource dataSourceEvent() {
         return JpaBeans.newDataSource(casProperties.getEvents().getJpa());
     }
