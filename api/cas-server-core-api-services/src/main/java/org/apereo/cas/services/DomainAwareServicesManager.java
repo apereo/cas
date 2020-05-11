@@ -20,7 +20,6 @@ public interface DomainAwareServicesManager {
         return Stream.of("default");
     }
 
-
     /**
      * Return a list of services for the passed domain.
      *
