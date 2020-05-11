@@ -10,16 +10,20 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
+import org.jose4j.jwk.EllipticCurveJsonWebKey;
 import org.jose4j.jwk.HttpsJwks;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.io.File;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -32,6 +36,13 @@ import java.util.function.Predicate;
 @Slf4j
 @Setter
 public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor implements AutoCloseable, DisposableBean {
+    private static final Map<String, String> KEY_MANAGEMENT_ALGORITHM_IDENTIFIER_MAP = new HashMap<>();
+
+    static {
+        KEY_MANAGEMENT_ALGORITHM_IDENTIFIER_MAP.put(RsaJsonWebKey.KEY_TYPE, KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+        KEY_MANAGEMENT_ALGORITHM_IDENTIFIER_MAP.put(EllipticCurveJsonWebKey.KEY_TYPE, KeyManagementAlgorithmIdentifiers.ECDH_ES_A256KW);
+    }
+
     private final FileWatcherService keystorePatchWatcherService;
     private final Optional<String> keyIdToUse;
     private final Optional<HttpsJwks> httpsJkws;
@@ -107,9 +118,9 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
     }
 
     private void configureSigningParametersForDecoding() {
-        val result = findRsaJsonWebKeyByProvidedKeyId(webKeySet.getJsonWebKeys());
+        val result = findPublicJsonWebKeyByProvidedKeyId(webKeySet.getJsonWebKeys());
         if (result.isEmpty()) {
-            throw new IllegalArgumentException("Could not locate RSA JSON web key from keystore");
+            throw new IllegalArgumentException("Could not locate public JSON web key from keystore");
         }
         val key = result.get();
         if (key.getPublicKey() == null) {
@@ -124,10 +135,10 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
         } else {
             try {
                 val keys = this.httpsJkws.get().getJsonWebKeys();
-                val encKeyResult = findRsaJsonWebKey(keys, jsonWebKey -> true);
+                val encKeyResult = findPublicJsonWebKey(keys, jsonWebKey -> true);
 
                 if (encKeyResult.isEmpty()) {
-                    throw new IllegalArgumentException("Could not locate RSA JSON web key from endpoint");
+                    throw new IllegalArgumentException("Could not locate JSON web key from endpoint");
                 }
                 val encKey = encKeyResult.get();
                 if (encKey.getPrivateKey() == null) {
@@ -135,7 +146,11 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
                 }
                 setSecretKeyEncryptionKey(encKey.getPrivateKey());
                 setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
-                setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+                val keyManagementAlgorithmIdentifier = KEY_MANAGEMENT_ALGORITHM_IDENTIFIER_MAP.get(encKey.getKeyType());
+                if (keyManagementAlgorithmIdentifier == null) {
+                    throw new IllegalArgumentException("Unsupported public key format");
+                }
+                setEncryptionAlgorithm(keyManagementAlgorithmIdentifier);
             } catch (final Exception e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
@@ -148,7 +163,7 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
         } else {
             try {
                 val keys = this.httpsJkws.get().getJsonWebKeys();
-                val encKeyResult = findRsaJsonWebKey(keys, jsonWebKey -> true);
+                val encKeyResult = findPublicJsonWebKey(keys, jsonWebKey -> true);
 
                 if (encKeyResult.isEmpty()) {
                     throw new IllegalArgumentException("Could not locate RSA JSON web key from endpoint");
@@ -159,7 +174,11 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
                 }
                 setSecretKeyEncryptionKey(encKey.getPublicKey());
                 setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
-                setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+                val keyManagementAlgorithmIdentifier = KEY_MANAGEMENT_ALGORITHM_IDENTIFIER_MAP.get(encKey.getKeyType());
+                if (keyManagementAlgorithmIdentifier == null) {
+                    throw new IllegalArgumentException("Unsupported public key format");
+                }
+                setEncryptionAlgorithm(keyManagementAlgorithmIdentifier);
             } catch (final Exception e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
@@ -167,9 +186,9 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
     }
 
     private void configureSigningParametersForEncoding() {
-        val result = findRsaJsonWebKeyByProvidedKeyId(webKeySet.getJsonWebKeys());
+        val result = findPublicJsonWebKeyByProvidedKeyId(webKeySet.getJsonWebKeys());
         if (result.isEmpty()) {
-            throw new IllegalArgumentException("Could not locate RSA JSON web key from keystore");
+            throw new IllegalArgumentException("Could not locate public JSON web key from keystore");
         }
         val key = result.get();
         if (key.getPrivateKey() == null) {
@@ -178,19 +197,19 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
         setSigningKey(key.getPrivateKey());
     }
 
-    private Optional<RsaJsonWebKey> findRsaJsonWebKeyByProvidedKeyId(final List<JsonWebKey> keys) {
+    private Optional<PublicJsonWebKey> findPublicJsonWebKeyByProvidedKeyId(final List<JsonWebKey> keys) {
         val predicate = this.keyIdToUse
             .<Predicate<JsonWebKey>>map(s -> jsonWebKey -> jsonWebKey.getKeyId()
             .equalsIgnoreCase(s))
             .orElseGet(() -> jsonWebKey -> true);
-        return findRsaJsonWebKey(keys, predicate);
+        return findPublicJsonWebKey(keys, predicate);
     }
 
-    private static Optional<RsaJsonWebKey> findRsaJsonWebKey(final List<JsonWebKey> keys, final Predicate<JsonWebKey> filter) {
+    private static Optional<PublicJsonWebKey> findPublicJsonWebKey(final List<JsonWebKey> keys, final Predicate<JsonWebKey> filter) {
         return keys
             .stream()
-            .filter(key -> key instanceof RsaJsonWebKey && filter.test(key))
-            .map(RsaJsonWebKey.class::cast)
+            .filter(key -> key instanceof PublicJsonWebKey && filter.test(key))
+            .map(PublicJsonWebKey.class::cast)
             .findFirst();
     }
 }
