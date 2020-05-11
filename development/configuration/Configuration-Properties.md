@@ -1742,6 +1742,9 @@ under the configuration key `cas.authn.passwordless.accounts.rest`.
 LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) 
 under the configuration key `cas.authn.passwordless.accounts.ldap`.
 
+MongoDb settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) 
+under the configuration key `cas.authn.passwordless.accounts.mongo`.
+
 ### Token Management
 
 ```properties

@@ -43,6 +43,21 @@ This strategy provides a static map of usernames that are linked to their method
 for testing and demo purposes. The key in the map is taken to be the username eligible for authentication while the value can either be an email
 address or phone number that would be used to contact the user with issued tokens.
 
+### MongoDb
+
+This strategy simply allows one to locate a user record in MongoDb. The designated MongoDb collection is expectd to carry objects of type `PasswordlessUserAccount` in JSON format. To see the relevant list of CAS 
+properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).
+
+Support is enabled by including the following module in the overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-passwordless-mongo</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
 ### LDAP
 
 This strategy simply allows one to locate a user record in an LDAP directory. The record is expected to carry the user's phone number
