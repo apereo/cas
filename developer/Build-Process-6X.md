@@ -60,8 +60,8 @@ The following commandline boolean flags are supported by the build and can be pa
 | `remoteDebuggingSuspend`          | Set to `true` to suspend JVM remote debugging until the debugger attaches to the running session.
 | `enableIncremental`               | Enable Gradle's incremental compilation feature.
 | `showStandardStreams`             | Let the build output logs that are sent to the standard streams. (i.e. console, etc)
-| `skipCheckstyle`                  | Skip running checkstyle checks.
-| `skipFindbugs`                    | Skip running findbugs checks.
+| `skipCheckstyle`                  | Skip running Checkstyle checks.
+| `skipSpotbugs`                    | Skip running Spotbugs checks.
 | `skipVersionConflict`             | If a dependency conflict is found, use the latest version rather than failing the build.
 | `skipNestedConfigMetadataGen`     | Skip generating configuration metadata for nested properties and generic collections.
 | `skipSonarqube`                   | Ignore reporting results to Sonarqube.
