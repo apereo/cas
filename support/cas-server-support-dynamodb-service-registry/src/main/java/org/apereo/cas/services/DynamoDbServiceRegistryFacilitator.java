@@ -65,7 +65,7 @@ public class DynamoDbServiceRegistryFacilitator {
      * Delete boolean.
      *
      * @param service the service
-     * @return the boolean
+     * @return true/false
      */
     public boolean delete(final RegisteredService service) {
         val del = new DeleteItemRequest().withTableName(dynamoDbProperties.getTableName())

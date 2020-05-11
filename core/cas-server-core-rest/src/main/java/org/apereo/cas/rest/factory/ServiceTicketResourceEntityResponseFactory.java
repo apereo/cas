@@ -31,7 +31,7 @@ public interface ServiceTicketResourceEntityResponseFactory extends Ordered {
      *
      * @param service              the service
      * @param authenticationResult the authentication result
-     * @return the boolean
+     * @return true/false
      */
     boolean supports(Service service, AuthenticationResult authenticationResult);
 }

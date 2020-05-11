@@ -62,7 +62,7 @@ public class CommunicationsManager {
      * @param emailProperties the email properties
      * @param to              the to
      * @param body            the body
-     * @return the boolean
+     * @return true/false
      */
     public boolean email(final EmailProperties emailProperties, final String to, final String body) {
         try {
@@ -105,7 +105,7 @@ public class CommunicationsManager {
      * @param attribute the attribute
      * @param text      the text
      * @param from      the from
-     * @return the boolean
+     * @return true/false
      */
     public boolean sms(final Principal principal,
                        final String attribute,
@@ -126,7 +126,7 @@ public class CommunicationsManager {
      * @param from the from
      * @param to   the to
      * @param text the text
-     * @return the boolean
+     * @return true/false
      */
     public boolean sms(final String from, final String to, final String text) {
         if (!isSmsSenderDefined() || StringUtils.isBlank(text) || StringUtils.isBlank(from)) {

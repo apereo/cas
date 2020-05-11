@@ -39,7 +39,7 @@ public class SurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegis
      * Do principal attributes allow surrogate service access?.
      *
      * @param principalAttributes the principal attributes
-     * @return the boolean
+     * @return true/false
      */
     protected boolean doPrincipalAttributesAllowSurrogateServiceAccess(final Map<String, Object> principalAttributes) {
         if (!enoughRequiredAttributesAvailableToProcess(principalAttributes, this.surrogateRequiredAttributes)) {

@@ -68,7 +68,7 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
     /**
      * Is dynamic client registration request protected boolean.
      *
-     * @return the boolean
+     * @return true/false
      */
     private boolean isDynamicClientRegistrationRequestProtected() {
         return this.dynamicClientRegistrationMode == OidcConstants.DynamicClientRegistrationMode.PROTECTED;
@@ -78,7 +78,7 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
      * Is dynamic client registration request.
      *
      * @param requestPath the request path
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isDynamicClientRegistrationRequest(final String requestPath) {
         return doesUriMatchPattern(requestPath, OidcConstants.REGISTRATION_URL);
@@ -88,7 +88,7 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
      * Is client configuration request.
      *
      * @param requestPath the request path
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isClientConfigurationRequest(final String requestPath) {
         return doesUriMatchPattern(requestPath, OidcConstants.CLIENT_CONFIGURATION_URL);

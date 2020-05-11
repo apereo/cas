@@ -32,7 +32,7 @@ public abstract class BaseSurrogateAuthenticationService implements SurrogateAut
      * @param surrogate the surrogate
      * @param principal the principal
      * @param service   the service
-     * @return the boolean
+     * @return true/false
      */
     protected abstract boolean canAuthenticateAsInternal(String surrogate, Principal principal, Optional<Service> service);
 }

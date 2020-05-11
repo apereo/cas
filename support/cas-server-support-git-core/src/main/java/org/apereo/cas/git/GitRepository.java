@@ -149,7 +149,7 @@ public class GitRepository implements DisposableBean {
     /**
      * Pull repository changes.
      *
-     * @return the boolean
+     * @return true/false
      */
     @SneakyThrows
     public boolean pull() {

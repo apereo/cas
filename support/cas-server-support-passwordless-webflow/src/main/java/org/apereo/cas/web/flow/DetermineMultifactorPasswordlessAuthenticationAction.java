@@ -116,7 +116,7 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends Abstra
      *
      * @param requestContext the request context
      * @param user           the user
-     * @return the boolean
+     * @return true/false
      */
     protected boolean shouldActivateMultifactorAuthenticationFor(final RequestContext requestContext,
                                                                  final PasswordlessUserAccount user) {

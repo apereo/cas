@@ -23,7 +23,7 @@ public interface CasEventRepositoryFilter {
      * Whether this event can be saved/tracked by CAS event repository.
      *
      * @param event the event
-     * @return the boolean
+     * @return true/false
      */
     default boolean shouldSaveEvent(CasEvent event) {
         return true;

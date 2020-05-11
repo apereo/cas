@@ -40,7 +40,7 @@ public interface SamlRegisteredServiceMetadataResolver {
      * Supports this service?
      *
      * @param service the service
-     * @return the boolean
+     * @return true/false
      */
     boolean supports(SamlRegisteredService service);
 

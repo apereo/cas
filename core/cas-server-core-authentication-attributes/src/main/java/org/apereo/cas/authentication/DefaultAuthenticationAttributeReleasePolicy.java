@@ -86,7 +86,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
      * Is attribute allowed for release?
      *
      * @param attributeName the attribute name
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isAttributeAllowedForRelease(final String attributeName) {
         return !this.neverReleaseAttributes.contains(attributeName);

@@ -39,7 +39,7 @@ public class ValidateLdapConnectionCommand {
      * @param searchFilter   the search filter
      * @param userPassword   the user password
      * @param userAttributes the user attributes
-     * @return the boolean
+     * @return true/false
      */
     @ShellMethod(key = "validate-ldap", value = "Test connections to an LDAP server to verify connectivity, SSL, etc")
     public static boolean validateLdap(

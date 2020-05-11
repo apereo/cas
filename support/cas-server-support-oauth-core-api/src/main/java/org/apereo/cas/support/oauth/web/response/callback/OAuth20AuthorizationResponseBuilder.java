@@ -40,7 +40,7 @@ public interface OAuth20AuthorizationResponseBuilder {
      * Supports request?
      *
      * @param context the context
-     * @return the boolean
+     * @return true/false
      */
     boolean supports(JEEContext context);
 

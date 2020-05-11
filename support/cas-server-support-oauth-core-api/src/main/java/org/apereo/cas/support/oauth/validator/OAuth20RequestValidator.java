@@ -15,7 +15,7 @@ public interface OAuth20RequestValidator extends Ordered {
      * Validate request.
      *
      * @param context the context
-     * @return the boolean
+     * @return true/false
      */
     boolean validate(JEEContext context);
 
@@ -23,7 +23,7 @@ public interface OAuth20RequestValidator extends Ordered {
      * Supports request?
      *
      * @param context the context
-     * @return the boolean
+     * @return true/false
      */
     boolean supports(JEEContext context);
 

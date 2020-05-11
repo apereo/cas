@@ -112,7 +112,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     /**
      * Is allowed to generate refresh token ?
      *
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isAllowedToGenerateRefreshToken() {
         return true;

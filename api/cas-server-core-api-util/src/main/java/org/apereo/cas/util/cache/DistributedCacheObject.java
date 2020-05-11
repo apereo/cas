@@ -59,7 +59,7 @@ public class DistributedCacheObject<V extends Serializable> implements Serializa
      * Contains property?
      *
      * @param name the name
-     * @return the boolean
+     * @return true/false
      */
     public boolean containsProperty(final String name) {
         return this.properties.containsKey(name);

@@ -309,7 +309,7 @@ public class EncodingUtils {
      * Is json web key boolean.
      *
      * @param key the key
-     * @return the boolean
+     * @return true/false
      */
     public boolean isJsonWebKey(final String key) {
         try {
@@ -581,7 +581,7 @@ public class EncodingUtils {
     /**
      * Is jce installed ?
      *
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isJceInstalled() {
         try {

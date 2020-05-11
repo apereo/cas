@@ -63,7 +63,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
      *
      * @param principal  the principal
      * @param decisionId the decision id
-     * @return the boolean
+     * @return true/false
      */
     @DeleteOperation
     public boolean revokeConsents(@Selector final String principal, @Selector final long decisionId) {

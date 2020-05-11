@@ -53,7 +53,7 @@ public interface OAuth20TokenSigningAndEncryptionService {
      * Should sign token for service?
      *
      * @param svc the svc
-     * @return the boolean
+     * @return true/false
      */
     default boolean shouldSignToken(final OAuthRegisteredService svc) {
         return false;
@@ -63,7 +63,7 @@ public interface OAuth20TokenSigningAndEncryptionService {
      * Should encrypt token for service?
      *
      * @param svc the svc
-     * @return the boolean
+     * @return true/false
      */
     default boolean shouldEncryptToken(final OAuthRegisteredService svc) {
         return false;

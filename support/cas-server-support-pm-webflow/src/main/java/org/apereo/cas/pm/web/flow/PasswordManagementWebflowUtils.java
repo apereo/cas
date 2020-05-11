@@ -72,7 +72,7 @@ public class PasswordManagementWebflowUtils {
      * Is password reset security questions enabled boolean.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isPasswordResetSecurityQuestionsEnabled(final RequestContext requestContext) {
         val flowScope = requestContext.getFlowScope();

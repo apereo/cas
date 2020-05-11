@@ -152,7 +152,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     /**
      * Are attribute repository ids defined boolean.
      *
-     * @return the boolean
+     * @return true/false
      */
     @JsonIgnore
     protected boolean areAttributeRepositoryIdsDefined() {

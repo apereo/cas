@@ -51,7 +51,7 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
      * Should sign token for service?
      *
      * @param svc the svc
-     * @return the boolean
+     * @return true/false
      */
     @Override
     public boolean shouldSignToken(final OAuthRegisteredService svc) {

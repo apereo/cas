@@ -23,7 +23,7 @@ public interface UrlValidator {
      * <p>Checks if a field has a valid domain.</p>
      *
      * @param value the value
-     * @return the boolean
+     * @return true/false
      */
     boolean isValidDomain(String value);
 

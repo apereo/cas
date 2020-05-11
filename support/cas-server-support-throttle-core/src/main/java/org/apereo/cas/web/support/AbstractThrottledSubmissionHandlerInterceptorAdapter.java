@@ -109,7 +109,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * Should response be recorded as failure boolean.
      *
      * @param response the response
-     * @return the boolean
+     * @return true/false
      */
     protected boolean shouldResponseBeRecordedAsFailure(final HttpServletResponse response) {
         val status = response.getStatus();
@@ -134,7 +134,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * Compute rate in submissions/sec between last two authn failures and compare with threshold.
      *
      * @param failures the failures
-     * @return the boolean
+     * @return true/false
      */
     protected boolean calculateFailureThresholdRateAndCompare(final List<Date> failures) {
         if (failures.size() < 2) {

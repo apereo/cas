@@ -59,7 +59,7 @@ public class ScriptingUtils {
      * Is inline groovy script ?.
      *
      * @param script the script
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isInlineGroovyScript(final String script) {
         return getMatcherForInlineGroovyScript(script).find();
@@ -69,7 +69,7 @@ public class ScriptingUtils {
      * Is external groovy script ?.
      *
      * @param script the script
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isExternalGroovyScript(final String script) {
         return getMatcherForExternalGroovyScript(script).find();

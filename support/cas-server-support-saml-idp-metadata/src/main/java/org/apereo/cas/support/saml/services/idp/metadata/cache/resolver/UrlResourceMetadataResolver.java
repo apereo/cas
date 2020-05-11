@@ -152,7 +152,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      * Should http response status be processed?
      *
      * @param status the status
-     * @return the boolean
+     * @return true/false
      */
     protected boolean shouldHttpResponseStatusBeProcessed(final HttpStatus status) {
         return status.is2xxSuccessful();

@@ -118,7 +118,7 @@ public class OAuth20JwtAccessTokenEncoder {
      * Should encode as jwt.
      *
      * @param oAuthRegisteredService the o auth registered service
-     * @return the boolean
+     * @return true/false
      */
     protected boolean shouldEncodeAsJwt(final OAuthRegisteredService oAuthRegisteredService) {
         return casProperties.getAuthn().getOauth().getAccessToken().isCreateAsJwt()

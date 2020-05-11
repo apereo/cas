@@ -186,7 +186,7 @@ public class ServiceValidationViewFactory {
      * Contains view .
      *
      * @param type the type
-     * @return the boolean
+     * @return true/false
      */
     public boolean containsView(final ServiceValidationViewTypes type) {
         return containsView(type.getType());
@@ -196,7 +196,7 @@ public class ServiceValidationViewFactory {
      * Contains view .
      *
      * @param type the type
-     * @return the boolean
+     * @return true/false
      */
     public boolean containsView(final String type) {
         return registeredViews.containsKey(type);

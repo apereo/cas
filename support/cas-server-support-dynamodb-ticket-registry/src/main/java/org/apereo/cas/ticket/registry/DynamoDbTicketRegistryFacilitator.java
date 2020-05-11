@@ -66,7 +66,7 @@ public class DynamoDbTicketRegistryFacilitator {
      *
      * @param ticketId        the ticket id
      * @param encodedTicketId the encoded ticket id
-     * @return the boolean
+     * @return true/false
      */
     public boolean delete(final String ticketId, final String encodedTicketId) {
         val metadata = this.ticketCatalog.find(ticketId);

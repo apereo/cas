@@ -89,7 +89,7 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
      * @param registeredService the registered service
      * @param provider          the provider
      * @param request           the request
-     * @return the boolean
+     * @return true/false
      */
     protected abstract boolean shouldMultifactorAuthenticationProviderExecuteInternal(Authentication authentication,
                                                                                       RegisteredService registeredService,

@@ -219,7 +219,7 @@ public interface AuthenticationBuilder extends Serializable {
      * Has attribute boolean.
      *
      * @param name the name
-     * @return the boolean
+     * @return true/false
      */
     default boolean hasAttribute(final String name) {
         return hasAttribute(name, Predicates.alwaysTrue());

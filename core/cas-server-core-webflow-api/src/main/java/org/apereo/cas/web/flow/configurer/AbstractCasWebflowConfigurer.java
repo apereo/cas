@@ -565,7 +565,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      *
      * @param flow    the flow
      * @param stateId the state id
-     * @return the boolean
+     * @return true/false
      */
     public boolean containsSubflowState(final Flow flow, final String stateId) {
         return containsFlowState(flow, stateId) && getState(flow, stateId, SubflowState.class) != null;
@@ -576,7 +576,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      *
      * @param state      the state
      * @param transition the transition
-     * @return the boolean
+     * @return true/false
      */
     public boolean containsTransition(final TransitionableState state, final String transition) {
         if (state == null) {

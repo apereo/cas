@@ -190,7 +190,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      *
      * @param principalAttributes the principal attributes
      * @param requiredAttributes  the required attributes
-     * @return the boolean
+     * @return true/false
      */
     protected boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes,
                                                                final Map<String, Set<String>> requiredAttributes) {
@@ -202,7 +202,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * Do rejected attributes refuse principal access boolean.
      *
      * @param principalAttributes the principal attributes
-     * @return the boolean
+     * @return true/false
      */
     protected boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, Object> principalAttributes) {
         LOGGER.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.", rejectedAttributes, principalAttributes);
@@ -256,7 +256,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      *
      * @param principalAttributes the principal attributes
      * @param requiredAttributes  the attributes
-     * @return the boolean
+     * @return true/false
      */
     protected boolean requiredAttributesFoundInMap(final Map<String, Object> principalAttributes,
                                                    final Map<String, Set<String>> requiredAttributes) {

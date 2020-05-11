@@ -26,7 +26,7 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
     /**
      * Is authorized to release authentication attributes boolean.
      *
-     * @return the boolean
+     * @return true/false
      */
     default boolean isAuthorizedToReleaseAuthenticationAttributes() {
         return true;

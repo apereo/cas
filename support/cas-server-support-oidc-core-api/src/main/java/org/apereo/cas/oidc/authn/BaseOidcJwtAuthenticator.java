@@ -112,7 +112,7 @@ public abstract class BaseOidcJwtAuthenticator implements Authenticator<Username
      * Validate jwt algorithm and return true/false.
      *
      * @param alg the alg
-     * @return the boolean
+     * @return true/false
      */
     protected abstract boolean validateJwtAlgorithm(Algorithm alg);
 }

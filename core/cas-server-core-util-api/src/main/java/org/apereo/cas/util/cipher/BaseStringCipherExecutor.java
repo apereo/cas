@@ -260,7 +260,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     /**
      * Is encryption possible?
      *
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isEncryptionPossible() {
         return this.encryptionEnabled && this.secretKeyEncryptionKey != null;
