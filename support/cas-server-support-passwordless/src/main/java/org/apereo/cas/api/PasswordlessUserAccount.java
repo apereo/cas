@@ -3,6 +3,7 @@ package org.apereo.cas.api;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,21 +35,29 @@ import java.util.Map;
 public class PasswordlessUserAccount extends BasicIdentifiableCredential implements Serializable {
     private static final long serialVersionUID = 5783908770607793373L;
 
+    @JsonProperty("username")
     private String username;
 
+    @JsonProperty("email")
     private String email;
 
+    @JsonProperty("phoneNumber")
     private String phone;
 
+    @JsonProperty("name")
     private String name;
 
     @Builder.Default
+    @JsonProperty("attributes")
     private Map<String, List<String>> attributes = new LinkedHashMap<>();
 
+    @JsonProperty("multifactorAuthenticationEligible")
     private boolean multifactorAuthenticationEligible;
 
+    @JsonProperty("delegatedAuthenticationEligible")
     private boolean delegatedAuthenticationEligible;
 
+    @JsonProperty("requestPassword")
     private boolean requestPassword;
 
     @Override

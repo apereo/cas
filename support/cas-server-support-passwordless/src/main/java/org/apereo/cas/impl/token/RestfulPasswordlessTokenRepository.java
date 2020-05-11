@@ -1,6 +1,6 @@
 package org.apereo.cas.impl.token;
 
-import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.passwordless.token.PasswordlessAuthenticationRestTokensProperties;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -23,12 +23,12 @@ import java.util.Optional;
  */
 @Slf4j
 public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRepository {
-    private final PasswordlessAuthenticationProperties.RestTokens restProperties;
+    private final PasswordlessAuthenticationRestTokensProperties restProperties;
 
     private final CipherExecutor cipherExecutor;
 
     public RestfulPasswordlessTokenRepository(final int tokenExpirationInSeconds,
-                                              final PasswordlessAuthenticationProperties.RestTokens restProperties,
+                                              final PasswordlessAuthenticationRestTokensProperties restProperties,
                                               final CipherExecutor<Serializable, String> cipherExecutor) {
         super(tokenExpirationInSeconds);
         this.restProperties = restProperties;

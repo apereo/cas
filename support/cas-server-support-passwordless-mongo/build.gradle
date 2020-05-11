@@ -1,6 +1,6 @@
-description = "Apereo CAS Passwordless Authentication LDAP Support"
+description = "Apereo CAS Passwordless Authentication MongoDb Support"
 dependencies {
-    implementation libraries.ldaptive
+    implementation libraries.mongo
 
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
@@ -13,8 +13,8 @@ dependencies {
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-web")
-    
-    implementation project(":support:cas-server-support-ldap-core")
+
+    implementation project(":support:cas-server-support-mongo-core")
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-passwordless")
 
@@ -39,6 +39,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
-    testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-mongo-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-passwordless", configuration: "tests")
 }

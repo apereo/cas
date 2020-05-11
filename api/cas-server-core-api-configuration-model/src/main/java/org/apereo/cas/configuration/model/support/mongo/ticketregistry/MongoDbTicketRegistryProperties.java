@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
- * This is {@link MongoTicketRegistryProperties}.
+ * This is {@link MongoDbTicketRegistryProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -19,7 +19,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class MongoTicketRegistryProperties extends BaseMongoDbProperties {
+public class MongoDbTicketRegistryProperties extends BaseMongoDbProperties {
 
     private static final long serialVersionUID = 8243690796900311918L;
 
@@ -34,7 +34,7 @@ public class MongoTicketRegistryProperties extends BaseMongoDbProperties {
     @NestedConfigurationProperty
     private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
-    public MongoTicketRegistryProperties() {
+    public MongoDbTicketRegistryProperties() {
         this.crypto.setEnabled(false);
     }
 }

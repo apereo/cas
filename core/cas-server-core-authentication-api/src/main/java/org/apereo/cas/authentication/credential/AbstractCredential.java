@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetaData;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.ToString;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +20,7 @@ import org.springframework.binding.validation.ValidationContext;
  * @since 4.0.0
  */
 @ToString
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public abstract class AbstractCredential implements Credential, CredentialMetaData {
 
     /**

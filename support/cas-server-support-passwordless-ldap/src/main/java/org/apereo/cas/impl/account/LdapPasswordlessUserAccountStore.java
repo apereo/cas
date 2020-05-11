@@ -2,7 +2,7 @@ package org.apereo.cas.impl.account;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
-import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationLdapAccountsProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 
@@ -27,7 +27,7 @@ import java.util.Optional;
 public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccountStore {
     private final ConnectionFactory connectionFactory;
 
-    private final PasswordlessAuthenticationProperties.Ldap ldapProperties;
+    private final PasswordlessAuthenticationLdapAccountsProperties ldapProperties;
 
     @Override
     public Optional<PasswordlessUserAccount> findUser(final String username) {

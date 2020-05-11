@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
- * This is {@link MongoAuthenticationProperties}.
+ * This is {@link MongoDbAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -20,7 +20,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class MongoAuthenticationProperties extends SingleCollectionMongoDbProperties {
+public class MongoDbAuthenticationProperties extends SingleCollectionMongoDbProperties {
 
     private static final long serialVersionUID = -7304734732383722585L;
 
@@ -61,7 +61,7 @@ public class MongoAuthenticationProperties extends SingleCollectionMongoDbProper
      */
     private String name;
 
-    public MongoAuthenticationProperties() {
+    public MongoDbAuthenticationProperties() {
         setCollection("users");
     }
 }
