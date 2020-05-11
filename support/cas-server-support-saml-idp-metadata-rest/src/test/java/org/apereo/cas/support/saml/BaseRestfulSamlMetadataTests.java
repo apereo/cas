@@ -86,7 +86,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 },
     properties = {
         "cas.authn.saml-idp.metadata.rest.url=http://localhost:8078",
-        "cas.authn.saml-idp.metadata.location=file:/tmp"
+        "cas.authn.saml-dp.metadata.location=file:${#systemProperties['java.io.tmpdir']}/saml"
     }
 )
 @EnableConfigurationProperties(CasConfigurationProperties.class)

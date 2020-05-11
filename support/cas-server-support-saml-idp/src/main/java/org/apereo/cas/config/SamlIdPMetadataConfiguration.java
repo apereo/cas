@@ -160,9 +160,10 @@ public class SamlIdPMetadataConfiguration {
     @SneakyThrows
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        val location = ResourceUtils.getResourceFrom(
-            SpringExpressionLanguageValueResolver.getInstance().resolve(idp.getMetadata().getLocation()));
-        return new FileSystemSamlIdPMetadataLocator(location);
+        val location = SpringExpressionLanguageValueResolver.getInstance()
+            .resolve(idp.getMetadata().getLocation());
+        val metadataLocation = ResourceUtils.getRawResourceFrom(location);
+        return new FileSystemSamlIdPMetadataLocator(metadataLocation);
     }
 
     @ConditionalOnMissingBean(name = "chainingMetadataResolverCacheLoader")

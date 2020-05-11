@@ -55,14 +55,12 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
     public JsonResourceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                         final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
-
         try {
-            this.metadataTemplate = IOUtils.toString(new ClassPathResource("metadata/sp-metadata-template.xml")
-                .getInputStream(), StandardCharsets.UTF_8);
+            val inputStream = new ClassPathResource("metadata/sp-metadata-template.xml").getInputStream();
+            this.metadataTemplate = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             val md = samlIdPProperties.getMetadata();
-            val location = ResourceUtils.getResourceFrom(
-                SpringExpressionLanguageValueResolver.getInstance().resolve(md.getLocation()));
-            this.jsonResource = new FileSystemResource(new File(location.getFile(), "saml-sp-metadata.json"));
+            val location = SpringExpressionLanguageValueResolver.getInstance().resolve(md.getLocation());
+            this.jsonResource = new FileSystemResource(new File(location, "saml-sp-metadata.json"));
             if (this.jsonResource.exists()) {
                 this.metadataMap = readDecisionsFromJsonResource();
                 this.watcherService = new FileWatcherService(jsonResource.getFile(), file -> this.metadataMap = readDecisionsFromJsonResource());
@@ -109,6 +107,13 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
         return ResourceUtils.doesResourceExist(this.jsonResource);
     }
 
+    @Override
+    public void destroy() {
+        if (this.watcherService != null) {
+            this.watcherService.close();
+        }
+    }
+
     @SneakyThrows
     private Map<String, SamlServiceProviderMetadata> readDecisionsFromJsonResource() {
         try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
@@ -118,13 +123,6 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
         }
     }
 
-    @Override
-    public void destroy() {
-        if (this.watcherService != null) {
-            this.watcherService.close();
-        }
-    }
-    
     /**
      * The Saml service provider metadata.
      */

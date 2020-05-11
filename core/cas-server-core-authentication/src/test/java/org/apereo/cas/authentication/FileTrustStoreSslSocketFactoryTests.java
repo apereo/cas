@@ -27,27 +27,10 @@ public class FileTrustStoreSslSocketFactoryTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("truststore.jks");
 
-    @SneakyThrows
-    private static SSLConnectionSocketFactory sslFactory(final Resource resource, final String password) {
-        return new SSLConnectionSocketFactory(new DefaultCasSslContext(resource,
-            password,
-            KeyStore.getDefaultType()).getSslContext());
-    }
-
-    private static SSLConnectionSocketFactory sslFactory() {
-        return sslFactory(RESOURCE, "changeit");
-    }
-
     @Test
     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() {
         val client = getSimpleHttpClient();
         assertTrue(client.isValidEndPoint("https://self-signed.badssl.com"));
-    }
-
-    @Test
-    public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable2() {
-        val client = getSimpleHttpClient();
-        assertTrue(client.isValidEndPoint("https://untrusted-root.badssl.com"));
     }
 
     @Test
@@ -70,6 +53,17 @@ public class FileTrustStoreSslSocketFactoryTests {
     public void verifyTrustStoreLoadingSuccessfullyWihInsecureEndpoint() {
         val client = getSimpleHttpClient();
         assertTrue(client.isValidEndPoint("http://wikipedia.org"));
+    }
+
+    @SneakyThrows
+    private static SSLConnectionSocketFactory sslFactory(final Resource resource, final String password) {
+        return new SSLConnectionSocketFactory(new DefaultCasSslContext(resource,
+            password,
+            KeyStore.getDefaultType()).getSslContext());
+    }
+
+    private static SSLConnectionSocketFactory sslFactory() {
+        return sslFactory(RESOURCE, "changeit");
     }
 
     private static SimpleHttpClient getSimpleHttpClient() {
