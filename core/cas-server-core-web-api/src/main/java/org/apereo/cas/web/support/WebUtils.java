@@ -733,7 +733,7 @@ public class WebUtils {
      * Is remember me authentication enabled ?.
      *
      * @param context the context
-     * @return the boolean
+     * @return true/false
      */
     public static Boolean isRememberMeAuthenticationEnabled(final RequestContext context) {
         return context.getFlowScope().getBoolean("rememberMeAuthenticationEnabled", Boolean.FALSE);
@@ -940,7 +940,7 @@ public class WebUtils {
      * Has passwordless authentication account.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean hasPasswordlessAuthenticationAccount(final RequestContext requestContext) {
         return requestContext.getFlowScope().contains("passwordlessAccount");
@@ -960,7 +960,7 @@ public class WebUtils {
      * Has request surrogate authentication request.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean hasRequestSurrogateAuthenticationRequest(final RequestContext requestContext) {
         return requestContext.getFlowScope().getBoolean("requestSurrogateAccount", Boolean.FALSE);
@@ -1009,7 +1009,7 @@ public class WebUtils {
      * Put graphical user authentication enabled.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isGraphicalUserAuthenticationEnabled(final RequestContext requestContext) {
         return BooleanUtils.isTrue(requestContext.getFlowScope().get("guaEnabled", Boolean.class));
@@ -1029,7 +1029,7 @@ public class WebUtils {
      * Contains graphical user authentication username.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean containsGraphicalUserAuthenticationUsername(final RequestContext requestContext) {
         return requestContext.getFlowScope().contains("guaUsername");
@@ -1049,7 +1049,7 @@ public class WebUtils {
      * Contains graphical user authentication image boolean.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean containsGraphicalUserAuthenticationImage(final RequestContext requestContext) {
         return requestContext.getFlowScope().contains("guaUserImage");
@@ -1174,7 +1174,7 @@ public class WebUtils {
      * Is cas login form viewable.
      *
      * @param context the context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isCasLoginFormViewable(final RequestContext context) {
         return context.getFlowScope().getBoolean("casLoginFormViewable", Boolean.TRUE);

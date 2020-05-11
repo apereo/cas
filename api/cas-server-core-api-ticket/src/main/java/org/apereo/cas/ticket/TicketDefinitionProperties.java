@@ -28,7 +28,7 @@ public interface TicketDefinitionProperties {
     /**
      * Is exclude from cascade ?
      *
-     * @return the boolean
+     * @return true/false
      */
     boolean isExcludeFromCascade();
 

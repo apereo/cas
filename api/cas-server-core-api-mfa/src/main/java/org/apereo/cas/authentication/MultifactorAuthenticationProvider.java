@@ -61,7 +61,7 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
      * The identifier passed may be formed as a regular expression.
      *
      * @param identifier the identifier
-     * @return the boolean
+     * @return true/false
      */
     boolean matches(String identifier);
 

@@ -150,7 +150,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      *
      * @param to  the to
      * @param url the url
-     * @return the boolean
+     * @return true/false
      */
     protected boolean sendPasswordResetSmsToAccount(final String to, final String url) {
         if (StringUtils.isNotBlank(to)) {

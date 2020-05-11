@@ -19,7 +19,7 @@ public interface OidcAttributeToScopeClaimMapper {
      * Contains mapped attribute boolean.
      *
      * @param claim the claim
-     * @return the boolean
+     * @return true/false
      */
     boolean containsMappedAttribute(String claim);
 }

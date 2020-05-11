@@ -225,7 +225,7 @@ public class FunctionUtils {
      *
      * @param func   the func
      * @param params the params
-     * @return the boolean
+     * @return true/false
      */
     public static boolean doWithoutThrows(final Consumer<Object> func, final Object... params) {
         try {

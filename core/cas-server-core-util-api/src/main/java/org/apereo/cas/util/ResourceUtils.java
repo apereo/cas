@@ -72,7 +72,7 @@ public class ResourceUtils {
      *
      * @param resource       the resource
      * @param resourceLoader the resource loader
-     * @return the boolean
+     * @return true/false
      */
     public static boolean doesResourceExist(final String resource, final ResourceLoader resourceLoader) {
         try {
@@ -90,7 +90,7 @@ public class ResourceUtils {
      * Does resource exist?
      *
      * @param res the res
-     * @return the boolean
+     * @return true/false
      */
     public static boolean doesResourceExist(final Resource res) {
         if (res == null) {
@@ -112,7 +112,7 @@ public class ResourceUtils {
      * Does resource exist?
      *
      * @param location the resource
-     * @return the boolean
+     * @return true/false
      */
     public static boolean doesResourceExist(final String location) {
         try {
@@ -256,7 +256,7 @@ public class ResourceUtils {
      * Is the resource a file?
      *
      * @param resource the resource
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isFile(final String resource) {
         return StringUtils.isNotBlank(resource) && resource.startsWith(FILE_URL_PREFIX);
@@ -266,7 +266,7 @@ public class ResourceUtils {
      * Is file boolean.
      *
      * @param resource the resource
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isFile(final Resource resource) {
         try {
@@ -282,7 +282,7 @@ public class ResourceUtils {
      * Is jar resource ?.
      *
      * @param resource the resource
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isJarResource(final Resource resource) {
         try {

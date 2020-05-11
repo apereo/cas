@@ -43,7 +43,7 @@ public class ChainingDelegatedClientUserProfileProvisioner extends BaseDelegated
     /**
      * Is empty ?.
      *
-     * @return the boolean
+     * @return true/false
      */
     public boolean isEmpty() {
         return size() == 0;

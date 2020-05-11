@@ -48,7 +48,7 @@ public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactor
     /**
      * Can ping provider?
      *
-     * @return the boolean
+     * @return true/false
      */
     public boolean canPing() {
         try {

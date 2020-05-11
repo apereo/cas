@@ -37,7 +37,7 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
      * Indicate if the attribute value should
      * be scoped based on the scope defined in the CAS configuration.
      *
-     * @return the boolean
+     * @return true/false
      */
     boolean isScoped();
 

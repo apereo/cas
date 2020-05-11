@@ -31,7 +31,7 @@ public interface CasWebflowExceptionHandler<T extends Exception> extends Ordered
      *
      * @param exception      the exception
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     boolean supports(Exception exception, RequestContext requestContext);
 }

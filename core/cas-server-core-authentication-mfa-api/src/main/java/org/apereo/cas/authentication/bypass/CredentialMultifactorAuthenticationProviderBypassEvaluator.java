@@ -34,7 +34,7 @@ public class CredentialMultifactorAuthenticationProviderBypassEvaluator extends 
      *
      * @param authentication      the authentication
      * @param credentialClassType the credential class type
-     * @return the boolean
+     * @return true/false
      */
     protected static boolean locateMatchingCredentialType(final Authentication authentication, final String credentialClassType) {
         return StringUtils.isNotBlank(credentialClassType) && authentication.getCredentials()

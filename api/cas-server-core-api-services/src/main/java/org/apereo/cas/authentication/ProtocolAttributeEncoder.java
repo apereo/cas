@@ -59,7 +59,7 @@ public interface ProtocolAttributeEncoder {
      * Is attribute name encoded boolean.
      *
      * @param name the name
-     * @return the boolean
+     * @return true/false
      */
     static boolean isAttributeNameEncoded(final String name) {
         return name.startsWith(ENCODED_ATTRIBUTE_PREFIX);

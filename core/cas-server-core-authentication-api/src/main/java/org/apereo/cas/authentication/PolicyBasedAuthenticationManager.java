@@ -155,7 +155,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * Invoke authentication pre processors.
      *
      * @param transaction the transaction
-     * @return the boolean
+     * @return true/false
      */
     protected boolean invokeAuthenticationPreProcessors(final AuthenticationTransaction transaction) {
         LOGGER.trace("Invoking authentication pre processors for authentication transaction");

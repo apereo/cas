@@ -66,7 +66,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
      * Is remember me authentication ?
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static Boolean isRememberMeAuthentication(final RequestContext requestContext) {
         if (isRememberMeProvidedInRequest(requestContext)) {

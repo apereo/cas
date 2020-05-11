@@ -69,7 +69,7 @@ public class ScimV1PrincipalProvisioner implements PrincipalProvisioner {
      *
      * @param p          the p
      * @param credential the credential
-     * @return the boolean
+     * @return true/false
      */
     @SneakyThrows
     protected boolean createUserResource(final Principal p, final Credential credential) {
@@ -84,7 +84,7 @@ public class ScimV1PrincipalProvisioner implements PrincipalProvisioner {
      * @param user       the user
      * @param p          the p
      * @param credential the credential
-     * @return the boolean
+     * @return true/false
      */
     @SneakyThrows
     protected boolean updateUserResource(final UserResource user, final Principal p, final Credential credential) {

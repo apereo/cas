@@ -55,7 +55,7 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
      *
      * @param registeredService the registered service
      * @param type              the type
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isGrantTypeSupportedBy(final OAuthRegisteredService registeredService, final OAuth20GrantTypes type) {
         return isGrantTypeSupportedBy(registeredService, type.getType());

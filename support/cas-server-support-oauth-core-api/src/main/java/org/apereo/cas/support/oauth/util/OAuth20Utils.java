@@ -210,7 +210,7 @@ public class OAuth20Utils {
      *
      * @param registeredService the registered service
      * @param responseType      the response type
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isResponseModeTypeFormPost(final OAuthRegisteredService registeredService, final OAuth20ResponseModeTypes responseType) {
         return responseType == OAuth20ResponseModeTypes.FORM_POST || StringUtils.equalsIgnoreCase("post", registeredService.getResponseType());
@@ -277,7 +277,7 @@ public class OAuth20Utils {
      *
      * @param type         the type
      * @param expectedType the expected type
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isResponseModeType(final String type, final OAuth20ResponseModeTypes expectedType) {
         return expectedType.getType().equalsIgnoreCase(type);
@@ -288,7 +288,7 @@ public class OAuth20Utils {
      *
      * @param context           the context
      * @param registeredService the registered service
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isAuthorizedResponseTypeForService(final JEEContext context, final OAuthRegisteredService registeredService) {
         if (registeredService.getSupportedResponseTypes() != null && !registeredService.getSupportedResponseTypes().isEmpty()) {

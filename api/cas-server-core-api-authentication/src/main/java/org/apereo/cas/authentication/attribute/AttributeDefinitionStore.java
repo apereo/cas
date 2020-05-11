@@ -126,7 +126,7 @@ public interface AttributeDefinitionStore {
     /**
      * Determine if attribute definition store is empty.
      *
-     * @return the boolean
+     * @return true/false
      */
     boolean isEmpty();
 }

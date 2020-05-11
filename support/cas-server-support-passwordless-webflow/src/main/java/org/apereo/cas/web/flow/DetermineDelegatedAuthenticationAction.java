@@ -86,7 +86,7 @@ public class DetermineDelegatedAuthenticationAction extends AbstractAction imple
      *
      * @param requestContext the request context
      * @param user           the user
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isDelegatedAuthenticationActiveFor(final RequestContext requestContext,
                                                          final PasswordlessUserAccount user) {

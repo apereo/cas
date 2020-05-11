@@ -63,7 +63,7 @@ public class CaptchaValidator {
      *
      * @param recaptchaResponse the recaptcha response
      * @param userAgent         the user agent
-     * @return the boolean
+     * @return true/false
      */
     public boolean validate(final String recaptchaResponse, final String userAgent) {
         HttpResponse response = null;
