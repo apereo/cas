@@ -21,7 +21,7 @@ import org.apereo.cas.configuration.model.support.jaas.JaasAuthenticationPropert
 import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.mongo.MongoAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mongo.MongoDbAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ntlm.NtlmProperties;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
@@ -292,7 +292,7 @@ public class AuthenticationProperties implements Serializable {
      * MongoDb authentication settings.
      */
     @NestedConfigurationProperty
-    private MongoAuthenticationProperties mongo = new MongoAuthenticationProperties();
+    private MongoDbAuthenticationProperties mongo = new MongoDbAuthenticationProperties();
 
     /**
      * CouchDb authentication settings.

@@ -13,7 +13,7 @@ import org.apereo.cas.configuration.model.support.infinispan.InfinispanPropertie
 import org.apereo.cas.configuration.model.support.jms.JmsTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
-import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -67,7 +67,7 @@ public class TicketRegistryProperties implements Serializable {
      * MongoDb registry settings.
      */
     @NestedConfigurationProperty
-    private MongoTicketRegistryProperties mongo = new MongoTicketRegistryProperties();
+    private MongoDbTicketRegistryProperties mongo = new MongoDbTicketRegistryProperties();
 
     /**
      * Ehcache registry settings.
