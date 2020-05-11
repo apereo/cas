@@ -11,7 +11,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
-import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.SneakyThrows;
@@ -54,6 +53,7 @@ import java.util.LinkedHashMap;
 @Slf4j
 public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
     private static final String FILENAME_EXTENSION_XML = ".xml";
+
     private static final String DIRNAME_METADATA_BACKUPS = "metadata-backups";
 
     private final File metadataBackupDirectory;
@@ -64,9 +64,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         super(samlIdPProperties, configBean);
 
         val md = samlIdPProperties.getMetadata();
-        val location = ResourceUtils.getResourceFrom(
-            SpringExpressionLanguageValueResolver.getInstance().resolve(md.getLocation()));
-        this.metadataBackupDirectory = new File(location.getFile(), DIRNAME_METADATA_BACKUPS);
+        val location = SpringExpressionLanguageValueResolver.getInstance().resolve(md.getLocation());
+        this.metadataBackupDirectory = new File(location, DIRNAME_METADATA_BACKUPS);
         try {
             FileUtils.forceMkdir(this.metadataBackupDirectory);
         } catch (final Exception e) {
@@ -108,6 +107,45 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             HttpUtils.close(response);
         }
         return new ArrayList<>(0);
+    }
+
+    @Override
+    public boolean supports(final SamlRegisteredService service) {
+        try {
+            val metadataLocation = getMetadataLocationForService(service, new CriteriaSet());
+            return StringUtils.isNotBlank(metadataLocation)
+                && StringUtils.startsWith(metadataLocation, "http")
+                && !SamlUtils.isDynamicMetadataQueryConfigured(metadataLocation);
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isAvailable(final SamlRegisteredService service) {
+        if (supports(service)) {
+            val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
+            val status = HttpRequestUtils.pingUrl(metadataLocation);
+            return !status.isError();
+        }
+        return false;
+    }
+
+    private void cleanUpExpiredBackupMetadataFilesFor(final AbstractResource metadataResource, final SamlRegisteredService service) {
+        val prefix = getBackupMetadataFilenamePrefix(metadataResource, service);
+        val backups = FileUtils.listFiles(this.metadataBackupDirectory,
+            new AndFileFilter(CollectionUtils.wrapList(new PrefixFileFilter(prefix, IOCase.INSENSITIVE),
+                new SuffixFileFilter(FILENAME_EXTENSION_XML, IOCase.INSENSITIVE),
+                CanWriteFileFilter.CAN_WRITE, CanReadFileFilter.CAN_READ)), TrueFileFilter.INSTANCE);
+        backups.forEach(file -> {
+            try {
+                FileUtils.forceDelete(file);
+            } catch (final Exception e) {
+                LOGGER.warn("Unable to delete metadata backup file [{}]", file);
+                LOGGER.debug(e.getMessage(), e);
+            }
+        });
     }
 
     /**
@@ -165,22 +203,6 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         return SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
     }
 
-    private void cleanUpExpiredBackupMetadataFilesFor(final AbstractResource metadataResource, final SamlRegisteredService service) {
-        val prefix = getBackupMetadataFilenamePrefix(metadataResource, service);
-        val backups = FileUtils.listFiles(this.metadataBackupDirectory,
-            new AndFileFilter(CollectionUtils.wrapList(new PrefixFileFilter(prefix, IOCase.INSENSITIVE),
-                new SuffixFileFilter(FILENAME_EXTENSION_XML, IOCase.INSENSITIVE),
-                CanWriteFileFilter.CAN_WRITE, CanReadFileFilter.CAN_READ)), TrueFileFilter.INSTANCE);
-        backups.forEach(file -> {
-            try {
-                FileUtils.forceDelete(file);
-            } catch (final Exception e) {
-                LOGGER.warn("Unable to delete metadata backup file [{}]", file);
-                LOGGER.debug(e.getMessage(), e);
-            }
-        });
-    }
-
     /**
      * Gets metadata backup file.
      *
@@ -222,34 +244,11 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         }
         val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
         val fileName = SamlUtils.isDynamicMetadataQueryConfigured(metadataLocation)
-                ? service.getServiceId()
-                : metadataLocation;
+            ? service.getServiceId()
+            : metadataLocation;
 
         val sha = DigestUtils.sha(fileName);
         LOGGER.trace("Metadata backup file for metadata location [{}] is linked to [{}]", fileName, sha);
         return sha;
-    }
-
-    @Override
-    public boolean supports(final SamlRegisteredService service) {
-        try {
-            val metadataLocation = getMetadataLocationForService(service, new CriteriaSet());
-            return StringUtils.isNotBlank(metadataLocation)
-                    && StringUtils.startsWith(metadataLocation, "http")
-                    && !SamlUtils.isDynamicMetadataQueryConfigured(metadataLocation);
-        } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isAvailable(final SamlRegisteredService service) {
-        if (supports(service)) {
-            val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
-            val status = HttpRequestUtils.pingUrl(metadataLocation);
-            return !status.isError();
-        }
-        return false;
     }
 }
