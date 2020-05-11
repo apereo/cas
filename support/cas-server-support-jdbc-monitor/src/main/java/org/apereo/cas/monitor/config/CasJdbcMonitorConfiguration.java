@@ -52,6 +52,7 @@ public class CasJdbcMonitorConfiguration {
 
     @ConditionalOnMissingBean(name = "monitorDataSource")
     @Bean
+    @RefreshScope
     public DataSource monitorDataSource() {
         return JpaBeans.newDataSource(casProperties.getMonitor().getJdbc());
     }

@@ -58,6 +58,8 @@ public class JpaPasswordlessAuthenticationConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "passwordlessDataSource")
+    @RefreshScope
     public DataSource passwordlessDataSource() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getPasswordless().getTokens().getJpa());
     }

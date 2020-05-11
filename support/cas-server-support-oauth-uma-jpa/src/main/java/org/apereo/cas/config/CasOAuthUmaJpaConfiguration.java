@@ -84,6 +84,7 @@ public class CasOAuthUmaJpaConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "dataSourceUma")
+    @RefreshScope
     public DataSource dataSourceUma() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getUma().getResourceSet().getJpa());
     }
