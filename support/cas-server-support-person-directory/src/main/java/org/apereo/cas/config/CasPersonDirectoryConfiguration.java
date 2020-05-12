@@ -285,6 +285,11 @@ public class CasPersonDirectoryConfiguration {
                         ldapDao.setResultAttributeMapping(ldap.getAttributes());
                         val attributes = (String[]) ldap.getAttributes().keySet().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
                         constraints.setReturningAttributes(attributes);
+
+                        if (ldap.getBinaryAttributes() != null && !ldap.getBinaryAttributes().isEmpty()) {
+                            LOGGER.debug("Setting binary attributes [{}]", ldap.getBinaryAttributes());
+                            ldapDao.setBinaryAttributes(ldap.getBinaryAttributes().toArray(new String[ldap.getBinaryAttributes().size()]));
+                        }
                     } else {
                         LOGGER.debug("Retrieving all attributes as no explicit attribute mappings are defined for [{}]", ldap.getLdapUrl());
                         constraints.setReturningAttributes(null);
