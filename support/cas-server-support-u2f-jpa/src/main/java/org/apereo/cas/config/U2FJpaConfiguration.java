@@ -76,6 +76,7 @@ public class U2FJpaConfiguration {
 
     @Lazy
     @Bean
+    @ConditionalOnMissingBean(name = "u2fEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean u2fEntityManagerFactory() {
         val factory = jpaBeanFactory.getObject();
         val ctx = new JpaConfigurationContext(
@@ -88,6 +89,7 @@ public class U2FJpaConfiguration {
 
     @Autowired
     @Bean
+    @ConditionalOnMissingBean(name = "transactionManagerU2f")
     public PlatformTransactionManager transactionManagerU2f(@Qualifier("u2fEntityManagerFactory") final EntityManagerFactory emf) {
         val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
@@ -95,6 +97,7 @@ public class U2FJpaConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public U2FDeviceRepository u2fDeviceRepository() {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
         final LoadingCache<String, String> requestStorage =

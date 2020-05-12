@@ -128,8 +128,8 @@ public class CasSupportJdbcAuditConfiguration {
     public Cleanable inspektrAuditTrailCleaner() {
         return new Cleanable() {
             @Scheduled(
-                initialDelayString = "${cas.audit.jdbc.schedule.startDelay:10000}",
-                fixedDelayString = "${cas.audit.jdbc.schedule.repeatInterval:30000}"
+                initialDelayString = "${cas.audit.jdbc.schedule.start-delay:10000}",
+                fixedDelayString = "${cas.audit.jdbc.schedule.repeat-interval:30000}"
             )
             @Override
             public void clean() {
