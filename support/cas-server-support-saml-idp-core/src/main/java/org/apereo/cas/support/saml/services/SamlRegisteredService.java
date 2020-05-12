@@ -1,17 +1,23 @@
 package org.apereo.cas.support.saml.services;
 
-import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.RegexRegisteredService;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.RegexRegisteredService;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
-import javax.persistence.*;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Lob;
+import javax.persistence.MapKeyColumn;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
