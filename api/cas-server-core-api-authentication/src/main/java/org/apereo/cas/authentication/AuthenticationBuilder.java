@@ -2,8 +2,6 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
 
-import com.google.common.base.Predicates;
-
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -222,6 +220,6 @@ public interface AuthenticationBuilder extends Serializable {
      * @return true/false
      */
     default boolean hasAttribute(final String name) {
-        return hasAttribute(name, Predicates.alwaysTrue());
+        return hasAttribute(name, o -> true);
     }
 }

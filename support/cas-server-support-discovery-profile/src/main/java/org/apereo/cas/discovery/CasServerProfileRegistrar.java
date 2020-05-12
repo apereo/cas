@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 
-import com.google.common.base.Predicates;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
@@ -60,7 +59,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         };
         val collector = Collectors.toMap(RegisteredService::getFriendlyName, RegisteredService::getClass);
         return (Map) locateSubtypesByReflection(mapper, collector,
-            AbstractRegisteredService.class, Predicates.alwaysTrue(), CentralAuthenticationService.NAMESPACE);
+            AbstractRegisteredService.class, o -> true, CentralAuthenticationService.NAMESPACE);
     }
 
     private static Object locateSubtypesByReflection(final Function<Class, Object> mapper, final Collector collector,
