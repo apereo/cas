@@ -18,6 +18,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -74,9 +75,11 @@ public class DistributedJEESessionStoreTests {
 
     @Test
     public void verifyOperation() {
+        val cookie = casProperties.getSessionReplication().getCookie();
+        val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val store = new DistributedJEESessionStore(this.centralAuthenticationService, this.ticketFactory, casProperties);
+        val store = new DistributedJEESessionStore(this.centralAuthenticationService, this.ticketFactory, cookieGenerator);
         val context = new JEEContext(request, response, store);
 
         assertNotNull(request.getSession());

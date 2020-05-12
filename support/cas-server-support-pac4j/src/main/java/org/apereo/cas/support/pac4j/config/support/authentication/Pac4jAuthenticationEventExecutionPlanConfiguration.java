@@ -25,6 +25,8 @@ import org.apereo.cas.support.pac4j.authentication.RestfulDelegatedClientFactory
 import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandler;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -106,9 +108,17 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         val replicate = casProperties.getAuthn().getPac4j().isReplicateSessions();
         if (replicate) {
             return new DistributedJEESessionStore(centralAuthenticationService.getObject(),
-                ticketFactory.getObject(), casProperties);
+                ticketFactory.getObject(), delegatedClientDistributedSessionCookieGenerator());
         }
         return new JEESessionStore();
+    }
+
+    @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionCookieGenerator")
+    @Bean
+    @RefreshScope
+    public CasCookieBuilder delegatedClientDistributedSessionCookieGenerator() {
+        val cookie = casProperties.getSessionReplication().getCookie();
+        return CookieUtils.buildCookieRetrievingGenerator(cookie);
     }
 
     @RefreshScope
