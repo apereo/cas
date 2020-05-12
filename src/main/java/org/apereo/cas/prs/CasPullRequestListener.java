@@ -60,7 +60,7 @@ public class CasPullRequestListener implements PullRequestListener {
 
     private boolean processInvalidPullRequest(final PullRequest givenPullRequest) {
         val pr = this.repository.getPullRequest(givenPullRequest.getNumber());
-        if (pr.getChangedFiles() > 100) {
+        if (pr.getChangedFiles() >= 40) {
             log.info("Closing invalid pull request {} with large number of changes", pr);
             repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
             repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
