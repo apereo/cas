@@ -51,11 +51,14 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
         val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
             CollectionUtils.wrap(id));
+        LOGGER.debug("Constructed LDAP filter [{}]", filter);
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val response = LdapUtils.executeSearchOperation(connectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
         if (LdapUtils.containsResultEntry(response)) {
+            LOGGER.debug("LDAP query located an entry for [{}] and responded with [{}]", id, response);
             return Optional.of(Pair.of(connectionFactory, response));
         }
+        LOGGER.debug("LDAP query could not locate an entry for [{}]", id);
         return Optional.empty();
     }
 
