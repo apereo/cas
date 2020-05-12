@@ -71,7 +71,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     private InMemory inMemory = new InMemory();
 
     /**
-     * AUP enabled allows AUP to be turned off on startup.
+     * Allows AUP to be turned off on startup.
      */
     private boolean enabled = true;
 
