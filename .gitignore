@@ -2,3 +2,6 @@ target
 .classpath
 .project
 .settings
+.idea
+.history
+*.iml

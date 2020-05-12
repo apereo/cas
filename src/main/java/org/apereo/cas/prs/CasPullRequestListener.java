@@ -1,5 +1,8 @@
 package org.apereo.cas.prs;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.CasLabels;
 import org.apereo.cas.MonitoredRepository;
 import org.apereo.cas.PullRequestListener;
@@ -7,10 +10,6 @@ import org.apereo.cas.github.CombinedCommitStatus;
 import org.apereo.cas.github.Milestone;
 import org.apereo.cas.github.PullRequest;
 import org.apereo.cas.github.PullRequestFile;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,7 +33,20 @@ public class CasPullRequestListener implements PullRequestListener {
         processMilestoneAssignment(pr);
         processLabelsByFeatures(pr);
         removeLabelWorkInProgress(pr);
+        processTestCasesForPullRequest(pr);
         mergePullRequestIfPossible(pr);
+    }
+
+    private void processTestCasesForPullRequest(final PullRequest pr) {
+        val files = repository.getPullRequestFiles(pr);
+        val modifiesJava = files.stream().anyMatch(file -> !file.getFilename().contains("Tests") && file.getFilename().endsWith(".java"));
+        if (modifiesJava) {
+            val hasTests = files.stream().anyMatch(file -> file.getFilename().endsWith("Tests.java"));
+            if (!hasTests) {
+                log.info("Pull request {} does not have any tests", pr);
+                repository.labelPullRequestAs(pr, CasLabels.LABEL_PENDING_NEEDS_TESTS);
+            }
+        }
     }
 
     private void mergePullRequestIfPossible(final PullRequest pr) {

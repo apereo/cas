@@ -125,7 +125,7 @@ public class MonitoredRepository {
         val branchVersion = Version.valueOf(branch.replace(".x", "." + Integer.MAX_VALUE));
         return milestones.stream()
             .filter(milestone -> {
-                final Version milestoneVersion = Version.valueOf(milestone.getTitle());
+                val milestoneVersion = Version.valueOf(milestone.getTitle());
                 return milestoneVersion.getMajorVersion() == branchVersion.getMajorVersion()
                     && milestoneVersion.getMinorVersion() == branchVersion.getMinorVersion();
             })

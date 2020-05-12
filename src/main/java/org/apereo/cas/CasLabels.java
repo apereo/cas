@@ -82,6 +82,7 @@ public enum CasLabels {
     LABEL_PASSWORD_POLICY("Password Policy", "lppe"),
     LABEL_PENDING("Pending"),
     LABEL_PENDING_PORT_FORWARD("Remember: Port Forward"),
+    LABEL_PENDING_NEEDS_TESTS("Remember: Needs Tests"),
     LABEL_PERFORMANCE_LOAD_TESTS("Performance & Load Tests", "threadsafe|jmeter|performance|non-threadsafe|overhead"),
     LABEL_PRINCIPAL_RESOLUTION("Principal Resolution"),
     LABEL_PROPOSAL_DECLINED("Proposal Declined"),
