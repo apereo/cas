@@ -400,14 +400,17 @@ subprojects {
         }
     }
 
-    artifacts {
-        tests testJar
 
-        if (!rootProject.publishSnapshots) {
-            archives sourcesJar
-            archives javadocJar
-            archives resourcesJar
-            archives testJar
+    if (rootProject.publishReleases || rootProject.publishSnapshots) {
+        artifacts {
+            tests testJar
+
+            if (!rootProject.publishSnapshots) {
+                archives sourcesJar
+                archives javadocJar
+                archives resourcesJar
+                archives testJar
+            }
         }
     }
 
@@ -616,9 +619,11 @@ task gradleHome(description: "Display GRADLE_HOME environment variable") {
     }
 }
 
-artifacts {
-    archives aggregateJavadocsIntoJar
-    archives rootSourcesJar
+if (rootProject.publishReleases || rootProject.publishSnapshots) {
+    artifacts {
+        archives aggregateJavadocsIntoJar
+        archives rootSourcesJar
+    }
 }
 
 def publishedProjects = subprojects.findAll { !it.path.contains(':docs') }
