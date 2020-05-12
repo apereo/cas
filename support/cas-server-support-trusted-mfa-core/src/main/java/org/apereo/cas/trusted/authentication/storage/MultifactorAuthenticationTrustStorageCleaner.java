@@ -29,8 +29,8 @@ public class MultifactorAuthenticationTrustStorageCleaner {
     /**
      * Clean up expired records.
      */
-    @Scheduled(initialDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.startDelay:PT10S}",
-        fixedDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.repeatInterval:PT60S}")
+    @Scheduled(initialDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.start-delay:PT10S}",
+        fixedDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.repeat-interval:PT60S}")
     public void clean() {
         if (!trustedProperties.getCleaner().getSchedule().isEnabled()) {
             LOGGER.debug("[{}] is disabled; expired trusted authentication records will not be removed automatically", getClass().getName());
