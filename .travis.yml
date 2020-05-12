@@ -15,12 +15,10 @@ branches:
   only:
     - master
 before_cache:
-  - rm -rf $HOME/.gradle/caches/7.0.*/
-  - rm -rf $HOME/.gradle/caches/7.1.*/
-  - rm -rf $HOME/.gradle/caches/7.2.*/
-  - rm -rf $HOME/.gradle/caches/6.4.*/
-  - rm -rf $HOME/.gradle/caches/6.5.*/
-  - rm -rf $HOME/.gradle/caches/6.6.*/
+  - rm -rf $HOME/.gradle/caches/7.*/
+  - rm -rf $HOME/.gradle/caches/6.*/
+  - rm -rf $HOME/.gradle/caches/5.*/
+  - rm -rf $HOME/.gradle/caches/4.*/
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
   - find ~/.gradle/caches/ -name "*.lock" -type f -delete
 cache:
@@ -38,8 +36,8 @@ notifications:
     secure: "gNFUOGd0isowSwPfQ9VqGQWhWRDAjzX9tfH0xGe2gyg1kiOhq3Odb8fdcUg9f3DhAbiMxGDu08IgmDbeEyncB42Zdqk/DFvD3F958WaVy0O9TF2iAzO+ftBG0+slFHPDZ8qAy97+mV/be7KBkLYP+BydYTVfO84NvpLNiylmOVU="
 env:
   global:
-    - JAVA_OPTS="-Xms512m -Xmx6144m -Xss64m -XX:ReservedCodeCacheSize=512m 1
-      -XX:MaxMetaspaceSize=256m -XX:+UseZGC -Xverify:none -server -XX:+HeapDumpOnOutOfMemoryError -XX:+UseGCOverheadLimit"
+    - JAVA_OPTS="-Xms512m -Xmx4048m -Xss64m -XX:ReservedCodeCacheSize=512m 1
+      -XX:MaxMetaspaceSize=256m -Xverify:none -server -XX:+HeapDumpOnOutOfMemoryError -XX:+UseGCOverheadLimit"
     - SPRING_MAIN_BANNER-MODE="off"
     - DEPENDENCY_BOT_BRANCH=^renovate
     - TERM=xterm
