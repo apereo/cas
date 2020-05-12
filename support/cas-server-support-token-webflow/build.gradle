@@ -13,6 +13,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-attributes")
+    implementation project(":core:cas-server-core-authentication-mfa")
 
     implementation project(":support:cas-server-support-token-core-api")
     implementation project(":support:cas-server-support-token-authentication")
@@ -21,7 +22,7 @@ dependencies {
     implementation libraries.pac4jjwt
     implementation libraries.jose4j
     implementation libraries.nimbus
-    
+
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-logout-api")
@@ -29,7 +30,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-authentication")
-    testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core-configuration")

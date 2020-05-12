@@ -4,6 +4,10 @@ dependencies {
 
     implementation project(":support:cas-server-support-captcha-core")
 
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-authentication-mfa")
+    implementation project(":core:cas-server-core-services-authentication")
+    implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-webflow-mfa")
@@ -20,10 +24,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-authentication")
-    testImplementation project(":core:cas-server-core-authentication-api")
-    testImplementation project(":core:cas-server-core-services-authentication")
-    testImplementation project(":core:cas-server-core-authentication-attributes")
-
     testImplementation project(":support:cas-server-support-themes")
 
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
