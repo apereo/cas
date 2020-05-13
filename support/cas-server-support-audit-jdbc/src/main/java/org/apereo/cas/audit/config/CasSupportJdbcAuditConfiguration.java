@@ -65,6 +65,7 @@ public class CasSupportJdbcAuditConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public AuditTrailManager jdbcAuditTrailManager() {
         val jdbc = casProperties.getAudit().getJdbc();
         val t = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate());
@@ -78,6 +79,7 @@ public class CasSupportJdbcAuditConfiguration {
 
     @ConditionalOnMissingBean(name = "jdbcAuditTrailExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuditTrailExecutionPlanConfigurer jdbcAuditTrailExecutionPlanConfigurer() {
         return plan -> plan.registerAuditTrailManager(jdbcAuditTrailManager());
     }
@@ -101,6 +103,7 @@ public class CasSupportJdbcAuditConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "inspektrAuditTransactionManager")
     public PlatformTransactionManager inspektrAuditTransactionManager() {
         return new DataSourceTransactionManager(inspektrAuditTrailDataSource());
     }
