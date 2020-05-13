@@ -3,13 +3,13 @@ package org.apereo.cas.adaptors.x509.web.extractcert;
 import org.apereo.cas.adaptors.x509.authentication.RequestHeaderX509CertificateExtractor;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.security.cert.X509Certificate;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 
 /**
  * @author Hal Deadman

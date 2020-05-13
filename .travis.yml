@@ -240,6 +240,11 @@ jobs:
       workspaces:
         use: buildWorkspace
     - stage: test
+      script: ./ci/tests/shell/run-tests-shell.sh
+      name: "Command-line Shell Tests"
+      workspaces:
+        use: buildWorkspace
+    - stage: test
       script: ./ci/tests/amazon/run-tests-aws.sh
       name: "AWS Tests"
       workspaces:
