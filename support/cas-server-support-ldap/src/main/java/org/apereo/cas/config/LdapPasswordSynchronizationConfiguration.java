@@ -38,12 +38,12 @@ public class LdapPasswordSynchronizationConfiguration {
         val bean = new ListFactoryBean() {
             @Override
             protected void destroyInstance(final List list) {
-                list.forEach(Unchecked.consumer(postProcessor -> {
-                    ((DisposableBean) postProcessor).destroy();
-                }));
+                list.forEach(Unchecked.consumer(postProcessor ->
+                    ((DisposableBean) postProcessor).destroy()
+                ));
             }
         };
-        bean.setSourceList(new ArrayList());
+        bean.setSourceList(new ArrayList<>());
         return bean;
     }
 
@@ -51,8 +51,8 @@ public class LdapPasswordSynchronizationConfiguration {
     @Bean
     @SneakyThrows
     @Autowired
-    @Qualifier("ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean")
     public AuthenticationEventExecutionPlanConfigurer ldapPasswordSynchronizationAuthenticationEventExecutionPlanConfigurer(
+            @Qualifier("ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean")
             final ListFactoryBean ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean) {
         val postProcessorList = ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean.getObject();
         return plan -> {

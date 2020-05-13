@@ -46,21 +46,21 @@ public class LdapMonitorConfiguration {
         val list = new ListFactoryBean() {
             @Override
             protected void destroyInstance(final List list) {
-                list.forEach(connectionFactory -> {
-                    ((ConnectionFactory) connectionFactory).close();
-                });
+                list.forEach(connectionFactory ->
+                    ((ConnectionFactory) connectionFactory).close()
+                );
             }
         };
-        list.setSourceList(new ArrayList());
+        list.setSourceList(new ArrayList<>());
         return list;
     }
 
     @Bean
     @SneakyThrows
     @Autowired
-    @Qualifier("pooledLdapConnectionFactoryHealthIndicatorListFactoryBean")
     @ConditionalOnEnabledHealthIndicator("pooledLdapConnectionFactoryHealthIndicator")
     public CompositeHealthContributor pooledLdapConnectionFactoryHealthIndicator(
+            @Qualifier("pooledLdapConnectionFactoryHealthIndicatorListFactoryBean")
             final ListFactoryBean pooledLdapConnectionFactoryHealthIndicatorListFactoryBean) {
         val ldaps = casProperties.getMonitor().getLdap();
         val connectionFactoryList = pooledLdapConnectionFactoryHealthIndicatorListFactoryBean.getObject();

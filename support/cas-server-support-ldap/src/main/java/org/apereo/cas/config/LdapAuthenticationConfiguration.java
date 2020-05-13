@@ -164,12 +164,12 @@ public class LdapAuthenticationConfiguration {
         val bean = new SetFactoryBean() {
             @Override
             protected void destroyInstance(final Set set) {
-                set.forEach(Unchecked.consumer(handler -> {
-                    ((DisposableBean) handler).destroy();
-                }));
+                set.forEach(Unchecked.consumer(handler ->
+                    ((DisposableBean) handler).destroy()
+                ));
             }
         };
-        bean.setSourceSet(new HashSet());
+        bean.setSourceSet(new HashSet<>());
         return bean;
     }
 
@@ -177,6 +177,7 @@ public class LdapAuthenticationConfiguration {
     @SneakyThrows
     @RefreshScope
     public Collection<AuthenticationHandler> ldapAuthenticationHandlers(
+            @Qualifier("ldapAuthenticationHandlerSetFactoryBean")
             final SetFactoryBean ldapAuthenticationHandlerSetFactoryBean) {
         val handlers = new HashSet<AuthenticationHandler>();
 
@@ -274,9 +275,9 @@ public class LdapAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "ldapAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @Autowired
-    @Qualifier("ldapAuthenticationHandlerSetFactoryBean")
     @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer ldapAuthenticationEventExecutionPlanConfigurer(
+            @Qualifier("ldapAuthenticationHandlerSetFactoryBean")
             final SetFactoryBean ldapAuthenticationHandlerSetFactoryBean) {
         return plan -> ldapAuthenticationHandlers(ldapAuthenticationHandlerSetFactoryBean).forEach(handler -> {
             LOGGER.info("Registering LDAP authentication for [{}]", handler.getName());
