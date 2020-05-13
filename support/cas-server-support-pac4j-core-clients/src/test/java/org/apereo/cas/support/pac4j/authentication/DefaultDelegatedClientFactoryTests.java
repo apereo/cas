@@ -11,6 +11,7 @@ import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProp
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
+import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasProtocol;
 import org.pac4j.oauth.client.GitHubClient;
 import org.pac4j.saml.client.SAML2Client;
@@ -75,6 +76,23 @@ public class DefaultDelegatedClientFactoryTests {
         val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
         val clients = factory.build();
         assertEquals(1, clients.size());
+    }
+
+    @Test
+    public void verifyFactoryForCasClientsHavingLoginInDomain() {
+        val props = new Pac4jDelegatedAuthenticationProperties();
+        val cas = new Pac4jCasClientProperties();
+        cas.setLoginUrl("https://login.example.org/login");
+        cas.setProtocol(CasProtocol.SAML.name());
+        props.getCas().add(cas);
+
+        val casSettings = new CasConfigurationProperties();
+        casSettings.getAuthn().setPac4j(props);
+        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val clients = factory.build();
+        assertEquals(1, clients.size());
+        val client = (CasClient) clients.iterator().next();
+        assertEquals("https://login.example.org/", client.getConfiguration().getPrefixUrl());
     }
 
     @Test
