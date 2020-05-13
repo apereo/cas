@@ -533,6 +533,37 @@ public abstract class AbstractOAuth20Tests {
         return accessTokenResponseGenerator.generate(mockRequest, mockResponse, result);
     }
 
+    protected ModelAndView generateAccessTokenResponseAndGetModelAndView(
+            final OAuthRegisteredService registeredService,
+            final Authentication authentication,
+            final OAuth20GrantTypes grantType
+    ) {
+
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        val mockResponse = new MockHttpServletResponse();
+
+        val service = RegisteredServiceTestUtils.getService("example");
+        val holder = AccessTokenRequestDataHolder.builder()
+                .clientId(registeredService.getClientId())
+                .service(service)
+                .authentication(authentication)
+                .registeredService(registeredService)
+                .grantType(grantType)
+                .responseType(OAuth20ResponseTypes.CODE)
+                .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+                .build();
+
+        val generatedToken = oauthTokenGenerator.generate(holder);
+        val builder = OAuth20AccessTokenResponseResult.builder();
+        val result = builder
+                .registeredService(registeredService)
+                .responseType(OAuth20ResponseTypes.CODE)
+                .service(service)
+                .generatedToken(generatedToken)
+                .build();
+        return accessTokenResponseGenerator.generate(mockRequest, mockResponse, result);
+    }
+
     @TestConfiguration("OAuth20TestConfiguration")
     public static class OAuth20TestConfiguration implements ComponentSerializationPlanConfigurer, InitializingBean {
         @Autowired
