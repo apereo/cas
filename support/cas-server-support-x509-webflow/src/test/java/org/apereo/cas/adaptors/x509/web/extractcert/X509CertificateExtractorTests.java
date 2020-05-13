@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Hal Deadman
  * @since 5.3.0
  */
+@Tag("X509")
 public class X509CertificateExtractorTests {
 
     private static final String[] CERTIFICATE_LINES = new String[]{
