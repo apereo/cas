@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "spring.mail.host=localhost",
         "spring.mail.port=25000"
     })
+@Tag("X509")
 public class DefaultX509ConfigTests {
 
     @Autowired

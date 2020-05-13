@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attributeRepository.groovy[0].order=1",
         "cas.authn.attributeRepository.merger=multivalued"
     })
+@Tag("X509")
 public class X509SubjectDNPrincipalResolverAggregateTests {
     private static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
