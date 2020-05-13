@@ -74,7 +74,10 @@ public class CasBotApplication {
 
         val repository = event.getApplicationContext().getBean(MonitoredRepository.class);
         log.info("Current version in master branch: {}", repository.getCurrentVersionInMaster());
-        log.info("Current milestone for master branch: {}", repository.getMilestoneForMaster());
+        repository.getMilestoneForMaster().ifPresentOrElse(ms ->
+            log.info("Current milestone for master branch: {}", ms),
+            () -> log.warn("Unable to determine current milestone for master branch"));
+
     }
 
     @RestController

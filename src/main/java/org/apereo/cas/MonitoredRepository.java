@@ -1,5 +1,9 @@
 package org.apereo.cas;
 
+import com.github.zafarkhaja.semver.Version;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.cas.github.CheckRun;
 import org.apereo.cas.github.CombinedCommitStatus;
@@ -11,18 +15,13 @@ import org.apereo.cas.github.Milestone;
 import org.apereo.cas.github.Page;
 import org.apereo.cas.github.PullRequest;
 import org.apereo.cas.github.PullRequestFile;
-
-import com.github.zafarkhaja.semver.Version;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
@@ -188,6 +187,40 @@ public class MonitoredRepository {
 
     public CheckRun getLatestCompletedCheckRun(final PullRequest pr) {
         return getLatestCompletedCheckRunsFor(pr, null);
+    }
+
+    public boolean createCheckRunForActionRequired(final PullRequest pr, String checkName,
+                                                   final String title, final String summary) {
+        try {
+            val output = Map.of("title", title, "summary", summary);
+            return this.gitHub.createCheckRun(getOrganization(), getName(),
+                checkName, pr.getHead().getSha(), "completed", "action_required", output);
+        } catch (final Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return false;
+    }
+
+    public boolean createStatusForSuccess(final PullRequest pr, final String context, String description) {
+        try {
+            return this.gitHub.createStatus(getOrganization(), getName(),
+                pr.getHead().getSha(), "success", "https://apereo.github.io/cas",
+                description, context);
+        } catch (final Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return false;
+    }
+
+    public boolean createStatusForFailure(final PullRequest pr, final String context, String description) {
+        try {
+            return this.gitHub.createStatus(getOrganization(), getName(),
+                pr.getHead().getSha(), "failure", "https://apereo.github.io/cas",
+                description, context);
+        } catch (final Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return false;
     }
 
     public List<CommitStatus> getPullRequestCommitStatuses(final PullRequest pr) {

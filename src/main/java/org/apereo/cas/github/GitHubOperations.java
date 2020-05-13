@@ -16,6 +16,8 @@
 
 package org.apereo.cas.github;
 
+import java.util.Map;
+
 public interface GitHubOperations {
 
     Page<Issue> getIssues(String organization, String repository);
@@ -68,4 +70,12 @@ public interface GitHubOperations {
 
     CheckRun getCheckRunsFor(String organization, String repository, String ref,
                              String checkName, String status, String filter);
+
+    boolean createCheckRun(String organization, String repository, String name,
+                           String ref, String status, String conclusion,
+                           Map<String, String> output) throws Exception;
+
+    boolean createStatus(String organization, String repository, String ref,
+                         String state, String targetUrl, String description,
+                         String context) throws Exception;
 }

@@ -35,7 +35,6 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.util.Base64Utils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StreamUtils;
@@ -49,6 +48,7 @@ import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Central class for interacting with GitHub's REST API.
@@ -230,7 +231,7 @@ public class GitHubTemplate implements GitHubOperations {
 
         body.put("commit_message", "Merged branch " + targetBranch + " into " + prBranch);
 
-        final ResponseEntity response = this.rest.exchange(new RequestEntity(body, HttpMethod.POST, uri), Map.class);
+        val response = this.rest.exchange(new RequestEntity(body, HttpMethod.POST, uri), Map.class);
         if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
             log.debug("Pull request [{}] already contains the [{}]; nothing to merge", targetBranch, pr);
         } else if (response.getStatusCode() == HttpStatus.CONFLICT) {
@@ -272,7 +273,7 @@ public class GitHubTemplate implements GitHubOperations {
     private <T> Page<T> getPage(final String url, final Class<T[]> type, final Map params) {
         return getPage(url, type, params, new HttpHeaders());
     }
-    
+
     private <T> Page<T> getPage(final String url, final Class<T[]> type, final Map params, final MultiValueMap headers) {
         if (!StringUtils.hasText(url)) {
             return null;
@@ -304,7 +305,7 @@ public class GitHubTemplate implements GitHubOperations {
         if (!StringUtils.hasText(url)) {
             return null;
         }
-        final HttpHeaders hd = new HttpHeaders(headers);
+        val hd = new HttpHeaders(headers);
         final ResponseEntity<T> contents = this.rest.exchange(url, HttpMethod.GET, new HttpEntity<>(hd), type, params);
         return contents.getBody();
     }
@@ -315,7 +316,7 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public PullRequest addLabel(final PullRequest pr, final String label) {
-        final URI uri = URI.create(pr.getLabelsUrl());
+        val uri = URI.create(pr.getLabelsUrl());
         log.info("Adding label {} to pull request {}", label, pr);
         final ResponseEntity<Label[]> response = this.rest.exchange(
             new RequestEntity<>(Arrays.asList(label), HttpMethod.POST, uri),
@@ -350,11 +351,10 @@ public class GitHubTemplate implements GitHubOperations {
         } catch (final URISyntaxException ex) {
             throw new RuntimeException(ex);
         }
+        val url = pullRequest.getLabelsUrl().replace("{/name}", '/' + encodedName);
         final ResponseEntity<Label[]> response = this.rest.exchange(
-            new RequestEntity<Void>(HttpMethod.DELETE, URI.create(
-                pullRequest.getLabelsUrl().replace("{/name}", '/' + encodedName))),
-            Label[].class);
-        if (response.getStatusCode() != HttpStatus.OK) {
+            new RequestEntity<Void>(HttpMethod.DELETE, URI.create(url)), Label[].class);
+        if (!response.getStatusCode().is2xxSuccessful()) {
             log.warn("Failed to remove label from pull request. Response status: "
                 + response.getStatusCode());
         }
@@ -410,6 +410,29 @@ public class GitHubTemplate implements GitHubOperations {
     }
 
     @Override
+    public boolean createCheckRun(final String organization, final String repository, final String name,
+                                  final String ref, final String status, final String conclusion,
+                                  final Map<String, String> output) throws Exception {
+        val tz = TimeZone.getTimeZone("UTC");
+        val df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        df.setTimeZone(tz);
+        val currentTime = df.format(new Date());
+        val body = new HashMap<String, Object>();
+        body.put("name", name);
+        body.put("head_sha", ref);
+        body.put("status", status);
+        body.put("started_at", currentTime);
+        body.put("conclusion", conclusion);
+        body.put("completed_at", currentTime);
+        body.put("output", output);
+        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/check-runs";
+
+        val headers = new LinkedMultiValueMap(Map.of("Accept", List.of("application/vnd.github.antiope-preview+json")));
+        val response = this.rest.exchange(new RequestEntity(body, headers, HttpMethod.POST, new URI(url)), Map.class);
+        return response.getStatusCode().is2xxSuccessful();
+    }
+
+    @Override
     public CheckRun getCheckRunsFor(final String organization, final String repository, final String ref,
                                     final String checkName, final String status, final String filter) {
         final Map<String, String> params = new HashMap<>();
@@ -427,6 +450,20 @@ public class GitHubTemplate implements GitHubOperations {
             new LinkedMultiValueMap(Map.of("Accept", List.of("application/vnd.github.antiope-preview+json"))));
     }
 
+    @Override
+    public boolean createStatus(final String organization, final String repository, final String ref,
+                                final String state, final String targetUrl, final String description,
+                                final String context) throws Exception {
+        val body = new HashMap<>();
+        body.put("state", state);
+        body.put("context", context);
+        body.put("target_url", targetUrl);
+        body.put("description", description);
+        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/statuses/" + ref;
+        val response = this.rest.exchange(new RequestEntity(body, HttpMethod.POST, new URI(url)), Map.class);
+        return response.getStatusCode().is2xxSuccessful();
+
+    }
     private static final class ErrorLoggingMappingJackson2HttpMessageConverter
         extends MappingJackson2HttpMessageConverter {
 
@@ -456,7 +493,7 @@ public class GitHubTemplate implements GitHubOperations {
     @RequiredArgsConstructor
     private static class BasicAuthorizationInterceptor
         implements ClientHttpRequestInterceptor {
-        
+
         private final String token;
 
         @Override

@@ -45,6 +45,10 @@ public class CasPullRequestListener implements PullRequestListener {
             if (!hasTests) {
                 log.info("Pull request {} does not have any tests", pr);
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_PENDING_NEEDS_TESTS);
+                repository.createStatusForFailure(pr, "Tests", "Please add tests to verify changes.");
+            } else {
+                repository.removeLabelFrom(pr, CasLabels.LABEL_PENDING_NEEDS_TESTS);
+                repository.createStatusForSuccess(pr, "Tests", "Good job! A positive pull request.");
             }
         }
     }

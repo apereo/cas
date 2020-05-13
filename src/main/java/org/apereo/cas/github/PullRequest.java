@@ -100,9 +100,9 @@ public class PullRequest {
         this.commits = commits;
 
         this.statusesUrl = statusesUrl;
-        this.draft = draft;
+        this.draft = draft == null ? Boolean.FALSE : draft;
         this.mergeable = mergeable != null && Boolean.parseBoolean(mergeable);
-        this.locked = locked;
+        this.locked = locked == null ? Boolean.FALSE : locked;;
     }
     
     public boolean isOpen() {
