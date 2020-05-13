@@ -7,13 +7,11 @@ import org.apereo.cas.CasLabels;
 import org.apereo.cas.MonitoredRepository;
 import org.apereo.cas.PullRequestListener;
 import org.apereo.cas.github.CombinedCommitStatus;
-import org.apereo.cas.github.Milestone;
 import org.apereo.cas.github.PullRequest;
 import org.apereo.cas.github.PullRequestFile;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Slf4j
@@ -22,7 +20,8 @@ public class CasPullRequestListener implements PullRequestListener {
     private final MonitoredRepository repository;
 
     @Override
-    public void onOpenPullRequest(final PullRequest pr) {
+    public void onOpenPullRequest(final PullRequest givenPullRequest) {
+        val pr = this.repository.getPullRequest(givenPullRequest.getNumber());
         log.debug("Processing {}", pr);
 
         if (processLabelSeeMaintenancePolicy(pr) || processInvalidPullRequest(pr)) {
@@ -37,18 +36,21 @@ public class CasPullRequestListener implements PullRequestListener {
         mergePullRequestIfPossible(pr);
     }
 
-    private void checkForPullRequestTestCases(final PullRequest givenPullRequest) {
-        val pr = this.repository.getPullRequest(givenPullRequest.getNumber());
+    private void checkForPullRequestTestCases(final PullRequest pr) {
         val files = repository.getPullRequestFiles(pr);
         val modifiesJava = files.stream().anyMatch(file -> !file.getFilename().contains("Tests") && file.getFilename().endsWith(".java"));
         if (modifiesJava) {
             val hasTests = files.stream().anyMatch(file -> file.getFilename().endsWith("Tests.java"));
             if (!hasTests) {
                 log.info("Pull request {} does not have any tests", pr);
-                repository.labelPullRequestAs(pr, CasLabels.LABEL_PENDING_NEEDS_TESTS);
+                if (!pr.isLabeledAs(CasLabels.LABEL_PENDING_NEEDS_TESTS)) {
+                    repository.labelPullRequestAs(pr, CasLabels.LABEL_PENDING_NEEDS_TESTS);
+                }
                 repository.createStatusForFailure(pr, "Tests", "Please add tests to verify changes.");
             } else {
-                repository.removeLabelFrom(pr, CasLabels.LABEL_PENDING_NEEDS_TESTS);
+                if (pr.isLabeledAs(CasLabels.LABEL_PENDING_NEEDS_TESTS)) {
+                    repository.removeLabelFrom(pr, CasLabels.LABEL_PENDING_NEEDS_TESTS);
+                }
                 repository.createStatusForSuccess(pr, "Tests", "Good job! A positive pull request.");
             }
         }
@@ -63,8 +65,7 @@ public class CasPullRequestListener implements PullRequestListener {
         }
     }
 
-    private boolean processInvalidPullRequest(final PullRequest givenPullRequest) {
-        val pr = this.repository.getPullRequest(givenPullRequest.getNumber());
+    private boolean processInvalidPullRequest(final PullRequest pr) {
         if (pr.getChangedFiles() >= 40) {
             log.info("Closing invalid pull request {} with large number of changes", pr);
             repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
@@ -84,8 +85,7 @@ public class CasPullRequestListener implements PullRequestListener {
         return false;
     }
 
-    private void removeLabelWorkInProgress(final PullRequest givenPullRequest) {
-        val pr = this.repository.getPullRequest(givenPullRequest.getNumber());
+    private void removeLabelWorkInProgress(final PullRequest pr) {
         if (pr.isDraft()) {
             if (pr.isLabeledAs(CasLabels.LABEL_PENDING)) {
                 repository.removeLabelFrom(pr, CasLabels.LABEL_PENDING);
@@ -108,12 +108,18 @@ public class CasPullRequestListener implements PullRequestListener {
     private void processLabelPendingUpdateProperty(final PullRequest pr) {
         if (!pr.isLabeledAs(CasLabels.LABEL_PENDING_DOCUMENT_PROPERTY)) {
             Collection<PullRequestFile> files = repository.getPullRequestFiles(pr);
-            boolean hasProperty = files.stream().anyMatch(f -> f.getFilename().endsWith("Properties.java"));
+            val hasProperty = files.stream().anyMatch(f -> f.getFilename().endsWith("Properties.java"));
             if (hasProperty) {
-                boolean hasNoDocs = files.stream().noneMatch(f -> f.getFilename().contains("Configuration-Properties.md"));
+                val hasNoDocs = files.stream().noneMatch(f -> f.getFilename().contains("Configuration-Properties.md"));
                 if (hasNoDocs) {
                     log.info("{} changes CAS properties, yet documentation is not updated to reflect changes", pr);
-                    repository.labelPullRequestAs(pr, CasLabels.LABEL_PENDING_DOCUMENT_PROPERTY);
+                    if (!pr.isLabeledAs(CasLabels.LABEL_PENDING_DOCUMENT_PROPERTY)) {
+                        repository.labelPullRequestAs(pr, CasLabels.LABEL_PENDING_DOCUMENT_PROPERTY);
+                    }
+                } else {
+                    if (pr.isLabeledAs(CasLabels.LABEL_PENDING_DOCUMENT_PROPERTY)) {
+                        repository.removeLabelFrom(pr, CasLabels.LABEL_PENDING_DOCUMENT_PROPERTY);
+                    }
                 }
             }
         }
@@ -121,7 +127,7 @@ public class CasPullRequestListener implements PullRequestListener {
 
     private boolean processLabelSeeMaintenancePolicy(final PullRequest pr) {
         if (!pr.isTargetedAtMasterBranch() && !pr.isLabeledAs(CasLabels.LABEL_SEE_MAINTENANCE_POLICY)) {
-            final Optional<Milestone> milestone = repository.getMilestoneForBranch(pr.getBase().getRef());
+            val milestone = repository.getMilestoneForBranch(pr.getBase().getRef());
             if (milestone.isEmpty()) {
                 log.info("{} is targeted at a branch {} that is no longer maintained. See maintenance policy", pr, pr.getBase());
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_MAINTENANCE_POLICY);
@@ -148,13 +154,13 @@ public class CasPullRequestListener implements PullRequestListener {
     private void processMilestoneAssignment(final PullRequest pr) {
         if (pr.getMilestone() == null) {
             if (pr.isTargetedAtMasterBranch()) {
-                Optional<Milestone> milestoneForMaster = repository.getMilestoneForMaster();
+                val milestoneForMaster = repository.getMilestoneForMaster();
                 milestoneForMaster.ifPresent(milestone -> {
                     log.info("{} will be assigned the master milestone {}", pr, milestone);
                     repository.getGitHub().setMilestone(pr, milestone);
                 });
             } else {
-                final Optional<Milestone> milestone = repository.getMilestoneForBranch(pr.getBase().getRef());
+                val milestone = repository.getMilestoneForBranch(pr.getBase().getRef());
                 milestone.ifPresent(result -> {
                     log.info("{} will be assigned the maintenance milestone {}", pr, milestone);
                     repository.getGitHub().setMilestone(pr, result);
@@ -163,11 +169,12 @@ public class CasPullRequestListener implements PullRequestListener {
         }
     }
 
-    private void processLabelsByFeatures(final PullRequest pr) {
-        var title = pr.getTitle().toLowerCase();
+    private void processLabelsByFeatures(final PullRequest givenPullRequest) {
+        val pr = this.repository.getPullRequest(givenPullRequest.getNumber());
+        val title = pr.getTitle().toLowerCase();
         Arrays.stream(CasLabels.values()).forEach(l -> {
             if (!pr.isLabeledAs(l)) {
-                Pattern titlePattern = Pattern.compile("\\b" + l.getTitle().toLowerCase() + ":*\\b", Pattern.CASE_INSENSITIVE);
+                val titlePattern = Pattern.compile("\\b" + l.getTitle().toLowerCase() + ":*\\b", Pattern.CASE_INSENSITIVE);
                 if (titlePattern.matcher(pr.getTitle()).find()) {
                     log.info("{} will be assigned the label {}", pr, l);
                     repository.labelPullRequestAs(pr, l);

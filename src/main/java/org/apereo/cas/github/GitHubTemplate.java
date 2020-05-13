@@ -351,6 +351,7 @@ public class GitHubTemplate implements GitHubOperations {
         } catch (final URISyntaxException ex) {
             throw new RuntimeException(ex);
         }
+        log.info("Removing label {} from pull request {}", label, pullRequest);
         val url = pullRequest.getLabelsUrl().replace("{/name}", '/' + encodedName);
         final ResponseEntity<Label[]> response = this.rest.exchange(
             new RequestEntity<Void>(HttpMethod.DELETE, URI.create(url)), Label[].class);
@@ -368,6 +369,7 @@ public class GitHubTemplate implements GitHubOperations {
         } catch (final URISyntaxException ex) {
             throw new RuntimeException(ex);
         }
+        log.info("Removing label {} from issue {}", labelName, issue);
         final ResponseEntity<Label[]> response = this.rest.exchange(
             new RequestEntity<Void>(HttpMethod.DELETE, URI.create(
                 issue.getLabelsUrl().replace("{/name}", '/' + encodedName))),
