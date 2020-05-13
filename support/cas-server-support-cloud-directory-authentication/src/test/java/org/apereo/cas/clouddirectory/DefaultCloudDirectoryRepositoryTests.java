@@ -11,6 +11,7 @@ import com.amazonaws.services.clouddirectory.model.ListIndexResult;
 import com.amazonaws.services.clouddirectory.model.ListObjectAttributesResult;
 import com.amazonaws.services.clouddirectory.model.TypedAttributeValue;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@Tag("AmazonWebServices")
 public class DefaultCloudDirectoryRepositoryTests {
     @Test
     public void verifyAction() {

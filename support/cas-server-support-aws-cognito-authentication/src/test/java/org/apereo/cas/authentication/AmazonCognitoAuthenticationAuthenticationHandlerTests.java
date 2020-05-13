@@ -22,6 +22,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -58,6 +59,7 @@ import static org.mockito.Mockito.*;
     "cas.authn.cognito.credentialSecretKey=test",
     "cas.authn.cognito.clientId=4o5qr8egumc72iv6qibm8foeh6"
 })
+@Tag("AmazonWebServices")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AmazonCognitoAuthenticationAuthenticationHandlerTests {
     @Autowired

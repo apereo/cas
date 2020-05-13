@@ -16,6 +16,7 @@ import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFact
 import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.*;
  * @author Jonathon Johnson
  * @since 6.2.0
  */
+@Tag("AmazonWebServices")
 public class CloudWatchAppenderSpecTests {
     private static DescribeLogStreamsResult createDescribeLogStreamsResult() {
         var stream = new DescribeLogStreamsResult();

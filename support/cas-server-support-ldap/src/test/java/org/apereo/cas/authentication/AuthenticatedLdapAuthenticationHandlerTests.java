@@ -5,6 +5,7 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.UncheckedException;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.ldap[0].principalAttributeList=description,cn"
     })
 @EnabledIfPortOpen(port = 10389)
+@Tag("Ldap")
 public class AuthenticatedLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticateNotFound() {

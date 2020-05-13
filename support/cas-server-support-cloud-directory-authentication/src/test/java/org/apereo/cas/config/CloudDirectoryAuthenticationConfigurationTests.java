@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectory;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.cloudDirectory.endpoint=http://127.0.0.1:1234"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("AmazonWebServices")
 public class CloudDirectoryAuthenticationConfigurationTests {
     @Autowired
     @Qualifier("amazonCloudDirectory")
