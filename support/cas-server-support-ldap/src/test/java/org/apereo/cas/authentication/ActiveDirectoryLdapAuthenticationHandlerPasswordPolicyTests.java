@@ -5,6 +5,7 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
@@ -42,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     "cas.authn.ldap[0].passwordPolicy.enabled=true"
 })
 @EnabledIfPortOpen(port = 10390)
+@Tag("Ldap")
 public class ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
 
     @Override

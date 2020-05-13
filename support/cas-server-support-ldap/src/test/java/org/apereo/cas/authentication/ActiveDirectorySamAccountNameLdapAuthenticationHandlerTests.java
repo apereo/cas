@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -31,6 +32,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].hostname-verifier=-default"
 })
 @EnabledIfPortOpen(port = 10390)
+@Tag("Ldap")
 public class ActiveDirectorySamAccountNameLdapAuthenticationHandlerTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
 
     /**
