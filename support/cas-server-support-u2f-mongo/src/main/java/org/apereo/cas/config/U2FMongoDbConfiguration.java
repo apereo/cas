@@ -14,6 +14,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -35,6 +36,7 @@ public class U2FMongoDbConfiguration {
     private ObjectProvider<CipherExecutor> u2fRegistrationRecordCipherExecutor;
 
     @Bean
+    @RefreshScope
     public U2FDeviceRepository u2fDeviceRepository() {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
 
