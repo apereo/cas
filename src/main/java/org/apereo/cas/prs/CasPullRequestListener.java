@@ -33,11 +33,12 @@ public class CasPullRequestListener implements PullRequestListener {
         processMilestoneAssignment(pr);
         processLabelsByFeatures(pr);
         removeLabelWorkInProgress(pr);
-        processTestCasesForPullRequest(pr);
+        checkForPullRequestTestCases(pr);
         mergePullRequestIfPossible(pr);
     }
 
-    private void processTestCasesForPullRequest(final PullRequest pr) {
+    private void checkForPullRequestTestCases(final PullRequest givenPullRequest) {
+        val pr = this.repository.getPullRequest(givenPullRequest.getNumber());
         val files = repository.getPullRequestFiles(pr);
         val modifiesJava = files.stream().anyMatch(file -> !file.getFilename().contains("Tests") && file.getFilename().endsWith(".java"));
         if (modifiesJava) {
@@ -102,7 +103,6 @@ public class CasPullRequestListener implements PullRequestListener {
                 repository.removeLabelFrom(pr, CasLabels.LABEL_WIP);
             }
         }
-
     }
 
     private void processLabelPendingUpdateProperty(final PullRequest pr) {
