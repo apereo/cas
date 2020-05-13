@@ -35,6 +35,15 @@ if (hasTestsOfCategory(project, "X509")) {
     }
 }
 
+if (hasTestsOfCategory(project, "SHELL")) {
+    task testSHELL(type: Test) {
+        enabled = shouldTest(project, "SHELL")
+        useJUnitPlatform {
+            includeTags "SHELL"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "Cassandra")) {
     task testCassandra(type: Test) {
         enabled = shouldTest(project, "Cassandra")

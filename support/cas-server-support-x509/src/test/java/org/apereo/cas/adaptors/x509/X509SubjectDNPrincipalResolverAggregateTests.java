@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
