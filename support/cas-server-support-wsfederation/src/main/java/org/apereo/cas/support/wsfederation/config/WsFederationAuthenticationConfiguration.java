@@ -13,6 +13,7 @@ import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -55,11 +56,14 @@ public class WsFederationAuthenticationConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "wsFederationHelper")
     public WsFederationHelper wsFederationHelper() {
         return new WsFederationHelper(configBean.getObject(), servicesManager.getObject());
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "wsFederationCookieManager")
     public WsFederationCookieManager wsFederationCookieManager() {
         return new WsFederationCookieManager(wsFederationConfigurations,
             casProperties.getTheme().getParamName(), casProperties.getLocale().getParamName());
