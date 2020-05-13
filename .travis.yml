@@ -36,7 +36,7 @@ notifications:
     secure: "gNFUOGd0isowSwPfQ9VqGQWhWRDAjzX9tfH0xGe2gyg1kiOhq3Odb8fdcUg9f3DhAbiMxGDu08IgmDbeEyncB42Zdqk/DFvD3F958WaVy0O9TF2iAzO+ftBG0+slFHPDZ8qAy97+mV/be7KBkLYP+BydYTVfO84NvpLNiylmOVU="
 env:
   global:
-    - JAVA_OPTS="-Xms512m -Xmx4048m -Xss64m -XX:ReservedCodeCacheSize=512m -XX:MaxMetaspaceSize=256m -Xverify:none -server -XX:+HeapDumpOnOutOfMemoryError -XX:+UseGCOverheadLimit -XX:+UnlockExperimentalVMOptions -XX:+UseZGC"
+    - JAVA_OPTS="-Xms512m -Xmx6048m -Xss64m -XX:ReservedCodeCacheSize=512m -Xverify:none -server"
     - SPRING_MAIN_BANNER-MODE="off"
     - DEPENDENCY_BOT_BRANCH=^renovate
     - TERM=xterm
@@ -70,11 +70,18 @@ jobs:
     - stage: build
       script: ./ci/build.sh
       name: "Build CAS"
+      workspaces:
+        create:
+          name: buildWorkspace
+          paths:
+            - .
       ############################################
     - stage: publish
       if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       script: ./ci/publish-snapshots-release.sh
       name: "Publish SNAPSHOT Artifacts"
+      workspaces:
+        use: buildWorkspace
     - stage: publish
       script: ./ci/push-docs-ghpages.sh
       if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
@@ -88,10 +95,14 @@ jobs:
       script: ./ci/analyze-sonarqube.sh
       if: type != pull_request
       name: "Validate Code Quality via SonarCloud"
+      workspaces:
+        use: buildWorkspace
     - stage: validate
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/analyze-style.sh
       name: "Validate Style via Checkstyle"
+      workspaces:
+        use: buildWorkspace
     - stage: validate
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/analyze-codebase.sh
@@ -100,6 +111,8 @@ jobs:
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/build-javadocs.sh
       name: "Validate Javadocs"
+      workspaces:
+        use: buildWorkspace
     - stage: validate
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/build-config-metadata.sh
@@ -148,6 +161,8 @@ jobs:
     - stage: test
       script: ./ci/tests/run-tests-simple.sh
       name: "Simple Unit Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/groovy/run-tests-groovy.sh
       name: "Groovy Tests"
