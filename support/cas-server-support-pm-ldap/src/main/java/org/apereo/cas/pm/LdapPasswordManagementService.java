@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LdapPasswordManagementService extends BasePasswordManagementService implements DisposableBean {
     private final List<LdapPasswordManagementProperties> ldapProperties;
-    private final HashMap<LdapPasswordManagementProperties, ConnectionFactory> connectionFactoryMap = new HashMap<>();
+    private final Map<String, ConnectionFactory> connectionFactoryMap = new ConcurrentHashMap<>();
 
 
     public LdapPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
@@ -42,16 +43,15 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                                          final PasswordHistoryService passwordHistoryService) {
         super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
         this.ldapProperties = passwordManagementProperties.getLdap();
-        this.ldapProperties.forEach(ldap -> {
-            this.connectionFactoryMap.put(ldap, LdapUtils.newLdaptiveConnectionFactory(ldap));
-        });
+        this.ldapProperties.forEach(ldap ->
+            this.connectionFactoryMap.put(ldap.getLdapUrl(), LdapUtils.newLdaptiveConnectionFactory(ldap))
+        );
     }
 
     @Override
     public void destroy() {
-        this.connectionFactoryMap.forEach((ldap, connectionFactory) -> {
-            connectionFactory.close();
-        });
+        this.connectionFactoryMap.forEach((ldap, connectionFactory) ->
+            connectionFactory.close());
     }
 
     @Override
@@ -88,7 +88,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                     LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                     CollectionUtils.wrap(username));
                 LOGGER.debug("Constructed LDAP filter [{}] to locate security questions", filter);
-                val ldapConnectionFactory = this.connectionFactoryMap.get(ldap);
+                val ldapConnectionFactory = this.connectionFactoryMap.get(ldap.getLdapUrl());
                 val response = LdapUtils.executeSearchOperation(ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
                 LOGGER.debug("LDAP response for security questions [{}]", response);
 

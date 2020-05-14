@@ -26,7 +26,7 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
 
     private final CasConfigurationProperties casProperties;
 
-    private ConnectionFactory connectionFactory;
+    private final ConnectionFactory connectionFactory;
 
     public LdapUserGraphicalAuthenticationRepository(final CasConfigurationProperties casProperties) {
         this.casProperties = casProperties;

@@ -17,9 +17,10 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This is {@link LdapAcceptableUsagePolicyRepository}.
@@ -35,14 +36,14 @@ import java.util.Set;
 public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository implements DisposableBean {
     private static final long serialVersionUID = 1600024683199961892L;
 
-    private HashMap<LdapAcceptableUsagePolicyProperties, ConnectionFactory> connectionFactoryList = new HashMap<>();
+    private final Map<String, ConnectionFactory> connectionFactoryList = new ConcurrentHashMap<>();
 
     public LdapAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
                                                final AcceptableUsagePolicyProperties aupProperties) {
         super(ticketRegistrySupport, aupProperties);
-        aupProperties.getLdap().forEach(ldap -> {
-            connectionFactoryList.put(ldap, LdapUtils.newLdaptiveConnectionFactory(ldap));
-        });
+        aupProperties.getLdap().forEach(ldap ->
+            connectionFactoryList.put(ldap.getLdapUrl(), LdapUtils.newLdaptiveConnectionFactory(ldap))
+        );
     }
 
     /**
@@ -59,7 +60,7 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
             CollectionUtils.wrap(id));
         LOGGER.debug("Constructed LDAP filter [{}]", filter);
-        val connectionFactory = connectionFactoryList.get(ldap);
+        val connectionFactory = connectionFactoryList.get(ldap.getLdapUrl());
         val response = LdapUtils.executeSearchOperation(connectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
         if (LdapUtils.containsResultEntry(response)) {
             LOGGER.debug("LDAP query located an entry for [{}] and responded with [{}]", id, response);
@@ -95,8 +96,8 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
 
     @Override
     public void destroy() {
-        connectionFactoryList.forEach((ldap, connectionFactory) -> {
-            connectionFactory.close();
-        });
+        connectionFactoryList.forEach((ldap, connectionFactory) ->
+            connectionFactory.close()
+        );
     }
 }

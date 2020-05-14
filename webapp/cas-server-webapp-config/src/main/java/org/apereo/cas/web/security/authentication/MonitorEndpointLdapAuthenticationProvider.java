@@ -46,8 +46,8 @@ import java.util.stream.Collectors;
 public class MonitorEndpointLdapAuthenticationProvider implements AuthenticationProvider {
     private final MonitorProperties.Endpoints.LdapSecurity ldapProperties;
     private final SecurityProperties securityProperties;
-    private ConnectionFactory connectionFactory;
-    private Authenticator authenticator;
+    private final ConnectionFactory connectionFactory;
+    private final Authenticator authenticator;
 
     public MonitorEndpointLdapAuthenticationProvider(final MonitorProperties.Endpoints.LdapSecurity ldapProperties,
                                                      final SecurityProperties securityProperties) {
