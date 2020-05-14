@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.context.ApplicationEventPublisher;
 
 import static org.mockito.Mockito.*;
@@ -10,6 +11,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Tag("Simple")
 public class InMemoryServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Override

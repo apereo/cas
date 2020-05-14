@@ -16,6 +16,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -52,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "spring.mail.port=25000"
 })
 @DirtiesContext
+@Tag("Simple")
 public class UniquePrincipalAuthenticationPolicyTests {
     @Autowired
     @Qualifier("ticketRegistry")

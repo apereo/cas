@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.config.CasCoreMonitorConfiguration;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -49,6 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "management.endpoint.health.enabled=true"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("Simple")
 public class CasCoreMonitorConfigurationTests {
     @Autowired
     @Qualifier("memoryHealthIndicator")
