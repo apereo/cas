@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  */
 @DirtiesContext
 @SpringBootTest(classes = AopAutoConfiguration.class)
-@Tag("Simple")
+@Tag("MFA")
 public class DefaultRequestedAuthenticationContextValidatorTests {
 
     private static final String CASUSER = "casuser";

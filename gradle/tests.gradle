@@ -198,7 +198,7 @@ if (hasTestsOfCategory(project, "Ignite")) {
         list.add("java.base/jdk.internal.misc=ALL-UNNAMED")
         list.add("--add-exports")
         list.add("java.base/sun.nio.ch=ALL-UNNAMED")
-        jvmArgs = list
+        jvmArgs.addAll(list)
     }
 }
 
@@ -348,7 +348,7 @@ tasks.withType(Test) {
     systemProperty("CI", System.getProperty("CI"))
 
     failFast = true
-    jvmArgs.addAll(["-Xms512m", "-Xmx4g"])
+    jvmArgs = ["-Xms512m", "-Xmx4g"]
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
     testLogging {
         events = ["FAILED", "STANDARD_OUT"]
