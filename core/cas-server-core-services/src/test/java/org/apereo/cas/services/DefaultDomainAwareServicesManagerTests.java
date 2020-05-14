@@ -4,6 +4,7 @@ import org.apereo.cas.services.domain.DefaultDomainAwareServicesManager;
 import org.apereo.cas.services.domain.DefaultRegisteredServiceDomainExtractor;
 
 import lombok.NoArgsConstructor;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @NoArgsConstructor
+@Tag("Simple")
 public class DefaultDomainAwareServicesManagerTests extends AbstractServicesManagerTests {
     private DefaultDomainAwareServicesManager defaultDomainAwareServicesManager;
 

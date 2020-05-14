@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolv
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Tag("Simple")
 public class ChainingPrincipalResolverTests {
 
     private final PrincipalFactory principalFactory = PrincipalFactoryUtils.newPrincipalFactory();

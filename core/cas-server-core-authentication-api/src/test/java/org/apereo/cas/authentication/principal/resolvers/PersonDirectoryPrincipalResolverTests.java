@@ -11,6 +11,7 @@ import com.google.common.collect.Maps;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.*;
  * @since 4.2
  */
 @SuppressWarnings("OptionalAssignedToNull")
+@Tag("Simple")
 public class PersonDirectoryPrincipalResolverTests {
 
     private static final String ATTR_1 = "attr1";

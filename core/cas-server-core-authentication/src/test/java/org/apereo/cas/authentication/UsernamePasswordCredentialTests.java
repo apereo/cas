@@ -6,6 +6,7 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.mapping.MappingResults;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = "cas.authn.policy.source-selection-enabled=true")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("Simple")
 public class UsernamePasswordCredentialTests {
 
     @Autowired

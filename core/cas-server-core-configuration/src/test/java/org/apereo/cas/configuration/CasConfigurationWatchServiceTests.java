@@ -2,6 +2,7 @@ package org.apereo.cas.configuration;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class
 })
+@Tag("Simple")
 public class CasConfigurationWatchServiceTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

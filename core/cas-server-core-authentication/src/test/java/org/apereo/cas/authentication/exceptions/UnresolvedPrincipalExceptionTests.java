@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.exceptions;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.ThrowingSupplier;
 
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("Simple")
 public class UnresolvedPrincipalExceptionTests {
     @Test
     public void verifyOperation() {

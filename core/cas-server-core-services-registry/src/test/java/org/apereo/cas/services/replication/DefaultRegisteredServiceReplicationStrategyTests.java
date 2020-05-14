@@ -10,6 +10,7 @@ import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,6 +31,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class, properties = "cas.service-registry.stream.replication-mode=ACTIVE_ACTIVE")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("Simple")
 public class DefaultRegisteredServiceReplicationStrategyTests {
 
     @Autowired

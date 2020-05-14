@@ -9,6 +9,7 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.*;
  * @author Daniel Frett
  * @since 5.3.0
  */
+@Tag("Simple")
 public class DefaultCasCookieValueManagerTests {
     private static final String CLIENT_IP = "127.0.0.1";
 

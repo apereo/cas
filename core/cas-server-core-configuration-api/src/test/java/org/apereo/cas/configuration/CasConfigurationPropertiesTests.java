@@ -2,6 +2,7 @@ package org.apereo.cas.configuration;
 
 import lombok.val;
 import org.apache.commons.lang3.SerializationUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasConfigurationPropertiesTests.CasPropertiesTestConfiguration.class,
     RefreshAutoConfiguration.class
 })
+@Tag("Simple")
 public class CasConfigurationPropertiesTests {
     @Autowired
     private CasConfigurationProperties casProperties;

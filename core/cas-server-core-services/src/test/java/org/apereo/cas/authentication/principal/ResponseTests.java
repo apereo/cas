@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.4.4
  */
+@Tag("Simple")
 public class ResponseTests {
 
     private static final String TICKET_PARAM = "ticket";

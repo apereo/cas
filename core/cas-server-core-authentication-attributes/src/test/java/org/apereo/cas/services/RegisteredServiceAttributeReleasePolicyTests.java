@@ -15,6 +15,7 @@ import lombok.val;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
@@ -48,6 +49,7 @@ import static org.mockito.Mockito.*;
     "spring.mail.host=localhost",
     "spring.mail.port=25000"
 })
+@Tag("Simple")
 public class RegisteredServiceAttributeReleasePolicyTests {
 
     private static final String ATTR_1 = "attr1";

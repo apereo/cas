@@ -8,6 +8,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Tag("Simple")
 public class JaasAuthenticationHandlerSystemConfigurationTests {
 
     private static final String USERNAME = "test";

@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
+@Tag("Simple")
 public class ThreadLocalPrincipalResolverTests {
 
     private final ThreadLocalPrincipalResolver theResolver =

@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.*;
     AopAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("Simple")
 public class TicketRegistryHealthIndicatorTests {
 
     @Test

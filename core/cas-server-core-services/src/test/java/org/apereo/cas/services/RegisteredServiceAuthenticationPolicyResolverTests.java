@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("Simple")
 public class RegisteredServiceAuthenticationPolicyResolverTests {
     private ServicesManager servicesManager;
 
