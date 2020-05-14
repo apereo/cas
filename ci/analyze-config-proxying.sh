@@ -1,8 +1,6 @@
 #!/bin/bash
 source ./ci/functions.sh
 
-runBuild=true
-
 gradle="./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--build-cache --configure-on-demand --no-daemon "

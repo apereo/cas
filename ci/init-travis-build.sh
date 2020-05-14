@@ -42,16 +42,8 @@ sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
 
 chmod -R 777 ./ci/*.sh
 
-echo -e "Installing JDK...\n"
-installJdk
-
 echo -e "Configuring Gradle wrapper...\n"
 mkdir -p ~/.gradle && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
 chmod -R 777 ./gradlew
-
-echo "Home directory: $HOME"
-
-echo "Gradle Home directory:"
-./gradlew gradleHome --no-daemon --version
 
 echo -e "Configured build environment\n"

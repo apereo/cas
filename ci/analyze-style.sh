@@ -1,24 +1,6 @@
 #!/bin/bash
 source ./ci/functions.sh
 
-runBuild=false
-echo "Reviewing changes that might affect the Gradle build..."
-currentChangeSetAffectsStyle
-retval=$?
-if [ "$retval" == 0 ]
-then
-    echo "Found changes that require the build to run static analysis."
-    runBuild=true
-else
-    echo "Changes do NOT affect project static analysis."
-    runBuild=false
-fi
-
-if [ "$runBuild" = false ]; then
-    exit 0
-fi
-
-
 gradle="./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--build-cache --configure-on-demand --no-daemon "

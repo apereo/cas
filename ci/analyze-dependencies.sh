@@ -1,28 +1,6 @@
 #!/bin/bash
 source ./ci/functions.sh
 
-runBuild=false
-if [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
-    echo "Reviewing changes that might affect the Gradle build in this pull request..."
-    currentChangeSetAffectsDependencies
-    retval=$?
-    if [ "$retval" == 0 ]
-    then
-        echo "Changes affect Gradle build descriptors. Dependency analysis will run."
-        runBuild=true
-    else
-        echo "Changes do NOT affect Gradle build descriptors. Dependency analysis will be skipped."
-        runBuild=false
-    fi
-else
-    echo "Dependency analysis will run against branch $TRAVIS_BRANCH"
-    runBuild=true
-fi
-
-if [ "$runBuild" = false ]; then
-    exit 0
-fi
-
 
 gradle="./gradlew $@"
 gradleBuild=""
