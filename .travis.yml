@@ -8,7 +8,7 @@
 
 language: java
 os: linux
-dist: xenial
+dist: trusty
 services:
   - docker
 branches:
