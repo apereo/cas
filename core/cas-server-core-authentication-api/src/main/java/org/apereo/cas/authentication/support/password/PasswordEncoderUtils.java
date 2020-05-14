@@ -58,8 +58,13 @@ public class PasswordEncoderUtils {
                 val clazz = (Class<PasswordEncoder>) Class.forName(type);
                 return clazz.getDeclaredConstructor().newInstance();
             } catch (final Exception e) {
-                LOGGER.error("Falling back to a no-op password encoder as CAS has failed to create "
-                    + "an instance of the custom password encoder class " + type, e);
+                val msg = "Falling back to a no-op password encoder as CAS has failed to create "
+                    + "an instance of the custom password encoder class " + type;
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.error(msg, e);
+                } else {
+                    LOGGER.error(msg);
+                }
                 return NoOpPasswordEncoder.getInstance();
             }
         }
