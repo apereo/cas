@@ -9,6 +9,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,10 +38,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
+@Tag("SAML")
 public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     @Autowired
     @Qualifier("shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy")

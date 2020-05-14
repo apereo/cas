@@ -3,14 +3,14 @@ source ./ci/functions.sh
 
 runBuild=false
 echo "Reviewing changes that might affect the Gradle build..."
-currentChangeSetAffectsBuild
+currentChangeSetAffectsTests
 retval=$?
 if [ "$retval" == 0 ]
 then
-    echo "Found changes that require the build to run."
+    echo "Found changes that require the build to run test cases."
     runBuild=true
 else
-    echo "Changes do NOT affect the project build."
+    echo "Changes do NOT affect project test cases."
     runBuild=false
 fi
 
@@ -18,16 +18,17 @@ if [ "$runBuild" = false ]; then
     exit 0
 fi
 
+
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -DtestCategoryType=X509 "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-gradleBuild="$gradleBuild build install -x test -x javadoc -x check \
-    -DskipNestedConfigMetadataGen=true --parallel  "
+gradleBuild="$gradleBuild testX509 jacocoRootReport -x test -x javadoc -x check \
+    --parallel -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "
@@ -46,12 +47,14 @@ if [ -z "$gradleBuild" ]; then
 else
     tasks="$gradle $gradleBuildOptions $gradleBuild"
     echo -e "***************************************************************************************"
+
     echo $tasks
     echo -e "***************************************************************************************"
 
     waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
     eval $waitloop
     waitRetVal=$?
+
 
     eval $tasks
     retVal=$?
@@ -61,8 +64,9 @@ else
     echo -e "***************************************************************************************"
 
     if [ $retVal == 0 ]; then
+        echo "Uploading test coverage results..."
+        bash <(curl -s https://codecov.io/bash) -F X509
         echo "Gradle build finished successfully."
-        exit 0
     else
         echo "Gradle build did NOT finish successfully."
         exit $retVal

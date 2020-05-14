@@ -10,6 +10,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
@@ -30,6 +31,7 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfPortOpen(port = 10389)
 @Slf4j
+@Tag("Ldap")
 public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     private static final int LDAP_PORT = 10389;
 

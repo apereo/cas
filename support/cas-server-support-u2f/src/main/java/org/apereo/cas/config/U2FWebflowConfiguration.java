@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -113,6 +114,7 @@ public class U2FWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "u2fAuthenticationWebflowAction")
     @Bean
+    @RefreshScope
     public Action u2fAuthenticationWebflowAction() {
         return new U2FAuthenticationWebflowAction(u2fAuthenticationWebflowEventResolver());
     }
@@ -129,6 +131,7 @@ public class U2FWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "u2fStartAuthenticationAction")
     @Bean
+    @RefreshScope
     public Action u2fStartAuthenticationAction() {
         return new U2FStartAuthenticationAction(u2fService.getObject(),
             casProperties.getServer().getName(),
@@ -137,6 +140,7 @@ public class U2FWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "u2fStartRegistrationAction")
     @Bean
+    @RefreshScope
     public Action u2fStartRegistrationAction() {
         return new U2FStartRegistrationAction(u2fService.getObject(),
             casProperties.getServer().getName(), u2fDeviceRepository.getObject());
@@ -144,18 +148,21 @@ public class U2FWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "u2fCheckAccountRegistrationAction")
     @Bean
+    @RefreshScope
     public Action u2fCheckAccountRegistrationAction() {
         return new U2FAccountCheckRegistrationAction(u2fDeviceRepository.getObject());
     }
 
     @ConditionalOnMissingBean(name = "u2fSaveAccountRegistrationAction")
     @Bean
+    @RefreshScope
     public Action u2fSaveAccountRegistrationAction() {
         return new U2FAccountSaveRegistrationAction(u2fService.getObject(), u2fDeviceRepository.getObject());
     }
 
     @ConditionalOnMissingBean(name = "u2fAuthenticationWebflowEventResolver")
     @Bean
+    @RefreshScope
     public CasWebflowEventResolver u2fAuthenticationWebflowEventResolver() {
         val context = CasWebflowEventResolutionConfigurationContext.builder()
             .authenticationSystemSupport(authenticationSystemSupport.getObject())

@@ -2,6 +2,7 @@ package org.apereo.cas.aws;
 
 import com.amazonaws.auth.BasicAWSCredentials;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
 
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("AmazonWebServices")
 public class ChainingAWSCredentialsProviderTests {
     static {
         System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");

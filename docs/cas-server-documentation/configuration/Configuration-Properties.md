@@ -656,7 +656,11 @@ Control aspects of session replication for certain CAS features, such as OAuth o
 allowing session and authentication profile data to be kept with the client as a cookie.
 
 Common cookie properties found [here](Configuration-Properties-Common.html#cookie-properties) under 
-the configuration key `cas.sessionReplication.cookie`.
+the configuration key `cas.session-replication.cookie`.
+
+```properties
+# cas.session-replication.auto-configure-cookie-path=true
+```
 
 ## CAS Banner
 
@@ -1612,7 +1616,7 @@ Examine the client IP address via the following strategies.
 #### REST Adaptive Authentication
 
 RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
-under the configuration key `cas.authn.adaptive.ipIntel.rest`.
+under the configuration key `cas.authn.adaptive.ip-intel.rest`.
 
 #### Groovy Adaptive Authentication
 
@@ -1783,7 +1787,7 @@ Send text messages using a Groovy script.
 ### REST
 
 Send text messages using a RESTful API. RESTful settings for this feature are 
-available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.smsProvider.rest`.
+available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.sms-provider.rest`.
 
 ### Twilio
 
@@ -1842,7 +1846,7 @@ Send text messaging using Amazon SNS.
 ```
 
 AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
-under the configuration key `cas.smsProvider.sns`.
+under the configuration key `cas.sms-provider.sns`.
 
 ## GeoTracking
 
@@ -2066,8 +2070,8 @@ Password encoding  settings for this feature are available [here](Configuration-
 
 To learn more about this topic, [please review this guide](../installation/CouchDb-Authentication.html).
 
-Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.couchDb`.
-Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.couchDb`.
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.couch-db`.
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.couch-db`.
 
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn`.
 
@@ -2287,7 +2291,7 @@ are available [here](Configuration-Properties-Common.html#person-directory-princ
 under the configuration key `cas.authn.jaas[0].principal`.
 
 Password policy settings for this feature are available [here](Configuration-Properties-Common.html#password-policy-settings) 
-under the configuration key `cas.authn.jaas[0].passwordPolicy`.
+under the configuration key `cas.authn.jaas[0].password-policy`.
 
 
 ## GUA Authentication
@@ -2299,7 +2303,7 @@ To learn more about this topic, [please review this guide](../installation/GUA-A
 LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.gua.ldap`.
 
 ```properties
-# cas.authn.gua.ldap.image-attribute=userImageIdentifie
+# cas.authn.gua.ldap.image-attribute=userImageIdentifier
 ```
 
 ### Static Resource Repository
@@ -3507,7 +3511,7 @@ might be discovered via an "acct:" URI, for example, which is a URI that looks l
 #### WebFinger UserInfo via REST
 
 RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
-under the configuration key `cas.authn.oidc.webfinger.userInfo.rest`.
+under the configuration key `cas.authn.oidc.webfinger.user-info.rest`.
 
 ### OpenID Connect Logout
 
@@ -3734,7 +3738,7 @@ Delegate authentication to Facebook. Common settings for this identity provider 
 
 ### HiOrg Server
 
-Delegate authentication to HiOrg Server. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.hiOrgServer`.
+Delegate authentication to HiOrg Server. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.hi-org-server`.
 
 ```properties
 # cas.authn.pac4j.hi-org-server.scope=eigenedaten
@@ -3853,7 +3857,7 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 
 The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) 
-under the configuration key `cas.authn.oauth.accessToken`.
+under the configuration key `cas.authn.oauth.access-token`.
 
 ### OAuth2 UMA
 
@@ -3895,10 +3899,10 @@ If the user changes the language, a special cookie is created by CAS to contain 
 
 ## Warning Cookie
 
-Created by CAS if and when users are to be warned when accessing CAS protected services. Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-properties) under the configuration key `cas.warningCookie`.
+Created by CAS if and when users are to be warned when accessing CAS protected services. Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-properties) under the configuration key `cas.warning-cookie`.
 
 ```properties
-# cas.warningCookie.autoConfigureCookiePath=true
+# cas.warningCookie.auto-configure-cookie-path=true
 ```
 
 ## Ticket Granting Cookie
@@ -4563,7 +4567,7 @@ are kept inside the runtime environment memory.
 # cas.ticket.registry.in-memory.initial-capacity=1000
 ```
 
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.inMemory`.
+Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.in-memory`.
 
 ### JMS Ticket Registry
 
@@ -4872,7 +4876,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 ### Google Analytics Cookie
 
 The common cookie settings applicable to this feature are [available here](Configuration-Properties-Common.html#cookie-properties) 
-under the configuration key `cas.googleAnalytics.cookie`.
+under the configuration key `cas.google-analytics.cookie`.
 
 ```properties
 cas.google-analytics.cookie.attribute-name=
@@ -4904,7 +4908,7 @@ To learn more about this topic, [please review this guide](../webflow/Webflow-Cu
 
 #### REST
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.webflow.loginDecorator.rest`.
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.webflow.login-decorator.rest`.
 
 ### Spring Webflow Auto Configuration
 
@@ -5259,7 +5263,7 @@ To learn more about this topic, [please review this guide](../integration/Shibbo
 # cas.saml-metadata-ui.parameter=entityId
 ```         
 
-Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.samlMetadataUi`.
+Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.saml-metadata-ui`.
 
 ## Eureka Service Discovery
 

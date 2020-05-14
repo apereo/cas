@@ -8,6 +8,7 @@ import org.apereo.cas.services.RegexRegisteredService;
 
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Tag("FileSystem")
 public class RegisteredServiceJsonSerializerTests {
 
     @Test

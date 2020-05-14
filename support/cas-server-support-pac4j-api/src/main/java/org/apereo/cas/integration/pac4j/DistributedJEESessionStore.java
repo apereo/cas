@@ -1,13 +1,12 @@
 package org.apereo.cas.integration.pac4j;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
-import org.apereo.cas.web.support.CookieUtils;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +28,7 @@ import java.util.UUID;
  */
 @Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
+@RequiredArgsConstructor
 public class DistributedJEESessionStore implements SessionStore<JEEContext> {
     private static final String SESSION_ID_IN_REQUEST_ATTRIBUTE = "sessionIdInRequestAttribute";
 
@@ -36,17 +36,7 @@ public class DistributedJEESessionStore implements SessionStore<JEEContext> {
 
     private final TicketFactory ticketFactory;
 
-    private final CookieRetrievingCookieGenerator cookieGenerator;
-
-    public DistributedJEESessionStore(final CentralAuthenticationService centralAuthenticationService,
-                                      final TicketFactory ticketFactory,
-                                      final CasConfigurationProperties casProperties) {
-        this.centralAuthenticationService = centralAuthenticationService;
-        this.ticketFactory = ticketFactory;
-        val cookie = casProperties.getSessionReplication().getCookie();
-        val context = CookieUtils.buildCookieGenerationContext(cookie);
-        this.cookieGenerator = new CookieRetrievingCookieGenerator(context);
-    }
+    private final CasCookieBuilder cookieGenerator;
 
     @Override
     public String getOrCreateSessionId(final JEEContext context) {
@@ -57,16 +47,6 @@ public class DistributedJEESessionStore implements SessionStore<JEEContext> {
             cookieGenerator.addCookie(context.getNativeRequest(), context.getNativeResponse(), sessionId);
             context.setRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE, sessionId);
         }
-        return sessionId;
-    }
-
-
-    private String getSessionId(final JEEContext context) {
-        var sessionId = (String) context.getRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE).orElse(null);
-        if (StringUtils.isBlank(sessionId)) {
-            sessionId = cookieGenerator.retrieveCookieValue(context.getNativeRequest());
-        }
-        LOGGER.trace("Generated session id: [{}]", sessionId);
         return sessionId;
     }
 
@@ -139,6 +119,15 @@ public class DistributedJEESessionStore implements SessionStore<JEEContext> {
     @Override
     public boolean renewSession(final JEEContext context) {
         return false;
+    }
+
+    private String getSessionId(final JEEContext context) {
+        var sessionId = (String) context.getRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE).orElse(null);
+        if (StringUtils.isBlank(sessionId)) {
+            sessionId = cookieGenerator.retrieveCookieValue(context.getNativeRequest());
+        }
+        LOGGER.trace("Generated session id: [{}]", sessionId);
+        return sessionId;
     }
 
     private TransientSessionTicket getTransientSessionTicketForSession(final JEEContext context) {

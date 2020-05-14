@@ -8,6 +8,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.*;
     "cas.authn.cloudDirectory.passwordAttributeName=password"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("AmazonWebServices")
 public class CloudDirectoryAuthenticationHandlerTests {
     @Autowired
     private CasConfigurationProperties casProperties;

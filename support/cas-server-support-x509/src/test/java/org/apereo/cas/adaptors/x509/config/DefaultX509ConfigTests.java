@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.x509.config;
 import org.apereo.cas.adaptors.x509.BaseX509Tests;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "spring.mail.host=localhost",
         "spring.mail.port=25000"
     })
+@Tag("X509")
 public class DefaultX509ConfigTests {
 
     @Autowired

@@ -22,7 +22,6 @@ import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicyTests;
 import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicyTests;
 import org.apereo.cas.authentication.principal.ChainingPrincipalElectionStrategyTests;
 import org.apereo.cas.authentication.principal.ChainingPrincipalResolverTests;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactoryTests;
 import org.apereo.cas.authentication.principal.NullPrincipalTests;
 import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataPopulatorTests;
 import org.apereo.cas.authentication.principal.SimplePrincipalFactoryTests;
@@ -46,7 +45,6 @@ import org.junit.runner.RunWith;
     PasswordEncoderUtilsTests.class,
     SimplePrincipalFactoryTests.class,
     RememberMeAuthenticationMetaDataPopulatorTests.class,
-    DefaultPrincipalFactoryTests.class,
     ConvertCasePrincipalNameTransformerTests.class,
     JaasAuthenticationHandlerSystemConfigurationTests.class,
     JaasAuthenticationHandlerTests.class,

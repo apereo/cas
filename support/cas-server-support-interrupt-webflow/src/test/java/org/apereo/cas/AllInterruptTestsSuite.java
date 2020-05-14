@@ -1,5 +1,7 @@
-package org.apereo.cas.interrupt.webflow;
+package org.apereo.cas;
 
+import org.apereo.cas.interrupt.webflow.InterruptSingleSignOnParticipationStrategyTests;
+import org.apereo.cas.interrupt.webflow.InterruptWebflowConfigurerTests;
 import org.apereo.cas.interrupt.webflow.actions.FinalizeInterruptFlowActionTests;
 import org.apereo.cas.interrupt.webflow.actions.InquireInterruptActionTests;
 import org.apereo.cas.interrupt.webflow.actions.PrepareInterruptViewActionTests;

@@ -4,6 +4,7 @@ import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @EnableAutoConfiguration
+@Tag("SHELL")
 public class StringableCipherExecutorCommandTests extends BaseCasShellCommandTests {
     private static final String SAMPLE_ENCRYPTION_KEY = "AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M";
 

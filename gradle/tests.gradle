@@ -4,7 +4,7 @@ def testCategories = [
     "Ldap", "Mail", "MariaDb", "Memcached", "JDBC",
     "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
     "Radius", "AmazonWebServices", "RestfulApi", "Groovy",
-    "OAuth", "OIDC", "SAML", "UMA", "Oracle", "JMS",
+    "OAuth", "OIDC", "SAML", "UMA", "Oracle", "JMS", "X509",
     "ZooKeeper", "Webflow", "DynamoDb", "MFA", "Kafka"
 ] as String[]
 
@@ -22,6 +22,24 @@ if (hasTestsOfCategory(project, "MFA")) {
         enabled = shouldTest(project, "MFA")
         useJUnitPlatform {
             includeTags "MFA"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "X509")) {
+    task testX509(type: Test) {
+        enabled = shouldTest(project, "X509")
+        useJUnitPlatform {
+            includeTags "X509"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "SHELL")) {
+    task testSHELL(type: Test) {
+        enabled = shouldTest(project, "SHELL")
+        useJUnitPlatform {
+            includeTags "SHELL"
         }
     }
 }

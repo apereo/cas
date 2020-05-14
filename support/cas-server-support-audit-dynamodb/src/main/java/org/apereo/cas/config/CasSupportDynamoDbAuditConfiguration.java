@@ -31,6 +31,7 @@ public class CasSupportDynamoDbAuditConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbAuditTrailManager")
+    @RefreshScope
     public AuditTrailManager dynamoDbAuditTrailManager() {
         val db = casProperties.getAudit().getDynamoDb();
         return new DynamoDbAuditTrailManager(dynamoDbAuditTrailManagerFacilitator(), db.isAsynchronous());
@@ -59,6 +60,7 @@ public class CasSupportDynamoDbAuditConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "dynamoDbAuditTrailExecutionPlanConfigurer")
     public AuditTrailExecutionPlanConfigurer dynamoDbAuditTrailExecutionPlanConfigurer() {
         return plan -> plan.registerAuditTrailManager(dynamoDbAuditTrailManager());
     }
