@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     HazelcastSessionConfiguration.class
 })
-@Tag("Simple")
+@Tag("Hazelcast")
 public class HazelcastSessionConfigurationTests {
     @Autowired
     @Qualifier("hazelcastInstance")

@@ -1,40 +1,20 @@
 #!/bin/bash
-source ./ci/functions.sh
-
-runBuild=false
-echo "Reviewing changes that might affect the Gradle build..."
-currentChangeSetAffectsTests
-retval=$?
-if [ "$retval" == 0 ]
-then
-    echo "Found changes that require the build to run test cases."
-    runBuild=true
-else
-    echo "Changes do NOT affect project test cases."
-    runBuild=false
-fi
-
-if [ "$runBuild" = false ]; then
-    exit 0
-fi
 
 
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon  "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-./ci/tests/oracle/run-oracle-server.sh
-
-gradleBuild="$gradleBuild testOracle jacocoRootReport -x test -x javadoc -x check \
-    --parallel  \
+gradleBuild="$gradleBuild testJMX jacocoRootReport --parallel -x javadoc -x check \
+     \
     -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
-    gradleBuild="$gradleBuild -DshowStandardStreams=true "
+   gradleBuild="$gradleBuild -DshowStandardStreams=true "
 fi
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
@@ -68,7 +48,7 @@ else
 
     if [ $retVal == 0 ]; then
         echo "Uploading test coverage results..."
-        bash <(curl -s https://codecov.io/bash) -F Oracle
+        bash <(curl -s https://codecov.io/bash) -F Groovy
         echo "Gradle build finished successfully."
     else
         echo "Gradle build did NOT finish successfully."

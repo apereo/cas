@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Simple")
+@Tag("Hazelcast")
 public class HazelcastAwsDiscoveryStrategyTests {
     @Test
     public void verifyAction() {

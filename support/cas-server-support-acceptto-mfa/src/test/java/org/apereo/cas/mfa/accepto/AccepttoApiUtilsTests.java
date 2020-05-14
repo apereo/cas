@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Simple")
+@Tag("MFA")
 public class AccepttoApiUtilsTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

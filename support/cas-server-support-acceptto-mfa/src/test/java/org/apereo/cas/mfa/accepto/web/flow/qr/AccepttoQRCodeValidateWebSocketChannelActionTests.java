@@ -3,7 +3,7 @@ package org.apereo.cas.mfa.accepto.web.flow.qr;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
-import org.apereo.cas.mfa.accepto.BaseAcceptoMultifactorAuthenticationTests;
+import org.apereo.cas.mfa.accepto.BaseAccepttoMultifactorAuthenticationTests;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoWebflowUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = BaseAcceptoMultifactorAuthenticationTests.SharedTestConfiguration.class,
+@SpringBootTest(classes = BaseAccepttoMultifactorAuthenticationTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.acceptto.apiUrl=http://localhost:5012",
         "cas.authn.mfa.acceptto.application-id=thisisatestid",
@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.acceptto.organization-secret=thisisasecret",
         "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
     })
-@Tag("Simple")
+@Tag("Webflow")
 public class AccepttoQRCodeValidateWebSocketChannelActionTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

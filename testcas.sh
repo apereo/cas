@@ -6,7 +6,7 @@ printHelp() {
     echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--coverage]\n"
     echo -e "Available test categories are:\n"
     echo -e "simple, memcached,cassandra,groovy,kafka,ldap,rest,mfa,jdbc,mssql,oracle,radius,couchdb,\
-mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,activemq,\
+mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,activemq,hazelcast,jmx,\
 oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell"
     echo -e "\nPlease see the test script for details.\n"
 }
@@ -79,6 +79,12 @@ while (( "$#" )); do
                 ;;
             groovy|script)
                 task+="testGroovy "
+                ;;
+            jmx|jmx)
+                task+="testJMX "
+                ;;
+            hz|hazelcast)
+                task+="testHazelcast "
                 ;;
             mssql)
                 task+="testMsSqlServer "

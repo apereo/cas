@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Simple")
+@Tag("Hazelcast")
 public class RegisteredServiceHazelcastDistributedCacheManagerTests {
     private HazelcastInstance hz;
     private RegisteredServiceHazelcastDistributedCacheManager mgr;

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = BaseCasJmsTests.SharedTestConfiguration.class)
-@Tag("Simple")
+@Tag("JMX")
 public class CasJmxConfigurationTests {
 
     @Autowired
