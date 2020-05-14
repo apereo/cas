@@ -1,10 +1,11 @@
 package org.apereo.cas.support.rest;
 
-import lombok.val;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.support.rest.resources.RestResourceUtils;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
