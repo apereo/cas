@@ -18,16 +18,8 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 if [[ "$casVersion" == *"-SNAPSHOT" ]]; then
-    currentChangeSetAffectsSnapshots
-    retval=$?
-    if [ "$retval" == 0 ]
-    then
-        echo "Found changes that require snapshots to be published."
-        runBuild=true
-    else
-        echo "Changes do NOT affect project snapshots."
-        runBuild=false
-    fi
+    echo "Found changes that require snapshots to be published."
+    runBuild=true
 else
     runBuild=false
 fi
