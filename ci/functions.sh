@@ -95,5 +95,3 @@ currentChangeSetAffectsSnapshots() {
     currentChangeSetContains "\.(java|groovy|yml|gradle|properties|xml|json)"
     return `(expr "$?" + 0)`
 }
-
-installJdk
