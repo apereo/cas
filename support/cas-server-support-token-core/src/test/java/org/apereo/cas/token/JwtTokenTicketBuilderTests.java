@@ -6,6 +6,7 @@ import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
