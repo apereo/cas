@@ -41,11 +41,10 @@ import org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDa
 import org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao;
 import org.jooq.lambda.Unchecked;
 import org.ldaptive.ConnectionFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.beans.factory.config.ListFactoryBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -261,35 +260,26 @@ public class CasPersonDirectoryConfiguration {
     }
 
     @ConditionalOnProperty(name = "cas.authn.attribute-repository.ldap[0].ldap-url")
-    @Configuration("CasPersonDirectoryLdapConfiguration")
-    public class CasPersonDirectoryLdapConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
+    @Bean
+    @Autowired
+    @RefreshScope
+    public PersonDirectoryAttributeRepositoryPlanConfigurer ldapAttributeRepositoryPlanConfigurer() {
+        return new LdapAttributeRepositoryPlanConfigurer();
+    }
 
-        @Bean
-        @RefreshScope
-        public ListFactoryBean personDirectoryAttributeRepositoryPlanConfigurerListConnectionFactoryListBean() {
-            val bean = new ListFactoryBean() {
-                @Override
-                protected void destroyInstance(final List list) {
-                    list.forEach(dao ->
-                        ((ConnectionFactory) dao).close()
-                    );
-                }
-            };
-            bean.setSourceList(new ArrayList<>());
-            return bean;
+    private class LdapAttributeRepositoryPlanConfigurer implements PersonDirectoryAttributeRepositoryPlanConfigurer, DisposableBean {
+        private final ArrayList<ConnectionFactory> connectionFactoryList = new ArrayList<>(0);
+
+        @Override
+        public void destroy() {
+            connectionFactoryList.forEach(ConnectionFactory::close);
         }
 
-        @ConditionalOnMissingBean(name = "ldapAttributeRepositories")
-        @Bean
-        @Autowired
+        @Override
         @SneakyThrows
-        @RefreshScope
-        public List<IPersonAttributeDao> ldapAttributeRepositories(
-                @Qualifier("personDirectoryAttributeRepositoryPlanConfigurerListConnectionFactoryListBean")
-                final ListFactoryBean personDirectoryAttributeRepositoryPlanConfigurerListConnectionFactoryListBean) {
-            val list = new ArrayList<IPersonAttributeDao>();
-            val connectionFactoryList = personDirectoryAttributeRepositoryPlanConfigurerListConnectionFactoryListBean.getObject();
+        public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
             val attrs = casProperties.getAuthn().getAttributeRepository();
+
             attrs.getLdap()
                 .stream()
                 .filter(ldap -> StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl()))
@@ -324,18 +314,8 @@ public class CasPersonDirectoryConfiguration {
                     ldapDao.setSearchControls(constraints);
                     ldapDao.setOrder(ldap.getOrder());
                     LOGGER.debug("Adding LDAP attribute source for [{}]", ldap.getLdapUrl());
-                    list.add(ldapDao);
+                    plan.registerAttributeRepository(ldapDao);
                 });
-
-            return list;
-        }
-
-
-        @Override
-        public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
-            plan.registerAttributeRepositories(ldapAttributeRepositories(
-                personDirectoryAttributeRepositoryPlanConfigurerListConnectionFactoryListBean()
-            ));
         }
     }
 
@@ -515,4 +495,3 @@ public class CasPersonDirectoryConfiguration {
 
 
 }
-
