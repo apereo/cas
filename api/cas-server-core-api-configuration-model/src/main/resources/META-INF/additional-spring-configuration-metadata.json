@@ -18,7 +18,18 @@
       "defaultValue": true,
       "deprecation": {
         "replacement": "cas.authn.authentication-attribute-release.enabled",
-        "reason": "Property renamed due to new cas.authn.authenticationAttributeRelease.* settings.",
+        "reason": "Property moved to new namespace under cas.authn.authentication-attribute-release.* settings.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.mfa.gauth.rest.endpoint-url",
+      "type": "java.lang.String",
+      "description": "URL to manage Google Authenticator credentials.",
+      "defaultValue": "",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.gauth.rest.url",
+        "reason": "Property renamed to be consistent with other RESt-based configuration.",
         "level": "error"
       }
     },
@@ -47,7 +58,7 @@
       "description": "Location of the JSON/YAML service registry files",
       "deprecation": {
         "replacement": "cas.service-registry.json.location",
-        "reason": "Property renamed due to cas.service-registry.json.location instead.",
+        "reason": "Property renamed, use cas.service-registry.json.location instead.",
         "level": "error"
       }
     },

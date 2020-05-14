@@ -168,7 +168,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             return new JsonGoogleAuthenticatorTokenCredentialRepository(gauth.getJson().getLocation(), googleAuthenticatorInstance(),
                 googleAuthenticatorAccountCipherExecutor());
         }
-        if (StringUtils.isNotBlank(gauth.getRest().getEndpointUrl())) {
+        if (StringUtils.isNotBlank(gauth.getRest().getUrl())) {
             return new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance(),
                 gauth, googleAuthenticatorAccountCipherExecutor());
         }
