@@ -1,6 +1,7 @@
 package org.apereo.cas.web.view;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.StringTemplateResolver;

@@ -14,6 +14,7 @@ import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.JEEContext;

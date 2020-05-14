@@ -6,6 +6,7 @@ import org.apereo.cas.impl.token.InMemoryPasswordlessTokenRepository;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
