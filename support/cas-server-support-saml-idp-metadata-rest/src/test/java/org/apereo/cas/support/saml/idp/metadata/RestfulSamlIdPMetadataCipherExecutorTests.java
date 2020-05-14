@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Simple")
+@Tag("RestfulApi")
 public class RestfulSamlIdPMetadataCipherExecutorTests {
     @Test
     public void verifyAction() {
