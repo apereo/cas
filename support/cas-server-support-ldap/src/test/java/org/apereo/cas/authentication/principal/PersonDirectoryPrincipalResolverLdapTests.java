@@ -28,7 +28,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link PersonDirectoryPrincipalResolverLdaptiveTests}.
+ * This is {@link PersonDirectoryPrincipalResolverLdapTests}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -37,18 +37,18 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = {
-    "cas.authn.attribute-repository.ldap[0].baseDn=dc=example,dc=org",
+    "cas.authn.attribute-repository.ldap[0].base-dn=dc=example,dc=org",
     "cas.authn.attribute-repository.ldap[0].ldap-url=ldap://localhost:10389",
-    "cas.authn.attribute-repository.ldap[0].searchFilter=cn={user}",
+    "cas.authn.attribute-repository.ldap[0].search-filter=cn={user}",
     "cas.authn.attribute-repository.ldap[0].attributes.cn=cn",
     "cas.authn.attribute-repository.ldap[0].attributes.description=description",
-    "cas.authn.attribute-repository.ldap[0].bindDn=cn=Directory Manager",
-    "cas.authn.attribute-repository.ldap[0].bindCredential=password"
+    "cas.authn.attribute-repository.ldap[0].bind-dn=cn=Directory Manager",
+    "cas.authn.attribute-repository.ldap[0].bind-credential=password"
 })
 @DirtiesContext
 @Tag("Ldap")
 @EnabledIfPortOpen(port = 10389)
-public class PersonDirectoryPrincipalResolverLdaptiveTests {
+public class PersonDirectoryPrincipalResolverLdapTests {
     @Autowired
     @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
@@ -60,7 +60,6 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests {
     public void verifyResolver() {
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
             this.attributeRepository, casProperties.getPersonDirectory());
-        
         val p = resolver.resolve(new UsernamePasswordCredential("admin", "password"),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
