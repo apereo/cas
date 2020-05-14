@@ -13,6 +13,7 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import org.springframework.test.context.TestPropertySource;
 })
 @Setter
 @Getter
+@Tag("Simple")
 public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasCoreTests {
     @Autowired
     @Qualifier("centralAuthenticationService")

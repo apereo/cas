@@ -37,6 +37,7 @@ notifications:
 env:
   global:
     - JAVA_OPTS="-Xms512m -Xmx6048m -Xss64m -XX:ReservedCodeCacheSize=512m -Xverify:none -server"
+    - GRADLE_OPTS="-Xms512m -Xmx6048m -Xss64m -XX:ReservedCodeCacheSize=512m -Xverify:none -server"
     - SPRING_MAIN_BANNER-MODE="off"
     - DEPENDENCY_BOT_BRANCH=^renovate
     - TERM=xterm
@@ -47,6 +48,7 @@ env:
 jdk:
   - openjdk11
 before_install:
+  - unset _JAVA_OPTIONS
   - ./ci/init-travis-build.sh
 install: true
 script:

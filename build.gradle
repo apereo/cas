@@ -58,7 +58,6 @@ ext {
         throw new GradleException("No credentials are configured to publish releases or snapshots")
     }
 
-    testCategoryType = System.getProperty("testCategoryType")
     skipBootifulArtifact = System.getProperty("skipBootifulArtifact")
     skipErrorProneCompiler = System.getProperty("skipErrorProneCompiler")
 
