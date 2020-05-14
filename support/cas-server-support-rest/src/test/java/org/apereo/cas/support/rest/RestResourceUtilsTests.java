@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationExceptio
 import org.apereo.cas.support.rest.resources.RestResourceUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -30,6 +31,7 @@ import static org.mockito.Mockito.mock;
  * @since 6.1.6
  */
 @ExtendWith(MockitoExtension.class)
+@Tag("RestfulApi")
 public class RestResourceUtilsTests {
 
     @Mock
@@ -51,7 +53,7 @@ public class RestResourceUtilsTests {
                 new UnauthorizedAuthenticationException(msg)
         );
 
-        ResponseEntity<String> response = RestResourceUtils.createResponseEntityForAuthnFailure(
+        val response = RestResourceUtils.createResponseEntityForAuthnFailure(
                 new AuthenticationException(msg, map, new HashMap<>(0)),
                 request,
                 context
