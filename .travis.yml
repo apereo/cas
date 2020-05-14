@@ -8,7 +8,7 @@
 
 language: java
 os: linux
-dist: bionic
+dist: trusty
 services:
   - docker
 branches:
@@ -129,27 +129,43 @@ jobs:
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/tests/shell/validate-shell.sh
       name: "Validate CAS Command-line Shell"
+      workspaces:
+        use: buildWorkspace
     - stage: validate
       script: ./ci/tests/webapp/validate-embedded-webapp.sh tomcat
       name: "Validate Web Application Server via Embedded Apache Tomcat"
+      workspaces:
+        use: buildWorkspace
     - stage: validate
       script: ./ci/tests/webapp/validate-external-webapp.sh tomcat
       name: "Validate Web Application Server via External Apache Tomcat"
+      workspaces:
+        use: buildWorkspace
     - stage: validate
       script: ./ci/tests/webapp/validate-embedded-webapp.sh jetty
       name: "Validate Web Application Server via Embedded Jetty"
+      workspaces:
+        use: buildWorkspace
     - stage: validate
       script: ./ci/tests/webapp/validate-embedded-webapp.sh undertow
       name: "Validate Web Application Server via Embedded Undertow"
+      workspaces:
+        use: buildWorkspace
     - stage: validate
       script: ./ci/tests/webapp/validate-configserver-webapp.sh
       name: "Validate Spring Cloud Configuration Server"
+      workspaces:
+        use: buildWorkspace
     - stage: validate
       script: ./ci/tests/webapp/validate-eurekaserver-webapp.sh
       name: "Validate Eureka Discovery Server"
+      workspaces:
+        use: buildWorkspace
     - stage: validate
       script: ./ci/tests/webapp/validate-bootadmin-webapp.sh
       name: "Validate Spring Boot Admin Server"
+      workspaces:
+        use: buildWorkspace
     - stage: validate
       if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
       script: ./ci/tests/validate-tests.sh
@@ -166,99 +182,173 @@ jobs:
     - stage: test
       script: ./ci/tests/groovy/run-tests-groovy.sh
       name: "Groovy Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/filesystem/run-tests-filesystem.sh
       name: "FileSystem Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/jdbc/run-tests-jdbc.sh
       name: "JDBC Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/webflow/run-tests-webflow.sh
       name: "Spring Webflow Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/restful/run-tests-restful.sh
       name: "RESTful Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/mfa/run-tests-mfa.sh
       name: "Multifactor Authentication Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/oauth/run-tests-oauth.sh
       name: "OAuth Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/oauth/run-tests-uma.sh
       name: "OAuth UMA Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/oidc/run-tests-oidc.sh
       name: "OpenID Connect Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/saml/run-tests-saml.sh
       name: "SAML Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/ldap/run-tests-ldap.sh
       name: "LDAP Tests"
+      workspaces:
+        use: buildWorkspace
+    - stage: test
+      script: ./ci/tests/x509/run-tests-x509.sh
+      name: "X509 Tests"
+      workspaces:
+        use: buildWorkspace
+    - stage: test
+      script: ./ci/tests/shell/run-tests-shell.sh
+      name: "Command-line Shell Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/amazon/run-tests-aws.sh
       name: "AWS Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/mongodb/run-tests-mongodb.sh
       name: "MongoDb Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/redis/run-tests-redis.sh
       name: "Redis Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/radius/run-tests-radius.sh
       name: "Radius Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/mysql/run-tests-mysql.sh
       name: "MySQL Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/mssqlserver/run-tests-mssqlserver.sh
       name: "MSSQL Server Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/postgres/run-tests-postgres.sh
       name: "PostgreSQL Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/mariadb/run-tests-mariadb.sh
       name: "MariaDb Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/oracle/run-tests-oracle.sh
       name: "Oracle Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/cassandra/run-tests-cassandra.sh
       name: "Apache Cassandra Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/couchbase/run-tests-couchbase.sh
       name: "Couchbase Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/dynamodb/run-tests-dynamodb.sh
       name: "DynamoDb Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/memcached/run-tests-memcached.sh
       name: "Memcached Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/ehcache/run-tests-ehcache.sh
       name: "Ehcache Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/ignite/run-tests-ignite.sh
       name: "Apache Ignite Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/couchdb/run-tests-couchdb.sh
       name: "Apache CouchDb Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/influxdb/run-tests-influxdb.sh
       name: "InfluxDb Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/mail/run-tests-mail.sh
       name: "Mail Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
       name: "Azure CosmosDb Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/activemq/run-tests-activemq.sh
       name: "Apache ActiveMQ Tests"
+      workspaces:
+        use: buildWorkspace
     - stage: test
       script: ./ci/tests/zookeeper/run-tests-zookeeper.sh
       name: "Apache ZooKeeper Tests"
+      workspaces:
+        use: buildWorkspace
       ############################################
     - stage: performance
       script: ./ci/tests/perftests-locust.sh tomcat
