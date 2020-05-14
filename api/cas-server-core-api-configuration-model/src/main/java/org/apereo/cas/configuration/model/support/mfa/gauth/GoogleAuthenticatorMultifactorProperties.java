@@ -1,22 +1,16 @@
-package org.apereo.cas.configuration.model.support.mfa;
+package org.apereo.cas.configuration.model.support.mfa.gauth;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.model.support.couchdb.BaseCouchDbProperties;
-import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorProviderProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
-import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
-import java.io.Serializable;
 
 /**
  * This is {@link GoogleAuthenticatorMultifactorProperties}.
@@ -71,22 +65,26 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorPro
     /**
      * Store google authenticator devices inside a MongoDb instance.
      */
-    private MongoDb mongo = new MongoDb();
+    @NestedConfigurationProperty
+    private MongoDbGoogleAuthenticatorMultifactorProperties mongo = new MongoDbGoogleAuthenticatorMultifactorProperties();
 
     /**
      * Store google authenticator devices inside a jdbc instance.
      */
-    private Jpa jpa = new Jpa();
+    @NestedConfigurationProperty
+    private JpaGoogleAuthenticatorMultifactorProperties jpa = new JpaGoogleAuthenticatorMultifactorProperties();
 
     /**
      * Store google authenticator devices inside a json file.
      */
-    private Json json = new Json();
+    @NestedConfigurationProperty
+    private JsonGoogleAuthenticatorMultifactorProperties json = new JsonGoogleAuthenticatorMultifactorProperties();
 
     /**
      * Store google authenticator devices via a rest interface.
      */
-    private Rest rest = new Rest();
+    @NestedConfigurationProperty
+    private RestfulGoogleAuthenticatorMultifactorProperties rest = new RestfulGoogleAuthenticatorMultifactorProperties();
 
     /**
      * Indicates whether this provider should support trusted devices.
@@ -96,12 +94,14 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorPro
     /**
      * Store google authenticator devices via CouchDb.
      */
-    private CouchDb couchDb = new CouchDb();
+    @NestedConfigurationProperty
+    private CouchDbGoogleAuthenticatorMultifactorProperties couchDb = new CouchDbGoogleAuthenticatorMultifactorProperties();
 
     /**
      * Store google authenticator devices via Redis.
      */
-    private Redis redis = new Redis();
+    @NestedConfigurationProperty
+    private RedisGoogleAuthenticatorMultifactorProperties redis = new RedisGoogleAuthenticatorMultifactorProperties();
 
     /**
      * Crypto settings that sign/encrypt the records.
@@ -121,73 +121,4 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorPro
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }
 
-    @RequiresModule(name = "cas-server-support-gauth")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Json extends SpringResourceProperties {
-
-        private static final long serialVersionUID = 4303355159388663888L;
-    }
-
-    @RequiresModule(name = "cas-server-support-gauth-rest")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Rest implements Serializable {
-
-        private static final long serialVersionUID = 4518622579150572559L;
-
-        /**
-         * Endpoint url of the REST resource used for tokens that are kept to prevent replay attacks.
-         */
-        private String endpointUrl;
-    }
-
-    @Getter
-    @Setter
-    @RequiresModule(name = "cas-server-support-gauth-mongo")
-    public static class MongoDb extends SingleCollectionMongoDbProperties {
-
-        private static final long serialVersionUID = -200556119517414696L;
-
-        /**
-         * Collection name where tokens are kept to prevent replay attacks.
-         */
-        private String tokenCollection;
-
-        public MongoDb() {
-            setCollection("MongoDbGoogleAuthenticatorRepository");
-            setTokenCollection("MongoDbGoogleAuthenticatorTokenRepository");
-        }
-    }
-
-    @RequiresModule(name = "cas-server-support-gauth-couchdb")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class CouchDb extends BaseCouchDbProperties {
-
-        private static final long serialVersionUID = -6260683393319585262L;
-
-        public CouchDb() {
-            setDbName("gauth_multifactor");
-        }
-    }
-
-    @RequiresModule(name = "cas-server-support-gauth-redis")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Redis extends BaseRedisProperties {
-        private static final long serialVersionUID = -1260683393319585262L;
-    }
-
-    @RequiresModule(name = "cas-server-support-gauth-jpa")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Jpa extends AbstractJpaProperties {
-        private static final long serialVersionUID = -2689797889546802618L;
-    }
 }

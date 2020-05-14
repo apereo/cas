@@ -69,6 +69,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "jpaPackagesToScanGoogleAuthenticator")
     public List<String> jpaPackagesToScanGoogleAuthenticator() {
         return CollectionUtils.wrapList(
             GoogleAuthenticatorAccount.class.getPackage().getName(),
@@ -89,6 +90,7 @@ public class GoogleAuthenticatorJpaConfiguration {
 
     @Autowired
     @Bean
+    @ConditionalOnMissingBean(name = "transactionManagerGoogleAuthenticator")
     public PlatformTransactionManager transactionManagerGoogleAuthenticator(
         @Qualifier("googleAuthenticatorEntityManagerFactory") final EntityManagerFactory emf) {
         val mgmr = new JpaTransactionManager();
@@ -106,7 +108,6 @@ public class GoogleAuthenticatorJpaConfiguration {
         return new JpaGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorAccountCipherExecutor, googleAuthenticatorInstance);
     }
 
-    @ConditionalOnMissingBean(name = "oneTimeTokenAuthenticatorTokenRepository")
     @Bean
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
         return new GoogleAuthenticatorJpaTokenRepository(
