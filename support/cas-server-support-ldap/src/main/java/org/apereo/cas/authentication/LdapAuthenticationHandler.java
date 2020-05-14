@@ -21,6 +21,7 @@ import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
+import org.springframework.beans.factory.DisposableBean;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -43,7 +44,7 @@ import java.util.Map;
 @Slf4j
 @Setter
 @Getter
-public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
+public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements DisposableBean {
 
     /**
      * Mapping of LDAP attribute name to principal attribute name.
@@ -99,6 +100,11 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         super(name, servicesManager, principalFactory, order);
         this.authenticator = authenticator;
         this.passwordPolicyHandlingStrategy = strategy;
+    }
+
+    @Override
+    public void destroy() {
+        authenticator.close();
     }
 
     @Override
