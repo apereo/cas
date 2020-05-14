@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "management.endpoint.status.enabled=true",
     "management.endpoint.health.enabled=false"
 })
+@Tag("Simple")
 public class StatusEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("statusEndpoint")

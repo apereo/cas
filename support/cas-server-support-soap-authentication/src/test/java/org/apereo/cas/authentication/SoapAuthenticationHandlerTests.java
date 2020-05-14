@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
     },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("Simple")
 public class SoapAuthenticationHandlerTests {
     @Autowired
     @Qualifier("soapAuthenticationAuthenticationHandler")

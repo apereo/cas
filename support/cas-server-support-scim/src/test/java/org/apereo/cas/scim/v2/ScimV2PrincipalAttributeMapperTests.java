@@ -17,6 +17,7 @@ import java.util.Calendar;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Simple")
 public class ScimV2PrincipalAttributeMapperTests {
     @Test
     public void verifyAction() throws Exception {

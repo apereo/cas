@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = CasSwaggerConfiguration.class)
+@Tag("Simple")
 public class CasSwaggerConfigurationTests {
     @Autowired
     @Qualifier("api")

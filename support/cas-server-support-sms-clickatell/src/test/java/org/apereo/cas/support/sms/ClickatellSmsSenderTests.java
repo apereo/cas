@@ -7,6 +7,7 @@ import org.apereo.cas.util.io.SmsSender;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.smsProvider.clickatell.serverUrl=http://localhost:8099",
     "cas.smsProvider.clickatell.token=DEMO_TOKEN"
 })
+@Tag("Simple")
 public class ClickatellSmsSenderTests {
     @Autowired
     @Qualifier("smsSender")

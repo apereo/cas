@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @TestPropertySource(properties = "management.endpoint.ssoSessions.enabled=true")
+@Tag("Simple")
 public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("singleSignOnSessionsEndpoint")

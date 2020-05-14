@@ -2,6 +2,7 @@ package org.apereo.cas.support.spnego.authentication.handler.support;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@Tag("Simple")
 public class JcifsConfigTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

@@ -45,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.wsfedIdp.sts.realm.issuer=CAS"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("Simple")
 public class WSFederationMetadataControllerTests {
     @Autowired
     @Qualifier("wsFederationMetadataController")

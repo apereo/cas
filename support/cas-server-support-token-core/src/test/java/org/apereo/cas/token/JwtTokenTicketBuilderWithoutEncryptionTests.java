@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @TestPropertySource(properties = "cas.authn.token.crypto.encryptionEnabled=false")
+@Tag("Simple")
 public class JwtTokenTicketBuilderWithoutEncryptionTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test

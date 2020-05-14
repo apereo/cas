@@ -9,6 +9,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Tag("Simple")
 public class SurrogatePrincipalElectionStrategyTests {
     private static Principal buildSurrogatePrincipal(final String surrogateId,
                                                      final Authentication primaryAuth,

@@ -3,6 +3,7 @@ package org.apereo.cas.ws.idp.web;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("Simple")
 public class WSFederationRequestTests {
 
     @Test

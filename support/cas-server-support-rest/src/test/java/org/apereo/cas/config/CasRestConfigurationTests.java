@@ -43,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasRestConfiguration.class
 })
 @EnableWebMvc
+@Tag("Simple")
 public class CasRestConfigurationTests {
 
     @Autowired

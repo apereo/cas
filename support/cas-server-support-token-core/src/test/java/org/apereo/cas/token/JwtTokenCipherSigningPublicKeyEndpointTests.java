@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoints.web.exposure.include=*",
         "management.endpoint.jwtTicketSigningPublicKey.enabled=true"
     })
+@Tag("Simple")
 public class JwtTokenCipherSigningPublicKeyEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("jwtTokenCipherSigningPublicKeyEndpoint")

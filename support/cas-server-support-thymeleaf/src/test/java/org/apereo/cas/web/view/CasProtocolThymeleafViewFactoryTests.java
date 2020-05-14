@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     ThymeleafAutoConfiguration.class
 })
+@Tag("Simple")
 public class CasProtocolThymeleafViewFactoryTests {
 
     @Autowired

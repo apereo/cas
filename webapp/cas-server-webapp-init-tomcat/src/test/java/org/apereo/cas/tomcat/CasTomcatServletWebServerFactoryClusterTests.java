@@ -8,6 +8,7 @@ import lombok.val;
 import org.apache.catalina.ha.tcp.SimpleTcpCluster;
 import org.apache.catalina.tribes.group.GroupChannel;
 import org.apache.catalina.tribes.membership.McastService;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     },
     webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
+@Tag("Simple")
 public class CasTomcatServletWebServerFactoryClusterTests {
     @Autowired
     protected CasConfigurationProperties casProperties;

@@ -35,6 +35,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -93,6 +94,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
+@Tag("Simple")
 public class TokenWebApplicationServiceResponseBuilderTests {
     @Autowired
     @Qualifier("webApplicationServiceResponseBuilder")

@@ -33,6 +33,7 @@ import static org.mockito.Mockito.*;
     ThymeleafAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("Simple")
 public class ThemeClassLoaderTemplateResolverTests {
     @Autowired
     private CasConfigurationProperties casProperties;

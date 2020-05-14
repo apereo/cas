@@ -33,6 +33,7 @@ import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import lombok.SneakyThrows;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
@@ -84,6 +85,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "spring.mail.host=localhost",
     "spring.mail.port=25000"
 })
+@Tag("Simple")
 public class TokenAuthenticationHandlerTests {
     private static final RandomStringGenerator RANDOM_STRING_GENERATOR = new DefaultRandomStringGenerator();
     private static final String SIGNING_SECRET = RANDOM_STRING_GENERATOR.getNewString(256);

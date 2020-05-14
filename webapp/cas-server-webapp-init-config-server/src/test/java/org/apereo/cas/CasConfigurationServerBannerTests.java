@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.mock.env.MockEnvironment;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("Simple")
 public class CasConfigurationServerBannerTests {
     @Test
     public void verifyOperation() throws Exception {
