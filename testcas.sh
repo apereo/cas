@@ -3,7 +3,7 @@
 clear
 
 printHelp() {
-    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--coverage]\n"
+    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--coverage]\n"
     echo -e "Available test categories are:\n"
     echo -e "simple, memcached,cassandra,groovy,kafka,ldap,rest,mfa,jdbc,mssql,oracle,radius,couchdb,\
 mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,activemq,\
@@ -60,7 +60,7 @@ while (( "$#" )); do
         do
             case "${item}" in
             test|simple|run|basic|unit|unittests)
-                task+="test "
+                task+="testSimple "
                 ;;
             memcached|memcache|kryo)
                 task+="testMemcached "
