@@ -3,13 +3,13 @@ source ./ci/functions.sh
 
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -DtestCategoryType=SIMPLE "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-gradleBuild="$gradleBuild test jacocoRootReport --parallel -x javadoc -x check \
+gradleBuild="$gradleBuild testSimple jacocoRootReport --parallel -x javadoc -x check \
     -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
