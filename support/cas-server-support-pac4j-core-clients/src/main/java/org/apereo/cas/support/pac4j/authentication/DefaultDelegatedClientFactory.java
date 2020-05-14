@@ -369,7 +369,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
             .filter(cas -> cas.isEnabled() && StringUtils.isNotBlank(cas.getLoginUrl()))
             .forEach(cas -> {
                 val cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol()));
-                val prefix = StringUtils.remove(cas.getLoginUrl(), "/login");
+                val prefix = cas.getLoginUrl().replaceFirst("/login$", "/");
                 cfg.setPrefixUrl(StringUtils.appendIfMissing(prefix, "/"));
                 val client = new CasClient(cfg);
 
