@@ -25,7 +25,7 @@ installJdk() {
     url="${jdkDownloadUrl}/jdk-${jdkVersion}%2B${jdkRevision}/OpenJDK11U-jdk_x64_linux_${jdkVersion}_${jdkRevision}.tar.gz"
     echo "Downloading JDK from ${url}\n"
 
-    wget -N https://github.com/sormuras/bach/raw/master/install-jdk.sh -O ~/install-jdk.sh && chmod +x ~/install-jdk.sh
+    wget https://github.com/sormuras/bach/raw/master/install-jdk.sh -O ~/install-jdk.sh && chmod +x ~/install-jdk.sh
     for i in {1..5}; do
         export JAVA_HOME=$(~/install-jdk.sh --emit-java-home --url ${url} -c | tail --lines 1)
         if [[ -d ${JAVA_HOME} ]] ; then
