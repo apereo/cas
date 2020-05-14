@@ -6,9 +6,9 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off" additivity="false" />
+        <Logger name="org.apereo" level="warn" additivity="false" />
         <Logger name="org.apereo.cas.support.spnego" level="off" />
-        <Logger name="org.ldaptive" level="off" />
+        <Logger name="org.ldaptive" level="warn" />
         <Logger name="org.springframework" level="off">
             <AppenderRef ref="console"/>
         </Logger>
