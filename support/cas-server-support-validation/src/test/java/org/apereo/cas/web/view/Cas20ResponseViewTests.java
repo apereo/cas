@@ -55,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasThymeleafConfiguration.class,
     CasValidationConfiguration.class
 })
+@Tag("Simple")
 public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
     @Autowired
     @Qualifier("serviceValidationViewFactory")

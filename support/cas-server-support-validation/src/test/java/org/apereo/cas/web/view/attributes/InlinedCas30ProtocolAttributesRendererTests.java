@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Simple")
 public class InlinedCas30ProtocolAttributesRendererTests {
     @Test
     public void verifyAction() {

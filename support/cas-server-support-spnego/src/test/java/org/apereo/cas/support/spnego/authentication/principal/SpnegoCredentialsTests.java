@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
+@Tag("Simple")
 public class SpnegoCredentialsTests {
 
     @Test

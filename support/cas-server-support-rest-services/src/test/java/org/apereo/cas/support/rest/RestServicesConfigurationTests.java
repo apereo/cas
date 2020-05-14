@@ -20,6 +20,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.support.rest.config.RestServicesConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -59,6 +60,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.rest.attribute-name=attr-name",
     "cas.rest.attribute-value=attr-v"
 })
+@Tag("Simple")
 public class RestServicesConfigurationTests {
     @Autowired
     @Qualifier("registeredServiceResourceRestController")

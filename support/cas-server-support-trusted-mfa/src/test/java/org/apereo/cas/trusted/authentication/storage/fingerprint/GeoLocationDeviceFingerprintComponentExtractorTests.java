@@ -23,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("Simple")
 public class GeoLocationDeviceFingerprintComponentExtractorTests {
     @Test
     public void verifyGeoLocationDevice() {

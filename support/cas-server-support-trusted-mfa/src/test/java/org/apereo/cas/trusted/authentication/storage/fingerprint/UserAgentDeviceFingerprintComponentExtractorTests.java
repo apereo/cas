@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Simple")
 public class UserAgentDeviceFingerprintComponentExtractorTests {
     @Test
     public void verifyAgentFingerprintNotFound() {

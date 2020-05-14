@@ -5,6 +5,7 @@ import org.apereo.cas.token.TokenConstants;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("Simple")
 public class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends BaseTicketResourceEntityResponseFactoryTests {
     @Test
     public void verifyTicketGrantingTicketAsDefault() throws Exception {

@@ -43,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.wsfedIdp.sts.realm.keyPassword=realma",
     "cas.authn.wsfedIdp.sts.realm.issuer=CAS"
 })
+@Tag("Simple")
 public class SecurityTokenServiceTokenFetcherTests {
     @Autowired
     private CasConfigurationProperties casProperties;

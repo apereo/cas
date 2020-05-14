@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @DirtiesContext
+@Tag("Simple")
 public class Cas30JsonResponseViewTests extends Cas30ResponseViewTests {
     @Override
     protected AbstractCasView getCasViewToRender(final ProtocolAttributeEncoder encoder, final View viewDelegated) {

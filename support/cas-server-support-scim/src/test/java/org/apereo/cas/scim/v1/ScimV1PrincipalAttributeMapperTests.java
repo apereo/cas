@@ -18,6 +18,7 @@ import java.util.Date;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Simple")
 public class ScimV1PrincipalAttributeMapperTests {
     @Test
     public void verifyAction() throws Exception {
