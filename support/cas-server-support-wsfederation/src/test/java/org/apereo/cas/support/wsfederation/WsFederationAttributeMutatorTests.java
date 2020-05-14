@@ -3,6 +3,7 @@ package org.apereo.cas.support.wsfederation;
 import org.apereo.cas.support.wsfederation.attributes.WsFederationAttributeMutator;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
