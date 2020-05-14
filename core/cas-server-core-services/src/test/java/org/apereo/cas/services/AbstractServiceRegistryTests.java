@@ -40,6 +40,8 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Collection;
+
 /**
  * Abstracted service registry tests for all implementations.
  *
@@ -191,8 +193,9 @@ public abstract class AbstractServiceRegistryTests {
         assertEquals(rs3.getServiceId(), rs.getServiceId());
         assertEquals(rs3.getTheme(), rs.getTheme());
 
-        val rs4 = this.serviceRegistry.findServicePredicate(registeredService -> registeredService.getId() == rs.getId());
-        assertEquals(rs4.getName(), rs.getName());
+        Collection<RegisteredService> rs4 =
+                this.serviceRegistry.findServicePredicate(registeredService -> registeredService.getId() == rs.getId());
+        assertTrue(rs4.stream().map(rs5-> rs5.getName().equals(rs.getName())).findFirst().isPresent());
     }
 
     @ParameterizedTest

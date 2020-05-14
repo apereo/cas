@@ -132,6 +132,30 @@ public interface ServicesManager {
         }
         return null;
     }
+    
+    /**
+     * Find a RegisteredService by matching with the supplied name.
+     *
+     * @param name the name to match with.
+     * @return the RegisteredService that matches the supplied service.
+     */
+    RegisteredService findServiceByName(String name);
+
+    /**
+     * Find a RegisteredService by matching with the supplied name.
+     *
+     * @param <T>   the type parameter
+     * @param name    the name to match with.
+     * @param clazz the clazz
+     * @return the RegisteredService that matches the supplied service.
+     */
+    default <T extends RegisteredService> T findServiceByName(final String name, final Class<T> clazz) {
+        val service = findServiceByName(name);
+        if (service != null && clazz.isAssignableFrom(service.getClass())) {
+            return (T) service;
+        }
+        return null;
+    }
 
     /**
      * Retrieve the collection of all registered services.
@@ -169,7 +193,7 @@ public interface ServicesManager {
      *
      * @return the count/size of registry.
      */
-    default int count() {
+    default long count() {
         return 0;
     }
 

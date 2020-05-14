@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -135,12 +136,11 @@ public interface ServiceRegistry {
      * @param predicate the predicate
      * @return the registered service
      */
-    default RegisteredService findServicePredicate(final Predicate<RegisteredService> predicate) {
+    default Collection<RegisteredService> findServicePredicate(final Predicate<RegisteredService> predicate) {
         return load()
             .stream()
             .filter(predicate)
-            .findFirst()
-            .orElse(null);
+            .collect(Collectors.toList());
     }
 
     /**

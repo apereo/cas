@@ -104,10 +104,14 @@ public abstract class AbstractServicesManager implements ServicesManager {
             return null;
         }
 
-        val service = getCandidateServicesToMatch(serviceId)
-            .filter(r -> r.matches(serviceId))
-            .findFirst()
-            .orElse(null);
+        RegisteredService service = getCandidateServicesToMatch(serviceId)
+                .filter(r -> r.matches(serviceId))
+                .findFirst()
+                .orElse(null);
+
+        if (service == null) {
+            service = this.serviceRegistry.findServiceByExactServiceId(serviceId);
+        }
 
         if (service != null) {
             service.initialize();
@@ -118,8 +122,8 @@ public abstract class AbstractServicesManager implements ServicesManager {
     @Override
     public RegisteredService findServiceBy(final Service service) {
         return Optional.ofNullable(service)
-            .map(svc -> findServiceBy(svc.getId()))
-            .orElse(null);
+                .map(svc -> findServiceBy(svc.getId()))
+                .orElse(null);
     }
 
     @Override
@@ -128,12 +132,11 @@ public abstract class AbstractServicesManager implements ServicesManager {
             return new ArrayList<>(0);
         }
 
-        return getAllServices()
-            .stream()
-            .filter(getRegisteredServicesFilteringPredicate(predicate))
-            .sorted()
-            .peek(RegisteredService::initialize)
-            .collect(Collectors.toList());
+        return this.serviceRegistry.findServicePredicate(predicate).
+                stream().
+                sorted().
+                peek(RegisteredService::initialize).
+                collect(Collectors.toList());
     }
 
     @Override
@@ -155,30 +158,54 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public RegisteredService findServiceBy(final long id) {
-        val result = this.services.get(id);
+        RegisteredService result = this.services.get(id);
+
+        if (result == null) {
+            result = this.serviceRegistry.findServiceById(id);
+        }
         return validateRegisteredService(result);
     }
 
     @Override
+    public Stream<? extends RegisteredService> getAllServicesStream() {
+        return this.serviceRegistry.getServicesStream();
+    }
+
+    @Override
+    public <T extends RegisteredService> T findServiceBy(final long id, final Class<T> clazz) {
+        return this.serviceRegistry.findServiceById(id, clazz);
+    }
+
+    @Override
+    public <T extends RegisteredService> T findServiceByName(final String name, final Class<T> clazz) {
+        return this.serviceRegistry.findServiceByExactServiceName(name, clazz);
+    }
+
+    @Override
+    public RegisteredService findServiceByName(final String name) {
+        return this.serviceRegistry.findServiceByExactServiceName(name);
+    }
+
+    @Override
     public Collection<RegisteredService> getAllServices() {
-        return this.services.values()
-            .stream()
-            .filter(this::validateAndFilterServiceByEnvironment)
-            .filter(getRegisteredServicesFilteringPredicate())
-            .sorted()
-            .peek(RegisteredService::initialize)
-            .collect(Collectors.toList());
+        return this.services.values().
+                stream().
+                filter(this::validateAndFilterServiceByEnvironment).
+                filter(getRegisteredServicesFilteringPredicate()).
+                sorted().
+                peek(RegisteredService::initialize).
+                collect(Collectors.toList());
     }
 
     @Override
     public Collection<RegisteredService> load() {
         LOGGER.trace("Loading services from [{}]", serviceRegistry.getName());
         this.services = this.serviceRegistry.load()
-            .stream()
-            .collect(Collectors.toConcurrentMap(r -> {
+                .stream()
+                .collect(Collectors.toConcurrentMap(r -> {
                 LOGGER.debug("Adding registered service [{}] with name [{}] and internal identifier [{}]", r.getServiceId(), r.getName(), r.getId());
-                return r.getId();
-            }, Function.identity(), (r, s) -> s));
+                    return r.getId();
+                }, Function.identity(), (r, s) -> s));
         loadInternal();
         publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices()));
         evaluateExpiredServiceDefinitions();
@@ -187,16 +214,16 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     @Override
-    public int count() {
-        return services.size();
+    public long count() {
+        return this.serviceRegistry.size();
     }
 
     private void evaluateExpiredServiceDefinitions() {
         this.services.values()
-            .stream()
-            .filter(RegisteredServiceAccessStrategyUtils.getRegisteredServiceExpirationPolicyPredicate().negate())
-            .filter(Objects::nonNull)
-            .forEach(this::processExpiredRegisteredService);
+                .stream()
+                .filter(RegisteredServiceAccessStrategyUtils.getRegisteredServiceExpirationPolicyPredicate().negate())
+                .filter(Objects::nonNull)
+                .forEach(this::processExpiredRegisteredService);
     }
 
     private RegisteredService validateRegisteredService(final RegisteredService registeredService) {
@@ -208,7 +235,8 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     private RegisteredService checkServiceExpirationPolicyIfAny(final RegisteredService registeredService) {
-        if (registeredService == null || RegisteredServiceAccessStrategyUtils.ensureServiceIsNotExpired(registeredService)) {
+        if (registeredService == null || RegisteredServiceAccessStrategyUtils.ensureServiceIsNotExpired(
+                registeredService)) {
             return registeredService;
         }
         return processExpiredRegisteredService(registeredService);
@@ -284,7 +312,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
             return true;
         }
         return service.getEnvironments()
-            .stream()
-            .anyMatch(this.environments::contains);
+                .stream()
+                .anyMatch(this.environments::contains);
     }
 }
