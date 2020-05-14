@@ -4,6 +4,7 @@ import org.apereo.cas.BaseCoreWsSecurityIdentityProviderConfigurationTests;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

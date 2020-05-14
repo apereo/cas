@@ -6,6 +6,7 @@ import com.unboundid.scim2.common.types.Meta;
 import com.unboundid.scim2.common.types.Name;
 import com.unboundid.scim2.common.types.UserResource;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;

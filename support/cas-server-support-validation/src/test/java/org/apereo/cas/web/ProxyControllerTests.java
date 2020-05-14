@@ -13,6 +13,7 @@ import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.v2.ProxyController;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +37,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasThemesConfiguration.class,
     CasThymeleafConfiguration.class,
     CasValidationConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 @Tag("Simple")
 public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {
