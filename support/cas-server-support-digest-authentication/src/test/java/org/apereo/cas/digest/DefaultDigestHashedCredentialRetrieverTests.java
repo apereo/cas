@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author David Rodriguez
  * @since 5.1.0
  */
+@Tag("Simple")
 public class DefaultDigestHashedCredentialRetrieverTests {
 
     @Test

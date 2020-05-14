@@ -42,6 +42,7 @@ import static org.mockito.Mockito.*;
     "spring.mail.port=25000"
 })
 @DirtiesContext
+@Tag("Simple")
 public class DefaultConsentEngineTests {
     @Autowired
     @Qualifier("consentEngine")

@@ -21,6 +21,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("Simple")
 public class DistributedJEESessionStoreTests {
 
     @Autowired

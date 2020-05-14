@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import lombok.val;
 import org.joda.time.DateTime;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("Simple")
 public class DateTimeUtilsTests {
 
     @Test

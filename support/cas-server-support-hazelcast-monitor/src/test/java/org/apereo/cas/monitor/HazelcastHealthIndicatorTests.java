@@ -25,6 +25,7 @@ import org.apereo.cas.monitor.config.HazelcastMonitorConfiguration;
 
 import com.hazelcast.internal.memory.MemoryStats;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -77,6 +78,7 @@ import static org.mockito.Mockito.*;
         "spring.mail.host=localhost",
         "spring.mail.port=25000"
     })
+@Tag("Simple")
 public class HazelcastHealthIndicatorTests {
     @Autowired
     @Qualifier("hazelcastHealthIndicator")

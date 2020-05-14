@@ -6,6 +6,7 @@ import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "spring.mail.host=localhost",
     "spring.mail.port=25000"
 })
+@Tag("Simple")
 public class DefaultPasswordValidationServiceTests {
     @Autowired
     @Qualifier("passwordValidationService")

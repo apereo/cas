@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attributeRepository.aggregation=cascade",
     "cas.authn.attributeRepository.merger=multivalued"
 })
+@Tag("Simple")
 public class CasPersonDirectoryConfigurationCascadeAggregationTests {
     @Autowired
     @Qualifier("aggregatingAttributeRepository")

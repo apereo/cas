@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProp
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.cas.config.CasProtocol;
 import org.pac4j.oauth.client.GitHubClient;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@Tag("Simple")
 public class DefaultDelegatedClientFactoryTests {
 
     private static void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {

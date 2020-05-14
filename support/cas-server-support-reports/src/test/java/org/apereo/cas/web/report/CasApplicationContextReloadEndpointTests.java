@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @TestPropertySource(properties = "management.endpoint.reloadContext.enabled=true")
+@Tag("Simple")
 public class CasApplicationContextReloadEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("casApplicationContextReloadEndpoint")

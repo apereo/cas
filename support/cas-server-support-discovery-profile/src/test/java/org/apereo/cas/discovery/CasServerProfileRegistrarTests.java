@@ -62,6 +62,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "spring.mail.port=25000"
 })
 @DirtiesContext
+@Tag("Simple")
 public class CasServerProfileRegistrarTests {
     @Autowired
     @Qualifier("casServerProfileRegistrar")

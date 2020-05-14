@@ -2,6 +2,7 @@ package org.apereo.cas.web.support.filters;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockFilterConfig;
@@ -34,6 +35,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1
  */
+@Tag("Simple")
 public class RequestParameterPolicyEnforcementFilterTests {
 
     private static void internalTestOnlyPostParameter(final String method) {

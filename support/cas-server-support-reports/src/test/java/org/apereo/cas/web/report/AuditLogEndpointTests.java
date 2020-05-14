@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "management.endpoint.auditLog.enabled=true",
     "cas.audit.number-of-days-in-history=30"
 })
+@Tag("Simple")
 public class AuditLogEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("auditLogEndpoint")

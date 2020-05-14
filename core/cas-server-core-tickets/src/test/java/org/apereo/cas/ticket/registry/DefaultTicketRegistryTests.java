@@ -4,6 +4,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Tag;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class)
+@Tag("Simple")
 public class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Override

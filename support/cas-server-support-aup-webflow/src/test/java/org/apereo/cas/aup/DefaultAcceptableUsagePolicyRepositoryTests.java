@@ -31,6 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Getter
+@Tag("Simple")
 public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
 
     @Autowired

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaPropert
 import org.apereo.cas.util.MockServletContext;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("Simple")
 public class WebUtilsTests {
 
     @Test

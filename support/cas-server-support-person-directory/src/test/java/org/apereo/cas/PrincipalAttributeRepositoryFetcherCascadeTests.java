@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attributeRepository.aggregation=cascade",
     "cas.authn.attributeRepository.merger=multivalued"
 })
+@Tag("Simple")
 public class PrincipalAttributeRepositoryFetcherCascadeTests {
     @Autowired
     @Qualifier("aggregatingAttributeRepository")

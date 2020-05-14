@@ -26,6 +26,7 @@ import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -68,10 +69,9 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.authn.pm.json.location=classpath:jsonResourcePassword.json",
         "cas.authn.pm.enabled=true",
-        "cas.authn.pm.policyPattern=^Test1.+",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
+        "cas.authn.pm.policyPattern=^Test1.+"
     })
+@Tag("FileSystem")
 public class JsonResourcePasswordManagementServiceTests {
     @Autowired
     @Qualifier("passwordChangeService")
