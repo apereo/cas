@@ -115,6 +115,7 @@ public class SwivelConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "swivelAuthenticationWebflowEventResolver")
     public CasWebflowEventResolver swivelAuthenticationWebflowEventResolver() {
         val context = CasWebflowEventResolutionConfigurationContext.builder()
             .authenticationSystemSupport(authenticationSystemSupport.getObject())
@@ -145,6 +146,7 @@ public class SwivelConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "swivelAuthenticationWebflowAction")
     public Action swivelAuthenticationWebflowAction() {
         return new SwivelAuthenticationWebflowAction(swivelAuthenticationWebflowEventResolver());
     }

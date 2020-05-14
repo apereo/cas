@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.ldap.services;
 
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -18,5 +19,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.service-registry.ldap.objectClass=account"
 })
 @EnabledIfPortOpen(port = 10389)
+@Tag("Ldap")
 public class LdapServiceRegistryTests extends BaseLdapServiceRegistryTests {
 }

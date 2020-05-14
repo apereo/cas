@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.
  */
+@Tag("X509")
 public class X509CertificateCredentialTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "x509CertificateCredential.json");

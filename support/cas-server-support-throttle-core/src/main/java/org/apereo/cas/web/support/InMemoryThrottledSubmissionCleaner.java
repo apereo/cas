@@ -20,8 +20,8 @@ public class InMemoryThrottledSubmissionCleaner implements Runnable {
      * Kicks off the job that attempts to clean the throttling submission record history.
      */
     @Override
-    @Scheduled(initialDelayString = "${cas.authn.throttle.schedule.startDelay:PT10S}",
-        fixedDelayString = "${cas.authn.throttle.schedule.repeatInterval:PT15S}")
+    @Scheduled(initialDelayString = "${cas.authn.throttle.schedule.start-delay:PT10S}",
+        fixedDelayString = "${cas.authn.throttle.schedule.repeat-interval:PT15S}")
     public void run() {
         val handlers = authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors();
         handlers

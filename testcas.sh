@@ -7,7 +7,7 @@ printHelp() {
     echo -e "Available test categories are:\n"
     echo -e "simple, memcached,cassandra,groovy,kafka,ldap,rest,mfa,jdbc,mssql,oracle,radius,couchdb,\
 mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,activemq,\
-oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql"
+oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell"
     echo -e "\nPlease see the test script for details.\n"
 }
 
@@ -66,7 +66,14 @@ while (( "$#" )); do
             memcached|memcache|kryo)
                 task+="testMemcached "
                 category+="MEMCACHED,"
-
+                ;;
+            x509)
+                task+="testX509 "
+                category+="X509,"
+                ;;
+            shell)
+                task+="testSHELL "
+                category+="SHELL,"
                 ;;
             uma)
                 task+="testUma "

@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -14,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -26,6 +26,17 @@ import java.util.Optional;
  */
 @UtilityClass
 public class CookieUtils {
+
+    /**
+     * Build cookie retrieving generator.
+     *
+     * @param cookie the cookie
+     * @return the cookie retrieving cookie generator
+     */
+    public static CasCookieBuilder buildCookieRetrievingGenerator(final CookieProperties cookie) {
+        val context = buildCookieGenerationContext(cookie);
+        return new CookieRetrievingCookieGenerator(context);
+    }
 
     /**
      * Gets ticket granting ticket from request.

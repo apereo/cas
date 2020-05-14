@@ -52,6 +52,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "swivelAuthenticationMetaDataPopulator")
     public AuthenticationMetaDataPopulator swivelAuthenticationMetaDataPopulator() {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(
@@ -69,6 +70,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "swivelAuthenticationHandler")
     public SwivelAuthenticationHandler swivelAuthenticationHandler() {
         val swivel = this.casProperties.getAuthn().getMfa().getSwivel();
         return new SwivelAuthenticationHandler(swivel.getName(),
@@ -77,6 +79,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "swivelMultifactorAuthenticationProvider")
     public MultifactorAuthenticationProvider swivelMultifactorAuthenticationProvider() {
         val swivel = this.casProperties.getAuthn().getMfa().getSwivel();
         val p = new SwivelMultifactorAuthenticationProvider(swivel.getSwivelUrl());
@@ -90,6 +93,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "swivelAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer swivelAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             plan.registerAuthenticationHandler(swivelAuthenticationHandler());

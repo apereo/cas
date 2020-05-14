@@ -37,6 +37,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
+import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -159,7 +160,9 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "mfaAccepttoDistributedSessionStore")
     @Bean
     public SessionStore<JEEContext> mfaAccepttoDistributedSessionStore() {
-        return new DistributedJEESessionStore(centralAuthenticationService.getObject(), ticketFactory.getObject(), casProperties);
+        val cookie = casProperties.getSessionReplication().getCookie();
+        val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
+        return new DistributedJEESessionStore(centralAuthenticationService.getObject(), ticketFactory.getObject(), cookieGenerator);
     }
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorFetchChannelAction")

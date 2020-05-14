@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("X509")
 public class X509CommonNameEDIPIPrincipalResolverTests {
     /**
      * Gets the unit test parameters.

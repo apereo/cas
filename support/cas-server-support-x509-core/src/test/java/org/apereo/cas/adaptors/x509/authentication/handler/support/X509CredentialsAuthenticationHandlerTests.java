@@ -14,6 +14,7 @@ import org.apereo.cas.util.RegexUtils;
 
 import lombok.val;
 import org.cryptacular.util.CertUtil;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -40,6 +41,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Tag("X509")
 public class X509CredentialsAuthenticationHandlerTests {
 
     private static final String USER_VALID_CRT = "user-valid.crt";
