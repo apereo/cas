@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -34,18 +33,16 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LdapPasswordManagementService extends BasePasswordManagementService implements DisposableBean {
     private final List<LdapPasswordManagementProperties> ldapProperties;
-    private final Map<String, ConnectionFactory> connectionFactoryMap = new ConcurrentHashMap<>();
-
+    private final Map<String, ConnectionFactory> connectionFactoryMap;
 
     public LdapPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                          final String issuer,
                                          final PasswordManagementProperties passwordManagementProperties,
-                                         final PasswordHistoryService passwordHistoryService) {
+                                         final PasswordHistoryService passwordHistoryService,
+                                         final Map<String, ConnectionFactory> connectionFactoryMap) {
         super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
         this.ldapProperties = passwordManagementProperties.getLdap();
-        this.ldapProperties.forEach(ldap ->
-            this.connectionFactoryMap.put(ldap.getLdapUrl(), LdapUtils.newLdaptiveConnectionFactory(ldap))
-        );
+        this.connectionFactoryMap = connectionFactoryMap;
     }
 
     @Override

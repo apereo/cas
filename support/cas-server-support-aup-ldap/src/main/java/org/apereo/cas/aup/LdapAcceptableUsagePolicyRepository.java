@@ -20,7 +20,6 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This is {@link LdapAcceptableUsagePolicyRepository}.
@@ -36,14 +35,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository implements DisposableBean {
     private static final long serialVersionUID = 1600024683199961892L;
 
-    private final Map<String, ConnectionFactory> connectionFactoryList = new ConcurrentHashMap<>();
+    private final Map<String, ConnectionFactory> connectionFactoryList;
 
     public LdapAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
-                                               final AcceptableUsagePolicyProperties aupProperties) {
+                                               final AcceptableUsagePolicyProperties aupProperties,
+                                               final Map<String, ConnectionFactory> connectionFactoryList) {
         super(ticketRegistrySupport, aupProperties);
-        aupProperties.getLdap().forEach(ldap ->
-            connectionFactoryList.put(ldap.getLdapUrl(), LdapUtils.newLdaptiveConnectionFactory(ldap))
-        );
+        this.connectionFactoryList = connectionFactoryList;
     }
 
     /**

@@ -7,6 +7,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LdapUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -43,19 +44,12 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class MonitorEndpointLdapAuthenticationProvider implements AuthenticationProvider {
     private final MonitorProperties.Endpoints.LdapSecurity ldapProperties;
     private final SecurityProperties securityProperties;
     private final ConnectionFactory connectionFactory;
     private final Authenticator authenticator;
-
-    public MonitorEndpointLdapAuthenticationProvider(final MonitorProperties.Endpoints.LdapSecurity ldapProperties,
-                                                     final SecurityProperties securityProperties) {
-        this.ldapProperties = ldapProperties;
-        this.securityProperties = securityProperties;
-        this.connectionFactory = LdapUtils.newLdaptiveConnectionFactory(this.ldapProperties);
-        this.authenticator = LdapUtils.newLdaptiveAuthenticator(this.ldapProperties);
-    }
 
     public void destroy() {
         this.connectionFactory.close();

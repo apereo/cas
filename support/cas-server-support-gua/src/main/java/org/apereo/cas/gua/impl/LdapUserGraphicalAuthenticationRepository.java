@@ -6,6 +6,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 
 import com.google.common.io.ByteSource;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.ConnectionFactory;
@@ -21,18 +22,13 @@ import org.springframework.beans.factory.DisposableBean;
  * @since 5.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalAuthenticationRepository, DisposableBean {
     private static final long serialVersionUID = 421732017215881244L;
 
     private final CasConfigurationProperties casProperties;
 
     private final ConnectionFactory connectionFactory;
-
-    public LdapUserGraphicalAuthenticationRepository(final CasConfigurationProperties casProperties) {
-        this.casProperties = casProperties;
-        this.connectionFactory = LdapUtils.newLdaptiveConnectionFactory(
-            casProperties.getAuthn().getGua().getLdap());
-    }
 
     @Override
     public void destroy() {

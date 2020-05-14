@@ -3,6 +3,7 @@ package org.apereo.cas.web.security;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
+import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.web.security.authentication.MonitorEndpointLdapAuthenticationProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -128,7 +129,9 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      */
     protected void configureLdapAuthenticationProvider(final AuthenticationManagerBuilder auth, final MonitorProperties.Endpoints.LdapSecurity ldap) {
         if (isLdapAuthorizationActive()) {
-            monitorEndpointLdapAuthenticationProvider = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties);
+            val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
+            val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
+            monitorEndpointLdapAuthenticationProvider = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
             auth.authenticationProvider(monitorEndpointLdapAuthenticationProvider);
         } else {
             LOGGER.trace("LDAP authorization is undefined, given no LDAP url, base-dn, search filter or role/group filter is configured");
