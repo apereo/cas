@@ -73,12 +73,8 @@ import static org.mockito.Mockito.*;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 },
-    properties = {
-        "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalmonitor",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
-@Tag("Simple")
+    properties = "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalmonitor")
+@Tag("Hazelcast")
 public class HazelcastHealthIndicatorTests {
     @Autowired
     @Qualifier("hazelcastHealthIndicator")

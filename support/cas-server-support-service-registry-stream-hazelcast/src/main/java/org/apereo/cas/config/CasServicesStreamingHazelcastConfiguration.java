@@ -60,8 +60,7 @@ public class CasServicesStreamingHazelcastConfiguration {
             casRegisteredServiceStreamPublisherIdentifier.getObject());
     }
 
-
-    @Bean
+    @Bean(destroyMethod = "shutdown")
     public HazelcastInstance casRegisteredServiceHazelcastInstance() {
         val name = CasRegisteredServiceHazelcastStreamPublisher.class.getSimpleName();
         LOGGER.debug("Creating Hazelcast instance [{}] to publish service definitions", name);

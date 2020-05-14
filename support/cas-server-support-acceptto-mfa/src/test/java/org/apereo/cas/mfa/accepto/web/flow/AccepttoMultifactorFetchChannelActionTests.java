@@ -2,7 +2,7 @@ package org.apereo.cas.mfa.accepto.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.mfa.accepto.BaseAcceptoMultifactorAuthenticationTests;
+import org.apereo.cas.mfa.accepto.BaseAccepttoMultifactorAuthenticationTests;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -39,8 +39,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("RestfulApi")
-@SpringBootTest(classes = BaseAcceptoMultifactorAuthenticationTests.SharedTestConfiguration.class,
+@Tag("Webflow")
+@SpringBootTest(classes = BaseAccepttoMultifactorAuthenticationTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.acceptto.apiUrl=http://localhost:5001",
         "cas.authn.mfa.acceptto.application-id=thisisatestid",

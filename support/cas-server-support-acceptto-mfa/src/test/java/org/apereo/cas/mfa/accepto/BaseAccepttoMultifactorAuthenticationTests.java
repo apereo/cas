@@ -33,12 +33,12 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 /**
- * This is {@link BaseAcceptoMultifactorAuthenticationTests}.
+ * This is {@link BaseAccepttoMultifactorAuthenticationTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-public class BaseAcceptoMultifactorAuthenticationTests {
+public class BaseAccepttoMultifactorAuthenticationTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,

@@ -18,12 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
     HazelcastTicketRegistryConfiguration.class,
     HazelcastTicketRegistryTicketCatalogConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
-}, properties = {
-    "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalhostinstance",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
-@Tag("Simple")
+}, properties = "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalhostinstance")
+@Tag("Hazelcast")
 public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired

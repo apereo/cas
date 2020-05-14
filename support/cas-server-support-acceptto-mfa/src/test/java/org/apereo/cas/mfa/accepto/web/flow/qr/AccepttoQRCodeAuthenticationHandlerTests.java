@@ -2,7 +2,7 @@ package org.apereo.cas.mfa.accepto.web.flow.qr;
 
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
-import org.apereo.cas.mfa.accepto.BaseAcceptoMultifactorAuthenticationTests;
+import org.apereo.cas.mfa.accepto.BaseAccepttoMultifactorAuthenticationTests;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
@@ -19,15 +19,13 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@SpringBootTest(classes = BaseAcceptoMultifactorAuthenticationTests.SharedTestConfiguration.class,
+@SpringBootTest(classes = BaseAccepttoMultifactorAuthenticationTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.acceptto.apiUrl=http://localhost:5001",
         "cas.authn.mfa.acceptto.application-id=thisisatestid",
         "cas.authn.mfa.acceptto.secret=thisisasecret",
         "cas.authn.mfa.acceptto.organization-id=thisisatestid",
         "cas.authn.mfa.acceptto.organization-secret=thisisasecret",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000",
         "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
     })
 @Tag("Webflow")

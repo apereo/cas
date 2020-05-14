@@ -7,6 +7,24 @@ if (hasTestsOfCategory(project, "Kafka")) {
     }
 }
 
+if (hasTestsOfCategory(project, "Hazelcast")) {
+    task testHazelcast(type: Test) {
+        enabled = shouldTest(project, "Hazelcast")
+        useJUnitPlatform {
+            includeTags "Hazelcast"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "JMX")) {
+    task testJMX(type: Test) {
+        enabled = shouldTest(project, "JMX")
+        useJUnitPlatform {
+            includeTags "JMX"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "Simple")) {
     task testSimple(type: Test) {
         enabled = shouldTest(project, "Simple")
@@ -193,12 +211,6 @@ if (hasTestsOfCategory(project, "Ignite")) {
         useJUnitPlatform {
             includeTags "Ignite"
         }
-        def list = []
-        list.add("--add-exports")
-        list.add("java.base/jdk.internal.misc=ALL-UNNAMED")
-        list.add("--add-exports")
-        list.add("java.base/sun.nio.ch=ALL-UNNAMED")
-        jvmArgs.addAll(list)
     }
 }
 
@@ -348,7 +360,26 @@ tasks.withType(Test) {
     systemProperty("CI", System.getProperty("CI"))
 
     failFast = true
-    jvmArgs = ["-Xms512m", "-Xmx4g"]
+
+    def list = []
+    list.add("--add-modules")
+    list.add("java.se")
+    list.add("--add-exports")
+    list.add("java.base/jdk.internal.ref=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.lang=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.nio=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/sun.nio.ch=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.management/sun.management=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
+    list.add("-Xms512m")
+    list.add("-Xmx4g")
+    jvmArgs = list
+    
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
     testLogging {
         events = ["FAILED", "STANDARD_OUT"]
