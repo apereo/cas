@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchResponse;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ import java.util.Objects;
  */
 @Slf4j
 @ToString
-public class LdapServiceRegistry extends AbstractServiceRegistry {
+public class LdapServiceRegistry extends AbstractServiceRegistry implements DisposableBean {
 
     private final ConnectionFactory connectionFactory;
 
@@ -203,5 +204,10 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
         val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(),
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(id.toString()));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter, ldapProperties.getPageSize());
+    }
+
+    @Override
+    public void destroy() {
+        connectionFactory.close();
     }
 }
