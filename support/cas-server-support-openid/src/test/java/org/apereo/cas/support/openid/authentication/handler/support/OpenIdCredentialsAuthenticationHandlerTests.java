@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @deprecated 6.2
  */
 @Deprecated(since = "6.2.0")
+@Tag("Simple")
 public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdTests {
 
     private static final String TGT_ID = "test";

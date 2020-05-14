@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -22,5 +23,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.redis.sentinel.node[2]=localhost:26381"
 })
 @EnabledIfPortOpen(port = 6379)
+@Tag("Redis")
 public class SentinelServerTicketRegistryTests extends BaseRedisSentinelTicketRegistryTests {
 }

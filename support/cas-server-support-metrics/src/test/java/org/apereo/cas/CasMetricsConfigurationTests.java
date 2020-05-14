@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.config.CasMetricsConfiguration;
 import org.apereo.cas.config.CasMetricsRepositoryConfiguration;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.metrics.export.simple.SimpleMetricsExportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -24,5 +25,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     AopAutoConfiguration.class
 },
     properties = "management.metrics.export.simple.enabled=true")
+@Tag("Simple")
 public class CasMetricsConfigurationTests {
 }

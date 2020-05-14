@@ -3,6 +3,7 @@ package org.apereo.cas.otp.web.flow.rest;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepositoryTests;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = BaseOneTimeTokenRepositoryTests.SharedTestConfiguration.class)
+@Tag("Simple")
 public class OneTimeTokenQRGeneratorControllerTests {
 
     @Autowired

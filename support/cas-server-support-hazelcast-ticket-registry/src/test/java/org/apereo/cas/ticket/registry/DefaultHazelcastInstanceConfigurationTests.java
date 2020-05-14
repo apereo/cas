@@ -27,6 +27,7 @@ import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,7 @@ properties = {
 })
 @DirtiesContext
 @Slf4j
+@Tag("Simple")
 public class DefaultHazelcastInstanceConfigurationTests {
     @Autowired
     @Qualifier("casTicketRegistryHazelcastInstance")

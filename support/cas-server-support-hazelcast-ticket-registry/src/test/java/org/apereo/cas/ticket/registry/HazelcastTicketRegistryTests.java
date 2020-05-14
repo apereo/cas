@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     "spring.mail.host=localhost",
     "spring.mail.port=25000"
 })
+@Tag("Simple")
 public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired

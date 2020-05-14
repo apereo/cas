@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoints.web.exposure.include=*",
         "management.endpoint.discoveryProfile.enabled=true"
     })
+@Tag("Simple")
 public class CasServerDiscoveryProfileEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("discoveryProfileEndpoint")

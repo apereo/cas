@@ -3,6 +3,7 @@ package org.apereo.cas.util.function;
 import com.google.common.base.Suppliers;
 import lombok.val;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Supplier;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("Simple")
 public class FunctionUtilsTests {
 
     @Test

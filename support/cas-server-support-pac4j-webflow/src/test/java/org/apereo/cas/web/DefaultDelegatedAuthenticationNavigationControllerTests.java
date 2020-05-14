@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
+@Tag("Simple")
 public class DefaultDelegatedAuthenticationNavigationControllerTests {
 
     @Autowired

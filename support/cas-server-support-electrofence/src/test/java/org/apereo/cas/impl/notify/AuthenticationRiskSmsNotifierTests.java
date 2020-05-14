@@ -29,6 +29,7 @@ import java.util.List;
     "cas.authn.adaptive.risk.response.sms.text=Message",
     "cas.authn.adaptive.risk.response.sms.from=3487244312"
 })
+@Tag("Simple")
 public class AuthenticationRiskSmsNotifierTests extends BaseAuthenticationRequestRiskCalculatorTests {
     @Test
     public void verifyOperation() {

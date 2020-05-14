@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import com.google.common.collect.Multimap;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("Simple")
 public class CollectionUtilsTests {
     @Test
     public void verifyToCol() {

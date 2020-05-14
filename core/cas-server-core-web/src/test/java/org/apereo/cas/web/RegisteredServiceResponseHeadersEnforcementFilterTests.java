@@ -15,6 +15,7 @@ import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -36,6 +37,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@Tag("Simple")
 public class RegisteredServiceResponseHeadersEnforcementFilterTests {
 
     @Test

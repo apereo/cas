@@ -3,6 +3,7 @@ package org.apereo.cas.validation;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @ExtendWith(MockitoExtension.class)
+@Tag("Simple")
 public class Cas10ProtocolValidationSpecificationTests {
     @Mock
     private ServicesManager servicesManager;

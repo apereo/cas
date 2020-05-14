@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordA
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@Tag("Simple")
 public class ChainingCasProtocolValidationSpecificationTests {
 
     private static Assertion getAssertion() {

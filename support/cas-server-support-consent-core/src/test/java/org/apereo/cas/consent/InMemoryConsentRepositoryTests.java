@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     BaseConsentRepositoryTests.SharedTestConfiguration.class
 })
 @Getter
+@Tag("Simple")
 public class InMemoryConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired

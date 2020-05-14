@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
@@ -19,6 +20,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.redis.pool.enabled=true"
 })
 @EnabledIfPortOpen(port = 6379)
+@Tag("Redis")
 public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegistryTests {
 
     @Autowired

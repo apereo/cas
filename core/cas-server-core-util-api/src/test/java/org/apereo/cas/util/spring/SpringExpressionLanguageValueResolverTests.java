@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("Simple")
 public class SpringExpressionLanguageValueResolverTests {
     @Test
     public void verifyOperation() {
