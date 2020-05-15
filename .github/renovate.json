@@ -6,6 +6,14 @@
     ":semanticCommits",
     ":semanticCommitTypeAll(renovatebot)"
   ],
+  "gitAuthor": "Renovate Bot <bot@renovateapp.com>",
+  "logLevel": "debug",
+  "onboarding": false,
+  "platform": "github",
+  "includeForks": true,
+  "repositories": [
+    "apereo/cas"
+  ],
   "gradle": {
     "enabled": true
   },
