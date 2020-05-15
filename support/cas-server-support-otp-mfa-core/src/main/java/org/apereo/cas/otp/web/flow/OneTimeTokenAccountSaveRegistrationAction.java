@@ -32,7 +32,6 @@ public class OneTimeTokenAccountSaveRegistrationAction extends AbstractAction {
             .get(OneTimeTokenAccountCheckRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT, OneTimeTokenAccount.class);
         val uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
         val credential = WebUtils.getCredential(requestContext, OneTimeTokenCredential.class);
-        //val credential = (OneTimeTokenCredential) WebUtils.getCredential(requestContext);
 
         if (!StringUtils.isNumeric(credential.getToken())) {
             LOGGER.error("Non-numeric OTP token provided: [{}]", credential.getToken());
