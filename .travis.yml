@@ -282,7 +282,7 @@ jobs:
       workspaces:
         use: buildWorkspace
     - stage: test
-      script: ./ci/tests/postgres/run-tests-postgres.sh
+        script: ./ci/tests/postgres/run-tests-postgres.sh
       name: "PostgreSQL Tests"
       workspaces:
         use: buildWorkspace

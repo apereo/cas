@@ -15,17 +15,6 @@ echo "Running dependency analysis..."
 gradleBuild="$gradleBuild dependencyCheckAggregate -x javadoc -x check \
    --parallel -DskipNestedConfigMetadataGen=true "
 
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
-    gradleBuild="$gradleBuild -DshowStandardStreams=true "
-fi
-
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
-    gradleBuild="$gradleBuild --rerun-tasks "
-fi
-
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[refresh dependencies]"* ]]; then
-    gradleBuild="$gradleBuild --refresh-dependencies "
-fi
 
 tasks="$gradle $gradleBuildOptions $gradleBuild"
 echo -e "***************************************************************************************"

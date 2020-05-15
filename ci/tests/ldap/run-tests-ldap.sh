@@ -12,17 +12,7 @@ echo -e "***********************************************"
 ./ci/tests/ldap/run-ldap-server.sh
 ./ci/tests/ldap/run-ad-server.sh true
 
-gradleBuild="$gradleBuild testLdap jacocoRootReport -x test -x javadoc -x check \
-    -DshowStandardStreams=true  \
-    -DskipNestedConfigMetadataGen=true "
-
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
-    gradleBuild="$gradleBuild --rerun-tasks "
-fi
-
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[refresh dependencies]"* ]]; then
-    gradleBuild="$gradleBuild --refresh-dependencies "
-fi
+gradleBuild="$gradleBuild testLdap jacocoRootReport -x test -x javadoc -x check -DshowStandardStreams=true  -DskipNestedConfigMetadataGen=true "
 
 if [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."
