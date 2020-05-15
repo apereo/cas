@@ -37,8 +37,3 @@ installJdk() {
     echo JAVA_HOME=${JAVA_HOME}
     rm ~/install-jdk.sh
 }
-
-installJdk
-
-echo "Gradle Home directory:"
-./gradlew gradleHome --no-daemon --version
