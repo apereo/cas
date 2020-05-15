@@ -15,7 +15,7 @@ else
 fi
 
 echo "Waiting for Cassandra server to come online..."
-sleep 30
+sleep 40
 
 echo "Creating Cassandra keyspace: cas"
 docker exec cassandra cqlsh -e "CREATE KEYSPACE cas WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 1}"
