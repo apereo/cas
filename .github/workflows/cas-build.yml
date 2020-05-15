@@ -632,7 +632,7 @@ jobs:
 
   tests-simple:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+#    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -871,7 +871,7 @@ jobs:
 
   tests-ldap:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+#    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1489,7 +1489,7 @@ jobs:
 
   tests-performance-locust-undertow:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+#    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
