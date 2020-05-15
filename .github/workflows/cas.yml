@@ -10,15 +10,21 @@ on:
     branches: [ master ]
 
 jobs:
+  initialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11.0.7
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci./ci/init-build.sh
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK 11
-      uses: actions/setup-java@v1
-      with:
-        java-version: 11.0.7
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+    - name: Initialize
+      run: chmod -R 777 ./ci/*.sh && ./ci./ci/init-build.sh
     - name: Build with Gradle
       run: ./gradlew --build-cache --configure-on-demand --no-daemon build install -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
