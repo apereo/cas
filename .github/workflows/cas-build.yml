@@ -1506,7 +1506,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh && pyenv global ${PYTHON_VERSION}
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh && python --version
       - uses: actions/cache@v1
         with:
           path: ~/.gradle/caches
