@@ -669,9 +669,9 @@ task signingKey(description: "Display CAS signing key id") {
 }
 
 task verifyRequiredJavaVersion {
-    // println "Checking current Java version ${JavaVersion.current()} for required Java version ${project.targetCompatibility}"
-    if (!JavaVersion.current().name.equalsIgnoreCase("${project.targetCompatibility}")) {
-        throw new GradleException("Current Java version ${JavaVersion.current()} does not match required Java version ${project.targetCompatibility}")
+    def requiredVersion = JavaVersion.toVersion(project.targetCompatibility)
+    if (!JavaVersion.current().isCompatibleWith(requiredVersion)) {
+        throw new GradleException("Current Java version ${JavaVersion.current()} does not match required Java version ${requiredVersion}")
     }
 }
 

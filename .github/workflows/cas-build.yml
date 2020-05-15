@@ -7,12 +7,16 @@ env:
   JDK_LATEST: 15-ea
   SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
   SONATYPE_PWD: ${{ secrets.SONATYPE_PWD }}
-  
+
+##########################################################################
+
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+
+##########################################################################
 
 jobs:
   initialize:
@@ -25,6 +29,8 @@ jobs:
           java-version: ${{env.JDK_CURRENT}}
       - name: Initialize
         run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+
+##########################################################################
   cache:
     runs-on: ubuntu-latest
     needs: [initialize]
@@ -45,6 +51,8 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
+##########################################################################
   build-jdk-current:
     runs-on: ubuntu-latest
     needs: [cache]
@@ -64,6 +72,8 @@ jobs:
           ${{ runner.os }}-gradle-
     - name: Build with Gradle
       run: ./gradlew --build-cache --configure-on-demand --no-daemon build install -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
+##########################################################################
+
   build-jdk-latest:
     runs-on: ubuntu-latest
     needs: [cache]
@@ -84,6 +94,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew --build-cache --configure-on-demand --no-daemon build install -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
 
+##########################################################################
 
   validate:
     runs-on: ubuntu-latest
@@ -102,30 +113,35 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+            
       - name: Validate Documentation
-        if: !contains(github.head_ref, 'renovate') && github.event_name == 'push'
+        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
         run: ./ci/validate-documentation.sh
+
       - name: Validate Code Quality via SonarCloud
+        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.organization=apereo -Dsonar.host.url=https://sonarcloud.io -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -Dsonar.verbose=true --parallel
 
+
+##########################################################################
         
-  publish:
-    runs-on: ubuntu-latest
-    needs: [build-jdk]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{env.JDK_CURRENT}}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Publish SNAPSHOTs
-        if: !contains(github.event.head_commit.message, 'skip snapshots') && github.event_name == 'push'
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 assemble publish -x test -x javadoc -x check -DpublishSnapshots=true -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
+#  publish:
+#    runs-on: ubuntu-latest
+#    needs: [build-jdk]
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Set up JDK
+#        uses: actions/setup-java@v1
+#        with:
+#          java-version: ${{env.JDK_CURRENT}}
+#      - name: Initialize
+#        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+#      - uses: actions/cache@v1
+#        with:
+#          path: ~/.gradle/caches
+#          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+#          restore-keys: |
+#            ${{ runner.os }}-gradle-
+#      - name: Publish SNAPSHOTs
+#        if: !contains(github.event.head_commit.message, 'skip snapshots') && github.event_name == 'push'
+#        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 assemble publish -x test -x javadoc -x check -DpublishSnapshots=true -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
