@@ -1,11 +1,4 @@
 {
-  "extends": [
-    "config:base",
-    ":preserveSemverRanges",
-    ":disableRateLimiting",
-    ":semanticCommits",
-    ":semanticCommitTypeAll(renovatebot)"
-  ],
   "gitAuthor": "Renovate Bot <bot@renovateapp.com>",
   "logLevel": "debug",
   "onboarding": false,
