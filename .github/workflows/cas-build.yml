@@ -5,13 +5,6 @@ env:
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss64m -XX:ReservedCodeCacheSize=512m -Xverify:none -server -XX:+UseG1GC"
   JDK_CURRENT: 11.0.7
   JDK_LATEST: 14
-  SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
-  SONATYPE_PWD: ${{ secrets.SONATYPE_PWD }}
-  SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  GITHUB_PAGES_TOKEN: ${{ secrets.GITHUB_PAGES_TOKEN }}
-  PYTHON_VERSION: 3.8.2
-
 ##########################################################################
 
 on:
