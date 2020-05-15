@@ -1,5 +1,5 @@
 #!/bin/bash
-source ./ci/functions.sh
+
 
 
 

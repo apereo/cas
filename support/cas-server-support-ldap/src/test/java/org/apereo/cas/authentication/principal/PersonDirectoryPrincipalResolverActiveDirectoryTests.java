@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.ldap[0].trust-store-password=changeit",
     "cas.authn.attribute-repository.ldap[0].attributes.displayName=description",
     "cas.authn.attribute-repository.ldap[0].attributes.objectGUID=objectGUID",
-    "cas.authn.attribute-repository.ldap[0].attributes.objectSid=objectSid",
+    "cas.authn.attribute-repository.ldap[0].attributes.objectSid=objectSid"
 })
 @EnabledIfPortOpen(port = 10390)
 @Tag("Ldap")

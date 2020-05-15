@@ -1,5 +1,5 @@
 #!/bin/bash
-source ./ci/functions.sh
+
 
 echo -e "SHA: ${GITHUB_SHA}"
 echo -e "Branch: ${GITHUB_REF}"
