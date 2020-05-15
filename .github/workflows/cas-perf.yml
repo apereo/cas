@@ -32,7 +32,6 @@ jobs:
 
   tests-performance-locust-tomcat:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -56,7 +55,6 @@ jobs:
 
   tests-performance-locust-jetty:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -81,7 +79,6 @@ jobs:
 
   tests-performance-locust-undertow:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
