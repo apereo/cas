@@ -12,6 +12,8 @@ git config --global user.name "travis-ci"
 git config --global pack.threads "8"
 
 echo -e "Cloning the repository to push documentation...\n"
+[ -z "GITHUB_PAGES_TOKEN" ] && echo "Found token for GitHub Pages..."
+
 git clone --single-branch --depth 1 --branch gh-pages --quiet https://${GITHUB_PAGES_TOKEN}@github.com/apereo/cas gh-pages
 cd gh-pages
 

@@ -55,8 +55,8 @@ public class LdapPasswordSynchronizationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer ldapPasswordSynchronizationAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean")
         final ListFactoryBean ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean) {
+        val postProcessorList = ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean.getObject();
         return plan -> {
-            val postProcessorList = ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean.getObject();
             val ldap = casProperties.getAuthn().getPasswordSync().getLdap();
             ldap.stream()
                 .filter(LdapPasswordSynchronizationProperties::isEnabled)

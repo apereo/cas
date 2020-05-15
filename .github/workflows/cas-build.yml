@@ -80,7 +80,13 @@ jobs:
         with:
           name: cas-binary-artifacts
           path: ./**/build/libs/*.*
-  ##########################################################################
+      - uses: actions/download-artifact@v2
+        with:
+          name: cas-binary-artifacts
+          path: ./artifacts
+      - name: Display structure of downloaded files
+        run: ls ./artifacts -R
+##########################################################################
 
   build-jdk-current-windows:
     runs-on: windows-latest
