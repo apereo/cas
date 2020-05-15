@@ -9,8 +9,10 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -47,28 +49,33 @@ public class LdapUserGraphicalAuthenticationRepositoryTests {
     
     @Test
     public void verifyOperation() throws Exception {
-        val cn = createLdapEntry();
-        val repo = new LdapUserGraphicalAuthenticationRepository(casProperties);
+        val ldap = casProperties.getAuthn().getGua().getLdap();
+        val factory = LdapUtils.newLdaptiveConnectionFactory(ldap);
+        val cn = createLdapEntry(factory);
+        val repo = new LdapUserGraphicalAuthenticationRepository(casProperties, factory);
         assertFalse(repo.getGraphics(cn).isEmpty());
         assertTrue(repo.getGraphics("bad-user").isEmpty());
+        assertAll(new Executable() {
+            @Override
+            public void execute() throws Exception {
+                repo.destroy();
+            }
+        });
     }
 
-    private String createLdapEntry() throws Exception {
-        val ldap = casProperties.getAuthn().getGua().getLdap();
-        try (val factory = LdapUtils.newLdaptiveConnectionFactory(ldap)) {
-            val photo = IOUtils.toByteArray(new ClassPathResource("image.jpg").getInputStream());
-            val cn = RandomUtils.randomAlphabetic(6).toLowerCase();
-            val request = AddRequest.builder()
-                .attributes(List.of(
-                    new LdapAttribute("objectclass", "top", "person", "inetOrgPerson"),
-                    new LdapAttribute("cn", cn),
-                    new LdapAttribute("jpegPhoto", photo),
-                    new LdapAttribute("sn", cn)))
-                .dn("cn=" + cn + ",ou=People,dc=example,dc=org")
-                .build();
-            val operation = new AddOperation(factory);
-            operation.execute(request);
-            return cn;
-        }
+    private String createLdapEntry(final ConnectionFactory factory) throws Exception {
+        val photo = IOUtils.toByteArray(new ClassPathResource("image.jpg").getInputStream());
+        val cn = RandomUtils.randomAlphabetic(6).toLowerCase();
+        val request = AddRequest.builder()
+            .attributes(List.of(
+                new LdapAttribute("objectclass", "top", "person", "inetOrgPerson"),
+                new LdapAttribute("cn", cn),
+                new LdapAttribute("jpegPhoto", photo),
+                new LdapAttribute("sn", cn)))
+            .dn("cn=" + cn + ",ou=People,dc=example,dc=org")
+            .build();
+        val operation = new AddOperation(factory);
+        operation.execute(request);
+        return cn;
     }
 }
