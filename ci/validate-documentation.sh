@@ -1,5 +1,4 @@
 #!/bin/bash
-source ./ci/functions.sh
 
 HTML_PROOFER_IMAGE=hdeadman/html-proofer:latest
 DOCS_FOLDER=$(pwd)/docs/cas-server-documentation
