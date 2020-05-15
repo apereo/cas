@@ -43,6 +43,11 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractAction {
         val uid = auth.getPrincipal().getId();
         val keyUriFmt = "otpauth://totp/" + this.label + ":" + uid + "?secret=%s&issuer=" + this.issuer;
 
+        if (auth.getAttributes().containsKey("isNewOtpRegistration")) {
+            LOGGER.debug("Arrrived back at registration check with isNewOtpRegistration set; returning register");
+            return new EventFactorySupport().event(this, "register");
+        }
+
         val acct = repository.get(uid);
         if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {
             val keyAccount = this.repository.create(uid);
@@ -52,10 +57,6 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractAction {
             flowScope.put(FLOW_SCOPE_ATTR_ACCOUNT_URI, keyUri);
             LOGGER.debug("Registration key URI is [{}]", keyUri);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
-        }
-        if (auth.getAttributes().containsKey("isNewOtpRegistration")) {
-            LOGGER.debug("Arrrived back at registration check with isNewOtpRegistration set; returning register");
-            return new EventFactorySupport().event(this, "register");
         }
         return success();
     }
