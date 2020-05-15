@@ -81,7 +81,4 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Publish SNAPSHOTs
-        env:
-          - cmd=""
-        run: >-
-        ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 assemble publish -x test -x javadoc -x check -DpublishSnapshots=true -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 assemble publish -x test -x javadoc -x check -DpublishSnapshots=true -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
