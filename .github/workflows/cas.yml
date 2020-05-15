@@ -14,7 +14,7 @@ env:
   SONATYPE_PWD: ${{ secrets.SONATYPE_PWD }}
 
 jobs:
-  Initialize:
+  initialize:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -24,7 +24,7 @@ jobs:
           java-version: ${{env.JDK11}}
       - name: Initialize
         run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-  Cache:
+  cache:
     runs-on: ubuntu-latest
     needs: [initialize]
     steps:
@@ -44,7 +44,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-  Build-JDK11:
+  build-jdk11:
     runs-on: ubuntu-latest
     needs: [cache]
     steps:
@@ -65,7 +65,7 @@ jobs:
       run: ./gradlew --build-cache --configure-on-demand --no-daemon build install -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
   Publish:
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [build-jdk11]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
