@@ -12,7 +12,7 @@ git config --global user.name "travis-ci"
 git config --global pack.threads "8"
 
 echo -e "Cloning the repository to push documentation...\n"
-git clone --single-branch --depth 1 --branch gh-pages --quiet https://${GITHUB_TOKEN}@github.com/apereo/cas gh-pages > /dev/null
+git clone --single-branch --depth 1 --branch gh-pages --quiet https://${GITHUB_PAGES_TOKEN}@github.com/apereo/cas gh-pages
 cd gh-pages
 
 echo -e "Switching to gh-pages branch\n"
