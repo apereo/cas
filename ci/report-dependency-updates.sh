@@ -12,18 +12,6 @@ echo -e "***********************************************"
 gradleBuild="$gradleBuild dependencyUpdates -Drevision=release -x javadoc -x check  \
     -DskipNestedConfigMetadataGen=true \
     --parallel -DgradleReleaseChannel=current "
-    
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
-    gradleBuild="$gradleBuild -DshowStandardStreams=true "
-fi
-
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
-    gradleBuild="$gradleBuild --rerun-tasks "
-fi
-
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[refresh dependencies]"* ]]; then
-    gradleBuild="$gradleBuild --refresh-dependencies "
-fi
 
 if [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."

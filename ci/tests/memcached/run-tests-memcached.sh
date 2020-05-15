@@ -11,21 +11,7 @@ echo -e "***********************************************"
 
 ./ci/tests/memcached/run-memcached-server.sh
 
-gradleBuild="$gradleBuild testMemcached jacocoRootReport -x test -x javadoc -x check \
-    --parallel \
-    -DskipNestedConfigMetadataGen=true "
-
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
-    gradleBuild="$gradleBuild -DshowStandardStreams=true "
-fi
-
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
-    gradleBuild="$gradleBuild --rerun-tasks "
-fi
-
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[refresh dependencies]"* ]]; then
-    gradleBuild="$gradleBuild --refresh-dependencies "
-fi
+gradleBuild="$gradleBuild testMemcached jacocoRootReport -x test -x javadoc -x check --parallel -DskipNestedConfigMetadataGen=true "
 
 if [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."
