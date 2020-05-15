@@ -8,7 +8,6 @@ env:
   SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
   SONATYPE_PWD: ${{ secrets.SONATYPE_PWD }}
   SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GHPAGES_TOKEN: ${{ secrets.GITHUB_PAGES_TOKEN }}
   RENOVATE_TOKEN: ${{ secrets.GITHUB_RENOVATE_TOKEN }}
   PYTHON_VERSION: 3.8.2
@@ -176,7 +175,7 @@ jobs:
 
   validate-quality:
     runs-on: ubuntu-latest
-    needs: [cache]
+    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -202,7 +201,7 @@ jobs:
 
   validate-style-main:
     runs-on: ubuntu-latest
-    needs: [cache]
+    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -228,7 +227,7 @@ jobs:
 
   validate-style-test:
     runs-on: ubuntu-latest
-    needs: [cache]
+    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -254,7 +253,7 @@ jobs:
 
   validate-spotbugs-main:
     runs-on: ubuntu-latest
-    needs: [cache]
+    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -280,7 +279,7 @@ jobs:
 
   validate-spotbugs-test:
     runs-on: ubuntu-latest
-    needs: [cache]
+    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -329,7 +328,7 @@ jobs:
 
   validate-javadocs:
     runs-on: ubuntu-latest
-    needs: [cache]
+    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -424,7 +423,7 @@ jobs:
 
   validate-commandline-shell:
     runs-on: ubuntu-latest
-    needs: [cache]
+    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -452,7 +451,7 @@ jobs:
 
   validate-webapp-embedded-tomcat:
     runs-on: ubuntu-latest
-    needs: [cache]
+    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -478,7 +477,7 @@ jobs:
 
   validate-webapp-embedded-jetty:
     runs-on: ubuntu-latest
-    needs: [cache]
+    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -504,7 +503,7 @@ jobs:
 
   validate-webapp-embedded-undertow:
     runs-on: ubuntu-latest
-    needs: [cache]
+    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -531,7 +530,7 @@ jobs:
 
   validate-webapp-external-tomcat:
     runs-on: ubuntu-latest
-    needs: [cache]
+    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -557,7 +556,7 @@ jobs:
 
   validate-spring-cloud-config-server:
     runs-on: ubuntu-latest
-    needs: [cache]
+    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -583,7 +582,7 @@ jobs:
 
   validate-eureka-discovery-server:
     runs-on: ubuntu-latest
-    needs: [cache]
+    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -609,7 +608,7 @@ jobs:
 
   validate-spring-boot-admin-server:
     runs-on: ubuntu-latest
-    needs: [cache]
+    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
