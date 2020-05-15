@@ -230,10 +230,105 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Validate Javadocs
         if: ${{ !contains(github.head_ref, 'renovate') }}
-        run: ./ci/analyze-codebase.sh
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel javadoc -x test -x check -DskipNestedConfigMetadataGen=true --parallel "
 
         ##########################################################################
-        
+
+  validate-spring-config-metadata:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_LATEST}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Spring Configuration Metadata
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel :api:cas-server-core-api-configuration-model:build -x check -x test -x javadoc
+
+        ##########################################################################
+
+  validate-spring-config-proxies:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_LATEST}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Spring Configuration Proxies
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel verifySpringConfigurationCanDisableBeanProxying -x javadoc -x check --parallel -DskipNestedConfigMetadataGen=true
+
+        ##########################################################################
+
+  validate-spring-config-factories:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_LATEST}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Spring Configuration Factories
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel verifySpringConfigurationFactories -x javadoc -x check --parallel -DskipNestedConfigMetadataGen=true
+
+        ##########################################################################
+
+  validate-commandline-shell:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_LATEST}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate CAS Command-line Shell
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run:
+          - casVersion=$(./gradlew casVersion --no-daemon -q)
+          - ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true :support:cas-server-support-shell:build
+          - - java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar @ci/tests/shell/cas-shell-script.sh
+
+        ##########################################################################
+
 #  publish:
 #    runs-on: ubuntu-latest
 #    needs: [build-jdk]
