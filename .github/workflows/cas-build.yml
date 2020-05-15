@@ -11,7 +11,6 @@ env:
   GHPAGES_TOKEN: ${{ secrets.GITHUB_PAGES_TOKEN }}
   RENOVATE_TOKEN: ${{ secrets.GITHUB_RENOVATE_TOKEN }}
   PYTHON_VERSION: 3.8.2
-  NODE_VERSION: 12
 
 ##########################################################################
 
@@ -1642,9 +1641,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{env.JDK_CURRENT}}
-      - uses: actions/setup-node@v1
-        with:
-          node-version: ${{env.NODE_VERSION}}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1653,6 +1649,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Report Dependency Updates
-        if: ${{ !contains(github.head_ref, 'renovate') }}
-        run: ./ci/update-dependencies.sh
+        - uses: renovatebot/github-action@v1.0.0
+          with:
+          token: ${{ secrets.RENOVATE_TOKEN }}
+          configurationFile: .github/renovate.json
