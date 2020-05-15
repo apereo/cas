@@ -1,7 +1,5 @@
 #!/bin/bash
 
-
-
 gradle="./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--build-cache --configure-on-demand --no-daemon  "
@@ -10,7 +8,7 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-./ci/tests/amazon/run-aws-server.sh
+./ci/tests/aws/run-aws-server.sh
 
 gradleBuild="$gradleBuild testAWS jacocoRootReport -x test -x javadoc -x check \
     --parallel -DskipNestedConfigMetadataGen=true "
@@ -27,7 +25,6 @@ else
     waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
     eval $waitloop
     waitRetVal=$?
-
 
     eval $tasks
     retVal=$?

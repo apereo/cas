@@ -9,8 +9,10 @@ env:
   SONATYPE_PWD: ${{ secrets.SONATYPE_PWD }}
   SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  GITHUB_PAGES_TOKEN: ${{ secrets.GITHUB_PAGES_TOKEN }}
+  GHPAGES_TOKEN: ${{ secrets.GITHUB_PAGES_TOKEN }}
+  RENOVATE_TOKEN: ${{ secrets.GITHUB_RENOVATE_TOKEN }}
   PYTHON_VERSION: 3.8.2
+  NODE_VERSION: 12
 
 ##########################################################################
 
@@ -56,7 +58,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-  ##########################################################################
+##########################################################################
+  
   build-jdk-current:
     runs-on: ubuntu-latest
     needs: [cache]
@@ -78,14 +81,8 @@ jobs:
         run: ./gradlew --build-cache --configure-on-demand --no-daemon build install -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
       - uses: actions/upload-artifact@v2
         with:
-          name: cas-binary-artifacts
+          name: binary-artifacts
           path: ./**/build/libs/*.*
-      - uses: actions/download-artifact@v2
-        with:
-          name: cas-binary-artifacts
-          path: ./artifacts
-      - name: Display structure of downloaded files
-        run: ls ./artifacts -R
 ##########################################################################
 
   build-jdk-current-windows:
@@ -108,7 +105,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew --build-cache --configure-on-demand --no-daemon build install -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
 
-  ##########################################################################
+##########################################################################
 
   build-jdk-current-macos:
     runs-on: macos-latest
@@ -130,7 +127,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew --build-cache --configure-on-demand --no-daemon build install -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
 
-  ##########################################################################
+##########################################################################
 
   build-jdk-latest:
     runs-on: ubuntu-latest
@@ -194,6 +191,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Validate Code Quality via SonarCloud
         if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.organization=apereo -Dsonar.host.url=https://sonarcloud.io -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -Dsonar.verbose=true --parallel
@@ -217,6 +217,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Validate Production Files via Checkstyle
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel checkstyleMain -x test -x javadoc -DskipNestedConfigMetadataGen=true --parallel -DshowStandardStreams=true
@@ -240,12 +243,67 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Validate Test Files via Checkstyle
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel checkstyleTest -x test -x javadoc -DskipNestedConfigMetadataGen=true --parallel -DshowStandardStreams=true
 
   ##########################################################################
 
+  validate-spotbugs-main:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
+      - name: SpotBugs Main Analysis
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./gradlew --build-cache --configure-on-demand --parallel --no-daemon spotbugsMain -x test -x javadoc -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true
+
+  ##########################################################################
+
+  validate-spotbugs-test:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
+      - name: SpotBugs Tests Analysis
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./gradlew --build-cache --configure-on-demand --parallel --no-daemon spotbugsTest -x test -x javadoc -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true
+
+  ##########################################################################
+  
   validate-codebase:
     runs-on: ubuntu-latest
     needs: [cache]
@@ -286,6 +344,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Validate Javadocs
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel javadoc -x test -x check -DskipNestedConfigMetadataGen=true --parallel
@@ -378,11 +439,13 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Validate CAS Command-line Shell
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: |
           casVersion=$(./gradlew casVersion --no-daemon -q)
-          ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true :support:cas-server-support-shell:build
           java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar @ci/tests/shell/cas-shell-script.sh
 
   ##########################################################################
@@ -404,6 +467,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Validate Web Application Server via Embedded Apache Tomcat
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-embedded-webapp.sh tomcat
@@ -427,6 +493,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Validate Web Application Server via Embedded Jetty
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-embedded-webapp.sh jetty
@@ -450,6 +519,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Validate Web Application Server via Embedded Undertow
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-embedded-webapp.sh undertow
@@ -474,6 +546,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Validate Web Application Server via External Apache Tomcat
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-external-webapp.sh tomcat
@@ -497,6 +572,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Validate Spring Cloud Configuration Server
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-configserver-webapp.sh
@@ -520,6 +598,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Validate Eureka Discovery Server
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-eurekaserver-webapp.sh
@@ -543,6 +624,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Validate Spring Boot Admin Server
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-bootadmin-webapp.sh
@@ -1559,6 +1643,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{env.JDK_CURRENT}}
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{env.NODE_VERSION}}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
