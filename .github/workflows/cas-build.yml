@@ -1649,7 +1649,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-        - uses: renovatebot/github-action@v1.0.0
-          with:
+      - uses: renovatebot/github-action@v1.0.0
+        with:
           token: ${{ secrets.RENOVATE_TOKEN }}
           configurationFile: .github/renovate.json
