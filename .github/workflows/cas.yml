@@ -9,9 +9,8 @@ on:
 env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss64m -XX:ReservedCodeCacheSize=512m -Xverify:none -server -XX:+UseG1GC"
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss64m -XX:ReservedCodeCacheSize=512m -Xverify:none -server -XX:+UseG1GC"
-  SPRING_MAIN_BANNER-MODE: "off"
-  TERM: "xterm"
-  
+  JDK11: 11.0.7
+
 jobs:
   initialize:
     runs-on: ubuntu-latest
@@ -20,7 +19,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: $JDK11
       - name: Initialize
         run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
   cache:
@@ -28,6 +27,10 @@ jobs:
     needs: [initialize]
     steps:
       - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: $JDK11
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/checkout@v2
@@ -38,6 +41,10 @@ jobs:
     needs: [initialize, cache]
     steps:
     - uses: actions/checkout@v2
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: $JDK11
     - name: Initialize
       run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
     - uses: actions/cache@v1
