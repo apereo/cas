@@ -322,10 +322,10 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Validate CAS Command-line Shell
         if: ${{ !contains(github.head_ref, 'renovate') }}
-        run:
-          - casVersion=$(./gradlew casVersion --no-daemon -q)
-          - ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true :support:cas-server-support-shell:build
-          - - java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar @ci/tests/shell/cas-shell-script.sh
+        run: |
+          casVersion=$(./gradlew casVersion --no-daemon -q)
+          ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true :support:cas-server-support-shell:build
+          java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar @ci/tests/shell/cas-shell-script.sh
 
         ##########################################################################
 
