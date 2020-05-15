@@ -1,0 +1,492 @@
+name: Validate
+
+env:
+  JAVA_OPTS: "-Xms512m -Xmx6048m -Xss64m -XX:ReservedCodeCacheSize=512m -Xverify:none -server -XX:+UseG1GC"
+  GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss64m -XX:ReservedCodeCacheSize=512m -Xverify:none -server -XX:+UseG1GC"
+  JDK_CURRENT: 11.0.7
+  SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+##########################################################################
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+##########################################################################
+
+jobs:
+  initialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+
+##########################################################################
+  cache:
+    runs-on: ubuntu-latest
+    needs: [initialize]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/checkout@v2
+      - name: Download Dependencies
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+##########################################################################
+
+  validate-docs:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Documentation
+        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
+        run: ./ci/validate-documentation.sh
+
+##########################################################################
+
+  validate-quality:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Code Quality via SonarCloud
+        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.organization=apereo -Dsonar.host.url=https://sonarcloud.io -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -Dsonar.verbose=true --parallel
+
+##########################################################################
+
+  validate-style-main:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Production Files via Checkstyle
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel checkstyleMain -x test -x javadoc -DskipNestedConfigMetadataGen=true --parallel -DshowStandardStreams=true
+
+##########################################################################
+
+  validate-style-test:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Test Files via Checkstyle
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel checkstyleTest -x test -x javadoc -DskipNestedConfigMetadataGen=true --parallel -DshowStandardStreams=true
+
+##########################################################################
+
+  validate-codebase:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Codebase
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./ci/analyze-codebase.sh
+
+##########################################################################
+
+  validate-javadocs:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Javadocs
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel javadoc -x test -x check -DskipNestedConfigMetadataGen=true --parallel 
+
+##########################################################################
+
+  validate-spring-config-metadata:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Spring Configuration Metadata
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel :api:cas-server-core-api-configuration-model:build -x check -x test -x javadoc
+
+##########################################################################
+
+  validate-spring-config-proxies:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Spring Configuration Proxies
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel verifySpringConfigurationCanDisableBeanProxying -x javadoc -x check --parallel -DskipNestedConfigMetadataGen=true
+
+##########################################################################
+
+  validate-spring-config-factories:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Spring Configuration Factories
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel verifySpringConfigurationFactories -x javadoc -x check --parallel -DskipNestedConfigMetadataGen=true
+
+##########################################################################
+
+  validate-commandline-shell:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate CAS Command-line Shell
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: |
+          casVersion=$(./gradlew casVersion --no-daemon -q)
+          ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true :support:cas-server-support-shell:build
+          java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar @ci/tests/shell/cas-shell-script.sh
+
+##########################################################################
+
+  validate-webapp-embedded-tomcat:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Web Application Server via Embedded Apache Tomcat
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./ci/tests/webapp/validate-embedded-webapp.sh tomcat
+
+##########################################################################
+
+  validate-webapp-embedded-jetty:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Web Application Server via Embedded Jetty
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./ci/tests/webapp/validate-embedded-webapp.sh jetty
+
+##########################################################################
+
+  validate-webapp-embedded-undertow:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Web Application Server via Embedded Undertow
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./ci/tests/webapp/validate-embedded-webapp.sh undertow
+
+
+##########################################################################
+
+  validate-webapp-external-tomcat:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Web Application Server via External Apache Tomcat
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./ci/tests/webapp/validate-external-webapp.sh tomcat
+
+##########################################################################
+
+  validate-spring-cloud-config-server:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Spring Cloud Configuration Server
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./ci/tests/webapp/validate-configserver-webapp.sh
+
+##########################################################################
+
+  validate-eureka-discovery-server:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Eureka Discovery Server
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./ci/tests/webapp/validate-eurekaserver-webapp.sh
+
+##########################################################################
+
+  validate-spring-boot-admin-server:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Spring Boot Admin Server
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./ci/tests/webapp/validate-bootadmin-webapp.sh
+
+##########################################################################
+
+  validate-tests:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Tests & Test Suites
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel validateTestsSuites -x javadoc
+
+  ##########################################################################
+
+  validate-dependency-licenses:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Dependency Licenses
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel checkLicense -x javadoc -x check -DskipNestedConfigMetadataGen=true
+
