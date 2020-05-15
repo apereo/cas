@@ -1532,8 +1532,8 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: kafka Tests
-        run: ./ci/tests/kafka/run-tests-kafka.sh
+#      - name: kafka Tests
+#        run: ./ci/tests/kafka/run-tests-kafka.sh
   ##########################################################################
 
   tests-performance-locust-tomcat:
