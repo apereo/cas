@@ -19,7 +19,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: $JDK11
+          java-version: ${{env.JDK11}}
       - name: Initialize
         run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
   cache:
@@ -30,7 +30,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: $JDK11
+          java-version: ${{env.JDK11}}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/checkout@v2
@@ -44,7 +44,7 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v1
       with:
-        java-version: $JDK11
+        java-version: ${{env.JDK11}}
     - name: Initialize
       run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
     - uses: actions/cache@v1
