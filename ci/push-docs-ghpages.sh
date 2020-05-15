@@ -14,7 +14,7 @@ git config --global pack.threads "8"
 echo -e "Cloning the repository to push documentation...\n"
 [ -z "GITHUB_PAGES_TOKEN" ] && echo "Found token for GitHub Pages..."
 
-git clone --single-branch --depth 1 --branch gh-pages --quiet https://${GITHUB_PAGES_TOKEN}@github.com/apereo/cas gh-pages
+git clone --single-branch --depth 1 --branch gh-pages --quiet https://${GHPAGES_TOKEN}@github.com/apereo/cas gh-pages
 cd gh-pages
 
 echo -e "Switching to gh-pages branch\n"
@@ -37,7 +37,7 @@ echo -e "Adding changes to the git index...\n"
 git add -f . > /dev/null
 
 echo -e "Committing changes...\n"
-git commit -m "Published docs from $TRAVIS_BRANCH to [gh-pages]. " > /dev/null
+git commit -m "Published docs [gh-pages]. " > /dev/null
 
 echo -e "Pushing upstream to origin/gh-pages...\n"
 git push -fq origin --all
