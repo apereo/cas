@@ -10,6 +10,7 @@ env:
   SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_PAGES_TOKEN: ${{ secrets.GITHUB_PAGES_TOKEN }}
+  PYTHON_VERSION: 3.8.2
 
 ##########################################################################
 
@@ -1419,5 +1420,89 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Apache ZooKeeper Tests
         run: ./ci/tests/zookeeper/run-tests-zookeeper.sh
+        
+  ##########################################################################
 
-                                                
+  tests-kafka:
+    runs-on: ubuntu-latest
+    needs: [build-jdk-current]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: kafka Tests
+        run: ./ci/tests/kafka/run-tests-kafka.sh
+  ##########################################################################
+
+  tests-performance-locust-tomcat:
+    runs-on: ubuntu-latest
+    needs: [build-jdk-current]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh  && pyenv global ${PYTHON_VERSION}
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Locust Performance Tests via Embedded Apache Tomcat
+        run: ./ci/tests/perftests-locust.sh tomcat
+  ##########################################################################
+
+  tests-performance-locust-jetty:
+    runs-on: ubuntu-latest
+    needs: [build-jdk-current]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh  && pyenv global ${PYTHON_VERSION}
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Locust Performance Tests via Embedded Jetty
+        run: ./ci/tests/perftests-locust.sh jetty
+
+  ##########################################################################
+
+  tests-performance-locust-undertow:
+    runs-on: ubuntu-latest
+    needs: [build-jdk-current]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_CURRENT}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh && pyenv global ${PYTHON_VERSION}
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Locust Performance Tests via Undertow
+        run: ./ci/tests/perftests-locust.sh undertow
