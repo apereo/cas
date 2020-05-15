@@ -20,16 +20,20 @@
         <transition on="success" to="viewLoginForm"/>
     </action-state>
 
-    <view-state id="viewRegistration" view="casGoogleAuthenticatorRegistrationView">
+    <view-state id="viewRegistration" view="casGoogleAuthenticatorRegistrationView" model="credential">
+        <binder>
+            <binding property="token" required="true" />
+        </binder>
         <on-entry>
             <set name="viewScope.principal" value="conversationScope.authentication.principal" />
         </on-entry>
-        <transition on="submit" to="saveRegistration"/>
+        <transition on="submit" bind="true" validate="true" to="saveRegistration" />
     </view-state>
     
     <action-state id="saveRegistration">
         <evaluate expression="googleSaveAccountRegistrationAction" />
-        <transition on="success" to="viewLoginForm"/>
+        <transition on="success" to="realSubmit"/>
+        <transition on="error" to="initializeLoginForm" />
     </action-state>
     
     <view-state id="viewLoginForm" view="casGoogleAuthenticatorLoginView" model="credential">
