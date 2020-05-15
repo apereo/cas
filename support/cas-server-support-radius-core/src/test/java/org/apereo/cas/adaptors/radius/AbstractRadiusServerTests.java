@@ -18,10 +18,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Radius")
 public abstract class AbstractRadiusServerTests {
-    public static final int ACCOUNTING_PORT = 6940;
-    public static final int AUTHENTICATION_PORT = 6939;
-    public static final String INET_ADDRESS = "130.211.138.166";
-    public static final String SECRET = "3SJRWyo1pOBa47M";
+    public static final int ACCOUNTING_PORT = 1813;
+    public static final int AUTHENTICATION_PORT = 1812;
+    public static final String INET_ADDRESS = "localhost";
+    public static final String SECRET = "testing123";
 
     static {
         Security.addProvider(new BouncyCastleProvider());
