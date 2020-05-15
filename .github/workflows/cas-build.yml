@@ -96,7 +96,7 @@ jobs:
 
 ##########################################################################
 
-  validate:
+  validate-docs:
     runs-on: ubuntu-latest
     needs: [cache]
     steps:
@@ -113,17 +113,126 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-            
       - name: Validate Documentation
         if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
         run: ./ci/validate-documentation.sh
 
+  ##########################################################################
+
+  validate-quality:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_LATEST}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: Validate Code Quality via SonarCloud
         if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.organization=apereo -Dsonar.host.url=https://sonarcloud.io -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -Dsonar.verbose=true --parallel
 
+  ##########################################################################
 
-##########################################################################
+  validate-style-main:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_LATEST}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Production Files via Checkstyle
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel checkstyleMain -x test -x javadoc -DskipNestedConfigMetadataGen=true --parallel -DshowStandardStreams=true
+
+  ##########################################################################
+
+  validate-style-test:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_LATEST}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Test Files via Checkstyle
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel checkstyleTest -x test -x javadoc -DskipNestedConfigMetadataGen=true --parallel -DshowStandardStreams=true
+
+  ##########################################################################
+
+  validate-codebase:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_LATEST}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Codebase
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./ci/analyze-codebase.sh
+
+  ##########################################################################
+
+  validate-javadocs:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JDK_LATEST}}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Javadocs
+        if: ${{ !contains(github.head_ref, 'renovate') }}
+        run: ./ci/analyze-codebase.sh
+
+        ##########################################################################
         
 #  publish:
 #    runs-on: ubuntu-latest
