@@ -4,8 +4,8 @@ import org.apereo.cas.adaptors.trusted.authentication.handler.support.PrincipalB
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
 import org.apereo.cas.adaptors.trusted.authentication.principal.RemoteRequestPrincipalAttributesExtractor;
 import org.apereo.cas.adaptors.trusted.authentication.principal.ShibbolethServiceProviderRequestPrincipalAttributesExtractor;
-import org.apereo.cas.adaptors.trusted.web.flow.BasePrincipalFromNonInteractiveCredentialsAction;
 import org.apereo.cas.adaptors.trusted.web.flow.ChainingPrincipalFromRequestNonInteractiveCredentialsAction;
+import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestExtractorAction;
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestHeaderNonInteractiveCredentialsAction;
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction;
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction;
@@ -35,7 +35,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.webflow.execution.Action;
 
 /**
  * This is {@link TrustedAuthenticationConfiguration}.
@@ -120,7 +119,7 @@ public class TrustedAuthenticationConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "principalFromRemoteUserAction")
-    public BasePrincipalFromNonInteractiveCredentialsAction principalFromRemoteUserAction() {
+    public PrincipalFromRequestExtractorAction principalFromRemoteUserAction() {
         return new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction(
             initialAuthenticationAttemptWebflowEventResolver.getObject(),
             serviceTicketRequestWebflowEventResolver.getObject(),
@@ -132,7 +131,7 @@ public class TrustedAuthenticationConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "principalFromRemoteUserPrincipalAction")
-    public BasePrincipalFromNonInteractiveCredentialsAction principalFromRemoteUserPrincipalAction() {
+    public PrincipalFromRequestExtractorAction principalFromRemoteUserPrincipalAction() {
         return new PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction(
             initialAuthenticationAttemptWebflowEventResolver.getObject(),
             serviceTicketRequestWebflowEventResolver.getObject(),
@@ -144,7 +143,7 @@ public class TrustedAuthenticationConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "principalFromRemoteHeaderPrincipalAction")
-    public BasePrincipalFromNonInteractiveCredentialsAction principalFromRemoteHeaderPrincipalAction() {
+    public PrincipalFromRequestExtractorAction principalFromRemoteHeaderPrincipalAction() {
         val trusted = casProperties.getAuthn().getTrusted();
         return new PrincipalFromRequestHeaderNonInteractiveCredentialsAction(
             initialAuthenticationAttemptWebflowEventResolver.getObject(),
@@ -158,14 +157,13 @@ public class TrustedAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "remoteUserAuthenticationAction")
     @Bean
     @RefreshScope
-    public Action remoteUserAuthenticationAction() {
-        val chain =
-            new ChainingPrincipalFromRequestNonInteractiveCredentialsAction(
-                initialAuthenticationAttemptWebflowEventResolver.getObject(),
-                serviceTicketRequestWebflowEventResolver.getObject(),
-                adaptiveAuthenticationPolicy.getObject(),
-                trustedPrincipalFactory(),
-                remoteRequestPrincipalAttributesExtractor());
+    public PrincipalFromRequestExtractorAction remoteUserAuthenticationAction() {
+        val chain = new ChainingPrincipalFromRequestNonInteractiveCredentialsAction(
+            initialAuthenticationAttemptWebflowEventResolver.getObject(),
+            serviceTicketRequestWebflowEventResolver.getObject(),
+            adaptiveAuthenticationPolicy.getObject(),
+            trustedPrincipalFactory(),
+            remoteRequestPrincipalAttributesExtractor());
         chain.addAction(principalFromRemoteUserAction());
         chain.addAction(principalFromRemoteUserPrincipalAction());
         chain.addAction(principalFromRemoteHeaderPrincipalAction());

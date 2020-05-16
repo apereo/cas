@@ -12,7 +12,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PrincipalFromRemoteRequestHeaderNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
     @Autowired
     @Qualifier("principalFromRemoteHeaderPrincipalAction")
-    private Action action;
+    private PrincipalFromRequestExtractorAction action;
 
     @Test
     public void verifyRemoteUserExists() throws Exception {
