@@ -7,9 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * This is {@link AbstractLdapAuthenticationProperties}.
  *
@@ -72,10 +69,6 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
      * </ul>
      */
     private String derefAliases;
-    /**
-     * Search entry to define on the authenticator.
-     */
-    private List<LdapSearchEntryHandlersProperties> searchEntryHandlers = new ArrayList<>(0);
 
     /**
      * The enum Authentication types.
