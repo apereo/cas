@@ -31,12 +31,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@TestPropertySource(properties = {"cas.authn.mfa.globalAuthenticationAttributeNameTriggers=authn-method-dummy", "cas.authn.mfa.globalAuthenticationAttributeValueRegex=mfa.*"})
+@TestPropertySource(properties = {
+    "cas.authn.mfa.globalAuthenticationAttributeNameTriggers=authn-method-dummy",
+    "cas.authn.mfa.globalAuthenticationAttributeValueRegex=mfa.*"
+})
 @Tag("Webflow")
 public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("authenticationAttributeAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver authenticationAttributeMultifactorAuthenticationPolicyEventResolver;
+
 
     @Test
     public void verifyOperation() {
@@ -45,7 +49,10 @@ public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService();
+        servicesManager.save(registeredService);
+
+        WebUtils.putRegisteredService(context, registeredService);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
 
