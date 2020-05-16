@@ -348,7 +348,7 @@ test {
 tasks.withType(Test) {
     scanForTestClasses = false
     ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
-    forkEvery = 750
+    forkEvery = 1000
     doFirst {
         maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 2)
         if (maxParallelForks != 2) {

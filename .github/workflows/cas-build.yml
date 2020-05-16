@@ -9,6 +9,7 @@ env:
   SONATYPE_PWD: ${{ secrets.SONATYPE_PWD }}
   SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
   GHPAGES_TOKEN: ${{ secrets.GITHUB_PAGES_TOKEN }}
+  GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
   RENOVATE_TOKEN: ${{ secrets.GITHUB_RENOVATE_TOKEN }}
   PYTHON_VERSION: 3.8.2
 
@@ -194,7 +195,7 @@ jobs:
           name: binary-artifacts
       - name: Validate Code Quality via SonarCloud
         if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.organization=apereo -Dsonar.host.url=https://sonarcloud.io -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -Dsonar.verbose=true --parallel
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.organization=apereo -Dsonar.host.url=https://sonarcloud.io -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -Dsonar.verbose=true --parallel -DshowStandardStreams=true --info
 
   ##########################################################################
 
@@ -839,6 +840,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Spring Webflow Tests
         run: ./ci/tests/webflow/run-tests-webflow.sh
 
@@ -861,6 +865,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: RESTful Tests
         run: ./ci/tests/restful/run-tests-restful.sh
 
@@ -883,6 +890,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Multifactor Authentication Tests
         run: ./ci/tests/mfa/run-tests-mfa.sh
 
@@ -905,6 +915,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: OAuth Tests
         run: ./ci/tests/oauth/run-tests-oauth.sh
 
@@ -927,6 +940,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: OAuth UMA Tests
         run: ./ci/tests/oauth/run-tests-uma.sh
 
@@ -949,6 +965,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: OpenID Connect Tests
         run: ./ci/tests/oidc/run-tests-oidc.sh
 
@@ -971,6 +990,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: SAML Tests
         run: ./ci/tests/saml/run-tests-saml.sh
 
@@ -993,6 +1015,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: LDAP Tests
         run: ./ci/tests/ldap/run-tests-ldap.sh
 
@@ -1015,6 +1040,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Hazelcast Tests
         run: ./ci/tests/hazelcast/run-tests-hazelcast.sh
 
@@ -1037,6 +1065,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: X509 Tests
         run: ./ci/tests/x509/run-tests-x509.sh
 
@@ -1059,6 +1090,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Commandline Shell Tests
         run: ./ci/tests/shell/run-tests-shell.sh
 
@@ -1082,6 +1116,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: AWS Tests
         run: ./ci/tests/aws/run-tests-aws.sh
 
@@ -1104,6 +1141,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: MongoDb Tests
         run: ./ci/tests/mongodb/run-tests-mongodb.sh
   ##########################################################################
@@ -1125,6 +1165,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Redis Tests
         run: ./ci/tests/redis/run-tests-redis.sh
   ##########################################################################
@@ -1146,6 +1189,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Radius Tests
         run: ./ci/tests/radius/run-tests-radius.sh
   ##########################################################################
@@ -1167,6 +1213,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: MySQL Tests
         run: ./ci/tests/mysql/run-tests-mysql.sh
   ##########################################################################
@@ -1188,6 +1237,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: MSSQL Server Tests
         run: ./ci/tests/mssqlserver/run-tests-mssqlserver.sh
   ##########################################################################
@@ -1209,6 +1261,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: PostgreSQL Tests
         run: ./ci/tests/postgres/run-tests-postgres.sh
   ##########################################################################
@@ -1230,6 +1285,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: MariaDb Tests
         run: ./ci/tests/mariadb/run-tests-mariadb.sh
   ##########################################################################
@@ -1251,6 +1309,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Oracle Tests
         run: ./ci/tests/oracle/run-tests-oracle.sh
   ##########################################################################
@@ -1272,6 +1333,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Apache Cassandra Tests
         run: ./ci/tests/cassandra/run-tests-cassandra.sh
   ##########################################################################
@@ -1293,6 +1357,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Couchbase Tests
         run: ./ci/tests/couchbase/run-tests-couchbase.sh
   ##########################################################################
@@ -1314,6 +1381,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: DynamoDb Tests
         run: ./ci/tests/dynamodb/run-tests-dynamodb.sh
   ##########################################################################
@@ -1335,6 +1405,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Memcached Tests
         run: ./ci/tests/memcached/run-tests-memcached.sh
   ##########################################################################
@@ -1356,6 +1429,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Ehcache Tests
         run: ./ci/tests/ehcache/run-tests-ehcache.sh
   ##########################################################################
@@ -1377,6 +1453,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Apache Ignite Tests
         run: ./ci/tests/ignite/run-tests-ignite.sh
   ##########################################################################
@@ -1398,6 +1477,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Apache CouchDb Tests
         run: ./ci/tests/couchdb/run-tests-couchdb.sh
   ##########################################################################
@@ -1419,6 +1501,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: InfluxDb Tests
         run: ./ci/tests/influxdb/run-tests-influxdb.sh
   ##########################################################################
@@ -1440,6 +1525,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: JMX Tests
         run: ./ci/tests/jmx/run-tests-jmx.sh
   ##########################################################################
@@ -1461,6 +1549,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Mail Tests
         run: ./ci/tests/mail/run-tests-mail.sh
   ##########################################################################
@@ -1482,6 +1573,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Azure CosmosDb Tests
         run: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
   ##########################################################################
@@ -1503,6 +1597,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Apache ActiveMQ Tests
         run: ./ci/tests/activemq/run-tests-activemq.sh
 
@@ -1525,6 +1622,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Apache ZooKeeper Tests
         run: ./ci/tests/zookeeper/run-tests-zookeeper.sh
 
@@ -1547,6 +1647,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
 #      - name: kafka Tests
 #        run: ./ci/tests/kafka/run-tests-kafka.sh
   ##########################################################################
@@ -1571,6 +1674,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Locust Performance Tests via Embedded Apache Tomcat
         run: ./ci/tests/perftests-locust.sh tomcat
   ##########################################################################
@@ -1595,6 +1701,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Locust Performance Tests via Embedded Jetty
         run: ./ci/tests/perftests-locust.sh jetty
 
@@ -1620,6 +1729,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Locust Performance Tests via Undertow
         run: ./ci/tests/perftests-locust.sh undertow
 ##########################################################################
