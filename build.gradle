@@ -378,6 +378,14 @@ subprojects {
                                 password "${sonatypePassword}"
                             }
                         }
+                        maven {
+                            name = "GitHubPackages-Releases"
+                            url = uri("${githubPackagesRepositoryUrl}")
+                            credentials {
+                                username = "${sonatypeUsername}"
+                                password = System.getenv("GH_PACKAGES_TOKEN")
+                            }
+                        }
                     }
                     if (rootProject.publishSnapshots) {
                         maven {
@@ -386,6 +394,14 @@ subprojects {
                             credentials {
                                 username "${sonatypeUsername}"
                                 password "${sonatypePassword}"
+                            }
+                        }
+                        maven {
+                            name = "GitHubPackages-Snapshots"
+                            url = uri("${githubPackagesRepositoryUrl}")
+                            credentials {
+                                username = "${sonatypeUsername}"
+                                password = System.getenv("GH_PACKAGES_TOKEN")
                             }
                         }
                     }
