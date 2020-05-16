@@ -18,8 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * This is {@link BasePrincipalFromNonInteractiveCredentialsAction}.
  *
@@ -29,7 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @Setter
 @Getter
-public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends AbstractNonInteractiveCredentialsAction implements Ordered {
+public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends AbstractNonInteractiveCredentialsAction
+    implements Ordered, PrincipalFromRequestExtractorAction {
 
     /**
      * The principal factory used to construct the final principal.
@@ -60,12 +59,4 @@ public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends A
         LOGGER.debug("No user found in request");
         return null;
     }
-
-    /**
-     * Gets remote principal id.
-     *
-     * @param request the request
-     * @return the remote principal id
-     */
-    protected abstract String getRemotePrincipalId(HttpServletRequest request);
 }
