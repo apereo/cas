@@ -58,7 +58,6 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends B
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("195.88.151.11");
 
-
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 

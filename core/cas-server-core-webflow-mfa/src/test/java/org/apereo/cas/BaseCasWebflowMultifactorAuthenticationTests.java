@@ -26,6 +26,7 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -35,6 +36,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -98,6 +100,10 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    protected ServicesManager servicesManager;
 
     @TestConfiguration("TestAuthenticationConfiguration")
     public static class TestAuthenticationConfiguration {
