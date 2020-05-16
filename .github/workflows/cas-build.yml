@@ -694,6 +694,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Publish SNAPSHOTs
         if: ${{ !contains(github.event.head_commit.message, 'skip snapshots') && github.event_name == 'push' }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DpublishSnapshots=true -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
@@ -739,6 +742,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Simple Unit Tests
         run: ./ci/tests/run-tests-simple.sh
   ##########################################################################
@@ -760,6 +766,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: Groovy Tests
         run: ./ci/tests/groovy/run-tests-groovy.sh
   ##########################################################################
@@ -781,6 +790,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: FileSystem Tests
         run: ./ci/tests/filesystem/run-tests-filesystem.sh
 
@@ -803,6 +815,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
       - name: JDBC Tests
         run: ./ci/tests/jdbc/run-tests-jdbc.sh
   ##########################################################################
@@ -1652,5 +1667,5 @@ jobs:
       - uses: renovatebot/github-action@v1.0.0
         with:
           token: ${{ secrets.RENOVATE_TOKEN }}
-          configurationFile: .github/renovate.json
+          configurationFile: .github/renovate.js
 
