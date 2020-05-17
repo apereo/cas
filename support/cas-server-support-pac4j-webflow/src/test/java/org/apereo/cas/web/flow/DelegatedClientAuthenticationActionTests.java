@@ -21,6 +21,7 @@ import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -66,6 +67,7 @@ import static org.springframework.webflow.execution.RequestContextHolder.setRequ
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Webflow")
+@Slf4j
 public class DelegatedClientAuthenticationActionTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -146,7 +148,10 @@ public class DelegatedClientAuthenticationActionTests {
         assertFalse(urls.isEmpty());
         assertSame(3, urls.size());
         urls.stream()
-            .map(url -> UriComponentsBuilder.fromUriString(url.getRedirectUrl()).build())
+            .map(url -> {
+                LOGGER.debug("Redirect URL [{}]", url.getRedirectUrl());
+                return UriComponentsBuilder.fromUriString(url.getRedirectUrl()).build();
+            })
             .forEach(uriComponents -> {
                 assertEquals(DelegatedClientIdentityProviderConfigurationFactory.ENDPOINT_URL_REDIRECT, uriComponents.getPath());
                 val clientName = uriComponents.getQueryParams().get(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);

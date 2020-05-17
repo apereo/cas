@@ -60,7 +60,10 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
 
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, resolver.resolve(context).iterator().next().getId());
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-        WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
+
+        val service = RegisteredServiceTestUtils.getRegisteredService();
+        servicesManager.save(service);
+        WebUtils.putRegisteredService(context, service);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, resolver.resolve(context).iterator().next().getId());
 
         val tgt = new MockTicketGrantingTicket("casuser");
