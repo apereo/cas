@@ -825,7 +825,7 @@ jobs:
 
   tests-spring-webflow:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+#    needs: [build-jdk-current]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -840,9 +840,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
+#      - uses: actions/download-artifact@v2
+#        with:
+#          name: binary-artifacts
       - name: Spring Webflow Tests
         run: ./ci/tests/webflow/run-tests-webflow.sh
 
