@@ -64,7 +64,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        jdk: [ ${{ env.JDK_CURRENT}}, ${{ env.JDK_LATEST}} ]
+        jdk: [ ${{ env.JDK_CURRENT }} ]
     needs: [cache]
     steps:
       - uses: actions/checkout@v2
