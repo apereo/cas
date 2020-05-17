@@ -9,8 +9,7 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-gradleBuild="$gradleBuild testWebflow jacocoRootReport -x test -x javadoc -x check --parallel -DskipNestedConfigMetadataGen=true "
-
+gradleBuild="$gradleBuild testWebflow jacocoRootReport -x test -x javadoc -x check  -DskipNestedConfigMetadataGen=true "
 
 if [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."
