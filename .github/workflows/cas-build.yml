@@ -63,14 +63,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     matrix:
       os: [ubuntu-latest, windows-latest, macos-latest]
-      java-version: [ ${{ env.JDK_CURRENT }} , ${{ env.JDK_LATEST }} ]
+      jdk: [ ${{ env.JDK_CURRENT }} , ${{ env.JDK_LATEST }} ]
     needs: [cache]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: ${{ matrix.java-version }}
+          java-version: ${{ matrix.jdk }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
