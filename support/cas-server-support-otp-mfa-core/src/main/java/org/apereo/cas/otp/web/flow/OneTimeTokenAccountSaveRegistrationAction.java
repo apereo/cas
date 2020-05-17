@@ -3,9 +3,10 @@ package org.apereo.cas.otp.web.flow;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.credential.OneTimeTokenCredential;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.otp.validator.OneTimeTokenAccountValidator;
 import org.apereo.cas.web.support.WebUtils;
 
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
+//import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,7 +25,8 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 public class OneTimeTokenAccountSaveRegistrationAction extends AbstractAction {
     private final OneTimeTokenCredentialRepository repository;
-    private final IGoogleAuthenticator googleAuthenticatorInstance;
+    //private final IGoogleAuthenticator googleAuthenticatorInstance;
+    private final OneTimeTokenAccountValidator tokenValidator;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
@@ -41,7 +43,8 @@ public class OneTimeTokenAccountSaveRegistrationAction extends AbstractAction {
         val token = Integer.parseInt(credential.getToken());
 
         LOGGER.debug("Attempting to validate OTP token [{}] with [{}]", token, account);
-        val isCodeValid = this.googleAuthenticatorInstance.authorize(account.getSecretKey(), token);
+        //val isCodeValid = this.googleAuthenticatorInstance.authorize(account.getSecretKey(), token);
+        val isCodeValid = this.tokenValidator.isValid(account, token);
 
         if (!isCodeValid && account.getScratchCodes().contains(token)) {
             LOGGER.warn("User [{}] attempted to use scratch code during OTP registration; this is likely a mistake.", uid);
