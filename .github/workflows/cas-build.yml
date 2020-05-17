@@ -63,8 +63,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        jdk: ${{ env.JDK_CURRENT }}
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest]
+        jdk:
+          - ${{ env.JDK_CURRENT }}
+          - ${{ env.JDK_LATEST }}
 #    needs: [cache]
     steps:
       - uses: actions/checkout@v2
