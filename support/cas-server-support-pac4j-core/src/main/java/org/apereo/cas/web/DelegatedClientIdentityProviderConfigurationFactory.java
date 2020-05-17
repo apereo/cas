@@ -16,7 +16,6 @@ import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
