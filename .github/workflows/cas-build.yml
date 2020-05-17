@@ -1,5 +1,8 @@
 name: Build
 
+jdk:
+  something: 11.0.7
+  
 env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss64m -XX:ReservedCodeCacheSize=512m -Xverify:none -server -XX:+UseG1GC"
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss64m -XX:ReservedCodeCacheSize=512m -Xverify:none -server -XX:+UseG1GC"
@@ -58,7 +61,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
 ##########################################################################
-  
+
   build:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -66,10 +69,10 @@ jobs:
         os:
           - ubuntu-latest
           - windows-latest
-          - macos-latest]
+          - macos-latest
         jdk:
           - ${{ env.JDK_CURRENT }}
-          - ${{ env.JDK_LATEST }}
+          - ${{ env.JDK_CURRENT }}
 #    needs: [cache]
     steps:
       - uses: actions/checkout@v2
@@ -247,7 +250,7 @@ jobs:
         run: ./gradlew --build-cache --configure-on-demand --parallel --no-daemon spotbugsTest -x test -x javadoc -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true
 
   ##########################################################################
-  
+
   validate-codebase:
     runs-on: ubuntu-latest
     needs: [cache]
@@ -1679,7 +1682,7 @@ jobs:
       - name: Locust Performance Tests via Undertow
         run: ./ci/tests/perftests-locust.sh undertow
 ##########################################################################
-  
+
   report-dependency-updates:
     runs-on: ubuntu-latest
     needs: [cache]
