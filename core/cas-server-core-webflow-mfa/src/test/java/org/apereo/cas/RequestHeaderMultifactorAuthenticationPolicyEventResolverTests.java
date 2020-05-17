@@ -2,7 +2,6 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -34,10 +33,6 @@ public class RequestHeaderMultifactorAuthenticationPolicyEventResolverTests exte
     @Autowired
     @Qualifier("httpRequestAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver requestHeaderAuthenticationPolicyWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
 
     @Test
     public void verifyOperation() {
