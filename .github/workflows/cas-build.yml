@@ -1381,7 +1381,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: Ehcache Tests
-        run: ./ci/tests/ehcache/run-tests-ehcache.sh
+        run: ./ci/tests/ehcache/run-terracotta-server.sh && ./testcas.sh --coverage-report --coverage-upload --category ehcache
   ##########################################################################
 
   tests-ignite:
@@ -1429,7 +1429,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: Apache CouchDb Tests
-        run: ./ci/tests/couchdb/run-tests-couchdb.sh
+        run: ./ci/tests/couchdb/run-couchdb-server.sh && ./testcas.sh --coverage-report --coverage-upload --category couchdb
   ##########################################################################
 
   tests-influxdb:
@@ -1453,7 +1453,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: InfluxDb Tests
-        run: ./ci/tests/influxdb/run-tests-influxdb.sh
+        run: ./ci/tests/influxdb/run-influxdb-server.sh && ./testcas.sh --coverage-report --coverage-upload --category influxdb
   ##########################################################################
 
   tests-jmx:
@@ -1501,7 +1501,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: Mail Tests
-        run: ./ci/tests/mail/run-tests-mail.sh
+        run: ./ci/tests/mail/run-mail-server.sh && ./testcas.sh --coverage-report --coverage-upload --category influxdb
   ##########################################################################
 
   tests-cosmosdb:
@@ -1525,7 +1525,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: Azure CosmosDb Tests
-        run: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
+        run: ./testcas.sh --coverage-report --coverage-upload --category cosmosdb
   ##########################################################################
 
   tests-activemq:
@@ -1574,7 +1574,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: Apache ZooKeeper Tests
-        run: ./ci/tests/zookeeper/run-tests-zookeeper.sh
+        run: ./ci/tests/zookeeper/run-zookeeper-server.sh && ./testcas.sh --coverage-report --coverage-upload --category zookeeper
 
   ##########################################################################
 
@@ -1599,7 +1599,7 @@ jobs:
         with:
           name: binary-artifacts
 #      - name: kafka Tests
-#        run: ./ci/tests/kafka/run-tests-kafka.sh
+#        run: ./ci/tests/kafka/run-kafka-server.sh && ./testcas.sh --coverage-report --coverage-upload --category kafka
   ##########################################################################
 
   tests-performance-locust-tomcat:

@@ -254,8 +254,9 @@ public class DelegatedClientAuthenticationActionTests {
         val flow = new Flow("mockFlow");
         flow.addVariable(new FlowVariable("credential",
             new BeanFactoryVariableValueFactory(UsernamePasswordCredential.class, applicationContext.getAutowireCapableBeanFactory())));
-        val locale = Locale.ENGLISH.getCountry();
+        val locale = Locale.ENGLISH.getLanguage();
         request.setParameter(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, "theme");
+        LOGGER.debug("Setting locale [{}] for request parameter as [{}]", locale, request.getParameterMap());
         request.setParameter(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, locale);
         request.setParameter(CasProtocolConstants.PARAMETER_METHOD, HttpMethod.POST.name());
         LOGGER.debug("Set request parameters as [{}]", request.getParameterMap());
@@ -275,7 +276,7 @@ public class DelegatedClientAuthenticationActionTests {
         val ticket = delegatedClientWebflowManager.store(webContext, client);
         request.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 
-        LOGGER.debug("Initializing action with request paramters [{}]", webContext.getRequestParameters());
+        LOGGER.debug("Initializing action with request parameters [{}]", webContext.getRequestParameters());
         val event = delegatedAuthenticationAction.execute(requestContext);
         assertEquals("error", event.getId());
 
