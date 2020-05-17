@@ -60,6 +60,7 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os:
           - ubuntu-latest
@@ -68,7 +69,11 @@ jobs:
         jdk:
           - 11.0.7
           - 14
-#    needs: [cache]
+        experimental: false
+        include:
+          - jdk: 14
+            experimental: true
+    needs: [cache]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -787,7 +792,7 @@ jobs:
 #        with:
 #          name: binary-artifacts
       - name: Spring Webflow Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category webflow --no-parallel
+        run: ./testcas.sh --coverage-report --coverage-upload --category webflow
 
   ##########################################################################
 
