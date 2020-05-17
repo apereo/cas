@@ -59,15 +59,18 @@ jobs:
 
 ##########################################################################
   
-  build-jdk-current:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ${{ matrix.os }}
+    matrix:
+      os: [ubuntu-latest, windows-latest, macos-latest]
+      java-version: [ ${{ env.JDK_CURRENT }} , ${{ env.JDK_LATEST }} ]
     needs: [cache]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: ${{env.JDK_CURRENT}}
+          java-version: ${{ matrix.java-version }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -79,74 +82,10 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew --build-cache --configure-on-demand --no-daemon build install -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
       - uses: actions/upload-artifact@v2
+        if: ${{ matrix.os == 'ubunt-0latest' }}
         with:
           name: binary-artifacts
           path: ./**/build/libs/*.*
-##########################################################################
-
-  build-jdk-current-windows:
-    runs-on: windows-latest
-    needs: [cache]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{env.JDK_CURRENT}}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Build with Gradle
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon build install -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
-
-##########################################################################
-
-  build-jdk-current-macos:
-    runs-on: macos-latest
-    needs: [cache]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{env.JDK_CURRENT}}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Build with Gradle
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon build install -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
-
-##########################################################################
-
-  build-jdk-latest:
-    runs-on: ubuntu-latest
-    needs: [cache]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{env.JDK_LATEST}}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Build with Gradle
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon build install -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
 
   ##########################################################################
 
@@ -175,7 +114,7 @@ jobs:
 
   validate-quality:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -201,7 +140,7 @@ jobs:
 
   validate-style-main:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -227,7 +166,7 @@ jobs:
 
   validate-style-test:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -253,7 +192,7 @@ jobs:
 
   validate-spotbugs-main:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -279,7 +218,7 @@ jobs:
 
   validate-spotbugs-test:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -328,7 +267,7 @@ jobs:
 
   validate-javadocs:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -423,7 +362,7 @@ jobs:
 
   validate-commandline-shell:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -451,7 +390,7 @@ jobs:
 
   validate-webapp-embedded-tomcat:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -477,7 +416,7 @@ jobs:
 
   validate-webapp-embedded-jetty:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -503,7 +442,7 @@ jobs:
 
   validate-webapp-embedded-undertow:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -530,7 +469,7 @@ jobs:
 
   validate-webapp-external-tomcat:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -556,7 +495,7 @@ jobs:
 
   validate-spring-cloud-config-server:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -582,7 +521,7 @@ jobs:
 
   validate-eureka-discovery-server:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -608,7 +547,7 @@ jobs:
 
   validate-spring-boot-admin-server:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -680,7 +619,7 @@ jobs:
 
   publish-snapshots:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -728,7 +667,7 @@ jobs:
 
   tests-simple:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -752,7 +691,7 @@ jobs:
 
   tests-groovy:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -776,7 +715,7 @@ jobs:
 
   tests-filesystem:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -801,7 +740,7 @@ jobs:
 
   tests-jdbc:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -825,7 +764,7 @@ jobs:
 
   tests-spring-webflow:
     runs-on: ubuntu-latest
-#    needs: [build-jdk-current]
+#    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -850,7 +789,7 @@ jobs:
 
   tests-restful:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -875,7 +814,7 @@ jobs:
 
   tests-mfa:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -900,7 +839,7 @@ jobs:
 
   tests-oauth:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -925,7 +864,7 @@ jobs:
 
   tests-uma:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -950,7 +889,7 @@ jobs:
 
   tests-oidc:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -975,7 +914,7 @@ jobs:
 
   tests-saml:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1000,7 +939,7 @@ jobs:
 
   tests-ldap:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1025,7 +964,7 @@ jobs:
 
   tests-hazelcast:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1050,7 +989,7 @@ jobs:
 
   tests-x509:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1075,7 +1014,7 @@ jobs:
 
   tests-shell:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1101,7 +1040,7 @@ jobs:
 
   tests-aws:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1126,7 +1065,7 @@ jobs:
 
   tests-mongodb:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1150,7 +1089,7 @@ jobs:
 
   tests-redis:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1174,7 +1113,7 @@ jobs:
 
   tests-radius:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1198,7 +1137,7 @@ jobs:
 
   tests-mysql:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1222,7 +1161,7 @@ jobs:
 
   tests-mssqlserver:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1246,7 +1185,7 @@ jobs:
 
   tests-postgres:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1270,7 +1209,7 @@ jobs:
 
   tests-mariadb:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1294,7 +1233,7 @@ jobs:
 
   tests-oracle:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1318,7 +1257,7 @@ jobs:
 
   tests-cassandra:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1342,7 +1281,7 @@ jobs:
 
   tests-couchbase:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1366,7 +1305,7 @@ jobs:
 
   tests-dynamodb:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1390,7 +1329,7 @@ jobs:
 
   tests-memcached:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1414,7 +1353,7 @@ jobs:
 
   tests-ehcache:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1438,7 +1377,7 @@ jobs:
 
   tests-ignite:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1462,7 +1401,7 @@ jobs:
 
   tests-couchdb:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1486,7 +1425,7 @@ jobs:
 
   tests-influxdb:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1510,7 +1449,7 @@ jobs:
 
   tests-jmx:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1534,7 +1473,7 @@ jobs:
 
   tests-mail:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1558,7 +1497,7 @@ jobs:
 
   tests-cosmosdb:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1582,7 +1521,7 @@ jobs:
 
   tests-activemq:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1607,7 +1546,7 @@ jobs:
 
   tests-zookeeper:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1632,7 +1571,7 @@ jobs:
 
   tests-kafka:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1656,7 +1595,7 @@ jobs:
 
   tests-performance-locust-tomcat:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1683,7 +1622,7 @@ jobs:
 
   tests-performance-locust-jetty:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1711,7 +1650,7 @@ jobs:
 
   tests-performance-locust-undertow:
     runs-on: ubuntu-latest
-    needs: [build-jdk-current]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
