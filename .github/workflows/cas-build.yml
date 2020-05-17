@@ -64,8 +64,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        jdk: [ env.JDK_CURRENT,env.JDK_LATEST ]
-    needs: [cache]
+        jdk: ${{ env.JDK_CURRENT }}
+#    needs: [cache]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -784,7 +784,7 @@ jobs:
 #        with:
 #          name: binary-artifacts
       - name: Spring Webflow Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category webflow
+        run: ./testcas.sh --coverage-report --coverage-upload --category webflow --no-parallel
 
   ##########################################################################
 
