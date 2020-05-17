@@ -56,8 +56,9 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
         val uriBuilder = UriComponentsBuilder
             .fromUriString(ENDPOINT_URL_REDIRECT)
             .queryParam(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, name);
-        Map<String, String> queryParams = new HashMap<>();
+        val queryParams = new HashMap<String, String>();
 
+        LOGGER.debug("Request parameters are [{}]", webContext.getRequestParameters());
         if (service != null) {
             val sourceParam = service.getSource();
             val serviceParam = service.getOriginalUrl();
@@ -76,8 +77,9 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
             uriBuilder.queryParam(CasProtocolConstants.PARAMETER_METHOD, "{method}");
             queryParams.put("method", methodParam);
         }
+        LOGGER.debug("Processing locale parameter [{}]", casProperties.getLocale().getParamName());
         val localeParam = webContext.getRequestParameter(casProperties.getLocale().getParamName())
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
+            .map(String::valueOf).orElse(casProperties.getLocale().getDefaultValue());
         if (StringUtils.isNotBlank(localeParam)) {
             LOGGER.debug("Processing locale parameter [{}] with value [{}]",
                 casProperties.getLocale().getParamName(), localeParam);
