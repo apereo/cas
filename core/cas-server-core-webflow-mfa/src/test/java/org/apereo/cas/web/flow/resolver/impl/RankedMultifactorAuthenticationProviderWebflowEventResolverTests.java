@@ -98,7 +98,9 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-        WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
+        val service = RegisteredServiceTestUtils.getRegisteredService();
+        servicesManager.save(service);
+        WebUtils.putRegisteredService(context, service);
 
         val tgt = new MockTicketGrantingTicket("casuser");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
@@ -124,7 +126,9 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-        WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
+        val service = RegisteredServiceTestUtils.getRegisteredService();
+        servicesManager.save(service);
+        WebUtils.putRegisteredService(context, service);
 
         val tgt = new MockTicketGrantingTicket("casuser", Map.of(),
             Map.of(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), List.of(TestMultifactorAuthenticationProvider.ID)));
