@@ -271,7 +271,8 @@ public class DelegatedClientAuthenticationActionTests {
         }
 
         val client = builtClients.findClient("SAML2Client").get();
-        val webContext = new JEEContext(request, new MockHttpServletResponse(), new JEESessionStore());
+        val webContext = new JEEContext(request, response, new JEESessionStore());
+
         val ticket = delegatedClientWebflowManager.store(webContext, client);
         request.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 

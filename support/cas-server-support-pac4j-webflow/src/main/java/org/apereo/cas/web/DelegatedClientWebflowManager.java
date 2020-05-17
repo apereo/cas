@@ -131,7 +131,7 @@ public class DelegatedClientWebflowManager {
         properties.put(CasProtocolConstants.PARAMETER_METHOD,
             webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)
                 .map(String::valueOf).orElse(StringUtils.EMPTY));
-
+        LOGGER.debug("Built ticket properties [{}]", properties);
         return properties;
     }
 
