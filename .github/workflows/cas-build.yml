@@ -83,7 +83,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew --build-cache --configure-on-demand --no-daemon build install -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
       - uses: actions/upload-artifact@v2
-        if: ${{ matrix.os == 'ubunt-0latest' }}
+        if: ${{ matrix.os == 'ubunt-latest' }}
         with:
           name: binary-artifacts
           path: ./**/build/libs/*.*
