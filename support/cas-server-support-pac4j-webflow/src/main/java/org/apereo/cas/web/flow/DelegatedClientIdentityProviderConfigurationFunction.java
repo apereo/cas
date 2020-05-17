@@ -91,6 +91,7 @@ public class DelegatedClientIdentityProviderConfigurationFunction implements Fun
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val webContext = new JEEContext(request, response, this.sessionStore);
 
+        LOGGER.debug("Initialized context with request parameters [{}]", webContext.getRequestParameters());
         val allClients = this.clients.findAllClients();
         val urls = new LinkedHashSet<DelegatedClientIdentityProviderConfiguration>(allClients.size());
         allClients
@@ -99,6 +100,7 @@ public class DelegatedClientIdentityProviderConfigurationFunction implements Fun
             .map(IndirectClient.class::cast)
             .forEach(client -> {
                 try {
+                    LOGGER.debug("Initializing client [{}] with request parameters [{}]", client, webContext.getRequestParameters());
                     client.init();
                     val provider = DelegatedClientIdentityProviderConfigurationFactory.builder()
                         .client(client)

@@ -254,19 +254,17 @@ public class DelegatedClientAuthenticationActionTests {
         val flow = new Flow("mockFlow");
         flow.addVariable(new FlowVariable("credential",
             new BeanFactoryVariableValueFactory(UsernamePasswordCredential.class, applicationContext.getAutowireCapableBeanFactory())));
-        
+        val locale = Locale.ENGLISH.getCountry();
+        request.setParameter(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, "theme");
+        request.setParameter(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, locale);
+        request.setParameter(CasProtocolConstants.PARAMETER_METHOD, HttpMethod.POST.name());
+        LOGGER.debug("Set request parameters as [{}]", request.getParameterMap());
         val requestContext = new MockRequestContext();
         requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(requestContext);
         ExternalContextHolder.setExternalContext(requestContext.getExternalContext());
         val mockExecutionContext = new MockFlowExecutionContext(new MockFlowSession(flow));
         requestContext.setFlowExecutionContext(mockExecutionContext);
-
-        val locale = Locale.ENGLISH.getCountry();
-        request.setParameter(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, "theme");
-        request.setParameter(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, locale);
-        request.setParameter(CasProtocolConstants.PARAMETER_METHOD, HttpMethod.POST.name());
-        LOGGER.debug("Set request parameters as [{}]", request.getParameterMap());
         if (service != null) {
             WebUtils.putServiceIntoFlowScope(requestContext, service);
         }
@@ -277,6 +275,7 @@ public class DelegatedClientAuthenticationActionTests {
         val ticket = delegatedClientWebflowManager.store(webContext, client);
         request.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 
+        LOGGER.debug("Initializing action with request paramters [{}]", webContext.getRequestParameters());
         val event = delegatedAuthenticationAction.execute(requestContext);
         assertEquals("error", event.getId());
 

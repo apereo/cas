@@ -9,7 +9,7 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-./ci/tests/memcached/run-memcached-server.sh
+
 
 gradleBuild="$gradleBuild testMemcached jacocoRootReport -x test -x javadoc -x check --parallel -DskipNestedConfigMetadataGen=true "
 
