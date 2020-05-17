@@ -39,11 +39,13 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.support.BeanFactoryVariableValueFactory;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
@@ -247,25 +249,24 @@ public class DelegatedClientAuthenticationActionTests {
 
     @SneakyThrows
     private void assertStartAuthentication(final Service service) {
-        val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
-        val locale = Locale.getDefault().getCountry();
-        request.setParameter(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, "theme");
-        request.setParameter(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, locale);
-        request.setParameter(CasProtocolConstants.PARAMETER_METHOD, HttpMethod.POST.name());
-
-        val servletExternalContext = mock(ServletExternalContext.class);
-        when(servletExternalContext.getNativeRequest()).thenReturn(request);
-        when(servletExternalContext.getNativeResponse()).thenReturn(response);
-
+        val response = new MockHttpServletResponse();
         val flow = new Flow("mockFlow");
         flow.addVariable(new FlowVariable("credential",
             new BeanFactoryVariableValueFactory(UsernamePasswordCredential.class, applicationContext.getAutowireCapableBeanFactory())));
+        
         val requestContext = new MockRequestContext();
+        requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(requestContext);
+        ExternalContextHolder.setExternalContext(requestContext.getExternalContext());
         val mockExecutionContext = new MockFlowExecutionContext(new MockFlowSession(flow));
         requestContext.setFlowExecutionContext(mockExecutionContext);
-        requestContext.setExternalContext(servletExternalContext);
 
+        val locale = Locale.ENGLISH.getCountry();
+        request.setParameter(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, "theme");
+        request.setParameter(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, locale);
+        request.setParameter(CasProtocolConstants.PARAMETER_METHOD, HttpMethod.POST.name());
+        LOGGER.debug("Set request parameters as [{}]", request.getParameterMap());
         if (service != null) {
             WebUtils.putServiceIntoFlowScope(requestContext, service);
         }
