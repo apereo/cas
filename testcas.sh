@@ -3,10 +3,10 @@
 clear
 
 printHelp() {
-    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--coverage-report] [--coverage-upload]\n"
+    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--coverage-report] [--coverage-upload] [--no-parallel] \n"
     echo -e "Available test categories are:\n"
     echo -e "simple, memcached,cassandra,groovy,kafka,ldap,rest,mfa,jdbc,mssql,oracle,radius,couchdb,\
-mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,activemq,hazelcast,jmx,\
+mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,hazelcast,jmx,\
 oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell"
     echo -e "\nPlease see the test script for details.\n"
 }
@@ -19,6 +19,10 @@ flags="--build-cache -x javadoc -x check -DignoreTestFailures=false -DskipNested
 
 while (( "$#" )); do
     case "$1" in
+    --no-parallel)
+        parallel=""
+        shift
+        ;;
     --coverage-report)
         currentDir=`pwd`
         case "${currentDir}" in
@@ -170,8 +174,8 @@ while (( "$#" )); do
             redis)
                 task+="testRedis "
                 ;;
-            activemq|amq)
-                task+="testActiveMQ "
+            activemq|amq|jms)
+                task+="testJMS "
                 ;;
             simple|unit)
                 task+="testSimple "

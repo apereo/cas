@@ -710,7 +710,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: Groovy Tests
-        run: ./ci/tests/groovy/run-tests-groovy.sh
+        run: ./testcas.sh --coverage-report --coverage-upload --category groovy
   ##########################################################################
 
   tests-filesystem:
@@ -734,7 +734,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: FileSystem Tests
-        run: ./ci/tests/filesystem/run-tests-filesystem.sh
+        run: ./testcas.sh --coverage-report --coverage-upload --category filesystem
 
   ##########################################################################
 
@@ -759,7 +759,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: JDBC Tests
-        run: ./ci/tests/jdbc/run-tests-jdbc.sh
+        run: ./testcas.sh --coverage-report --coverage-upload --category jdbc
   ##########################################################################
 
   tests-spring-webflow:
@@ -783,7 +783,7 @@ jobs:
 #        with:
 #          name: binary-artifacts
       - name: Spring Webflow Tests
-        run: ./ci/tests/webflow/run-tests-webflow.sh
+        run: ./testcas.sh --coverage-report --coverage-upload --category webflow
 
   ##########################################################################
 
@@ -808,7 +808,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: RESTful Tests
-        run: ./ci/tests/restful/run-tests-restful.sh
+        run: ./testcas.sh --coverage-report --coverage-upload --category rest
 
   ##########################################################################
 
@@ -833,7 +833,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: Multifactor Authentication Tests
-        run: ./ci/tests/mfa/run-tests-mfa.sh
+        run: ./testcas.sh --coverage-report --coverage-upload --category mfa
 
   ##########################################################################
 
@@ -858,7 +858,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: OAuth Tests
-        run: ./ci/tests/oauth/run-tests-oauth.sh
+        run: ./testcas.sh --coverage-report --coverage-upload --category oauth
 
   ##########################################################################
 
@@ -883,7 +883,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: OAuth UMA Tests
-        run: ./ci/tests/oauth/run-tests-uma.sh
+        run: ./testcas.sh --coverage-report --coverage-upload --category uma
 
   ##########################################################################
 
@@ -908,7 +908,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: OpenID Connect Tests
-        run: ./ci/tests/oidc/run-tests-oidc.sh
+        run: ./testcas.sh --coverage-report --coverage-upload --category oidc
 
   ##########################################################################
 
@@ -933,7 +933,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: SAML Tests
-        run: ./ci/tests/saml/run-tests-saml.sh
+        run: ./testcas.sh --coverage-report --coverage-upload --category saml
 
   ##########################################################################
 
@@ -983,7 +983,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: Hazelcast Tests
-        run: ./ci/tests/hazelcast/run-tests-hazelcast.sh
+        run: ./testcas.sh --coverage-report --coverage-upload --category hazelcast
 
   ##########################################################################
 
@@ -1008,7 +1008,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: X509 Tests
-        run: ./ci/tests/x509/run-tests-x509.sh
+        run: ./testcas.sh --coverage-report --coverage-upload --category x509
 
   ##########################################################################
 
@@ -1033,8 +1033,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: Commandline Shell Tests
-        run: ./ci/tests/shell/run-tests-shell.sh
-
+        run: ./testcas.sh --coverage-report --coverage-upload --category shell
 
   ##########################################################################
 
@@ -1396,7 +1395,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: Apache Ignite Tests
-        run: ./ci/tests/ignite/run-tests-ignite.sh
+        run: ./testcas.sh --coverage-report --coverage-upload --category ignite
   ##########################################################################
 
   tests-couchdb:
@@ -1468,7 +1467,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: JMX Tests
-        run: ./ci/tests/jmx/run-tests-jmx.sh
+        run: ./testcas.sh --coverage-report --coverage-upload --category jmx
   ##########################################################################
 
   tests-mail:
@@ -1540,7 +1539,9 @@ jobs:
         with:
           name: binary-artifacts
       - name: Apache ActiveMQ Tests
-        run: ./ci/tests/activemq/run-tests-activemq.sh
+        run: |
+        ./ci/tests/activemq/run-activemq-server.sh
+        ./testcas.sh --coverage-report --coverage-upload --category activemq
 
   ##########################################################################
 
