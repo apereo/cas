@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
@@ -26,6 +27,7 @@ import java.util.regex.Pattern;
  * @since 6.1.0
  */
 @Builder
+@Slf4j
 public class DelegatedClientIdentityProviderConfigurationFactory {
     /**
      * Endpoint path controlled by this controller to make the redirect.
@@ -59,6 +61,7 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
         if (service != null) {
             val sourceParam = service.getSource();
             val serviceParam = service.getOriginalUrl();
+            LOGGER.debug("Processing service parameter [{}] with value [{}]", sourceParam, serviceParam);
             if (StringUtils.isNotBlank(sourceParam) && StringUtils.isNotBlank(serviceParam)) {
                 uriBuilder.queryParam(sourceParam, "{service}");
                 queryParams.put(CasProtocolConstants.PARAMETER_SERVICE, serviceParam);
@@ -68,22 +71,30 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
         val methodParam = webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isNotBlank(methodParam)) {
+            LOGGER.debug("Processing method parameter [{}] with value [{}]",
+                CasProtocolConstants.PARAMETER_METHOD, methodParam);
             uriBuilder.queryParam(CasProtocolConstants.PARAMETER_METHOD, "{method}");
             queryParams.put("method", methodParam);
         }
         val localeParam = webContext.getRequestParameter(casProperties.getLocale().getParamName())
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isNotBlank(localeParam)) {
+            LOGGER.debug("Processing locale parameter [{}] with value [{}]",
+                casProperties.getLocale().getParamName(), localeParam);
             uriBuilder.queryParam(casProperties.getLocale().getParamName(), "{locale}");
             queryParams.put("locale", localeParam);
         }
         val themeParam = webContext.getRequestParameter(casProperties.getTheme().getParamName())
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isNotBlank(themeParam)) {
+            LOGGER.debug("Processing theme parameter [{}] with value [{}]",
+                casProperties.getTheme().getParamName(), themeParam);
             uriBuilder.queryParam(casProperties.getTheme().getParamName(), "{theme}");
             queryParams.put("theme", themeParam);
         }
         val redirectUrl = uriBuilder.build(queryParams).toString();
+        LOGGER.debug("Final redirect url is [{}]", redirectUrl);
+        
         val autoRedirect = (Boolean) client.getCustomProperties()
             .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, Boolean.FALSE);
         val p = new DelegatedClientIdentityProviderConfiguration(name, redirectUrl, type, getCssClass(client), autoRedirect);
@@ -99,7 +110,9 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
     protected String getCssClass(final BaseClient client) {
         val customProperties = client.getCustomProperties();
         if (customProperties != null && customProperties.containsKey(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS)) {
-            return customProperties.get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS).toString();
+            val css = customProperties.get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS).toString();
+            LOGGER.debug("Located custom CSS class [{}] for client [{}]", client, css);
+            return css;
         }
         return null;
     }
