@@ -60,10 +60,10 @@ jobs:
 ##########################################################################
   
   build:
+    runs-on: ${{ matrix.os }}
     matrix:
       os: [ubuntu-latest, windows-latest, macos-latest]
-      jdk: [11]
-    runs-on: ${{ matrix.os }}
+      jdk: [11, 14]
     needs: [cache]
     steps:
       - uses: actions/checkout@v2
