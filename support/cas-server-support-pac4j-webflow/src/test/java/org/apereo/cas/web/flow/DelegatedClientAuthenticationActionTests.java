@@ -283,7 +283,7 @@ public class DelegatedClientAuthenticationActionTests {
         delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
 
         assertEquals("theme", request.getAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME));
-        assertEquals(Locale.getDefault().getCountry(), request.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
+        assertEquals(locale, request.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(HttpMethod.POST.name(), request.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
         val urls = (Set<DelegatedClientIdentityProviderConfiguration>)
             WebUtils.getDelegatedAuthenticationProviderConfigurations(requestContext);
