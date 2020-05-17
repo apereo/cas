@@ -63,7 +63,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     matrix:
       os: [ubuntu-latest, windows-latest, macos-latest]
-      jdk: []
+      jdk: [${{ env.JDK_CURRENT }}]
     needs: [cache]
     steps:
       - uses: actions/checkout@v2
@@ -1539,9 +1539,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: Apache ActiveMQ Tests
-        run: |
-        ./ci/tests/activemq/run-activemq-server.sh
-        ./testcas.sh --coverage-report --coverage-upload --category activemq
+        run: ./ci/tests/activemq/run-activemq-server.sh && ./testcas.sh --coverage-report --coverage-upload --category activemq
 
   ##########################################################################
 
