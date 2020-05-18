@@ -59,7 +59,7 @@ jobs:
 
   build:
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.experimental }}
+    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
@@ -70,10 +70,6 @@ jobs:
         jdk:
           - 11.0.7
           - 14
-        experimental: [false]
-        include:
-          - jdk: 14
-            experimental: true
     needs: [cache]
     steps:
       - uses: actions/checkout@v2
