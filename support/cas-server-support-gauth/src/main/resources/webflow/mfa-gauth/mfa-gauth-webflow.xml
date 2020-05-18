@@ -33,7 +33,7 @@
     <action-state id="saveRegistration">
         <evaluate expression="googleSaveAccountRegistrationAction" />
         <transition on="success" to="realSubmit"/>
-        <transition on="error" to="initializeLoginForm" />
+        <transition on="register" to="initializeLoginForm" />
     </action-state>
     
     <view-state id="viewLoginForm" view="casGoogleAuthenticatorLoginView" model="credential">
