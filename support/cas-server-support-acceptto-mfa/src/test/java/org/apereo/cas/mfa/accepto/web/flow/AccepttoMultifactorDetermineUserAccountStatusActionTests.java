@@ -91,7 +91,7 @@ public class AccepttoMultifactorDetermineUserAccountStatusActionTests {
             "eguardian_user_id", "cas-user",
             "channel", UUID.randomUUID().toString(),
             "response_code", "pair_device"));
-        val jwt = EncodingUtils.signJwsRSASha512(priv, payload.getBytes(StandardCharsets.UTF_8), Map.of());
+        val jwt = EncodingUtils.SIGN_JWS_RSA_SHA512.signJws(priv, payload.getBytes(StandardCharsets.UTF_8), Map.of());
 
         val data = MAPPER.writeValueAsString(Map.of("content", new String(jwt, StandardCharsets.UTF_8)));
         try (val webServer = new MockWebServer(5013,

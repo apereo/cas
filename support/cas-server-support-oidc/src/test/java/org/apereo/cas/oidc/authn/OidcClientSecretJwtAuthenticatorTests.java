@@ -54,7 +54,7 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
             registeredService.getClientId(), audience);
 
         val key = EncodingUtils.generateJsonWebKey(512);
-        val jwt = EncodingUtils.signJwsHMACSha512(new AesKey(key.getBytes(StandardCharsets.UTF_8)),
+        val jwt = EncodingUtils.SIGN_JWS_HMAC_SHA512.signJws(new AesKey(key.getBytes(StandardCharsets.UTF_8)),
             claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
         val credentials = new UsernamePasswordCredentials(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8));

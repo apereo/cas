@@ -158,7 +158,7 @@ public class AccepttoApiUtilsTests {
         val priv = pair.getPrivate();
         val pub = pair.getPublic();
         val payload = MAPPER.writeValueAsString(Map.of("uid", "casuser"));
-        val jwt = EncodingUtils.signJwsRSASha512(priv, payload.getBytes(StandardCharsets.UTF_8), Map.of());
+        val jwt = EncodingUtils.SIGN_JWS_RSA_SHA512.signJws(priv, payload.getBytes(StandardCharsets.UTF_8), Map.of());
 
         val data = MAPPER.writeValueAsString(Map.of("content", new String(jwt, StandardCharsets.UTF_8)));
         try (val webServer = new MockWebServer(9285,
