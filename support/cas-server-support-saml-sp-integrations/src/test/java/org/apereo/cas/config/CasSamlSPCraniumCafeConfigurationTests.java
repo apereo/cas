@@ -1,8 +1,9 @@
 package org.apereo.cas.config;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 
 /**
  * This is {@link CasSamlSPCraniumCafeConfigurationTests}.
@@ -13,9 +14,12 @@ import org.springframework.context.annotation.Import;
 @Tag("SAML")
 @Import(CasSamlSPCraniumCafeConfiguration.class)
 public class CasSamlSPCraniumCafeConfigurationTests extends BaseCasSamlSPConfigurationTests {
-    @BeforeAll
-    public static void beforeAll() {
-        SERVICE_PROVIDER = "craniumCafe";
+    @DynamicPropertySource
+    @SuppressWarnings("UnusedMethod")
+    public static void configurePropertySource(final DynamicPropertyRegistry registry) {
+        registry.add("cas.saml-sp.cranium-cafe.metadata", () -> "classpath:/metadata/sp-metadata.xml");
+        registry.add("cas.saml-sp.cranium-cafe.name-id-attribute", () -> "cn");
+        registry.add("cas.saml-sp.cranium-cafe.name-id-format", () -> "transient");
     }
 
     @Override

@@ -6,8 +6,8 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="net.jradius" level="debug" />
-        <Logger name="org.apereo.cas" level="debug" />
+        <Logger name="net.jradius" level="warn" />
+        <Logger name="org.apereo.cas" level="warn" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

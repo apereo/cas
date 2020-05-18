@@ -1,8 +1,9 @@
 package org.apereo.cas.config;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 
 /**
  * This is {@link CasSamlSPConfluenceConfigurationTests}.
@@ -13,8 +14,11 @@ import org.springframework.context.annotation.Import;
 @Tag("SAML")
 @Import(CasSamlSPConfluenceConfiguration.class)
 public class CasSamlSPConfluenceConfigurationTests extends BaseCasSamlSPConfigurationTests {
-    @BeforeAll
-    public static void beforeAll() {
-        SERVICE_PROVIDER = "confluence";
+    @DynamicPropertySource
+    @SuppressWarnings("UnusedMethod")
+    public static void configurePropertySource(final DynamicPropertyRegistry registry) {
+        registry.add("cas.saml-sp.confluence.metadata", () -> "classpath:/metadata/sp-metadata.xml");
+        registry.add("cas.saml-sp.confluence.name-id-attribute", () -> "cn");
+        registry.add("cas.saml-sp.confluence.name-id-format", () -> "transient");
     }
 }

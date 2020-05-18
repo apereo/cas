@@ -7,7 +7,7 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo" level="error" additivity="false" />
-        <Logger name="org.springframework.jdbc" level="debug" />
+        <Logger name="org.springframework.jdbc" level="error" />
         <Logger name="org.springframework.transaction" level="error" />
         <Logger name="org.hibernate.sql" level="info" />
         <Logger name="org.hibernate.engine" level="info" />

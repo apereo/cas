@@ -1,8 +1,9 @@
 package org.apereo.cas.config;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 
 /**
  * This is {@link CasSamlSPCaliforniaCommunityCollegesConfigurationTests}.
@@ -13,8 +14,11 @@ import org.springframework.context.annotation.Import;
 @Tag("SAML")
 @Import(CasSamlSPCaliforniaCommunityCollegesConfiguration.class)
 public class CasSamlSPCaliforniaCommunityCollegesConfigurationTests extends BaseCasSamlSPConfigurationTests {
-    @BeforeAll
-    public static void beforeAll() {
-        SERVICE_PROVIDER = "cccco";
+    @DynamicPropertySource
+    @SuppressWarnings("UnusedMethod")
+    public static void configurePropertySource(final DynamicPropertyRegistry registry) {
+        registry.add("cas.saml-sp.cccco.metadata", () -> "classpath:/metadata/sp-metadata.xml");
+        registry.add("cas.saml-sp.cccco.name-id-attribute", () -> "cn");
+        registry.add("cas.saml-sp.cccco.name-id-format", () -> "transient");
     }
 }

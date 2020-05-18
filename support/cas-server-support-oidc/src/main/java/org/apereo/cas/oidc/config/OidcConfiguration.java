@@ -467,7 +467,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     public OidcAccessTokenEndpointController oidcAccessTokenController() {
         val context = buildConfigurationContext();
-        return new OidcAccessTokenEndpointController(context);
+        return new OidcAccessTokenEndpointController(context, accessTokenGrantAuditableRequestExtractor.getObject());
     }
 
     @ConditionalOnMissingBean(name = "clientRegistrationRequestSerializer")
@@ -849,7 +849,6 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .accessTokenExpirationPolicy(accessTokenExpirationPolicy.getObject())
             .deviceTokenExpirationPolicy(deviceTokenExpirationPolicy.getObject())
             .accessTokenGrantRequestValidators(oauthTokenRequestValidators.getObject())
-            .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor.getObject())
             .userProfileDataCreator(oidcUserProfileDataCreator())
             .userProfileViewRenderer(oidcUserProfileViewRenderer())
             .oAuthCodeFactory(defaultOAuthCodeFactory.getObject())

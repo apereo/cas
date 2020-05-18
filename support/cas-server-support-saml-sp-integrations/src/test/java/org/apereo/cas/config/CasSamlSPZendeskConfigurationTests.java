@@ -1,8 +1,9 @@
 package org.apereo.cas.config;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 
 /**
  * This is {@link CasSamlSPZendeskConfigurationTests}.
@@ -13,8 +14,11 @@ import org.springframework.context.annotation.Import;
 @Tag("SAML")
 @Import(CasSamlSPZendeskConfiguration.class)
 public class CasSamlSPZendeskConfigurationTests extends BaseCasSamlSPConfigurationTests {
-    @BeforeAll
-    public static void beforeAll() {
-        SERVICE_PROVIDER = "zendesk";
+    @DynamicPropertySource
+    @SuppressWarnings("UnusedMethod")
+    public static void configurePropertySource(final DynamicPropertyRegistry registry) {
+        registry.add("cas.saml-sp.zendesk.metadata", () -> "classpath:/metadata/sp-metadata.xml");
+        registry.add("cas.saml-sp.zendesk.name-id-attribute", () -> "cn");
+        registry.add("cas.saml-sp.zendesk.name-id-format", () -> "transient");
     }
 }
