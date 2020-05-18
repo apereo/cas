@@ -44,7 +44,7 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractAction {
         val keyUriFmt = "otpauth://totp/" + this.label + ":" + uid + "?secret=%s&issuer=" + this.issuer;
 
         if (auth.getAttributes().containsKey("isNewOtpRegistration")) {
-            LOGGER.debug("Arrrived back at registration check with isNewOtpRegistration set; returning register");
+            LOGGER.debug("Arrived back at registration check with isNewOtpRegistration set; returning register");
             return new EventFactorySupport().event(this, "register");
         }
 

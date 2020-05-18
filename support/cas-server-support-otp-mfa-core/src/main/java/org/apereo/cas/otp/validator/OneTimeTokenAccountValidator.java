@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.credential.OneTimeTokenCredential;
 
+import lombok.val;
+
 /**
  * This is {@link OneTimeTokenAccountValidator}.
  *
@@ -34,11 +36,11 @@ public interface OneTimeTokenAccountValidator {
      */
     default int parseToken(Credential credential) throws IllegalArgumentException {
         try {
-            OneTimeTokenCredential cred = (OneTimeTokenCredential) credential;
+            val cred = (OneTimeTokenCredential) credential;
             return Integer.parseInt(cred.getToken());
-        } catch (ClassCastException e) {
+        } catch (final ClassCastException e) {
             throw new IllegalArgumentException("Provided credential could not be cast to OneTimeTokenCredential", e);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new IllegalArgumentException("Token could not be parsed: " + ((OneTimeTokenCredential) credential).getToken(), e);
         }
     }
