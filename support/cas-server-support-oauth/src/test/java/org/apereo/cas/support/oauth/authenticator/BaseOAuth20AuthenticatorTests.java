@@ -20,6 +20,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
 import org.apereo.cas.config.CasOAuth20Configuration;
+import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
 import org.apereo.cas.config.CasOAuth20ServicesConfiguration;
 import org.apereo.cas.config.CasOAuth20TicketSerializationConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
@@ -80,6 +81,7 @@ import static org.mockito.Mockito.*;
     CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
     CasOAuth20ComponentSerializationConfiguration.class,
     CasOAuth20Configuration.class,
+    CasOAuth20EndpointsConfiguration.class,
     CasOAuth20ServicesConfiguration.class,
     CasOAuth20TicketSerializationConfiguration.class
 })

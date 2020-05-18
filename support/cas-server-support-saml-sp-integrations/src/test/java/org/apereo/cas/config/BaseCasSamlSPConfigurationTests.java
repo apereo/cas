@@ -16,8 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.File;
 
@@ -34,9 +33,9 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     BaseSamlIdPConfigurationTests.SharedTestConfiguration.class
 })
+@DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseCasSamlSPConfigurationTests {
-    protected static String SERVICE_PROVIDER;
 
     @Autowired
     protected CasConfigurationProperties casProperties;
@@ -45,16 +44,8 @@ public abstract class BaseCasSamlSPConfigurationTests {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-    @DynamicPropertySource
-    @SuppressWarnings("UnusedMethod")
-    private static void configurePropertySource(final DynamicPropertyRegistry registry) {
-        registry.add("cas.samlSp." + SERVICE_PROVIDER + ".metadata", () -> "classpath:/metadata/sp-metadata.xml");
-        registry.add("cas.samlSp." + SERVICE_PROVIDER + ".nameIdAttribute", () -> "cn");
-        registry.add("cas.samlSp." + SERVICE_PROVIDER + ".nameIdFormat", () -> "transient");
-    }
-
     @BeforeAll
-    public static void beforeThisClass() throws Exception {
+    public static void beforeThisClass() {
         BaseSamlIdPConfigurationTests.setMetadataDirectory(
             new FileSystemResource(new File(FileUtils.getTempDirectory(), "idp-metadata-sps")));
     }

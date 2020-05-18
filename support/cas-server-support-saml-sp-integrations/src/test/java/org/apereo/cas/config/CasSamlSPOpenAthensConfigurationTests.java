@@ -1,8 +1,9 @@
 package org.apereo.cas.config;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 
 /**
  * This is {@link CasSamlSPOpenAthensConfigurationTests}.
@@ -13,8 +14,12 @@ import org.springframework.context.annotation.Import;
 @Tag("SAML")
 @Import(CasSamlSPOpenAthensConfiguration.class)
 public class CasSamlSPOpenAthensConfigurationTests extends BaseCasSamlSPConfigurationTests {
-    @BeforeAll
-    public static void beforeAll() {
-        SERVICE_PROVIDER = "openAthens";
+
+    @DynamicPropertySource
+    @SuppressWarnings("UnusedMethod")
+    public static void configurePropertySource(final DynamicPropertyRegistry registry) {
+        registry.add("cas.saml-sp.open-athens.metadata", () -> "classpath:/metadata/sp-metadata.xml");
+        registry.add("cas.saml-sp.open-athens.name-id-attribute", () -> "cn");
+        registry.add("cas.saml-sp.open-athens.name-id-format", () -> "transient");
     }
 }

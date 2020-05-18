@@ -19,6 +19,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasOAuth20Configuration;
+import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
@@ -61,6 +62,7 @@ import static org.junit.jupiter.api.Assertions.*;
     JpaTicketRegistryTicketCatalogConfiguration.class,
     JpaTicketRegistryConfiguration.class,
     CasOAuth20Configuration.class,
+    CasOAuth20EndpointsConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasHibernateJpaConfiguration.class,
@@ -89,7 +91,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = "cas.jdbc.showSql=true")
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
 @ResourceLock("oauth-jpa-tickets")
-@Tag("OAuth")
+@Tag("JDBC")
 public class OAuthJpaTicketRegistryTests {
 
     @Autowired

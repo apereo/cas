@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
 
     private static final String OPENID_MODE_PARAM = "openid.mode";
+
     private final MockHttpServletRequest request = new MockHttpServletRequest();
     private final HttpServletResponse response = new MockHttpServletResponse();
 
