@@ -770,7 +770,7 @@ jobs:
 
   tests-spring-webflow:
     runs-on: ubuntu-latest
-   needs: [build]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
