@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration("casOAuth20EndpointsConfiguration")
+@Configuration(value = "casOAuth20EndpointsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasOAuth20EndpointsConfiguration {
 
