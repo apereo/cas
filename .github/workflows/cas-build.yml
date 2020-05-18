@@ -1,8 +1,8 @@
 name: Build
 
 env:
-  JAVA_OPTS: "-Xms512m -Xmx6048m -Xss64m -XX:ReservedCodeCacheSize=512m -Xverify:none -server -XX:+UseG1GC"
-  GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss64m -XX:ReservedCodeCacheSize=512m -Xverify:none -server -XX:+UseG1GC"
+  JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server -XX:+UseG1GC"
+  GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server -XX:+UseG1GC"
   SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
   SONATYPE_PWD: ${{ secrets.SONATYPE_PWD }}
   SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
@@ -10,6 +10,8 @@ env:
   GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
   RENOVATE_TOKEN: ${{ secrets.GITHUB_RENOVATE_TOKEN }}
   PYTHON_VERSION: 3.8.2
+  JDK_CURRENT: 11.0.7
+  JDK_LATEST: 14
 
 ##########################################################################
 
@@ -33,7 +35,7 @@ jobs:
       - name: Initialize
         run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
 
-  ##########################################################################
+##########################################################################
   cache:
     runs-on: ubuntu-latest
     needs: [initialize]
@@ -58,25 +60,14 @@ jobs:
 ##########################################################################
 
   build:
-    runs-on: ${{ matrix.os }}
-    continue-on-error: true
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-          - macos-latest
-        jdk:
-          - 11.0.7
-          - 14
+    runs-on: ubuntu-latest
     needs: [cache]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: ${{ matrix.jdk }}
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -86,14 +77,79 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon build install -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
       - uses: actions/upload-artifact@v2
-        if: ${{ matrix.os == 'ubuntu-latest' && matrix.jdk == '11.0.7' }}
         with:
           name: binary-artifacts
           path: ./**/build/libs/*.*
 
-  ##########################################################################
+##########################################################################
+
+  build-latest:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.JDK_LATEST }}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Build with Gradle
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
+        
+##########################################################################
+
+  build-windows:
+    runs-on: windows-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Build with Gradle
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
+
+##########################################################################
+
+  build-macos:
+    runs-on: macos-latest
+    needs: [cache]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Build with Gradle
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
+
+##########################################################################
 
   validate-docs:
     runs-on: ubuntu-latest
@@ -103,7 +159,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -116,7 +172,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
         run: ./ci/validate-documentation.sh
 
-  ##########################################################################
+##########################################################################
 
   validate-quality:
     runs-on: ubuntu-latest
@@ -126,7 +182,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -142,7 +198,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.organization=apereo -Dsonar.host.url=https://sonarcloud.io -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -Dsonar.verbose=true --parallel -DshowStandardStreams=true --info
 
-  ##########################################################################
+##########################################################################
 
   validate-style-main:
     runs-on: ubuntu-latest
@@ -152,7 +208,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -168,7 +224,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel checkstyleMain -x test -x javadoc -DskipNestedConfigMetadataGen=true --parallel -DshowStandardStreams=true
 
-  ##########################################################################
+##########################################################################
 
   validate-style-test:
     runs-on: ubuntu-latest
@@ -178,7 +234,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -194,7 +250,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel checkstyleTest -x test -x javadoc -DskipNestedConfigMetadataGen=true --parallel -DshowStandardStreams=true
 
-  ##########################################################################
+##########################################################################
 
   validate-spotbugs-main:
     runs-on: ubuntu-latest
@@ -204,7 +260,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -220,7 +276,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./gradlew --build-cache --configure-on-demand --parallel --no-daemon spotbugsMain -x test -x javadoc -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true
 
-  ##########################################################################
+##########################################################################
 
   validate-spotbugs-test:
     runs-on: ubuntu-latest
@@ -230,7 +286,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -246,7 +302,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./gradlew --build-cache --configure-on-demand --parallel --no-daemon spotbugsTest -x test -x javadoc -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true
 
-  ##########################################################################
+##########################################################################
 
   validate-codebase:
     runs-on: ubuntu-latest
@@ -256,7 +312,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -269,7 +325,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/analyze-codebase.sh
 
-  ##########################################################################
+##########################################################################
 
   validate-javadocs:
     runs-on: ubuntu-latest
@@ -279,7 +335,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -295,7 +351,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel javadoc -x test -x check -DskipNestedConfigMetadataGen=true --parallel
 
-  ##########################################################################
+##########################################################################
 
   validate-spring-config-metadata:
     runs-on: ubuntu-latest
@@ -305,7 +361,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -318,7 +374,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel :api:cas-server-core-api-configuration-model:build -x check -x test -x javadoc
 
-  ##########################################################################
+##########################################################################
 
   validate-spring-config-proxies:
     runs-on: ubuntu-latest
@@ -328,7 +384,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -341,7 +397,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel verifySpringConfigurationCanDisableBeanProxying -x javadoc -x check --parallel -DskipNestedConfigMetadataGen=true
 
-  ##########################################################################
+##########################################################################
 
   validate-spring-config-factories:
     runs-on: ubuntu-latest
@@ -351,7 +407,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -364,7 +420,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel verifySpringConfigurationFactories -x javadoc -x check --parallel -DskipNestedConfigMetadataGen=true
 
-  ##########################################################################
+##########################################################################
 
   validate-commandline-shell:
     runs-on: ubuntu-latest
@@ -374,7 +430,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -392,7 +448,7 @@ jobs:
           casVersion=$(./gradlew casVersion --no-daemon -q)
           java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar @ci/tests/shell/cas-shell-script.sh
 
-  ##########################################################################
+##########################################################################
 
   validate-webapp-embedded-tomcat:
     runs-on: ubuntu-latest
@@ -402,7 +458,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -418,7 +474,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-embedded-webapp.sh tomcat
 
-  ##########################################################################
+##########################################################################
 
   validate-webapp-embedded-jetty:
     runs-on: ubuntu-latest
@@ -428,7 +484,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -444,7 +500,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-embedded-webapp.sh jetty
 
-  ##########################################################################
+##########################################################################
 
   validate-webapp-embedded-undertow:
     runs-on: ubuntu-latest
@@ -454,7 +510,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -471,7 +527,7 @@ jobs:
         run: ./ci/tests/webapp/validate-embedded-webapp.sh undertow
 
 
-  ##########################################################################
+##########################################################################
 
   validate-webapp-external-tomcat:
     runs-on: ubuntu-latest
@@ -481,7 +537,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -497,7 +553,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-external-webapp.sh tomcat
 
-  ##########################################################################
+##########################################################################
 
   validate-spring-cloud-config-server:
     runs-on: ubuntu-latest
@@ -507,7 +563,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -523,7 +579,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-configserver-webapp.sh
 
-  ##########################################################################
+##########################################################################
 
   validate-eureka-discovery-server:
     runs-on: ubuntu-latest
@@ -533,7 +589,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -549,7 +605,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-eurekaserver-webapp.sh
 
-  ##########################################################################
+##########################################################################
 
   validate-spring-boot-admin-server:
     runs-on: ubuntu-latest
@@ -559,7 +615,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -575,7 +631,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-bootadmin-webapp.sh
 
-  ##########################################################################
+##########################################################################
 
   validate-tests:
     runs-on: ubuntu-latest
@@ -585,7 +641,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -598,7 +654,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel validateTestsSuites -x javadoc
 
-  ##########################################################################
+##########################################################################
 
   validate-dependency-licenses:
     runs-on: ubuntu-latest
@@ -608,7 +664,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -621,7 +677,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel checkLicense -x javadoc -x check -DskipNestedConfigMetadataGen=true
 
-  ##########################################################################
+##########################################################################
 
   publish-snapshots:
     runs-on: ubuntu-latest
@@ -631,7 +687,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -647,7 +703,7 @@ jobs:
         if: ${{ !contains(github.event.head_commit.message, 'skip snapshots') && github.event_name == 'push' }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DpublishSnapshots=true -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
 
-  ##########################################################################
+##########################################################################
 
   publish-docs:
     runs-on: ubuntu-latest
@@ -656,7 +712,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -669,7 +725,7 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         run: ./ci/push-docs-ghpages.sh
 
-  ##########################################################################
+##########################################################################
 
   tests-simple:
     runs-on: ubuntu-latest
@@ -679,7 +735,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -693,7 +749,7 @@ jobs:
           name: binary-artifacts
       - name: Simple Unit Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category simple
-  ##########################################################################
+##########################################################################
 
   tests-groovy:
     runs-on: ubuntu-latest
@@ -703,7 +759,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -717,7 +773,7 @@ jobs:
           name: binary-artifacts
       - name: Groovy Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category groovy
-  ##########################################################################
+##########################################################################
 
   tests-filesystem:
     runs-on: ubuntu-latest
@@ -727,7 +783,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -742,7 +798,7 @@ jobs:
       - name: FileSystem Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category filesystem
 
-  ##########################################################################
+##########################################################################
 
   tests-jdbc:
     runs-on: ubuntu-latest
@@ -752,7 +808,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -766,7 +822,7 @@ jobs:
           name: binary-artifacts
       - name: JDBC Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category jdbc
-  ##########################################################################
+##########################################################################
 
   tests-spring-webflow:
     runs-on: ubuntu-latest
@@ -776,7 +832,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -791,7 +847,7 @@ jobs:
       - name: Spring Webflow Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category webflow
 
-  ##########################################################################
+##########################################################################
 
   tests-restful:
     runs-on: ubuntu-latest
@@ -801,7 +857,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -816,7 +872,7 @@ jobs:
       - name: RESTful Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category rest
 
-  ##########################################################################
+##########################################################################
 
   tests-mfa:
     runs-on: ubuntu-latest
@@ -826,7 +882,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -841,7 +897,7 @@ jobs:
       - name: Multifactor Authentication Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category mfa
 
-  ##########################################################################
+##########################################################################
 
   tests-oauth:
     runs-on: ubuntu-latest
@@ -851,7 +907,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -866,7 +922,7 @@ jobs:
       - name: OAuth Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category oauth
 
-  ##########################################################################
+##########################################################################
 
   tests-uma:
     runs-on: ubuntu-latest
@@ -876,7 +932,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -891,7 +947,7 @@ jobs:
       - name: OAuth UMA Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category uma
 
-  ##########################################################################
+##########################################################################
 
   tests-oidc:
     runs-on: ubuntu-latest
@@ -901,7 +957,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -916,7 +972,7 @@ jobs:
       - name: OpenID Connect Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category oidc
 
-  ##########################################################################
+##########################################################################
 
   tests-saml:
     runs-on: ubuntu-latest
@@ -926,7 +982,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -941,7 +997,7 @@ jobs:
       - name: SAML Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category saml
 
-  ##########################################################################
+##########################################################################
 
   tests-ldap:
     runs-on: ubuntu-latest
@@ -951,7 +1007,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -966,7 +1022,7 @@ jobs:
       - name: LDAP Tests
         run: ./ci/tests/ldap/run-ldap-server.sh && ./ci/tests/ldap/run-ad-server.sh true && ./testcas.sh --coverage-report --coverage-upload --category groovy
 
-  ##########################################################################
+##########################################################################
 
   tests-hazelcast:
     runs-on: ubuntu-latest
@@ -976,7 +1032,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -991,7 +1047,7 @@ jobs:
       - name: Hazelcast Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category hazelcast
 
-  ##########################################################################
+##########################################################################
 
   tests-x509:
     runs-on: ubuntu-latest
@@ -1001,7 +1057,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1016,7 +1072,7 @@ jobs:
       - name: X509 Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category x509
 
-  ##########################################################################
+##########################################################################
 
   tests-shell:
     runs-on: ubuntu-latest
@@ -1026,7 +1082,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1041,7 +1097,7 @@ jobs:
       - name: Commandline Shell Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category shell
 
-  ##########################################################################
+##########################################################################
 
   tests-aws:
     runs-on: ubuntu-latest
@@ -1051,7 +1107,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1066,7 +1122,7 @@ jobs:
       - name: AWS Tests
         run: ./ci/tests/aws/run-aws-server.sh && ./testcas.sh --coverage-report --coverage-upload --category aws
 
-  ##########################################################################
+##########################################################################
 
   tests-mongodb:
     runs-on: ubuntu-latest
@@ -1076,7 +1132,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1090,7 +1146,7 @@ jobs:
           name: binary-artifacts
       - name: MongoDb Tests
         run: ./ci/tests/mongodb/run-mongodb-server.sh && ./testcas.sh --coverage-report --coverage-upload --category mongo
-  ##########################################################################
+##########################################################################
 
   tests-redis:
     runs-on: ubuntu-latest
@@ -1100,7 +1156,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1114,7 +1170,7 @@ jobs:
           name: binary-artifacts
       - name: Redis Tests
         run: ./ci/tests/redis/run-redis-server.sh && ./testcas.sh --coverage-report --coverage-upload --category redis
-  ##########################################################################
+##########################################################################
 
   tests-radius:
     runs-on: ubuntu-latest
@@ -1124,7 +1180,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1138,7 +1194,7 @@ jobs:
           name: binary-artifacts
       - name: Radius Tests
         run: ./ci/tests/radius/run-radius-server.sh && ./testcas.sh --coverage-report --coverage-upload --category radius
-  ##########################################################################
+##########################################################################
 
   tests-mysql:
     runs-on: ubuntu-latest
@@ -1148,7 +1204,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1162,7 +1218,7 @@ jobs:
           name: binary-artifacts
       - name: MySQL Tests
         run: ./ci/tests/mysql/run-mysql-server.sh && ./testcas.sh --coverage-report --coverage-upload --category radius
-  ##########################################################################
+##########################################################################
 
   tests-mssqlserver:
     runs-on: ubuntu-latest
@@ -1172,7 +1228,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1186,7 +1242,7 @@ jobs:
           name: binary-artifacts
       - name: MSSQL Server Tests
         run: ./ci/tests/mssqlserver/run-mssql-server.sh && ./testcas.sh --coverage-report --coverage-upload --category mssql
-  ##########################################################################
+##########################################################################
 
   tests-postgres:
     runs-on: ubuntu-latest
@@ -1196,7 +1252,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1210,7 +1266,7 @@ jobs:
           name: binary-artifacts
       - name: PostgreSQL Tests
         run: ./ci/tests/postgres/run-postgres-server.sh && ./testcas.sh --coverage-report --coverage-upload --category postgres
-  ##########################################################################
+##########################################################################
 
   tests-mariadb:
     runs-on: ubuntu-latest
@@ -1220,7 +1276,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1234,7 +1290,7 @@ jobs:
           name: binary-artifacts
       - name: MariaDb Tests
         run: ./ci/tests/mariadb/run-mariadb-server.sh && ./testcas.sh --coverage-report --coverage-upload --category postgres
-  ##########################################################################
+##########################################################################
 
   tests-oracle:
     runs-on: ubuntu-latest
@@ -1244,7 +1300,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1258,7 +1314,7 @@ jobs:
           name: binary-artifacts
       - name: Oracle Tests
         run: ./ci/tests/oracle/run-oracle-server.sh && ./testcas.sh --coverage-report --coverage-upload --category oracle
-  ##########################################################################
+##########################################################################
 
   tests-cassandra:
     runs-on: ubuntu-latest
@@ -1268,7 +1324,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1282,7 +1338,7 @@ jobs:
           name: binary-artifacts
       - name: Apache Cassandra Tests
         run: ./ci/tests/cassandra/run-cassandra-server.sh && ./testcas.sh --coverage-report --coverage-upload --category oracle
-  ##########################################################################
+##########################################################################
 
   tests-couchbase:
     runs-on: ubuntu-latest
@@ -1292,7 +1348,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1306,7 +1362,7 @@ jobs:
           name: binary-artifacts
       - name: Couchbase Tests
         run: ./ci/tests/couchbase/run-couchbase-server.sh && ./testcas.sh --coverage-report --coverage-upload --category couchbase
-  ##########################################################################
+##########################################################################
 
   tests-dynamodb:
     runs-on: ubuntu-latest
@@ -1316,7 +1372,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1330,7 +1386,7 @@ jobs:
           name: binary-artifacts
       - name: DynamoDb Tests
         run: ./ci/tests/dynamodb/run-dynamodb-server.sh && ./testcas.sh --coverage-report --coverage-upload --category dynamodb
-  ##########################################################################
+##########################################################################
 
   tests-memcached:
     runs-on: ubuntu-latest
@@ -1340,7 +1396,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1354,7 +1410,7 @@ jobs:
           name: binary-artifacts
       - name: Memcached Tests
         run: ./ci/tests/memcached/run-memcached-server.sh && ./testcas.sh --coverage-report --coverage-upload --category memcached
-  ##########################################################################
+##########################################################################
 
   tests-ehcache:
     runs-on: ubuntu-latest
@@ -1364,7 +1420,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1378,7 +1434,7 @@ jobs:
           name: binary-artifacts
       - name: Ehcache Tests
         run: ./ci/tests/ehcache/run-terracotta-server.sh && ./testcas.sh --coverage-report --coverage-upload --category ehcache
-  ##########################################################################
+##########################################################################
 
   tests-ignite:
     runs-on: ubuntu-latest
@@ -1388,7 +1444,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1402,7 +1458,7 @@ jobs:
           name: binary-artifacts
       - name: Apache Ignite Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category ignite
-  ##########################################################################
+##########################################################################
 
   tests-couchdb:
     runs-on: ubuntu-latest
@@ -1412,7 +1468,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1426,7 +1482,7 @@ jobs:
           name: binary-artifacts
       - name: Apache CouchDb Tests
         run: ./ci/tests/couchdb/run-couchdb-server.sh && ./testcas.sh --coverage-report --coverage-upload --category couchdb
-  ##########################################################################
+##########################################################################
 
   tests-influxdb:
     runs-on: ubuntu-latest
@@ -1436,7 +1492,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1450,7 +1506,7 @@ jobs:
           name: binary-artifacts
       - name: InfluxDb Tests
         run: ./ci/tests/influxdb/run-influxdb-server.sh && ./testcas.sh --coverage-report --coverage-upload --category influxdb
-  ##########################################################################
+##########################################################################
 
   tests-jmx:
     runs-on: ubuntu-latest
@@ -1460,7 +1516,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1474,7 +1530,7 @@ jobs:
           name: binary-artifacts
       - name: JMX Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category jmx
-  ##########################################################################
+##########################################################################
 
   tests-mail:
     runs-on: ubuntu-latest
@@ -1484,7 +1540,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1498,7 +1554,7 @@ jobs:
           name: binary-artifacts
       - name: Mail Tests
         run: ./ci/tests/mail/run-mail-server.sh && ./testcas.sh --coverage-report --coverage-upload --category influxdb
-  ##########################################################################
+##########################################################################
 
   tests-cosmosdb:
     runs-on: ubuntu-latest
@@ -1508,7 +1564,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1522,7 +1578,7 @@ jobs:
           name: binary-artifacts
       - name: Azure CosmosDb Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category cosmosdb
-  ##########################################################################
+##########################################################################
 
   tests-activemq:
     runs-on: ubuntu-latest
@@ -1532,7 +1588,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1547,7 +1603,7 @@ jobs:
       - name: Apache ActiveMQ Tests
         run: ./ci/tests/activemq/run-activemq-server.sh && ./testcas.sh --coverage-report --coverage-upload --category activemq
 
-  ##########################################################################
+##########################################################################
 
   tests-zookeeper:
     runs-on: ubuntu-latest
@@ -1557,7 +1613,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1572,7 +1628,7 @@ jobs:
       - name: Apache ZooKeeper Tests
         run: ./ci/tests/zookeeper/run-zookeeper-server.sh && ./testcas.sh --coverage-report --coverage-upload --category zookeeper
 
-  ##########################################################################
+##########################################################################
 
   tests-kafka:
     runs-on: ubuntu-latest
@@ -1582,7 +1638,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1596,7 +1652,7 @@ jobs:
           name: binary-artifacts
 #      - name: kafka Tests
 #        run: ./ci/tests/kafka/run-kafka-server.sh && ./testcas.sh --coverage-report --coverage-upload --category kafka
-  ##########################################################################
+##########################################################################
 
   tests-performance-locust-tomcat:
     runs-on: ubuntu-latest
@@ -1606,7 +1662,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON_VERSION }}
@@ -1623,7 +1679,7 @@ jobs:
           name: binary-artifacts
       - name: Locust Performance Tests via Embedded Apache Tomcat
         run: ./ci/tests/perftests-locust.sh tomcat
-  ##########################################################################
+##########################################################################
 
   tests-performance-locust-jetty:
     runs-on: ubuntu-latest
@@ -1633,7 +1689,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON_VERSION }}
@@ -1651,7 +1707,7 @@ jobs:
       - name: Locust Performance Tests via Embedded Jetty
         run: ./ci/tests/perftests-locust.sh jetty
 
-  ##########################################################################
+##########################################################################
 
   tests-performance-locust-undertow:
     runs-on: ubuntu-latest
@@ -1661,7 +1717,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON_VERSION }}
@@ -1682,13 +1738,13 @@ jobs:
 
   report-dependency-updates:
     runs-on: ubuntu-latest
-    needs: [cache]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -1701,7 +1757,7 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc dependencyUpdates -Drevision=release -DskipNestedConfigMetadataGen=true -DgradleReleaseChannel=current
 
-  ##########################################################################
+##########################################################################
 
   renovate-dependency-updates:
     runs-on: ubuntu-latest
@@ -1711,7 +1767,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
