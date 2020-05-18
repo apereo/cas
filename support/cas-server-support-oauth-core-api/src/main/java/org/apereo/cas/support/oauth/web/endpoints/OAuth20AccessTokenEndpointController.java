@@ -12,6 +12,7 @@ import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20Devi
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 
 import com.google.common.base.Supplier;
@@ -95,6 +96,8 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         } catch (final Exception e) {
             LOGGER.error("Could not identify and extract access token request", e);
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_GRANT);
+        } finally {
+            OAuth20JwtAccessTokenEncoder.getEncodedToken().remove();
         }
     }
 

@@ -57,9 +57,16 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
         val accessToken = result.getAccessToken().orElse(null);
         val refreshToken = result.getRefreshToken().orElse(null);
         LOGGER.debug("Generated OAuth access token: [{}]", accessToken);
+        OAuth20JwtAccessTokenEncoder.builder()
+            .accessToken(accessToken)
+            .registeredService(holder.getRegisteredService())
+            .service(holder.getService())
+            .accessTokenJwtBuilder(accessTokenJwtBuilder)
+            .casProperties(casProperties)
+            .build()
+            .encode();
         return buildCallbackUrlResponseType(holder, redirectUri, accessToken, new ArrayList<>(0), refreshToken, context);
     }
-
 
     /**
      * Build callback url response type string.
@@ -86,14 +93,8 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
         val builder = new URIBuilder(redirectUri);
         val stringBuilder = new StringBuilder();
 
-        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
-            .accessToken(accessToken)
-            .registeredService(holder.getRegisteredService())
-            .service(holder.getService())
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .casProperties(casProperties)
-            .build()
-            .encode();
+        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.getEncodedToken().get();
+        OAuth20JwtAccessTokenEncoder.getEncodedToken().remove();
 
         val expiration = accessTokenExpirationPolicy.buildTicketExpirationPolicy();
         val timeToLive = expiration.getTimeToLive();
