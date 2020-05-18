@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.token.JwtBuilder;
 
@@ -40,8 +41,17 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
         val accessToken = result.getGeneratedToken().getAccessToken();
         accessToken.ifPresent(token -> {
             val oidcRegisteredService = (OidcRegisteredService) result.getRegisteredService();
+            OAuth20JwtAccessTokenEncoder.builder()
+                .accessToken(accessToken.get())
+                .registeredService(oidcRegisteredService)
+                .service(result.getService())
+                .accessTokenJwtBuilder(accessTokenJwtBuilder)
+                .casProperties(result.getCasProperties())
+                .build()
+                .encode();
             val idToken = this.idTokenGenerator.generate(request, response, accessToken.get(),
                 result.getAccessTokenTimeout(), result.getResponseType(), oidcRegisteredService);
+            OAuth20JwtAccessTokenEncoder.getEncodedToken().remove();
 
             LOGGER.debug("Generated ID token [{}]", idToken);
             model.put(OidcConstants.ID_TOKEN, idToken);

@@ -32,6 +32,16 @@ import java.util.Optional;
 @Getter
 @Slf4j
 public class OAuth20JwtAccessTokenEncoder {
+
+    /*
+     * There is a class of "non-deterministic" crypto signature generation algorithms.
+     * i.e. different signatures are generated even for identical input.
+     * DSA and variants (ECDSA) are in this category.
+     * We have to put the encoded access token here so that OidcIdTokenGeneratorService
+     * can get the correct encoded access token to generate at_hash
+     */
+    private static ThreadLocal<String> ENCODEDTOKEN = new ThreadLocal<>();
+
     private final JwtBuilder accessTokenJwtBuilder;
 
     private final OAuth20AccessToken accessToken;
@@ -42,6 +52,10 @@ public class OAuth20JwtAccessTokenEncoder {
 
     private final CasConfigurationProperties casProperties;
 
+    public static ThreadLocal<String> getEncodedToken() {
+        return ENCODEDTOKEN;
+    }
+
     /**
      * Encode access token as JWT.
      *
@@ -51,10 +65,14 @@ public class OAuth20JwtAccessTokenEncoder {
         val oAuthRegisteredService = OAuthRegisteredService.class.cast(this.registeredService);
         if (shouldEncodeAsJwt(oAuthRegisteredService)) {
             val request = getJwtRequestBuilder(Optional.ofNullable(oAuthRegisteredService), accessToken);
-            return accessTokenJwtBuilder.build(request);
+            val encodedAccessToken = accessTokenJwtBuilder.build(request);
+            ENCODEDTOKEN.set(encodedAccessToken);
+            return encodedAccessToken;
         }
 
-        return accessToken.getId();
+        val encodedAccessToken = accessToken.getId();
+        ENCODEDTOKEN.set(encodedAccessToken);
+        return encodedAccessToken;
     }
 
     /**
