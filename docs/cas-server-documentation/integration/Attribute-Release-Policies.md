@@ -267,12 +267,12 @@ def run(final Object... args) {
 }
 ```         
 
-The configuration of this component qualifies to use the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax.
+The configuration of this component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
 
 ### Groovy Script
 
 Let an external Groovy script decide how principal attributes should be released. The configuration of this 
-component qualifies to use the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax.
+component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
 
 ```json
 {
@@ -347,7 +347,7 @@ The service definition then may be designed as:
 ```
 
 The configuration of this component qualifies to use 
-the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax. The scripts 
+the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax. The scripts 
 need to design a `run` function that receives a list of parameters. The collection of current attributes in process
 as well as a logger object are passed to this function. The result must produce a map whose `key`s are attributes names 
 and whose `value`s are a list of attribute values.
