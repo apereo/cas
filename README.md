@@ -75,6 +75,7 @@ The following features are supported by the CAS project:
 * Administrative UIs to manage logging, monitoring, statistics, configuration, client registration and more.
 * Global and per-application user interface theme and branding.
 * Password management and password policy enforcement.
+* Deployment options using Apache Tomcat, Jetty, Undertow, packaged and running as Docker containers.
 
 The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/spring-boot) and
 [Spring Cloud](http://projects.spring.io/spring-cloud/).
