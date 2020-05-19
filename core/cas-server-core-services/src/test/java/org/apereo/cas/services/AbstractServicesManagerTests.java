@@ -4,6 +4,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -50,7 +51,9 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     protected ServiceRegistry getServiceRegistryInstance() {
-        return new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), listOfDefaultServices, new ArrayList<>());
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        return new InMemoryServiceRegistry(appCtx, listOfDefaultServices, new ArrayList<>());
     }
 
     @Test

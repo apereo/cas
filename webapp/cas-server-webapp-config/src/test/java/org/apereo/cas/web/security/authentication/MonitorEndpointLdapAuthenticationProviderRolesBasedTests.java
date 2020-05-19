@@ -5,6 +5,7 @@ import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnabledIfPortOpen(port = 10389)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("Ldap")
 public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends BaseMonitorEndpointLdapAuthenticationProviderTests {
 
     @Test

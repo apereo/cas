@@ -53,7 +53,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Tag("CouchDb")
 @SpringBootTest(classes = {
     CasCouchDbCoreConfiguration.class,
-    BaseOneTimeTokenRepositoryTests.BaseTestConfiguration.class,
+    BaseOneTimeTokenRepositoryTests.BaseOneTimeTokenRepositoryTestConfiguration.class,
     GoogleAuthenticatorCouchDbConfiguration.class,
     GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration.class,
     CasWebflowContextConfiguration.class,

@@ -16,7 +16,7 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchResponse;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,9 +45,9 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
                                final String baseDn,
                                final LdapRegisteredServiceMapper ldapServiceMapper,
                                final LdapServiceRegistryProperties ldapProperties,
-                               final ApplicationEventPublisher eventPublisher,
+                               final ConfigurableApplicationContext applicationContext,
                                final Collection<ServiceRegistryListener> serviceRegistryListeners) {
-        super(eventPublisher, serviceRegistryListeners);
+        super(applicationContext, serviceRegistryListeners);
         this.connectionFactory = connectionFactory;
         this.baseDn = baseDn;
         this.ldapProperties = ldapProperties;
@@ -120,7 +120,11 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
                 return LdapUtils.executeDeleteOperation(this.connectionFactory, entry);
             }
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return false;
     }
@@ -147,7 +151,11 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
                     .count();
             }
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return 0;
     }
@@ -170,7 +178,11 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
                     });
             }
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return list;
     }
@@ -188,7 +200,11 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
                 return this.ldapServiceMapper.mapToRegisteredService(response.getEntry());
             }
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }

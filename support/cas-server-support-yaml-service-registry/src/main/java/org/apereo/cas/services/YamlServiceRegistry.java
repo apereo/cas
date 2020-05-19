@@ -8,7 +8,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.WatcherService;
 
 import lombok.Getter;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 
 import java.util.Collection;
@@ -45,13 +45,13 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
 
     public YamlServiceRegistry(final Resource configDirectory,
                                final WatcherService serviceRegistryConfigWatcher,
-                               final ApplicationEventPublisher eventPublisher,
+                               final ConfigurableApplicationContext applicationContext,
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
                                final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
         super(configDirectory,
             CollectionUtils.wrapList(new RegisteredServiceYamlSerializer()),
-            eventPublisher, registeredServiceReplicationStrategy,
+            applicationContext, registeredServiceReplicationStrategy,
             resourceNamingStrategy, serviceRegistryListeners, serviceRegistryConfigWatcher);
     }
 

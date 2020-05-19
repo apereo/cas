@@ -26,6 +26,7 @@ import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.syncope.common.lib.to.UserTO;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,12 +66,9 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutConfiguration.class,
     CasCoreConfiguration.class,
     CasPersonDirectoryTestConfiguration.class
-}, properties = {
-    "cas.authn.syncope.url=http://localhost:8095",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
+}, properties ="cas.authn.syncope.url=http://localhost:8095")
 @ResourceLock("Syncope")
+@Tag("Simple")
 public class SyncopeAuthenticationHandlerTests {
     private static final ObjectMapper MAPPER = new IgnoringJaxbModuleJacksonObjectMapper().findAndRegisterModules();
 

@@ -84,9 +84,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.wsfed[0].identityProviderIdentifier=https://example.org/adfs/services/trust",
     "cas.authn.wsfed[0].relyingPartyIdentifier=urn:cas:example",
     "cas.authn.wsfed[0].signingCertificateResources=classpath:adfs-signing.cer",
-    "cas.authn.wsfed[0].identityAttribute=upn",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
+    "cas.authn.wsfed[0].identityAttribute=upn"
 })
 @Tag("Webflow")
 public class WsFederationActionTests {

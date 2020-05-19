@@ -54,11 +54,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@SpringBootTest(classes = BaseCasCoreTests.SharedTestConfiguration.class,
-    properties = {
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+@SpringBootTest(classes = BaseCasCoreTests.SharedTestConfiguration.class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @DirtiesContext
 @EnableScheduling

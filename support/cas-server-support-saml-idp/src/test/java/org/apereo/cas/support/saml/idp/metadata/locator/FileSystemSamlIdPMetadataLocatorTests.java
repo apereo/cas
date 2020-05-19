@@ -4,13 +4,10 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import lombok.val;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.test.context.TestPropertySource;
 
-import java.io.File;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,18 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML")
+@TestPropertySource(properties = {
+    "cas.authn.saml-idp.entityId=https://cas.example.org/idp",
+    "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
+})
 public class FileSystemSamlIdPMetadataLocatorTests extends BaseSamlIdPConfigurationTests {
-    @BeforeAll
-    public static void beforeThisClass() throws Exception {
-        METADATA_DIRECTORY = new FileSystemResource(new File(FileUtils.getTempDirectory(), "metadata"));
-        if (METADATA_DIRECTORY.exists()) {
-            FileUtils.deleteDirectory(METADATA_DIRECTORY.getFile());
-        }
-        val serviceDir = new File(METADATA_DIRECTORY.getFile(), "TestShib-1000");
-        if (!serviceDir.exists()) {
-            serviceDir.mkdirs();
-        }
-    }
 
     @Test
     public void verifyOperation() {

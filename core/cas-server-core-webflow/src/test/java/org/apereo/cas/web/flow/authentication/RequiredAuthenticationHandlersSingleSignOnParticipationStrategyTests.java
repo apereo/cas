@@ -15,7 +15,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -40,15 +40,18 @@ import static org.mockito.Mockito.*;
 public class RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTests {
     @Test
     public void verifyNoServiceOrSso() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         val svc = CoreAuthenticationTestUtils.getRegisteredService("serviceid1");
-        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), List.of(svc), new ArrayList<>());
+        val dao = new InMemoryServiceRegistry(appCtx, List.of(svc), new ArrayList<>());
 
-        val defaultServicesManager = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
+        val defaultServicesManager = new DefaultServicesManager(dao, appCtx, new HashSet<>());
         defaultServicesManager.load();
 
         val strategy = new RequiredAuthenticationHandlersSingleSignOnParticipationStrategy(defaultServicesManager,
@@ -62,6 +65,9 @@ public class RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTest
 
     @Test
     public void verifySsoWithMismatchedHandlers() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -73,11 +79,11 @@ public class RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTest
         when(svc.getAuthenticationPolicy()).thenReturn(policy);
         when(svc.matches(anyString())).thenReturn(Boolean.TRUE);
 
-        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class),
+        val dao = new InMemoryServiceRegistry(appCtx,
             List.of(svc), new ArrayList<>());
 
         val servicesManager = new DefaultServicesManager(dao,
-            mock(ApplicationEventPublisher.class), new HashSet<>());
+            appCtx, new HashSet<>());
         servicesManager.load();
 
         val ticketRegistry = new DefaultTicketRegistry();
@@ -95,6 +101,9 @@ public class RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTest
 
     @Test
     public void verifySsoWithHandlers() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -107,11 +116,11 @@ public class RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTest
         when(svc.getAuthenticationPolicy()).thenReturn(policy);
         when(svc.matches(anyString())).thenReturn(Boolean.TRUE);
 
-        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class),
+        val dao = new InMemoryServiceRegistry(appCtx,
             List.of(svc), new ArrayList<>());
 
         val servicesManager = new DefaultServicesManager(dao,
-            mock(ApplicationEventPublisher.class), new HashSet<>());
+            appCtx, new HashSet<>());
         servicesManager.load();
 
         val ticketRegistry = new DefaultTicketRegistry();

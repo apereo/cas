@@ -3,6 +3,7 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.logging.web.LoggingConfigurationEndpoint;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties =
     "management.endpoint.loggingConfig.enabled=true"
 )
+@Tag("Simple")
 public class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("loggingConfigurationEndpoint")

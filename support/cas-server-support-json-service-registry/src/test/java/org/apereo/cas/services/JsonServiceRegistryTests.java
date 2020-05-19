@@ -9,13 +9,12 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Handles test cases for {@link JsonServiceRegistry}.
@@ -28,8 +27,10 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
     @SneakyThrows
     @Override
     public ServiceRegistry getNewServiceRegistry() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
         dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
-            mock(ApplicationEventPublisher.class),
+            appCtx,
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
@@ -39,8 +40,10 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
     @Test
     @SneakyThrows
     public void verifyRegistry() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
         val registry = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
-            mock(ApplicationEventPublisher.class),
+            appCtx,
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());

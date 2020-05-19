@@ -2,6 +2,7 @@ package org.apereo.cas.util.crypto;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.10
  */
 @Slf4j
+@Tag("Simple")
 public class GlibcCryptPasswordEncoderTests {
 
     private static final String PASSWORD_CLEAR = "12345abcDEF!$";

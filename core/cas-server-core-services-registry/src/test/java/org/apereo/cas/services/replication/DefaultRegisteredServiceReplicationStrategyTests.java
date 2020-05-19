@@ -10,12 +10,13 @@ import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.Optional;
 
@@ -30,23 +31,17 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class, properties = "cas.service-registry.stream.replication-mode=ACTIVE_ACTIVE")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("Simple")
 public class DefaultRegisteredServiceReplicationStrategyTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    private static RegisteredService newService(final String name) {
-        val service = new RegexRegisteredService();
-        service.setServiceId("^https?://.*");
-        service.setName(name);
-        service.setId(1000L);
-        service.setDescription("Test description");
-        return service;
-    }
-
     @Test
     public void verifySetInCache() throws Exception {
-        val serviceRegistry = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val serviceRegistry = new InMemoryServiceRegistry(appCtx);
         val stream = casProperties.getServiceRegistry().getStream();
         val mgr = mock(DistributedCacheManager.class);
         val strategy = new DefaultRegisteredServiceReplicationStrategy(mgr, stream);
@@ -60,7 +55,9 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
 
     @Test
     public void verifyGetInCacheAndRemove() {
-        val serviceRegistry = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val serviceRegistry = new InMemoryServiceRegistry(appCtx);
         val stream = casProperties.getServiceRegistry().getStream();
         val mgr = mock(DistributedCacheManager.class);
         val strategy = new DefaultRegisteredServiceReplicationStrategy(mgr, stream);
@@ -77,7 +74,9 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
 
     @Test
     public void verifyGetInCacheAndSave() {
-        val serviceRegistry = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val serviceRegistry = new InMemoryServiceRegistry(appCtx);
         val stream = casProperties.getServiceRegistry().getStream();
         val mgr = mock(DistributedCacheManager.class);
         val strategy = new DefaultRegisteredServiceReplicationStrategy(mgr, stream);
@@ -93,7 +92,9 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
 
     @Test
     public void verifyGetInCacheAndUpdate() {
-        val serviceRegistry = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val serviceRegistry = new InMemoryServiceRegistry(appCtx);
         val stream = casProperties.getServiceRegistry().getStream();
         val mgr = mock(DistributedCacheManager.class);
         val strategy = new DefaultRegisteredServiceReplicationStrategy(mgr, stream);
@@ -112,7 +113,9 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
 
     @Test
     public void verifyGetInCacheAndMatch() {
-        val serviceRegistry = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val serviceRegistry = new InMemoryServiceRegistry(appCtx);
         val stream = casProperties.getServiceRegistry().getStream();
         val mgr = mock(DistributedCacheManager.class);
         val strategy = new DefaultRegisteredServiceReplicationStrategy(mgr, stream);
@@ -129,7 +132,9 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
 
     @Test
     public void verifyUpdateWithMatch() {
-        val serviceRegistry = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val serviceRegistry = new InMemoryServiceRegistry(appCtx);
         val stream = casProperties.getServiceRegistry().getStream();
         val mgr = mock(DistributedCacheManager.class);
         val service = newService("Test1");
@@ -146,7 +151,9 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
 
     @Test
     public void verifyUpdateWithNoMatch() {
-        val serviceRegistry = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val serviceRegistry = new InMemoryServiceRegistry(appCtx);
         val stream = casProperties.getServiceRegistry().getStream();
         val mgr = mock(DistributedCacheManager.class);
 
@@ -161,5 +168,14 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
         val results = strategy.updateLoadedRegisteredServicesFromCache(CollectionUtils.wrapList(service), serviceRegistry);
         assertFalse(results.isEmpty());
         assertEquals(2, results.size());
+    }
+
+    private static RegisteredService newService(final String name) {
+        val service = new RegexRegisteredService();
+        service.setServiceId("^https?://.*");
+        service.setName(name);
+        service.setId(1000L);
+        service.setDescription("Test description");
+        return service;
     }
 }

@@ -66,11 +66,7 @@ import org.springframework.webflow.execution.Action;
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class
 },
-    properties = {
-        "cas.authn.gua.resource.location=classpath:image.jpg",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+    properties ="cas.authn.gua.resource.location=classpath:image.jpg")
 public abstract class AbstractGraphicalAuthenticationActionTests {
     @Autowired
     @Qualifier("initializeLoginAction")

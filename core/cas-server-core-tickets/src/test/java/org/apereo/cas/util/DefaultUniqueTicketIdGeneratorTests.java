@@ -4,6 +4,7 @@ import org.apereo.cas.util.gen.DefaultLongNumericGenerator;
 import org.apereo.cas.util.gen.HexRandomStringGenerator;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Tag("Simple")
 public class DefaultUniqueTicketIdGeneratorTests {
 
     @Test

@@ -35,7 +35,11 @@ public class WatchableGroovyScriptResource implements AutoCloseable, ExecutableC
                         LOGGER.debug("Reloading script at [{}]", file);
                         compileScriptResource(script);
                     } catch (final Exception e) {
-                        LOGGER.error(e.getMessage(), e);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.error(e.getMessage(), e);
+                        } else {
+                            LOGGER.error(e.getMessage());
+                        }
                     }
                 });
                 this.watcherService.start(script.getFilename());

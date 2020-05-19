@@ -16,7 +16,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
@@ -59,8 +59,9 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
         when(servletExternalContext.getNativeResponse()).thenReturn(new MockHttpServletResponse());
         when(this.requestContext.getFlowScope()).thenReturn(new LocalAttributeMap<>());
 
-        val publisher = mock(ApplicationEventPublisher.class);
-        this.serviceManager = new DefaultServicesManager(new InMemoryServiceRegistry(publisher), publisher, new HashSet<>());
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        this.serviceManager = new DefaultServicesManager(new InMemoryServiceRegistry(appCtx), appCtx, new HashSet<>());
         this.serviceManager.load();
     }
 

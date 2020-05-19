@@ -1,8 +1,7 @@
 package org.apereo.cas.config;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
-import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link CasSamlSPCraniumCafeConfigurationTests}.
@@ -11,12 +10,12 @@ import org.springframework.context.annotation.Import;
  * @since 6.2.0
  */
 @Tag("SAML")
-@Import(CasSamlSPCraniumCafeConfiguration.class)
+@TestPropertySource(properties = {
+    "cas.saml-sp.cranium-cafe.metadata=classpath:/metadata/sp-metadata.xml",
+    "cas.saml-sp.cranium-cafe.name-id-attribute=cn",
+    "cas.saml-sp.cranium-cafe.name-id-format=transient"
+})
 public class CasSamlSPCraniumCafeConfigurationTests extends BaseCasSamlSPConfigurationTests {
-    @BeforeAll
-    public static void beforeAll() {
-        SERVICE_PROVIDER = "craniumCafe";
-    }
 
     @Override
     protected String getServiceProviderId() {

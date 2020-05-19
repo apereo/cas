@@ -16,6 +16,7 @@ import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,10 +43,8 @@ import static org.mockito.Mockito.*;
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreUtilConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
+@Tag("Simple")
 public class DefaultTicketStringSerializationManagerTests {
     @Autowired
     @Qualifier("ticketSerializationManager")

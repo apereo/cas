@@ -50,7 +50,7 @@ Additional resources are available as follows:
 [![Contributing Guide](https://img.shields.io/badge/Contributions-guide-green.svg?style=flat)][contribute]
 [![Open Pull Requests](https://img.shields.io/github/issues-pr/apereo/cas.svg?style=flat)][contribute]
 [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg)](https://codecov.io/gh/apereo/cas)
-[![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas)
+![CAS Build](https://github.com/apereo/cas/workflows/Build/badge.svg)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-core/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-core)
 [![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
 
@@ -75,6 +75,7 @@ The following features are supported by the CAS project:
 * Administrative UIs to manage logging, monitoring, statistics, configuration, client registration and more.
 * Global and per-application user interface theme and branding.
 * Password management and password policy enforcement.
+* Deployment options using Apache Tomcat, Jetty, Undertow, packaged and running as Docker containers.
 
 The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/spring-boot) and
 [Spring Cloud](http://projects.spring.io/spring-cloud/).

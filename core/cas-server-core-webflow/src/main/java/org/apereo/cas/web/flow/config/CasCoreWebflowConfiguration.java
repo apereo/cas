@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
+import org.apereo.cas.authentication.exceptions.UniquePrincipalRequiredException;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
@@ -257,6 +258,7 @@ public class CasCoreWebflowConfiguration {
         errors.add(InvalidLoginLocationException.class);
         errors.add(AccountPasswordMustChangeException.class);
         errors.add(InvalidLoginTimeException.class);
+        errors.add(UniquePrincipalRequiredException.class);
 
         errors.add(AccountNotFoundException.class);
         errors.add(FailedLoginException.class);

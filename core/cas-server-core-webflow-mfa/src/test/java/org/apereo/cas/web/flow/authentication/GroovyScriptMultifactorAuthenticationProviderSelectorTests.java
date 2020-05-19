@@ -31,9 +31,11 @@ public class GroovyScriptMultifactorAuthenticationProviderSelectorTests extends 
 
     @Test
     public void verifySelectionOfMfaProvider() {
+        val service = RegisteredServiceTestUtils.getRegisteredService();
+        servicesManager.save(service);
         val dummy = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         val provider = multifactorAuthenticationProviderSelector.resolve(CollectionUtils.wrapList(dummy),
-            RegisteredServiceTestUtils.getRegisteredService(), RegisteredServiceTestUtils.getPrincipal());
+            service, RegisteredServiceTestUtils.getPrincipal());
         assertNotNull(provider);
         assertEquals(TestMultifactorAuthenticationProvider.ID, provider.getId());
     }

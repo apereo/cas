@@ -8,6 +8,7 @@ import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
         "cas.person-directory.attribute-definition-store.json.location=classpath:/basic-attribute-definitions.json"
     })
+@Tag("Simple")
 public class DefaultAttributeDefinitionStoreTests {
 
     @Autowired

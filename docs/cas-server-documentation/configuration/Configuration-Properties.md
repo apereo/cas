@@ -2939,8 +2939,12 @@ Configuration settings for this feature are available [here](Configuration-Prope
 
 #### Google Authenticator Rest
 
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.mfa.gauth.rest`.
+
+Additionally, tokens can be managed via REST using the following settings:
+
 ```properties
-# cas.authn.mfa.gauth.rest.endpoint-url=https://somewhere.gauth.com
+# cas.authn.mfa.gauth.rest.token-url=https://somewhere.gauth.com
 ```
 
 #### Google Authenticator MongoDb

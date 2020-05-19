@@ -5,7 +5,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -31,11 +31,11 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
     private final MongoOperations mongoTemplate;
     private final String collectionName;
 
-    public MongoDbServiceRegistry(final ApplicationEventPublisher eventPublisher,
+    public MongoDbServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                   final MongoOperations mongoTemplate,
                                   final String collectionName,
                                   final Collection<ServiceRegistryListener> serviceRegistryListeners) {
-        super(eventPublisher, serviceRegistryListeners);
+        super(applicationContext, serviceRegistryListeners);
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
     }

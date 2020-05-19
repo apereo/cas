@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,11 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
     HazelcastTicketRegistryConfiguration.class,
     HazelcastTicketRegistryTicketCatalogConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
-}, properties = {
-    "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalhostinstance",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
+}, properties = "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalhostinstance")
+@Tag("Hazelcast")
 public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired

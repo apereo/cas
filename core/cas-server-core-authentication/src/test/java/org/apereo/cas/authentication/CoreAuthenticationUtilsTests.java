@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("Simple")
 public class CoreAuthenticationUtilsTests {
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
@@ -71,14 +73,6 @@ public class CoreAuthenticationUtilsTests {
     public void verifyAuthnPolicyNotPrevented() throws Exception {
         val props = new AuthenticationPolicyProperties();
         props.getNotPrevented().setEnabled(true);
-        val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
-        verifySerialization(policy);
-    }
-
-    @Test
-    public void verifyAuthnPolicyUnique() throws Exception {
-        val props = new AuthenticationPolicyProperties();
-        props.getUniquePrincipal().setEnabled(true);
         val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
         verifySerialization(policy);
     }

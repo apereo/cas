@@ -1,5 +1,5 @@
 #!/bin/bash
-source ./ci/functions.sh
+
 
 gradle="./gradlew "
 gradleBuild=""
@@ -37,11 +37,7 @@ if [ $retVal == 0 ]; then
     pid=$!
     echo "Launched CAS with pid ${pid}. Waiting for CAS server to come online..."
     sleep 60
-
-    echo -e "Switching Python version..."
-    pyenv global 3.8.1
-    echo -e "Python version is: `python --version`\n"
-
+    
     cd etc/loadtests/locust
     echo -e "Current directory contains: \n\n`ls`"
 

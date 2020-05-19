@@ -9,6 +9,7 @@ import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.tgc.cookie.sameSitePolicy=lax"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("Simple")
 public class CasGoogleAnalyticsCookieGeneratorTests {
 
     @Autowired

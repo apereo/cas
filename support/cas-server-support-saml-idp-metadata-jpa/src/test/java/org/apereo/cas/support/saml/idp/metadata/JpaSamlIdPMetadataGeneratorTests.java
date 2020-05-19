@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.jpa.ddlAuto=create-drop",
     "cas.jdbc.showSql=true"
 })
-@Tag("SAML")
+@Tag("JDBC")
 public class JpaSamlIdPMetadataGeneratorTests extends BaseJpaSamlMetadataTests {
     @Test
     public void verifyOperation() {

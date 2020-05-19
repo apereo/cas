@@ -1,24 +1,15 @@
 #!/bin/bash
-source ./ci/functions.sh
+
 
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon -DtestCategoryType=SIMPLE "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-gradleBuild="$gradleBuild test jacocoRootReport --parallel -x javadoc -x check \
-    -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true "
-
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
-    gradleBuild="$gradleBuild --rerun-tasks "
-fi
-
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[refresh dependencies]"* ]]; then
-    gradleBuild="$gradleBuild --refresh-dependencies "
-fi
+gradleBuild="$gradleBuild testSimple jacocoRootReport --parallel -x javadoc -x check -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true "
 
 if [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."

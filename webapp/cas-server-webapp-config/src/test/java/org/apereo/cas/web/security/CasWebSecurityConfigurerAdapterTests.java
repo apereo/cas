@@ -3,6 +3,7 @@ package org.apereo.cas.web.security;
 import org.apereo.cas.config.CasWebAppSecurityConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.actuate.autoconfigure.beans.BeansEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
@@ -68,6 +69,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
     })
 @WebAppConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("Simple")
 public class CasWebSecurityConfigurerAdapterTests {
     @Test
     public void verifyOperation() {

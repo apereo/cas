@@ -32,12 +32,14 @@ import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -77,6 +79,7 @@ import static org.junit.jupiter.api.Assertions.*;
         CasThymeleafConfiguration.class,
         CasValidationConfiguration.class
     })
+@Tag("Simple")
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
@@ -202,7 +205,8 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         assertEquals("binaryAttributeValue", EncodingUtils.decodeBase64ToString(binaryAttr.toString()));
     }
 
-    @TestConfiguration
+    @TestConfiguration("AttributeRepositoryTestConfiguration")
+    @Lazy(false)
     public static class AttributeRepositoryTestConfiguration {
         @Bean
         public IPersonAttributeDao attributeRepository() {

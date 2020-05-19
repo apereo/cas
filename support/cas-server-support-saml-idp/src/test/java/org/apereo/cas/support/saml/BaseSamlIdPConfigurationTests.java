@@ -35,7 +35,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
-import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -51,7 +50,6 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.Data;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -73,9 +71,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -88,12 +85,14 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@SpringBootTest(classes = BaseSamlIdPConfigurationTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseSamlIdPConfigurationTests.SharedTestConfiguration.class,
+    properties = {
+        "cas.authn.saml-idp.entityId=https://cas.example.org/idp",
+        "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
+    })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("SAML")
 public abstract class BaseSamlIdPConfigurationTests {
-    protected static FileSystemResource METADATA_DIRECTORY;
-
     @Autowired
     @Qualifier("casSamlIdPMetadataResolver")
     protected MetadataResolver casSamlIdPMetadataResolver;
@@ -149,79 +148,12 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
-    protected static Assertion getAssertion() {
-        val attributes = new LinkedHashMap<String, Object>(CoreAuthenticationTestUtils.getAttributes());
-        val permissions = new ArrayList<>();
-        permissions.add(new PermissionSamlAttributeValue("admin", "cas-admins", "super-cas"));
-        permissions.add(new PermissionSamlAttributeValue("designer", "cas-designers", "cas-ux"));
-        attributes.put("permissions", permissions);
-        val casuser = new AttributePrincipalImpl("casuser", attributes);
-        return new AssertionImpl(casuser, attributes);
-    }
-
-    protected static AuthnRequest getAuthnRequestFor(final SamlRegisteredService service) {
-        return getAuthnRequestFor(service.getServiceId());
-    }
-
-    protected static AuthnRequest getAuthnRequestFor(final String service) {
-        val authnRequest = mock(AuthnRequest.class);
-        when(authnRequest.getID()).thenReturn("23hgbcehfgeb7843jdv1");
-        val issuer = mock(Issuer.class);
-        when(issuer.getValue()).thenReturn(service);
-        when(authnRequest.getIssuer()).thenReturn(issuer);
-        return authnRequest;
-    }
-
-    public static void setMetadataDirectory(final FileSystemResource metadataDirectory) {
-        METADATA_DIRECTORY = metadataDirectory;
-    }
-
-    public static FileSystemResource getMetadataDirectory() {
-        return METADATA_DIRECTORY;
-    }
-
-    protected static SamlRegisteredService getSamlRegisteredServiceForTestShib() {
-        return getSamlRegisteredServiceForTestShib(false, false, false);
-    }
-
-    protected static SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion,
-                                                                               final boolean signResponses) {
-        return getSamlRegisteredServiceForTestShib(signAssertion, signResponses, false);
-    }
-
-    protected static SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion,
-                                                                               final boolean signResponses,
-                                                                               final boolean encryptAssertions) {
-        return getSamlRegisteredServiceFor(signAssertion, signResponses, encryptAssertions, "https://sp.testshib.org/shibboleth-sp");
-    }
-
-    protected static SamlRegisteredService getSamlRegisteredServiceFor(final boolean signAssertion,
-                                                                       final boolean signResponses,
-                                                                       final boolean encryptAssertions,
-                                                                       final String entityId) {
-        val service = new SamlRegisteredService();
-        service.setName("TestShib");
-        service.setServiceId(entityId);
-        service.setId(100);
-        service.setSignAssertions(signAssertion);
-        service.setSignResponses(signResponses);
-        service.setEncryptAssertions(encryptAssertions);
-        service.setDescription("SAML Service");
-        service.setMetadataLocation("classpath:metadata/testshib-providers.xml");
-        return service;
-    }
-
     @TestConfiguration
+    @Lazy(false)
     public static class SamlIdPMetadataTestConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired
         @Qualifier("defaultPrincipalResolver")
         private PrincipalResolver defaultPrincipalResolver;
-
-        @SneakyThrows
-        @Bean
-        public SamlIdPMetadataLocator samlIdPMetadataLocator() {
-            return new FileSystemSamlIdPMetadataLocator(METADATA_DIRECTORY);
-        }
 
         @Override
         public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
@@ -288,10 +220,59 @@ public abstract class BaseSamlIdPConfigurationTests {
         CasCoreUtilConfiguration.class
     })
     public static class SharedTestConfiguration {
-        static {
-            if (METADATA_DIRECTORY == null) {
-                METADATA_DIRECTORY = new FileSystemResource("src/test/resources/metadata");
-            }
-        }
+    }
+
+    protected static Assertion getAssertion() {
+        val attributes = new LinkedHashMap<String, Object>(CoreAuthenticationTestUtils.getAttributes());
+        val permissions = new ArrayList<>();
+        permissions.add(new PermissionSamlAttributeValue("admin", "cas-admins", "super-cas"));
+        permissions.add(new PermissionSamlAttributeValue("designer", "cas-designers", "cas-ux"));
+        attributes.put("permissions", permissions);
+        val casuser = new AttributePrincipalImpl("casuser", attributes);
+        return new AssertionImpl(casuser, attributes);
+    }
+
+    protected static AuthnRequest getAuthnRequestFor(final SamlRegisteredService service) {
+        return getAuthnRequestFor(service.getServiceId());
+    }
+
+    protected static AuthnRequest getAuthnRequestFor(final String service) {
+        val authnRequest = mock(AuthnRequest.class);
+        when(authnRequest.getID()).thenReturn("23hgbcehfgeb7843jdv1");
+        val issuer = mock(Issuer.class);
+        when(issuer.getValue()).thenReturn(service);
+        when(authnRequest.getIssuer()).thenReturn(issuer);
+        return authnRequest;
+    }
+
+    protected static SamlRegisteredService getSamlRegisteredServiceForTestShib() {
+        return getSamlRegisteredServiceForTestShib(false, false, false);
+    }
+
+    protected static SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion,
+                                                                               final boolean signResponses) {
+        return getSamlRegisteredServiceForTestShib(signAssertion, signResponses, false);
+    }
+
+    protected static SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion,
+                                                                               final boolean signResponses,
+                                                                               final boolean encryptAssertions) {
+        return getSamlRegisteredServiceFor(signAssertion, signResponses, encryptAssertions, "https://sp.testshib.org/shibboleth-sp");
+    }
+
+    protected static SamlRegisteredService getSamlRegisteredServiceFor(final boolean signAssertion,
+                                                                       final boolean signResponses,
+                                                                       final boolean encryptAssertions,
+                                                                       final String entityId) {
+        val service = new SamlRegisteredService();
+        service.setName("TestShib");
+        service.setServiceId(entityId);
+        service.setId(100);
+        service.setSignAssertions(signAssertion);
+        service.setSignResponses(signResponses);
+        service.setEncryptAssertions(encryptAssertions);
+        service.setDescription("SAML Service");
+        service.setMetadataLocation("classpath:metadata/testshib-providers.xml");
+        return service;
     }
 }

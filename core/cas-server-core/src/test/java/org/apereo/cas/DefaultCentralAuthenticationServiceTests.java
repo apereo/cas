@@ -30,6 +30,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -41,6 +42,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Tag("Simple")
 public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthenticationServiceTests {
 
     private static Service getService(final String name) {

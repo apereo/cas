@@ -1,8 +1,7 @@
 package org.apereo.cas.config;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
-import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link CasSamlSPSymplicityConfigurationTests}.
@@ -11,10 +10,12 @@ import org.springframework.context.annotation.Import;
  * @since 6.2.0
  */
 @Tag("SAML")
-@Import(CasSamlSPSymplicityConfiguration.class)
+
+@TestPropertySource(properties = {
+    "cas.saml-sp.symplicity.metadata=classpath:/metadata/sp-metadata.xml",
+    "cas.saml-sp.symplicity.name-id-attribute=cn",
+    "cas.saml-sp.symplicity.name-id-format=transient"
+})
 public class CasSamlSPSymplicityConfigurationTests extends BaseCasSamlSPConfigurationTests {
-    @BeforeAll
-    public static void beforeAll() {
-        SERVICE_PROVIDER = "symplicity";
-    }
+
 }

@@ -8,6 +8,7 @@ import org.apereo.cas.services.ServiceRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.*;
  * @author Arnaud Lesueur
  * @since 3.1
  */
+@Tag("Simple")
 public class SimpleWebApplicationServiceImplTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "simpleWebApplicationServiceImpl.json");
 

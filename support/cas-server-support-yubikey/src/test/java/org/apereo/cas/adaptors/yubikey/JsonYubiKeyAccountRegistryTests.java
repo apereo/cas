@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,6 +48,7 @@ public class JsonYubiKeyAccountRegistryTests extends BaseYubiKeyTests {
     }
 
     @TestConfiguration("JsonYubiKeyAccountRegistryTestConfiguration")
+    @Lazy(false)
     public static class JsonYubiKeyAccountRegistryTestConfiguration {
         @Bean
         @RefreshScope

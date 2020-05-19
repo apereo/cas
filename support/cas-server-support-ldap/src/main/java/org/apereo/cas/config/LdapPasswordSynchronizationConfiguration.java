@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This is {@link LdapPasswordSynchronizationConfiguration}.
@@ -38,7 +39,7 @@ public class LdapPasswordSynchronizationConfiguration {
         val bean = new ListFactoryBean() {
             @Override
             protected void destroyInstance(final List list) {
-                list.forEach(Unchecked.consumer(postProcessor ->
+                Objects.requireNonNull(list).forEach(Unchecked.consumer(postProcessor ->
                     ((DisposableBean) postProcessor).destroy()
                 ));
             }
@@ -52,8 +53,8 @@ public class LdapPasswordSynchronizationConfiguration {
     @SneakyThrows
     @Autowired
     public AuthenticationEventExecutionPlanConfigurer ldapPasswordSynchronizationAuthenticationEventExecutionPlanConfigurer(
-            @Qualifier("ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean")
-            final ListFactoryBean ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean) {
+        @Qualifier("ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean")
+        final ListFactoryBean ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean) {
         val postProcessorList = ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean.getObject();
         return plan -> {
             val ldap = casProperties.getAuthn().getPasswordSync().getLdap();

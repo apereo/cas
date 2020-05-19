@@ -12,7 +12,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -41,11 +41,11 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
 
     private final StringSerializer<RegisteredService> registeredServiceJsonSerializer;
 
-    public CouchbaseServiceRegistry(final ApplicationEventPublisher eventPublisher,
+    public CouchbaseServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                     final CouchbaseClientFactory couchbase,
                                     final StringSerializer<RegisteredService> registeredServiceJsonSerializer,
                                     final Collection<ServiceRegistryListener> serviceRegistryListeners) {
-        super(eventPublisher, serviceRegistryListeners);
+        super(applicationContext, serviceRegistryListeners);
         this.couchbase = couchbase;
         this.registeredServiceJsonSerializer = registeredServiceJsonSerializer;
     }

@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.exceptions.UniquePrincipalRequiredException;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -16,6 +17,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,11 +49,9 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreServicesConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 @DirtiesContext
+@Tag("Simple")
 public class UniquePrincipalAuthenticationPolicyTests {
     @Autowired
     @Qualifier("ticketRegistry")
@@ -64,7 +64,7 @@ public class UniquePrincipalAuthenticationPolicyTests {
     @SneakyThrows
     public void verifyPolicyIsGoodUserNotFound() {
         this.ticketRegistry.deleteAll();
-        val p = new UniquePrincipalAuthenticationPolicy();
+        val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             new LinkedHashSet<>(), applicationContext));
     }
@@ -73,10 +73,13 @@ public class UniquePrincipalAuthenticationPolicyTests {
     @SneakyThrows
     public void verifyPolicyFailsUserFoundOnce() {
         this.ticketRegistry.deleteAll();
-        this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TGT-1", CoreAuthenticationTestUtils.getAuthentication("casuser"),
-            NeverExpiresExpirationPolicy.INSTANCE));
-        val p = new UniquePrincipalAuthenticationPolicy();
-        assertFalse(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
-            new LinkedHashSet<>(), applicationContext));
+        val ticket = new TicketGrantingTicketImpl("TGT-1",
+            CoreAuthenticationTestUtils.getAuthentication("casuser"),
+            NeverExpiresExpirationPolicy.INSTANCE);
+        this.ticketRegistry.addTicket(ticket);
+        val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
+        assertThrows(UniquePrincipalRequiredException.class,
+            () -> p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
+                new LinkedHashSet<>(), applicationContext));
     }
 }

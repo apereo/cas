@@ -41,7 +41,9 @@ public class RequestSessionAttributeMultifactorAuthenticationPolicyEventResolver
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
+        val service = RegisteredServiceTestUtils.getRegisteredService();
+        servicesManager.save(service);
+        WebUtils.putRegisteredService(context, service);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
 

@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("Simple")
 public class ServiceRegistryInitializerEventListenerTests {
 
     @Test

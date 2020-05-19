@@ -1,8 +1,7 @@
 package org.apereo.cas.config;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
-import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link CasSamlSPJiraConfigurationTests}.
@@ -11,10 +10,11 @@ import org.springframework.context.annotation.Import;
  * @since 6.2.0
  */
 @Tag("SAML")
-@Import(CasSamlSPJiraConfiguration.class)
+
+@TestPropertySource(properties = {
+    "cas.saml-sp.jira.metadata=classpath:/metadata/sp-metadata.xml",
+    "cas.saml-sp.jira.name-id-attribute=cn",
+    "cas.saml-sp.jira.name-id-format=transient"
+})
 public class CasSamlSPJiraConfigurationTests extends BaseCasSamlSPConfigurationTests {
-    @BeforeAll
-    public static void beforeAll() {
-        SERVICE_PROVIDER = "jira";
-    }
 }

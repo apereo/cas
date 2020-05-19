@@ -23,11 +23,11 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].dn-format=CAS\\\\%s",
     "cas.authn.ldap[0].principalAttributeList=sAMAccountName,cn",
     "cas.authn.ldap[0].enhance-with-entry-resolver=true",
-    "cas.authn.ldap[0].search-filter=(s-amaccount-name={user})",
+    "cas.authn.ldap[0].search-filter=(sAMAccountName={user})",
     "cas.authn.ldap[0].pool-passivator=bind",
     "cas.authn.ldap[0].min-pool-size=0",
     "cas.authn.ldap[0].trust-store=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_TRUST_STORE,
-    "cas.authn.ldap[0].trust-store-type=-jks",
+    "cas.authn.ldap[0].trust-store-type=JKS",
     "cas.authn.ldap[0].trust-store-password=changeit",
     "cas.authn.ldap[0].hostname-verifier=-default"
 })

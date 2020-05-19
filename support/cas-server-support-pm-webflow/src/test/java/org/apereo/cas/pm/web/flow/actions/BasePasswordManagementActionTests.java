@@ -73,9 +73,6 @@ import org.springframework.webflow.execution.Action;
     CasCoreHttpConfiguration.class,
     CasWebflowContextConfiguration.class
 }, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-
     "cas.authn.pm.enabled=true",
     "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
     "cas.authn.pm.reset.mail.from=cas@example.org",

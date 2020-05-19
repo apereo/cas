@@ -4,6 +4,7 @@ import org.apereo.cas.support.wsfederation.authentication.principal.WsFederation
 
 import lombok.Setter;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.security.credential.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2.0
  */
 @Setter
+@Tag("Simple")
 public class WsFederationHelperTests extends AbstractWsFederationTests {
     private static final String GOOD_TOKEN = "goodToken";
 

@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("Simple")
 public class RegisteredServicePublicKeyCipherExecutorTests {
 
     private static AbstractRegisteredService getService(final String keyLocation) {

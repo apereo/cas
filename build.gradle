@@ -58,7 +58,6 @@ ext {
         throw new GradleException("No credentials are configured to publish releases or snapshots")
     }
 
-    testCategoryType = System.getProperty("testCategoryType")
     skipBootifulArtifact = System.getProperty("skipBootifulArtifact")
     skipErrorProneCompiler = System.getProperty("skipErrorProneCompiler")
 
@@ -379,6 +378,14 @@ subprojects {
                                 password "${sonatypePassword}"
                             }
                         }
+                        maven {
+                            name = "GitHubPackages-Releases"
+                            url = uri("${githubPackagesRepositoryUrl}")
+                            credentials {
+                                username = "${sonatypeUsername}"
+                                password = System.getenv("GH_PACKAGES_TOKEN")
+                            }
+                        }
                     }
                     if (rootProject.publishSnapshots) {
                         maven {
@@ -387,6 +394,14 @@ subprojects {
                             credentials {
                                 username "${sonatypeUsername}"
                                 password "${sonatypePassword}"
+                            }
+                        }
+                        maven {
+                            name = "GitHubPackages-Snapshots"
+                            url = uri("${githubPackagesRepositoryUrl}")
+                            credentials {
+                                username = "${sonatypeUsername}"
+                                password = System.getenv("GH_PACKAGES_TOKEN")
                             }
                         }
                     }
@@ -670,9 +685,9 @@ task signingKey(description: "Display CAS signing key id") {
 }
 
 task verifyRequiredJavaVersion {
-    // println "Checking current Java version ${JavaVersion.current()} for required Java version ${project.targetCompatibility}"
-    if (!JavaVersion.current().name.equalsIgnoreCase("${project.targetCompatibility}")) {
-        throw new GradleException("Current Java version ${JavaVersion.current()} does not match required Java version ${project.targetCompatibility}")
+    def requiredVersion = JavaVersion.toVersion(project.targetCompatibility)
+    if (!JavaVersion.current().isCompatibleWith(requiredVersion)) {
+        throw new GradleException("Current Java version ${JavaVersion.current()} does not match required Java version ${requiredVersion}")
     }
 }
 

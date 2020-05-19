@@ -41,6 +41,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -87,12 +88,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasSupportActionsConfiguration.class
 },
-    properties = {
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000",
-
-        "cas.sso.allowMissingServiceParameter=false"
-    })
+    properties =
+        "cas.sso.allowMissingServiceParameter=false")
 @Tag("Webflow")
 public class InitialFlowSetupActionSsoTests {
     @Autowired
@@ -108,6 +105,7 @@ public class InitialFlowSetupActionSsoTests {
     }
 
     @TestConfiguration("CasTestConfiguration")
+    @Lazy(false)
     public static class CasTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;

@@ -30,6 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 
 import java.net.URL;
 import java.util.List;
@@ -67,7 +68,8 @@ public abstract class BaseJwtTokenTicketBuilderTests {
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
-    @TestConfiguration
+    @TestConfiguration("TokenTicketBuilderTestConfiguration")
+    @Lazy(false)
     public static class TokenTicketBuilderTestConfiguration implements InitializingBean {
         @Autowired
         @Qualifier("inMemoryRegisteredServices")

@@ -8,7 +8,7 @@
 
 language: java
 os: linux
-dist: trusty
+dist: bionic
 services:
   - docker
 branches:
@@ -36,7 +36,8 @@ notifications:
     secure: "gNFUOGd0isowSwPfQ9VqGQWhWRDAjzX9tfH0xGe2gyg1kiOhq3Odb8fdcUg9f3DhAbiMxGDu08IgmDbeEyncB42Zdqk/DFvD3F958WaVy0O9TF2iAzO+ftBG0+slFHPDZ8qAy97+mV/be7KBkLYP+BydYTVfO84NvpLNiylmOVU="
 env:
   global:
-    - JAVA_OPTS="-Xms512m -Xmx6048m -Xss64m -XX:ReservedCodeCacheSize=512m -Xverify:none -server"
+    - JAVA_OPTS="-Xms512m -Xmx6048m -Xss64m -XX:ReservedCodeCacheSize=512m -Xverify:none -server -XX:+UseG1GC"
+    - GRADLE_OPTS="-Xms512m -Xmx6048m -Xss64m -XX:ReservedCodeCacheSize=512m -Xverify:none -server -XX:+UseG1GC"
     - SPRING_MAIN_BANNER-MODE="off"
     - DEPENDENCY_BOT_BRANCH=^renovate
     - TERM=xterm
@@ -47,6 +48,7 @@ env:
 jdk:
   - openjdk11
 before_install:
+  - unset _JAVA_OPTIONS
   - ./ci/init-travis-build.sh
 install: true
 script:
@@ -235,6 +237,11 @@ jobs:
       workspaces:
         use: buildWorkspace
     - stage: test
+      script: ./ci/tests/hazelcast/run-tests-hazelcast.sh
+      name: "Hazelcast Tests"
+      workspaces:
+        use: buildWorkspace
+    - stage: test
       script: ./ci/tests/x509/run-tests-x509.sh
       name: "X509 Tests"
       workspaces:
@@ -275,7 +282,7 @@ jobs:
       workspaces:
         use: buildWorkspace
     - stage: test
-      script: ./ci/tests/postgres/run-tests-postgres.sh
+        script: ./ci/tests/postgres/run-tests-postgres.sh
       name: "PostgreSQL Tests"
       workspaces:
         use: buildWorkspace
@@ -327,6 +334,11 @@ jobs:
     - stage: test
       script: ./ci/tests/influxdb/run-tests-influxdb.sh
       name: "InfluxDb Tests"
+      workspaces:
+        use: buildWorkspace
+    - stage: test
+      script: ./ci/tests/jmx/run-tests-jmx.sh
+      name: "JMX Tests"
       workspaces:
         use: buildWorkspace
     - stage: test

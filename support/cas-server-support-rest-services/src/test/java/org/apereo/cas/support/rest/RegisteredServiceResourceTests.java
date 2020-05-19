@@ -15,6 +15,7 @@ import org.apereo.cas.util.EncodingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatcher;
@@ -40,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 4.0.0
  */
 @ExtendWith(MockitoExtension.class)
+@Tag("Simple")
 public class RegisteredServiceResourceTests {
 
     @Mock

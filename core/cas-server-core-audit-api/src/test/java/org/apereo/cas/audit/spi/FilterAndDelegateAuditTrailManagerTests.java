@@ -4,6 +4,7 @@ import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("Simple")
 public class FilterAndDelegateAuditTrailManagerTests {
 
     @Test

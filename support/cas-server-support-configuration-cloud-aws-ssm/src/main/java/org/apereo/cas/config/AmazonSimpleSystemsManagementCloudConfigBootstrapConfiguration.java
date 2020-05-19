@@ -64,7 +64,11 @@ public class AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration impl
                 } while (nextToken != null);
             });
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         LOGGER.debug("Located [{}] settings(s)", props.size());
         return new PropertiesPropertySource(getClass().getSimpleName(), props);

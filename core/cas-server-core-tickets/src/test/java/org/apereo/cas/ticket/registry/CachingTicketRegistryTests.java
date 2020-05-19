@@ -4,7 +4,8 @@ import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
-import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class)
+@Tag("Simple")
 public class CachingTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Override
@@ -25,7 +27,8 @@ public class CachingTicketRegistryTests extends BaseTicketRegistryTests {
         return new CachingTicketRegistry(mock(LogoutManager.class));
     }
 
-    @RepeatedTest(1)
+    @Test
+    @Tag("DisableEncryption")
     public void verifyOtherConstructor() {
         val registry = new CachingTicketRegistry(CipherExecutor.noOp(), mock(LogoutManager.class));
         assertNotNull(registry);

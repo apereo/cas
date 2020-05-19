@@ -4,6 +4,7 @@ import org.apereo.cas.BaseCoreWsSecurityIdentityProviderConfigurationTests;
 
 import org.apache.cxf.sts.token.realm.RealmProperties;
 import org.apache.cxf.ws.security.sts.provider.SecurityTokenServiceProvider;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.wsfedIdp.sts.realm.keyPassword=realma",
     "cas.authn.wsfedIdp.sts.realm.issuer=CAS"
 })
+@Tag("Simple")
 public class CoreWsSecuritySecurityTokenServiceConfigurationTests {
     @Autowired
     @Qualifier("cxfServlet")

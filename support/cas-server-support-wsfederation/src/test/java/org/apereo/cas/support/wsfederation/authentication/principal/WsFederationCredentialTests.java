@@ -3,6 +3,7 @@ package org.apereo.cas.support.wsfederation.authentication.principal;
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZoneOffset;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author John Gasper
  * @since 4.2.0
  */
+@Tag("Simple")
 public class WsFederationCredentialTests extends AbstractWsFederationTests {
     
     @Test
