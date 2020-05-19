@@ -66,9 +66,9 @@ git checkout -b $BRANCH
 If there already exists a remote tracking branch for the version you are about to release, you should <code>git checkout</code> that branch, 
 skip this step and move on to next section to build and release.</p></div>
 
-### Travis CI
+### GitHub Actions
 
-- Change `.travis.yml` to *only* build the newly-created release branch.
+- Change `.github/workflows/cas-build.yml` to trigger and *only* build the newly-created release branch.
 - Examine all CI shell scripts under the `ci` folder to make sure nothing points to `development` or `master`. This is particularly applicable to how CAS documentation is published to the `gh-pages` branch.
 - Disable jobs in CI that report new dependency versions or update dependencies using Renovate, etc.
  
@@ -76,7 +76,7 @@ Do not forget to commit all changes and push changes upstream, creating a new re
 
 ## Performing the Release 
 
-- In the project's `gradle.properties`, change the project version to the release version and remove the `-SNAPSHOT`. (i.e. `5.0.0-RC1`). 
+- In the project's `gradle.properties`, change the project version to the release version and remove the `-SNAPSHOT`. (i.e. `6.0.0-RC1`). 
 - Then build and release the project using the following command:
 
 ```bash
