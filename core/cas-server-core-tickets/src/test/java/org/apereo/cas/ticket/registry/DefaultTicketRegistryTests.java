@@ -3,8 +3,8 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +28,8 @@ public class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
         return new DefaultTicketRegistry(new ConcurrentHashMap<>(10, 10, 5), CipherExecutor.noOp());
     }
 
-    @RepeatedTest(1)
+    @Test
+    @Tag("DisableEncryption")
     public void verifyCountsUnknown() {
         val registry = mock(DefaultTicketRegistry.class);
         when(registry.getTicketsStream()).thenThrow(IllegalArgumentException.class);
