@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.location=file:/tmp")
-@Tag("SAML")
+@Tag("JDBC")
 public class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMetadataTests {
 
     @Test

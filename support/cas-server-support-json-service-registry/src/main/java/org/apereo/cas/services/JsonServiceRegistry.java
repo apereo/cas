@@ -9,7 +9,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.WatcherService;
 
 import lombok.Getter;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 
 import java.util.Collection;
@@ -35,13 +35,13 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
     private static final String FILE_EXTENSION = "json";
 
     public JsonServiceRegistry(final Resource configDirectory, final WatcherService serviceRegistryConfigWatcher,
-                               final ApplicationEventPublisher eventPublisher,
+                               final ConfigurableApplicationContext applicationContext,
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
                                final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
         super(configDirectory,
             CollectionUtils.wrapList(new CasAddonsRegisteredServicesJsonSerializer(), new RegisteredServiceJsonSerializer()),
-            eventPublisher, registeredServiceReplicationStrategy, resourceNamingStrategy,
+            applicationContext, registeredServiceReplicationStrategy, resourceNamingStrategy,
             serviceRegistryListeners, serviceRegistryConfigWatcher);
     }
 

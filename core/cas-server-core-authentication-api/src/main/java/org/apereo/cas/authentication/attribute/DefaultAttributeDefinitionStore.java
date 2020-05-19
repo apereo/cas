@@ -68,7 +68,11 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
                     try {
                         loadAttributeDefinitionsFromInputStream(new FileSystemResource(file));
                     } catch (final Exception e) {
-                        LOGGER.error(e.getMessage(), e);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.error(e.getMessage(), e);
+                        } else {
+                            LOGGER.error(e.getMessage());
+                        }
                     }
                 });
                 this.storeWatcherService.start(getClass().getSimpleName());

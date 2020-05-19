@@ -32,9 +32,9 @@ public class GroovyMultifactorAuthenticationProviderBypassEvaluator extends Base
 
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecuteInternal(final Authentication authentication,
-                                                                  final RegisteredService registeredService,
-                                                                  final MultifactorAuthenticationProvider provider,
-                                                                  final HttpServletRequest request) {
+                                                                          final RegisteredService registeredService,
+                                                                          final MultifactorAuthenticationProvider provider,
+                                                                          final HttpServletRequest request) {
         try {
             val principal = authentication.getPrincipal();
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
@@ -43,7 +43,11 @@ public class GroovyMultifactorAuthenticationProviderBypassEvaluator extends Base
             val args = new Object[]{authentication, principal, registeredService, provider, LOGGER, request};
             return watchableScript.execute(args, Boolean.class);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             return true;
         }
     }

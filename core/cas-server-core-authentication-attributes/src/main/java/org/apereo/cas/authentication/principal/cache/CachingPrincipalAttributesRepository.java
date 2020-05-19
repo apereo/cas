@@ -87,7 +87,11 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
             cache.putCachedAttributesFor(registeredService, this, id, attributes);
             LOGGER.trace("Cached attributes for [{}]", id);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
     }
 
@@ -104,7 +108,11 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
             val cache = getCacheInstanceFromApplicationContext();
             return cache.getCachedAttributesFor(registeredService, this, principal);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return new HashMap<>(0);
     }

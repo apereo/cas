@@ -87,7 +87,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseSamlIdPConfigurationTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.saml-idp.entityId=https://cas.example.org/idp",
-        "cas.authn.saml-idp.metadata.location=file:${#systemProperties['java.io.tmpdir']}/idp-metadata"
+        "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("SAML")

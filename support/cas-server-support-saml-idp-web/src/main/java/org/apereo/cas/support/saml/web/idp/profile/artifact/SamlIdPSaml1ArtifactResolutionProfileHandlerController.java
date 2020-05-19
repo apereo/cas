@@ -64,7 +64,11 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerController extends Abst
             config.getResponseBuilder().build(artifactMsg, request, response, casAssertion,
                 service, facade, SAMLConstants.SAML2_ARTIFACT_BINDING_URI, ctx);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             request.setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR,
                 "Unable to build SOAP response: " + StringUtils.defaultString(e.getMessage()));
             config.getSamlFaultResponseBuilder().build(artifactMsg, request, response,

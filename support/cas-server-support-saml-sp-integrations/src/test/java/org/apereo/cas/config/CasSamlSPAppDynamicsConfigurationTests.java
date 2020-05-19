@@ -1,9 +1,7 @@
 package org.apereo.cas.config;
 
 import org.junit.jupiter.api.Tag;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link CasSamlSPAppDynamicsConfigurationTests}.
@@ -12,13 +10,11 @@ import org.springframework.test.context.DynamicPropertySource;
  * @since 6.2.0
  */
 @Tag("SAML")
-@Import(CasSamlSPAppDynamicsConfiguration.class)
+@TestPropertySource(properties = {
+    "cas.saml-sp.app-dynamics.metadata=classpath:/metadata/sp-metadata.xml",
+    "cas.saml-sp.app-dynamics.name-id-attribute=cn",
+    "cas.saml-sp.app-dynamics.name-id-format=transient"
+})
 public class CasSamlSPAppDynamicsConfigurationTests extends BaseCasSamlSPConfigurationTests {
-    @DynamicPropertySource
-    @SuppressWarnings("UnusedMethod")
-    public static void configurePropertySource(final DynamicPropertyRegistry registry) {
-        registry.add("cas.saml-sp.app-dynamics.metadata", () -> "classpath:/metadata/sp-metadata.xml");
-        registry.add("cas.saml-sp.app-dynamics.name-id-attribute", () -> "cn");
-        registry.add("cas.saml-sp.app-dynamics.name-id-format", () -> "transient");
-    }
+
 }

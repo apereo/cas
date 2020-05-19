@@ -22,11 +22,19 @@ are expected to be preceded with the `#` character. The following predefined var
 | `environmentVariables`   | Same as above.
 | `envVars`                | Same as above.
 | `env`                    | Same as above.
+| `randomNumber2`          | 2-digit random number.
+| `randomNumber4`          | 4-digit random number.
+| `randomNumber6`          | 6-digit random number.
+| `randomNumber8`          | 8-digit random number.
+| `randomString4`          | 4-character random word.
+| `randomString6`          | 6-character random word.
+| `randomString8`          | 8-character random word.
 
 ## Examples
 
 - Assuming system property `tier` with a value of `production` is available, the configuration 
 value `file://${#systemProperties['tier']}/file.json` translates to `file://production/file.json`
-
 - Assuming environment variable `tier` with a value of `qa` is available, the configuration 
 value `file://${#environmentVariables['tier']}/file.json` translates to `file://qa/file.json`
+- Using `${#randomString6}` translates to a 6-character random word, such as `qemguz`.
+- Using `${#randomNumber8}` translates to a 8-digit random number, such as `75915283`.

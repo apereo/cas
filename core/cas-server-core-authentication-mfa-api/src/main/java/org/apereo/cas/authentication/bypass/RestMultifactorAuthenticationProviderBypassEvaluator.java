@@ -53,7 +53,11 @@ public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMu
                 rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), parameters, new HashMap<>(0));
             return response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             return true;
         }
     }

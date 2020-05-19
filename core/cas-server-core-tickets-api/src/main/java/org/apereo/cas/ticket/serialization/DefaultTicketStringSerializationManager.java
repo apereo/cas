@@ -29,7 +29,11 @@ public class DefaultTicketStringSerializationManager implements TicketSerializat
             }
             return serializer.toString(ticket);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             throw e;
         }
     }

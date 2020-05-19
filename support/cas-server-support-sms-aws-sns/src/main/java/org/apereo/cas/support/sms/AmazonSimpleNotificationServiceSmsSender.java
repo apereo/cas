@@ -45,7 +45,11 @@ public class AmazonSimpleNotificationServiceSmsSender implements SmsSender {
             LOGGER.debug("Submitted SMS publish request with resulting message id [{}]", result.getMessageId());
             return StringUtils.isNotBlank(result.getMessageId());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return false;
     }

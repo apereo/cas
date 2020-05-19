@@ -96,7 +96,15 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
                 .map(entity -> Pair.of(entity.getEntityID(), SamlUtils.transformSamlObject(openSamlConfigBean, entity).toString()))
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.error(e.getMessage(), e);
+                } else {
+                    LOGGER.error(e.getMessage());
+                }
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             return CollectionUtils.wrap("error", e.getMessage());
         }
     }

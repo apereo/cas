@@ -10,7 +10,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.ArrayList;
@@ -33,10 +33,10 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
 
     private final RedisTemplate<String, RegisteredService> template;
 
-    public RedisServiceRegistry(final ApplicationEventPublisher eventPublisher,
+    public RedisServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                 final RedisTemplate<String, RegisteredService> template,
                                 final Collection<ServiceRegistryListener> serviceRegistryListeners) {
-        super(eventPublisher, serviceRegistryListeners);
+        super(applicationContext, serviceRegistryListeners);
         this.template = template;
     }
 

@@ -50,7 +50,11 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
                 return Optional.of(result);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         } finally {
             HttpUtils.close(response);
         }
@@ -67,7 +71,11 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>(0));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         } finally {
             HttpUtils.close(response);
         }
@@ -84,7 +92,11 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>(0));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         } finally {
             HttpUtils.close(response);
         }
@@ -101,7 +113,11 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>(0));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         } finally {
             HttpUtils.close(response);
         }
@@ -115,7 +131,11 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 new HashMap<>(0), new HashMap<>(0));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         } finally {
             HttpUtils.close(response);
         }

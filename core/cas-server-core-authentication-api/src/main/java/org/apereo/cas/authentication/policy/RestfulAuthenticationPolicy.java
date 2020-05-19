@@ -104,7 +104,11 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
             val ex = handleResponseStatusCode(e.getStatusCode(), authentication.getPrincipal());
             throw new GeneralSecurityException(ex);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return false;
     }

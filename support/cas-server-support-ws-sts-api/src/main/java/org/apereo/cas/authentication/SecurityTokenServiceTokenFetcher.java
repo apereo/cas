@@ -42,7 +42,11 @@ public class SecurityTokenServiceTokenFetcher {
             LOGGER.debug("Requesting security token for principal [{}] and registered service [{}]", uid, rp);
             return sts.requestSecurityToken(rp.getAppliesTo());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             throw new AuthenticationException(e.getMessage());
         }
     }

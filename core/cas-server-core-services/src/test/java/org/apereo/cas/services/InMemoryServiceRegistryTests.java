@@ -1,9 +1,8 @@
 package org.apereo.cas.services;
 
+import lombok.val;
 import org.junit.jupiter.api.Tag;
-import org.springframework.context.ApplicationEventPublisher;
-
-import static org.mockito.Mockito.*;
+import org.springframework.context.support.StaticApplicationContext;
 
 /**
  * This is test cases for {@link InMemoryServiceRegistry}.
@@ -16,6 +15,8 @@ public class InMemoryServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {
-        return new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        return new InMemoryServiceRegistry(appCtx);
     }
 }

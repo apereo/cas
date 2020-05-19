@@ -3,7 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
 import lombok.val;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 public class DynamoDbServiceRegistry extends AbstractServiceRegistry {
     private final DynamoDbServiceRegistryFacilitator dbTableService;
 
-    public DynamoDbServiceRegistry(final ApplicationEventPublisher eventPublisher,
+    public DynamoDbServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                    final DynamoDbServiceRegistryFacilitator dbTableService,
                                    final Collection<ServiceRegistryListener> serviceRegistryListeners) {
-        super(eventPublisher, serviceRegistryListeners);
+        super(applicationContext, serviceRegistryListeners);
         this.dbTableService = dbTableService;
     }
 

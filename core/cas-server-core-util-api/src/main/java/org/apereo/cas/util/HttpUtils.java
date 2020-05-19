@@ -37,7 +37,9 @@ import java.util.Map;
 @UtilityClass
 public class HttpUtils {
     private static final int MAP_SIZE = 8;
+
     private static final int MAX_CONNECTIONS = 200;
+
     private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
 
     private static HttpClient HTTP_CLIENT = HttpClientBuilder.create()
@@ -164,7 +166,11 @@ public class HttpUtils {
             prepareHttpRequest(request, basicAuthUsername, basicAuthPassword);
             return HTTP_CLIENT.execute(request);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -180,26 +186,13 @@ public class HttpUtils {
             try {
                 closeableHttpResponse.close();
             } catch (final IOException e) {
-                LOGGER.error(e.getMessage(), e);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.error(e.getMessage(), e);
+                } else {
+                    LOGGER.error(e.getMessage());
+                }
             }
         }
-    }
-
-    @SneakyThrows
-    private static HttpUriRequest getHttpRequestByMethod(final String method, final String entity, final URI uri) {
-        if ("post".equalsIgnoreCase(method)) {
-            val request = new HttpPost(uri);
-            if (StringUtils.isNotBlank(entity)) {
-                val stringEntity = new StringEntity(entity);
-                request.setEntity(stringEntity);
-            }
-            return request;
-        }
-        if ("delete".equalsIgnoreCase(method)) {
-            return new HttpDelete(uri);
-        }
-
-        return new HttpGet(uri);
     }
 
     /**
@@ -218,7 +211,11 @@ public class HttpUtils {
         try {
             return executeGet(url, basicAuthUsername, basicAuthPassword, parameters, new HashMap<>(0));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -241,7 +238,11 @@ public class HttpUtils {
         try {
             return execute(url, HttpMethod.GET.name(), basicAuthUsername, basicAuthPassword, parameters, headers);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -260,7 +261,11 @@ public class HttpUtils {
         try {
             return execute(url, HttpMethod.GET.name(), null, null, parameters, headers);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -277,7 +282,11 @@ public class HttpUtils {
         try {
             return executeGet(url, null, null, parameters);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -292,7 +301,11 @@ public class HttpUtils {
         try {
             return executeGet(url, null, null, new LinkedHashMap<>(MAP_SIZE));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -311,7 +324,11 @@ public class HttpUtils {
         try {
             return executeGet(url, basicAuthUsername, basicAuthPassword, new HashMap<>(0));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -364,7 +381,11 @@ public class HttpUtils {
         try {
             return executePost(url, basicAuthUsername, basicAuthPassword, entity, parameters, new HashMap<>(0));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -389,7 +410,11 @@ public class HttpUtils {
         try {
             return execute(url, HttpMethod.POST.name(), basicAuthUsername, basicAuthPassword, parameters, headers, entity);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -408,11 +433,14 @@ public class HttpUtils {
         try {
             return execute(url, HttpMethod.POST.name(), null, null, parameters, headers, null);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
-
 
     /**
      * Execute delete http response.
@@ -434,7 +462,11 @@ public class HttpUtils {
         try {
             return execute(url, HttpMethod.DELETE.name(), basicAuthUsername, basicAuthPassword, parameters, headers, entity);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -457,7 +489,11 @@ public class HttpUtils {
         try {
             return executeDelete(url, basicAuthUsername, basicAuthPassword, null, parameters, headers);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -476,33 +512,13 @@ public class HttpUtils {
         try {
             return executeDelete(url, basicAuthUsername, basicAuthPassword, null, null, null);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
-    }
-
-
-    /**
-     * Prepare http request. Tries to set the authorization header
-     * in cases where the URL endpoint does not actually produce the header
-     * on its own.
-     *
-     * @param request           the request
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
-     */
-    private static void prepareHttpRequest(final HttpUriRequest request, final String basicAuthUsername,
-                                           final String basicAuthPassword) {
-        if (StringUtils.isNotBlank(basicAuthUsername) && StringUtils.isNotBlank(basicAuthPassword)) {
-            val auth = EncodingUtils.encodeBase64(basicAuthUsername + ':' + basicAuthPassword);
-            request.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + auth);
-        }
-    }
-
-    private static URI buildHttpUri(final String url, final Map<String, Object> parameters) throws URISyntaxException {
-        val uriBuilder = new URIBuilder(url);
-        parameters.forEach((k, v) -> uriBuilder.addParameter(k, v.toString()));
-        return uriBuilder.build();
     }
 
     /**
@@ -541,5 +557,45 @@ public class HttpUtils {
 
     public static void setHttpClient(final HttpClient httpClient) {
         HTTP_CLIENT = httpClient;
+    }
+
+    @SneakyThrows
+    private static HttpUriRequest getHttpRequestByMethod(final String method, final String entity, final URI uri) {
+        if ("post".equalsIgnoreCase(method)) {
+            val request = new HttpPost(uri);
+            if (StringUtils.isNotBlank(entity)) {
+                val stringEntity = new StringEntity(entity);
+                request.setEntity(stringEntity);
+            }
+            return request;
+        }
+        if ("delete".equalsIgnoreCase(method)) {
+            return new HttpDelete(uri);
+        }
+
+        return new HttpGet(uri);
+    }
+
+    /**
+     * Prepare http request. Tries to set the authorization header
+     * in cases where the URL endpoint does not actually produce the header
+     * on its own.
+     *
+     * @param request           the request
+     * @param basicAuthUsername the basic auth username
+     * @param basicAuthPassword the basic auth password
+     */
+    private static void prepareHttpRequest(final HttpUriRequest request, final String basicAuthUsername,
+                                           final String basicAuthPassword) {
+        if (StringUtils.isNotBlank(basicAuthUsername) && StringUtils.isNotBlank(basicAuthPassword)) {
+            val auth = EncodingUtils.encodeBase64(basicAuthUsername + ':' + basicAuthPassword);
+            request.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + auth);
+        }
+    }
+
+    private static URI buildHttpUri(final String url, final Map<String, Object> parameters) throws URISyntaxException {
+        val uriBuilder = new URIBuilder(url);
+        parameters.forEach((k, v) -> uriBuilder.addParameter(k, v.toString()));
+        return uriBuilder.build();
     }
 }

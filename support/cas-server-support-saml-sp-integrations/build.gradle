@@ -1,4 +1,5 @@
 description = "Apereo CAS SAML SP Integrations"
+
 dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")

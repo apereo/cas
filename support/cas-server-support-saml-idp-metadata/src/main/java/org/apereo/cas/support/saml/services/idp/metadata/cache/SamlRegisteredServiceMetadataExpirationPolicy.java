@@ -75,6 +75,10 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
      */
     protected long getCacheDurationForServiceProvider(final SamlRegisteredService service, final MetadataResolver chainingMetadataResolver) {
         try {
+            if (StringUtils.isBlank(service.getServiceId())) {
+                LOGGER.error("Unable to determine duration for SAML service [{}] with no entity id", service);
+                return -1;
+            }
             val set = new CriteriaSet();
             set.add(new EntityIdCriterion(service.getServiceId()));
             set.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));

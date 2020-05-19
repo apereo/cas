@@ -48,7 +48,11 @@ public class RestfulSmsSender implements SmsSender {
                 return status.is2xxSuccessful();
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         } finally {
             HttpUtils.close(response);
         }

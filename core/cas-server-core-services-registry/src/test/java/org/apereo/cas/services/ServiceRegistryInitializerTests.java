@@ -3,7 +3,7 @@ package org.apereo.cas.services;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.List;
 
@@ -33,9 +33,12 @@ public class ServiceRegistryInitializerTests {
         val jsonServiceRegistry = mock(ServiceRegistry.class);
         when(jsonServiceRegistry.load()).thenReturn(List.of(initialService));
 
-        val serviceRegistry = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+
+        val serviceRegistry = new InMemoryServiceRegistry(appCtx);
         val serviceRegistryInitializer = new ServiceRegistryInitializer(jsonServiceRegistry,
-            new DefaultChainingServiceRegistry(mock(ApplicationEventPublisher.class), List.of(serviceRegistry)),
+            new DefaultChainingServiceRegistry(appCtx, List.of(serviceRegistry)),
             servicesManager);
         serviceRegistryInitializer.initServiceRegistryIfNecessary();
         assertEquals(1, serviceRegistry.size());

@@ -14,13 +14,12 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RegisteredServiceAuthenticationPolicyResolverTests}.
@@ -80,9 +79,12 @@ public class RegisteredServiceAuthenticationPolicyResolverTests {
         svc6.setAuthenticationPolicy(p6);
         list.add(svc6);
 
-        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), list, new ArrayList<>());
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
 
-        this.servicesManager = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
+        val dao = new InMemoryServiceRegistry(appCtx, list, new ArrayList<>());
+
+        this.servicesManager = new DefaultServicesManager(dao, appCtx, new HashSet<>());
         this.servicesManager.load();
     }
 

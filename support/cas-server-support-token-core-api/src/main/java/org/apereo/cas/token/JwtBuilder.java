@@ -62,7 +62,11 @@ public class JwtBuilder {
             try {
                 return JWTClaimsSet.parse(jwt);
             } catch (final Exception ex) {
-                LOGGER.error(e.getMessage(), ex);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.error(e.getMessage(), ex);
+                } else {
+                    LOGGER.error(ex.getMessage());
+                }
                 throw new IllegalArgumentException("Unable to parse JWT");
             }
         }

@@ -16,7 +16,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,9 +40,9 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
 
     public CassandraServiceRegistry(final CassandraSessionFactory cassandraSessionFactory,
                                     final CassandraServiceRegistryProperties properties,
-                                    final ApplicationEventPublisher eventPublisher,
+                                    final ConfigurableApplicationContext applicationContext,
                                     final Collection<ServiceRegistryListener> serviceRegistryListeners) {
-        super(eventPublisher, serviceRegistryListeners);
+        super(applicationContext, serviceRegistryListeners);
         this.properties = properties;
         this.cassandraSession = cassandraSessionFactory.getSession();
         val mappingManager = new MappingManager(this.cassandraSession);

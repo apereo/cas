@@ -158,7 +158,11 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
             sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
             sessionsMap.put(TICKET_GRANTING_TICKET, ticketGrantingTicket);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             sessionsMap.put(STATUS, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             sessionsMap.put(TICKET_GRANTING_TICKET, ticketGrantingTicket);
             sessionsMap.put("message", e.getMessage());
@@ -199,7 +203,11 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
                 try {
                     this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
                 } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.error(e.getMessage(), e);
+                    } else {
+                        LOGGER.error(e.getMessage());
+                    }
                     failedTickets.put(ticketGrantingTicket, e.getMessage());
                 }
             });

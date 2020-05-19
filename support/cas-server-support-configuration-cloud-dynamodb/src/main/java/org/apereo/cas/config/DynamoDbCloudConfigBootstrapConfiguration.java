@@ -105,7 +105,11 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
                 .map(DynamoDbCloudConfigBootstrapConfiguration::retrieveSetting)
                 .forEach(p -> props.put(p.getKey(), p.getValue()));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
 
         return new PropertiesPropertySource(getClass().getSimpleName(), props);

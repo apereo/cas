@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Collection;
 
@@ -23,7 +23,7 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
     /**
      * The Event publisher.
      */
-    private final transient ApplicationEventPublisher eventPublisher;
+    private final transient ConfigurableApplicationContext applicationContext;
 
     /**
      * The Service registry listeners.
@@ -36,9 +36,9 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
      * @param event the event
      */
     public void publishEvent(final ApplicationEvent event) {
-        if (this.eventPublisher != null) {
+        if (this.applicationContext != null) {
             LOGGER.trace("Publishing event [{}]", event);
-            this.eventPublisher.publishEvent(event);
+            this.applicationContext.publishEvent(event);
         }
     }
 

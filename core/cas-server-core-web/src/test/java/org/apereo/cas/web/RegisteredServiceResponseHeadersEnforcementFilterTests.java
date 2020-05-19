@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -28,7 +28,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RegisteredServiceResponseHeadersEnforcementFilterTests}.
@@ -183,8 +182,10 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     private static RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final Pair<RegisteredServiceProperties, String>... properties) {
-        val servicesManager = new DefaultServicesManager(new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class)),
-            mock(ApplicationEventPublisher.class), new LinkedHashSet<>());
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val servicesManager = new DefaultServicesManager(new InMemoryServiceRegistry(appCtx),
+            appCtx, new LinkedHashSet<>());
         val argumentExtractor = new DefaultArgumentExtractor(new WebApplicationServiceFactory());
 
         val service = RegisteredServiceTestUtils.getRegisteredService("service-0");

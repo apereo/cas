@@ -184,7 +184,11 @@ public class HttpRequestUtils {
             connection.setRequestMethod(HttpMethod.HEAD.name());
             return HttpStatus.valueOf(connection.getResponseCode());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return HttpStatus.SERVICE_UNAVAILABLE;
 

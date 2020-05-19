@@ -26,7 +26,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -38,7 +38,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link Saml10SuccessResponseView} class.
@@ -60,11 +59,14 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     @BeforeEach
     public void initialize() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+
         val list = new ArrayList<RegisteredService>();
         list.add(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
-        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), list, new ArrayList<>());
+        val dao = new InMemoryServiceRegistry(appCtx, list, new ArrayList<>());
 
-        val mgmr = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
+        val mgmr = new DefaultServicesManager(dao, appCtx, new HashSet<>());
         mgmr.load();
 
         val protocolAttributeEncoder = new DefaultCasProtocolAttributeEncoder(mgmr, CipherExecutor.noOpOfStringToString());

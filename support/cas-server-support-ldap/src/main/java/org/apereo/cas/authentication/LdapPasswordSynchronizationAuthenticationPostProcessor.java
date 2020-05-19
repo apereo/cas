@@ -73,7 +73,11 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessor implements A
                 LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldapProperties.getBaseDn());
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
     }
 

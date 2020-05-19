@@ -122,7 +122,11 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                             val resource = ResourceUtils.getRawResourceFrom(scriptPath);
                             attributeScriptCache.put(claim.getUri(), new WatchableGroovyScriptResource(resource));
                         } catch (final Exception e) {
-                            LOGGER.error(e.getMessage(), e);
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.error(e.getMessage(), e);
+                            } else {
+                                LOGGER.error(e.getMessage());
+                            }
                         }
                     }
                 }

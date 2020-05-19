@@ -82,7 +82,11 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
                             }
                             LOGGER.warn("Unable to to decode device registration for record id [{}]", r.getId());
                         } catch (final Exception e) {
-                            LOGGER.error(e.getMessage(), e);
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.error(e.getMessage(), e);
+                            } else {
+                                LOGGER.error(e.getMessage());
+                            }
                         }
                         return null;
                     })
@@ -90,7 +94,11 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
                     .collect(Collectors.toList());
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return new ArrayList<>(0);
     }
@@ -125,7 +133,11 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
                 .collect(Collectors.toList());
             this.redisTemplate.delete(expiredKeys);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
     }
 

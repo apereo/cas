@@ -12,7 +12,7 @@ import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,13 +45,13 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
     private final RegisteredServiceResourceNamingStrategy resourceNamingStrategy;
     private final boolean pushChanges;
 
-    public GitServiceRegistry(final ApplicationEventPublisher eventPublisher,
+    public GitServiceRegistry(final ConfigurableApplicationContext applicationContext,
                               final GitRepository gitRepository,
                               final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers,
                               final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
                               final boolean pushChanges,
                               final Collection<ServiceRegistryListener> serviceRegistryListeners) {
-        super(eventPublisher, serviceRegistryListeners);
+        super(applicationContext, serviceRegistryListeners);
         this.gitRepository = gitRepository;
         this.registeredServiceSerializers = registeredServiceSerializers;
         this.resourceNamingStrategy = resourceNamingStrategy;

@@ -16,7 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
@@ -28,7 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * The {@link SamlRegisteredServiceTests} handles test cases for {@link SamlRegisteredService}.
@@ -53,13 +52,16 @@ public class SamlRegisteredServiceTests {
 
     @Test
     public void verifySavingSamlService() throws Exception {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+
         val service = new SamlRegisteredService();
         service.setName(SAML_SERVICE);
         service.setServiceId("http://mmoayyed.unicon.net");
         service.setMetadataLocation(METADATA_LOCATION);
 
         val dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
-            mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy(),
+            appCtx, new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
         dao.save(service);
@@ -68,6 +70,9 @@ public class SamlRegisteredServiceTests {
 
     @Test
     public void verifySavingInCommonSamlService() throws Exception {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+
         val service = new SamlRegisteredService();
         service.setName(SAML_SERVICE);
         service.setServiceId("http://mmoayyed.unicon.net");
@@ -78,7 +83,7 @@ public class SamlRegisteredServiceTests {
         service.setAttributeReleasePolicy(chain);
 
         val dao = new JsonServiceRegistry(new FileSystemResource(FileUtils.getTempDirectory()), WatcherService.noOp(),
-            mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy(),
+            appCtx, new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
         dao.save(service);
@@ -87,12 +92,14 @@ public class SamlRegisteredServiceTests {
 
     @Test
     public void checkPattern() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
         val service = new SamlRegisteredService();
         service.setName(SAML_SERVICE);
         service.setServiceId("^http://.+");
         service.setMetadataLocation(METADATA_LOCATION);
-        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), List.of(service), new ArrayList<>());
-        val impl = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
+        val dao = new InMemoryServiceRegistry(appCtx, List.of(service), new ArrayList<>());
+        val impl = new DefaultServicesManager(dao, appCtx, new HashSet<>());
         impl.load();
 
         val s = impl.findServiceBy(new WebApplicationServiceFactory()

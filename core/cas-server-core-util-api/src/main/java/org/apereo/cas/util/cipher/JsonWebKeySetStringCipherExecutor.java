@@ -60,7 +60,11 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
                 val reloadedJson = FileUtils.readFileToString(jwksKeystore, StandardCharsets.UTF_8);
                 this.webKeySet = new JsonWebKeySet(reloadedJson);
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.error(e.getMessage(), e);
+                } else {
+                    LOGGER.error(e.getMessage());
+                }
             }
         });
 

@@ -383,7 +383,11 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
                 deliveryThread.join(SHUTDOWN_TIMEOUT_MILLIS);
             } catch (final InterruptedException e) {
                 deliveryThread.interrupt();
-                LOGGER.error(e.getMessage(), e);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.error(e.getMessage(), e);
+                } else {
+                    LOGGER.error(e.getMessage());
+                }
             }
         }
         if (!queue.isEmpty()) {

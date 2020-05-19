@@ -30,7 +30,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClas
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -143,11 +142,11 @@ public class CasServiceRegistryInitializationConfiguration {
      * on the classpath.
      */
     public static class EmbeddedResourceBasedServiceRegistry extends AbstractResourceBasedServiceRegistry {
-        EmbeddedResourceBasedServiceRegistry(final ApplicationEventPublisher publisher,
+        EmbeddedResourceBasedServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                              final Resource location,
                                              final Collection<ServiceRegistryListener> serviceRegistryListeners,
                                              final WatcherService watcherService) throws Exception {
-            super(location, getRegisteredServiceSerializers(), publisher, serviceRegistryListeners, watcherService);
+            super(location, getRegisteredServiceSerializers(), applicationContext, serviceRegistryListeners, watcherService);
         }
 
         static Collection<StringSerializer<RegisteredService>> getRegisteredServiceSerializers() {
