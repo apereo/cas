@@ -1755,7 +1755,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Report Dependency Updates
-        if: ${{ !contains(github.head_ref, 'renovate') }}
+        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc dependencyUpdates -Drevision=release -DskipNestedConfigMetadataGen=true -DgradleReleaseChannel=current
 
 ##########################################################################
@@ -1778,7 +1778,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - uses: renovatebot/github-action@v1.0.0
+        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
         with:
           token: ${{ secrets.RENOVATE_TOKEN }}
           configurationFile: .github/renovate.js
-
