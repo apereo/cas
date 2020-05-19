@@ -7,7 +7,8 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
@@ -28,10 +29,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Simple")
 public class JsonWebKeySetStringCipherExecutorTests {
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "sample.jwks",
+        "sample-p256.jwks",
+        "sample-p384.jwks",
+        "sample-p521.jwks"
+    })
     @SneakyThrows
-    public void verifyAction() {
-        val jwksKeystore = new ClassPathResource("sample.jwks");
+    public void verifyAction(final String jwks) {
+        val jwksKeystore = new ClassPathResource(jwks);
         val data = IOUtils.toString(jwksKeystore.getInputStream(), StandardCharsets.UTF_8);
         val keystoreFile = new File(FileUtils.getTempDirectoryPath(), "sample.jwks");
         FileUtils.write(keystoreFile, data, StandardCharsets.UTF_8);
