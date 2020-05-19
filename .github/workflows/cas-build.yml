@@ -1218,7 +1218,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: MySQL Tests
-        run: ./ci/tests/mysql/run-mysql-server.sh && ./testcas.sh --coverage-report --coverage-upload --category radius
+        run: ./ci/tests/mysql/run-mysql-server.sh && ./testcas.sh --coverage-report --coverage-upload --category mysql
 ##########################################################################
 
   tests-mssqlserver:
