@@ -150,6 +150,7 @@ public abstract class BaseTicketRegistryTests {
     @Test
     @Tag("DisableEncryption")
     public void verifyCountSessionsPerUser() {
+        assumeTrue(isIterableRegistry());
         val id = UUID.randomUUID().toString();
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
             CoreAuthenticationTestUtils.getAuthentication(id),
