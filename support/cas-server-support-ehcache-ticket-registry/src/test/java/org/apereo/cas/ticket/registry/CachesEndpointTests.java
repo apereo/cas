@@ -42,11 +42,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
     CasCoreUtilConfiguration.class,
     MailSenderAutoConfiguration.class
 }, properties = {
-    "cas.ticket.registry.ehcache.maxElementsOnDisk=100",
-    "cas.ticket.registry.ehcache.maxElementsInMemory=100",
-    "cas.ticket.registry.ehcache.shared=true",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
+    "cas.ticket.registry.ehcache.max-elements-on-disk=100",
+    "cas.ticket.registry.ehcache.max-elements-in-memory=100",
+    "cas.ticket.registry.ehcache.shared=true"
 })
 @Tag("Ehcache")
 public class CachesEndpointTests {
