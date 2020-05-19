@@ -5,9 +5,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.annotation.DirtiesContext;
-
-import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,6 +27,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     BaseSamlIdPConfigurationTests.SharedTestConfiguration.class
+}, properties = {
+    "cas.authn.saml-idp.entityId=https://cas.example.org/idp",
+    "cas.authn.saml-idp.metadata.location=file:${#systemProperties['java.io.tmpdir']}/sp-idp-metadata"
 })
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -43,12 +41,6 @@ public abstract class BaseCasSamlSPConfigurationTests {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @BeforeAll
-    public static void beforeThisClass() {
-        BaseSamlIdPConfigurationTests.setMetadataDirectory(
-            new FileSystemResource(new File(FileUtils.getTempDirectory(), "idp-metadata-sps")));
-    }
 
     @AfterEach
     public void afterEach() {

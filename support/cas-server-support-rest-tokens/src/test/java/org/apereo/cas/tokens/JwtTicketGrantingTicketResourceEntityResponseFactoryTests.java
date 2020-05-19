@@ -22,6 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends BaseTicketResourceEntityResponseFactoryTests {
     @Test
     public void verifyTicketGrantingTicketAsDefault() throws Exception {
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(CoreAuthenticationTestUtils.getService().getId());
+        servicesManager.save(registeredService);
+        
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport);
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
 
@@ -32,6 +35,9 @@ public class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends B
 
     @Test
     public void verifyTicketGrantingTicketAsJwt() throws Exception {
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(CoreAuthenticationTestUtils.getService().getId());
+        servicesManager.save(registeredService);
+        
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
@@ -49,6 +55,8 @@ public class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends B
 
     @Test
     public void verifyTicketGrantingTicketAsJwtWithHeader() throws Exception {
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(CoreAuthenticationTestUtils.getService().getId());
+        servicesManager.save(registeredService);
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
