@@ -3,6 +3,7 @@ name: Build
 env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server -XX:+UseG1GC"
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server -XX:+UseG1GC"
+  TERM: xterm-256color
   SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
   SONATYPE_PWD: ${{ secrets.SONATYPE_PWD }}
   SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
