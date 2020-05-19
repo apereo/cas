@@ -43,6 +43,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
 
     @ConditionalOnMissingBean(name = "authenticationPolicyExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer authenticationPolicyExecutionPlanConfigurer() {
         return plan -> {
             val policyProps = casProperties.getAuthn().getPolicy();

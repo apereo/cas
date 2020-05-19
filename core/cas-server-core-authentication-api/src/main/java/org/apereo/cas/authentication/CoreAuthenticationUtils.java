@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
-import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -347,11 +346,6 @@ public class CoreAuthenticationUtils {
         if (policyProps.getNotPrevented().isEnabled()) {
             LOGGER.trace("Activating authentication policy [{}]", NotPreventedAuthenticationPolicy.class.getSimpleName());
             return CollectionUtils.wrapList(new NotPreventedAuthenticationPolicy());
-        }
-
-        if (policyProps.getUniquePrincipal().isEnabled()) {
-            LOGGER.trace("Activating authentication policy [{}]", UniquePrincipalAuthenticationPolicy.class.getSimpleName());
-            return CollectionUtils.wrapList(new UniquePrincipalAuthenticationPolicy());
         }
 
         if (!policyProps.getGroovy().isEmpty()) {

@@ -160,5 +160,10 @@ public class DistributedTicketRegistryTests {
             this.tickets.clear();
             return size;
         }
+
+        @Override
+        public long countSessionsFor(final String principalId) {
+            return 0;
+        }
     }
 }

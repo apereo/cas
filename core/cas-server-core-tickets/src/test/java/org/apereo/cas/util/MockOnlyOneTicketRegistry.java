@@ -78,4 +78,9 @@ public class MockOnlyOneTicketRegistry implements TicketRegistry {
     public long serviceTicketCount() {
         return 1;
     }
+
+    @Override
+    public long countSessionsFor(final String principalId) {
+        return 1;
+    }
 }

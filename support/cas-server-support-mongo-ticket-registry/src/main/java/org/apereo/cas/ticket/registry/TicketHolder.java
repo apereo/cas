@@ -29,6 +29,11 @@ public class TicketHolder implements Serializable {
     public static final String FIELD_NAME_JSON = "json";
 
     /**
+     * Field name to hold ticket type.
+     */
+    public static final String FIELD_NAME_TYPE = "type";
+
+    /**
      * Field name to hold ticket expiration time.
      */
     public static final String FIELD_NAME_EXPIRE_AT = "expireAt";

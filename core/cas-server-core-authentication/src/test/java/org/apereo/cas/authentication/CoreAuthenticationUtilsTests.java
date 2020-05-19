@@ -78,14 +78,6 @@ public class CoreAuthenticationUtilsTests {
     }
 
     @Test
-    public void verifyAuthnPolicyUnique() throws Exception {
-        val props = new AuthenticationPolicyProperties();
-        props.getUniquePrincipal().setEnabled(true);
-        val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
-        verifySerialization(policy);
-    }
-
-    @Test
     public void verifyAuthnPolicyGroovy() throws Exception {
         val props = new AuthenticationPolicyProperties();
         props.getGroovy()
