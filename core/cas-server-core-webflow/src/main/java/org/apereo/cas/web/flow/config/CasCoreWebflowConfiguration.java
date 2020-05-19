@@ -222,19 +222,37 @@ public class CasCoreWebflowConfiguration {
         return chain;
     }
 
+    @ConditionalOnMissingBean(name = "defaultCasWebflowAuthenticationExceptionHandler")
+    @Bean
+    @RefreshScope
+    public CasWebflowExceptionHandler defaultCasWebflowAuthenticationExceptionHandler() {
+        return new DefaultCasWebflowAuthenticationExceptionHandler(
+            handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+    }
+
+    @ConditionalOnMissingBean(name = "defaultCasWebflowAbstractTicketExceptionHandler")
+    @Bean
+    @RefreshScope
+    public CasWebflowExceptionHandler defaultCasWebflowAbstractTicketExceptionHandler() {
+        return new DefaultCasWebflowAbstractTicketExceptionHandler(
+            handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+    }
+
+    @ConditionalOnMissingBean(name = "genericCasWebflowExceptionHandler")
+    @Bean
+    @RefreshScope
+    public CasWebflowExceptionHandler genericCasWebflowExceptionHandler() {
+        return new GenericCasWebflowExceptionHandler(
+            handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+    }
+
+
     @ConditionalOnMissingBean(name = "authenticationExceptionHandler")
     @Bean
     @RefreshScope
     public Action authenticationExceptionHandler() {
         val beans = applicationContext.getBeansOfType(CasWebflowExceptionHandler.class, false, true);
-        val handlers = new ArrayList<CasWebflowExceptionHandler>(beans.values());
-        handlers.add(new DefaultCasWebflowAuthenticationExceptionHandler(
-            handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
-        handlers.add(new DefaultCasWebflowAbstractTicketExceptionHandler(
-            handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
-        handlers.add(new GenericCasWebflowExceptionHandler(
-            handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
-
+        val handlers = new ArrayList<>(beans.values());
         AnnotationAwareOrderComparator.sort(handlers);
         return new AuthenticationExceptionHandlerAction(handlers);
     }

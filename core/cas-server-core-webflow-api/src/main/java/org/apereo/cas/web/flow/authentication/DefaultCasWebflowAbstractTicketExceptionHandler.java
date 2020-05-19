@@ -23,7 +23,7 @@ import java.util.Set;
 @Setter
 @RequiredArgsConstructor
 public class DefaultCasWebflowAbstractTicketExceptionHandler implements CasWebflowExceptionHandler<AbstractTicketException> {
-    private int order = Integer.MAX_VALUE;
+    private int order = Integer.MAX_VALUE - 1;
 
     /**
      * Ordered list of error classes that this class knows how to handle.
