@@ -76,7 +76,7 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
 
     @Override
     public long deleteAll() {
-        LOGGER.debug("deleteAll() isn't supported. Returning empty list");
+        LOGGER.debug("deleteAll() isn't supported");
         return 0;
     }
 
