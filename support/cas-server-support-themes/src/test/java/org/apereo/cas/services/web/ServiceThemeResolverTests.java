@@ -63,11 +63,7 @@ import static org.mockito.Mockito.*;
     MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
-    properties = {
-        "cas.theme.defaultThemeName=test",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+    properties = "cas.theme.defaultThemeName=test")
 @Tag("Simple")
 public class ServiceThemeResolverTests {
     private static final String MOZILLA = "Mozilla";

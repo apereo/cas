@@ -88,9 +88,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = {
     "cas.server.name=http://localhost:8281",
     "cas.server.prefix=${cas.server.name}/cas",
-    "cas.client.validatorType=CAS10",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
+    "cas.client.validatorType=CAS10"
 })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling

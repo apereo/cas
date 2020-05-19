@@ -39,9 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "server.port=8080",
-        "cas.authn.soap.url=http://localhost:8080/ws/users",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
+        "cas.authn.soap.url=http://localhost:8080/ws/users"
     },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)

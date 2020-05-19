@@ -38,9 +38,6 @@ import static org.mockito.Mockito.*;
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class,
     MailSenderAutoConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 @DirtiesContext
 @Tag("Simple")

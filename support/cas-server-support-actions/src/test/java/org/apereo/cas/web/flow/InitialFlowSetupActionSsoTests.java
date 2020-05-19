@@ -88,12 +88,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasSupportActionsConfiguration.class
 },
-    properties = {
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000",
-
-        "cas.sso.allowMissingServiceParameter=false"
-    })
+    properties =
+        "cas.sso.allowMissingServiceParameter=false")
 @Tag("Webflow")
 public class InitialFlowSetupActionSsoTests {
     @Autowired

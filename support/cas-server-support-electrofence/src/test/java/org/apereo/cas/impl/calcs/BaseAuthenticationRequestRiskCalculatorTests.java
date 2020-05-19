@@ -87,9 +87,6 @@ import org.springframework.test.annotation.DirtiesContext;
     CasCoreAuditConfiguration.class,
     CasEventsInMemoryRepositoryConfiguration.class,
     CasCoreEventsConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 @DirtiesContext
 @EnableScheduling

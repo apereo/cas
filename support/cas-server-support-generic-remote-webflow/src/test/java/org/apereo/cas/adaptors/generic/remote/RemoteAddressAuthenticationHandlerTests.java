@@ -77,11 +77,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasRemoteAuthenticationConfiguration.class
 },
-    properties = {
-        "cas.authn.remote-address.ipAddressRange=192.168.1.0/255.255.255.0",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+    properties =
+        "cas.authn.remote-address.ipAddressRange=192.168.1.0/255.255.255.0")
 @Tag("Simple")
 public class RemoteAddressAuthenticationHandlerTests {
     @Autowired
