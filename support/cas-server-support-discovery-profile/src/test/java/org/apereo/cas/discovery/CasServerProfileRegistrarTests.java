@@ -58,9 +58,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 @DirtiesContext
 @Tag("Simple")

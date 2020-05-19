@@ -28,11 +28,7 @@ import static org.mockito.Mockito.*;
     EhcacheTicketRegistryConfiguration.class,
     EhcacheTicketRegistryTicketCatalogConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
-}, properties = {
-    "cas.ticket.registry.ehcache.shared=true",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
+}, properties = "cas.ticket.registry.ehcache.shared=true")
 @Tag("Ehcache")
 @Deprecated(since = "6.2.0")
 public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {

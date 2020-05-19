@@ -53,9 +53,6 @@ import org.springframework.webflow.execution.Action;
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasScimConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 public abstract class BaseScimProvisionerActionTests {
     @Autowired

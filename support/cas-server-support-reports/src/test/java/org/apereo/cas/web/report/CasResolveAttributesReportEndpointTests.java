@@ -15,11 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@TestPropertySource(properties = {
-    "management.endpoint.resolveAttributes.enabled=true",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
+@TestPropertySource(properties = "management.endpoint.resolveAttributes.enabled=true")
 @Tag("Simple")
 public class CasResolveAttributesReportEndpointTests extends AbstractCasEndpointTests {
     @Autowired

@@ -69,9 +69,6 @@ import org.springframework.webflow.execution.Action;
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 public abstract class AbstractSpnegoTests {
     @Autowired

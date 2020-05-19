@@ -50,9 +50,6 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseCasCoreTests.SharedTestConfiguration.class,
     TokenAuthenticationConfiguration.class,
     TokenAuthenticationWebflowConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 @Tag("Webflow")
 public class TokenAuthenticationActionTests extends AbstractCentralAuthenticationServiceTests {

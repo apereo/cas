@@ -15,9 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(classes = {
     InfinispanTicketRegistryConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 @Tag("Simple")
 public class InfinispanTicketRegistryTests extends BaseTicketRegistryTests {

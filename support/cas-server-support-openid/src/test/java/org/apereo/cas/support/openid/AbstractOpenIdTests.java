@@ -49,11 +49,7 @@ import org.springframework.context.annotation.Import;
  * @since 4.2
  * @deprecated 6.2
  */
-@SpringBootTest(classes = AbstractOpenIdTests.SharedTestConfiguration.class,
-    properties = {
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+@SpringBootTest(classes = AbstractOpenIdTests.SharedTestConfiguration.class)
 @Deprecated(since = "6.2.0")
 public class AbstractOpenIdTests {
 

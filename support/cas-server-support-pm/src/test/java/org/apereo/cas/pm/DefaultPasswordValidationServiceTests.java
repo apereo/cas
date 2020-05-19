@@ -30,9 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = {
     "cas.authn.pm.enabled=true",
     "cas.authn.pm.history.enabled=true",
-    "cas.authn.pm.policyPattern=^Th!.+{8,10}",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
+    "cas.authn.pm.policyPattern=^Th!.+{8,10}"
 })
 @Tag("Simple")
 public class DefaultPasswordValidationServiceTests {

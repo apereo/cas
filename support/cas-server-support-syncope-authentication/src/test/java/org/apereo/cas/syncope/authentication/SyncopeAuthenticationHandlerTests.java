@@ -66,11 +66,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutConfiguration.class,
     CasCoreConfiguration.class,
     CasPersonDirectoryTestConfiguration.class
-}, properties = {
-    "cas.authn.syncope.url=http://localhost:8095",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
+}, properties ="cas.authn.syncope.url=http://localhost:8095")
 @ResourceLock("Syncope")
 @Tag("Simple")
 public class SyncopeAuthenticationHandlerTests {

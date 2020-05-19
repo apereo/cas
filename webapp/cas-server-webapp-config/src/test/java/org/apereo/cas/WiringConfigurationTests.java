@@ -99,11 +99,7 @@ import static org.junit.jupiter.api.Assertions.*;
     AopAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "cas.http-web-request.cors.enabled=true"
-})
+}, properties = "cas.http-web-request.cors.enabled=true")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @WebAppConfiguration
 @EnableAspectJAutoProxy(proxyTargetClass = true)

@@ -43,9 +43,6 @@ import static org.mockito.Mockito.*;
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreUtilConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 @Tag("Simple")
 public class DefaultTicketStringSerializationManagerTests {

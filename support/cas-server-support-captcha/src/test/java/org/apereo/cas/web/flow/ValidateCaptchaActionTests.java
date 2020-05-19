@@ -85,11 +85,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 },
-    properties = {
-        "cas.google-recaptcha.verifyUrl=http://localhost:9294",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    }
+    properties = "cas.google-recaptcha.verifyUrl=http://localhost:9294"
 )
 @Tag("Webflow")
 public class ValidateCaptchaActionTests {

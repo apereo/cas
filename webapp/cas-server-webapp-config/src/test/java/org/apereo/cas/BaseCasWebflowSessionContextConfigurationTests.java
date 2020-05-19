@@ -127,11 +127,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuditConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "cas.webflow.base-path=classpath:/webflow"
-})
+}, properties = "cas.webflow.base-path=classpath:/webflow")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public abstract class BaseCasWebflowSessionContextConfigurationTests {

@@ -19,11 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@TestPropertySource(properties = {
-    "cas.authn.adaptive.risk.ip.enabled=true",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
+@TestPropertySource(properties = "cas.authn.adaptive.risk.ip.enabled=true")
 @Tag("Simple")
 public class IpAddressAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
 

@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -46,11 +45,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreHttpConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    MailSenderAutoConfiguration.class
+    CasCoreUtilConfiguration.class
 }, properties = {
     "cas.ticket.registry.ehcache.maxElementsOnDisk=100",
-    "cas.ticket.registry.ehcache.maxElementsInMemory=100"
+    "cas.ticket.registry.ehcache.maxElementsInMemory=100",
+    "management.endpoints.web.exposure.include=*",
+    "management.endpoint.caches.enabled=true"
 })
 @Tag("Ehcache")
 @Deprecated(since = "6.2.0")
@@ -73,7 +73,8 @@ public class EhCacheHealthIndicatorTests {
          * above 10% free WARN threshold
          */
         IntStream.range(0, 95)
-            .forEach(i -> this.ticketRegistry.addTicket(new MockServiceTicket("ST-" + i, RegisteredServiceTestUtils.getService(),
+            .forEach(i -> this.ticketRegistry.addTicket(
+                new MockServiceTicket("ST-" + i, RegisteredServiceTestUtils.getService(),
                 new MockTicketGrantingTicket("test"))));
 
         status = monitor.health();

@@ -29,9 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class
 }, properties = {
     "cas.authn.pm.enabled=true",
-    "cas.authn.pm.history.enabled=true",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
+    "cas.authn.pm.history.enabled=true"
 })
 @Tag("Simple")
 public class InMemoryPasswordHistoryServiceTests {

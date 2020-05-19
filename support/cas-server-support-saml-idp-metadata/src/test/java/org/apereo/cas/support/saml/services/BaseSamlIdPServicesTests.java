@@ -22,7 +22,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     RefreshAutoConfiguration.class,
     CasCoreHttpConfiguration.class,
     CoreSamlConfiguration.class
-}, properties = {"spring.mail.host=localhost", "spring.mail.port=25000"})
+})
 @Tag("SAML")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseSamlIdPServicesTests {
