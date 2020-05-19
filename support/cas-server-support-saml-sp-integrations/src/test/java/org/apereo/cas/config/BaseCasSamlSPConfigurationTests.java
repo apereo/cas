@@ -5,6 +5,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -26,12 +27,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    BaseSamlIdPConfigurationTests.SharedTestConfiguration.class
+    BaseSamlIdPConfigurationTests.SharedTestConfiguration.class,
+    CasSamlServiceProvidersConfiguration.class
 }, properties = {
     "cas.authn.saml-idp.entityId=https://cas.example.org/idp",
-    "cas.authn.saml-idp.metadata.location=file:${#systemProperties['java.io.tmpdir']}/sp-idp-metadata"
+    "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/sp-idp-metadata"
 })
-@DirtiesContext
+@Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseCasSamlSPConfigurationTests {
 
@@ -40,7 +42,7 @@ public abstract class BaseCasSamlSPConfigurationTests {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    protected ServicesManager servicesManager;
 
     @AfterEach
     public void afterEach() {
@@ -49,6 +51,7 @@ public abstract class BaseCasSamlSPConfigurationTests {
 
     @Test
     public void verifyOperation() {
+        LOGGER.debug("Looking for service id [{}]", getServiceProviderId());
         assertNotNull(servicesManager.findServiceBy(getServiceProviderId(), SamlRegisteredService.class));
     }
 

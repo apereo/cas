@@ -62,7 +62,11 @@ public class PasswordChangeAction extends AbstractAction {
                 StringUtils.defaultIfBlank(e.getValidationMessage(), DEFAULT_MESSAGE),
                 e.getParams());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return getErrorEvent(requestContext, "pm.updateFailure", DEFAULT_MESSAGE);
     }

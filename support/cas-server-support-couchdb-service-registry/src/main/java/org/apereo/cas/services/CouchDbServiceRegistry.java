@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ektorp.DbAccessException;
 import org.ektorp.DocumentNotFoundException;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -25,10 +25,10 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
 
     private final RegisteredServiceCouchDbRepository dbClient;
 
-    public CouchDbServiceRegistry(final ApplicationEventPublisher eventPublisher,
+    public CouchDbServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                   final RegisteredServiceCouchDbRepository dbClient,
                                   final Collection<ServiceRegistryListener> serviceRegistryListeners) {
-        super(eventPublisher, serviceRegistryListeners);
+        super(applicationContext, serviceRegistryListeners);
         this.dbClient = dbClient;
     }
 

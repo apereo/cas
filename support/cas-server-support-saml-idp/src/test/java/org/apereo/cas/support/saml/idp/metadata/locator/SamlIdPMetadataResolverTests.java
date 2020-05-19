@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 @Tag("SAML")
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.entityId=https://cas.example.org/idp",
-    "cas.authn.saml-idp.metadata.location=file:${#systemProperties['java.io.tmpdir']}/idp-metadata"
+    "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
 })
 @EnableRetry
 public class SamlIdPMetadataResolverTests extends BaseSamlIdPConfigurationTests {

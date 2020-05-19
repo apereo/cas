@@ -26,7 +26,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
@@ -84,9 +84,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     public AbstractResourceBasedServiceRegistry(final Resource configDirectory,
                                                 final Collection<StringSerializer<RegisteredService>> serializers,
-                                                final ApplicationEventPublisher eventPublisher,
+                                                final ConfigurableApplicationContext applicationContext,
                                                 final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
-        this(configDirectory, serializers, eventPublisher,
+        this(configDirectory, serializers, applicationContext,
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             serviceRegistryListeners, WatcherService.noOp());
@@ -94,10 +94,10 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     public AbstractResourceBasedServiceRegistry(final Resource configDirectory,
                                                 final Collection<StringSerializer<RegisteredService>> serializers,
-                                                final ApplicationEventPublisher eventPublisher,
+                                                final ConfigurableApplicationContext applicationContext,
                                                 final Collection<ServiceRegistryListener> serviceRegistryListeners,
                                                 final WatcherService serviceRegistryConfigWatcher) throws Exception {
-        this(configDirectory, serializers, eventPublisher,
+        this(configDirectory, serializers, applicationContext,
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             serviceRegistryListeners, serviceRegistryConfigWatcher);
@@ -105,36 +105,36 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
 
     public AbstractResourceBasedServiceRegistry(final Path configDirectory, final StringSerializer<RegisteredService> serializer,
-                                                final ApplicationEventPublisher eventPublisher,
+                                                final ConfigurableApplicationContext applicationContext,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                                 final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
                                                 final Collection<ServiceRegistryListener> serviceRegistryListeners,
                                                 final WatcherService serviceRegistryConfigWatcher) {
-        this(configDirectory, CollectionUtils.wrap(serializer), eventPublisher,
+        this(configDirectory, CollectionUtils.wrap(serializer), applicationContext,
             registeredServiceReplicationStrategy, resourceNamingStrategy,
             serviceRegistryListeners, serviceRegistryConfigWatcher);
     }
 
     public AbstractResourceBasedServiceRegistry(final Path configDirectory,
                                                 final Collection<StringSerializer<RegisteredService>> serializers,
-                                                final ApplicationEventPublisher eventPublisher,
+                                                final ConfigurableApplicationContext applicationContext,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                                 final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
                                                 final Collection<ServiceRegistryListener> serviceRegistryListeners,
                                                 final WatcherService serviceRegistryConfigWatcher) {
-        super(eventPublisher, serviceRegistryListeners);
+        super(applicationContext, serviceRegistryListeners);
         initializeRegistry(configDirectory, serializers,
             registeredServiceReplicationStrategy, resourceNamingStrategy, serviceRegistryConfigWatcher);
     }
 
     public AbstractResourceBasedServiceRegistry(final Resource configDirectory,
                                                 final Collection<StringSerializer<RegisteredService>> serializers,
-                                                final ApplicationEventPublisher eventPublisher,
+                                                final ConfigurableApplicationContext applicationContext,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                                 final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
                                                 final Collection<ServiceRegistryListener> serviceRegistryListeners,
                                                 final WatcherService serviceRegistryConfigWatcher) throws Exception {
-        super(eventPublisher, serviceRegistryListeners);
+        super(applicationContext, serviceRegistryListeners);
         LOGGER.trace("Provided service registry directory is specified at [{}]", configDirectory);
         val pattern = String.join("|", getExtensions());
         val servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, pattern);

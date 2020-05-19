@@ -39,7 +39,11 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
                 }
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return ByteSource.empty();
     }

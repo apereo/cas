@@ -42,9 +42,13 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 public class UserAuthenticationResource {
     private final AuthenticationSystemSupport authenticationSystemSupport;
+
     private final RestHttpRequestCredentialFactory credentialFactory;
+
     private final ServiceFactory serviceFactory;
+
     private final UserAuthenticationResourceEntityResponseFactory userAuthenticationResourceEntityResponseFactory;
+
     private final ApplicationContext applicationContext;
 
     /**
@@ -72,10 +76,18 @@ public class UserAuthenticationResource {
         } catch (final AuthenticationException e) {
             return RestResourceUtils.createResponseEntityForAuthnFailure(e, request, applicationContext);
         } catch (final BadRestRequestException e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

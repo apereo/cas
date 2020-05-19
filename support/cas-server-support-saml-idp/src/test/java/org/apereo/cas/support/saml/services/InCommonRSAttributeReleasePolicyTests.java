@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML")
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.entityId=https://cas.example.org/idp",
-    "cas.authn.saml-idp.metadata.location=file:${#systemProperties['java.io.tmpdir']}/idp-metadata"
+    "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
 })
 public class InCommonRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "InCommonRSAttributeReleasePolicyTests.json");

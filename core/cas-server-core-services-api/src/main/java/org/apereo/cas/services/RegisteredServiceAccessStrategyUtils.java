@@ -101,7 +101,6 @@ public class RegisteredServiceAccessStrategyUtils {
             val message = String.format("Cannot grant service access to %s", principalId);
             val exception = new UnauthorizedServiceForPrincipalException(message, registeredService, principalId, attributes);
             handlerErrors.put(UnauthorizedServiceForPrincipalException.class.getSimpleName(), exception);
-
             throw new PrincipalException(UnauthorizedServiceForPrincipalException.CODE_UNAUTHZ_SERVICE, handlerErrors, new HashMap<>(0));
         }
     }

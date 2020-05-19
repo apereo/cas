@@ -12,6 +12,7 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+@Tag("Simple")
 public class PolicyBasedAuthenticationManagerTests {
     private static final String HANDLER_A = "HandlerA";
 

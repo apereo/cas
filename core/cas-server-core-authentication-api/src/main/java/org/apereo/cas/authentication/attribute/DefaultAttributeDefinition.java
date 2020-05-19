@@ -130,7 +130,11 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
                     val resource = ResourceUtils.getRawResourceFrom(scriptPath);
                     attributeScriptCache.put(attributeKey, new WatchableGroovyScriptResource(resource));
                 } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.error(e.getMessage(), e);
+                    } else {
+                        LOGGER.error(e.getMessage());
+                    }
                 }
             }
         }

@@ -1,5 +1,7 @@
-package org.apereo.cas.services;
+package org.apereo.cas;
 
+import org.apereo.cas.services.ServiceRegistryInitializerEventListenerTests;
+import org.apereo.cas.services.ServiceRegistryInitializerTests;
 import org.apereo.cas.services.replication.DefaultRegisteredServiceReplicationStrategyTests;
 import org.apereo.cas.services.resource.CreateResourceBasedRegisteredServiceWatcherTests;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategyTests;
