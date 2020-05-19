@@ -54,6 +54,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.io.File;
@@ -115,6 +116,7 @@ public abstract class BaseDelegatedAuthenticationTests {
     }
 
     @TestConfiguration("Saml2ClientMetadataControllerTestConfiguration")
+    @Lazy(false)
     public static class DelegatedAuthenticationWebflowTestConfiguration {
         @Bean
         public Clients builtClients() throws Exception {

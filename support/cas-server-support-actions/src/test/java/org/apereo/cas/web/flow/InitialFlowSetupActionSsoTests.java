@@ -41,6 +41,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -108,6 +109,7 @@ public class InitialFlowSetupActionSsoTests {
     }
 
     @TestConfiguration("CasTestConfiguration")
+    @Lazy(false)
     public static class CasTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;

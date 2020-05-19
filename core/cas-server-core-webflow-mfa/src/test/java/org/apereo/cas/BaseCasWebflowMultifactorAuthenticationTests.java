@@ -45,6 +45,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -106,6 +107,7 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     protected ServicesManager servicesManager;
 
     @TestConfiguration("TestAuthenticationConfiguration")
+    @Lazy(false)
     public static class TestAuthenticationConfiguration {
         @Bean
         public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() {

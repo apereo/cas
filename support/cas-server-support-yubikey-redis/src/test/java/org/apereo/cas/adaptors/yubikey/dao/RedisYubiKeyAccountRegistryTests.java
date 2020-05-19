@@ -45,6 +45,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 
 
 import java.util.UUID;
@@ -156,6 +157,7 @@ public class RedisYubiKeyAccountRegistryTests {
     }
 
     @TestConfiguration("RedisYubiKeyAccountRegistryTestConfiguration")
+    @Lazy(false)
     public static class RedisYubiKeyAccountRegistryTestConfiguration {
         @Bean
         @RefreshScope

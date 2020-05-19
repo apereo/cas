@@ -26,6 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.List;
 
@@ -57,6 +58,7 @@ public abstract class BaseTicketFactoryTests {
     protected TicketFactory ticketFactory;
 
     @TestConfiguration("TicketFactoryTestConfiguration")
+    @Lazy(false)
     public static class TicketFactoryTestConfiguration {
         @Bean
         public List inMemoryRegisteredServices() {

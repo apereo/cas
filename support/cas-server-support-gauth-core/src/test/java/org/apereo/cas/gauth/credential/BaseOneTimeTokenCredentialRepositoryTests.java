@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 
 import javax.annotation.PostConstruct;
 import java.util.LinkedHashMap;
@@ -131,6 +132,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     public abstract OneTimeTokenCredentialRepository getRegistry();
 
     @TestConfiguration
+    @Lazy(false)
     public static class BaseTestConfiguration {
         @Autowired
         protected ApplicationContext applicationContext;

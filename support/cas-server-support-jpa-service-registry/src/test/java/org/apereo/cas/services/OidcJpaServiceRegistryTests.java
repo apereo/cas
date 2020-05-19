@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public class OidcJpaServiceRegistryTests extends JpaServiceRegistryTests {
     }
 
     @TestConfiguration("OidcJpaServiceRegistryTestConfiguration")
+    @Lazy(false)
     public static class OidcJpaServiceRegistryTestConfiguration {
         @Bean
         public ServiceRegistryListener oidcServiceRegistryListener() {

@@ -36,6 +36,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
@@ -99,7 +100,8 @@ public class DefaultHazelcastInstanceConfigurationTests {
         }
     }
 
-    @TestConfiguration
+    @TestConfiguration("HazelcastTestConfiguration")
+    @Lazy(false)
     public static class HazelcastTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;

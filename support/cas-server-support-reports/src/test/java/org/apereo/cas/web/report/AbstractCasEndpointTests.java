@@ -48,6 +48,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -69,6 +70,7 @@ public abstract class AbstractCasEndpointTests {
     protected ServicesManager servicesManager;
 
     @TestConfiguration
+    @Lazy(false)
     public static class AuditTestConfiguration implements AuditTrailExecutionPlanConfigurer {
         @Override
         public void configureAuditTrailExecutionPlan(final AuditTrailExecutionPlan plan) {

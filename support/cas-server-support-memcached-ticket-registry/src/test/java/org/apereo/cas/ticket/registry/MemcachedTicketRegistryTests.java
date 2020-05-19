@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.HashMap;
 
@@ -85,6 +86,7 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @TestConfiguration("MemcachedTicketRegistryTestConfiguration")
+    @Lazy(false)
     public static class MemcachedTicketRegistryTestConfiguration implements ComponentSerializationPlanConfigurer {
         @Override
         public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {

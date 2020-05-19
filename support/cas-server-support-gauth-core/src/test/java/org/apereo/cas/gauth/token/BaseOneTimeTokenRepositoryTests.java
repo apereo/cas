@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 
 import javax.annotation.PostConstruct;
 
@@ -107,8 +108,9 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.getObject().count(), "Repository is not empty");
     }
 
-    @TestConfiguration
-    public static class BaseTestConfiguration {
+    @TestConfiguration("BaseOneTimeTokenRepositoryTestConfiguration")
+    @Lazy(false)
+    public static class BaseOneTimeTokenRepositoryTestConfiguration {
         @Autowired
         protected ApplicationContext applicationContext;
 
