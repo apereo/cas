@@ -19,12 +19,8 @@ import org.springframework.boot.test.context.SpringBootTest;
     Ehcache3TicketRegistryConfiguration.class,
     Ehcache3TicketRegistryTicketCatalogConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-
-    "cas.ticket.registry.ehcache3.terracottaClusterUri=terracotta://localhost:9410/cas-application"
-})
+}, properties =
+    "cas.ticket.registry.ehcache3.terracottaClusterUri=terracotta://localhost:9410/cas-application")
 @EnabledIfPortOpen(port = 9410)
 @Tag("Ehcache")
 public class EhCache3TerracottaTicketRegistryTests extends BaseTicketRegistryTests {

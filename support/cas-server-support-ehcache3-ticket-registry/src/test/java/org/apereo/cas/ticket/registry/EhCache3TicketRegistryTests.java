@@ -18,9 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
     Ehcache3TicketRegistryConfiguration.class,
     Ehcache3TicketRegistryTicketCatalogConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 @Tag("Ehcache")
 public class EhCache3TicketRegistryTests extends BaseTicketRegistryTests {
