@@ -21,7 +21,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
@@ -49,10 +48,6 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private transient EntityManager entityManager;
-
-    private static long countToLong(final Object result) {
-        return ((Number) result).longValue();
-    }
 
     @Override
     public void addTicket(final Ticket ticket) {
@@ -226,6 +221,10 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             }
         }
         return totalCount != 0;
+    }
+
+    private static long countToLong(final Object result) {
+        return ((Number) result).longValue();
     }
 
     /**

@@ -214,6 +214,10 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long countSessionsFor(final String principalId) {
+        if (isCipherExecutorEnabled()) {
+            return super.countSessionsFor(principalId);
+        }
+        
         val ticketDefinitions = ticketCatalog.find(TicketGrantingTicket.class);
         return ticketDefinitions.stream()
             .map(this::getTicketCollectionInstanceByMetadata)
