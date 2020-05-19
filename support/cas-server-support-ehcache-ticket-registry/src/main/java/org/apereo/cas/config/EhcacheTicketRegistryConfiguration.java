@@ -24,6 +24,8 @@ import net.sf.ehcache.distribution.RMISynchronousCacheReplicator;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.actuate.cache.CachesEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -185,9 +187,10 @@ public class EhcacheTicketRegistryConfiguration implements InitializingBean {
      * This bean is used by the spring boot cache actuator which spring boot admin can use to clear caches.
      * Actuator needs to be exposed in order for this bean to be used.
      * @param ehcacheTicketCacheManager EhCache cache manager to be wrapped by spring cache manager.
-     * @return Spring EhCacheCacheManager that wraps EhCache CacheManager
+     * @return Spring {@link EhCacheCacheManager} that wraps EhCache {@link CacheManager}
      */
     @Bean
+    @ConditionalOnAvailableEndpoint(endpoint = CachesEndpoint.class)
     public EhCacheCacheManager ehCacheCacheManager(@Autowired final CacheManager ehcacheTicketCacheManager) {
         return new EhCacheCacheManager(ehcacheTicketCacheManager);
     }
