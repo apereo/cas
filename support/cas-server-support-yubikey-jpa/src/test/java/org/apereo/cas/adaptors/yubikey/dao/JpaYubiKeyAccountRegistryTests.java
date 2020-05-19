@@ -43,6 +43,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -120,6 +121,7 @@ public class JpaYubiKeyAccountRegistryTests {
     }
 
     @TestConfiguration("JpaYubiKeyAccountRegistryTestConfiguration")
+    @Lazy(false)
     public static class JpaYubiKeyAccountRegistryTestConfiguration {
         @Bean
         @RefreshScope

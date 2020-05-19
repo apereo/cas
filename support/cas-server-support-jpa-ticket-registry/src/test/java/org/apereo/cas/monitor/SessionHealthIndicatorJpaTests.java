@@ -44,6 +44,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -116,7 +117,8 @@ public class SessionHealthIndicatorJpaTests {
         assertEquals(Status.UP, status.getStatus());
     }
 
-    @TestConfiguration
+    @TestConfiguration("JpaTestConfiguration")
+    @Lazy(false)
     public static class JpaTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;

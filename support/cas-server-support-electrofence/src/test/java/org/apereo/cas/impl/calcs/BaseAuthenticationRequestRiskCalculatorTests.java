@@ -45,6 +45,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -121,8 +122,8 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
     }
 
     @TestConfiguration
+    @Lazy(false)
     public static class ElectronicFenceTestConfiguration {
-
         @Bean
         public SmsSender smsSender() {
             return new MockSmsSender();

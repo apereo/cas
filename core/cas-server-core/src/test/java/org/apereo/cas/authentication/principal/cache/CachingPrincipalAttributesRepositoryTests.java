@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.File;
@@ -66,7 +67,8 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
         assertEquals(repositoryWritten, repositoryRead);
     }
 
-    @TestConfiguration
+    @TestConfiguration("CachingPrincipalAttributeRepositoryTestConfiguration")
+    @Lazy(false)
     public static class CachingPrincipalAttributeRepositoryTestConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "principalAttributesRepositoryCache")

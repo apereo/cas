@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
@@ -27,6 +28,7 @@ import javax.sql.DataSource;
  */
 @TestConfiguration("databaseAuthenticationTestConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Lazy(false)
 public class DatabaseAuthenticationTestConfiguration {
     @Value("${database.user:sa}")
     private String databaseUser;

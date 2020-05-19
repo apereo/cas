@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 
 import static org.mockito.Mockito.*;
 
@@ -46,6 +47,7 @@ public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @TestConfiguration("EhcacheTicketRegistryTestConfiguration")
+    @Lazy(false)
     public static class EhcacheTicketRegistryTestConfiguration {
         @Bean
         @SneakyThrows

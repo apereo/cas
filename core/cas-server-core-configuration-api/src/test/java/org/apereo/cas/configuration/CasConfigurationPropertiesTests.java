@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Lazy;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,7 +38,7 @@ public class CasConfigurationPropertiesTests {
 
     @TestConfiguration("CasPropertiesTestConfiguration")
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @Lazy(false)
     public static class CasPropertiesTestConfiguration {
-        
     }
 }
