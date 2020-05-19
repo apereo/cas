@@ -129,6 +129,36 @@ Only return the principal attributes that are explicitly allowed by the service 
 }
 ```
 
+### Return Encrypted
+
+Encrypt and encode all all allowed attributes in base-64 using the assigned registered service public key. 
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.EncryptingAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ]
+  },
+  "publicKey" : {
+    "@class" : "org.apereo.cas.services.RegisteredServicePublicKeyImpl",
+    "location" : "classpath:public.key",
+    "algorithm" : "RSA"
+  }
+}
+```
+
+The keys can be generated via the following commands:
+
+```bash
+openssl genrsa -out private.key 1024
+openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
+openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out private.p8
+```
+
 ### REST
 
 Only return the principal attributes that are explicitly allowed by contacting a REST endpoint. Endpoints must be designed to accept/process `application/json`. The expected response status code is `200` where the body of the response includes a `Map` of attributes linked to their values.

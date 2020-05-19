@@ -14,6 +14,7 @@ import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import java.security.PublicKey;
 
@@ -38,18 +39,22 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
     private String location;
 
     private String algorithm = "RSA";
-    
+
     @SneakyThrows
     @Override
     public PublicKey createInstance() {
-        val factory = PublicKeyFactoryBean.class.getDeclaredConstructor().newInstance();
-        LOGGER.trace("Attempting to read public key from [{}]", this.location);
-        val resolved = SpringExpressionLanguageValueResolver.getInstance().resolve(this.location);
-        val resource = ResourceUtils.getResourceFrom(resolved);
-        factory.setResource(resource);
-        factory.setAlgorithm(this.algorithm);
-        factory.setSingleton(false);
-        return factory.getObject();
+        if (StringUtils.isNotBlank(this.location)) {
+            LOGGER.trace("Attempting to read public key from [{}]", this.location);
+            val factory = PublicKeyFactoryBean.class.getDeclaredConstructor().newInstance();
+            val resolved = SpringExpressionLanguageValueResolver.getInstance().resolve(this.location);
+            val resource = ResourceUtils.getResourceFrom(resolved);
+            factory.setResource(resource);
+            factory.setAlgorithm(this.algorithm);
+            factory.setSingleton(false);
+            return factory.getObject();
+        }
+        LOGGER.warn("NO public key location is defined");
+        return null;
     }
 
 }
