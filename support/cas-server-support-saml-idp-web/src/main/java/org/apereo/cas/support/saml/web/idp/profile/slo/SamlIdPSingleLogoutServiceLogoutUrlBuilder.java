@@ -62,7 +62,11 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
                 }
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         LOGGER.debug("Service [{}] is not a SAML service, or its logout url could not be determined", registeredService);
         return super.determineLogoutUrl(registeredService, singleLogoutService);

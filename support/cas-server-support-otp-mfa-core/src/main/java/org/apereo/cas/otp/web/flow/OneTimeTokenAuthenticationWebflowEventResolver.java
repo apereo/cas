@@ -17,8 +17,8 @@ import java.util.Set;
  */
 public class OneTimeTokenAuthenticationWebflowEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
-    public OneTimeTokenAuthenticationWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext) {
-        super(webflowEventResolutionConfigurationContext);
+    public OneTimeTokenAuthenticationWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext context) {
+        super(context);
     }
 
     @Override

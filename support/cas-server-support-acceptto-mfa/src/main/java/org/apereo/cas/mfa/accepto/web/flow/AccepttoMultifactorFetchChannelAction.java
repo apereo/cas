@@ -99,7 +99,11 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
                 return channel;
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         throw new AuthenticationException("Unable to fetch channel for user");
     }

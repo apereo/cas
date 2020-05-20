@@ -86,7 +86,11 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
                         writeAttributeValue(writer, WSFederationConstants.getClaimInCasNamespace(claimName), v, service);
                     }
                 } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.error(e.getMessage(), e);
+                    } else {
+                        LOGGER.error(e.getMessage());
+                    }
                 }
             });
 
@@ -95,7 +99,11 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
             val claims = writer.getDocument().getDocumentElement();
             sts.setClaims(claims);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
     }
 

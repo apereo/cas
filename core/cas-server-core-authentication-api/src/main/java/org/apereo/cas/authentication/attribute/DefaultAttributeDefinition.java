@@ -111,7 +111,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
             .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private List<Object> encryptValues(final List<Object> currentValues, final RegisteredService registeredService) {
+    private static List<Object> encryptValues(final List<Object> currentValues, final RegisteredService registeredService) {
         val publicKey = registeredService.getPublicKey();
         if (publicKey == null) {
             LOGGER.error("No public key is defined for service [{}]. No attributes will be released", registeredService);

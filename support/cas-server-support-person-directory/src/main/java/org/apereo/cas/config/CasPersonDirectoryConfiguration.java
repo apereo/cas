@@ -55,7 +55,6 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.http.HttpMethod;
 
 import javax.naming.directory.SearchControls;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -83,7 +82,7 @@ public class CasPersonDirectoryConfiguration {
 
     @Autowired
     private ObjectProvider<List<PersonDirectoryAttributeRepositoryPlanConfigurer>> attributeRepositoryConfigurers;
-    
+
     @ConditionalOnMissingBean(name = "attributeDefinitionStore")
     @Bean
     @RefreshScope
@@ -202,24 +201,6 @@ public class CasPersonDirectoryConfiguration {
     @Configuration("CasPersonDirectoryJdbcConfiguration")
     public class CasPersonDirectoryJdbcConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
 
-        private AbstractJdbcPersonAttributeDao createJdbcPersonAttributeDao(final JdbcPrincipalAttributesProperties jdbc) {
-            if (jdbc.isSingleRow()) {
-                LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", jdbc.getUrl());
-                return new SingleRowJdbcPersonAttributeDao(
-                    JpaBeans.newDataSource(jdbc),
-                    jdbc.getSql()
-                );
-            }
-            LOGGER.debug("Configured multi-row JDBC attribute repository for [{}]", jdbc.getUrl());
-            val jdbcDao = new MultiRowJdbcPersonAttributeDao(
-                JpaBeans.newDataSource(jdbc),
-                jdbc.getSql()
-            );
-            LOGGER.debug("Configured multi-row JDBC column mappings for [{}] are [{}]", jdbc.getUrl(), jdbc.getColumnMappings());
-            jdbcDao.setNameValueColumnMappings(jdbc.getColumnMappings());
-            return jdbcDao;
-        }
-        
         @ConditionalOnMissingBean(name = "jdbcAttributeRepositories")
         @Bean
         @RefreshScope
@@ -249,10 +230,27 @@ public class CasPersonDirectoryConfiguration {
             return list;
         }
 
-
         @Override
         public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
             plan.registerAttributeRepositories(jdbcAttributeRepositories());
+        }
+
+        private AbstractJdbcPersonAttributeDao createJdbcPersonAttributeDao(final JdbcPrincipalAttributesProperties jdbc) {
+            if (jdbc.isSingleRow()) {
+                LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", jdbc.getUrl());
+                return new SingleRowJdbcPersonAttributeDao(
+                    JpaBeans.newDataSource(jdbc),
+                    jdbc.getSql()
+                );
+            }
+            LOGGER.debug("Configured multi-row JDBC attribute repository for [{}]", jdbc.getUrl());
+            val jdbcDao = new MultiRowJdbcPersonAttributeDao(
+                JpaBeans.newDataSource(jdbc),
+                jdbc.getSql()
+            );
+            LOGGER.debug("Configured multi-row JDBC column mappings for [{}] are [{}]", jdbc.getUrl(), jdbc.getColumnMappings());
+            jdbcDao.setNameValueColumnMappings(jdbc.getColumnMappings());
+            return jdbcDao;
         }
     }
 

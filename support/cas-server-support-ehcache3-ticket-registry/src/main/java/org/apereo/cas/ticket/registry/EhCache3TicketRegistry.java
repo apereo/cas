@@ -151,7 +151,11 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry implements Di
             map.iterator().forEachRemaining(entry -> returnMap.put(entry.getKey(), entry.getValue()));
             return returnMap;
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
             return new HashMap<>(0);
         }
     }

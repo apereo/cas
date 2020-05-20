@@ -46,7 +46,11 @@ public class ScriptedRegisteredServiceUsernameProvider extends BaseRegisteredSer
                 return result.toString();
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         LOGGER.warn("Script [{}] returned no value for username attribute. Fallback to default [{}]", this.script, principal.getId());
         return principal.getId();

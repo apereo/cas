@@ -65,7 +65,11 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
                     try {
                         return DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord()));
                     } catch (final Exception e) {
-                        LOGGER.error(e.getMessage(), e);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.error(e.getMessage(), e);
+                        } else {
+                            LOGGER.error(e.getMessage());
+                        }
                     }
                     return null;
                 })
@@ -74,7 +78,11 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
         } catch (final NoResultException e) {
             LOGGER.debug("No device registration was found for [{}]", username);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return new ArrayList<>(0);
     }
@@ -103,7 +111,11 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
                 .setParameter("expdate", expirationDate)
                 .executeUpdate();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
     }
 
@@ -112,7 +124,11 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
         try {
             this.entityManager.createQuery(DELETE_QUERY).executeUpdate();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
     }
 }
