@@ -32,6 +32,7 @@ public class DefaultAttributeDefinitionStoreTests {
 
     @Test
     public void verifyAttrDefnNotFound() {
+        val service = CoreAuthenticationTestUtils.getRegisteredService();
         val store = new DefaultAttributeDefinitionStore();
         store.setScope("example.org");
         val defn = DefaultAttributeDefinition.builder()
@@ -41,12 +42,13 @@ public class DefaultAttributeDefinitionStoreTests {
             .build();
         store.registerAttributeDefinition(defn);
         var values = (Optional<Pair<AttributeDefinition, List<Object>>>) store.resolveAttributeValues("whatever",
-            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME));
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service);
         assertTrue(values.isEmpty());
     }
 
     @Test
     public void verifyAttributeDefinitionsAsMap() {
+        val service = CoreAuthenticationTestUtils.getRegisteredService();
         val store = new DefaultAttributeDefinitionStore();
         store.setScope("example.org");
         val defn = DefaultAttributeDefinition.builder()
@@ -56,7 +58,7 @@ public class DefaultAttributeDefinitionStoreTests {
             .build();
         store.registerAttributeDefinition(defn);
         assertFalse(store.isEmpty());
-        val attrs = store.resolveAttributeValues(CoreAuthenticationTestUtils.getAttributes());
+        val attrs = store.resolveAttributeValues(CoreAuthenticationTestUtils.getAttributes(), service);
         assertFalse(attrs.isEmpty());
         assertTrue(attrs.containsKey("mail"));
         assertTrue(attrs.containsKey(defn.getName()));
@@ -66,6 +68,7 @@ public class DefaultAttributeDefinitionStoreTests {
 
     @Test
     public void verifyScopedAttrDefn() {
+        val service = CoreAuthenticationTestUtils.getRegisteredService();
         val store = new DefaultAttributeDefinitionStore();
         store.setScope("example.org");
         val defn = DefaultAttributeDefinition.builder()
@@ -74,13 +77,15 @@ public class DefaultAttributeDefinitionStoreTests {
             .scoped(true)
             .build();
         store.registerAttributeDefinition(defn);
-        var values = store.resolveAttributeValues("eduPersonPrincipalName", CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME));
+        var values = store.resolveAttributeValues("eduPersonPrincipalName",
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service);
         assertTrue(values.isPresent());
         assertTrue(values.get().getValue().contains("test@example.org"));
     }
 
     @Test
     public void verifyScriptedEmbeddedAttrDefn() {
+        val service = CoreAuthenticationTestUtils.getRegisteredService();
         val store = new DefaultAttributeDefinitionStore();
         store.setScope("example.org");
         val defn = DefaultAttributeDefinition.builder()
@@ -91,7 +96,7 @@ public class DefaultAttributeDefinitionStoreTests {
             .build();
         store.registerAttributeDefinition(defn);
         var values = store.resolveAttributeValues("eduPersonPrincipalName",
-            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME));
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service);
         assertTrue(values.isPresent());
         assertTrue(values.get().getValue().contains("hello@example.org"));
         assertTrue(values.get().getValue().contains("world@example.org"));
@@ -99,6 +104,7 @@ public class DefaultAttributeDefinitionStoreTests {
 
     @Test
     public void verifyScriptedExternalAttrDefn() {
+        val service = CoreAuthenticationTestUtils.getRegisteredService();
         val store = new DefaultAttributeDefinitionStore();
         store.setScope("system.org");
         val defn = DefaultAttributeDefinition.builder()
@@ -109,7 +115,7 @@ public class DefaultAttributeDefinitionStoreTests {
             .build();
         store.registerAttributeDefinition(defn);
         var values = store.resolveAttributeValues("eduPersonPrincipalName",
-            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME));
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service);
         assertTrue(values.isPresent());
         assertTrue(values.get().getValue().contains("casuser@system.org"));
         assertTrue(values.get().getValue().contains("groovy@system.org"));
@@ -117,6 +123,7 @@ public class DefaultAttributeDefinitionStoreTests {
 
     @Test
     public void verifyFormattedAttrDefn() {
+        val service = CoreAuthenticationTestUtils.getRegisteredService();
         val store = new DefaultAttributeDefinitionStore();
         store.setScope("example.org");
         val defn = DefaultAttributeDefinition.builder()
@@ -127,7 +134,7 @@ public class DefaultAttributeDefinitionStoreTests {
             .build();
         store.registerAttributeDefinition(defn);
         var values = store.resolveAttributeValues("eduPersonPrincipalName",
-            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME));
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service);
         assertTrue(values.isPresent());
         assertTrue(values.get().getValue().contains("hello,test@example.org"));
     }

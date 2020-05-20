@@ -24,7 +24,7 @@ import java.util.Set;
  */
 @FunctionalInterface
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface PrincipalAttributesRepository extends Serializable {
+public interface RegisteredServicePrincipalAttributesRepository extends Serializable {
 
     /**
      * Gets attributes for the given principal id.

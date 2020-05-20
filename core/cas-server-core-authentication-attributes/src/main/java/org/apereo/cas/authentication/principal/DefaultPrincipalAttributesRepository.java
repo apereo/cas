@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServicePrincipalAttributesRepository;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -27,12 +26,6 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
     private static final long serialVersionUID = -4535358847021241725L;
 
     @Override
-    protected void addPrincipalAttributes(final String id, final Map<String, List<Object>> attributes,
-                                          final RegisteredService registeredService) {
-        LOGGER.debug("Using [{}], no caching takes place for [{}] to add attributes.", id, this.getClass().getSimpleName());
-    }
-
-    @Override
     public Map<String, List<Object>> getAttributes(final Principal principal, final RegisteredService registeredService) {
         val mergeStrategy = determineMergingStrategy();
         val principalAttributes = getPrincipalAttributes(principal);
@@ -45,5 +38,11 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
             return convertAttributesToPrincipalAttributesAndCache(principal, mergedAttributes, registeredService);
         }
         return convertAttributesToPrincipalAttributesAndCache(principal, principalAttributes, registeredService);
+    }
+
+    @Override
+    protected void addPrincipalAttributes(final String id, final Map<String, List<Object>> attributes,
+                                          final RegisteredService registeredService) {
+        LOGGER.debug("Using [{}], no caching takes place for [{}] to add attributes.", id, this.getClass().getSimpleName());
     }
 }
