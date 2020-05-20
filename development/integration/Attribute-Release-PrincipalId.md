@@ -72,7 +72,7 @@ The public key is then configured for a service definition in CAS:
 }
 ``` 
 
-The configuration of the public key component qualifies to use the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax.
+The configuration of the public key component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
 
 The application can then proceed to decrypt the username using its own private key.
 The following sample code demonstrates how that might be done in Java:
@@ -219,7 +219,7 @@ logger.info("Choosing username attribute out of attributes $attributes")
 return "newPrincipalId"
 ```
 
-The configuration of this component qualifies to use the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax.
+The configuration of this component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
 
 ## Anonymous / Transient
 
