@@ -6,12 +6,12 @@ import org.apereo.cas.authentication.principal.ChainingPrincipalElectionStrategy
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalResolutionExecutionPlan;
-import org.apereo.cas.services.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalElectionStrategyConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
@@ -60,7 +60,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @RefreshScope
     @Autowired
     public PrincipalElectionStrategy principalElectionStrategy(final List<PrincipalElectionStrategyConfigurer> configurers) {
-        LOGGER.trace("building principal election strategies from [{}]", configurers);
+        LOGGER.trace("Building principal election strategies from [{}]", configurers);
         val chain = new ChainingPrincipalElectionStrategy();
         AnnotationAwareOrderComparator.sortIfNecessary(configurers);
 
@@ -112,8 +112,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @RefreshScope
     @Autowired
     public PrincipalResolver defaultPrincipalResolver(final List<PrincipalResolutionExecutionPlanConfigurer> configurers,
-                                                      @Qualifier("principalElectionStrategy")
-                                                      final PrincipalElectionStrategy principalElectionStrategy) {
+                                                      @Qualifier("principalElectionStrategy") final PrincipalElectionStrategy principalElectionStrategy) {
         val plan = new DefaultPrincipalResolutionExecutionPlan();
         val sortedConfigurers = new ArrayList<PrincipalResolutionExecutionPlanConfigurer>(configurers);
         AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
@@ -132,6 +131,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
 
     @ConditionalOnMissingBean(name = "casCorePrincipalResolutionExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public PrincipalResolutionExecutionPlanConfigurer casCorePrincipalResolutionExecutionPlanConfigurer() {
         return plan -> {
             if (attributeRepositories.getObject().isEmpty()) {
