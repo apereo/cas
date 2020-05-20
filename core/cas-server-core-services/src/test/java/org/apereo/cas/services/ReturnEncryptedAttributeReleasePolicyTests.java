@@ -18,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link EncryptingAttributeReleasePolicyTests}.
+ * This is {@link ReturnEncryptedAttributeReleasePolicyTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Tag("Simple")
-public class EncryptingAttributeReleasePolicyTests {
+public class ReturnEncryptedAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "EncryptingAttributeReleasePolicyTests.json");
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
@@ -33,16 +33,16 @@ public class EncryptingAttributeReleasePolicyTests {
     public void verifySerialization() throws IOException {
         val allowedAttributes = new ArrayList<String>();
         allowedAttributes.add("attributeOne");
-        val policyWritten = new EncryptingAttributeReleasePolicy(allowedAttributes);
+        val policyWritten = new ReturnEncryptedAttributeReleasePolicy(allowedAttributes);
         MAPPER.writeValue(JSON_FILE, policyWritten);
-        val policyRead = MAPPER.readValue(JSON_FILE, EncryptingAttributeReleasePolicy.class);
+        val policyRead = MAPPER.readValue(JSON_FILE, ReturnEncryptedAttributeReleasePolicy.class);
         assertEquals(policyWritten, policyRead);
         assertNotNull(policyWritten.toString());
     }
 
     @Test
     public void verifyNoPublicKey() {
-        val policy = new EncryptingAttributeReleasePolicy(CollectionUtils.wrapList("cn"));
+        val policy = new ReturnEncryptedAttributeReleasePolicy(CollectionUtils.wrapList("cn"));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         var results = policy.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser"),
             CoreAuthenticationTestUtils.getService(), registeredService);
@@ -57,7 +57,7 @@ public class EncryptingAttributeReleasePolicyTests {
 
     @Test
     public void verifyBadCipher() {
-        val policy = new EncryptingAttributeReleasePolicy(CollectionUtils.wrapList("cn"));
+        val policy = new ReturnEncryptedAttributeReleasePolicy(CollectionUtils.wrapList("cn"));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val servicePublicKey = mock(RegisteredServicePublicKey.class);
         when(servicePublicKey.getAlgorithm()).thenReturn("BAD");
@@ -70,7 +70,7 @@ public class EncryptingAttributeReleasePolicyTests {
 
     @Test
     public void verifyEncrypt() {
-        val policy = new EncryptingAttributeReleasePolicy(CollectionUtils.wrapList("cn", "uid", "mail"));
+        val policy = new ReturnEncryptedAttributeReleasePolicy(CollectionUtils.wrapList("cn", "uid", "mail"));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val servicePublicKey = new RegisteredServicePublicKeyImpl("classpath:keys/RSA1024Public.key", "RSA");
         when(registeredService.getPublicKey()).thenReturn(servicePublicKey);

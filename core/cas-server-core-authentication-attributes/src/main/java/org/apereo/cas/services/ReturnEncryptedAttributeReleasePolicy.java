@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class EncryptingAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
+public class ReturnEncryptedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -5771481877391140569L;
 

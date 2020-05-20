@@ -140,7 +140,7 @@ Encrypt and encode all all allowed attributes in base-64 using the assigned regi
   "name" : "sample",
   "id" : 100,
   "attributeReleasePolicy" : {
-    "@class" : "org.apereo.cas.services.EncryptingAttributeReleasePolicy",
+    "@class" : "org.apereo.cas.services.ReturnEncryptedAttributeReleasePolicy",
     "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ]
   },
   "publicKey" : {
