@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.adaptive.DefaultAdaptiveAuthenticationPolic
 import org.apereo.cas.authentication.adaptive.intel.BlackDotIPAddressIntelligenceServiceTests;
 import org.apereo.cas.authentication.adaptive.intel.GroovyIPAddressIntelligenceServiceTests;
 import org.apereo.cas.authentication.adaptive.intel.RestfulIPAddressIntelligenceServiceTests;
-import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStoreTests;
 import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolverTests;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolverTests;
 import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicyTests;
@@ -38,7 +37,6 @@ import org.junit.runner.RunWith;
     PrincipalNameTransformerUtilsTests.class,
     AuthenticationCredentialTypeMetaDataPopulatorTests.class,
     DefaultPrincipalFactoryTests.class,
-    DefaultAttributeDefinitionStoreTests.class,
     GroovyAuthenticationPreProcessorTests.class,
     GroovyPrincipalFactoryTests.class,
     GroovyPasswordEncoderTests.class,

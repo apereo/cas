@@ -16,9 +16,7 @@ import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jooq.lambda.Unchecked;
 
-import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
-import java.security.PublicKey;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,31 +56,6 @@ public class EncryptingAttributeReleasePolicy extends AbstractRegisteredServiceA
         return authorizeReleaseOfAllowedAttributes(principal, attrs, registeredService, selectedService);
     }
 
-    /**
-     * Initialize cipher based on service public key.
-     *
-     * @param publicKey         the public key
-     * @param registeredService the registered service
-     * @return the false if no public key is found
-     * or if cipher cannot be initialized, etc.
-     */
-    private static Cipher initializeCipherBasedOnServicePublicKey(final PublicKey publicKey,
-                                                                  final RegisteredService registeredService) {
-        try {
-            LOGGER.debug("Using service [{}] public key [{}] to initialize the cipher", registeredService.getServiceId(),
-                registeredService.getPublicKey());
-
-            val cipher = Cipher.getInstance(publicKey.getAlgorithm());
-            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            LOGGER.trace("Initialized cipher in encrypt-mode via the public key algorithm [{}] for service [{}]",
-                publicKey.getAlgorithm(), registeredService.getServiceId());
-            return cipher;
-        } catch (final Exception e) {
-            LOGGER.warn("Cipher could not be initialized for service [{}]. Error [{}]",
-                registeredService, e.getMessage());
-        }
-        return null;
-    }
 
     /**
      * Authorize release of allowed attributes map.
@@ -97,22 +70,17 @@ public class EncryptingAttributeReleasePolicy extends AbstractRegisteredServiceA
                                                                             final Map<String, List<Object>> attrs,
                                                                             final RegisteredService registeredService,
                                                                             final Service selectedService) {
-        if (registeredService.getPublicKey() == null) {
+        val publicKey = registeredService.getPublicKey();
+        if (publicKey == null) {
             LOGGER.error("No public key is defined for service [{}]. No attributes will be released", registeredService);
             return new HashMap<>(0);
         }
-        val publicKey = registeredService.getPublicKey().createInstance();
-        if (publicKey == null) {
-            LOGGER.error("No public key can be created for service [{}]. No attributes will be released", registeredService);
-            return new HashMap<>(0);
-        }
-
-        val cipher = initializeCipherBasedOnServicePublicKey(publicKey, registeredService);
+        LOGGER.debug("Using service [{}] public key [{}] to initialize the cipher", registeredService.getServiceId(), publicKey);
+        val cipher = publicKey.toCipher();
         if (cipher == null) {
             LOGGER.error("Unable to initialize cipher given the public key algorithm [{}]", publicKey.getAlgorithm());
             return new HashMap<>(0);
         }
-
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
         val attributesToRelease = new HashMap<String, List<Object>>();

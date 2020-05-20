@@ -1,7 +1,9 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import javax.crypto.Cipher;
 import java.io.Serializable;
 import java.security.PublicKey;
 
@@ -33,5 +35,14 @@ public interface RegisteredServicePublicKey extends Serializable {
      *
      * @return the public key
      */
+    @JsonIgnore
     PublicKey createInstance();
+
+    /**
+     * Convert the key into a cipher instance.
+     *
+     * @return the cipher
+     */
+    @JsonIgnore
+    Cipher toCipher();
 }

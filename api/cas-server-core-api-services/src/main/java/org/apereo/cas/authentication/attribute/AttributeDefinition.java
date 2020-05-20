@@ -44,6 +44,14 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
     boolean isScoped();
 
     /**
+     * Indicate if the attribute value should
+     * be encrypted using defined public keys for the service.
+     *
+     * @return true/false
+     */
+    boolean isEncrypted();
+
+    /**
      * Gets underlying source attribute that should drive
      * the value of the attribute definition.
      *

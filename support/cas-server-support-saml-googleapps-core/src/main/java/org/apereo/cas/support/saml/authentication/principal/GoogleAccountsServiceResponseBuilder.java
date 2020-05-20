@@ -25,6 +25,7 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.util.ResourceUtils;
 
 import java.security.PrivateKey;
@@ -177,16 +178,15 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             return;
         }
 
-        val bean = new PublicKeyFactoryBean();
+        var resource = (Resource) null;
         if (this.publicKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
-            bean.setResource(new ClassPathResource(StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
+            resource = new ClassPathResource(StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX));
         } else if (this.publicKeyLocation.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
-            bean.setResource(new FileSystemResource(StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.FILE_URL_PREFIX)));
+            resource = new FileSystemResource(StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.FILE_URL_PREFIX));
         } else {
-            bean.setResource(new FileSystemResource(this.publicKeyLocation));
+            resource = new FileSystemResource(this.publicKeyLocation);
         }
-
-        bean.setAlgorithm(this.keyAlgorithm);
+        val bean = new PublicKeyFactoryBean(resource, this.keyAlgorithm);
         LOGGER.debug("Loading Google Apps public key from [{}] with key algorithm [{}]",
             bean.getResource(), bean.getAlgorithm());
         bean.afterPropertiesSet();
