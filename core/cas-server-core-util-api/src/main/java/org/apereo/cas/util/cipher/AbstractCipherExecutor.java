@@ -77,9 +77,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
     public static PublicKey extractPublicKeyFromResource(final String secretKeyToUse) {
         LOGGER.debug("Attempting to extract public key from [{}]...", secretKeyToUse);
         val resource = ResourceUtils.getResourceFrom(secretKeyToUse);
-        val factory = new PublicKeyFactoryBean();
-        factory.setAlgorithm(RsaKeyUtil.RSA);
-        factory.setResource(resource);
+        val factory = new PublicKeyFactoryBean(resource, RsaKeyUtil.RSA);
         factory.setSingleton(false);
         return factory.getObject();
     }
