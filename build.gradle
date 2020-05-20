@@ -51,9 +51,6 @@ ext {
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
 
-    githubPackagesUsername = System.getProperty("githubPackagesUsername")
-    githubPackagesToken = System.getProperty("githubPackagesToken")
-
     publishSnapshots = Boolean.getBoolean("publishSnapshots")
     publishReleases = Boolean.getBoolean("publishReleases")
 
@@ -376,6 +373,9 @@ subprojects {
                         maven {
                             name "Sonatype-Releases"
                             url "${sonatypeRepositoryUrl}"
+                            mavenContent {
+                                releasesOnly()
+                            }
                             credentials {
                                 username "${sonatypeUsername}"
                                 password "${sonatypePassword}"
@@ -384,6 +384,9 @@ subprojects {
                         maven {
                             name = "GitHubPackages-Releases"
                             url = uri("${githubPackagesRepositoryUrl}")
+                            mavenContent {
+                                releasesOnly()
+                            }
                             credentials {
                                 username = "${githubPackagesUsername}"
                                 password = "${githubPackagesToken}"
@@ -394,17 +397,12 @@ subprojects {
                         maven {
                             name "Sonatype-Snapshots"
                             url "${sonatypeSnapshotsRepositoryUrl}"
+                            mavenContent {
+                                snapshotsOnly()
+                            }
                             credentials {
                                 username "${sonatypeUsername}"
                                 password "${sonatypePassword}"
-                            }
-                        }
-                        maven {
-                            name = "GitHubPackages-Snapshots"
-                            url = uri("${githubPackagesRepositoryUrl}")
-                            credentials {
-                                username = "${githubPackagesUsername}"
-                                password = "${githubPackagesToken}"
                             }
                         }
                     }
