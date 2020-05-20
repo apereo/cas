@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.attribute;
 
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
@@ -87,20 +88,18 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     @JsonIgnore
     @Override
     public List<Object> resolveAttributeValues(final List<Object> attributeValues,
-                                               final String scope) {
+                                               final String scope,
+                                               final RegisteredService registeredService) {
         List<Object> currentValues = new ArrayList<>(attributeValues);
-        
         if (StringUtils.isNotBlank(getScript())) {
             currentValues = getScriptedAttributeValue(key, currentValues);
         }
         if (isScoped()) {
             currentValues = formatValuesWithScope(scope, currentValues);
         }
-
         if (StringUtils.isNotBlank(getPatternFormat())) {
             currentValues = formatValuesWithPattern(currentValues);
         }
-
         LOGGER.trace("Resolved values [{}] for attribute definition [{}]", currentValues, this);
         return currentValues;
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.attribute;
 
+import org.apereo.cas.services.RegisteredService;
+
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -83,19 +85,23 @@ public interface AttributeDefinitionStore {
     /**
      * Gets attribute values.
      *
-     * @param key    the key
-     * @param values the values
+     * @param key               the key
+     * @param values            the values
+     * @param registeredService the registered service
      * @return the attribute values
      */
-    Optional<Pair<AttributeDefinition, List<Object>>> resolveAttributeValues(String key, List<Object> values);
+    Optional<Pair<AttributeDefinition, List<Object>>> resolveAttributeValues(String key, List<Object> values,
+                                                                             RegisteredService registeredService);
 
     /**
      * Gets attribute values.
      *
-     * @param attributes the values
+     * @param attributes        the values
+     * @param registeredService the registered service
      * @return the attribute values
      */
-    default Map<String, List<Object>> resolveAttributeValues(final Map<String, List<Object>> attributes) {
+    default Map<String, List<Object>> resolveAttributeValues(final Map<String, List<Object>> attributes,
+                                                             final RegisteredService registeredService) {
         return attributes
             .entrySet()
             .stream()
@@ -107,7 +113,7 @@ public interface AttributeDefinitionStore {
                     val attributeValues = determineValuesForAttributeDefinition(attributes, entry, definition);
                     LOGGER.trace("Resolving attribute [{}] from attribute definition store with values [{}]", entry.getKey(), attributeValues);
 
-                    val result = resolveAttributeValues(entry.getKey(), attributeValues);
+                    val result = resolveAttributeValues(entry.getKey(), attributeValues, registeredService);
                     if (result.isPresent()) {
                         val resolvedValues = result.get().getValue();
                         LOGGER.trace("Resolving attribute [{}] based on attribute definition [{}]", entry.getKey(), definition);
