@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.principal.ChainingPrincipalElectionStrategy
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalResolutionExecutionPlan;
-import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
+import org.apereo.cas.services.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalElectionStrategyConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -87,7 +87,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "globalPrincipalAttributeRepository")
-    public PrincipalAttributesRepository globalPrincipalAttributeRepository() {
+    public RegisteredServicePrincipalAttributesRepository globalPrincipalAttributeRepository() {
         val props = casProperties.getAuthn().getAttributeRepository();
         val cacheTime = props.getExpirationTime();
         if (cacheTime <= 0) {

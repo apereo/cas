@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServicePrincipalAttributesRepository;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Default implementation of {@link PrincipalAttributesRepository}
+ * Default implementation of {@link RegisteredServicePrincipalAttributesRepository}
  * that just returns the attributes as it receives them.
  *
  * @author Misagh Moayyed

@@ -3,7 +3,7 @@ package org.apereo.cas.authentication.principal.cache;
 import org.apereo.cas.authentication.AttributeMergingStrategy;
 import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetcher;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
+import org.apereo.cas.services.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 @ToString(exclude = "lock")
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"mergingStrategy", "attributeRepositoryIds"})
-public abstract class AbstractPrincipalAttributesRepository implements PrincipalAttributesRepository, AutoCloseable {
+public abstract class AbstractPrincipalAttributesRepository implements RegisteredServicePrincipalAttributesRepository, AutoCloseable {
     private static final long serialVersionUID = 6350245643948535906L;
 
     @JsonIgnore

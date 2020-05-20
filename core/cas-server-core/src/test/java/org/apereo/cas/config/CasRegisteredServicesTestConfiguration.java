@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.TestOneTimePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
-import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
+import org.apereo.cas.services.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -42,7 +42,7 @@ import java.util.List;
 public class CasRegisteredServicesTestConfiguration {
 
     @Bean
-    public PrincipalAttributesRepository cachingPrincipalAttributeRepository() {
+    public RegisteredServicePrincipalAttributesRepository cachingPrincipalAttributeRepository() {
         return new CachingPrincipalAttributesRepository("SECONDS", 20);
     }
 

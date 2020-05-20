@@ -3,7 +3,7 @@ package org.apereo.cas.authentication.principal.cache;
 import org.apereo.cas.authentication.AttributeMergingStrategy;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
+import org.apereo.cas.services.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Parent class for test cases around {@link PrincipalAttributesRepository}.
+ * Parent class for test cases around {@link RegisteredServicePrincipalAttributesRepository}.
  *
  * @author Misagh Moayyed
  * @since 4.2

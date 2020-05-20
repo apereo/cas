@@ -9,6 +9,7 @@ env:
   SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
   GH_PAGES_TOKEN: ${{ secrets.GH_PAGES_TOKEN }}
   GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+  GH_PACKAGES_USER: ${{ secrets.GH_PACKAGES_USER }}
   RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
   PYTHON_VERSION: 3.8.2
   JDK_CURRENT: 11.0.7
@@ -702,7 +703,7 @@ jobs:
           name: binary-artifacts
       - name: Publish SNAPSHOTs
         if: ${{ !contains(github.event.head_commit.message, 'skip snapshots') && github.event_name == 'push' }}
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DpublishSnapshots=true -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DpublishSnapshots=true -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}" -DgithubPackagesUsername="${GH_PACKAGES_USER}" -DgithubPackagesToken="${GH_PACKAGES_TOKEN}"
 
 ##########################################################################
 
