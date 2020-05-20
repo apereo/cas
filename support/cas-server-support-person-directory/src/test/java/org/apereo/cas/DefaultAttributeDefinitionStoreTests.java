@@ -44,10 +44,10 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class
 },
     properties = {
-        "cas.authn.attributeRepository.stub.attributes.uid=cas-user-id",
-        "cas.authn.attributeRepository.stub.attributes.givenName=cas-given-name",
-        "cas.authn.attributeRepository.stub.attributes.eppn=casuser",
-        "cas.authn.attributeRepository.stub.attributes.mismatchedAttributeKey=someValue",
+        "cas.authn.attribute-repository.stub.attributes.uid=cas-user-id",
+        "cas.authn.attribute-repository.stub.attributes.givenName=cas-given-name",
+        "cas.authn.attribute-repository.stub.attributes.eppn=casuser",
+        "cas.authn.attribute-repository.stub.attributes.mismatchedAttributeKey=someValue",
 
         "cas.server.scope=cas.org",
 
