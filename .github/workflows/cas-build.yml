@@ -8,8 +8,6 @@ env:
   SONATYPE_PWD: ${{ secrets.SONATYPE_PWD }}
   SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
   GH_PAGES_TOKEN: ${{ secrets.GH_PAGES_TOKEN }}
-  GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
-  GH_PACKAGES_USER: ${{ secrets.GH_PACKAGES_USER }}
   RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
   PYTHON_VERSION: 3.8.2
   JDK_CURRENT: 11.0.7
@@ -173,32 +171,6 @@ jobs:
       - name: Validate Documentation
         if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
         run: ./ci/validate-documentation.sh
-
-##########################################################################
-
-  validate-quality:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Validate Code Quality via SonarCloud
-        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.organization=apereo -Dsonar.host.url=https://sonarcloud.io -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -Dsonar.verbose=true --parallel -DshowStandardStreams=true --info
 
 ##########################################################################
 
@@ -703,7 +675,7 @@ jobs:
           name: binary-artifacts
       - name: Publish SNAPSHOTs
         if: ${{ !contains(github.event.head_commit.message, 'skip snapshots') && github.event_name == 'push' }}
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DpublishSnapshots=true -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}" -DgithubPackagesUsername="${GH_PACKAGES_USER}" -DgithubPackagesToken="${GH_PACKAGES_TOKEN}"
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DpublishSnapshots=true -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
 
 ##########################################################################
 
@@ -826,7 +798,7 @@ jobs:
         run: ./testcas.sh --coverage-report --coverage-upload --category jdbc
 ##########################################################################
 
-  tests-spring-webflow:
+  tests-swf:
     runs-on: ubuntu-latest
     needs: [build]
     steps:
@@ -1783,3 +1755,28 @@ jobs:
         with:
           token: ${{ secrets.RENOVATE_TOKEN }}
           configurationFile: .github/renovate.js
+
+##########################################################################
+
+  validate-quality:
+    runs-on: ubuntu-latest
+    needs: [tests-simple,tests-groovy,tests-filesystem,tests-jdbc,tests-swf,tests-restful,tests-mfa]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Validate Code Quality via SonarCloud
+        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.organization=apereo -Dsonar.host.url=https://sonarcloud.io -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true --parallel -DshowStandardStreams=true --info
+
+##########################################################################

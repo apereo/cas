@@ -1,7 +1,7 @@
 module.exports = {
   branchPrefix: 'renovate/',
   gitAuthor: 'Renovate Bot <bot@renovateapp.com>',
-  logLevel: 'debug',
+  logLevel: 'warn',
   onboarding: false,
   platform: 'github',
   includeForks: true,
