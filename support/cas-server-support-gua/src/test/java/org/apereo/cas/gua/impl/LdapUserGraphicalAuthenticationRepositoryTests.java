@@ -55,7 +55,8 @@ public class LdapUserGraphicalAuthenticationRepositoryTests {
 
     private String createLdapEntry() throws Exception {
         val ldap = casProperties.getAuthn().getGua().getLdap();
-        try (val factory = LdapUtils.newLdaptiveConnectionFactory(ldap)) {
+        val factory = LdapUtils.newLdaptiveConnectionFactory(ldap);
+        try {
             val photo = IOUtils.toByteArray(new ClassPathResource("image.jpg").getInputStream());
             val cn = RandomUtils.randomAlphabetic(6).toLowerCase();
             val request = AddRequest.builder()
@@ -69,6 +70,8 @@ public class LdapUserGraphicalAuthenticationRepositoryTests {
             val operation = new AddOperation(factory);
             operation.execute(request);
             return cn;
+        } finally {
+            factory.close();
         }
     }
 }
