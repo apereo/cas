@@ -16,6 +16,7 @@ import org.ldaptive.Credential;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.auth.AuthenticationRequest;
+import org.ldaptive.auth.Authenticator;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.authorization.generator.DefaultRolesPermissionsAuthorizationGenerator;
@@ -47,6 +48,13 @@ import java.util.stream.Collectors;
 public class MonitorEndpointLdapAuthenticationProvider implements AuthenticationProvider {
     private final MonitorProperties.Endpoints.LdapSecurity ldapProperties;
     private final SecurityProperties securityProperties;
+    private final ConnectionFactory connectionFactory;
+    private final Authenticator authenticator;
+
+    public void destroy() {
+        this.connectionFactory.close();
+        this.authenticator.close();
+    }
 
     @Override
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
@@ -59,10 +67,9 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
             }
             LOGGER.debug("Preparing LDAP authentication request for user [{}]", username);
             val request = new AuthenticationRequest(username, new Credential(password), ReturnAttributes.ALL.value());
-            val authenticator = LdapUtils.newLdaptiveAuthenticator(ldapProperties);
             LOGGER.debug("Executing LDAP authentication request for user [{}]", username);
 
-            val response = authenticator.authenticate(request);
+            val response = this.authenticator.authenticate(request);
             LOGGER.debug("LDAP response: [{}]", response);
 
             if (response.isSuccess()) {
@@ -125,12 +132,11 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
     @SuppressWarnings("java:S2095")
     private AuthorizationGenerator buildAuthorizationGenerator() {
         val ldapAuthz = this.ldapProperties.getLdapAuthz();
-        val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(this.ldapProperties);
 
         if (isGroupBasedAuthorization()) {
             LOGGER.debug("Handling LDAP authorization based on groups");
             return new LdapUserGroupsToRolesAuthorizationGenerator(
-                ldapAuthorizationGeneratorUserSearchOperation(connectionFactory),
+                ldapAuthorizationGeneratorUserSearchOperation(this.connectionFactory),
                 ldapAuthz.isAllowMultipleResults(),
                 ldapAuthz.getGroupAttribute(),
                 ldapAuthz.getGroupPrefix(),
@@ -139,7 +145,7 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
         if (isUserBasedAuthorization()) {
             LOGGER.debug("Handling LDAP authorization based on attributes and roles");
             return new LdapUserAttributesToRolesAuthorizationGenerator(
-                ldapAuthorizationGeneratorUserSearchOperation(connectionFactory),
+                ldapAuthorizationGeneratorUserSearchOperation(this.connectionFactory),
                 ldapAuthz.isAllowMultipleResults(),
                 ldapAuthz.getRoleAttribute(),
                 ldapAuthz.getRolePrefix());

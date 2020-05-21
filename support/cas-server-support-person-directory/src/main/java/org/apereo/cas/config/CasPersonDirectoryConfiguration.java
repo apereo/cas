@@ -18,6 +18,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -39,6 +40,7 @@ import org.apereo.services.persondir.support.jdbc.MultiRowJdbcPersonAttributeDao
 import org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -255,23 +257,35 @@ public class CasPersonDirectoryConfiguration {
     }
 
     @ConditionalOnProperty(name = "cas.authn.attribute-repository.ldap[0].ldap-url")
-    @Configuration("CasPersonDirectoryLdapConfiguration")
-    public class CasPersonDirectoryLdapConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
+    @Bean
+    @RefreshScope
+    public PersonDirectoryAttributeRepositoryPlanConfigurer ldapAttributeRepositoryPlanConfigurer() {
+        return new LdapAttributeRepositoryPlanConfigurer();
+    }
 
-        @ConditionalOnMissingBean(name = "ldapAttributeRepositories")
-        @Bean
-        @RefreshScope
-        public List<IPersonAttributeDao> ldapAttributeRepositories() {
-            val list = new ArrayList<IPersonAttributeDao>();
+    private class LdapAttributeRepositoryPlanConfigurer implements PersonDirectoryAttributeRepositoryPlanConfigurer, DisposableBean {
+        private final List<LdaptivePersonAttributeDao> ldapDaoList = new ArrayList<>(0);
+
+        @Override
+        public void destroy() {
+            ldapDaoList.forEach(LdaptivePersonAttributeDao::close);
+        }
+
+        @Override
+        @SneakyThrows
+        public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
             val attrs = casProperties.getAuthn().getAttributeRepository();
+
             attrs.getLdap()
                 .stream()
                 .filter(ldap -> StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl()))
                 .forEach(ldap -> {
                     val ldapDao = new LdaptivePersonAttributeDao();
+                    ldapDaoList.add(ldapDao);
                     FunctionUtils.doIfNotNull(ldap.getId(), ldapDao::setId);
                     LOGGER.debug("Configured LDAP attribute source for [{}] and baseDn [{}]", ldap.getLdapUrl(), ldap.getBaseDn());
-                    ldapDao.setConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap));
+                    val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
+                    ldapDao.setConnectionFactory(connectionFactory);
                     ldapDao.setBaseDN(ldap.getBaseDn());
 
                     LOGGER.debug("LDAP attributes are fetched from [{}] via filter [{}]", ldap.getLdapUrl(), ldap.getSearchFilter());
@@ -302,16 +316,8 @@ public class CasPersonDirectoryConfiguration {
                     ldapDao.setSearchControls(constraints);
                     ldapDao.setOrder(ldap.getOrder());
                     LOGGER.debug("Adding LDAP attribute source for [{}]", ldap.getLdapUrl());
-                    list.add(ldapDao);
+                    plan.registerAttributeRepository(ldapDao);
                 });
-
-            return list;
-        }
-
-
-        @Override
-        public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
-            plan.registerAttributeRepositories(ldapAttributeRepositories());
         }
     }
 
@@ -491,4 +497,3 @@ public class CasPersonDirectoryConfiguration {
 
 
 }
-

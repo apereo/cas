@@ -5,6 +5,7 @@ import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.gua.impl.LdapUserGraphicalAuthenticationRepository;
 import org.apereo.cas.gua.impl.StaticUserGraphicalAuthenticationRepository;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.web.flow.AcceptUserGraphicsForAuthenticationAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -78,7 +79,8 @@ public class GraphicalUserAuthenticationConfiguration {
             && StringUtils.isNotBlank(ldap.getSearchFilter())
             && StringUtils.isNotBlank(ldap.getBaseDn())
             && StringUtils.isNotBlank(ldap.getImageAttribute())) {
-            return new LdapUserGraphicalAuthenticationRepository(casProperties);
+            val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(gua.getLdap());
+            return new LdapUserGraphicalAuthenticationRepository(casProperties, connectionFactory);
         }
         throw new BeanCreationException("A repository instance must be configured to locate user-defined graphics");
     }
