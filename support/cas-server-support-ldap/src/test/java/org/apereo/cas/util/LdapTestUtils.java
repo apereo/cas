@@ -165,13 +165,16 @@ public class LdapTestUtils {
             config.setConnectionInitializers(connInit);
         }
         LOGGER.debug("Created modification request connection configuration [{}] for [{}]", config, address);
-        try (val connectionFactory = new DefaultConnectionFactory(config)) {
+        val connectionFactory = new DefaultConnectionFactory(config);
+        try {
             val modify = new ModifyOperation(connectionFactory);
             val request = new ModifyRequest(dn, new AttributeModification(add, attr));
             LOGGER.debug("Executing modification request [{}] with type [{}] for [{}]", request, add, dn);
             modify.execute(request);
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
+        } finally {
+            connectionFactory.close();
         }
     }
 
