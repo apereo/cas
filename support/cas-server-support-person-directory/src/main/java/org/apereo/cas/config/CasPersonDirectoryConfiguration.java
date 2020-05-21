@@ -40,7 +40,6 @@ import org.apereo.services.persondir.support.jdbc.MultiRowJdbcPersonAttributeDao
 import org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao;
 import org.jooq.lambda.Unchecked;
-import org.ldaptive.ConnectionFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -261,18 +260,17 @@ public class CasPersonDirectoryConfiguration {
 
     @ConditionalOnProperty(name = "cas.authn.attribute-repository.ldap[0].ldap-url")
     @Bean
-    @Autowired
     @RefreshScope
     public PersonDirectoryAttributeRepositoryPlanConfigurer ldapAttributeRepositoryPlanConfigurer() {
         return new LdapAttributeRepositoryPlanConfigurer();
     }
 
     private class LdapAttributeRepositoryPlanConfigurer implements PersonDirectoryAttributeRepositoryPlanConfigurer, DisposableBean {
-        private final ArrayList<ConnectionFactory> connectionFactoryList = new ArrayList<>(0);
+        private final List<LdaptivePersonAttributeDao> ldapDaoList = new ArrayList<>(0);
 
         @Override
         public void destroy() {
-            connectionFactoryList.forEach(ConnectionFactory::close);
+            ldapDaoList.forEach(LdaptivePersonAttributeDao::close);
         }
 
         @Override
@@ -285,10 +283,10 @@ public class CasPersonDirectoryConfiguration {
                 .filter(ldap -> StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl()))
                 .forEach(ldap -> {
                     val ldapDao = new LdaptivePersonAttributeDao();
+                    ldapDaoList.add(ldapDao);
                     FunctionUtils.doIfNotNull(ldap.getId(), ldapDao::setId);
                     LOGGER.debug("Configured LDAP attribute source for [{}] and baseDn [{}]", ldap.getLdapUrl(), ldap.getBaseDn());
                     val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
-                    connectionFactoryList.add(connectionFactory);
                     ldapDao.setConnectionFactory(connectionFactory);
                     ldapDao.setBaseDN(ldap.getBaseDn());
 
