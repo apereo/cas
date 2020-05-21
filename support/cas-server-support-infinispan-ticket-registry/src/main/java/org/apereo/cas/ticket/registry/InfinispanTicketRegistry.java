@@ -41,7 +41,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
             : expirationPolicy.getTimeToIdle();
 
         LOGGER.debug("Adding ticket [{}] to cache store to live [{}] seconds and stay idle for [{}]",
-            ticketToAdd.getId(), expirationPolicy.getTimeToLive(), idleTime);
+            ticketToAdd.getId(), getTimeToLive(expirationPolicy), idleTime);
 
         this.cache.put(ticket.getId(), ticket,
             expirationPolicy.getTimeToLive(), TimeUnit.SECONDS,
@@ -83,5 +83,10 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Collection<? extends Ticket> getTickets() {
         return decodeTickets(this.cache.values());
+    }
+    
+    private Long getTimeToLive(ExpirationPolicy expirationPolicy) {
+        val timeToLive = expirationPolicy.getTimeToLive();
+        return Long.MAX_VALUE == timeToLive ? Long.valueOf(Integer.MAX_VALUE) : timeToLive;
     }
 }
