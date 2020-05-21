@@ -32,6 +32,7 @@ import org.apereo.cas.oidc.slo.OidcSingleLogoutServiceMessageHandlerTests;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorServiceTests;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionServiceTests;
 import org.apereo.cas.oidc.token.OidcJwtAccessTokenEncoderTests;
+import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutor2Tests;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutorTests;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupportTests;
 import org.apereo.cas.oidc.web.OidcAccessTokenResponseGeneratorTests;
@@ -104,6 +105,7 @@ import org.junit.runner.RunWith;
     OidcCallbackAuthorizeViewResolverTests.class,
     OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests.class,
     OidcRestfulJsonWebKeystoreGeneratorServiceTests.class,
+    OidcRegisteredServiceJwtAccessTokenCipherExecutor2Tests.class,
     OidcRegisteredServiceJwtAccessTokenCipherExecutorTests.class,
     OidcClientConfigurationAccessTokenAuthenticatorTests.class,
     OidcSingleLogoutMessageCreatorTests.class,

@@ -24,18 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends AbstractOidcTests {
 
     @Test
-    public void verifyOperation() {
-        val service = getOidcRegisteredService("whatever");
-        assertTrue(oauthRegisteredServiceJwtAccessTokenCipherExecutor.supports(service));
-        val at = getAccessToken();
-        val encoded = oauthRegisteredServiceJwtAccessTokenCipherExecutor.encode(at.getId(), Optional.of(service));
-        assertNotNull(encoded);
-        val decoded = oauthRegisteredServiceJwtAccessTokenCipherExecutor.decode(encoded, Optional.of(service));
-        assertNotNull(decoded);
-        assertEquals(at.getId(), decoded);
-    }
-
-    @Test
     public void verifyNoSigningKey() {
         val service = getOidcRegisteredService("whatever");
         service.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_SIGNING_ENABLED.getPropertyName(),

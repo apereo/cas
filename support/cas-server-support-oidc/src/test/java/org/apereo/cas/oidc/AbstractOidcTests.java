@@ -274,20 +274,28 @@ public abstract class AbstractOidcTests {
     @Qualifier("accessTokenJwtBuilder")
     protected JwtBuilder accessTokenJwtBuilder;
 
-    protected static OidcRegisteredService getOidcRegisteredService() {
+    protected void setJwksFile(final String jwksFile) {
+        casProperties.getAuthn().getOidc().getJwks().setJwksFile(jwksFile);
+    }
+
+    protected String getJwksFile() {
+        return casProperties.getAuthn().getOidc().getJwks().getJwksFile();
+    }
+
+    protected OidcRegisteredService getOidcRegisteredService() {
         return getOidcRegisteredService(true, true);
     }
 
-    protected static OidcRegisteredService getOidcRegisteredService(final boolean sign,
+    protected OidcRegisteredService getOidcRegisteredService(final boolean sign,
                                                                     final boolean encrypt) {
         return getOidcRegisteredService("clientid", "https://oauth\\.example\\.org.*", sign, encrypt);
     }
 
-    protected static OidcRegisteredService getOidcRegisteredService(final String clientid) {
+    protected OidcRegisteredService getOidcRegisteredService(final String clientid) {
         return getOidcRegisteredService(clientid, "https://oauth\\.example\\.org.*", true, true);
     }
 
-    protected static OidcRegisteredService getOidcRegisteredService(final String clientId,
+    protected OidcRegisteredService getOidcRegisteredService(final String clientId,
                                                                     final String redirectUri,
                                                                     final boolean sign,
                                                                     final boolean encrypt) {
@@ -303,7 +311,7 @@ public abstract class AbstractOidcTests {
         svc.setIdTokenEncryptionEncoding(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
         svc.setInformationUrl("info");
         svc.setPrivacyUrl("privacy");
-        svc.setJwks("classpath:keystore.jwks");
+        svc.setJwks(getJwksFile());
         svc.setLogoutUrl("https://oauth.example.org/logout,https://logout");
         svc.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
         svc.setScopes(CollectionUtils.wrapSet(OidcConstants.StandardScopes.EMAIL.getScope(),
