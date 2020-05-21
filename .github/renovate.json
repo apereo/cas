@@ -1,0 +1,226 @@
+{
+  "extends": [
+    "config:base",
+    ":preserveSemverRanges",
+    ":disableRateLimiting",
+    ":semanticCommits",
+    ":semanticCommitTypeAll(renovatebot)"
+  ],
+  "gradle": {
+    "enabled": true
+  },
+  "ignoreDeps": [
+    "com.github.coova:jradius",
+    "net.jradius:jradius-extras",
+    "net.jradius:jradius-apps",
+    "net.jradius:jradius-dictionary",
+    "net.jradius:jradius-client",
+    "net.jradius:jradius-extended",
+    "net.jradius:jradius-core",
+    "net.jradius:jradius-server",
+    "com.mebigfatguy.fb-contrib:fb-contrib"
+  ],
+  "packageRules": [
+    {
+      "groupName": "Groovy",
+      "packagePatterns": [
+        "^org.codehaus.groovy:"
+      ]
+    },
+    {
+      "groupName": "Groovy",
+      "packagePatterns": [
+        "^de.codecentric:spring-boot-admin-starter"
+      ]
+    },
+    {
+      "groupName": "SpringBoot",
+      "packagePatterns": [
+        "^org.springframework.boot:"
+      ]
+    },
+    {
+      "groupName": "AspectJ",
+      "packagePatterns": [
+        "^org.aspectj:"
+      ]
+    },
+    {
+      "groupName": "Spring",
+      "packagePatterns": [
+        "^org.springframework:"
+      ]
+    },
+    {
+      "groupName": "SpringSession",
+      "packagePatterns": [
+        "^org.springframework.session:"
+      ]
+    },
+    {
+      "groupName": "Ribbon",
+      "packagePatterns": [
+        "^com.netflix.ribbon:"
+      ]
+    },
+    {
+      "groupName": "ApacheCurator",
+      "packagePatterns": [
+        "^org.apache.curator:"
+      ]
+    },
+    {
+      "groupName": "ApacheWss4j",
+      "packagePatterns": [
+        "^org.apache.wss4j:"
+      ]
+    },
+    {
+      "groupName": "SpringSecurity",
+      "packagePatterns": [
+        "^org.springframework.security:"
+      ]
+    },
+    {
+      "groupName": "JAXB2",
+      "packagePatterns": [
+        "^org.jvnet.jaxb2_commons:",
+        "^com.sun.xml.bind"
+      ]
+    },
+    {
+      "groupName": "Logback",
+      "packagePatterns": [
+        "^ch.qos.logback:"
+      ]
+    },
+    {
+      "groupName": "JUnit",
+      "packagePatterns": [
+        "^org.junit.vintage",
+        "^org.junit.platform",
+        "^org.junit.jupiter"
+      ]
+    },
+    {
+      "groupName": "Hibernate",
+      "packagePatterns": [
+        "^org.hibernate:hibernate-core",
+        "^org.hibernate:hibernate-hikaricp",
+        "^org.hibernate:hibernate-entitymanager"
+      ]
+    },
+    {
+      "groupName": "Mockito",
+      "packagePatterns": [
+        "^org.mockito:"
+      ]
+    },
+    {
+      "groupName": "ApacheJClouds",
+      "packagePatterns": [
+        "^org.apache.jclouds"
+      ]
+    },
+    {
+      "groupName": "Tomcat",
+      "packagePatterns": [
+        "^org.apache.tomcat:",
+        "^org.apache.tomcat.embed:"
+      ]
+    },
+    {
+      "groupName": "Jackson",
+      "packagePatterns": [
+        "^com.fasterxml.jackson"
+      ]
+    },
+    {
+      "groupName": "BouncyCastle",
+      "packagePatterns": [
+        "^org.bouncycastle:"
+      ]
+    },
+    {
+      "groupName": "Slf4j",
+      "packagePatterns": [
+        "^org.slf4j:"
+      ]
+    },
+    {
+      "groupName": "ShibbolethIdP",
+      "packagePatterns": [
+        "^net.shibboleth.idp:"
+      ]
+    },
+    {
+      "groupName": "ApacheLogging",
+      "packagePatterns": [
+        "^org.apache.logging:"
+      ]
+    },
+    {
+      "groupName": "Ldaptive",
+      "packagePatterns": [
+        "^org.ldaptive:"
+      ]
+    },
+    {
+      "groupName": "ApacheCassandra",
+      "packagePatterns": [
+        "^com.datastax.cassandra:"
+      ]
+    },
+    {
+      "groupName": "Pac4j",
+      "packagePatterns": [
+        "^org.pac4j:"
+      ]
+    },
+    {
+      "groupName": "Micrometer",
+      "packagePatterns": [
+        "^io.micrometer:"
+      ]
+    },
+    {
+      "groupName": "OpenSAML",
+      "packagePatterns": [
+        "^org.opensaml:"
+      ]
+    },
+    {
+      "groupName": "ApacheIgnite",
+      "packagePatterns": [
+        "^org.apache.ignite:"
+      ]
+    },
+    {
+      "groupName": "AmazonSDK",
+      "extends": ["schedule:weekly"],
+      "packagePatterns": [
+        "^com.amazonaws:"
+      ]
+    },
+    {
+      "groupName": "ApacheCXF",
+      "packagePatterns": [
+        "^org.apache.cxf:",
+        "^org.apache.cxf.services.sts:"
+      ]
+    },
+    {
+      "groupName": "Swagger",
+      "packagePatterns": [
+        "^io.swagger:"
+      ]
+    },
+    {
+      "groupName": "Jersey",
+      "packagePatterns": [
+        "^org.glassfish.jersey.security:",
+        "^org.glassfish.jersey.inject:"
+      ]
+    }
+  ]
+}

@@ -226,7 +226,7 @@ Decide whether the primary user is allowed to go through impersonation via an ex
 }
 ```
 
-The configuration of this component qualifies to use the [Spring Expression Language](Configuring-Spring-Expressions.html) syntax. The Groovy 
+The configuration of this component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax. The Groovy 
 script itself may be designed as:
 
 ```groovy

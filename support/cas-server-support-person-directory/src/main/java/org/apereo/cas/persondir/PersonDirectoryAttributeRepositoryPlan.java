@@ -5,6 +5,9 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link PersonDirectoryAttributeRepositoryPlan}.
@@ -20,6 +23,16 @@ public interface PersonDirectoryAttributeRepositoryPlan {
      * @param repository the repository
      */
     void registerAttributeRepository(IPersonAttributeDao repository);
+
+    /**
+     * Find attribute repositories and return the stream.
+     *
+     * @param filter the filter
+     * @return the stream
+     */
+    default Stream<IPersonAttributeDao> findAttributeRepositories(Predicate<IPersonAttributeDao> filter) {
+        return getAttributeRepositories().stream().filter(filter);
+    }
 
     /**
      * Register attribute repository.

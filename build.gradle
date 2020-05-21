@@ -373,6 +373,9 @@ subprojects {
                         maven {
                             name "Sonatype-Releases"
                             url "${sonatypeRepositoryUrl}"
+                            mavenContent {
+                                releasesOnly()
+                            }
                             credentials {
                                 username "${sonatypeUsername}"
                                 password "${sonatypePassword}"
@@ -381,9 +384,12 @@ subprojects {
                         maven {
                             name = "GitHubPackages-Releases"
                             url = uri("${githubPackagesRepositoryUrl}")
+                            mavenContent {
+                                releasesOnly()
+                            }
                             credentials {
-                                username = "${sonatypeUsername}"
-                                password = System.getenv("GH_PACKAGES_TOKEN")
+                                username = "${githubPackagesUsername}"
+                                password = "${githubPackagesToken}"
                             }
                         }
                     }
@@ -391,17 +397,12 @@ subprojects {
                         maven {
                             name "Sonatype-Snapshots"
                             url "${sonatypeSnapshotsRepositoryUrl}"
+                            mavenContent {
+                                snapshotsOnly()
+                            }
                             credentials {
                                 username "${sonatypeUsername}"
                                 password "${sonatypePassword}"
-                            }
-                        }
-                        maven {
-                            name = "GitHubPackages-Snapshots"
-                            url = uri("${githubPackagesRepositoryUrl}")
-                            credentials {
-                                username = "${sonatypeUsername}"
-                                password = System.getenv("GH_PACKAGES_TOKEN")
                             }
                         }
                     }

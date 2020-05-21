@@ -24,7 +24,9 @@ public class UnauthorizedServiceForPrincipalException extends UnauthorizedServic
     private static final String CODE = "service.not.authorized.missing.attr";
 
     private final RegisteredService registeredService;
+
     private final String principalId;
+
     private final Map<String, Object> attributes;
 
     /**

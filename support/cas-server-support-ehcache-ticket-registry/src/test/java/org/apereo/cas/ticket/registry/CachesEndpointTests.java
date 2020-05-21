@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.EhcacheTicketRegistryConfiguration;
 import org.apereo.cas.config.EhcacheTicketRegistryTicketCatalogConfiguration;
 
+import lombok.val;
 import net.sf.ehcache.CacheManager;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -58,7 +59,10 @@ public class CachesEndpointTests {
 
     @Test
     public void ensureCachesEndpointLoaded() {
-        assertEquals(cachesEndpoint.caches().getCacheManagers().get("ehCacheCacheManager").getCaches().size(),
+        val cacheManagers = cachesEndpoint.caches().getCacheManagers();
+        assertFalse(cacheManagers.isEmpty());
+        assertTrue(cacheManagers.containsKey("ehCacheCacheManager"));
+        assertEquals(cacheManagers.get("ehCacheCacheManager").getCaches().size(),
             ehcacheTicketCacheManager.getCacheNames().length);
     }
 

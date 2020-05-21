@@ -3,7 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
@@ -48,7 +48,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
 
     private RegisteredServiceAttributeFilter attributeFilter;
 
-    private PrincipalAttributesRepository principalAttributesRepository = new DefaultPrincipalAttributesRepository();
+    private RegisteredServicePrincipalAttributesRepository principalAttributesRepository = new DefaultPrincipalAttributesRepository();
 
     private RegisteredServiceConsentPolicy consentPolicy = new DefaultRegisteredServiceConsentPolicy();
 
@@ -64,12 +64,12 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
 
     private int order;
 
-    private static PrincipalAttributesRepository getPrincipalAttributesRepositoryFromApplicationContext() {
+    private static RegisteredServicePrincipalAttributesRepository getPrincipalAttributesRepositoryFromApplicationContext() {
         val applicationContext = ApplicationContextProvider.getConfigurableApplicationContext();
         if (applicationContext != null && applicationContext.isActive()) {
             if (applicationContext.containsBean("globalPrincipalAttributeRepository")) {
                 LOGGER.trace("Loading global principal attribute repository with caching policies...");
-                return applicationContext.getBean("globalPrincipalAttributeRepository", PrincipalAttributesRepository.class);
+                return applicationContext.getBean("globalPrincipalAttributeRepository", RegisteredServicePrincipalAttributesRepository.class);
             }
             LOGGER.warn("No global principal attribute repository can be located from the application context.");
         }
@@ -181,7 +181,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             LOGGER.trace("No attribute definitions are defined in the attribute definition store");
             return principalAttributes;
         }
-        return attributeDefinitionStore.resolveAttributeValues(principalAttributes);
+        return attributeDefinitionStore.resolveAttributeValues(principalAttributes, registeredService);
     }
 
     /**

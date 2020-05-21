@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.attribute;
 
+import org.apereo.cas.services.RegisteredService;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -42,6 +44,14 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
     boolean isScoped();
 
     /**
+     * Indicate if the attribute value should
+     * be encrypted using defined public keys for the service.
+     *
+     * @return true/false
+     */
+    boolean isEncrypted();
+
+    /**
      * Gets underlying source attribute that should drive
      * the value of the attribute definition.
      *
@@ -67,9 +77,10 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
     /**
      * Resolve attribute values as list.
      *
-     * @param attributeValues the attribute values
-     * @param scope           the scope
+     * @param attributeValues   the attribute values
+     * @param scope             the scope
+     * @param registeredService the registered service
      * @return the list
      */
-    List<Object> resolveAttributeValues(List<Object> attributeValues, String scope);
+    List<Object> resolveAttributeValues(List<Object> attributeValues, String scope, RegisteredService registeredService);
 }

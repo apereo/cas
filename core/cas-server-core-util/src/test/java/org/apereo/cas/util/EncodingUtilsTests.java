@@ -41,9 +41,7 @@ public class EncodingUtilsTests {
 
     @SneakyThrows
     private static PublicKey getPublicKey() {
-        val factory = new PublicKeyFactoryBean();
-        factory.setAlgorithm(RsaKeyUtil.RSA);
-        factory.setResource(new ClassPathResource("keys/RSA2048Public.key"));
+        val factory = new PublicKeyFactoryBean(new ClassPathResource("keys/RSA2048Public.key"), RsaKeyUtil.RSA);
         factory.setSingleton(false);
         return factory.getObject();
     }
