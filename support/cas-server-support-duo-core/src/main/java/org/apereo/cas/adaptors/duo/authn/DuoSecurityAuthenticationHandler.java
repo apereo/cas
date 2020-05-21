@@ -63,7 +63,11 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
                 return createHandlerResult(credential, principal, new ArrayList<>(0));
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         throw new FailedLoginException("Duo authentication has failed");
     }
@@ -93,7 +97,11 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
                 + primaryCredentialsUsername + " does not match Duo response: " + duoVerifyResponse);
 
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             throw new FailedLoginException(e.getMessage());
         }
     }

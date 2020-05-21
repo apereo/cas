@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.location=file:/tmp")
 public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     public static final String METADATA_URL = "https://raw.githubusercontent.com/apereo/cas/master/support/cas-server-support-saml-idp/src/test/resources/metadata/testshib-providers.xml";
+
     public static final String MDQ_URL = "https://mdq.incommon.org/entities/{0}";
 
     @Test
@@ -43,6 +44,19 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     public void verifyResolverResolves() throws Exception {
         val props = new SamlIdPProperties();
         props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
+        val service = new SamlRegisteredService();
+        val resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
+        service.setName("TestShib");
+        service.setId(1000);
+        service.setMetadataLocation(METADATA_URL);
+        val results = resolver.resolve(service);
+        assertFalse(results.isEmpty());
+    }
+
+    @Test
+    public void verifyResolverWithProtocol() {
+        val props = new SamlIdPProperties();
+        props.getMetadata().setLocation("file:/" + FileUtils.getTempDirectory());
         val service = new SamlRegisteredService();
         val resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
         service.setName("TestShib");

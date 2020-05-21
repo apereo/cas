@@ -11,6 +11,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.SneakyThrows;
@@ -65,8 +66,9 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
 
         val md = samlIdPProperties.getMetadata();
         val location = SpringExpressionLanguageValueResolver.getInstance().resolve(md.getLocation());
-        this.metadataBackupDirectory = new File(location, DIRNAME_METADATA_BACKUPS);
+        this.metadataBackupDirectory = new File(ResourceUtils.getRawResourceFrom(location).getFile(), DIRNAME_METADATA_BACKUPS);
         try {
+            LOGGER.trace("Creating metadata backup directory at [{}]", this.metadataBackupDirectory);
             FileUtils.forceMkdir(this.metadataBackupDirectory);
         } catch (final Exception e) {
             LOGGER.error("Unable to create metadata backup directory [{}] to store downloaded metadata. "

@@ -44,7 +44,11 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
             LOGGER.trace("Acquired lock. Proceeding with cleanup.");
             return cleanInternal();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         } finally {
             LOGGER.trace("Releasing ticket cleanup lock.");
             this.lockingStrategy.release();

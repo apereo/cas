@@ -63,6 +63,7 @@ public class LdapUserGraphicalAuthenticationRepositoryTests {
         });
     }
 
+
     private String createLdapEntry(final ConnectionFactory factory) throws Exception {
         val photo = IOUtils.toByteArray(new ClassPathResource("image.jpg").getInputStream());
         val cn = RandomUtils.randomAlphabetic(6).toLowerCase();

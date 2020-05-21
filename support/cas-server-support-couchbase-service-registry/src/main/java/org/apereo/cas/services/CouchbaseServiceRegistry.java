@@ -91,7 +91,11 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
                 .peek(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)))
                 .collect(Collectors.toList());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
@@ -109,7 +113,11 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
         } catch (final DocumentNotFoundException e) {
             LOGGER.debug(e.getMessage(), e);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }

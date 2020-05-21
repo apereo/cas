@@ -111,7 +111,11 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
                 }
             });
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
         }
     }
 

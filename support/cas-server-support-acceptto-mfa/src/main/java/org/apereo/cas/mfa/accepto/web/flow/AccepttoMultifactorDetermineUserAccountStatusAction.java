@@ -98,7 +98,11 @@ public class AccepttoMultifactorDetermineUserAccountStatusAction extends Abstrac
                 }
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_DENY);
         }
         LOGGER.trace("Account status is verified for [{}]. Proceeding to MFA flow...", email);
