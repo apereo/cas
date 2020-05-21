@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
  * provide validation of Google Authenticator credentials.
  *
  * @author Hayden Sartoris
- * @since 6.2.0-RC5
+ * @since 6.2.0
  */
 @Slf4j
 @RequiredArgsConstructor

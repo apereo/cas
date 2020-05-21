@@ -196,7 +196,9 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         return CipherExecutor.noOp();
     }
 
+    @ConditionalOnMissingBean(name = "googleAuthenticatorAccountValidator")
     @Bean
+    @RefreshScope
     public OneTimeTokenAccountValidator googleAuthenticatorAccountValidator() {
         return new GoogleAuthenticatorAccountValidator(googleAuthenticatorInstance());
     }

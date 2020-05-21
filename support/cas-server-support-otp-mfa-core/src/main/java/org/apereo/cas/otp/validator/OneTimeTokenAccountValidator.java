@@ -13,7 +13,7 @@ import lombok.val;
  * validate OTP credentials.
  *
  * @author Hayden Sartoris
- * @since 6.2.0-RC5
+ * @since 6.2.0
  */
 public interface OneTimeTokenAccountValidator {
 
@@ -34,7 +34,7 @@ public interface OneTimeTokenAccountValidator {
      * @param credential the Credential presumed to contain the token
      * @return the integer token
      */
-    default int parseToken(Credential credential) throws IllegalArgumentException {
+    default int parseToken(final Credential credential) throws IllegalArgumentException {
         try {
             val cred = (OneTimeTokenCredential) credential;
             return Integer.parseInt(cred.getToken());
