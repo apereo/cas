@@ -159,7 +159,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public Collection<AuthenticationMetaDataPopulator> getAuthenticationMetadataPopulators(final AuthenticationTransaction transaction) {
-        val list = new ArrayList<AuthenticationMetaDataPopulator>(this.authenticationMetaDataPopulatorList);
+        val list = new ArrayList<>(this.authenticationMetaDataPopulatorList);
         AnnotationAwareOrderComparator.sort(list);
         LOGGER.debug("Sorted and registered metadata populators for this transaction are [{}]", list);
         return list;
@@ -167,7 +167,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public Collection<AuthenticationPostProcessor> getAuthenticationPostProcessors(final AuthenticationTransaction transaction) {
-        val list = new ArrayList<AuthenticationPostProcessor>(this.authenticationPostProcessors);
+        val list = new ArrayList<>(this.authenticationPostProcessors);
         AnnotationAwareOrderComparator.sort(list);
         LOGGER.trace("Sorted and registered authentication post processors for this transaction are [{}]", list);
         return list;
@@ -192,7 +192,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
         val handlerResolvers = getAuthenticationPolicyResolvers(transaction);
         LOGGER.debug("Authentication policy resolvers for this transaction are [{}]", handlerResolvers);
 
-        val list = new ArrayList<AuthenticationPolicy>(this.authenticationPolicies);
+        val list = new ArrayList<>(this.authenticationPolicies);
         AnnotationAwareOrderComparator.sort(list);
         LOGGER.trace("Candidate authentication policies for this transaction are [{}]", list);
 
