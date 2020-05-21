@@ -3,7 +3,6 @@ package org.apereo.cas.persondir;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -52,9 +51,18 @@ public interface PersonDirectoryAttributeRepositoryPlan {
     }
 
     /**
+     * Indicate whether any attribute repositories are currently registered with the plan.
+     *
+     * @return true/false
+     */
+    default boolean isEmpty() {
+        return getAttributeRepositories().isEmpty();
+    }
+
+    /**
      * Gets attribute repositories.
      *
      * @return the attribute repositories
      */
-    Collection<IPersonAttributeDao> getAttributeRepositories();
+    List<IPersonAttributeDao> getAttributeRepositories();
 }

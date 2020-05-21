@@ -28,7 +28,8 @@ import java.sql.Statement;
  */
 @SpringBootTest(classes = {
     CasPersonDirectoryConfiguration.class,
-    RefreshAutoConfiguration.class})
+    RefreshAutoConfiguration.class
+})
 @Tag("JDBC")
 public abstract class BaseJdbcAttributeRepositoryTests {
     @Autowired
