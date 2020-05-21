@@ -45,16 +45,6 @@ import static org.mockito.Mockito.*;
 @Tag("Simple")
 public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthenticationServiceTests {
 
-    private static Service getService(final String name) {
-        val request = new MockHttpServletRequest();
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, name);
-        return new WebApplicationServiceFactory().createService(request);
-    }
-
-    private static Service getService() {
-        return getService(CoreAuthenticationTestUtils.CONST_TEST_URL);
-    }
-
     @Test
     public void verifyBadCredentialsOnTicketGrantingTicketCreation() {
         assertThrows(AuthenticationException.class, () -> CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
@@ -126,11 +116,10 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
 
     @Test
     public void verifyGrantServiceTicketPassesAuthzRule() {
-        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
-            getService("TestServiceAttributeForAuthzPasses"));
+        val service = getService("TestServiceAttributeForAuthzPasses");
+        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service);
         val ticketId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
-        getCentralAuthenticationService().getObject().grantServiceTicket(ticketId.getId(),
-            getService("TestServiceAttributeForAuthzPasses"), ctx);
+        getCentralAuthenticationService().getObject().grantServiceTicket(ticketId.getId(), service, ctx);
     }
 
     @Test
@@ -450,5 +439,15 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
             mock(AuditableExecution.class),
             new DefaultServiceMatchingStrategy(servicesManager));
         cas.destroyTicketGrantingTicket(tgt.getId());
+    }
+
+    private static Service getService(final String name) {
+        val request = new MockHttpServletRequest();
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, name);
+        return new WebApplicationServiceFactory().createService(request);
+    }
+
+    private static Service getService() {
+        return getService(CoreAuthenticationTestUtils.CONST_TEST_URL);
     }
 }

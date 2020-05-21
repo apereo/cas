@@ -27,4 +27,5 @@ public class CasAuthenticationEventExecutionPlanTestConfiguration {
     public AuthenticationEventExecutionPlanConfigurer casDefaultAuthenticationEventExecutionPlanConfigurer() {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(new SimpleTestUsernamePasswordAuthenticationHandler(), defaultPrincipalResolver);
     }
+
 }

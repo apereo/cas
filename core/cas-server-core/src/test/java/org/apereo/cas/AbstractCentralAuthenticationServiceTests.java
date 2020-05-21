@@ -74,6 +74,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     @Lazy(false)
     public static class CasTestConfiguration implements InitializingBean {
 
+
         @Autowired
         protected ApplicationContext applicationContext;
 
