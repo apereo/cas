@@ -17,6 +17,7 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
+@TestPropertySource(properties = "cas.authn.oauth.accessToken.createAsJwt=true")
 public class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
     @Test
     public void verifyAccessTokenResponseAsCode() {
