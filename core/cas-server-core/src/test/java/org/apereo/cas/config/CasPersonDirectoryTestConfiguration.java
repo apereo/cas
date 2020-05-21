@@ -1,7 +1,10 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -53,5 +56,15 @@ public class CasPersonDirectoryTestConfiguration {
             return new DefaultAttributeDefinitionStore(resource);
         }
         return new DefaultAttributeDefinitionStore();
+    }
+    
+    @Bean
+    public PrincipalResolutionExecutionPlanConfigurer testPersonDirectoryPrincipalResolutionExecutionPlanConfigurer() {
+        return plan -> {
+            val personDirectory = casProperties.getPersonDirectory();
+            val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
+                attributeRepository(), personDirectory);
+            plan.registerPrincipalResolver(resolver);
+        };
     }
 }

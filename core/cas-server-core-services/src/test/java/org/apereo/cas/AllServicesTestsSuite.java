@@ -19,7 +19,6 @@ import org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPo
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.DefaultServicesManagerByEnvironmentTests;
 import org.apereo.cas.services.DefaultServicesManagerTests;
-import org.apereo.cas.services.ReturnEncryptedAttributeReleasePolicyTests;
 import org.apereo.cas.services.GroovyAuthenticationHandlerResolverTests;
 import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.GroovyRegisteredServiceMultifactorPolicyTests;
@@ -35,6 +34,7 @@ import org.apereo.cas.services.RegisteredServiceAuthenticationPolicyResolverTest
 import org.apereo.cas.services.RegisteredServicePublicKeyImplTests;
 import org.apereo.cas.services.RegisteredServicesEventListenerTests;
 import org.apereo.cas.services.RemoteEndpointServiceAccessStrategyTests;
+import org.apereo.cas.services.ReturnEncryptedAttributeReleasePolicyTests;
 import org.apereo.cas.services.ScriptedRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.SimpleServiceTests;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategyTests;
