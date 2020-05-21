@@ -6,7 +6,6 @@ env:
   TERM: xterm-256color
   SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
   SONATYPE_PWD: ${{ secrets.SONATYPE_PWD }}
-  SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
   GH_PAGES_TOKEN: ${{ secrets.GH_PAGES_TOKEN }}
   RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
   PYTHON_VERSION: 3.8.2
@@ -1776,6 +1775,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Validate Code Quality via SonarCloud
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.organization=apereo -Dsonar.host.url=https://sonarcloud.io -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true --parallel -DshowStandardStreams=true --info
 
