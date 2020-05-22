@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gauth.GoogleAuthenticatorAuthenticationHandler;
 import org.apereo.cas.gauth.GoogleAuthenticatorMultifactorAuthenticationProvider;
+import org.apereo.cas.gauth.GoogleAuthenticatorService;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredentialRepositoryEndpoint;
 import org.apereo.cas.gauth.credential.InMemoryGoogleAuthenticatorTokenCredentialRepository;
@@ -88,17 +89,17 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("failureModeEvaluator")
     private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
 
+    @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "googleAuthenticatorInstance")
     public IGoogleAuthenticator googleAuthenticatorInstance() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
-
         bldr.setCodeDigits(gauth.getCodeDigits());
         bldr.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(gauth.getTimeStepSize()));
         bldr.setWindowSize(gauth.getWindowSize());
         bldr.setKeyRepresentation(KeyRepresentation.BASE32);
-        return new GoogleAuthenticator(bldr.build());
+        return new GoogleAuthenticatorService(new GoogleAuthenticator(bldr.build()));
     }
 
     @ConditionalOnMissingBean(name = "googleAuthenticatorAuthenticationHandler")
@@ -167,7 +168,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             return new JsonGoogleAuthenticatorTokenCredentialRepository(gauth.getJson().getLocation(), googleAuthenticatorInstance(),
                 googleAuthenticatorAccountCipherExecutor());
         }
-        if (StringUtils.isNotBlank(gauth.getRest().getEndpointUrl())) {
+        if (StringUtils.isNotBlank(gauth.getRest().getUrl())) {
             return new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance(),
                 gauth, googleAuthenticatorAccountCipherExecutor());
         }
@@ -225,8 +226,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             super(tokenRepository);
         }
 
-        @Scheduled(initialDelayString = "${cas.authn.mfa.gauth.cleaner.schedule.startDelay:PT30S}",
-            fixedDelayString = "${cas.authn.mfa.gauth.cleaner.schedule.repeatInterval:PT35S}")
+        @Scheduled(initialDelayString = "${cas.authn.mfa.gauth.cleaner.schedule.start-delay:PT30S}",
+            fixedDelayString = "${cas.authn.mfa.gauth.cleaner.schedule.repeat-interval:PT35S}")
         @Override
         public void clean() {
             super.clean();

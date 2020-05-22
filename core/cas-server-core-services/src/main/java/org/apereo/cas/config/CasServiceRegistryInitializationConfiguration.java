@@ -13,13 +13,14 @@ import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,16 +30,19 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClas
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -54,7 +58,7 @@ import java.util.Collection;
     "org.apereo.cas.services.YamlServiceRegistry"
 })
 @ConditionalOnBean(ServicesManager.class)
-@ConditionalOnProperty(prefix = "cas.serviceRegistry", name = "initFromJson", havingValue = "true")
+@ConditionalOnProperty(prefix = "cas.service-registry", name = "init-from-json", havingValue = "true")
 @Slf4j
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableAsync
@@ -84,10 +88,7 @@ public class CasServiceRegistryInitializationConfiguration {
         val serviceRegistryInstance = serviceRegistry.getObject();
         val initializer = new ServiceRegistryInitializer(embeddedJsonServiceRegistry(),
             serviceRegistryInstance, servicesManager.getObject());
-
-        LOGGER.info("Attempting to initialize the service registry [{}] from service definition resources found at [{}]",
-            serviceRegistryInstance.getName(),
-            getServiceRegistryInitializerServicesDirectoryResource());
+        LOGGER.info("Attempting to initialize the service registry [{}]", serviceRegistryInstance.getName());
         initializer.initServiceRegistryIfNecessary();
         return initializer;
     }
@@ -96,7 +97,7 @@ public class CasServiceRegistryInitializationConfiguration {
     public ServiceRegistryInitializerEventListener serviceRegistryInitializerConfigurationEventListener() {
         return new ServiceRegistryInitializerEventListener(serviceRegistryInitializer());
     }
-    
+
     @RefreshScope
     @Bean
     @SneakyThrows
@@ -116,10 +117,24 @@ public class CasServiceRegistryInitializationConfiguration {
     public ServiceRegistryExecutionPlanConfigurer embeddedJsonServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(embeddedJsonServiceRegistry());
     }
-    
+
+    @SneakyThrows
     private Resource getServiceRegistryInitializerServicesDirectoryResource() {
         val registry = casProperties.getServiceRegistry().getJson();
-        return ObjectUtils.defaultIfNull(registry.getLocation(), new ClassPathResource("services"));
+        if (ResourceUtils.doesResourceExist(registry.getLocation())) {
+            LOGGER.debug("Using JSON service registry location [{}] for embedded service definitions", registry.getLocation());
+            return registry.getLocation();
+        }
+        val parent = new File(FileUtils.getTempDirectory(), "cas");
+        if (!parent.mkdirs()) {
+            LOGGER.warn("Unable to create folder [{}]", parent);
+        }
+        val resources = ResourcePatternUtils.getResourcePatternResolver(applicationContext)
+            .getResources("classpath*:/services/*.json");
+        Arrays.stream(resources)
+            .forEach(resource -> ResourceUtils.exportClasspathResourceToFile(parent, resource));
+        LOGGER.debug("Using JSON service registry location [{}] for embedded service definitions", registry.getLocation());
+        return new FileSystemResource(parent);
     }
 
     /**
@@ -127,11 +142,11 @@ public class CasServiceRegistryInitializationConfiguration {
      * on the classpath.
      */
     public static class EmbeddedResourceBasedServiceRegistry extends AbstractResourceBasedServiceRegistry {
-        EmbeddedResourceBasedServiceRegistry(final ApplicationEventPublisher publisher,
+        EmbeddedResourceBasedServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                              final Resource location,
                                              final Collection<ServiceRegistryListener> serviceRegistryListeners,
                                              final WatcherService watcherService) throws Exception {
-            super(location, getRegisteredServiceSerializers(), publisher, serviceRegistryListeners, watcherService);
+            super(location, getRegisteredServiceSerializers(), applicationContext, serviceRegistryListeners, watcherService);
         }
 
         static Collection<StringSerializer<RegisteredService>> getRegisteredServiceSerializers() {

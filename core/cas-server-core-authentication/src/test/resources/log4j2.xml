@@ -6,10 +6,11 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="error" additivity="false"/>
+        <Logger name="org.apereo" level="error"/>
+        <Logger name="org.apache.http" level="warn"/>
 
         <!-- Required for test coverage on statements that execute conditionally on debug -->
-        <Logger name="org.apereo.cas.authentication.policy" level="debug" additivity="false"/>
+        <Logger name="org.apereo.cas.authentication.policy" level="warn" additivity="false"/>
 
         <Root level="off">
             <AppenderRef ref="console"/>

@@ -5,6 +5,7 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attributeRepository.stub.attributes.givenName=givenName",
         "cas.authn.attributeRepository.stub.attributes.eppn=eppn"
     })
+@Tag("Simple")
 public class CachingAttributeRepositoryTests {
     @Autowired
     @Qualifier("cachingAttributeRepository")

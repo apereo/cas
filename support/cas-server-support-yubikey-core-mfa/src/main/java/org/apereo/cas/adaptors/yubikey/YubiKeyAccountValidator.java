@@ -16,7 +16,7 @@ public interface YubiKeyAccountValidator {
      *
      * @param uid   the uid
      * @param token the token
-     * @return the boolean
+     * @return true/false
      */
     boolean isValid(String uid, String token);
 

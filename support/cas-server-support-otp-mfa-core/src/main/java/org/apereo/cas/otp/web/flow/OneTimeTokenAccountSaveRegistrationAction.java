@@ -22,8 +22,8 @@ public class OneTimeTokenAccountSaveRegistrationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val account = requestContext.getFlowScope().get("key", OneTimeTokenAccount.class);
-
+        val account = requestContext.getFlowScope()
+            .get(OneTimeTokenAccountCheckRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT, OneTimeTokenAccount.class);
         val uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
         repository.save(uid, account.getSecretKey(), account.getValidationCode(), account.getScratchCodes());
         return success();

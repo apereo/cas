@@ -162,7 +162,11 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                 configureEncryptionKeyFromPublicKeyResource(secretKeyToUse);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         } finally {
             if (this.secretKeyEncryptionKey == null) {
                 LOGGER.trace("Creating encryption key instance based on provided secret key");
@@ -260,7 +264,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     /**
      * Is encryption possible?
      *
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isEncryptionPossible() {
         return this.encryptionEnabled && this.secretKeyEncryptionKey != null;

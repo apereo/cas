@@ -70,7 +70,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = {
     "cas.authn.radius.server.protocol=PAP",
     "cas.authn.radius.client.sharedSecret=testing123",
-    "cas.authn.radius.client.inetAddress=localhost",
+    "cas.authn.radius.client.inet-address=localhost",
     "cas.authn.mfa.radius.id=mfa-dummy"
 })
 @Tag("Radius")

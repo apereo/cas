@@ -3,6 +3,7 @@ package org.apereo.cas.shell.commands.properties;
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @EnableAutoConfiguration
+@Tag("SHELL")
 public class AddPropertiesToConfigurationCommandTests extends BaseCasShellCommandTests {
     @Test
     @SneakyThrows

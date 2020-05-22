@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
+import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.CasJavaClientProperties;
 import org.apereo.cas.logout.LogoutManager;
@@ -82,7 +84,6 @@ import org.springframework.transaction.annotation.TransactionManagementConfigure
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.util.List;
@@ -117,7 +118,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Autowired
     @Qualifier("uniqueIdGeneratorsMap")
     private ObjectProvider<Map<String, UniqueTicketIdGenerator>> uniqueIdGeneratorsMap;
-    
+
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private ObjectProvider<HttpClient> httpClient;
@@ -256,14 +257,14 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
     @ConditionalOnMissingBean(name = "proxy10Handler")
     @Bean
-    @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
     public ProxyHandler proxy10Handler() {
         return new Cas10ProxyHandler();
     }
 
     @ConditionalOnMissingBean(name = "proxy20Handler")
     @Bean
-    @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
     public ProxyHandler proxy20Handler() {
         return new Cas20ProxyHandler(httpClient.getObject(), proxy20TicketUniqueIdGenerator());
     }
@@ -358,6 +359,19 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
             c.configureTicketCatalog(plan);
         });
         return plan;
+    }
+
+    @ConditionalOnMissingBean(name = "ticketAuthenticationPolicyExecutionPlanConfigurer")
+    @Bean
+    @RefreshScope
+    public AuthenticationEventExecutionPlanConfigurer ticketAuthenticationPolicyExecutionPlanConfigurer() {
+        return plan -> {
+            val policyProps = casProperties.getAuthn().getPolicy();
+            if (policyProps.getUniquePrincipal().isEnabled()) {
+                LOGGER.trace("Activating authentication policy [{}]", UniquePrincipalAuthenticationPolicy.class.getSimpleName());
+                plan.registerAuthenticationPolicy(new UniquePrincipalAuthenticationPolicy(ticketRegistry()));
+            }
+        };
     }
 
     private AbstractUrlBasedTicketValidator buildCasClientTicketValidator(final String prefix) {

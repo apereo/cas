@@ -6,6 +6,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,7 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasServicesStreamingConfiguration.class
-}, properties = "cas.serviceRegistry.stream.enabled=true")
+}, properties = "cas.service-registry.stream.enabled=true")
+@Tag("Simple")
 public class CasServicesRegistryStreamingEventListenerTests {
     @Autowired
     @Qualifier("casServicesRegistryStreamingEventListener")

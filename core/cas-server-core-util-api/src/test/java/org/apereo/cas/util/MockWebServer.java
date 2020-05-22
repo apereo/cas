@@ -119,7 +119,7 @@ public class MockWebServer implements AutoCloseable {
         /**
          * Server always returns HTTP 200 response.
          */
-        private static final String STATUS_LINE = "HTTP/1.1 %s %s\r\n";
+        private static final String STATUS_LINE = "HTTP/1.1 %s %s\r%n";
 
         /**
          * Separates HTTP header from body.
@@ -164,7 +164,7 @@ public class MockWebServer implements AutoCloseable {
         }
 
         private static byte[] header(final String name, final Object value) {
-            return String.format("%s: %s\r\n", name, value).getBytes(StandardCharsets.UTF_8);
+            return String.format("%s: %s\r%n", name, value).getBytes(StandardCharsets.UTF_8);
         }
 
         @Override

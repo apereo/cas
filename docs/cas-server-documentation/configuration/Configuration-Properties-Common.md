@@ -11,7 +11,7 @@ To see the full list of CAS properties, please [review this guide](Configuration
 
 ## What is `${configurationKey}`?
 
-Many CAS *sub* settings are common and applicable to a number of modules and features. For example, in dealing with database authentication there are a number of database-related modules who own an individual setting to define the database driver. These settings would typically be defined as `cas.authn.feature1.databaseDriver=xyz` and `cas.authn.feature2.databaseDriver=abc`. Rather than duplicating the shared and common `databaseDriver` setting, this page attempts to collect only what might be common CAS settings across features and modules while referring to the specific feature under the path `${configurationKey}`. Therefor, the documentation for either `feature1` or `feature2` might allow one to find common database-related settings (such as the `databaseDriver`) under `${configurationKey}.databaseDriver` where `${configurationKey}` would either be `cas.authn.feature1` or `cas.authn.feature2` depending on feature at hand. The notes and documentation for each feature that wants to inherit from a common block of settings should always advertise the appropriate value for `${configurationKey}`.
+Many CAS *sub* settings are common and applicable to a number of modules and features. For example, in dealing with database authentication there are a number of database-related modules who own an individual setting to define the database driver. These settings would typically be defined as `cas.authn.feature1.database-driver=xyz` and `cas.authn.feature2.database-driver=abc`. Rather than duplicating the shared and common `database-driver` setting, this page attempts to collect only what might be common CAS settings across features and modules while referring to the specific feature under the path `${configurationKey}`. Therefor, the documentation for either `feature1` or `feature2` might allow one to find common database-related settings (such as the `database-driver`) under `${configurationKey}.database-driver` where `${configurationKey}` would either be `cas.authn.feature1` or `cas.authn.feature2` depending on feature at hand. The notes and documentation for each feature that wants to inherit from a common block of settings should always advertise the appropriate value for `${configurationKey}`.
 
 ## Naming Convention
 
@@ -55,27 +55,14 @@ should support the duration syntax for full clarity on unit of measure:
 The native numeric syntax is still supported though you will have to refer to the docs
 in each case to learn the exact unit of measure.
 
-## Cookie Settings
-
-```properties
-# ${configurationKey}.path=
-# ${configurationKey}.maxAge=-1
-# ${configurationKey}.domain=
-# ${configurationKey}.name=
-# ${configurationKey}.secure=true
-# ${configurationKey}.httpOnly=true
-# ${configurationKey}.sameSitePolicy=none|lax|strict
-# ${configurationKey}.comment=CAS Cookie
-```                               
-
 ## Job Scheduling
 
 A number of CAS components are given the ability to schedule background jobs to clean tokens, remove records, etc.
 The behavior of the scheduler can be controlled using the following settings:
 
 ```properties
-# ${configurationKey}.schedule.startDelay=PT10S
-# ${configurationKey}.schedule.repeatInterval=PT60S
+# ${configurationKey}.schedule.start-delay=PT10S
+# ${configurationKey}.schedule.repeat-interval=PT60S
 # ${configurationKey}.schedule.enabled=true
 ```
 
@@ -130,11 +117,11 @@ password encoding. Most options are based on Spring Security's [support for pass
 The following options related to password encoding support in CAS apply equally to a number of CAS components (authentication handlers, etc) given the component's *configuration key*:
 
 ```properties
-# ${configurationKey}.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2
-# ${configurationKey}.passwordEncoder.characterEncoding=
-# ${configurationKey}.passwordEncoder.encodingAlgorithm=
-# ${configurationKey}.passwordEncoder.secret=
-# ${configurationKey}.passwordEncoder.strength=16
+# ${configurationKey}.passsword-encoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2
+# ${configurationKey}.passsword-encoder.character-encoding=
+# ${configurationKey}.passsword-encoder.encoding-algorithm=
+# ${configurationKey}.passsword-encoder.secret=
+# ${configurationKey}.passsword-encoder.strength=16
 ```
 
 The following options are supported:
@@ -148,7 +135,7 @@ The following options are supported:
 | `PBKDF2`                | Use the `Pbkdf2PasswordEncoder` based on the `strength` provided and an optional `secret`.
 | `STANDARD`              | Use the `StandardPasswordEncoder` based on the `secret` provided.
 | `SSHA`                  | Use the `LdapShaPasswordEncoder` supports Ldap SHA and SSHA (salted-SHA). The values are base-64 encoded and have the label `{SHA}` (or `{SSHA}`) prepended to the encoded hash. 
-| `GLIBC_CRYPT`           | Use the `GlibcCryptPasswordEncoder` based on the [`encodingAlgorithm`](https://commons.apache.org/proper/commons-codec/archives/1.10/apidocs/org/apache/commons/codec/digest/Crypt.html), `strength` provided and an optional `secret`.
+| `GLIBC_CRYPT`           | Use the `GlibcCryptPasswordEncoder` based on the [`encoding-algorithm`](https://commons.apache.org/proper/commons-codec/archives/1.10/apidocs/org/apache/commons/codec/digest/Crypt.html), `strength` provided and an optional `secret`.
 | `org.example.MyEncoder` | An implementation of `PasswordEncoder` of your own choosing.
 | `file:///path/to/script.groovy` | Path to a Groovy script charged with handling password encoding operations.
 
@@ -224,11 +211,11 @@ def String run(final Object... args) {
 The following options related to principal transformation support in CAS apply equally to a number of CAS components (authentication handlers, etc) given the component's *configuration key*:
 
 ```properties
-# ${configurationKey}.principalTransformation.pattern=(.+)@example.org
-# ${configurationKey}.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
-# ${configurationKey}.principalTransformation.suffix=
-# ${configurationKey}.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# ${configurationKey}.principalTransformation.prefix=
+# ${configurationKey}.principal-transformation.pattern=(.+)@example.org
+# ${configurationKey}.principal-transformation.groovy.location=file:///etc/cas/config/principal.groovy
+# ${configurationKey}.principal-transformation.suffix=
+# ${configurationKey}.principal-transformation.case-conversion=NONE|UPPERCASE|LOWERCASE
+# ${configurationKey}.principal-transformation.prefix=
 ```
 
 ## Cookie Properties
@@ -236,12 +223,14 @@ The following options related to principal transformation support in CAS apply e
 The following common properties configure cookie generator support in CAS.
 
 ```properties
-# ${configurationKey}.name=
-# ${configurationKey}.domain=
 # ${configurationKey}.path=
-# ${configurationKey}.httpOnly=true
-# ${configurationKey}.secure=true
 # ${configurationKey}.maxAge=-1
+# ${configurationKey}.domain=
+# ${configurationKey}.name=
+# ${configurationKey}.secure=true
+# ${configurationKey}.http-only=true
+# ${configurationKey}.same-site-policy=none|lax|strict
+# ${configurationKey}.comment=CAS Cookie
 ```
 
 ## Cassandra Configuration
@@ -252,18 +241,18 @@ when CAS attempts to establish connections, run queries, etc.
 ```properties
 # ${configurationKey}.keyspace=
 # ${configurationKey}.port=9042
-# ${configurationKey}.contactPoints=localhost1,localhost2
+# ${configurationKey}.contact-points=localhost1,localhost2
 # ${configurationKey}.localDc=
-# ${configurationKey}.protocolVersion=V1|V2|V3|V4
-# ${configurationKey}.retryPolicy=DEFAULT_RETRY_POLICY|DOWNGRADING_CONSISTENCY_RETRY_POLICY|FALLTHROUGH_RETRY_POLICY
+# ${configurationKey}.protocol-version=V1|V2|V3|V4
+# ${configurationKey}.retry-policy=DEFAULT_RETRY_POLICY|DOWNGRADING_CONSISTENCY_RETRY_POLICY|FALLTHROUGH_RETRY_POLICY
 # ${configurationKey}.compression=LZ4|SNAPPY|NONE
-# ${configurationKey}.consistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
-# ${configurationKey}.serialConsistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
-# ${configurationKey}.maxConnections=10
-# ${configurationKey}.coreConnections=1
-# ${configurationKey}.maxRequestsPerConnection=1024
-# ${configurationKey}.connectTimeoutMillis=5000
-# ${configurationKey}.readTimeoutMillis=5000
+# ${configurationKey}.consistency-level=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
+# ${configurationKey}.serial-consistency-level=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
+# ${configurationKey}.max-connections=10
+# ${configurationKey}.core-connections=1
+# ${configurationKey}.max-requests-per-connection=1024
+# ${configurationKey}.connect-timeout-millis=5000
+# ${configurationKey}.read-timeout-millis=5000
 ```
 
 ## Hibernate & JDBC
@@ -273,10 +262,10 @@ when CAS attempts to employ and utilize database resources,
 connections and queries.
 
 ```properties
-# cas.jdbc.showSql=true
-# cas.jdbc.genDdl=true
-# cas.jdbc.caseInsensitive=false
-# cas.jdbc.physicalTableNames.{table-name}={new-table-name}
+# cas.jdbc.show-sql=true
+# cas.jdbc.gen-ddl=true
+# cas.jdbc.case-insensitive=false
+# cas.jdbc.physical-table-names.{table-name}={new-table-name}
 ```
 
 ### Database Settings
@@ -286,51 +275,51 @@ The following options related to JPA/JDBC support in CAS apply equally to a numb
 ```properties
 # ${configurationKey}.user=sa
 # ${configurationKey}.password=
-# ${configurationKey}.driverClass=org.hsqldb.jdbcDriver
+# ${configurationKey}.driver-class=org.hsqldb.jdbcDriver
 # ${configurationKey}.url=jdbc:hsqldb:mem:cas-hsql-database
 # ${configurationKey}.dialect=org.hibernate.dialect.HSQLDialect
 
-# ${configurationKey}.failFastTimeout=1
-# ${configurationKey}.isolationLevelName=ISOLATION_READ_COMMITTED 
-# ${configurationKey}.healthQuery=
-# ${configurationKey}.isolateInternalQueries=false
-# ${configurationKey}.leakThreshold=10
-# ${configurationKey}.propagationBehaviorName=PROPAGATION_REQUIRED
+# ${configurationKey}.fail-fast-timeout=1
+# ${configurationKey}.isolation-level-name=ISOLATION_READ_COMMITTED 
+# ${configurationKey}.health-query=
+# ${configurationKey}.isolate-internal-queries=false
+# ${configurationKey}.leak-threshold=10
+# ${configurationKey}.propagation-behaviorName=PROPAGATION_REQUIRED
 # ${configurationKey}.batchSize=1
-# ${configurationKey}.defaultCatalog=
-# ${configurationKey}.defaultSchema=
-# ${configurationKey}.ddlAuto=create-drop
-# ${configurationKey}.physicalNamingStrategyClassName=org.apereo.cas.hibernate.CasHibernatePhysicalNamingStrategy
+# ${configurationKey}.default-catalog=
+# ${configurationKey}.default-schema=
+# ${configurationKey}.ddl-auto=create-drop
+# ${configurationKey}.physical-naming-strategy-class-name=org.apereo.cas.hibernate.CasHibernatePhysicalNamingStrategy
 
 # ${configurationKey}.autocommit=false
-# ${configurationKey}.idleTimeout=5000
+# ${configurationKey}.idle-timeout=5000
 
-# ${configurationKey}.dataSourceName=
-# ${configurationKey}.dataSourceProxy=false
+# ${configurationKey}.data-source-name=
+# ${configurationKey}.data-source-roxy=false
 
 # Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# ${configurationKey}.properties.propertyName=propertyValue
+# ${configurationKey}.properties.property-name=propertyValue
 
 # ${configurationKey}.pool.suspension=false
-# ${configurationKey}.pool.minSize=6
-# ${configurationKey}.pool.maxSize=18
-# ${configurationKey}.pool.maxWait=2000
-# ${configurationKey}.pool.timeoutMillis=1000
+# ${configurationKey}.pool.mi-size=6
+# ${configurationKey}.pool.max-size=18
+# ${configurationKey}.pool.max-wait=2000
+# ${configurationKey}.pool.timeout-millis=1000
 ```
 
 ### Container-based JDBC Connections
 
 If you are planning to use a container-managed JDBC connection with CAS (i.e. JPA Ticket/Service Registry, etc)
-then you can set the `dataSourceName` property on any of the configuration items that require a database
+then you can set the `data-source-name` property on any of the configuration items that require a database
 connection. When using a container configured data source, many of the pool related parameters will not be used.
-If `dataSourceName` is specified but the JNDI lookup fails, a data source will be created with the configured 
+If `data-source-name` is specified but the JNDI lookup fails, a data source will be created with the configured 
 (or default) CAS pool parameters.
 
 If you experience classloading errors while trying to use a container datasource, you can try 
-setting the `dataSourceProxy` setting to true which will wrap the container datasource in
+setting the `data-source-proxy` setting to true which will wrap the container datasource in
 a way that may resolve the error.
 
-The `dataSourceName` property can be either a JNDI name for the datasource or a resource name prefixed with 
+The `data-source-name` property can be either a JNDI name for the datasource or a resource name prefixed with 
 `java:/comp/env/`. If it is a resource name then you need an entry in a `web.xml` that you can add to your
 CAS overlay. It should contain an entry like this:
 
@@ -432,10 +421,10 @@ components (ticket registries, etc) given the component's *configuration key*:
 
 ```properties
 # ${configurationKey}.crypto.signing.key=
-# ${configurationKey}.crypto.signing.keySize=
+# ${configurationKey}.crypto.signing.key-size=
 
 # ${configurationKey}.crypto.encryption.key=
-# ${configurationKey}.crypto.encryption.keySize=
+# ${configurationKey}.crypto.encryption.key-size=
 
 # ${configurationKey}.crypto.alg=AES
 # ${configurationKey}.crypto.enabled=false   
@@ -482,12 +471,12 @@ In order to enable RSA functionality for encrypting payloads, you will need to e
 The following options related to Person Directory support in CAS when it attempts to resolve and build the authenticated principal, given the component's *configuration key*:
 
 ```properties
-# ${configurationKey}.principalAttribute=uid,sAMAccountName,etc
-# ${configurationKey}.returnNull=false
-# ${configurationKey}.principalResolutionFailureFatal=false
-# ${configurationKey}.useExistingPrincipalId=false
-# ${configurationKey}.attributeResolutionEnabled=true
-# ${configurationKey}.activeAttributeRepositoryIds=StubRepository,etc
+# ${configurationKey}.principal-attribute=uid,sAMAccountName,etc
+# ${configurationKey}.return-null=false
+# ${configurationKey}.principal-resolution-failure-fatal=false
+# ${configurationKey}.use-existing-principal-id=false
+# ${configurationKey}.attribute-resolution-enabled=true
+# ${configurationKey}.active-attribute-repository-ids=StubRepository,etc
 ```
 
 ## InfluxDb Configuration
@@ -498,11 +487,11 @@ The following options related to InfluxDb support in CAS apply equally to a numb
 # ${configurationKey}.url=http://localhost:8086
 # ${configurationKey}.username=root
 # ${configurationKey}.password=root
-# ${configurationKey}.retentionPolicy=autogen
-# ${configurationKey}.dropDatabase=false
-# ${configurationKey}.pointsToFlush=100
-# ${configurationKey}.batchInterval=PT5S
-# ${configurationKey}.consistencyLevel=ALL
+# ${configurationKey}.retention-policy=autogen
+# ${configurationKey}.drop-database=false
+# ${configurationKey}.points-to-flush=100
+# ${configurationKey}.batch-interval=PT5S
+# ${configurationKey}.consistency-level=ALL
 ```
 
 ## Hazelcast Configuration
@@ -511,69 +500,69 @@ The following options related to Hazelcast support in CAS apply equally to a num
 
 ```properties
 # ${configurationKey}.cluster.members=123.456.789.000,123.456.789.001
-# ${configurationKey}.cluster.instanceName=localhost
+# ${configurationKey}.cluster.instance-name=localhost
 # ${configurationKey}.cluster.port=5701
 
-# ${configurationKey}.licenseKey=
-# ${configurationKey}.enableCompression=false
+# ${configurationKey}.license-key=
+# ${configurationKey}.enable-compression=false
 ```
 
 More advanced Hazelcast configuration settings are listed below, given the component's *configuration key*:
 
 ```properties
-# ${configurationKey}.cluster.tcpipEnabled=true
+# ${configurationKey}.cluster.tcpip-enabled=true
 
-# ${configurationKey}.cluster.partitionMemberGroupType=HOST_AWARE|CUSTOM|PER_MEMBER|ZONE_AWARE|SPI
-# ${configurationKey}.cluster.mapMergePolicy=PUT_IF_ABSENT|HIGHER_HITS|DISCARD|PASS_THROUGH|EXPIRATION_TIME|LATEST_UPDATE|LATEST_ACCESS
+# ${configurationKey}.cluster.partition-member-group-type=HOST_AWARE|CUSTOM|PER_MEMBER|ZONE_AWARE|SPI
+# ${configurationKey}.cluster.map-merge-policy=PUT_IF_ABSENT|HIGHER_HITS|DISCARD|PASS_THROUGH|EXPIRATION_TIME|LATEST_UPDATE|LATEST_ACCESS
 
-# ${configurationKey}.cluster.evictionPolicy=LRU
-# ${configurationKey}.cluster.maxNoHeartbeatSeconds=300
-# ${configurationKey}.cluster.loggingType=slf4j
-# ${configurationKey}.cluster.portAutoIncrement=true
-# ${configurationKey}.cluster.maxSize=85
-# ${configurationKey}.cluster.backupCount=1
-# ${configurationKey}.cluster.asyncBackupCount=0
-# ${configurationKey}.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
+# ${configurationKey}.cluster.eviction-policy=LRU
+# ${configurationKey}.cluster.max-no-heartbeat-seconds=300
+# ${configurationKey}.cluster.logging-type=slf4j
+# ${configurationKey}.cluster.port-auto-increment=true
+# ${configurationKey}.cluster.max-size=85
+# ${configurationKey}.cluster.backup-count=1
+# ${configurationKey}.cluster.async-backup-count=0
+# ${configurationKey}.cluster.max-size-policy=USED_HEAP_PERCENTAGE
 # ${configurationKey}.cluster.timeout=5
 
-# ${configurationKey}.cluster.localAddress=
-# ${configurationKey}.cluster.publicAddress=
+# ${configurationKey}.cluster.local-address=
+# ${configurationKey}.cluster.public-address=
 
-# ${configurationKey}.cluster.outboundPorts[0]=45000
+# ${configurationKey}.cluster.outbound-ports[0]=45000
 ```
 
 ### Static WAN Replication
 
 ```properties
-# ${configurationKey}.cluster.wanReplication.enabled=false
-# ${configurationKey}.cluster.wanReplication.replicationName=CAS
+# ${configurationKey}.cluster.wan-replication.enabled=false
+# ${configurationKey}.cluster.wan-replication.replication-name=CAS
 
-# ${configurationKey}.cluster.wanReplication.targets[0].endpoints=1.2.3.4,4.5.6.7
-# ${configurationKey}.cluster.wanReplication.targets[0].publisherClassName=com.hazelcast.enterprise.wan.replication.WanBatchReplication
-# ${configurationKey}.cluster.wanReplication.targets[0].queueFullBehavior=THROW_EXCEPTION
-# ${configurationKey}.cluster.wanReplication.targets[0].acknowledgeType=ACK_ON_OPERATION_COMPLETE
-# ${configurationKey}.cluster.wanReplication.targets[0].queueCapacity=10000
-# ${configurationKey}.cluster.wanReplication.targets[0].batchSize=500
-# ${configurationKey}.cluster.wanReplication.targets[0].snapshotEnabled=false
-# ${configurationKey}.cluster.wanReplication.targets[0].batchMaximumDelayMilliseconds=1000
-# ${configurationKey}.cluster.wanReplication.targets[0].responseTimeoutMilliseconds=60000
-# ${configurationKey}.cluster.wanReplication.targets[0].executorThreadCount=2
+# ${configurationKey}.cluster.wan-replication.targets[0].endpoints=1.2.3.4,4.5.6.7
+# ${configurationKey}.cluster.wan-replication.targets[0].publisher-className=com.hazelcast.enterprise.wan.replication.WanBatchReplication
+# ${configurationKey}.cluster.wan-replication.targets[0].queue-full-behavior=THROW_EXCEPTION
+# ${configurationKey}.cluster.wan-replication.targets[0].acknowledge-type=ACK_ON_OPERATION_COMPLETE
+# ${configurationKey}.cluster.wan-replication.targets[0].queue-capacity=10000
+# ${configurationKey}.cluster.wan-replication.targets[0].batch-size=500
+# ${configurationKey}.cluster.wan-replication.targets[0].snapshot-enabled=false
+# ${configurationKey}.cluster.wan-replication.targets[0].batch-maximum-delay-milliseconds=1000
+# ${configurationKey}.cluster.wan-replication.targets[0].response-timeout-milliseconds=60000
+# ${configurationKey}.cluster.wan-replication.targets[0].executor-thread-count=2
 
-# ${configurationKey}.cluster.wanReplication.targets[0].consistencyCheckStrategy=NONE|MERKLE_TREES
-# ${configurationKey}.cluster.wanReplication.targets[0].clusterName=
-# ${configurationKey}.cluster.wanReplication.targets[0].publisherId=
-# ${configurationKey}.cluster.wanReplication.targets[0].properties=
+# ${configurationKey}.cluster.wan-replication.targets[0].consistency-check-strategy=NONE|MERKLE_TREES
+# ${configurationKey}.cluster.wan-replication.targets[0].cluster-name=
+# ${configurationKey}.cluster.wan-replication.targets[0].publisher-id=
+# ${configurationKey}.cluster.wan-replication.targets[0].properties=
 ```
 
 ### Multicast Discovery
 
 ```properties
-# ${configurationKey}.cluster.multicastTrustedInterfaces=
-# ${configurationKey}.cluster.multicastEnabled=false
-# ${configurationKey}.cluster.multicastPort=
-# ${configurationKey}.cluster.multicastGroup=
-# ${configurationKey}.cluster.multicastTimeout=2
-# ${configurationKey}.cluster.multicastTimeToLive=32
+# ${configurationKey}.cluster.multicast-trusted-interfaces=
+# ${configurationKey}.cluster.multicast-enabled=false
+# ${configurationKey}.cluster.multicast-port=
+# ${configurationKey}.cluster.multicast-group=
+# ${configurationKey}.cluster.multicast-timeout=2
+# ${configurationKey}.cluster.multicast-time-to-live=32
 ```
 
 ### AWS EC2 Discovery
@@ -581,18 +570,18 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 ```properties
 # ${configurationKey}.cluster.discovery.enabled=true
 
-# ${configurationKey}.cluster.discovery.aws.accessKey=
-# ${configurationKey}.cluster.discovery.aws.secretKey=
+# ${configurationKey}.cluster.discovery.aws.access-ley=
+# ${configurationKey}.cluster.discovery.aws.secret-ley=
 
-# ${configurationKey}.cluster.discovery.aws.iamRole=
+# ${configurationKey}.cluster.discovery.aws.iam-role=
 
 # ${configurationKey}.cluster.discovery.aws.region=us-east-1
-# ${configurationKey}.cluster.discovery.aws.hostHeader=
-# ${configurationKey}.cluster.discovery.aws.securityGroupName=
-# ${configurationKey}.cluster.discovery.aws.tagKey=
-# ${configurationKey}.cluster.discovery.aws.tagValue=
+# ${configurationKey}.cluster.discovery.aws.host-header=
+# ${configurationKey}.cluster.discovery.aws.security-group-name=
+# ${configurationKey}.cluster.discovery.aws.tag-key=
+# ${configurationKey}.cluster.discovery.aws.tag-value=
 # ${configurationKey}.cluster.discovery.aws.port=-1
-# ${configurationKey}.cluster.discovery.aws.connectionTimeoutSeconds=5
+# ${configurationKey}.cluster.discovery.aws.connection-timeout-seconds=5
 ```
 
 ### Apache jclouds Discovery
@@ -606,12 +595,12 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.discovery.jclouds.endpoint=
 # ${configurationKey}.cluster.discovery.jclouds.zones=
 # ${configurationKey}.cluster.discovery.jclouds.regions=
-# ${configurationKey}.cluster.discovery.jclouds.tagKeys=
-# ${configurationKey}.cluster.discovery.jclouds.tagValues=
+# ${configurationKey}.cluster.discovery.jclouds.tag-keys=
+# ${configurationKey}.cluster.discovery.jclouds.tag-values=
 # ${configurationKey}.cluster.discovery.jclouds.group=
 # ${configurationKey}.cluster.discovery.jclouds.port=-1
-# ${configurationKey}.cluster.discovery.jclouds.roleName=
-# ${configurationKey}.cluster.discovery.jclouds.credentialPath=
+# ${configurationKey}.cluster.discovery.jclouds.role-name=
+# ${configurationKey}.cluster.discovery.jclouds.credential-path=
 ```
 
 ### Kubernetes Discovery
@@ -619,15 +608,15 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 ```properties
 # ${configurationKey}.cluster.discovery.enabled=true
 
-# ${configurationKey}.cluster.discovery.kubernetes.serviceDns=
-# ${configurationKey}.cluster.discovery.kubernetes.serviceDnsTimeout=-1
-# ${configurationKey}.cluster.discovery.kubernetes.serviceName=
-# ${configurationKey}.cluster.discovery.kubernetes.serviceLabelName=
-# ${configurationKey}.cluster.discovery.kubernetes.serviceLabelValue=
+# ${configurationKey}.service-dns=
+# ${configurationKey}.service-dns-timeout=-1
+# ${configurationKey}.service-name=
+# ${configurationKey}.service-label-name=
+# ${configurationKey}.service-label-value=
 # ${configurationKey}.cluster.discovery.kubernetes.namespace=
-# ${configurationKey}.cluster.discovery.kubernetes.resolveNotReadyAddresses=false
-# ${configurationKey}.cluster.discovery.kubernetes.kubernetesMaster=
-# ${configurationKey}.cluster.discovery.kubernetes.apiToken=
+# ${configurationKey}.resolve-not-ready-addresses=false
+# ${configurationKey}.cluster.discovery.kubernetes.kubernetes-master=
+# ${configurationKey}.api-token=
 ```
 
 ### Docker Swarm Discovery
@@ -635,20 +624,20 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 ```properties
 # ${configurationKey}.cluster.discovery.enabled=true
 
-# ${configurationKey}.cluster.discovery.dockerSwarm.dnsProvider.enabled=true
-# ${configurationKey}.cluster.discovery.dockerSwarm.dnsProvider.serviceName=
-# ${configurationKey}.cluster.discovery.dockerSwarm.dnsProvider.servicePort=5701
-# ${configurationKey}.cluster.discovery.dockerSwarm.dnsProvider.peerServices=service-a,service-b,etc
+# ${configurationKey}.cluster.discovery.docker-swarm.dns-provider.enabled=true
+# ${configurationKey}.cluster.discovery.docker-swarm.dns-provider.service-name=
+# ${configurationKey}.cluster.discovery.docker-swarm.dns-provider.service-port=5701
+# ${configurationKey}.cluster.discovery.docker-swarm.dns-provider.peer-services=service-a,service-b,etc
 
-# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.enabled=true
-# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.groupName=
-# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.groupPassword=
-# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.dockerNetworkNames=
-# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.dockerServiceNames=
-# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.dockerServiceLabels=
-# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.swarmMgrUri=
-# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.skipVerifySsl=false
-# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.hazelcastPeerPort=5701
+# ${configurationKey}.cluster.discovery.docker-swarm.member-provider.enabled=true
+# ${configurationKey}.cluster.discovery.docker-swarm.member-provider.group-name=
+# ${configurationKey}.cluster.discovery.docker-swarm.member-provider.group-password=
+# ${configurationKey}.cluster.discovery.docker-swarm.member-provider.docker-network-names=
+# ${configurationKey}.cluster.discovery.docker-swarm.member-provider.docker-service-names=
+# ${configurationKey}.cluster.discovery.docker-swarm.member-provider.docker-service-labels=
+# ${configurationKey}.cluster.discovery.docker-swarm.member-provider.swarm-mgr-uri=
+# ${configurationKey}.cluster.discovery.docker-swarm.member-provider.skip-verify-ssl=false
+# ${configurationKey}.cluster.discovery.docker-swarm.member-provider.hazelcast-peer-port=5701
 ```
 
 ### Microsoft Azure Discovery
@@ -656,12 +645,12 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 ```properties
 # ${configurationKey}.cluster.discovery.enabled=true
 
-# ${configurationKey}.cluster.discovery.azure.subscriptionId=
-# ${configurationKey}.cluster.discovery.azure.clientId=
-# ${configurationKey}.cluster.discovery.azure.clientSecret=
-# ${configurationKey}.cluster.discovery.azure.tenantId=
-# ${configurationKey}.cluster.discovery.azure.clusterId=
-# ${configurationKey}.cluster.discovery.azure.groupName=
+# ${configurationKey}.cluster.discovery.azure.subscription-id=
+# ${configurationKey}.cluster.discovery.azure.client-id=
+# ${configurationKey}.cluster.discovery.azure.client-secret=
+# ${configurationKey}.cluster.discovery.azure.tenant-id=
+# ${configurationKey}.cluster.discovery.azure.cluster-id=
+# ${configurationKey}.cluster.discovery.azure.group-name=
 ```
 
 ## RADIUS Configuration
@@ -677,24 +666,22 @@ Parameter `client.inetAddress` has possibility to contain more addresses separat
 when `failoverOnException` is set.   
 
 ```properties
-# ${configurationKey}.server.nasPortId=-1
-# ${configurationKey}.server.nasRealPort=-1
+# ${configurationKey}.server.nas-port-id=-1
+# ${configurationKey}.server.nas-real-port=-1
 # ${configurationKey}.server.protocol=EAP_MSCHAPv2
 # ${configurationKey}.server.retries=3
-# ${configurationKey}.server.nasPortType=-1
-# ${configurationKey}.server.nasPort=-1
-# ${configurationKey}.server.nasIpAddress=
-# ${configurationKey}.server.nasIpv6Address=
-# ${configurationKey}.server.nasIdentifier=-1
-
-# ${configurationKey}.client.authenticationPort=1812
-# ${configurationKey}.client.sharedSecret=N0Sh@ar3d$ecReT
-# ${configurationKey}.client.socketTimeout=0
-# ${configurationKey}.client.inetAddress=localhost
-# ${configurationKey}.client.accountingPort=1813
-
-# ${configurationKey}.failoverOnException=false
-# ${configurationKey}.failoverOnAuthenticationFailure=false
+# ${configurationKey}.server.nas-port-type=-1
+# ${configurationKey}.server.nas-port=-1
+# ${configurationKey}.server.nas-ip-address=
+# ${configurationKey}.server.nas-ipv6-address=
+# ${configurationKey}.server.nas-identifier=-1
+# ${configurationKey}.client.authentication-port=1812
+# ${configurationKey}.client.shared-secret=N0Sh@ar3d$ecReT
+# ${configurationKey}.client.socket-timeout=0
+# ${configurationKey}.client.inet-address=localhost
+# ${configurationKey}.client.accounting-port=1813
+# ${configurationKey}.failover-on-exception=false
+# ${configurationKey}.failover-on-authentication-failure=false
 ```
 
 ## CouchDb Configuration
@@ -702,32 +689,32 @@ when `failoverOnException` is set.
 The following options related to CouchDb support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
 
 ```properties
-# ${configurationKey}.couchDb.url=http://localhost:5984
-# ${configurationKey}.couchDb.username=
-# ${configurationKey}.couchDb.password=
-# ${configurationKey}.couchDb.socketTimeout=10000
-# ${configurationKey}.couchDb.connectionTimeout=1000
-# ${configurationKey}.couchDb.dropCollection=false
-# ${configurationKey}.couchDb.maxConnections=20
-# ${configurationKey}.couchDb.enableSSL=
-# ${configurationKey}.couchDb.relaxedSSLSettings=
-# ${configurationKey}.couchDb.caching=true
-# ${configurationKey}.couchDb.maxCacheEntries=1000
-# ${configurationKey}.couchDb.maxObjectSizeBytes=8192
-# ${configurationKey}.couchDb.useExpectContinue=true
-# ${configurationKey}.couchDb.cleanupIdleConnections=true
-# ${configurationKey}.couchDb.createIfNotExists=true
-# ${configurationKey}.couchDb.proxyHost=
-# ${configurationKey}.couchDb.proxyPort=-1
+# ${configurationKey}.couch-db.url=http://localhost:5984
+# ${configurationKey}.couch-db.username=
+# ${configurationKey}.couch-db.password=
+# ${configurationKey}.couch-db.socket-timeout=10000
+# ${configurationKey}.couch-db.connection-timeout=1000
+# ${configurationKey}.couch-db.drop-collection=false
+# ${configurationKey}.couch-db.max-connections=20
+# ${configurationKey}.couch-db.enable-ssl=
+# ${configurationKey}.couch-db.relaxed-ssl-settings=
+# ${configurationKey}.couch-db.caching=true
+# ${configurationKey}.couch-db.max-cache-entries=1000
+# ${configurationKey}.couch-db.max-object-size-bytes=8192
+# ${configurationKey}.couch-db.use-expect-continue=true
+# ${configurationKey}.couch-db.cleanup-idle-connections=true
+# ${configurationKey}.couch-db.create-if-not-exists=true
+# ${configurationKey}.couch-db.proxy-host=
+# ${configurationKey}.couch-db.proxy-port=-1
 
 # Defaults are based on the feature name.
-# ${configurationKey}.couchDb.dbName=
+# ${configurationKey}.couch-db.db-name=
 
 # For the few features that can't have update conflicts automatically resolved.
-# ${configurationKey}.couchDb.retries=5
+# ${configurationKey}.couch-db.retries=5
 
 # Depending on the feature at hand, CAS may perform some actions asynchronously.
-# ${configurationKey}.couchDb.asynchronous=true
+# ${configurationKey}.couch-db.asynchronous=true
 ```
 
 ## MongoDb Configuration
@@ -736,27 +723,27 @@ The following options related to MongoDb support in CAS apply equally to a numbe
 
 ```properties
 # ${configurationKey}.mongo.host=localhost
-# ${configurationKey}.mongo.clientUri=localhost
-# ${configurationKey}.mongo.idleTimeout=30000
+# ${configurationKey}.mongo.client-uri=localhost
+# ${configurationKey}.mongo.idle-timeout=30000
 # ${configurationKey}.mongo.port=27017
-# ${configurationKey}.mongo.dropCollection=false
-# ${configurationKey}.mongo.socketKeepAlive=false
+# ${configurationKey}.mongo.drop-collection=false
+# ${configurationKey}.mongo.socket-keep-alive=false
 # ${configurationKey}.mongo.password=
 
 # Depending on the feature at hand, CAS may decide to dynamically create its own collections and ignore this setting.
 # ${configurationKey}.mongo.collection=cas-service-registry
 
-# ${configurationKey}.mongo.databaseName=cas-mongo-database
+# ${configurationKey}.mongo.database-name=cas-mongo-database
 # ${configurationKey}.mongo.timeout=5000
-# ${configurationKey}.mongo.userId=
-# ${configurationKey}.mongo.writeConcern=NORMAL
-# ${configurationKey}.mongo.authenticationDatabaseName=
-# ${configurationKey}.mongo.replicaSet=
-# ${configurationKey}.mongo.sslEnabled=false 
-# ${configurationKey}.mongo.retryWrites=false 
+# ${configurationKey}.mongo.user-id=
+# ${configurationKey}.mongo.write-concern=NORMAL
+# ${configurationKey}.mongo.authentication-database-name=
+# ${configurationKey}.mongo.replica-set=
+# ${configurationKey}.mongo.ssl-enabled=false
+# ${configurationKey}.mongo.retry-writes=false
 
 # ${configurationKey}.mongo.conns.lifetime=60000
-# ${configurationKey}.mongo.conns.perHost=10
+# ${configurationKey}.mongo.conns.per-host=10
 ```
 
 ## DynamoDb Configuration
@@ -764,9 +751,9 @@ The following options related to MongoDb support in CAS apply equally to a numbe
 The following options related to DynamoDb support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
 
 ```properties
-# ${configurationKey}.dynamoDb.dropTablesOnStartup=false
-# ${configurationKey}.dynamoDb.preventTableCreationOnStartup=false
-# ${configurationKey}.dynamoDb.localInstance=false
+# ${configurationKey}.dynamo-db.drop-tables-on-startup=false
+# ${configurationKey}.dynamo-db.prevent-table-creation-on-startup=false
+# ${configurationKey}.dynamo-db.local-instance=false
 ```
     
 AWS settings for this feature are available [here](#amazon-integration-settings).
@@ -778,9 +765,9 @@ The following options related to features in CAS that provide REST support to fe
 ```properties
 # ${configurationKey}.method=GET|POST
 # ${configurationKey}.order=0
-# ${configurationKey}.caseInsensitive=false
-# ${configurationKey}.basicAuthUsername=uid
-# ${configurationKey}.basicAuthPassword=password
+# ${configurationKey}.case-insensitive=false
+# ${configurationKey}.basic-auth-username=uid
+# ${configurationKey}.basic-auth-password=password
 # ${configurationKey}.url=https://rest.somewhere.org/attributes
 ```
 
@@ -794,25 +781,24 @@ The following options related to Redis support in CAS apply equally to a number 
 # ${configurationKey}.redis.port=6380
 # ${configurationKey}.redis.password=
 # ${configurationKey}.redis.timeout=2000
-# ${configurationKey}.redis.useSsl=false
-# ${configurationKey}.redis.readFrom=MASTER
+# ${configurationKey}.redis.use-ssl=false
+# ${configurationKey}.redis.read-from=MASTER
 
 # ${configurationKey}.redis.pool.enabled=false
 # ${configurationKey}.redis.pool.max-active=20
-# ${configurationKey}.redis.pool.maxIdle=8
-# ${configurationKey}.redis.pool.minIdle=0
-# ${configurationKey}.redis.pool.maxActive=8
-# ${configurationKey}.redis.pool.maxWait=-1
-# ${configurationKey}.redis.pool.numTestsPerEvictionRun=0
-# ${configurationKey}.redis.pool.softMinEvictableIdleTimeMillis=0
-# ${configurationKey}.redis.pool.minEvictableIdleTimeMillis=0
+# ${configurationKey}.redis.pool.max-idle=8
+# ${configurationKey}.redis.pool.min-idle=0
+# ${configurationKey}.redis.pool.max-active=8
+# ${configurationKey}.redis.pool.max-wait=-1
+# ${configurationKey}.redis.pool.num-tests-per-eviction-run=0
+# ${configurationKey}.redis.pool.soft-min-evictable-idle-time-millis=0
+# ${configurationKey}.redis.pool.min-evictable-idle-time-millis=0
 # ${configurationKey}.redis.pool.lifo=true
 # ${configurationKey}.redis.pool.fairness=false
-
-# ${configurationKey}.redis.pool.testOnCreate=false
-# ${configurationKey}.redis.pool.testOnBorrow=false
-# ${configurationKey}.redis.pool.testOnReturn=false
-# ${configurationKey}.redis.pool.testWhileIdle=false
+# ${configurationKey}.redis.pool.test-on-create=false
+# ${configurationKey}.redis.pool.test-on-borrow=false
+# ${configurationKey}.redis.pool.test-on-return=false
+# ${configurationKey}.redis.pool.test-while-idle=false
 
 # ${configurationKey}.redis.sentinel.master=mymaster
 # ${configurationKey}.redis.sentinel.node[0]=localhost:26377
@@ -866,19 +852,19 @@ Each SAML service provider supports the following settings:
 
 The only required setting that would activate the automatic configuration for a service provider is the presence and definition of metadata. All other settings are optional. 
 
-The following  options apply equally to SAML2 service provider integrations, given the provider's *configuration key*:
+The following options apply equally to SAML2 service provider integrations, given the provider's *configuration key*:
 
 ```properties
 # ${configurationKey}.metadata=/etc/cas/saml/dropbox.xml
-# ${configurationKey}.name=Dropbox
-# ${configurationKey}.description=Dropbox Integration
-# ${configurationKey}.nameIdAttribute=mail
-# ${configurationKey}.nameIdFormat=
-# ${configurationKey}.signatureLocation=
+# ${configurationKey}.name=SP Name
+# ${configurationKey}.description=SP Integration
+# ${configurationKey}.name-id-attribute=mail
+# ${configurationKey}.name-id-format=
+# ${configurationKey}.signature-location=
 # ${configurationKey}.attributes=
-# ${configurationKey}.entityIds=
-# ${configurationKey}.signResponses=
-# ${configurationKey}.signAssertions=
+# ${configurationKey}.entity-ids=
+# ${configurationKey}.sign-responses=
+# ${configurationKey}.sign-assertions=
 ```
 
 ## Multifactor Authentication Providers
@@ -889,7 +875,7 @@ All configurable multifactor authentication providers have these base properties
 # ${configurationKey}.rank=
 # ${configurationKey}.id=
 # ${configurationKey}.name=
-# ${configurationKey}.failureMode=UNDEFINED
+# ${configurationKey}.failure-mode=UNDEFINED
 ```
 
 ## Multifactor Authentication Bypass
@@ -897,19 +883,19 @@ All configurable multifactor authentication providers have these base properties
 The following bypass options apply equally to multifactor authentication providers given the provider's *configuration key*:
 
 ```properties
-# ${configurationKey}.bypass.principalAttributeName=bypass|skip
-# ${configurationKey}.bypass.principalAttributeValue=true|enabled.+
+# ${configurationKey}.bypass.principal-attribute-name=bypass|skip
+# ${configurationKey}.bypass.principal-attribute-value=true|enabled.+
 
-# ${configurationKey}.bypass.authenticationAttributeName=bypass|skip
-# ${configurationKey}.bypass.authenticationAttributeValue=allowed.+|enabled.+
+# ${configurationKey}.bypass.authentication-attribute-name=bypass|skip
+# ${configurationKey}.bypass.authentication-attribute-value=allowed.+|enabled.+
 
-# ${configurationKey}.bypass.authenticationHandlerName=AcceptUsers.+
-# ${configurationKey}.bypass.authenticationMethodName=LdapAuthentication.+
+# ${configurationKey}.bypass.authentication-handler-name=AcceptUsers.+
+# ${configurationKey}.bypass.authentication-method-name=LdapAuthentication.+
 
-# ${configurationKey}.bypass.credentialClassType=UsernamePassword.+
+# ${configurationKey}.bypass.credential-class-type=UsernamePassword.+
 
-# ${configurationKey}.bypass.httpRequestRemoteAddress=127.+|example.*
-# ${configurationKey}.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
+# ${configurationKey}.bypass.http-request-remote-address=127.+|example.*
+# ${configurationKey}.bypass.http-request-headers=header-X-.+|header-Y-.+
 
 # ${configurationKey}.bypass.groovy.location=file:/etc/cas/config/mfa-bypass.groovy
 ```
@@ -922,11 +908,19 @@ RESTful settings are available [here](#restful-integrations) under the configura
 The following options are shared and apply when CAS is configured to integrate with Couchbase (i.e ticket registry, etc), given the provider's *configuration key*:
 
 ```properties
-# ${configurationKey}.nodeSet=localhost:8091
-# ${configurationKey}.password=
-# ${configurationKey}.queryEnabled=true
-# ${configurationKey}.bucket=default
-# ${configurationKey}.connectionTimeout=PT60S
+# ${configurationKey}.addresses[0]=localhost
+# ${configurationKey}.cluster-username=
+# ${configurationKey}.cluster-password= 
+
+# ${configurationKey}.bucket=testbucket    
+
+# ${configurationKey}.connection-timeout=PT60S
+# ${configurationKey}.search-timeout=PT30S
+# ${configurationKey}.query-timeout=PT30S
+# ${configurationKey}.view-timeout=PT30S
+# ${configurationKey}.kv-timeout=PT30S 
+# ${configurationKey}.max-http-connections=PT30S
+# ${configurationKey}.scan-consistency=NOT_BOUNDED|REQUEST_PLUS
 ```
 
 ## Amazon Integration Settings
@@ -936,35 +930,34 @@ Amazon Web Service features, given the provider's *configuration key*:
 
 ```properties
 # Path to an external properties file that contains 'accessKey' and 'secretKey' fields.
-# ${configurationKey}.credentialsPropertiesFile=file:/path/to/file.properties
+# ${configurationKey}.credentials-properties-file=file:/path/to/file.properties
 
-# Alternatively, you may directly provide credentials to CAS
-# ${configurationKey}.credentialAccessKey=
-# ${configurationKey}.credentialSecretKey=
+# ${configurationKey}.credential-access-key=
+# ${configurationKey}.credential-secret-key=
 
 # ${configurationKey}.endpoint=http://localhost:8000
 # ${configurationKey}.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
-# ${configurationKey}.regionOverride=
-# ${configurationKey}.localAddress=
+# ${configurationKey}.region-override=
+# ${configurationKey}.local-address=
 
-# ${configurationKey}.maxErrorRetry=-1
-# ${configurationKey}.proxyHost=
-# ${configurationKey}.proxyPassword=
-# ${configurationKey}.proxyPort=-1
+# ${configurationKey}.max-error-retry=-1
+# ${configurationKey}.proxy-host=
+# ${configurationKey}.proxy-password=
+# ${configurationKey}.proxy-port=-1
 
-# ${configurationKey}.readCapacity=10
-# ${configurationKey}.writeCapacity=10
-# ${configurationKey}.connectionTimeout=5000
-# ${configurationKey}.requestTimeout=5000
-# ${configurationKey}.socketTimeout=5000
-# ${configurationKey}.useGzip=false
-# ${configurationKey}.useReaper=false
-# ${configurationKey}.useThrottleRetries=false
-# ${configurationKey}.useTcpKeepAlive=false
+# ${configurationKey}.read-capacity=10
+# ${configurationKey}.write-capacity=10
+# ${configurationKey}.connection-timeout=5000
+# ${configurationKey}.request-timeout=5000
+# ${configurationKey}.socket-timeout=5000
+# ${configurationKey}.use-gzip=false
+# ${configurationKey}.use-reaper=false
+# ${configurationKey}.use-throttle-retries=false
+# ${configurationKey}.use-tcp-keep-alive=false
 # ${configurationKey}.protocol=HTTPS
-# ${configurationKey}.clientExecutionTimeout=10000
-# ${configurationKey}.cacheResponseMetadata=false
-# ${configurationKey}.maxConnections=10
+# ${configurationKey}.client-execution-timeout=10000
+# ${configurationKey}.cache-response-metadata=false
+# ${configurationKey}.max-connections=10
 ```
 
 ## Memcached Integration Settings
@@ -973,25 +966,25 @@ The following  options are shared and apply when CAS is configured to integrate 
 
 ```properties
 # ${configurationKey}.memcached.servers=localhost:11211
-# ${configurationKey}.memcached.locatorType=ARRAY_MOD
-# ${configurationKey}.memcached.failureMode=Redistribute
-# ${configurationKey}.memcached.hashAlgorithm=FNV1_64_HASH
-# ${configurationKey}.memcached.shouldOptimize=false
+# ${configurationKey}.memcached.locator-type=ARRAY_MOD
+# ${configurationKey}.memcached.failure-mode=Redistribute
+# ${configurationKey}.memcached.hash-algorithm=FNV1_64_HASH
+# ${configurationKey}.memcached.should-optimize=false
 # ${configurationKey}.memcached.daemon=true
-# ${configurationKey}.memcached.maxReconnectDelay=-1
-# ${configurationKey}.memcached.useNagleAlgorithm=false
-# ${configurationKey}.memcached.shutdownTimeoutSeconds=-1
-# ${configurationKey}.memcached.opTimeout=-1
-# ${configurationKey}.memcached.timeoutExceptionThreshold=2
-# ${configurationKey}.memcached.maxTotal=20
-# ${configurationKey}.memcached.maxIdle=8
-# ${configurationKey}.memcached.minIdle=0
+# ${configurationKey}.memcached.max-reconnect-delay=-1
+# ${configurationKey}.memcached.use-nagle-algorithm=false
+# ${configurationKey}.memcached.shutdown-timeout-seconds=-1
+# ${configurationKey}.memcached.op-timeout=-1
+# ${configurationKey}.memcached.timeout-exception-threshold=2
+# ${configurationKey}.memcached.max-total=20
+# ${configurationKey}.memcached.max-idle=8
+# ${configurationKey}.memcached.min-idle=0
 
 # ${configurationKey}.memcached.transcoder=KRYO|SERIAL|WHALIN|WHALINV1
-# ${configurationKey}.memcached.transcoderCompressionThreshold=16384
-# ${configurationKey}.memcached.kryoAutoReset=false
-# ${configurationKey}.memcached.kryoObjectsByReference=false
-# ${configurationKey}.memcached.kryoRegistrationRequired=false
+# ${configurationKey}.memcached.transcoder-compression-threshold=16384
+# ${configurationKey}.memcached.kryo-auto-reset=false
+# ${configurationKey}.memcached.kryo-objects-by-reference=false
+# ${configurationKey}.memcached.kryo-registration-required=false
 ```
 
 ## Password Policy Settings
@@ -1002,17 +995,17 @@ The following  options are shared and apply when CAS is configured to integrate 
 # ${configurationKey}.type=GENERIC|AD|FreeIPA|EDirectory
 
 # ${configurationKey}.enabled=true
-# ${configurationKey}.policyAttributes.accountLocked=javax.security.auth.login.AccountLockedException
-# ${configurationKey}.loginFailures=5
-# ${configurationKey}.warningAttributeValue=
-# ${configurationKey}.warningAttributeName=
-# ${configurationKey}.displayWarningOnMatch=true
-# ${configurationKey}.warnAll=true
-# ${configurationKey}.warningDays=30
-# ${configurationKey}.accountStateHandlingEnabled=true
+# ${configurationKey}.policy-attributes.account-locked=javax.security.auth.login.AccountLockedException
+# ${configurationKey}.login-failures=5
+# ${configurationKey}.warning-attribute-value=
+# ${configurationKey}.warning-attribute-name=
+# ${configurationKey}.display-warning-on-match=true
+# ${configurationKey}.warn-all=true
+# ${configurationKey}.warning-days=30
+# ${configurationKey}.account-state-handling-enabled=true
 
 # An implementation of `org.ldaptive.auth.AuthenticationResponseHandler`
-# ${configurationKey}.customPolicyClass=com.example.MyAuthenticationResponseHandler
+# ${configurationKey}.custom-policy-class=com.example.MyAuthenticationResponseHandler
 
 # ${configurationKey}.strategy=DEFAULT|GROOVY|REJECT_RESULT_CODE
 # ${configurationKey}.groovy.location=file:/etc/cas/config/password-policy.groovy
@@ -1070,11 +1063,11 @@ The following options are shared and apply when CAS is configured to send email 
 # ${configurationKey}.mail.subject=
 # ${configurationKey}.mail.cc=
 # ${configurationKey}.mail.bcc=
-# ${configurationKey}.mail.replyTo=
-# ${configurationKey}.mail.validateAddresses=false
+# ${configurationKey}.mail.reply-to=
+# ${configurationKey}.mail.validate-addresses=false
 # ${configurationKey}.mail.html=false
 
-# ${configurationKey}.mail.attributeName=mail
+# ${configurationKey}.mail.attribute-name=mail
 ```
 
 The following settings may also need to be defined to describe the mail server settings:
@@ -1095,7 +1088,7 @@ The following options are shared and apply when CAS is configured to send SMS no
 ```properties
 # ${configurationKey}.sms.from=
 # ${configurationKey}.sms.text=
-# ${configurationKey}.sms.attributeName=phone
+# ${configurationKey}.sms.attribute-name=phone
 ```
 
 You will also need to ensure a provider is defined that is able to send SMS messages. To learn more about this 
@@ -1117,12 +1110,13 @@ to an external provider such as Yahoo, given the provider's *configuration key*:
 ```properties
 # ${configurationKey}.id=
 # ${configurationKey}.secret=
-# ${configurationKey}.clientName=My Provider
-# ${configurationKey}.autoRedirect=false
-# ${configurationKey}.cssClass=
-# ${configurationKey}.principalAttributeId=
+# ${configurationKey}.client-name=My Provider
+# ${configurationKey}.auto-redirect=false
+# ${configurationKey}.css-class=
+# ${configurationKey}.principal-attribute-id=
 # ${configurationKey}.enabled=true
-# ${configurationKey}.callbackUrlType=PATH_PARAMETER|QUERY_PARAMETER|NONE
+# ${configurationKey}.callback-url-type=PATH_PARAMETER|QUERY_PARAMETER|NONE
+
 ```
 
 The following types are supported with callback URL resolution:
@@ -1139,19 +1133,20 @@ The following options are shared and apply when CAS is configured to delegate au
 to an external OpenID Connect provider such as Azure AD, given the provider's *configuration key*:
 
 ```properties
-# ${configurationKey}.discoveryUri=
-# ${configurationKey}.logoutUrl=
-# ${configurationKey}.maxClockSkew=
+# ${configurationKey}.discovery-uri=
+# ${configurationKey}.logout-url=
+# ${configurationKey}.max-clock-skew=
 # ${configurationKey}.scope=
-# ${configurationKey}.useNonce=
-# ${configurationKey}.preferredJwsAlgorithm=
-# ${configurationKey}.responseMode=
-# ${configurationKey}.responseType=
-# ${configurationKey}.customParams.param1=value1
-# ${configurationKey}.readTimeout=PT5S
-# ${configurationKey}.connectTimeout=PT5S
-# ${configurationKey}.expireSessionWithToken=false
-# ${configurationKey}.tokenExpirationAdvance=0
+# ${configurationKey}.use-nonce=
+# ${configurationKey}.preferred-jws-algorithm=
+# ${configurationKey}.response-mode=
+# ${configurationKey}.response-type=
+# ${configurationKey}.custom-params.param1=value1
+# ${configurationKey}.read-timeout=PT5S
+# ${configurationKey}.connect-timeout=PT5S
+# ${configurationKey}.expire-session-with-token=false
+# ${configurationKey}.token-expiration-advance=0
+
 ```
 
 ## LDAP Connection Settings
@@ -1159,39 +1154,39 @@ to an external OpenID Connect provider such as Azure AD, given the provider's *c
 The following  options apply  to features that integrate with an LDAP server (i.e. authentication, attribute resolution, etc) given the provider's *configuration key*:
 
 ```properties
-#${configurationKey}.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
-#${configurationKey}.bindDn=cn=Directory Manager,dc=example,dc=org
-#${configurationKey}.bindCredential=Password
+# ${configurationKey}.ldap-url=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# ${configurationKey}.bind-dn=cn=-directory -manager,dc=example,dc=org
+# ${configurationKey}.bind-credential=Password
 
-#${configurationKey}.poolPassivator=NONE|BIND
-#${configurationKey}.connectionStrategy=
-#${configurationKey}.connectTimeout=PT5S
-#${configurationKey}.trustCertificates=
-#${configurationKey}.trustStore=
-#${configurationKey}.trustStorePassword=
-#${configurationKey}.trustStoreType=JKS|JCEKS|PKCS12
-#${configurationKey}.keystore=
-#${configurationKey}.keystorePassword=
-#${configurationKey}.keystoreType=JKS|JCEKS|PKCS12
-#${configurationKey}.disablePooling=false
-#${configurationKey}.minPoolSize=3
-#${configurationKey}.maxPoolSize=10
-#${configurationKey}.validateOnCheckout=true
-#${configurationKey}.validatePeriodically=true
-#${configurationKey}.validatePeriod=PT5M
-#${configurationKey}.validateTimeout=PT5S
-#${configurationKey}.failFast=true
-#${configurationKey}.idleTime=PT10M
-#${configurationKey}.prunePeriod=PT2H
-#${configurationKey}.blockWaitTime=PT3S
+# ${configurationKey}.pool-passivator=NONE|BIND
+# ${configurationKey}.connection-strategy=
+# ${configurationKey}.connect-timeout=PT5S
+# ${configurationKey}.trust-certificates=
+# ${configurationKey}.trust-store=
+# ${configurationKey}.trust-store-password=
+# ${configurationKey}.trust-store-type=JKS|JCEKS|PKCS12
+# ${configurationKey}.keystore=
+# ${configurationKey}.keystore-password=
+# ${configurationKey}.keystore-type=JKS|JCEKS|PKCS12
+# ${configurationKey}.disable-pooling=false
+# ${configurationKey}.min-pool-size=3
+# ${configurationKey}.max-pool-size=10
+# ${configurationKey}.validate-on-checkout=true
+# ${configurationKey}.validate-periodically=true
+# ${configurationKey}.validate-period=PT5M
+# ${configurationKey}.validate-timeout=PT5S
+# ${configurationKey}.fail-fast=true
+# ${configurationKey}.idle-time=PT10M
+# ${configurationKey}.prune-period=PT2H
+# ${configurationKey}.block-wait-time=PT3S
 
-#${configurationKey}.useStartTls=false
-#${configurationKey}.responseTimeout=PT5S
-#${configurationKey}.allowMultipleDns=false
-#${configurationKey}.allowMultipleEntries=false
-#${configurationKey}.followReferrals=false
-#${configurationKey}.binaryAttributes=objectGUID,someOtherAttribute
-#${configurationKey}.name=
+# ${configurationKey}.use-start-tls=false
+# ${configurationKey}.response-timeout=PT5S
+# ${configurationKey}.allow-multiple-dns=false
+# ${configurationKey}.allow-multiple-entries=false
+# ${configurationKey}.follow-referrals=false
+# ${configurationKey}.binary-attributes=objectGUID,someOtherAttribute
+# ${configurationKey}.name=
 ```
 
 ### Connection Initialization
@@ -1234,12 +1229,13 @@ If multiple URLs are provided as the LDAP url, this describes how each URL will 
 ### LDAP SASL Mechanisms
 
 ```properties
-#${configurationKey}.saslMechanism=GSSAPI|DIGEST_MD5|CRAM_MD5|EXTERNAL
-#${configurationKey}.saslRealm=EXAMPLE.COM
-#${configurationKey}.saslAuthorizationId=
-#${configurationKey}.saslMutualAuth=
-#${configurationKey}.saslQualityOfProtection=
-#${configurationKey}.saslSecurityStrength=
+# ${configurationKey}.sasl-mechanism=GSSAPI|DIGEST_MD5|CRAM_MD5|EXTERNAL
+# ${configurationKey}.sasl-realm=EXAMPLE.COM
+# ${configurationKey}.sasl-authorization-id=
+# ${configurationKey}.sasl-mutual-auth=
+# ${configurationKey}.sasl-quality-of-protection=
+# ${configurationKey}.sasl-security-strength=
+
 ```
 
 ### LDAP Connection Validators
@@ -1253,13 +1249,14 @@ The following LDAP validators can be used to test connection health status:
 | `COMPARE`               | Validates a connection is healthy by performing a compare operation.
 
 ```properties
-#${configurationKey}.validator.type=NONE|SEARCH|COMPARE
-#${configurationKey}.validator.baseDn=
-#${configurationKey}.validator.searchFilter=(objectClass=*)
-#${configurationKey}.validator.scope=OBJECT|ONELEVEL|SUBTREE
-#${configurationKey}.validator.attributeName=objectClass
-#${configurationKey}.validator.attributeValue=top
-#${configurationKey}.validator.dn=
+# ${configurationKey}.validator.type=NONE|SEARCH|COMPARE
+# ${configurationKey}.validator.base-dn=
+# ${configurationKey}.validator.search-filter=(object-class=*)
+# ${configurationKey}.validator.scope=OBJECT|ONELEVEL|SUBTREE
+# ${configurationKey}.validator.attribute-name=objectClass
+# ${configurationKey}.validator.attribute-value=top
+# ${configurationKey}.validator.dn=
+
 ```
 
 ### LDAP SSL Hostname Verification
@@ -1272,7 +1269,7 @@ The following LDAP validators can be used to test connection health status:
 | `ANY`                   | Skip and ignore the hostname verification of the LDAP SSL configuration.
 
 ```properties
-#${configurationKey}.hostnameVerifier=DEFAULT|ANY
+#${configurationKey}.hostname-verifier=DEFAULT|ANY
 ```
 
 ### LDAP Types
@@ -1303,15 +1300,16 @@ The following  options apply  given the provider's *configuration key*:
 ```properties
 # ${configurationKey}.type=AD|AUTHENTICATED|DIRECT|ANONYMOUS
 
-# ${configurationKey}.baseDn=dc=example,dc=org
-# ${configurationKey}.subtreeSearch=true
-# ${configurationKey}.searchFilter=cn={user}
-# ${configurationKey}.pageSize=0
+# ${configurationKey}.base-dn=dc=example,dc=org
+# ${configurationKey}.subtree-search=true
+# ${configurationKey}.search-filter=cn={user}
+# ${configurationKey}.page-size=0
 
-# ${configurationKey}.enhanceWithEntryResolver=true
-# ${configurationKey}.derefAliases=NEVER|SEARCHING|FINDING|ALWAYS
-# ${configurationKey}.dnFormat=uid=%s,ou=people,dc=example,dc=org
-# ${configurationKey}.principalAttributePassword=password
+# ${configurationKey}.enhance-with-entry-resolver=true
+# ${configurationKey}.deref-aliases=NEVER|SEARCHING|FINDING|ALWAYS
+# ${configurationKey}.dn-format=uid=%s,ou=people,dc=example,dc=org
+# ${configurationKey}.principal-attribute-password=password
+
 ```
 
 The following authentication types are supported:
@@ -1326,24 +1324,25 @@ The following authentication types are supported:
 ### LDAP Search Entry Handlers
 
 ```properties
-# ${configurationKey}.searchEntryHandlers[0].type=
+# ${configurationKey}.search-entry-handlers[0].type=
 
-# ${configurationKey}.searchEntryHandlers[0].caseChange.dnCaseChange=NONE|LOWER|UPPER
-# ${configurationKey}.searchEntryHandlers[0].caseChange.attributeNameCaseChange=NONE|LOWER|UPPER
-# ${configurationKey}.searchEntryHandlers[0].caseChange.attributeValueCaseChange=NONE|LOWER|UPPER
-# ${configurationKey}.searchEntryHandlers[0].caseChange.attributeNames=
+# ${configurationKey}.search-entry-handlers[0].case-change.dn-case-change=NONE|LOWER|UPPER
+# ${configurationKey}.search-entry-handlers[0].case-change.attribute-name-case-change=NONE|LOWER|UPPER
+# ${configurationKey}.search-entry-handlers[0].case-change.attribute-value-case-change=NONE|LOWER|UPPER
+# ${configurationKey}.search-entry-handlers[0].case-change.attribute-names=
 
-# ${configurationKey}.searchEntryHandlers[0].dnAttribute.dnAttributeName=entryDN
-# ${configurationKey}.searchEntryHandlers[0].dnAttribute.addIfExists=false
+# ${configurationKey}.search-entry-handlers[0].dn-attribute.dn-attribute-name=entryDN
+# ${configurationKey}.search-entry-handlers[0].dn-attribute.add-if-exists=false
 
-# ${configurationKey}.searchEntryHandlers[0].primaryGroupId.groupFilter=(&(objectClass=group)(objectSid={0}))
-# ${configurationKey}.searchEntryHandlers[0].primaryGroupId.baseDn=
+# ${configurationKey}.search-entry-handlers[0].primary-group-id.group-filter=(&(object-class=group)(object-sid={0}))
+# ${configurationKey}.search-entry-handlers[0].primary-group-id.base-dn=
 
-# ${configurationKey}.searchEntryHandlers[0].mergeAttribute.mergeAttributeName=
-# ${configurationKey}.searchEntryHandlers[0].mergeAttribute.attributeNames=
+# ${configurationKey}.search-entry-handlers[0].merge-attribute.merge-attribute-name=
+# ${configurationKey}.search-entry-handlers[0].merge-attribute.attribute-names=
 
-# ${configurationKey}.searchEntryHandlers[0].recursive.searchAttribute=
-# ${configurationKey}.searchEntryHandlers[0].recursive.mergeAttributes=
+# ${configurationKey}.search-entry-handlers[0].recursive.search-attribute=
+# ${configurationKey}.search-entry-handlers[0].recursive.merge-attributes=
+
 ```
 
 The following types are supported:

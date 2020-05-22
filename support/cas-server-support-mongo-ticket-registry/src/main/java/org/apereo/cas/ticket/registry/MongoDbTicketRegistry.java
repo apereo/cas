@@ -18,11 +18,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.index.Index;
+import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.TextCriteria;
+import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.util.StreamUtils;
 
@@ -46,8 +50,11 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     private static final ImmutableSet<String> MONGO_INDEX_KEYS = ImmutableSet.of("v", "key", "name", "ns");
 
     private final TicketCatalog ticketCatalog;
+
     private final MongoOperations mongoTemplate;
+
     private final boolean dropCollection;
+
     private final TicketSerializationManager ticketSerializationManager;
 
     public MongoDbTicketRegistry(final TicketCatalog ticketCatalog,
@@ -205,6 +212,25 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         return countTicketsByTicketType(TicketGrantingTicket.class);
     }
 
+    @Override
+    public long countSessionsFor(final String principalId) {
+        if (isCipherExecutorEnabled()) {
+            return super.countSessionsFor(principalId);
+        }
+        
+        val ticketDefinitions = ticketCatalog.find(TicketGrantingTicket.class);
+        return ticketDefinitions.stream()
+            .map(this::getTicketCollectionInstanceByMetadata)
+            .mapToLong(map -> {
+                val criteria = TextCriteria.forDefaultLanguage().matchingAny(principalId);
+                val query = TextQuery.queryText(criteria)
+                    .sortByScore()
+                    .with(PageRequest.of(0, 10));
+                return mongoTemplate.count(query, map);
+            })
+            .sum();
+    }
+
     private long countTicketsByTicketType(final Class<? extends Ticket> ticketType) {
         val ticketDefinitions = ticketCatalog.find(ticketType);
         return ticketDefinitions.stream()
@@ -286,6 +312,13 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .expire(Duration.ofSeconds(ticket.getProperties().getStorageTimeout()));
         removeDifferingIndexIfAny(collection, index);
         mongoTemplate.indexOps(collectionName).ensureIndex(index);
+
+        val textIndex = new TextIndexDefinition.TextIndexDefinitionBuilder()
+            .onField(TicketHolder.FIELD_NAME_JSON)
+            .onField(TicketHolder.FIELD_NAME_TYPE)
+            .build();
+        mongoTemplate.indexOps(collectionName).ensureIndex(textIndex);
+
         return collection;
     }
 

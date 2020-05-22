@@ -77,7 +77,11 @@ public class UmaPermissionRegistrationEndpointController extends BaseUmaEndpoint
             val model = buildResponseEntityErrorModel(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to generate permission ticket");
             return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return new ResponseEntity("Unable to complete the permission registration request.", HttpStatus.BAD_REQUEST);
     }

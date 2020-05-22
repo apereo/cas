@@ -4,11 +4,9 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import lombok.val;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.Optional;
 
@@ -21,12 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML")
+@TestPropertySource(properties = {
+    "cas.authn.saml-idp.entityId=https://cas.example.org/idp",
+    "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
+})
 public class FileSystemSamlIdPMetadataGeneratorTests extends BaseSamlIdPConfigurationTests {
-
-    @BeforeAll
-    public static void beforeThisClass() {
-        METADATA_DIRECTORY = new FileSystemResource(FileUtils.getTempDirectory());
-    }
 
     @Test
     public void verifyOperation() throws Exception {

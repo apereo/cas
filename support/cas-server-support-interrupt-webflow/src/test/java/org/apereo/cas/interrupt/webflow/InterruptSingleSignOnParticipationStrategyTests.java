@@ -3,6 +3,7 @@ package org.apereo.cas.interrupt.webflow;
 import org.apereo.cas.interrupt.InterruptResponse;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Simple")
 public class InterruptSingleSignOnParticipationStrategyTests {
     @Test
     public void verifyStrategyWithoutInterrupt() {

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.ticket.TicketState;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZoneOffset;
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("Simple")
 public class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
     @Test
     public void verifySsoParticipationByAuthenticationDateFails() {

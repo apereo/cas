@@ -196,7 +196,7 @@ public class ValidateEndpointCommand {
      * @param url     the url
      * @param proxy   the proxy
      * @param timeout the timeout
-     * @return the boolean
+     * @return true/false
      */
     @ShellMethod(key = "validate-endpoint", value = "Test connections to an endpoint to verify connectivity, SSL, etc")
     public boolean validateEndpoint(

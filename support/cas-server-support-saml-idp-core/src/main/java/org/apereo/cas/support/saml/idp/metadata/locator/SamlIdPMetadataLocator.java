@@ -63,7 +63,7 @@ public interface SamlIdPMetadataLocator {
      * Metadata exists?
      *
      * @param registeredService the registered service
-     * @return the boolean
+     * @return true/false
      */
     boolean exists(Optional<SamlRegisteredService> registeredService);
 

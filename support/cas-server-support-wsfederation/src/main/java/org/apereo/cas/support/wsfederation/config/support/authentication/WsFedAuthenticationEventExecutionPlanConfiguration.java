@@ -138,6 +138,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "wsfedAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer wsfedAuthenticationEventExecutionPlanConfigurer() {
         val personDirectory = casProperties.getPersonDirectory();
         return plan -> casProperties.getAuthn().getWsfed()

@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.support;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
@@ -14,6 +15,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("Ldap")
 public class RejectResultCodeLdapPasswordPolicyHandlingStrategyTests {
     @Test
     public void verifyStrategySupportsDefault() {

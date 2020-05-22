@@ -7,15 +7,15 @@
   overlays could use and pull this file and have their 
   dependencies match that of CAS. 
  */
-ext["hibernateVersion"] = "5.4.14.Final"
+ext["hibernateVersion"] = "5.4.15.Final"
 ext["hazelcastVersion"] = "4.0.1"
-ext["infinispanVersion"] = "10.1.5.Final"
+ext["infinispanVersion"] = "10.1.8.Final"
 
 ext["springVersion"] = "5.2.6.RELEASE"
-ext["springSessionVersion"] = "2.2.0.RELEASE"
-ext["springSessionMongoVersion"] = "2.2.1.RELEASE"
+ext["springSessionVersion"] = "2.2.2.RELEASE"
+ext["springSessionMongoVersion"] = "2.2.3.RELEASE"
 
-ext["springBootTomcatVersion"] = "9.0.34"
+ext["springBootTomcatVersion"] = "9.0.35"
 
 ext["jacksonVersion"] = "2.11.0"
 ext["jacksonCoreVersion"] = "2.11.0"
@@ -23,13 +23,13 @@ ext["thymeleafVersion"] = "3.0.11.RELEASE"
 ext["thymeleafDialectVersion"] = "2.4.1"
 ext["hsqlVersion"] = "2.5.0"
 ext["httpCoreVersion"] = "4.4.13"
-ext["hikariVersion"] = "3.4.3"
+ext["hikariVersion"] = "3.4.5"
 ext["groovyVersion"] = "3.0.3"
-ext["log4jVersion"] = "2.13.2"
+ext["log4jVersion"] = "2.13.3"
 ext["commonsBeansVersion"] = "1.9.4"
 ext["logbackVersion"] = "1.3.0-alpha5"
-ext["caffeinVersion"] = "2.8.2"
-ext["couchbaseVersion"] = "2.7.11"
+ext["caffeinVersion"] = "2.8.3"
+ext["couchbaseVersion"] = "3.0.4"
 
 ext["mysqlVersion"] = "8.0.20"
 ext["postgresqlVersion"] = "42.2.12"

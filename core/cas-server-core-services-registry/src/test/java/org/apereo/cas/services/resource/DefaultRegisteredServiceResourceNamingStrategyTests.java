@@ -3,6 +3,7 @@ package org.apereo.cas.services.resource;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,6 +15,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("Simple")
 public class DefaultRegisteredServiceResourceNamingStrategyTests {
     @Test
     public void verifyOperation() {

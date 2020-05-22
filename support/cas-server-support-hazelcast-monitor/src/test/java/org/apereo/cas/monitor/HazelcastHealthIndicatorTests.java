@@ -25,6 +25,7 @@ import org.apereo.cas.monitor.config.HazelcastMonitorConfiguration;
 
 import com.hazelcast.internal.memory.MemoryStats;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -72,11 +73,8 @@ import static org.mockito.Mockito.*;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 },
-    properties = {
-        "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalmonitor",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+    properties = "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalmonitor")
+@Tag("Hazelcast")
 public class HazelcastHealthIndicatorTests {
     @Autowired
     @Qualifier("hazelcastHealthIndicator")

@@ -8,6 +8,7 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 
+import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ public class CouchbaseServiceRegistryConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "serviceRegistryCouchbaseClientFactory")
     public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory() {
         val couchbase = casProperties.getServiceRegistry().getCouchbase();
         return new CouchbaseClientFactory(couchbase);
@@ -52,10 +54,12 @@ public class CouchbaseServiceRegistryConfiguration {
     @RefreshScope
     public ServiceRegistry couchbaseServiceRegistry() {
         return new CouchbaseServiceRegistry(applicationContext, serviceRegistryCouchbaseClientFactory(),
-            new RegisteredServiceJsonSerializer(), serviceRegistryListeners.getObject());
+            new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter()),
+            serviceRegistryListeners.getObject());
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "couchbaseServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer couchbaseServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(couchbaseServiceRegistry());

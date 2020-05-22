@@ -412,9 +412,9 @@ ext.libraries = [
         ],
         findbugscontrib         : dependencies.create("com.mebigfatguy.sb-contrib:sb-contrib:$spotbugsContribVersion") {
         },
-        findbugs                : dependencies.create("com.github.spotbugs:spotbugs:$spotbugsVersion") {
+        spotbugs                : dependencies.create("com.github.spotbugs:spotbugs:$spotbugsVersion") {
         },
-        findbugsannotations     : dependencies.create("com.github.spotbugs:spotbugs-annotations:$spotbugsVersion") {
+        spotbugsannotations     : dependencies.create("com.github.spotbugs:spotbugs-annotations:$spotbugsVersion") {
         },
         findbugssec             : dependencies.create("com.h3xstream.findsecbugs:findsecbugs-plugin:$findbugsSecVersion") {
         },

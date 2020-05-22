@@ -121,7 +121,7 @@ public abstract class BaseWSFederationRequestController {
      *
      * @param fedRequest the fed request
      * @param request    the request
-     * @return the boolean
+     * @return true/false
      */
     protected boolean shouldRenewAuthentication(final WSFederationRequest fedRequest,
                                                 final HttpServletRequest request) {

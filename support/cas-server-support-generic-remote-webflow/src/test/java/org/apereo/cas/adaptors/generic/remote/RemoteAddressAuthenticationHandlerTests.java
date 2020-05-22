@@ -31,6 +31,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -76,11 +77,9 @@ import static org.junit.jupiter.api.Assertions.*;
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasRemoteAuthenticationConfiguration.class
 },
-    properties = {
-        "cas.authn.remoteAddress.ipAddressRange=192.168.1.0/255.255.255.0",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+    properties =
+        "cas.authn.remote-address.ipAddressRange=192.168.1.0/255.255.255.0")
+@Tag("Simple")
 public class RemoteAddressAuthenticationHandlerTests {
     @Autowired
     @Qualifier("remoteAddressAuthenticationHandler")

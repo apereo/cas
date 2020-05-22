@@ -59,10 +59,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CoreSamlConfiguration.class
     },
     properties = {
-        "cas.authn.samlIdp.metadata.couchDb.dbName=saml_generator",
-        "cas.authn.samlIdp.metadata.couchDb.idpMetadataEnabled=true",
-        "cas.authn.samlIdp.metadata.couchDb.username=cas",
-        "cas.authn.samlIdp.metadata.couchdb.password=password"
+        "cas.authn.saml-idp.metadata.couch-db.dbName=saml_generator",
+        "cas.authn.saml-idp.metadata.couch-db.idp-metadata-enabled=true",
+        "cas.authn.saml-idp.metadata.couch-db.username=cas",
+        "cas.authn.saml-idp.metadata.couchdb.password=password"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("CouchDb")

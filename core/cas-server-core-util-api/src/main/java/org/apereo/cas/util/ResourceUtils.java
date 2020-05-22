@@ -20,6 +20,7 @@ import org.springframework.core.io.UrlResource;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
@@ -71,7 +72,7 @@ public class ResourceUtils {
      *
      * @param resource       the resource
      * @param resourceLoader the resource loader
-     * @return the boolean
+     * @return true/false
      */
     public static boolean doesResourceExist(final String resource, final ResourceLoader resourceLoader) {
         try {
@@ -89,7 +90,7 @@ public class ResourceUtils {
      * Does resource exist?
      *
      * @param res the res
-     * @return the boolean
+     * @return true/false
      */
     public static boolean doesResourceExist(final Resource res) {
         if (res == null) {
@@ -111,7 +112,7 @@ public class ResourceUtils {
      * Does resource exist?
      *
      * @param location the resource
-     * @return the boolean
+     * @return true/false
      */
     public static boolean doesResourceExist(final String location) {
         try {
@@ -131,12 +132,34 @@ public class ResourceUtils {
      * @throws IOException the exception
      */
     public static AbstractResource getResourceFrom(final String location) throws IOException {
-        val metadataLocationResource = getRawResourceFrom(location);
-        if (!metadataLocationResource.exists() || !metadataLocationResource.isReadable()) {
+        val resource = getRawResourceFrom(location);
+        if (!resource.exists() || !resource.isReadable()) {
             throw new FileNotFoundException("Resource " + location + " does not exist or is unreadable");
         }
-        return metadataLocationResource;
+        return resource;
     }
+
+    @SneakyThrows
+    public static Resource exportClasspathResourceToFile(final File parentDirectory, final Resource resource) {
+        LOGGER.trace("Preparing classpath resource [{}]", resource);
+        if (resource == null) {
+            LOGGER.warn("No resource defined to prepare. Returning null");
+            return null;
+        }
+        if (!parentDirectory.exists() && !parentDirectory.mkdirs()) {
+            LOGGER.warn("Unable to create folder [{}]", parentDirectory);
+        }
+        val destination = new File(parentDirectory, Objects.requireNonNull(resource.getFilename()));
+        if (destination.exists()) {
+            LOGGER.trace("Deleting resource directory [{}]", destination);
+            FileUtils.forceDelete(destination);
+        }
+        try (val out = new FileOutputStream(destination)) {
+            resource.getInputStream().transferTo(out);
+        }
+        return new FileSystemResource(destination);
+    }
+
 
     /**
      * Prepare classpath resource if needed file.
@@ -233,7 +256,7 @@ public class ResourceUtils {
      * Is the resource a file?
      *
      * @param resource the resource
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isFile(final String resource) {
         return StringUtils.isNotBlank(resource) && resource.startsWith(FILE_URL_PREFIX);
@@ -243,7 +266,7 @@ public class ResourceUtils {
      * Is file boolean.
      *
      * @param resource the resource
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isFile(final Resource resource) {
         try {
@@ -259,7 +282,7 @@ public class ResourceUtils {
      * Is jar resource ?.
      *
      * @param resource the resource
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isJarResource(final Resource resource) {
         try {

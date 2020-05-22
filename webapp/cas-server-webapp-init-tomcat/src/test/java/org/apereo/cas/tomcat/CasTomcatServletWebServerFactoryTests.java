@@ -1,11 +1,11 @@
 package org.apereo.cas.tomcat;
 
-import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.config.CasEmbeddedContainerTomcatConfiguration;
 import org.apereo.cas.config.CasEmbeddedContainerTomcatFiltersConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -55,6 +55,7 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
     },
     webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
+@Tag("Simple")
 public class CasTomcatServletWebServerFactoryTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
@@ -67,9 +68,6 @@ public class CasTomcatServletWebServerFactoryTests {
     @Qualifier("casTomcatEmbeddedServletContainerCustomizer")
     private ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer;
 
-    static {
-        System.setProperty(CasEmbeddedContainerUtils.EMBEDDED_CONTAINER_CONFIG_ACTIVE, "true");
-    }
 
     @Test
     public void verifyOperation() {

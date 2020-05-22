@@ -1,28 +1,22 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.SimplePrincipal;
-import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import com.couchbase.client.java.Bucket;
-import com.couchbase.client.java.document.json.JsonObject;
-import com.couchbase.client.java.query.DefaultN1qlQueryResult;
-import com.couchbase.client.java.query.N1qlQueryRow;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 
+import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-
-import java.util.ArrayList;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -34,86 +28,51 @@ import static org.mockito.Mockito.*;
  * @since 6.0.4
  */
 @Tag("Couchbase")
+@EnabledIfPortOpen(port = 8091)
+@SpringBootTest(classes = RefreshAutoConfiguration.class,
+    properties = {
+        "cas.authn.couchbase.clusterUsername=admin",
+        "cas.authn.couchbase.clusterPassword=password",
+        "cas.authn.couchbase.bucket=testbucket"
+    })
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchbaseAuthenticationHandlerTests {
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
-    private static final String BUCKET_NAME = "default";
-
-    private static final String LOGIN = "login";
-
-    private static final String GOOD_PASSWORD = "good";
-
-    private static final String BAD_PASSWORD = "bad";
-
-    private static AuthenticationHandlerExecutionResult internalAuthenticate(final PasswordEncoder encoder,
-                                                                             final Principal principal,
-                                                                             final String userPassword) throws Exception {
-        val factory = mock(CouchbaseClientFactory.class);
-        val defBucket = mock(Bucket.class);
-        when(defBucket.name()).thenReturn(BUCKET_NAME);
-        when(factory.getBucket()).thenReturn(defBucket);
-        val properties = new CouchbaseAuthenticationProperties();
-        val principalFactory = mock(PrincipalFactory.class);
-        when(principalFactory.createPrincipal(any(String.class), any(Map.class))).thenReturn(principal);
-        val handler = new CouchbaseAuthenticationHandler(mock(ServicesManager.class), principalFactory, factory, properties);
-        handler.setPasswordEncoder(encoder);
-        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(LOGIN, userPassword);
-
-        val queryResult = mock(DefaultN1qlQueryResult.class);
-        val listRows = new ArrayList<N1qlQueryRow>();
-        val row = mock(N1qlQueryRow.class);
-        val json = JsonObject.empty()
-            .put(properties.getUsernameAttribute(), LOGIN)
-            .put(properties.getPasswordAttribute(), encoder.encode(GOOD_PASSWORD));
-        val bucket = JsonObject.empty()
-            .put(BUCKET_NAME, json);
-        when(row.value()).thenReturn(bucket);
-        listRows.add(row);
-        when(queryResult.allRows()).thenReturn(listRows);
-
-        when(factory.query(properties.getUsernameAttribute(), LOGIN)).thenReturn(queryResult);
-
-        return handler.authenticate(c);
+    @Test
+    public void verify() throws Exception {
+        val props = casProperties.getAuthn().getCouchbase();
+        val factory = new CouchbaseClientFactory(props);
+        val handler = new CouchbaseAuthenticationHandler(mock(ServicesManager.class),
+            PrincipalFactoryUtils.newPrincipalFactory(), factory, props);
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
+        val result = handler.authenticate(c);
+        assertNotNull(result);
+        val attributes = result.getPrincipal().getAttributes();
+        assertEquals(2, attributes.size());
+        assertTrue(attributes.containsKey("firstname"));
+        assertTrue(attributes.containsKey("lastname"));
     }
 
     @Test
-    public void noEncryptionGoodPassword() throws Exception {
-        val principal = new SimplePrincipal();
-        val result = internalAuthenticate(NoOpPasswordEncoder.getInstance(), principal, GOOD_PASSWORD);
-
-        assertEquals(principal, result.getPrincipal());
+    public void verifyBadEncoding() throws Exception {
+        val props = casProperties.getAuthn().getCouchbase();
+        val factory = new CouchbaseClientFactory(props);
+        val handler = new CouchbaseAuthenticationHandler(mock(ServicesManager.class),
+            PrincipalFactoryUtils.newPrincipalFactory(), factory, props);
+        handler.setPasswordEncoder(new SCryptPasswordEncoder());
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
+        assertThrows(FailedLoginException.class, () -> handler.authenticate(c));
     }
 
     @Test
-    public void noEncryptionBadPassword() {
-        assertThrows(FailedLoginException.class, () ->
-            internalAuthenticate(NoOpPasswordEncoder.getInstance(), new SimplePrincipal(), BAD_PASSWORD));
-    }
-
-    @Test
-    public void sha256EncryptionGoodPassword() throws Exception {
-        val principal = new SimplePrincipal();
-        val result = internalAuthenticate(new StandardPasswordEncoder(), principal, GOOD_PASSWORD);
-
-        assertEquals(principal, result.getPrincipal());
-    }
-
-    @Test
-    public void sha256EncryptionBadPassword() {
-        assertThrows(FailedLoginException.class, () ->
-            internalAuthenticate(new StandardPasswordEncoder(), new SimplePrincipal(), BAD_PASSWORD));
-    }
-
-    @Test
-    public void bcryptEncryptionGoodPassword() throws Exception {
-        val principal = new SimplePrincipal();
-        val result = internalAuthenticate(new BCryptPasswordEncoder(), principal, GOOD_PASSWORD);
-
-        assertEquals(principal, result.getPrincipal());
-    }
-
-    @Test
-    public void bcryptEncryptionBadPassword() {
-        assertThrows(FailedLoginException.class, () ->
-            internalAuthenticate(new BCryptPasswordEncoder(), new SimplePrincipal(), BAD_PASSWORD));
+    public void verifyMissingUser() {
+        val props = casProperties.getAuthn().getCouchbase();
+        val factory = new CouchbaseClientFactory(props);
+        val handler = new CouchbaseAuthenticationHandler(mock(ServicesManager.class),
+            PrincipalFactoryUtils.newPrincipalFactory(), factory, props);
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser-missing", "Mellon");
+        assertThrows(AccountNotFoundException.class, () -> handler.authenticate(c));
     }
 }

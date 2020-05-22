@@ -23,6 +23,7 @@ import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -62,11 +63,8 @@ import static org.mockito.Mockito.*;
     MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
-    properties = {
-        "cas.theme.defaultThemeName=test",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+    properties = "cas.theme.defaultThemeName=test")
+@Tag("Simple")
 public class ServiceThemeResolverTests {
     private static final String MOZILLA = "Mozilla";
 

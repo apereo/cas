@@ -103,6 +103,8 @@ public class JpaServiceRegistryConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "dataSourceService")
+    @RefreshScope
     public DataSource dataSourceService() {
         return JpaBeans.newDataSource(casProperties.getServiceRegistry().getJpa());
     }

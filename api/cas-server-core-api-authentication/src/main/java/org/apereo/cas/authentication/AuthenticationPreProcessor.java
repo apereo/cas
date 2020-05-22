@@ -22,7 +22,7 @@ public interface AuthenticationPreProcessor extends Ordered {
      * Process the authentication event.
      *
      * @param transaction The authentication transaction.
-     * @return the boolean
+     * @return true/false
      * @throws AuthenticationException the authn security exception
      */
     boolean process(AuthenticationTransaction transaction) throws AuthenticationException;

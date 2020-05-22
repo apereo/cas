@@ -63,7 +63,11 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
                 builder.withDetail(s.getName(), map);
             });
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             builder.down(e);
         }
 

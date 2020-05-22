@@ -60,7 +60,7 @@ public class AccepttoMultifactorValidateUserDeviceRegistrationAction extends Abs
     /**
      * Verify user device is paired.
      *
-     * @return the boolean
+     * @return true/false
      */
     @Retryable(value = AccepttoUserDeviceRegistrationException.class,
         maxAttempts = 2, backoff = @Backoff(delay = 1000, maxDelay = 3000))

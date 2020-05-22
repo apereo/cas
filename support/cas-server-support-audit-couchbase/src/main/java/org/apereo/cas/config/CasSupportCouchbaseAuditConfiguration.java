@@ -31,9 +31,7 @@ public class CasSupportCouchbaseAuditConfiguration {
     @Bean
     public CouchbaseClientFactory auditsCouchbaseClientFactory() {
         val cb = casProperties.getAudit().getCouchbase();
-        return new CouchbaseClientFactory(cb,
-            CouchbaseAuditTrailManager.UTIL_DOCUMENT,
-            CouchbaseAuditTrailManager.ALL_VIEWS);
+        return new CouchbaseClientFactory(cb);
     }
 
     @Bean

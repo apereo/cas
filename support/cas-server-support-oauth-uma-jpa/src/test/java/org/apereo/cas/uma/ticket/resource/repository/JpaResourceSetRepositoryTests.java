@@ -26,15 +26,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("UMA")
+@Tag("JDBC")
 @Import({
     CasOAuthUmaJpaConfiguration.class,
     CasHibernateJpaConfiguration.class
 })
 @TestPropertySource(properties = {
-    "cas.authn.uma.resourceSet.jpa.url=jdbc:hsqldb:mem:cas-uma-resourceset",
+    "cas.authn.uma.resource-set.jpa.url=jdbc:hsqldb:mem:cas-uma-resourceset",
     "cas.jdbc.showSql=true",
-    "cas.authn.uma.resourceSet.jpa.ddlAuto=create-drop"
+    "cas.authn.uma.resource-set.jpa.ddlAuto=create-drop"
 })
 public class JpaResourceSetRepositoryTests extends BaseUmaEndpointControllerTests {
 

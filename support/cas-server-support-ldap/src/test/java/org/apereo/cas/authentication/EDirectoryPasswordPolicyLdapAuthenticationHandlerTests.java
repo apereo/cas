@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 
@@ -22,5 +23,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].password-policy.warning-attribute-value=attr-value"
 })
 @EnabledIfPortOpen(port = 10389)
+@Tag("Ldap")
 public class EDirectoryPasswordPolicyLdapAuthenticationHandlerTests extends DirectLdapAuthenticationHandlerTests {
 }

@@ -1,8 +1,7 @@
 package org.apereo.cas.config;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
-import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link CasSamlSPInCommonConfigurationTests}.
@@ -11,10 +10,10 @@ import org.springframework.context.annotation.Import;
  * @since 6.2.0
  */
 @Tag("SAML")
-@Import(CasSamlSPInCommonConfiguration.class)
+@TestPropertySource(properties = {
+    "cas.saml-sp.in-common.metadata=classpath:/metadata/sp-metadata.xml",
+    "cas.saml-sp.in-common.name-id-attribute=cn",
+    "cas.saml-sp.in-common.name-id-format=transient"
+})
 public class CasSamlSPInCommonConfigurationTests extends BaseCasSamlSPConfigurationTests {
-    @BeforeAll
-    public static void beforeAll() {
-        SERVICE_PROVIDER = "inCommon";
-    }
 }

@@ -28,7 +28,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,8 +37,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RestfulServiceRegistryTests}.
@@ -67,14 +66,15 @@ import static org.mockito.Mockito.*;
 },
     properties = {
         "server.port=9303",
-        "cas.serviceRegistry.rest.url=http://localhost:9303",
-        "cas.serviceRegistry.initFromJson=false"
+        "cas.service-registry.rest.url=http://localhost:9303",
+        "cas.service-registry.initFromJson=false"
     },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAutoConfiguration
 @Tag("RestfulApi")
 public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
+
 
     @Autowired
     @Qualifier("restfulServiceRegistry")
@@ -86,12 +86,16 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @TestConfiguration
+    @Lazy(false)
     public static class RestfulServiceRegistryTestConfiguration {
+
+        @Autowired
+        private ConfigurableApplicationContext applicationContext;
 
         @RestController("servicesController")
         @RequestMapping("/")
-        public static class ServicesController {
-            private final InMemoryServiceRegistry serviceRegistry = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
+        public class ServicesController {
+            private final InMemoryServiceRegistry serviceRegistry = new InMemoryServiceRegistry(applicationContext);
 
             @DeleteMapping
             public Integer findByServiceId(@RequestBody final RegisteredService service) {

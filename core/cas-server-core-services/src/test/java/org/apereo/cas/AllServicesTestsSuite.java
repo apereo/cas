@@ -34,6 +34,7 @@ import org.apereo.cas.services.RegisteredServiceAuthenticationPolicyResolverTest
 import org.apereo.cas.services.RegisteredServicePublicKeyImplTests;
 import org.apereo.cas.services.RegisteredServicesEventListenerTests;
 import org.apereo.cas.services.RemoteEndpointServiceAccessStrategyTests;
+import org.apereo.cas.services.ReturnEncryptedAttributeReleasePolicyTests;
 import org.apereo.cas.services.ScriptedRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.SimpleServiceTests;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategyTests;
@@ -97,6 +98,7 @@ import org.junit.runner.RunWith;
     WebApplicationServiceFactoryTests.class,
     DefaultRegisteredServiceAuthenticationPolicyTests.class,
     UnauthorizedProxyingExceptionTests.class,
+    ReturnEncryptedAttributeReleasePolicyTests.class,
     UnauthorizedServiceExceptionTests.class,
     RegisteredServiceChainingAttributeFilterTests.class,
     RegisteredServiceAccessStrategyUtilsTests.class,

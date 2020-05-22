@@ -3,6 +3,7 @@ package org.apereo.cas.trusted.authentication.keys;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @deprecated Since 6.2.0
  */
 @Deprecated(since = "6.2.0")
+@Tag("Simple")
 public class LegacyMultifactorAuthenticationTrustRecordKeyGeneratorTests {
     @Test
     public void verifyOperation() {

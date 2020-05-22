@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -13,6 +14,7 @@ import static org.mockito.Mockito.*;
  * @author battags
  * @since 3.0.0
  */
+@Tag("Simple")
 public class DefaultServicesManagerByEnvironmentTests extends AbstractServicesManagerTests {
     @Override
     protected ServicesManager getServicesManagerInstance() {

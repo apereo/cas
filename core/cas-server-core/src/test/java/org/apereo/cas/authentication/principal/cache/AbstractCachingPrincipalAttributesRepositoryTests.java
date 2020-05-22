@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.principal.cache;
 import org.apereo.cas.authentication.AttributeMergingStrategy;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 
@@ -29,7 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Parent class for test cases around {@link PrincipalAttributesRepository}.
+ * Parent class for test cases around
+ * {@link org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository}.
  *
  * @author Misagh Moayyed
  * @since 4.2
@@ -70,8 +70,6 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
         email.add("final@school.com");
         this.principal = this.principalFactory.createPrincipal("uid", Collections.singletonMap(MAIL, email));
     }
-
-    protected abstract AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(String unit, long duration);
 
     @Test
     @SneakyThrows
@@ -142,4 +140,6 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
             assertTrue(mailAttr.contains("final@school.com"));
         }
     }
+
+    protected abstract AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(String unit, long duration);
 }

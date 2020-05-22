@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -78,6 +79,18 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         }
     }
 
+    @Override
+    public long countSessionsFor(final String principalId) {
+        val ticketPredicate = (Predicate<Ticket>) t -> {
+            if (t instanceof TicketGrantingTicket) {
+                val ticket = TicketGrantingTicket.class.cast(t);
+                return ticket.getAuthentication().getPrincipal().getId().equalsIgnoreCase(principalId);
+            }
+            return false;
+        };
+        return getTickets(ticketPredicate).count();
+    }
+    
     @Override
     public long serviceTicketCount() {
         try (val stStream = getTicketsStream().filter(ServiceTicket.class::isInstance)) {
@@ -227,7 +240,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         LOGGER.debug("Encoding ticket [{}]", ticket);
         val encodedTicketObject = SerializationUtils.serializeAndEncodeObject(this.cipherExecutor, ticket);
         val encodedTicketId = encodeTicketId(ticket.getId());
-        val encodedTicket = new EncodedTicket(encodedTicketId, ByteSource.wrap(encodedTicketObject).read());
+        val encodedTicket = new EncodedTicket(encodedTicketId,
+            ByteSource.wrap(encodedTicketObject).read(), ticket.getPrefix());
         LOGGER.debug("Created encoded ticket [{}]", encodedTicket);
         return encodedTicket;
     }

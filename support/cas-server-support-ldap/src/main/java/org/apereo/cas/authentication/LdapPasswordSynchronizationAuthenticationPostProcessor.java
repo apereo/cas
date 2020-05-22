@@ -13,6 +13,7 @@ import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.ResultCode;
 import org.ldaptive.ad.UnicodePwdAttribute;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.util.Collections;
 
@@ -23,13 +24,18 @@ import java.util.Collections;
  * @since 6.1.0
  */
 @Slf4j
-public class LdapPasswordSynchronizationAuthenticationPostProcessor implements AuthenticationPostProcessor {
+public class LdapPasswordSynchronizationAuthenticationPostProcessor implements AuthenticationPostProcessor, DisposableBean {
     private final ConnectionFactory searchFactory;
     private final AbstractLdapSearchProperties ldapProperties;
 
     public LdapPasswordSynchronizationAuthenticationPostProcessor(final AbstractLdapSearchProperties properties) {
         this.ldapProperties = properties;
         this.searchFactory = LdapUtils.newLdaptiveConnectionFactory(properties);
+    }
+
+    @Override
+    public void destroy() {
+        searchFactory.close();
     }
 
     @Override
@@ -67,7 +73,11 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessor implements A
                 LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldapProperties.getBaseDn());
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
     }
 

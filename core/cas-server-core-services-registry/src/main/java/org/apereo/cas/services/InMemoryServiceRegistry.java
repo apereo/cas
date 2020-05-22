@@ -4,7 +4,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
 import lombok.ToString;
 import lombok.val;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,14 +24,14 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
 
     private final List<RegisteredService> registeredServices;
 
-    public InMemoryServiceRegistry(final ApplicationEventPublisher eventPublisher) {
-        this(eventPublisher, new ArrayList<>(0), new ArrayList<>(0));
+    public InMemoryServiceRegistry(final ConfigurableApplicationContext applicationContext) {
+        this(applicationContext, new ArrayList<>(0), new ArrayList<>(0));
     }
 
-    public InMemoryServiceRegistry(final ApplicationEventPublisher eventPublisher,
+    public InMemoryServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                    final List<RegisteredService> registeredServices,
                                    final Collection<ServiceRegistryListener> serviceRegistryListeners) {
-        super(eventPublisher, serviceRegistryListeners);
+        super(applicationContext, serviceRegistryListeners);
         this.registeredServices = registeredServices;
     }
 

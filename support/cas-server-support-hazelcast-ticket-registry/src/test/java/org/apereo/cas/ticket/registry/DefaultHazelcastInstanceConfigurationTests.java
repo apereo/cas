@@ -27,15 +27,16 @@ import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
@@ -66,17 +67,14 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreConfiguration.class,
-    MailSenderAutoConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class},
-properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
-@DirtiesContext
+    CasWebApplicationServiceFactoryConfiguration.class
+}, properties = "cas.ticket.registry.hazelcast.cluster.instanceName=samplelocalhostinstance")
 @Slf4j
+@Tag("Hazelcast")
+@DirtiesContext
 public class DefaultHazelcastInstanceConfigurationTests {
     @Autowired
     @Qualifier("casTicketRegistryHazelcastInstance")
@@ -102,7 +100,8 @@ public class DefaultHazelcastInstanceConfigurationTests {
         }
     }
 
-    @TestConfiguration
+    @TestConfiguration("HazelcastTestConfiguration")
+    @Lazy(false)
     public static class HazelcastTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;

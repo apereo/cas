@@ -16,8 +16,9 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CouchbaseAuthenticationConfiguration;
+import org.apereo.cas.config.CouchbasePersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -43,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfPortOpen(port = 8091)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CouchbaseAuthenticationConfiguration.class,
+    CouchbasePersonDirectoryConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -64,9 +66,11 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationPrincipalConfiguration.class
 },
     properties = {
-        "cas.authn.attributeRepository.couchbase.password=password",
+        "cas.authn.attributeRepository.couchbase.clusterPassword=password",
+        "cas.authn.attributeRepository.couchbase.clusterUsername=admin",
         "cas.authn.attributeRepository.couchbase.bucket=testbucket"
     })
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchbasePersonAttributeDaoTests {
     @Autowired
     @Qualifier("attributeRepository")

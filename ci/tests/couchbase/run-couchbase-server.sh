@@ -4,18 +4,8 @@
 
 echo "Running Couchbase docker image..."
 docker run -d --name couchbase -p 8091-8094:8091-8094 -p 11210:11210 couchbase/server:6.5.0
-
-docker ps | grep "couchbase"
-retVal=$?
-if [ $retVal == 0 ]; then
-    echo "Couchbase docker image is running."
-else
-    echo "Couchbase docker image failed to start."
-    exit $retVal
-fi
-
 echo "Waiting for Couchbase server to come online..."
-sleep 10
+sleep 20
 until $(curl --output /dev/null --silent --head --fail http://localhost:8091); do
     printf '.'
     sleep 1
@@ -70,23 +60,32 @@ echo -e "Creating index settings..."
 echo -e "*************************************************************"
 curl  -u 'admin:password' 'http://localhost:8091/settings/indexes' -d 'indexerThreads=0' -d 'logLevel=info' -d \
 'maxRollbackPoints=5' -d 'memorySnapshotInterval=200' -d 'stableSnapshotInterval=5000' -d 'storageMode=memory_optimized'
-sleep 1
+sleep 2
 echo -e "\n*************************************************************"
 echo -e "Creating index..."
 echo -e "*************************************************************"
 curl -u 'admin:password'  http://localhost:8093/query/service -d 'statement=CREATE INDEX accounts_idx ON testbucket(username)' \
 -d 'namespace=default'
-sleep 1
+sleep 2
 echo -e "\n*************************************************************"
 echo -e "Creating primary index..."
 echo -e "*************************************************************"
 curl -u 'admin:password'  http://localhost:8093/query/service -d \
 'statement=CREATE PRIMARY INDEX `primary-idx` ON `testbucket` USING GSI;' \
 -d 'namespace=default'
-sleep 1
+sleep 2
 
 echo -e "\n*************************************************************"
 echo -e "Creating document/accounts..."
 echo -e "*************************************************************"
 curl -u 'admin:password'  http://localhost:8093/query/service \
 -d 'statement=INSERT INTO `testbucket` (KEY,VALUE) VALUES("accounts", {"username": "casuser", "psw": "Mellon", "firstname": "CAS", "lastname":"User"})'
+
+docker ps | grep "couchbase"
+retVal=$?
+if [ $retVal == 0 ]; then
+    echo "Couchbase docker image is running."
+else
+    echo "Couchbase docker image failed to start."
+    exit $retVal
+fi

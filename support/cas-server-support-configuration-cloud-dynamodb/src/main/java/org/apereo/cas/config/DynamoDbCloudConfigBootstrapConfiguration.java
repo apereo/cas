@@ -15,7 +15,6 @@ import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -76,7 +75,6 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
     }
 
-    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     private static CreateTableRequest createCreateTableRequest() {
         val name = ColumnNames.ID.getColumnName();
         return new CreateTableRequest()
@@ -107,7 +105,11 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
                 .map(DynamoDbCloudConfigBootstrapConfiguration::retrieveSetting)
                 .forEach(p -> props.put(p.getKey(), p.getValue()));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
 
         return new PropertiesPropertySource(getClass().getSimpleName(), props);

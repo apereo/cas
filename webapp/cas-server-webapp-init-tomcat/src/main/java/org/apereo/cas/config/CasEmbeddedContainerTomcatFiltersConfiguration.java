@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -25,7 +24,6 @@ import org.springframework.http.HttpStatus;
  */
 @Configuration(value = "casEmbeddedContainerTomcatFiltersConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(name = CasEmbeddedContainerUtils.EMBEDDED_CONTAINER_CONFIG_ACTIVE, havingValue = "true")
 @ImportAutoConfiguration(CasEmbeddedContainerTomcatConfiguration.class)
 public class CasEmbeddedContainerTomcatFiltersConfiguration {
     @Autowired
@@ -42,7 +40,7 @@ public class CasEmbeddedContainerTomcatFiltersConfiguration {
         return bean;
     }
 
-    @ConditionalOnProperty(prefix = "cas.server.tomcat.remoteAddr", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "cas.server.tomcat.remote-addr", name = "enabled", havingValue = "true")
     @RefreshScope
     @Bean
     public FilterRegistrationBean tomcatRemoteAddressFilter() {

@@ -63,7 +63,7 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
     /**
      * Is eligible for context refresh ?
      *
-     * @return the boolean
+     * @return true/false
      */
     public boolean isEligibleForContextRefresh() {
         if (this.override) {

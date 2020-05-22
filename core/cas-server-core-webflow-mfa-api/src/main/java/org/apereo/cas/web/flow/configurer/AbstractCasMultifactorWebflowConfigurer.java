@@ -62,7 +62,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
             loginFlowDefinitionRegistry,
             applicationContext,
             casProperties,
-            mfaFlowDefinitionRegistry.isPresent() ? List.of(mfaFlowDefinitionRegistry.get()) : List.of(),
+            mfaFlowDefinitionRegistry.map(List::of).orElseGet(List::of),
             mfaFlowCustomizers);
     }
 

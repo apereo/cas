@@ -26,8 +26,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CouchDbServiceRegistryConfiguration.class
 },
     properties = {
-        "cas.serviceRegistry.couchDb.username=cas",
-        "cas.serviceRegistry.couchDb.password=password"
+        "cas.service-registry.couch-db.username=cas",
+        "cas.service-registry.couch-db.password=password"
     })
 @Tag("CouchDb")
 @EnabledIfPortOpen(port = 5984)

@@ -4,6 +4,7 @@ import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2
  */
 @Deprecated(since = "6.2.0")
+@Tag("Simple")
 public class OpenIdServiceFactoryTests {
 
     @Test

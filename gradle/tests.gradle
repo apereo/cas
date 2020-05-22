@@ -1,13 +1,3 @@
-def testCategories = [
-    "Cassandra", "CosmosDb", "Couchbase", "CouchDb",
-    "Ehcache", "FileSystem", "Ignite", "InfluxDb",
-    "Ldap", "Mail", "MariaDb", "Memcached", "JDBC",
-    "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
-    "Radius", "AmazonWebServices", "RestfulApi", "Groovy",
-    "OAuth", "OIDC", "SAML", "UMA", "Oracle", "JMS",
-    "ZooKeeper", "Webflow", "DynamoDb", "MFA", "Kafka"
-] as String[]
-
 if (hasTestsOfCategory(project, "Kafka")) {
     task testKafka(type: Test) {
         enabled = shouldTest(project, "Kafka")
@@ -17,11 +7,56 @@ if (hasTestsOfCategory(project, "Kafka")) {
     }
 }
 
+if (hasTestsOfCategory(project, "Hazelcast")) {
+    task testHazelcast(type: Test) {
+        enabled = shouldTest(project, "Hazelcast")
+        useJUnitPlatform {
+            includeTags "Hazelcast"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "JMX")) {
+    task testJMX(type: Test) {
+        enabled = shouldTest(project, "JMX")
+        useJUnitPlatform {
+            includeTags "JMX"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "Simple")) {
+    task testSimple(type: Test) {
+        enabled = shouldTest(project, "Simple")
+        useJUnitPlatform {
+            includeTags "Simple"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "MFA")) {
     task testMFA(type: Test) {
         enabled = shouldTest(project, "MFA")
         useJUnitPlatform {
             includeTags "MFA"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "X509")) {
+    task testX509(type: Test) {
+        enabled = shouldTest(project, "X509")
+        useJUnitPlatform {
+            includeTags "X509"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "SHELL")) {
+    task testSHELL(type: Test) {
+        enabled = shouldTest(project, "SHELL")
+        useJUnitPlatform {
+            includeTags "SHELL"
         }
     }
 }
@@ -176,12 +211,6 @@ if (hasTestsOfCategory(project, "Ignite")) {
         useJUnitPlatform {
             includeTags "Ignite"
         }
-        def list = []
-        list.add("--add-exports")
-        list.add("java.base/jdk.internal.misc=ALL-UNNAMED")
-        list.add("--add-exports")
-        list.add("java.base/sun.nio.ch=ALL-UNNAMED")
-        jvmArgs = list
     }
 }
 
@@ -313,27 +342,44 @@ if (hasTestsOfCategory(project, "JDBC")) {
 }
 
 test {
-    useJUnitPlatform {
-        excludeTags testCategories
-    }
-    enabled = rootProject.testCategoryType != null && rootProject.testCategoryType.toLowerCase().contains("simple") && !Boolean.getBoolean("skipTests")
+    enabled = false
 }
 
 tasks.withType(Test) {
     scanForTestClasses = false
     ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
-
+    forkEvery = 1000
     doFirst {
-        maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 4)
-        if (maxParallelForks != 4) {
+        maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 2)
+        if (maxParallelForks != 2) {
             logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
         }
     }
     systemProperty("spring.main.banner-mode", "off")
+    systemProperty("spring.main.lazy-initialization", "true")
     systemProperty("CI", System.getProperty("CI"))
 
     failFast = true
-    jvmArgs.addAll(["-Xms512m", "-Xmx4g"])
+
+    def list = []
+    list.add("--add-modules")
+    list.add("java.se")
+    list.add("--add-exports")
+    list.add("java.base/jdk.internal.ref=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.lang=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.nio=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/sun.nio.ch=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.management/sun.management=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
+    list.add("-Xms512m")
+    list.add("-Xmx4g")
+    jvmArgs = list
+    
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
     testLogging {
         events = ["FAILED", "STANDARD_OUT"]
@@ -341,6 +387,19 @@ tasks.withType(Test) {
         showStandardStreams = Boolean.getBoolean("showStandardStreams")
         showExceptions = true
         showCauses = true
+        beforeSuite { desc ->
+            if (!desc.parent) {
+                println "Started running test suite [${desc.displayName}] @ ${new java.util.Date()} "
+            }
+        }
+        afterSuite { desc, result ->
+            if (!desc.parent) {
+                println """
+Results: ${result.resultType} @ ${new java.util.Date()} 
+(${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)
+"""
+            }
+        }
     }
     if (!Boolean.getBoolean("skipTestRetry")) {
         retry {
@@ -355,7 +414,8 @@ tasks.withType(Test) {
 }
 
 def shouldTest(Project project, String category) {
-    !Boolean.getBoolean("skipTests") && rootProject.testCategoryType != null && rootProject.testCategoryType.toLowerCase().contains(category.toLowerCase()) && hasTestsOfCategory(project, category)
+    def foundTest = gradle.startParameter.taskNames.any {task -> task.toLowerCase().contains(category.toLowerCase())}
+    return !Boolean.getBoolean("skipTests") && foundTest && hasTestsOfCategory(project, category)
 }
 
 def hasTestsOfCategory(Project project, String category) {

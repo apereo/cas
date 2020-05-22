@@ -31,7 +31,11 @@ public class StaticUserGraphicalAuthenticationRepository implements UserGraphica
             IOUtils.copy(this.graphicResource.getInputStream(), bos);
             return ByteSource.wrap(bos.toByteArray());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return ByteSource.empty();
     }

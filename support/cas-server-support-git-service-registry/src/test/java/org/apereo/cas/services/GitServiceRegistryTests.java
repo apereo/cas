@@ -38,8 +38,8 @@ import static org.junit.jupiter.api.Assertions.*;
     MailSenderAutoConfiguration.class
 },
     properties = {
-        "cas.serviceRegistry.git.signCommits=false",
-        "cas.serviceRegistry.git.repositoryUrl=file:/tmp/cas-sample-data.git"
+        "cas.service-registry.git.signCommits=false",
+        "cas.service-registry.git.repositoryUrl=file:/tmp/cas-sample-data.git"
     })
 @Slf4j
 @Tag("FileSystem")

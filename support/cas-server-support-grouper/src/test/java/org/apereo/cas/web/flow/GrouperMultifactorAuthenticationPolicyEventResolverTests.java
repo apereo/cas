@@ -44,6 +44,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -89,11 +90,7 @@ import static org.mockito.Mockito.*;
     CasPersonDirectoryTestConfiguration.class,
     GrouperMultifactorAuthenticationPolicyEventResolverTests.GrouperTestConfiguration.class,
     GrouperMultifactorAuthenticationConfiguration.class
-}, properties = {
-    "cas.authn.mfa.grouperGroupField=name",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
+}, properties = "cas.authn.mfa.grouper-group-field=name")
 @Tag("Webflow")
 public class GrouperMultifactorAuthenticationPolicyEventResolverTests {
     @Autowired
@@ -122,6 +119,7 @@ public class GrouperMultifactorAuthenticationPolicyEventResolverTests {
     }
 
     @TestConfiguration("GrouperTestConfiguration")
+    @Lazy(false)
     public static class GrouperTestConfiguration {
         @Bean
         public GrouperFacade grouperFacade() {

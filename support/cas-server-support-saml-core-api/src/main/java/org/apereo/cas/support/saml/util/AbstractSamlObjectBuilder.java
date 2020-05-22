@@ -120,7 +120,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     }
 
     /**
-     * Construct document from xml string.
+     * Construct document from xml.
      *
      * @param xmlString the xml string
      * @return the document
@@ -135,7 +135,11 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             return builder.build(new ByteArrayInputStream(xmlString.getBytes(Charset.defaultCharset())));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             return null;
         }
     }
@@ -296,7 +300,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     }
 
     /**
-     * Gets saml object QName.
+     * Gets saml object QName indicated by field {@link #DEFAULT_ELEMENT_NAME_FIELD}.
      *
      * @param objectType the object type
      * @return the saml object QName

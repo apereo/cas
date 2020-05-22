@@ -59,7 +59,7 @@ public class ScriptingUtils {
      * Is inline groovy script ?.
      *
      * @param script the script
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isInlineGroovyScript(final String script) {
         return getMatcherForInlineGroovyScript(script).find();
@@ -69,7 +69,7 @@ public class ScriptingUtils {
      * Is external groovy script ?.
      *
      * @param script the script
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isExternalGroovyScript(final String script) {
         return getMatcherForExternalGroovyScript(script).find();
@@ -134,7 +134,11 @@ public class ScriptingUtils {
             val result = script.run();
             return getGroovyScriptExecutionResultOrThrow(clazz, result);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -232,7 +236,11 @@ public class ScriptingUtils {
             if (failOnError) {
                 throw cause;
             }
-            LOGGER.error(cause.getMessage(), cause);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(cause.getMessage(), cause);
+            } else {
+                LOGGER.error(cause.getMessage());
+            }
         }
         return null;
     }
@@ -283,7 +291,11 @@ public class ScriptingUtils {
             LOGGER.debug("Parsing groovy script [{}]", script);
             return shell.parse(script);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -310,7 +322,11 @@ public class ScriptingUtils {
                 if (failOnError) {
                     throw new RuntimeException(e);
                 }
-                LOGGER.error(e.getMessage(), e);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.error(e.getMessage(), e);
+                } else {
+                    LOGGER.error(e.getMessage());
+                }
             }
             return null;
         });
@@ -349,7 +365,11 @@ public class ScriptingUtils {
             if (failOnError) {
                 throw e;
             }
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -399,7 +419,11 @@ public class ScriptingUtils {
             }
             LOGGER.warn("[{}] script [{}] does not exist, or cannot be loaded", StringUtils.capitalize(engineName), scriptFile);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -432,7 +456,11 @@ public class ScriptingUtils {
             val result = engine.eval(script, binding);
             return getGroovyScriptExecutionResultOrThrow(clazz, result);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -489,7 +517,11 @@ public class ScriptingUtils {
             }
             return result;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }

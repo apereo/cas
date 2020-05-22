@@ -155,7 +155,7 @@ public class BasePasswordManagementService implements PasswordManagementService 
      *
      * @param c    the credential
      * @param bean the bean
-     * @return the boolean
+     * @return true/false
      * @throws InvalidPasswordException if new password fails downstream validation
      */
     public boolean changeInternal(final Credential c, final PasswordChangeRequest bean) throws InvalidPasswordException {

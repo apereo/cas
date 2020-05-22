@@ -31,6 +31,7 @@ layout: null
     *   [Reloading Changes](/$version/configuration/Configuration-Management-Reload.html)
     *   [Clustered Deployments](/$version/configuration/Configuration-Management-Clustered.html)
     *   [Configuration Discovery](/$version/configuration/Configuration-Discovery.html)
+    *   [Configuration Expressions](/$version/configuration/Configuration-Spring-Expressions.html)
 
 * [Authentication](#casauthentication)
     *   [Overview](/$version/installation/Configuring-Authentication-Components.html)

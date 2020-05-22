@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0
  */
 @SpringBootTest(classes = AopAutoConfiguration.class)
+@Tag("Simple")
 public class AdditionalMetadataVerificationTests {
 
     @Autowired

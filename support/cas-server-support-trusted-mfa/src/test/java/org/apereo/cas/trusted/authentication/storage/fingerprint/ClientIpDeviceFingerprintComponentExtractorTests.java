@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.test.MockRequestContext;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @NoArgsConstructor
+@Tag("Simple")
 public class ClientIpDeviceFingerprintComponentExtractorTests {
 
     @Test

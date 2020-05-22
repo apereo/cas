@@ -92,7 +92,11 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
                 val f = credentialPropertiesFile.getFile();
                 chain.add(new PropertiesFileCredentialsProvider(f.getCanonicalPath()));
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.error(e.getMessage(), e);
+                } else {
+                    LOGGER.error(e.getMessage());
+                }
             }
         }
         if (StringUtils.isNotBlank(profilePath) && StringUtils.isNotBlank(profileName)) {
@@ -142,7 +146,11 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
         try {
             func.apply(null);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
     }
 

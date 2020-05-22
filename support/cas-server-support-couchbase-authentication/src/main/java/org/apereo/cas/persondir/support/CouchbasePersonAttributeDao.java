@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.core.authentication.CouchbasePrincipal
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.util.CollectionUtils;
 
-import com.couchbase.client.java.document.json.JsonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +34,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
     private final IUsernameAttributeProvider usernameAttributeProvider = new SimpleUsernameAttributeProvider();
+
     private final CouchbasePrincipalAttributesProperties couchbaseProperties;
+
     private final CouchbaseClientFactory couchbase;
 
     private static Map<String, List<Object>> stuffAttributesIntoList(final Map<String, ?> personAttributesMap) {
@@ -47,21 +48,20 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
     @Override
     @SneakyThrows
     public IPersonAttributes getPerson(final String uid, final IPersonAttributeDaoFilter filter) {
-        val result = couchbase.query(couchbaseProperties.getUsernameAttribute(), uid);
+        val query = String.format("%s = '%s'", couchbaseProperties.getUsernameAttribute(), uid);
+        val result = couchbase.select(query);
         val attributes = new LinkedHashMap<String, Object>();
-        if (result.allRows().isEmpty()) {
+        if (result.rowsAsObject().isEmpty()) {
             LOGGER.debug("Couchbase query did not return any results/rows.");
         } else {
-            val bucketName = couchbase.getBucket().name();
-            attributes.putAll(result.allRows()
-                .stream()
-                .filter(row -> row.value().containsKey(bucketName))
-                .filter(row -> {
-                    val value = (JsonObject) row.value().get(bucketName);
-                    return value.containsKey(couchbaseProperties.getUsernameAttribute());
+            val rows = result.rowsAsObject();
+            attributes.putAll(rows.stream()
+                .filter(row -> row.containsKey(couchbase.getBucket()))
+                .map(row -> {
+                    val document = row.getObject(couchbase.getBucket());
+                    val results = CouchbaseClientFactory.collectAttributesFromEntity(document, s -> true);
+                    return results.entrySet();
                 })
-                .map(row -> (JsonObject) row.value().get(bucketName))
-                .map(entity -> couchbase.collectAttributesFromEntity(entity, s -> !s.equals(couchbaseProperties.getUsernameAttribute())).entrySet())
                 .flatMap(Collection::stream)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
         }

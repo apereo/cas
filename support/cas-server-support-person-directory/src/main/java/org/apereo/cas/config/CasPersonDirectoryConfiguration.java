@@ -3,6 +3,10 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.JdbcPrincipalAttributesProperties;
@@ -22,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.AbstractAggregatingDefaultQueryPersonAttributeDao;
@@ -39,7 +42,6 @@ import org.apereo.services.persondir.support.jdbc.MultiRowJdbcPersonAttributeDao
 import org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao;
 import org.jooq.lambda.Unchecked;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -55,7 +57,6 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.http.HttpMethod;
 
 import javax.naming.directory.SearchControls;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,9 +82,37 @@ public class CasPersonDirectoryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
-    private ObjectProvider<List<PersonDirectoryAttributeRepositoryPlanConfigurer>> attributeRepositoryConfigurers;
-    
+    @ConditionalOnMissingBean(name = "personDirectoryPrincipalFactory")
+    @Bean
+    @RefreshScope
+    public PrincipalFactory personDirectoryPrincipalFactory() {
+        return PrincipalFactoryUtils.newPrincipalFactory();
+    }
+
+    @RefreshScope
+    @Bean
+    @ConditionalOnMissingBean(name = "personDirectoryAttributeRepositoryPrincipalResolver")
+    public PrincipalResolver personDirectoryAttributeRepositoryPrincipalResolver() {
+        val personDirectory = casProperties.getPersonDirectory();
+        return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(personDirectoryPrincipalFactory(),
+            attributeRepository(), personDirectory);
+    }
+
+    @ConditionalOnMissingBean(name = "principalResolutionExecutionPlanConfigurer")
+    @Bean
+    @RefreshScope
+    public PrincipalResolutionExecutionPlanConfigurer principalResolutionExecutionPlanConfigurer() {
+        return plan -> {
+            val personDirectoryPlan = personDirectoryAttributeRepositoryPlan();
+            if (personDirectoryPlan.isEmpty()) {
+                LOGGER.debug("Attribute repository sources are not available for person-directory principal resolution");
+            } else {
+                LOGGER.trace("Attribute repository sources are defined and available for person-directory principal resolution chain. ");
+                plan.registerPrincipalResolver(personDirectoryAttributeRepositoryPrincipalResolver());
+            }
+        };
+    }
+
     @ConditionalOnMissingBean(name = "attributeDefinitionStore")
     @Bean
     @RefreshScope
@@ -94,19 +123,19 @@ public class CasPersonDirectoryConfiguration {
         return store;
     }
 
-    @ConditionalOnMissingBean(name = "attributeRepositories")
+    @ConditionalOnMissingBean(name = "personDirectoryAttributeRepositoryPlan")
     @Bean
     @RefreshScope
-    public List<IPersonAttributeDao> attributeRepositories() {
-        val configurers = (List<PersonDirectoryAttributeRepositoryPlanConfigurer>)
-            ObjectUtils.defaultIfNull(attributeRepositoryConfigurers.getIfAvailable(), new ArrayList<>(0));
+    public PersonDirectoryAttributeRepositoryPlan personDirectoryAttributeRepositoryPlan() {
+        val configurers = applicationContext
+            .getBeansOfType(PersonDirectoryAttributeRepositoryPlanConfigurer.class, false, true)
+            .values();
         val plan = new DefaultPersonDirectoryAttributeRepositoryPlan();
         configurers.forEach(c -> c.configureAttributeRepositoryPlan(plan));
-        val list = new ArrayList<IPersonAttributeDao>(plan.getAttributeRepositories());
-        list.addAll(stubAttributeRepositories());
-        AnnotationAwareOrderComparator.sort(list);
-        LOGGER.trace("Final list of attribute repositories is [{}]", list);
-        return list;
+        plan.registerAttributeRepositories(stubAttributeRepositories());
+        AnnotationAwareOrderComparator.sort(plan.getAttributeRepositories());
+        LOGGER.trace("Final list of attribute repositories is [{}]", plan.getAttributeRepositories());
+        return plan;
     }
 
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -165,7 +194,7 @@ public class CasPersonDirectoryConfiguration {
         LOGGER.trace("Configured merging strategy for attribute sources is [{}]", merger);
         aggregate.setMerger(CoreAuthenticationUtils.getAttributeMerger(merger));
 
-        val list = attributeRepositories();
+        val list = personDirectoryAttributeRepositoryPlan().getAttributeRepositories();
         aggregate.setPersonAttributeDaos(list);
 
         if (list.isEmpty()) {
@@ -202,24 +231,6 @@ public class CasPersonDirectoryConfiguration {
     @Configuration("CasPersonDirectoryJdbcConfiguration")
     public class CasPersonDirectoryJdbcConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
 
-        private AbstractJdbcPersonAttributeDao createJdbcPersonAttributeDao(final JdbcPrincipalAttributesProperties jdbc) {
-            if (jdbc.isSingleRow()) {
-                LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", jdbc.getUrl());
-                return new SingleRowJdbcPersonAttributeDao(
-                    JpaBeans.newDataSource(jdbc),
-                    jdbc.getSql()
-                );
-            }
-            LOGGER.debug("Configured multi-row JDBC attribute repository for [{}]", jdbc.getUrl());
-            val jdbcDao = new MultiRowJdbcPersonAttributeDao(
-                JpaBeans.newDataSource(jdbc),
-                jdbc.getSql()
-            );
-            LOGGER.debug("Configured multi-row JDBC column mappings for [{}] are [{}]", jdbc.getUrl(), jdbc.getColumnMappings());
-            jdbcDao.setNameValueColumnMappings(jdbc.getColumnMappings());
-            return jdbcDao;
-        }
-        
         @ConditionalOnMissingBean(name = "jdbcAttributeRepositories")
         @Bean
         @RefreshScope
@@ -249,14 +260,31 @@ public class CasPersonDirectoryConfiguration {
             return list;
         }
 
-
         @Override
         public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
             plan.registerAttributeRepositories(jdbcAttributeRepositories());
         }
+
+        private AbstractJdbcPersonAttributeDao createJdbcPersonAttributeDao(final JdbcPrincipalAttributesProperties jdbc) {
+            if (jdbc.isSingleRow()) {
+                LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", jdbc.getUrl());
+                return new SingleRowJdbcPersonAttributeDao(
+                    JpaBeans.newDataSource(jdbc),
+                    jdbc.getSql()
+                );
+            }
+            LOGGER.debug("Configured multi-row JDBC attribute repository for [{}]", jdbc.getUrl());
+            val jdbcDao = new MultiRowJdbcPersonAttributeDao(
+                JpaBeans.newDataSource(jdbc),
+                jdbc.getSql()
+            );
+            LOGGER.debug("Configured multi-row JDBC column mappings for [{}] are [{}]", jdbc.getUrl(), jdbc.getColumnMappings());
+            jdbcDao.setNameValueColumnMappings(jdbc.getColumnMappings());
+            return jdbcDao;
+        }
     }
 
-    @ConditionalOnProperty(name = "cas.authn.attribute-repository.ldap[0].ldapUrl")
+    @ConditionalOnProperty(name = "cas.authn.attribute-repository.ldap[0].ldap-url")
     @Configuration("CasPersonDirectoryLdapConfiguration")
     public class CasPersonDirectoryLdapConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
 
@@ -285,6 +313,12 @@ public class CasPersonDirectoryConfiguration {
                         ldapDao.setResultAttributeMapping(ldap.getAttributes());
                         val attributes = (String[]) ldap.getAttributes().keySet().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
                         constraints.setReturningAttributes(attributes);
+
+                        val binaryAttributes = ldap.getBinaryAttributes();
+                        if (binaryAttributes != null && !binaryAttributes.isEmpty()) {
+                            LOGGER.debug("Setting binary attributes [{}]", binaryAttributes);
+                            ldapDao.setBinaryAttributes(binaryAttributes.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+                        }
                     } else {
                         LOGGER.debug("Retrieving all attributes as no explicit attribute mappings are defined for [{}]", ldap.getLdapUrl());
                         constraints.setReturningAttributes(null);
@@ -303,7 +337,6 @@ public class CasPersonDirectoryConfiguration {
 
             return list;
         }
-
 
         @Override
         public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
@@ -487,4 +520,3 @@ public class CasPersonDirectoryConfiguration {
 
 
 }
-

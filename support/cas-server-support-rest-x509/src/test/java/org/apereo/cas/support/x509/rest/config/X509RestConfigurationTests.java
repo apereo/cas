@@ -3,6 +3,7 @@ package org.apereo.cas.support.x509.rest.config;
 import org.apereo.cas.adaptors.x509.config.X509CertificateExtractorConfiguration;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
     X509CertificateExtractorConfiguration.class,
     X509RestConfiguration.class
 })
+@Tag("X509")
 public class X509RestConfigurationTests {
     @Autowired
     @Qualifier("x509RestMultipartBody")

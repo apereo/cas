@@ -25,13 +25,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("SAML")
-@TestPropertySource(properties = "cas.authn.samlIdp.metadata.location=file:/tmp")
+@TestPropertySource(properties = "cas.authn.saml-idp.metadata.location=file:/tmp")
 public class JsonResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
 
     @Test
     public void verifyResolverResolves() throws Exception {
         val props = new SamlIdPProperties();
-        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
+        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         FileUtils.copyFile(new ClassPathResource("saml-sp-metadata.json").getFile(),
             new File(FileUtils.getTempDirectory(), "saml-sp-metadata.json"));
         val service = new SamlRegisteredService();

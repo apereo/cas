@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCred
 
 import lombok.Cleanup;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @ExtendWith(MockitoExtension.class)
+@Tag("X509")
 public class X509RestMultipartBodyCredentialFactoryTests {
 
     private final X509RestMultipartBodyCredentialFactory factory = new X509RestMultipartBodyCredentialFactory();

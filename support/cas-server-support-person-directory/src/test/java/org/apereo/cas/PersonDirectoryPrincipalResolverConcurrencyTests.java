@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -53,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attributeRepository.aggregation=merge",
     "cas.authn.attributeRepository.merger=multivalued"
 })
+@Tag("Simple")
 public class PersonDirectoryPrincipalResolverConcurrencyTests {
 
     private static final int NUM_USERS = 100;

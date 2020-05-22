@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.util.model.Capacity;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("Simple")
 public class CapacityTests {
     @Test
     public void verifyOperation() {

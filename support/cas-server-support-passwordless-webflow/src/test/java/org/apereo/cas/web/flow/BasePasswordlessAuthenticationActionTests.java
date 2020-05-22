@@ -86,9 +86,6 @@ import org.springframework.context.ConfigurableApplicationContext;
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     PasswordlessAuthenticationConfiguration.class,
     PasswordlessAuthenticationWebflowConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 public class BasePasswordlessAuthenticationActionTests {
     @Autowired

@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.TestOneTimePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
-import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -24,6 +24,7 @@ import lombok.val;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -37,10 +38,11 @@ import java.util.List;
  * @since 5.2.0
  */
 @TestConfiguration("casRegisteredServicesTestConfiguration")
+@Lazy(false)
 public class CasRegisteredServicesTestConfiguration {
 
     @Bean
-    public PrincipalAttributesRepository cachingPrincipalAttributeRepository() {
+    public RegisteredServicePrincipalAttributesRepository cachingPrincipalAttributeRepository() {
         return new CachingPrincipalAttributesRepository("SECONDS", 20);
     }
 

@@ -4,6 +4,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "management.endpoint.auditLog.enabled=true",
     "cas.audit.number-of-days-in-history=30"
 })
+@Tag("Simple")
 public class AuditLogEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("auditLogEndpoint")

@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.util.io.SmsSender;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
    "cas.smsProvider.twilio.account-id=id",
    "cas.smsProvider.twilio.token=token"
 })
+@Tag("Simple")
 public class TwilioSmsConfigurationTests {
     @Autowired
     @Qualifier("smsSender")

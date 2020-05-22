@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -19,9 +20,10 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.server.name=https://sso.example.org",
     "cas.server.prefix=https://sso.example.org/cas",
     "cas.person-directory.attribute-definition-store.json.location=file:/defn-test.json",
-    "cas.authn.attribute-repository.ldap[0].ldapUrl=ldap://localhost:1389"
+    "cas.authn.attribute-repository.ldap[0].ldap-url=ldap://localhost:1389"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("Simple")
 public class CasCoreConfigurationUtilsTests {
 
     @Autowired

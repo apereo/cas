@@ -57,6 +57,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -126,11 +127,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuditConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "cas.webflow.base-path=classpath:/webflow"
-})
+}, properties = "cas.webflow.base-path=classpath:/webflow")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public abstract class BaseCasWebflowSessionContextConfigurationTests {
@@ -179,6 +176,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
      * The type Test webflow context configuration.
      */
     @TestConfiguration("testWebflowContextConfiguration")
+    @Lazy(false)
     public static class TestWebflowContextConfiguration {
         private static final String TEST = "test";
 

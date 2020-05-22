@@ -18,6 +18,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -57,6 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.view.rest.url=http://localhost:8182",
         "cas.view.template-prefixes=file:/templates"
     })
+@Tag("Simple")
 public class CasThymeleafConfigurationTests {
     @Autowired
     @Qualifier("chainingTemplateViewResolver")

@@ -34,7 +34,7 @@ public class HazelcastSessionConfiguration {
      *
      * @return the hazelcast instance
      */
-    @Bean
+    @Bean(destroyMethod = "shutdown")
     @SneakyThrows
     public HazelcastInstance hazelcastInstance() {
         val hzConfigResource = casProperties.getWebflow().getSession().getHzLocation();

@@ -40,7 +40,7 @@ public class AuditableContext {
     private final Object httpResponse;
 
     /**
-     * Sould attributes be refreshed from the release policy?
+     * Should attributes be refreshed from the release policy?
      */
     @Builder.Default
     private Boolean retrievePrincipalAttributesFromReleasePolicy = Boolean.FALSE;

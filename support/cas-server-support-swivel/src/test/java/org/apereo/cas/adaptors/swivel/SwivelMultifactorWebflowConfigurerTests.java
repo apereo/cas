@@ -20,7 +20,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
         "cas.authn.mfa.swivel.swivelUrl=http://localhost:9191",
         "cas.authn.mfa.swivel.sharedSecret=$ecret",
         "cas.authn.mfa.swivel.ignoreSslErrors=true",
-        "cas.authn.mfa.swivel.trustedDeviceEnabled=true",
+        "cas.authn.mfa.swivel.trusted-device-enabled=true",
         "cas.authn.mfa.trusted.deviceRegistrationEnabled=true"
     })
 @Tag("Webflow")

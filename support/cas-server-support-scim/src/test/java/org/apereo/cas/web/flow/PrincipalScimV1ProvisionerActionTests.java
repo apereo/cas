@@ -40,9 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.scim.target=http://localhost:8215",
     "cas.scim.version=1",
     "cas.scim.username=casuser",
-    "cas.scim.password=Mellon",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
+    "cas.scim.password=Mellon"
 })
 @Tag("Webflow")
 public class PrincipalScimV1ProvisionerActionTests extends BaseScimProvisionerActionTests {

@@ -37,10 +37,12 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
+import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.keys.RsaKeyUtil;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.BeanCreationException;
@@ -159,7 +161,9 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "mfaAccepttoDistributedSessionStore")
     @Bean
     public SessionStore<JEEContext> mfaAccepttoDistributedSessionStore() {
-        return new DistributedJEESessionStore(centralAuthenticationService.getObject(), ticketFactory.getObject(), casProperties);
+        val cookie = casProperties.getSessionReplication().getCookie();
+        val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
+        return new DistributedJEESessionStore(centralAuthenticationService.getObject(), ticketFactory.getObject(), cookieGenerator);
     }
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorFetchChannelAction")
@@ -199,11 +203,9 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         if (location == null) {
             throw new BeanCreationException("No registration API public key is defined for the Acceptto integration.");
         }
-        val factory = new PublicKeyFactoryBean();
+        val factory = new PublicKeyFactoryBean(location, RsaKeyUtil.RSA);
         LOGGER.debug("Locating Acceptto registration API public key from [{}]", location);
-        factory.setResource(location);
         factory.setSingleton(false);
-        factory.setAlgorithm("RSA");
         return factory.getObject();
     }
 

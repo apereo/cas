@@ -10,6 +10,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
@@ -21,7 +22,7 @@ import org.springframework.test.context.TestPropertySource;
  * @since 5.3.0
  */
 @TestPropertySource(properties = {
-    "cas.consent.ldap.ldapUrl=ldap://localhost:10389",
+    "cas.consent.ldap.ldap-url=ldap://localhost:10389",
     "cas.consent.ldap.baseDn=ou=people,dc=example,dc=org",
     "cas.consent.ldap.searchFilter=cn={0}",
     "cas.consent.ldap.consentAttributeName=description",
@@ -30,6 +31,7 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfPortOpen(port = 10389)
 @Slf4j
+@Tag("Ldap")
 public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     private static final int LDAP_PORT = 10389;
 

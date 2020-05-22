@@ -45,7 +45,7 @@ public class DefaultPasswordValidationService implements PasswordValidationServi
      *
      * @param credential the credential
      * @param bean       the bean
-     * @return the boolean
+     * @return true/false
      */
     protected boolean validatePassword(final UsernamePasswordCredential credential, final PasswordChangeRequest bean) {
         return true;

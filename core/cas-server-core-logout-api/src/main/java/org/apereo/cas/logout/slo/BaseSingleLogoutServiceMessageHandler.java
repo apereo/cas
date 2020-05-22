@@ -91,7 +91,11 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
             val logoutRequest = createSingleLogoutMessage(request);
             return sendSingleLogoutMessage(request, logoutRequest);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return false;
     }
@@ -106,7 +110,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
      *
      * @param singleLogoutService the single logout service
      * @param registeredService   the registered service
-     * @return the boolean
+     * @return true/false
      */
     protected boolean supportsInternal(final WebApplicationService singleLogoutService, final RegisteredService registeredService) {
         return true;
@@ -198,7 +202,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
      * @param msg           the msg
      * @param request       the request
      * @param logoutMessage the logout message
-     * @return the boolean
+     * @return true/false
      */
     protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg, final SingleLogoutRequest request, final SingleLogoutMessage logoutMessage) {
         return this.httpClient.sendMessageToEndPoint(msg);

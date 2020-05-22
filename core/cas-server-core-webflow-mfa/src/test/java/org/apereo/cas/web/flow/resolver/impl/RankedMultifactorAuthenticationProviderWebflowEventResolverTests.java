@@ -12,6 +12,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -51,6 +52,11 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService cas;
 
+    @BeforeEach
+    public void setup() {
+        this.servicesManager.deleteAll();
+    }
+    
     @Test
     public void verifyWithNoTicketOrService() {
         val context = new MockRequestContext();
@@ -60,7 +66,10 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
 
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, resolver.resolve(context).iterator().next().getId());
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-        WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
+
+        val service = RegisteredServiceTestUtils.getRegisteredService(Map.of());
+        servicesManager.save(service);
+        WebUtils.putRegisteredService(context, service);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, resolver.resolve(context).iterator().next().getId());
 
         val tgt = new MockTicketGrantingTicket("casuser");
@@ -76,7 +85,10 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-        WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
+
+        val service = RegisteredServiceTestUtils.getRegisteredService(Map.of());
+        servicesManager.save(service);
+        WebUtils.putRegisteredService(context, service);
 
         val tgt = new MockTicketGrantingTicket("casuser");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
@@ -95,7 +107,9 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-        WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
+        val service = RegisteredServiceTestUtils.getRegisteredService(Map.of());
+        servicesManager.save(service);
+        WebUtils.putRegisteredService(context, service);
 
         val tgt = new MockTicketGrantingTicket("casuser");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
@@ -120,9 +134,6 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-        WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
-
         val tgt = new MockTicketGrantingTicket("casuser", Map.of(),
             Map.of(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), List.of(TestMultifactorAuthenticationProvider.ID)));
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
@@ -138,7 +149,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
         context.getRootFlow().getGlobalTransitionSet().add(transition);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, resolver.resolve(context).iterator().next().getId());
 
-        val registeredService = RegisteredServiceTestUtils.getRegisteredService();
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(Map.of());
         val multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
         multifactorPolicy.setForceExecution(true);
         registeredService.setMultifactorPolicy(multifactorPolicy);

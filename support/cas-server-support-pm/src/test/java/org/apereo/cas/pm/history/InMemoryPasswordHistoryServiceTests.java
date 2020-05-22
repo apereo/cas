@@ -6,6 +6,7 @@ import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,10 +29,9 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class
 }, properties = {
     "cas.authn.pm.enabled=true",
-    "cas.authn.pm.history.enabled=true",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
+    "cas.authn.pm.history.enabled=true"
 })
+@Tag("Simple")
 public class InMemoryPasswordHistoryServiceTests {
     @Autowired
     @Qualifier("passwordHistoryService")

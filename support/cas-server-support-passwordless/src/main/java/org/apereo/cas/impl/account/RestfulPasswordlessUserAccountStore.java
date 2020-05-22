@@ -2,7 +2,7 @@ package org.apereo.cas.impl.account;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
-import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationRestAccountsProperties;
 import org.apereo.cas.util.HttpUtils;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -32,7 +32,7 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
         .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    private final PasswordlessAuthenticationProperties.Rest restProperties;
+    private final PasswordlessAuthenticationRestAccountsProperties restProperties;
 
     @Override
     public Optional<PasswordlessUserAccount> findUser(final String username) {
@@ -50,7 +50,11 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
                 return Optional.ofNullable(account);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         } finally {
             HttpUtils.close(response);
         }

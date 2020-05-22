@@ -39,7 +39,7 @@ buildscript {
         classpath "io.spring.gradle:propdeps-plugin:$gradlePropDepsVersion"
         classpath "net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:$gradleErrorProneVersion"
         classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
-        classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
+        classpath "gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
         classpath "net.rdrei.android.buildtimetracker:gradle-plugin:$gradleTimeTrackerVersion"
     }
@@ -58,7 +58,6 @@ ext {
         throw new GradleException("No credentials are configured to publish releases or snapshots")
     }
 
-    testCategoryType = System.getProperty("testCategoryType")
     skipBootifulArtifact = System.getProperty("skipBootifulArtifact")
     skipErrorProneCompiler = System.getProperty("skipErrorProneCompiler")
 
@@ -71,12 +70,12 @@ ext {
     continuousIntegrationBuild = System.getenv("CI") || Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
 
     excludedFilesFromTestCoverage = [
-        '**/**ConfigurationMetadata**',
-        '**/**Application**',
-        '**/**Application$**',
-        '**/**Exception$**',
-        '**/**Properties**',
-        '**/**Properties$**'
+            '**/**ConfigurationMetadata**',
+            '**/**Application**',
+            '**/**Application$**',
+            '**/**Exception$**',
+            '**/**Properties**',
+            '**/**Properties$**'
     ]
 }
 
@@ -86,7 +85,7 @@ def isArtifactSigningRequired = {
 
 apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
-apply plugin: "com.github.ben-manes.versions"
+apply from: rootProject.file("gradle/dependencyUpdates.gradle")
 
 if (!Boolean.getBoolean("skipSonarqube")) {
     apply plugin: "org.sonarqube"
@@ -374,9 +373,23 @@ subprojects {
                         maven {
                             name "Sonatype-Releases"
                             url "${sonatypeRepositoryUrl}"
+                            mavenContent {
+                                releasesOnly()
+                            }
                             credentials {
                                 username "${sonatypeUsername}"
                                 password "${sonatypePassword}"
+                            }
+                        }
+                        maven {
+                            name = "GitHubPackages-Releases"
+                            url = uri("${githubPackagesRepositoryUrl}")
+                            mavenContent {
+                                releasesOnly()
+                            }
+                            credentials {
+                                username = "${githubPackagesUsername}"
+                                password = "${githubPackagesToken}"
                             }
                         }
                     }
@@ -384,6 +397,9 @@ subprojects {
                         maven {
                             name "Sonatype-Snapshots"
                             url "${sonatypeSnapshotsRepositoryUrl}"
+                            mavenContent {
+                                snapshotsOnly()
+                            }
                             credentials {
                                 username "${sonatypeUsername}"
                                 password "${sonatypePassword}"
@@ -399,18 +415,17 @@ subprojects {
             }
         }
     }
-
+    
     artifacts {
         tests testJar
-
-        if (!rootProject.publishSnapshots) {
+        if (rootProject.publishReleases || rootProject.publishSnapshots) {
             archives sourcesJar
             archives javadocJar
             archives resourcesJar
-            archives testJar
         }
+        archives testJar
     }
-
+    
     jacocoTestReport {
         reports {
             xml.enabled(true)
@@ -504,28 +519,25 @@ subprojects {
         }
     }
 
-    if (!Boolean.getBoolean("skipFindbugs") && projectShouldBePublished(project)) {
+    if (!Boolean.getBoolean("skipSpotbugs") && projectShouldBePublished(project)) {
         apply plugin: "com.github.spotbugs"
         apply from: rootProject.file("gradle/spotbugs.gradle")
         spotbugs {
             toolVersion = "${spotbugsVersion}"
-            sourceSets = [sourceSets.main]
-            ignoreFailures = true
-            reportsDir = file("$project.buildDir/findbugsReports")
+            showProgress = true
+            ignoreFailures = false
+            reportsDir = file("$project.buildDir/spotbugs")
             effort = "max"
             reportLevel = "low"
-            includeFilter = file("$rootProject.projectDir/style/findbugs-rules.xml")
-            excludeFilter = file("$rootProject.projectDir/style/findbugs-excludes.xml")
-            //jvmArgs = ["-Xms2g", "-Xmx4g"]
-            extraArgs = ["maxHeap 4000"]
+            includeFilter = file("$rootProject.projectDir/style/spotbugs-includes.xml")
+            excludeFilter = file("$rootProject.projectDir/style/spotbugs-excludes.xml")
+            maxHeapSize = "2g"
         }
 
         [spotbugsMain, spotbugsTest].each {
             it.reports {
                 xml.enabled = true
-                html.enabled = !rootProject.continuousIntegrationBuild
             }
-            it.pluginClasspath = project.configurations.spotbugsPlugins
             it.finalizedBy outputSpotbugsReports
         }
     }
@@ -555,10 +567,7 @@ subprojects {
 
         api libraries.javax
 
-        if (!Boolean.getBoolean("skipFindbugs") && projectShouldBePublished(project)) {
-            spotbugs libraries.findbugs
-            spotbugs configurations.spotbugsPlugins.dependencies
-
+        if (!Boolean.getBoolean("skipSpotbugs") && projectShouldBePublished(project)) {
             spotbugsPlugins libraries.findbugscontrib
             spotbugsPlugins libraries.findbugssec
         }
@@ -569,7 +578,7 @@ subprojects {
         }
         testImplementation libraries.tests
         testImplementation libraries.log4j
-        compileOnly libraries.findbugsannotations
+        compileOnly libraries.spotbugsannotations
     }
 }
 
@@ -622,9 +631,11 @@ task gradleHome(description: "Display GRADLE_HOME environment variable") {
     }
 }
 
-artifacts {
-    archives aggregateJavadocsIntoJar
-    archives rootSourcesJar
+if (rootProject.publishReleases || rootProject.publishSnapshots) {
+    artifacts {
+        archives aggregateJavadocsIntoJar
+        archives rootSourcesJar
+    }
 }
 
 def publishedProjects = subprojects.findAll { !it.path.contains(':docs') }
@@ -675,9 +686,9 @@ task signingKey(description: "Display CAS signing key id") {
 }
 
 task verifyRequiredJavaVersion {
-    // println "Checking current Java version ${JavaVersion.current()} for required Java version ${project.targetCompatibility}"
-    if (!JavaVersion.current().name.equalsIgnoreCase("${project.targetCompatibility}")) {
-        throw new GradleException("Current Java version ${JavaVersion.current()} does not match required Java version ${project.targetCompatibility}")
+    def requiredVersion = JavaVersion.toVersion(project.targetCompatibility)
+    if (!JavaVersion.current().isCompatibleWith(requiredVersion)) {
+        throw new GradleException("Current Java version ${JavaVersion.current()} does not match required Java version ${requiredVersion}")
     }
 }
 

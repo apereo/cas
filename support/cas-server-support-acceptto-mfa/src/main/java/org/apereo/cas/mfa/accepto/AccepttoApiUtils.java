@@ -219,7 +219,7 @@ public class AccepttoApiUtils {
      *
      * @param authentication the authentication
      * @param acceptto       the acceptto
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isUserDevicePaired(final Authentication authentication, final AccepttoMultifactorProperties acceptto) {
         val results = isUserValid(authentication, acceptto);

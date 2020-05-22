@@ -21,7 +21,6 @@ import net.sf.ehcache.distribution.CacheReplicator;
 import net.sf.ehcache.distribution.RMIAsynchronousCacheReplicator;
 import net.sf.ehcache.distribution.RMIBootstrapCacheLoader;
 import net.sf.ehcache.distribution.RMISynchronousCacheReplicator;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,6 +32,7 @@ import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.Objects;
 
@@ -48,7 +48,7 @@ import java.util.Objects;
 @ConditionalOnProperty(prefix = "cas.ticket.registry.ehcache", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Deprecated(since = "6.2.0")
 @Slf4j
-public class EhcacheTicketRegistryConfiguration implements InitializingBean {
+public class EhcacheTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -88,8 +88,12 @@ public class EhcacheTicketRegistryConfiguration implements InitializingBean {
         return new RMIBootstrapCacheLoader(cache.isLoaderAsync(), cache.getMaxChunkSize());
     }
 
+    @Lazy(false)
     @Bean
     public EhCacheManagerFactoryBean ehcacheTicketCacheManager() {
+        AsciiArtUtils.printAsciiArtWarning(LOGGER,
+            "CAS Integration with ehcache 2.x will be discontinued after CAS 6.2.x. Consider migrating to another type of registry.");
+
         val cache = casProperties.getTicket().getRegistry().getEhcache();
         val bean = new EhCacheManagerFactoryBean();
 
@@ -104,7 +108,62 @@ public class EhcacheTicketRegistryConfiguration implements InitializingBean {
 
         bean.setShared(cache.isShared());
         bean.setCacheManagerName(cache.getCacheManagerName());
+
         return bean;
+    }
+
+    /**
+     * Create ticket registry bean with all necessary caches.
+     * Using the spring ehcache wrapper bean so it can be initialized after the caches are built.
+     *
+     * @param manager       Spring EhCache manager bean, wraps EhCache manager and is used for cache actuator endpoint.
+     * @param ticketCatalog Ticket Catalog
+     * @return Ticket Registry
+     */
+    @Autowired
+    @Bean
+    @RefreshScope
+    @Lazy(false)
+    public TicketRegistry ticketRegistry(@Qualifier("ehCacheCacheManager") final EhCacheCacheManager manager,
+                                         @Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
+
+        val ehCacheManager = Objects.requireNonNull(manager.getCacheManager());
+        val crypto = casProperties.getTicket().getRegistry().getEhcache().getCrypto();
+
+        val definitions = ticketCatalog.findAll();
+        definitions.forEach(t -> {
+            val ehcache = buildCache(t);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Created Ehcache cache [{}] for [{}]", ehcache.getName(), t);
+                val config = ehcache.getCacheConfiguration();
+                LOGGER.debug("[{}].maxEntriesLocalHeap=[{}]", ehcache.getName(), config.getMaxEntriesLocalHeap());
+                LOGGER.debug("[{}].maxEntriesLocalDisk=[{}]", ehcache.getName(), config.getMaxEntriesLocalDisk());
+                LOGGER.debug("[{}].maxEntriesInCache=[{}]", ehcache.getName(), config.getMaxEntriesInCache());
+                LOGGER.debug("[{}].persistenceConfiguration=[{}]", ehcache.getName(), config.getPersistenceConfiguration().getStrategy());
+                LOGGER.debug("[{}].synchronousWrites=[{}]", ehcache.getName(), config.getPersistenceConfiguration().getSynchronousWrites());
+                LOGGER.debug("[{}].timeToLive=[{}]", ehcache.getName(), config.getTimeToLiveSeconds());
+                LOGGER.debug("[{}].timeToIdle=[{}]", ehcache.getName(), config.getTimeToIdleSeconds());
+                LOGGER.debug("[{}].cacheManager=[{}]", ehcache.getName(), ehcache.getCacheManager().getName());
+            }
+            ehCacheManager.addDecoratedCacheIfAbsent(ehcache);
+        });
+
+        manager.initializeCaches();
+        LOGGER.debug("The following caches are available: [{}]", manager.getCacheNames());
+        return new EhCacheTicketRegistry(ticketCatalog, ehCacheManager,
+            CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache"));
+    }
+
+    /**
+     * This bean is used by the spring boot cache actuator which spring boot admin can use to clear caches.
+     *
+     * @param ehcacheTicketCacheManager EhCache cache manager to be wrapped by spring cache manager.
+     * @return Spring {@link EhCacheCacheManager} that wraps EhCache {@link CacheManager}
+     */
+    @Bean
+    @Autowired
+    public EhCacheCacheManager ehCacheCacheManager(final CacheManager ehcacheTicketCacheManager) {
+        return new EhCacheCacheManager(ehcacheTicketCacheManager);
     }
 
     private Ehcache buildCache(final TicketDefinition ticketDefinition) {
@@ -142,59 +201,4 @@ public class EhcacheTicketRegistryConfiguration implements InitializingBean {
         return bean.getObject();
     }
 
-    /**
-     * Create ticket registry bean with all necessary caches.
-     * Using the spring ehcache wrapper bean so it can be initialized after the caches are built.
-     * @param manager Spring EhCache manager bean, wraps EhCache manager and is used for cache actuator endpoint.
-     * @param ticketCatalog Ticket Catalog
-     * @return Ticket Registry
-     */
-    @Autowired
-    @Bean
-    @RefreshScope
-    public TicketRegistry ticketRegistry(@Qualifier("ehCacheCacheManager") final EhCacheCacheManager manager,
-                                         @Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        val ehCacheManager = Objects.requireNonNull(manager.getCacheManager());
-        val crypto = casProperties.getTicket().getRegistry().getEhcache().getCrypto();
-
-        val definitions = ticketCatalog.findAll();
-        definitions.forEach(t -> {
-            val ehcache = buildCache(t);
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Created Ehcache cache [{}] for [{}]", ehcache.getName(), t);
-
-                val config = ehcache.getCacheConfiguration();
-                LOGGER.debug("TicketCache.maxEntriesLocalHeap=[{}]", config.getMaxEntriesLocalHeap());
-                LOGGER.debug("TicketCache.maxEntriesLocalDisk=[{}]", config.getMaxEntriesLocalDisk());
-                LOGGER.debug("TicketCache.maxEntriesInCache=[{}]", config.getMaxEntriesInCache());
-                LOGGER.debug("TicketCache.persistenceConfiguration=[{}]", config.getPersistenceConfiguration().getStrategy());
-                LOGGER.debug("TicketCache.synchronousWrites=[{}]", config.getPersistenceConfiguration().getSynchronousWrites());
-                LOGGER.debug("TicketCache.timeToLive=[{}]", config.getTimeToLiveSeconds());
-                LOGGER.debug("TicketCache.timeToIdle=[{}]", config.getTimeToIdleSeconds());
-                LOGGER.debug("TicketCache.cacheManager=[{}]", ehcache.getCacheManager().getName());
-            }
-            ehCacheManager.addDecoratedCacheIfAbsent(ehcache);
-        });
-
-        manager.initializeCaches();
-        LOGGER.debug("The following caches are available: [{}]", manager.getCacheNames());
-        return new EhCacheTicketRegistry(ticketCatalog, ehCacheManager, CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache"));
-    }
-
-    /**
-     * This bean is used by the spring boot cache actuator which spring boot admin can use to clear caches.
-     * Actuator needs to be exposed in order for this bean to be used.
-     * @param ehcacheTicketCacheManager EhCache cache manager to be wrapped by spring cache manager.
-     * @return Spring EhCacheCacheManager that wraps EhCache CacheManager
-     */
-    @Bean
-    public EhCacheCacheManager ehCacheCacheManager(@Autowired final CacheManager ehcacheTicketCacheManager) {
-        return new EhCacheCacheManager(ehcacheTicketCacheManager);
-    }
-
-    @Override
-    public void afterPropertiesSet() {
-        AsciiArtUtils.printAsciiArtWarning(LOGGER,
-            "CAS Integration with ehcache 2.x will be discontinued after 6.2.x. Please consider migrating to another type of registry.");
-    }
 }

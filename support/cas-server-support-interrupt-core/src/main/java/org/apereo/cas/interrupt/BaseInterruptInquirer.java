@@ -31,7 +31,7 @@ public abstract class BaseInterruptInquirer implements InterruptInquirer {
      * Should skip interrupt for registered service.
      *
      * @param registeredService the registered service
-     * @return the boolean
+     * @return true/false
      */
     protected boolean shouldSkipInterruptForRegisteredService(final RegisteredService registeredService) {
         if (registeredService != null) {

@@ -30,7 +30,7 @@ import java.util.Collection;
  * @since 5.0.0
  */
 @Configuration("ldapServiceRegistryConfiguration")
-@ConditionalOnProperty(prefix = "cas.serviceRegistry.ldap", name = "ldapUrl")
+@ConditionalOnProperty(prefix = "cas.service-registry.ldap", name = "ldap-url")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapServiceRegistryConfiguration {
 

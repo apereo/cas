@@ -1,6 +1,8 @@
 package org.apereo.cas.authentication.attribute;
 
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.GroovyShellScript;
@@ -21,9 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.jooq.lambda.Unchecked;
 
 import javax.persistence.Transient;
-
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -64,18 +67,13 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
 
     private boolean scoped;
 
+    private boolean encrypted;
+
     private String attribute;
 
     private String patternFormat;
 
     private String script;
-
-    private static List<Object> formatValuesWithScope(final String scope, final List<Object> currentValues) {
-        return currentValues
-            .stream()
-            .map(v -> String.format("%s@%s", v, scope))
-            .collect(Collectors.toCollection(ArrayList::new));
-    }
 
     @Override
     public int compareTo(final AttributeDefinition o) {
@@ -87,24 +85,55 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     @JsonIgnore
     @Override
     public List<Object> resolveAttributeValues(final List<Object> attributeValues,
-                                               final String scope) {
+                                               final String scope,
+                                               final RegisteredService registeredService) {
         List<Object> currentValues = new ArrayList<>(attributeValues);
-        
         if (StringUtils.isNotBlank(getScript())) {
             currentValues = getScriptedAttributeValue(key, currentValues);
         }
         if (isScoped()) {
             currentValues = formatValuesWithScope(scope, currentValues);
         }
-
         if (StringUtils.isNotBlank(getPatternFormat())) {
             currentValues = formatValuesWithPattern(currentValues);
         }
-
+        if (isEncrypted()) {
+            currentValues = encryptValues(currentValues, registeredService);
+        }
         LOGGER.trace("Resolved values [{}] for attribute definition [{}]", currentValues, this);
         return currentValues;
     }
 
+    private static List<Object> formatValuesWithScope(final String scope, final List<Object> currentValues) {
+        return currentValues
+            .stream()
+            .map(v -> String.format("%s@%s", v, scope))
+            .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private static List<Object> encryptValues(final List<Object> currentValues, final RegisteredService registeredService) {
+        val publicKey = registeredService.getPublicKey();
+        if (publicKey == null) {
+            LOGGER.error("No public key is defined for service [{}]. No attributes will be released", registeredService);
+            return new ArrayList<>(0);
+        }
+        val cipher = publicKey.toCipher();
+        if (cipher == null) {
+            LOGGER.error("Unable to initialize cipher given the public key algorithm [{}]", publicKey.getAlgorithm());
+            return new ArrayList<>(0);
+        }
+
+        return currentValues
+            .stream()
+            .map(Unchecked.function(value -> {
+                LOGGER.trace("Encrypting attribute value [{}]", value);
+                val result = EncodingUtils.encodeBase64(cipher.doFinal(value.toString().getBytes(StandardCharsets.UTF_8)));
+                LOGGER.trace("Encrypted attribute value [{}]", result);
+                return result;
+            }))
+            .collect(Collectors.toCollection(ArrayList::new));
+    }
+    
     private List<Object> formatValuesWithPattern(final List<Object> currentValues) {
         return currentValues
             .stream()
@@ -130,7 +159,11 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
                     val resource = ResourceUtils.getRawResourceFrom(scriptPath);
                     attributeScriptCache.put(attributeKey, new WatchableGroovyScriptResource(resource));
                 } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.error(e.getMessage(), e);
+                    } else {
+                        LOGGER.error(e.getMessage());
+                    }
                 }
             }
         }

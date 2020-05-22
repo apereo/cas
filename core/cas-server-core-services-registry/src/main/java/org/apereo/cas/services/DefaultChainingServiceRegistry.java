@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,13 +24,13 @@ import java.util.stream.Collectors;
 public class DefaultChainingServiceRegistry extends AbstractServiceRegistry implements ChainingServiceRegistry {
     private final List<ServiceRegistry> serviceRegistries;
 
-    public DefaultChainingServiceRegistry(final ApplicationEventPublisher eventPublisher) {
-        this(eventPublisher, new ArrayList<>(0));
+    public DefaultChainingServiceRegistry(final ConfigurableApplicationContext applicationContext) {
+        this(applicationContext, new ArrayList<>(0));
     }
 
-    public DefaultChainingServiceRegistry(final ApplicationEventPublisher eventPublisher,
+    public DefaultChainingServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                           final List<ServiceRegistry> serviceRegistries) {
-        super(eventPublisher, new ArrayList<>(0));
+        super(applicationContext, new ArrayList<>(0));
         this.serviceRegistries = serviceRegistries;
     }
 

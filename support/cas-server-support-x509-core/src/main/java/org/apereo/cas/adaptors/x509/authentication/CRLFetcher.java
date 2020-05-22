@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.security.cert.CRLException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.util.Collection;
 
@@ -35,11 +34,9 @@ public interface CRLFetcher {
      *
      * @param crl resources to retrieve
      * @return the CRL entry
-     * @throws IOException          the exception thrown if resources cant be fetched
-     * @throws CRLException         the exception thrown if resources cant be fetched
-     * @throws CertificateException the exception thrown if resources cant be fetched
+     * @throws Exception the exception
      */
-    X509CRL fetch(String crl) throws IOException, CRLException, CertificateException;
+    X509CRL fetch(String crl) throws Exception;
 
     /**
      * Fetches a single of crl from the specified resource
@@ -47,11 +44,9 @@ public interface CRLFetcher {
      *
      * @param crl resources to retrieve
      * @return the CRL entry
-     * @throws IOException          the exception thrown if resources cant be fetched
-     * @throws CRLException         the exception thrown if resources cant be fetched
-     * @throws CertificateException the exception thrown if resources cant be fetched
+     * @throws Exception the exception
      */
-    X509CRL fetch(URI crl) throws IOException, CRLException, CertificateException;
+    X509CRL fetch(URI crl) throws Exception;
 
     /**
      * Fetches a single of crl from the specified resource
@@ -59,11 +54,9 @@ public interface CRLFetcher {
      *
      * @param crl resources to retrieve
      * @return the CRL entry
-     * @throws IOException          the exception thrown if resources cant be fetched
-     * @throws CRLException         the exception thrown if resources cant be fetched
-     * @throws CertificateException the exception thrown if resources cant be fetched
+     * @throws Exception the exception
      */
-    X509CRL fetch(URL crl) throws IOException, CRLException, CertificateException;
+    X509CRL fetch(URL crl) throws Exception;
 
     /**
      * Fetches a single of crl from the specified resource
@@ -71,9 +64,7 @@ public interface CRLFetcher {
      *
      * @param crl resources to retrieve
      * @return the CRL entry
-     * @throws IOException          the exception thrown if resources cant be fetched
-     * @throws CRLException         the exception thrown if resources cant be fetched
-     * @throws CertificateException the exception thrown if resources cant be fetched
+     * @throws Exception the exception
      */
-    X509CRL fetch(Resource crl) throws IOException, CRLException, CertificateException;
+    X509CRL fetch(Resource crl) throws Exception;
 }

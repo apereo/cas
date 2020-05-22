@@ -40,7 +40,7 @@ public interface U2FDeviceRepository {
      * Is registered ?
      *
      * @param username the username
-     * @return the boolean
+     * @return true/false
      */
     boolean isDeviceRegisteredFor(String username);
 

@@ -45,7 +45,7 @@ public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             if (StringUtils.isNotBlank(jdbc.getAupColumn())) {
                 aupColumnName = jdbc.getAupColumn();
             }
-            val sql = String.format(jdbc.getSqlUpdateAUP(), jdbc.getTableName(), aupColumnName, jdbc.getPrincipalIdColumn());
+            val sql = String.format(jdbc.getSqlUpdate(), jdbc.getTableName(), aupColumnName, jdbc.getPrincipalIdColumn());
             val principalId = determinePrincipalId(requestContext, credential);
             LOGGER.debug("Executing update query [{}] for principal [{}]", sql, principalId);
             return this.jdbcTemplate.update(sql, principalId) > 0;

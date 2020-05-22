@@ -25,6 +25,8 @@ import org.apereo.cas.support.pac4j.authentication.RestfulDelegatedClientFactory
 import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandler;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -101,13 +103,22 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionStore")
     @Bean
+    @RefreshScope
     public SessionStore<JEEContext> delegatedClientDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getPac4j().isReplicateSessions();
         if (replicate) {
             return new DistributedJEESessionStore(centralAuthenticationService.getObject(),
-                ticketFactory.getObject(), casProperties);
+                ticketFactory.getObject(), delegatedClientDistributedSessionCookieGenerator());
         }
         return new JEESessionStore();
+    }
+
+    @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionCookieGenerator")
+    @Bean
+    @RefreshScope
+    public CasCookieBuilder delegatedClientDistributedSessionCookieGenerator() {
+        val cookie = casProperties.getSessionReplication().getCookie();
+        return CookieUtils.buildCookieRetrievingGenerator(cookie);
     }
 
     @RefreshScope
@@ -178,6 +189,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "pac4jAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer pac4jAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             if (!builtClients().findAllClients().isEmpty()) {
@@ -198,6 +210,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "delegatedAuthenticationAuditTrailRecordResolutionPlanConfigurer")
+    @RefreshScope
     public AuditTrailRecordResolutionPlanConfigurer delegatedAuthenticationAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
             plan.registerAuditActionResolver("DELEGATED_CLIENT_ACTION_RESOLVER", authenticationActionResolver.getObject());
@@ -206,6 +219,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "delegatedAuthenticationLogoutExecutionPlanConfigurer")
     public LogoutExecutionPlanConfigurer delegatedAuthenticationLogoutExecutionPlanConfigurer() {
         return plan -> {

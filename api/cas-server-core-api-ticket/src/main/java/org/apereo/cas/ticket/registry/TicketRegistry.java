@@ -132,4 +132,13 @@ public interface TicketRegistry {
         return getTickets().stream();
     }
 
+    /**
+     * Count the number of single sign-on sessions
+     * that are recorded in the ticket registry for
+     * the given user name.
+     *
+     * @param principalId the principal id
+     * @return the count
+     */
+    long countSessionsFor(String principalId);
 }

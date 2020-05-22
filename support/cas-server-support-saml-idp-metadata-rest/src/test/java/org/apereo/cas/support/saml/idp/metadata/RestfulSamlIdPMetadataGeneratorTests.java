@@ -37,11 +37,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApi")
 @TestPropertySource(properties = {
-    "cas.authn.samlIdp.metadata.rest.url=http://localhost:9443",
-    "cas.authn.samlIdp.metadata.rest.basicAuthUsername=user",
-    "cas.authn.samlIdp.metadata.rest.basicAuthPassword=passw0rd",
-    "cas.authn.samlIdp.metadata.rest.idpMetadataEnabled=true",
-    "cas.authn.samlIdp.metadata.rest.crypto.enabled=false"
+    "cas.authn.saml-idp.metadata.rest.url=http://localhost:9443",
+    "cas.authn.saml-idp.metadata.rest.basicAuthUsername=user",
+    "cas.authn.saml-idp.metadata.rest.basicAuthPassword=passw0rd",
+    "cas.authn.saml-idp.metadata.rest.idp-metadata-enabled=true",
+    "cas.authn.saml-idp.metadata.rest.crypto.enabled=false"
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RestfulSamlIdPMetadataGeneratorTests extends BaseRestfulSamlMetadataTests {

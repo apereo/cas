@@ -1,6 +1,7 @@
 package org.apereo.cas.util.http;
 
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.net.URL;
@@ -11,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Francesco Cina
  * @since 4.1
  */
+@Tag("Simple")
 public class HttpMessageTests {
 
     @Test

@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -17,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {
     "cas.authn.ldap[0].type=AD",
-    "cas.authn.ldap[0].ldapUrl=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_LDAP_URL,
+    "cas.authn.ldap[0].ldap-url=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_LDAP_URL,
     "cas.authn.ldap[0].useStartTls=true",
     "cas.authn.ldap[0].subtreeSearch=true",
     "cas.authn.ldap[0].baseDn=cn=Users,dc=cas,dc=example,dc=org",
@@ -32,6 +33,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].hostnameVerifier=ANY"
 })
 @EnabledIfPortOpen(port = 10390)
+@Tag("Ldap")
 public class ActiveDirectoryUPNLdapAuthenticationHandlerTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
 
     /**

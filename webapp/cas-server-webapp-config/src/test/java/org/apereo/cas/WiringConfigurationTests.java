@@ -34,6 +34,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.val;
 import org.apache.http.client.methods.HttpGet;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -98,15 +99,12 @@ import static org.junit.jupiter.api.Assertions.*;
     AopAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000",
-    "cas.httpWebRequest.cors.enabled=true"
-})
+}, properties = "cas.http-web-request.cors.enabled=true")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @WebAppConfiguration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableWebMvc
+@Tag("Simple")
 public class WiringConfigurationTests {
     @Autowired
     private ApplicationContext applicationContext;

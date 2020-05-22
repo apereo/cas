@@ -66,6 +66,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "dataSourceMfaTrustedAuthn")
+    @RefreshScope
     public DataSource dataSourceMfaTrustedAuthn() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getTrusted().getJpa());
     }

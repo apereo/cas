@@ -1,6 +1,5 @@
 package org.apereo.cas.support.realm;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -22,7 +21,6 @@ public class RealmPasswordVerificationCallbackHandler implements CallbackHandler
 
     private final String psw;
 
-    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     @Override
     public void handle(final Callback[] callbacks) {
         Arrays.stream(callbacks)

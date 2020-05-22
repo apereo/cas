@@ -3,6 +3,7 @@ package org.apereo.cas.web.security;
 import org.apereo.cas.config.CasWebAppSecurityConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.actuate.autoconfigure.beans.BeansEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
@@ -39,7 +40,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
         "cas.monitor.endpoints.jaas.login-config=classpath:/jaas-endpoints.conf",
         "cas.monitor.endpoints.jaas.login-context-name=CAS",
 
-        "cas.monitor.endpoints.ldap.ldapUrl=ldap://localhost:10389",
+        "cas.monitor.endpoints.ldap.ldap-url=ldap://localhost:10389",
         "cas.monitor.endpoints.ldap.baseDn=ou=people,dc=example,dc=org",
         "cas.monitor.endpoints.ldap.searchFilter=uid={user}",
         "cas.monitor.endpoints.ldap.bindDn=cn=Directory Manager",
@@ -68,6 +69,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
     })
 @WebAppConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("Simple")
 public class CasWebSecurityConfigurerAdapterTests {
     @Test
     public void verifyOperation() {

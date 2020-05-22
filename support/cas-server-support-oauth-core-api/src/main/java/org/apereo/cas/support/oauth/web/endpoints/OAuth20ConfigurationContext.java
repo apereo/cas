@@ -85,8 +85,6 @@ public class OAuth20ConfigurationContext {
 
     private final ExpirationPolicyBuilder<OAuth20DeviceToken> deviceTokenExpirationPolicy;
 
-    private AuditableExecution accessTokenGrantAuditableRequestExtractor;
-
     private final OAuth20CodeFactory oAuthCodeFactory;
 
     private final ConsentApprovalViewResolver consentApprovalViewResolver;

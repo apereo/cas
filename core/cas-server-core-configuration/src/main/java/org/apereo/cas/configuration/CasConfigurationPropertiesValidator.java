@@ -46,7 +46,7 @@ public class CasConfigurationPropertiesValidator {
         if (validationResults.isEmpty()) {
             LOGGER.info("Application context has validated CAS property sources and configuration successfully.");
         } else {
-            var message = validationResults.stream().collect(Collectors.joining("\n"));
+            var message = String.join("\n", validationResults);
             message += "\n\nListed settings above are no longer recognized by CAS " + CasVersion.getVersion() + ". They may have been renamed, removed, or relocated "
                 + "to a new address in the CAS configuration schema. CAS will ignore such settings and will proceed with its normal initialization sequence. "
                 + "Please consult the CAS documentation to review and adjust each setting to find an alternative or remove the "
@@ -60,7 +60,11 @@ public class CasConfigurationPropertiesValidator {
         try {
             validateConfiguration(CasConfigurationProperties.class, validationResults);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
     }
 

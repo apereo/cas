@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultCasWebflowAuthenticationExceptionHandler implements CasWebflowExceptionHandler<AuthenticationException> {
-    private int order = Integer.MAX_VALUE;
+    private int order = Integer.MAX_VALUE - 1;
 
     /**
      * Ordered list of error classes that this class knows how to handle.

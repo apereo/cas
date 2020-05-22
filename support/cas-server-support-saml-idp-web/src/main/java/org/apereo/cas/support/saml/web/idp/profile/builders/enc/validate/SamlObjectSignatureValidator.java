@@ -275,8 +275,7 @@ public class SamlObjectSignatureValidator {
      * @return the signature validation configuration
      */
     protected SignatureValidationConfiguration getSignatureValidationConfiguration() {
-        val config =
-            DefaultSecurityConfigurationBootstrap.buildDefaultSignatureValidationConfiguration();
+        val config = DefaultSecurityConfigurationBootstrap.buildDefaultSignatureValidationConfiguration();
         val samlIdp = casProperties.getAuthn().getSamlIdp();
 
         if (this.overrideBlackListedSignatureAlgorithms != null

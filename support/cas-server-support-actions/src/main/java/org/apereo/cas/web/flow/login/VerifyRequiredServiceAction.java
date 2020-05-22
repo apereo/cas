@@ -87,7 +87,7 @@ public class VerifyRequiredServiceAction extends AbstractAction {
      *
      * @param context               the context
      * @param initialServicePattern the initial service pattern
-     * @return the boolean
+     * @return true/false
      */
     protected boolean shouldSkipRequiredServiceCheck(final RequestContext context,
                                                    final Pattern initialServicePattern) {

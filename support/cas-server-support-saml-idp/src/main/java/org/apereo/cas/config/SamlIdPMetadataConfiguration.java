@@ -34,8 +34,10 @@ import org.apereo.cas.support.saml.web.idp.metadata.SamlRegisteredServiceCachedM
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHandlerEndpoint;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -114,7 +116,8 @@ public class SamlIdPMetadataConfiguration {
     @SneakyThrows
     public MetadataResolver casSamlIdPMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        val resolver = new SamlIdPMetadataResolver(samlIdPMetadataLocator(), samlIdPMetadataGenerator(), openSamlConfigBean.getObject());
+        val resolver = new SamlIdPMetadataResolver(samlIdPMetadataLocator(),
+            samlIdPMetadataGenerator(), openSamlConfigBean.getObject());
         resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
         resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
         resolver.setId(idp.getEntityId());
@@ -158,7 +161,10 @@ public class SamlIdPMetadataConfiguration {
     @SneakyThrows
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new FileSystemSamlIdPMetadataLocator(idp.getMetadata().getLocation());
+        val location = SpringExpressionLanguageValueResolver.getInstance()
+            .resolve(idp.getMetadata().getLocation());
+        val metadataLocation = ResourceUtils.getRawResourceFrom(location);
+        return new FileSystemSamlIdPMetadataLocator(metadataLocation);
     }
 
     @ConditionalOnMissingBean(name = "chainingMetadataResolverCacheLoader")

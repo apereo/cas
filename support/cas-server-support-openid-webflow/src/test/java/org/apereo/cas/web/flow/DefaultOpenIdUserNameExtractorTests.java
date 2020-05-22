@@ -21,11 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     AbstractOpenIdTests.SharedTestConfiguration.class,
     OpenIdWebflowConfiguration.class
-},
-    properties = {
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+})
 @Deprecated(since = "6.2.0")
 public class DefaultOpenIdUserNameExtractorTests {
 

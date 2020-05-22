@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.attribute;
 
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 
@@ -68,7 +69,11 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
                     try {
                         loadAttributeDefinitionsFromInputStream(new FileSystemResource(file));
                     } catch (final Exception e) {
-                        LOGGER.error(e.getMessage(), e);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.error(e.getMessage(), e);
+                        } else {
+                            LOGGER.error(e.getMessage());
+                        }
                     }
                 });
                 this.storeWatcherService.start(getClass().getSimpleName());
@@ -144,13 +149,14 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     }
 
     @Override
-    public Optional<Pair<AttributeDefinition, List<Object>>> resolveAttributeValues(final String key, final List<Object> attributeValues) {
+    public Optional<Pair<AttributeDefinition, List<Object>>> resolveAttributeValues(final String key, final List<Object> attributeValues,
+                                                                                    final RegisteredService registeredService) {
         val result = locateAttributeDefinition(key);
         if (result.isEmpty()) {
             return Optional.empty();
         }
         val definition = result.get();
-        val currentValues = definition.resolveAttributeValues(attributeValues, this.scope);
+        val currentValues = definition.resolveAttributeValues(attributeValues, this.scope, registeredService);
         return Optional.of(Pair.of(definition, currentValues));
     }
 

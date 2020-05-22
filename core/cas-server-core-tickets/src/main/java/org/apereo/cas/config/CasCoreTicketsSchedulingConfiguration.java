@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.registry.support.LockingStrategy;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -30,7 +31,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casCoreTicketsSchedulingConfiguration", proxyBeanMethods = false)
+@Configuration(value = "casCoreTicketsSchedulingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @EnableAsync
@@ -39,20 +40,30 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Slf4j
 public class CasCoreTicketsSchedulingConfiguration {
 
+    @Autowired
+    @Qualifier("lockingStrategy")
+    private ObjectProvider<LockingStrategy> lockingStrategy;
+
+    @Autowired
+    @Qualifier("logoutManager")
+    private ObjectProvider<LogoutManager> logoutManager;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @ConditionalOnMissingBean(name = "ticketRegistryCleaner")
     @Bean
-    @Autowired
-    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("lockingStrategy") final LockingStrategy lockingStrategy,
-                                                       @Qualifier("logoutManager") final LogoutManager logoutManager,
-                                                       @Qualifier("ticketRegistry") final TicketRegistry ticketRegistry) {
+    @RefreshScope
+    public TicketRegistryCleaner ticketRegistryCleaner() {
         val isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().getSchedule().isEnabled();
         if (isCleanerEnabled) {
             LOGGER.debug("Ticket registry cleaner is enabled.");
-            return new DefaultTicketRegistryCleaner(lockingStrategy, logoutManager, ticketRegistry);
+            return new DefaultTicketRegistryCleaner(lockingStrategy.getObject(),
+                logoutManager.getObject(), ticketRegistry.getObject());
         }
         LOGGER.debug("Ticket registry cleaner is not enabled. "
             + "Expired tickets are not forcefully collected and cleaned by CAS. It is up to the ticket registry itself to "
@@ -63,10 +74,9 @@ public class CasCoreTicketsSchedulingConfiguration {
     @ConditionalOnMissingBean(name = "ticketRegistryCleanerScheduler")
     @ConditionalOnProperty(prefix = "cas.ticket.registry.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
     @Bean
-    @Autowired
     @RefreshScope
-    public TicketRegistryCleanerScheduler ticketRegistryCleanerScheduler(@Qualifier("ticketRegistryCleaner") final TicketRegistryCleaner ticketRegistryCleaner) {
-        return new TicketRegistryCleanerScheduler(ticketRegistryCleaner);
+    public TicketRegistryCleanerScheduler ticketRegistryCleanerScheduler() {
+        return new TicketRegistryCleanerScheduler(ticketRegistryCleaner());
     }
 
 
@@ -84,13 +94,17 @@ public class CasCoreTicketsSchedulingConfiguration {
             this.ticketRegistryCleaner = ticketRegistryCleaner;
         }
 
-        @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.schedule.startDelay:PT30S}",
-            fixedDelayString = "${cas.ticket.registry.cleaner.schedule.repeatInterval:PT120S}")
+        @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.schedule.start-delay:PT30S}",
+            fixedDelayString = "${cas.ticket.registry.cleaner.schedule.repeat-interval:PT120S}")
         public void run() {
             try {
                 this.ticketRegistryCleaner.clean();
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.error(e.getMessage(), e);
+                } else {
+                    LOGGER.error(e.getMessage());
+                }
             }
         }
     }
