@@ -39,14 +39,7 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val auth = WebUtils.getAuthentication(requestContext);
-        val uid = auth.getPrincipal().getId();
-        val keyUriFmt = "otpauth://totp/" + this.label + ":" + uid + "?secret=%s&issuer=" + this.issuer;
-
-        if (auth.getAttributes().containsKey("isNewOtpRegistration")) {
-            LOGGER.debug("Arrived back at registration check with isNewOtpRegistration set; returning register");
-            return new EventFactorySupport().event(this, "register");
-        }
+        val uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
 
         val acct = repository.get(uid);
         if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {

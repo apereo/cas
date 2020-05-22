@@ -33,16 +33,8 @@ public class OneTimeTokenAccountSaveRegistrationAction extends AbstractAction {
             .get(OneTimeTokenAccountCheckRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT, OneTimeTokenAccount.class);
         val uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
         val credential = WebUtils.getCredential(requestContext, OneTimeTokenCredential.class);
-        val account = requestContext.getFlowScope().get("key", OneTimeTokenAccount.class);
 
-        int token;
-        try {
-            token = tokenValidator.parseToken(credential);
-        } catch (final IllegalArgumentException e) {
-            LOGGER.error("Unable to extract token from Credential [{}] for user [{}]",
-                    credential, uid);
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
-        }
+        val token = tokenValidator.parseToken(credential);
 
         LOGGER.debug("Attempting to validate OTP token [{}] with [{}]", token, account);
         val isCodeValid = tokenValidator.isValid(account, token);
@@ -54,10 +46,14 @@ public class OneTimeTokenAccountSaveRegistrationAction extends AbstractAction {
         }
         if (account.getScratchCodes().contains(token)) {
             LOGGER.warn("User [{}] attempted to use scratch code during OTP registration; this is likely a mistake.", uid);
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
+            return register();
         }
 
         LOGGER.warn("Failed to validate token [{}] to register user [{}]", token, uid);
+        return register();
+    }
+
+    private Event register() {
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
     }
 }
