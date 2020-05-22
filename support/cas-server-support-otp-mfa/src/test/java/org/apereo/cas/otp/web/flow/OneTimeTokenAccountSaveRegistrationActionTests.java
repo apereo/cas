@@ -53,4 +53,23 @@ public class OneTimeTokenAccountSaveRegistrationActionTests {
         context.getFlowScope().put(OneTimeTokenAccountCheckRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT, account);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.doExecute(context).getId());
     }
+
+    @Test
+    public void verifyFailsBadToken() {
+        val account = new OneTimeTokenAccount("casuser", UUID.randomUUID().toString(), 123456, List.of());
+        val repository = mock(OneTimeTokenCredentialRepository.class);
+        val validator = mock(OneTimeTokenAccountValidator.class);
+        when(validator.isValid(any(), any())).thenReturn(false);
+        val action = new OneTimeTokenAccountSaveRegistrationAction(repository, validator);
+
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
+        context.getFlowScope().put(OneTimeTokenAccountCheckRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT, account);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, action.doExecute(context).getId());
+    }
 }
