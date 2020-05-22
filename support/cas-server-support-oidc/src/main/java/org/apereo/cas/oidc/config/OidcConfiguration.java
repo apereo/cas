@@ -114,6 +114,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.pac4j.cas.client.CasClient;
+import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.TokenCredentials;
@@ -335,7 +336,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
             Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
             Authenticators.CAS_OAUTH_CLIENT_USER_FORM);
         val interceptor = new SecurityInterceptor(oauthSecConfig.getObject(), clients, JEEHttpActionAdapter.INSTANCE);
-        interceptor.setAuthorizers(StringUtils.EMPTY);
+        interceptor.setAuthorizers(DefaultAuthorizers.NONE);
         return interceptor;
     }
 
@@ -343,7 +344,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     public HandlerInterceptorAdapter requiresAuthenticationClientConfigurationInterceptor() {
         val clients = String.join(",", OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
         val interceptor = new SecurityInterceptor(oauthSecConfig.getObject(), clients, JEEHttpActionAdapter.INSTANCE);
-        interceptor.setAuthorizers(StringUtils.EMPTY);
+        interceptor.setAuthorizers(DefaultAuthorizers.NONE);
         return interceptor;
     }
 

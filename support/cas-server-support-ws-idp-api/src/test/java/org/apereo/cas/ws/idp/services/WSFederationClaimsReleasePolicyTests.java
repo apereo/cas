@@ -79,6 +79,10 @@ public class WSFederationClaimsReleasePolicyTests {
         assertSame(2, results.size());
         assertTrue(results.containsKey(WSFederationClaims.COMMON_NAME.getUri()));
         assertTrue(results.containsKey(WSFederationClaims.EMAIL_ADDRESS.getUri()));
+        val commonNameValue = results.get(WSFederationClaims.COMMON_NAME.getUri());
+        assertEquals(CollectionUtils.wrapArrayList("casuser"), commonNameValue);
+        val emailAddressValue = results.get(WSFederationClaims.EMAIL_ADDRESS.getUri());
+        assertEquals(CollectionUtils.wrapArrayList("cas@example.org"), emailAddressValue);
     }
 
     @Test
