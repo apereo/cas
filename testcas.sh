@@ -73,6 +73,7 @@ while (( "$#" )); do
                 task+="testSimple "
                 ;;
             memcached|memcache|kryo)
+                ./ci/tests/memcached/run-memcached-server.sh
                 task+="testMemcached "
                 ;;
             x509)
@@ -97,48 +98,60 @@ while (( "$#" )); do
                 task+="testHazelcast "
                 ;;
             mssql)
+                ./ci/tests/mssqlserver/run-mssql-server.sh
                 task+="testMsSqlServer "
                 ;;
             ignite)
                 task+="testIgnite "
                 ;;
             influx|influxdb)
+                ./ci/tests/influxdb/run-influxdb-server.sh
                 task+="testInfluxDb "
                 ;;
             cosmosdb|cosmos)
                 task+="testCosmosDb "
                 ;;
             ehcache)
+                ./ci/tests/ehcache/run-terracotta-server.sh
                 task+="testEhcache "
                 ;;
             ldap|ad|activedirectory)
+                ./ci/tests/ldap/run-ldap-server.sh
+                ./ci/tests/ldap/run-ad-server.sh true
                 task+="testLdap "
                 ;;
             couchbase)
+                ./ci/tests/couchbase/run-couchbase-server.sh
                 task+="testCouchbase "
                 ;;
             mongo|mongodb)
+                ./ci/tests/mongodb/run-mongodb-server.sh
                 task+="testMongoDb "
                 ;;
             couchdb)
+                ./ci/tests/couchdb/run-couchdb-server.sh
                 task+="testCouchDb "
                 ;;
             rest|restful|restapi)
                 task+="testRestful "
                 ;;
             mysql)
+                ./ci/tests/mysql/run-mysql-server.sh
                 task+="testMySQL "
                 ;;
             maria|mariadb)
+                ./ci/tests/mariadb/run-mariadb-server.sh
                 task+="testMariaDb "
                 ;;
             jdbc|jpa|database|db|hibernate|rdbms|hsql)
                 task+="testJDBC "
                 ;;
             postgres|pg|postgresql)
+                ./ci/tests/postgres/run-postgres-server.sh
                 task+="testPostgres "
                 ;;
             cassandra)
+                ./ci/tests/cassandra/run-cassandra-server.sh
                 task+="testCassandra "
                 ;;
             kafka)
@@ -148,6 +161,7 @@ while (( "$#" )); do
                 task+="testOAuth "
                 ;;
             aws)
+                ./ci/tests/aws/run-aws-server.sh
                 task+="testAWS "
                 ;;
             oidc)
@@ -160,27 +174,34 @@ while (( "$#" )); do
                 task+="testSAML "
                 ;;
             radius)
+                ./ci/tests/radius/run-radius-server.sh
                 task+="testRadius "
                 ;;
             mail|email)
+                ./ci/tests/mail/run-mail-server.sh
                 task+="testMail "
                 ;;
             zoo|zookeeper)
+                ./ci/tests/zookeeper/run-zookeeper-server.sh
                 task+="testZooKeeper "
                 ;;
             dynamodb|dynamo)
+                ./ci/tests/dynamodb/run-dynamodb-server.sh
                 task+="testDynamoDb "
                 ;;
             webflow|swf)
                 task+="testWebflow "
                 ;;
             oracle)
+                ./ci/tests/oracle/run-oracle-server.sh
                 task+="testOracle "
                 ;;
             redis)
+                ./ci/tests/redis/run-redis-server.sh
                 task+="testRedis "
                 ;;
             activemq|amq|jms)
+                ./ci/tests/activemq/run-activemq-server.sh
                 task+="testJMS "
                 ;;
             simple|unit)
