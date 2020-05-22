@@ -69,7 +69,6 @@ The following commandline boolean flags are supported by the build and can be pa
 | `skipBootifulArtifact`            | Do not apply the Spring Boot plugin to bootify application artifacts.
 | `forceBom`                        | Force the generation of the CAS Maven BOM.
 | `ignoreJavadocFailures`           | Ignore javadoc failures and let the build resume.
-| `enableBuildTimeTracker`          | Track build execution time for requested tasks.
 | `ignoreFindbugsFailures`          | Ignore Findbugs failures and let the build resume.
 | `ignoreTestFailures`              | Ignore test failures and let the build resume.
 
