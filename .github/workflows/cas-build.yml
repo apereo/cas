@@ -6,7 +6,6 @@ env:
   TERM: xterm-256color
   SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
   SONATYPE_PWD: ${{ secrets.SONATYPE_PWD }}
-  SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
   GH_PAGES_TOKEN: ${{ secrets.GH_PAGES_TOKEN }}
   RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
   PYTHON_VERSION: 3.8.2
@@ -60,8 +59,14 @@ jobs:
 ##########################################################################
 
   build:
-    runs-on: ubuntu-latest
     needs: [cache]
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -79,6 +84,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
       - uses: actions/upload-artifact@v2
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         with:
           name: binary-artifacts
           path: ./**/build/libs/*.*
@@ -107,59 +113,11 @@ jobs:
         
 ##########################################################################
 
-  build-windows:
-    runs-on: windows-latest
-    needs: [cache]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Build with Gradle
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
-
-##########################################################################
-
-  build-macos:
-    runs-on: macos-latest
-    needs: [cache]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Build with Gradle
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
-
-##########################################################################
-
   validate-docs:
     runs-on: ubuntu-latest
     needs: [cache]
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v1
@@ -173,62 +131,17 @@ jobs:
         run: ./ci/validate-documentation.sh
 
 ##########################################################################
-
-  validate-style-main:
+  
+  static-analysis:
     runs-on: ubuntu-latest
     needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Validate Production Files via Checkstyle
-        if: ${{ !contains(github.head_ref, 'renovate') }}
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel checkstyleMain -x test -x javadoc -DskipNestedConfigMetadataGen=true --parallel -DshowStandardStreams=true
-
-##########################################################################
-
-  validate-style-test:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Validate Test Files via Checkstyle
-        if: ${{ !contains(github.head_ref, 'renovate') }}
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel checkstyleTest -x test -x javadoc -DskipNestedConfigMetadataGen=true --parallel -DshowStandardStreams=true
-
-##########################################################################
-
-  validate-spotbugs-main:
-    runs-on: ubuntu-latest
-    needs: [build]
+    strategy:
+      matrix:
+        category:
+          - spotbugsMain
+          - spotbugsTest
+          - checkstyleMain
+          - checkstyleTest
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -248,34 +161,8 @@ jobs:
           name: binary-artifacts
       - name: SpotBugs Main Analysis
         if: ${{ !contains(github.head_ref, 'renovate') }}
-        run: ./gradlew --build-cache --configure-on-demand --parallel --no-daemon spotbugsMain -x test -x javadoc -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true
-
-##########################################################################
-
-  validate-spotbugs-test:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: SpotBugs Tests Analysis
-        if: ${{ !contains(github.head_ref, 'renovate') }}
-        run: ./gradlew --build-cache --configure-on-demand --parallel --no-daemon spotbugsTest -x test -x javadoc -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true
-
+        run: ./gradlew --build-cache --configure-on-demand --parallel --no-daemon ${{ matrix.category }} -x test -x javadoc -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true
+        
 ##########################################################################
 
   validate-codebase:
@@ -424,9 +311,15 @@ jobs:
 
 ##########################################################################
 
-  validate-webapp-embedded-tomcat:
+  validate-webapp-embedded:
     runs-on: ubuntu-latest
     needs: [build]
+    strategy:
+      matrix:
+        category:
+          - tomcat
+          - jetty
+          - undertow
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -444,62 +337,9 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: binary-artifacts
-      - name: Validate Web Application Server via Embedded Apache Tomcat
+      - name: Validate Web Application Server
         if: ${{ !contains(github.head_ref, 'renovate') }}
-        run: ./ci/tests/webapp/validate-embedded-webapp.sh tomcat
-
-##########################################################################
-
-  validate-webapp-embedded-jetty:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Validate Web Application Server via Embedded Jetty
-        if: ${{ !contains(github.head_ref, 'renovate') }}
-        run: ./ci/tests/webapp/validate-embedded-webapp.sh jetty
-
-##########################################################################
-
-  validate-webapp-embedded-undertow:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Validate Web Application Server via Embedded Undertow
-        if: ${{ !contains(github.head_ref, 'renovate') }}
-        run: ./ci/tests/webapp/validate-embedded-webapp.sh undertow
-
+        run: ./ci/tests/webapp/validate-embedded-webapp.sh ${{ matrix.category }}
 
 ##########################################################################
 
@@ -701,9 +541,49 @@ jobs:
 
 ##########################################################################
 
-  tests-simple:
+  tests:
     runs-on: ubuntu-latest
     needs: [build]
+    strategy:
+      matrix:
+        category:
+          - simple
+          - groovy
+          - filesystem
+          - webflow
+          - rest
+          - mfa
+          - oauth
+          - uma
+          - oidc
+          - saml
+          - hazelcast
+          - x509
+          - ldap
+          - shell
+          - mongo
+          - jmx
+          - memcached
+          - jdbc
+          - mariadb
+          - postgres
+          - mssql
+          - oracle
+          - mysql
+          - aws
+          - ehcache
+          - redis
+          - dynamodb
+          - radius
+          - couchdb
+          - couchbase
+          - mail
+          - ignite
+          - cassandra
+          - influxdb
+          - zookeeper
+          - jms
+          - cosmosdb
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -722,915 +602,34 @@ jobs:
         with:
           name: binary-artifacts
       - name: Simple Unit Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category simple
-##########################################################################
+        run: ./testcas.sh --coverage-report --coverage-upload --category ${{ matrix.category }}
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}
+          flag-name: run-${{ matrix.category }}
+          parallel: true
 
-  tests-groovy:
+  tests-finish:
+    needs: tests
     runs-on: ubuntu-latest
-    needs: [build]
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@master
         with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Groovy Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category groovy
+          github-token: ${{ secrets.github_token }}
+          parallel-finished: true
 ##########################################################################
 
-  tests-filesystem:
+  tests-performance-locust:
     runs-on: ubuntu-latest
     needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: FileSystem Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category filesystem
-
-##########################################################################
-
-  tests-jdbc:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: JDBC Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category jdbc
-##########################################################################
-
-  tests-swf:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Spring Webflow Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category webflow
-
-##########################################################################
-
-  tests-restful:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: RESTful Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category rest
-
-##########################################################################
-
-  tests-mfa:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Multifactor Authentication Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category mfa
-
-##########################################################################
-
-  tests-oauth:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: OAuth Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category oauth
-
-##########################################################################
-
-  tests-uma:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: OAuth UMA Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category uma
-
-##########################################################################
-
-  tests-oidc:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: OpenID Connect Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category oidc
-
-##########################################################################
-
-  tests-saml:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: SAML Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category saml
-
-##########################################################################
-
-  tests-ldap:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: LDAP Tests
-        run: ./ci/tests/ldap/run-ldap-server.sh && ./ci/tests/ldap/run-ad-server.sh true && ./testcas.sh --coverage-report --coverage-upload --category groovy
-
-##########################################################################
-
-  tests-hazelcast:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Hazelcast Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category hazelcast
-
-##########################################################################
-
-  tests-x509:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: X509 Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category x509
-
-##########################################################################
-
-  tests-shell:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Commandline Shell Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category shell
-
-##########################################################################
-
-  tests-aws:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: AWS Tests
-        run: ./ci/tests/aws/run-aws-server.sh && ./testcas.sh --coverage-report --coverage-upload --category aws
-
-##########################################################################
-
-  tests-mongodb:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: MongoDb Tests
-        run: ./ci/tests/mongodb/run-mongodb-server.sh && ./testcas.sh --coverage-report --coverage-upload --category mongo
-##########################################################################
-
-  tests-redis:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Redis Tests
-        run: ./ci/tests/redis/run-redis-server.sh && ./testcas.sh --coverage-report --coverage-upload --category redis
-##########################################################################
-
-  tests-radius:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Radius Tests
-        run: ./ci/tests/radius/run-radius-server.sh && ./testcas.sh --coverage-report --coverage-upload --category radius
-##########################################################################
-
-  tests-mysql:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: MySQL Tests
-        run: ./ci/tests/mysql/run-mysql-server.sh && ./testcas.sh --coverage-report --coverage-upload --category mysql
-##########################################################################
-
-  tests-mssqlserver:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: MSSQL Server Tests
-        run: ./ci/tests/mssqlserver/run-mssql-server.sh && ./testcas.sh --coverage-report --coverage-upload --category mssql
-##########################################################################
-
-  tests-postgres:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: PostgreSQL Tests
-        run: ./ci/tests/postgres/run-postgres-server.sh && ./testcas.sh --coverage-report --coverage-upload --category postgres
-##########################################################################
-
-  tests-mariadb:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: MariaDb Tests
-        run: ./ci/tests/mariadb/run-mariadb-server.sh && ./testcas.sh --coverage-report --coverage-upload --category postgres
-##########################################################################
-
-  tests-oracle:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Oracle Tests
-        run: ./ci/tests/oracle/run-oracle-server.sh && ./testcas.sh --coverage-report --coverage-upload --category oracle
-##########################################################################
-
-  tests-cassandra:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Apache Cassandra Tests
-        run: ./ci/tests/cassandra/run-cassandra-server.sh && ./testcas.sh --coverage-report --coverage-upload --category oracle
-##########################################################################
-
-  tests-couchbase:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Couchbase Tests
-        run: ./ci/tests/couchbase/run-couchbase-server.sh && ./testcas.sh --coverage-report --coverage-upload --category couchbase
-##########################################################################
-
-  tests-dynamodb:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: DynamoDb Tests
-        run: ./ci/tests/dynamodb/run-dynamodb-server.sh && ./testcas.sh --coverage-report --coverage-upload --category dynamodb
-##########################################################################
-
-  tests-memcached:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Memcached Tests
-        run: ./ci/tests/memcached/run-memcached-server.sh && ./testcas.sh --coverage-report --coverage-upload --category memcached
-##########################################################################
-
-  tests-ehcache:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Ehcache Tests
-        run: ./ci/tests/ehcache/run-terracotta-server.sh && ./testcas.sh --coverage-report --coverage-upload --category ehcache
-##########################################################################
-
-  tests-ignite:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Apache Ignite Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category ignite
-##########################################################################
-
-  tests-couchdb:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Apache CouchDb Tests
-        run: ./ci/tests/couchdb/run-couchdb-server.sh && ./testcas.sh --coverage-report --coverage-upload --category couchdb
-##########################################################################
-
-  tests-influxdb:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: InfluxDb Tests
-        run: ./ci/tests/influxdb/run-influxdb-server.sh && ./testcas.sh --coverage-report --coverage-upload --category influxdb
-##########################################################################
-
-  tests-jmx:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: JMX Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category jmx
-##########################################################################
-
-  tests-mail:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Mail Tests
-        run: ./ci/tests/mail/run-mail-server.sh && ./testcas.sh --coverage-report --coverage-upload --category influxdb
-##########################################################################
-
-  tests-cosmosdb:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Azure CosmosDb Tests
-        run: ./testcas.sh --coverage-report --coverage-upload --category cosmosdb
-##########################################################################
-
-  tests-activemq:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Apache ActiveMQ Tests
-        run: ./ci/tests/activemq/run-activemq-server.sh && ./testcas.sh --coverage-report --coverage-upload --category activemq
-
-##########################################################################
-
-  tests-zookeeper:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Apache ZooKeeper Tests
-        run: ./ci/tests/zookeeper/run-zookeeper-server.sh && ./testcas.sh --coverage-report --coverage-upload --category zookeeper
-
-##########################################################################
-
-  tests-kafka:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-#      - name: kafka Tests
-#        run: ./ci/tests/kafka/run-kafka-server.sh && ./testcas.sh --coverage-report --coverage-upload --category kafka
-##########################################################################
-
-  tests-performance-locust-tomcat:
-    runs-on: ubuntu-latest
-    needs: [build]
+    strategy:
+      matrix:
+        category:
+          - tomcat
+          - jetty
+          - undertow
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1652,62 +651,8 @@ jobs:
         with:
           name: binary-artifacts
       - name: Locust Performance Tests via Embedded Apache Tomcat
-        run: ./ci/tests/perftests-locust.sh tomcat
-##########################################################################
+        run: ./ci/tests/perftests-locust.sh ${{ matrix.category }}
 
-  tests-performance-locust-jetty:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Locust Performance Tests via Embedded Jetty
-        run: ./ci/tests/perftests-locust.sh jetty
-
-##########################################################################
-
-  tests-performance-locust-undertow:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Locust Performance Tests via Undertow
-        run: ./ci/tests/perftests-locust.sh undertow
 ##########################################################################
 
   report-dependency-updates:
@@ -1760,7 +705,7 @@ jobs:
 
   validate-quality:
     runs-on: ubuntu-latest
-    needs: [tests-simple,tests-groovy,tests-filesystem,tests-jdbc,tests-swf,tests-restful,tests-mfa]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -1776,6 +721,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Validate Code Quality via SonarCloud
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.organization=apereo -Dsonar.host.url=https://sonarcloud.io -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true --parallel -DshowStandardStreams=true --info
 
