@@ -601,7 +601,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: binary-artifacts
-      - name: Simple Unit Tests
+      - name: Run Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category ${{ matrix.category }}
       - name: Coveralls
         uses: coverallsapp/github-action@master

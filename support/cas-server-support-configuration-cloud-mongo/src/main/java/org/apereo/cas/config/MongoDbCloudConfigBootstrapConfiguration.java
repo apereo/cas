@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.MongoDbPropertySourceLocator;
-import org.apereo.cas.mongo.MongoDbConnectionFactory;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -11,6 +10,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
+
+import java.util.Objects;
 
 /**
  * This is {@link MongoDbCloudConfigBootstrapConfiguration}.
@@ -43,9 +45,8 @@ public class MongoDbCloudConfigBootstrapConfiguration {
     @Bean
     public MongoTemplate mongoDbCloudConfigurationTemplate() {
         try {
-            val factory = new MongoDbConnectionFactory();
-            val uri = environment.getProperty(CAS_CONFIGURATION_MONGODB_URI);
-            return factory.buildMongoTemplate(uri);
+            val uri = Objects.requireNonNull(environment.getProperty(CAS_CONFIGURATION_MONGODB_URI));
+            return new MongoTemplate(new SimpleMongoClientDatabaseFactory(uri));
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new BeanCreationException("mongoDbCloudConfigurationTemplate", e.getMessage(), e);
