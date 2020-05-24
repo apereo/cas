@@ -27,7 +27,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "ldapPasswordSynchronizationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "ldapPasswordSynchronizationConfiguration", proxyBeanMethods = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapPasswordSynchronizationConfiguration {
     @Autowired
