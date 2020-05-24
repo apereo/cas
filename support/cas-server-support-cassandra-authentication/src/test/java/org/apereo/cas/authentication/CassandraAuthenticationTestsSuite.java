@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
  * @since 6.1.0
  */
 @SelectClasses(
-    DefaultCassandraRepositoryTests.class
+    CassandraAuthenticationHandlerTests.class
 )
 @RunWith(JUnitPlatform.class)
 public class CassandraAuthenticationTestsSuite {

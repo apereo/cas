@@ -50,7 +50,7 @@ public class CasMongoDbThrottlingConfiguration {
         val mongo = casProperties.getAudit().getMongo();
         val factory = new MongoDbConnectionFactory();
         val mongoTemplate = factory.buildMongoTemplate(mongo);
-        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
 
         val context = ThrottledSubmissionHandlerConfigurationContext.builder()
             .failureThreshold(failure.getThreshold())

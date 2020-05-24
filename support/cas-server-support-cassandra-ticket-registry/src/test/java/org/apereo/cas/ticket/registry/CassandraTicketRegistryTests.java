@@ -24,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     BaseTicketRegistryTests.SharedTestConfiguration.class
 }, properties = {
     "cas.ticket.registry.cassandra.keyspace=cas",
+    "cas.ticket.registry.cassandra.local-dc=datacenter1",
     "cas.ticket.registry.cassandra.drop-tables-on-startup=true"
 })
 @Tag("Cassandra")

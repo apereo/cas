@@ -737,13 +737,19 @@ The following options related to MongoDb support in CAS apply equally to a numbe
 # ${configurationKey}.mongo.timeout=5000
 # ${configurationKey}.mongo.user-id=
 # ${configurationKey}.mongo.write-concern=NORMAL
+# ${configurationKey}.mongo.read-concern=AVAILABLE
+# ${configurationKey}.mongo.read-preference=PRIMARY
 # ${configurationKey}.mongo.authentication-database-name=
 # ${configurationKey}.mongo.replica-set=
 # ${configurationKey}.mongo.ssl-enabled=false
 # ${configurationKey}.mongo.retry-writes=false
 
-# ${configurationKey}.mongo.conns.lifetime=60000
-# ${configurationKey}.mongo.conns.per-host=10
+# ${configurationKey}.mongo.pool.life-time=60000
+# ${configurationKey}.mongo.pool.idle-time=30000
+# ${configurationKey}.mongo.pool.max-wait-time=60000
+# ${configurationKey}.mongo.pool.max-size=10
+# ${configurationKey}.mongo.pool.min-size=1
+# ${configurationKey}.mongo.pool.per-host=10
 ```
 
 ## DynamoDb Configuration

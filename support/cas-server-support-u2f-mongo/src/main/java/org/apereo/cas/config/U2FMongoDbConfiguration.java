@@ -44,7 +44,7 @@ public class U2FMongoDbConfiguration {
         val mongoProps = u2f.getMongo();
         val mongoTemplate = factory.buildMongoTemplate(mongoProps);
 
-        factory.createCollection(mongoTemplate, mongoProps.getCollection(), mongoProps.isDropCollection());
+        MongoDbConnectionFactory.createCollection(mongoTemplate, mongoProps.getCollection(), mongoProps.isDropCollection());
         final LoadingCache<String, String> requestStorage =
             Caffeine.newBuilder()
                 .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
