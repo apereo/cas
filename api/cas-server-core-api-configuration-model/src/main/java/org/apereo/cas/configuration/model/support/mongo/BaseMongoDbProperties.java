@@ -71,11 +71,6 @@ public abstract class BaseMongoDbProperties implements Serializable {
     private String timeout = "PT5S";
 
     /**
-     * MongoDb database connection idle timeout.
-     */
-    private String idleTimeout = "PT30S";
-
-    /**
      * Write concern describes the level of acknowledgement requested from
      * MongoDB for write operations to a standalone
      * mongo db or to replica sets or to sharded clusters. In sharded clusters,

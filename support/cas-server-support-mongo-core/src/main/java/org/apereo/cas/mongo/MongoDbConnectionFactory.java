@@ -42,6 +42,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.util.ClassUtils;
 
+import javax.net.ssl.SSLContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -65,15 +66,22 @@ public class MongoDbConnectionFactory {
 
     private final MongoCustomConversions customConversions;
 
+    private final SSLContext sslContext;
+
     public MongoDbConnectionFactory() {
-        this(new ArrayList<>(0));
+        this(new ArrayList<>(0), SSLContexts.createSystemDefault());
     }
+
+    public MongoDbConnectionFactory(final SSLContext sslContext) {
+        this(new ArrayList<>(0), sslContext);
+    }
+
 
     public MongoDbConnectionFactory(final Converter... converters) {
-        this(Stream.of(converters).collect(Collectors.toList()));
+        this(Stream.of(converters).collect(Collectors.toList()), SSLContexts.createSystemDefault());
     }
 
-    public MongoDbConnectionFactory(final List<Converter> converters) {
+    public MongoDbConnectionFactory(final List<Converter> converters, final SSLContext sslContext) {
         converters.add(new BaseConverters.LoggerConverter());
         converters.add(new BaseConverters.ClassConverter());
         converters.add(new BaseConverters.CommonsLogConverter());
@@ -100,6 +108,26 @@ public class MongoDbConnectionFactory {
         converters.addAll(Jsr310Converters.getConvertersToRegister());
 
         this.customConversions = new MongoCustomConversions(converters);
+        this.sslContext = sslContext;
+    }
+
+    /**
+     * Create collection.
+     *
+     * @param mongoTemplate  the mongo template
+     * @param collectionName the collection name
+     * @param dropCollection the drop collection
+     */
+    public static void createCollection(final MongoOperations mongoTemplate, final String collectionName, final boolean dropCollection) {
+        if (dropCollection) {
+            LOGGER.trace("Dropping database collection: [{}]", collectionName);
+            mongoTemplate.dropCollection(collectionName);
+        }
+
+        if (!mongoTemplate.collectionExists(collectionName)) {
+            LOGGER.trace("Creating database collection: [{}]", collectionName);
+            mongoTemplate.createCollection(collectionName);
+        }
     }
 
     /**
@@ -108,7 +136,7 @@ public class MongoDbConnectionFactory {
      * @param mongo the mongo
      * @return the mongo client
      */
-    public static MongoClient buildMongoDbClient(final BaseMongoDbProperties mongo) {
+    public MongoClient buildMongoDbClient(final BaseMongoDbProperties mongo) {
         val settingsBuilder = MongoClientSettings.builder();
 
         if (StringUtils.isNotBlank(mongo.getClientUri())) {
@@ -163,7 +191,7 @@ public class MongoDbConnectionFactory {
                 .applyToSslSettings(builder -> {
                     val ssl = SslSettings.builder()
                         .enabled(mongo.isSslEnabled())
-                        .context(SSLContexts.createSystemDefault())
+                        .context(this.sslContext)
                         .build();
                     builder.applySettings(ssl);
                 })
@@ -176,25 +204,6 @@ public class MongoDbConnectionFactory {
                 .retryWrites(mongo.isRetryWrites());
         }
         return MongoClients.create(settingsBuilder.build());
-    }
-
-    /**
-     * Create collection.
-     *
-     * @param mongoTemplate  the mongo template
-     * @param collectionName the collection name
-     * @param dropCollection the drop collection
-     */
-    public static void createCollection(final MongoOperations mongoTemplate, final String collectionName, final boolean dropCollection) {
-        if (dropCollection) {
-            LOGGER.trace("Dropping database collection: [{}]", collectionName);
-            mongoTemplate.dropCollection(collectionName);
-        }
-
-        if (!mongoTemplate.collectionExists(collectionName)) {
-            LOGGER.trace("Creating database collection: [{}]", collectionName);
-            mongoTemplate.createCollection(collectionName);
-        }
     }
 
     /**
@@ -273,7 +282,7 @@ public class MongoDbConnectionFactory {
         val dbName = StringUtils.defaultIfBlank(mongo.getAuthenticationDatabaseName(), mongo.getDatabaseName());
         return MongoCredential.createCredential(mongo.getUserId(), dbName, mongo.getPassword().toCharArray());
     }
-    
+
     protected Collection<String> getMappingBasePackages() {
         return CollectionUtils.wrap(getClass().getPackage().getName());
     }

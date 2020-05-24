@@ -240,19 +240,11 @@ when CAS attempts to establish connections, run queries, etc.
 
 ```properties
 # ${configurationKey}.keyspace=
-# ${configurationKey}.port=9042
-# ${configurationKey}.contact-points=localhost1,localhost2
-# ${configurationKey}.localDc=
-# ${configurationKey}.protocol-version=V1|V2|V3|V4
-# ${configurationKey}.retry-policy=DEFAULT_RETRY_POLICY|DOWNGRADING_CONSISTENCY_RETRY_POLICY|FALLTHROUGH_RETRY_POLICY
-# ${configurationKey}.compression=LZ4|SNAPPY|NONE
+# ${configurationKey}.contact-points=localhost:9042
+# ${configurationKey}.local-dc=
 # ${configurationKey}.consistency-level=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
 # ${configurationKey}.serial-consistency-level=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
-# ${configurationKey}.max-connections=10
-# ${configurationKey}.core-connections=1
-# ${configurationKey}.max-requests-per-connection=1024
-# ${configurationKey}.connect-timeout-millis=5000
-# ${configurationKey}.read-timeout-millis=5000
+# ${configurationKey}.timeout=PT5S
 ```
 
 ## Hibernate & JDBC
@@ -724,13 +716,11 @@ The following options related to MongoDb support in CAS apply equally to a numbe
 ```properties
 # ${configurationKey}.mongo.host=localhost
 # ${configurationKey}.mongo.client-uri=localhost
-# ${configurationKey}.mongo.idle-timeout=30000
 # ${configurationKey}.mongo.port=27017
 # ${configurationKey}.mongo.drop-collection=false
 # ${configurationKey}.mongo.socket-keep-alive=false
 # ${configurationKey}.mongo.password=
 
-# Depending on the feature at hand, CAS may decide to dynamically create its own collections and ignore this setting.
 # ${configurationKey}.mongo.collection=cas-service-registry
 
 # ${configurationKey}.mongo.database-name=cas-mongo-database

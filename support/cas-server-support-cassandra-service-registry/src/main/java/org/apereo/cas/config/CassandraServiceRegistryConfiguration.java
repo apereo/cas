@@ -19,6 +19,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.net.ssl.SSLContext;
 import java.util.Collection;
 
 /**
@@ -40,6 +41,10 @@ public class CassandraServiceRegistryConfiguration {
     @Qualifier("serviceRegistryListeners")
     private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
+    @Autowired
+    @Qualifier("sslContext")
+    private ObjectProvider<SSLContext> sslContext;
+
     @Bean
     @RefreshScope
     public ServiceRegistry cassandraServiceRegistry() {
@@ -53,7 +58,7 @@ public class CassandraServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "cassandraServiceRegistrySessionFactory")
     public CassandraSessionFactory cassandraServiceRegistrySessionFactory() {
         val cassandra = casProperties.getServiceRegistry().getCassandra();
-        return new DefaultCassandraSessionFactory(cassandra);
+        return new DefaultCassandraSessionFactory(cassandra, sslContext.getObject());
     }
 
     @Bean
