@@ -19,6 +19,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.net.ssl.SSLContext;
+
 /**
  * This is {@link CassandraTicketRegistryConfiguration}.
  *
@@ -38,6 +40,10 @@ public class CassandraTicketRegistryConfiguration {
     private ObjectProvider<TicketSerializationManager> ticketSerializationManager;
 
     @Autowired
+    @Qualifier("sslContext")
+    private ObjectProvider<SSLContext> sslContext;
+
+    @Autowired
     @Bean
     @RefreshScope
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
@@ -54,6 +60,6 @@ public class CassandraTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "cassandraTicketRegistrySessionFactory")
     public CassandraSessionFactory cassandraTicketRegistrySessionFactory() {
         val cassandra = casProperties.getTicket().getRegistry().getCassandra();
-        return new DefaultCassandraSessionFactory(cassandra);
+        return new DefaultCassandraSessionFactory(cassandra, sslContext.getObject());
     }
 }

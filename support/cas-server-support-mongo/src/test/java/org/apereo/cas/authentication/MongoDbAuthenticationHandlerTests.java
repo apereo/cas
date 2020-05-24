@@ -87,7 +87,8 @@ public class MongoDbAuthenticationHandlerTests {
     @BeforeEach
     public void initialize() {
         val mongo = casProperties.getAuthn().getMongo();
-        try (val mongoClient = MongoDbConnectionFactory.buildMongoDbClient(mongo)) {
+        val factory = new MongoDbConnectionFactory();
+        try (val mongoClient = factory.buildMongoDbClient(mongo)) {
             val database = mongoClient.getDatabase(mongo.getDatabaseName());
             database.drop();
             val col = database.getCollection(mongo.getCollection());

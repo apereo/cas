@@ -23,6 +23,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.net.ssl.SSLContext;
+
 /**
  * This is {@link CasMongoAuthenticationConfiguration}.
  *
@@ -47,6 +49,10 @@ public class CasMongoAuthenticationConfiguration {
     @Qualifier("defaultPrincipalResolver")
     private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
+    @Autowired
+    @Qualifier("sslContext")
+    private ObjectProvider<SSLContext> sslContext;
+
     @ConditionalOnMissingBean(name = "mongoPrincipalFactory")
     @Bean
     public PrincipalFactory mongoPrincipalFactory() {
@@ -58,7 +64,7 @@ public class CasMongoAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "mongoAuthenticationHandler")
     public AuthenticationHandler mongoAuthenticationHandler() {
         val mongo = casProperties.getAuthn().getMongo();
-        val factory = new MongoDbConnectionFactory();
+        val factory = new MongoDbConnectionFactory(sslContext.getObject());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         val handler = new MongoDbAuthenticationHandler(mongo.getName(),
             servicesManager.getObject(), mongoPrincipalFactory(), mongo, mongoTemplate);
