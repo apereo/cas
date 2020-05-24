@@ -1,8 +1,10 @@
 description = "Apereo CAS Cassandra Ticket Registry"
-
+ext {
+    terminateCompilerOnWarning=false
+}
 dependencies {
     implementation libraries.cassandra
-
+    
     api project(":api:cas-server-core-api-util")
 
     implementation project(":core:cas-server-core-logging")

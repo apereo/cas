@@ -29,7 +29,7 @@ public class CasConsentMongoDbConfiguration {
         val mongo = casProperties.getConsent().getMongo();
         val factory = new MongoDbConnectionFactory();
         val mongoTemplate = factory.buildMongoTemplate(mongo);
-        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return new MongoDbConsentRepository(mongoTemplate, mongo.getCollection());
     }
 }

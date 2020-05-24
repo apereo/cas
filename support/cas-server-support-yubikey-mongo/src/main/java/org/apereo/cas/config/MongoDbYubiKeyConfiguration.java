@@ -51,7 +51,7 @@ public class MongoDbYubiKeyConfiguration {
         val mongo = casProperties.getAuthn().getMfa().getYubikey().getMongo();
         val factory = new MongoDbConnectionFactory();
         val mongoTemplate = factory.buildMongoTemplate(mongo);
-        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
 

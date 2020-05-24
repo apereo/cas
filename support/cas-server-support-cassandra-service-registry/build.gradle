@@ -1,7 +1,10 @@
 description = "Apereo CAS Cassandra Service Registry"
-
+ext {
+    terminateCompilerOnWarning=false
+}
 dependencies {
     implementation libraries.cassandra
+
 
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-services")
