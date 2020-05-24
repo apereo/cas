@@ -544,6 +544,7 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     needs: [build]
+    continue-on-error: true
     strategy:
       matrix:
         category:
