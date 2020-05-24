@@ -12,6 +12,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.data.cassandra.core.cql.CqlTemplate;
 
+import javax.net.ssl.SSLContext;
 import java.net.InetSocketAddress;
 
 /**
@@ -25,19 +26,18 @@ import java.net.InetSocketAddress;
 public class DefaultCassandraSessionFactory implements CassandraSessionFactory, AutoCloseable, DisposableBean {
 
     private final CqlSession session;
-
     private final CassandraTemplate cassandraTemplate;
     private final CqlTemplate cqlTemplate;
+    private final SSLContext sslContext;
 
-    public DefaultCassandraSessionFactory(final BaseCassandraProperties cassandra) {
+    public DefaultCassandraSessionFactory(final BaseCassandraProperties cassandra,
+                                          final SSLContext sslContext) {
         this.session = initializeCassandraSession(cassandra);
         this.cassandraTemplate = new CassandraTemplate(this.session);
         this.cqlTemplate = new CqlTemplate(this.session);
+        this.sslContext = sslContext;
     }
 
-    /**
-     * Destroy.
-     */
     @Override
     public void destroy() {
         try {
@@ -53,13 +53,14 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
         destroy();
     }
 
-    private static CqlSession initializeCassandraSession(final BaseCassandraProperties cassandra) {
+    private CqlSession initializeCassandraSession(final BaseCassandraProperties cassandra) {
         val builder = CqlSession.builder()
             .withKeyspace(cassandra.getKeyspace())
             .withAuthCredentials(cassandra.getUsername(), cassandra.getPassword());
         if (StringUtils.isNotBlank(cassandra.getLocalDc())) {
             builder.withLocalDatacenter(cassandra.getLocalDc());
         }
+        builder.withSslContext(this.sslContext);
         cassandra.getContactPoints()
             .stream()
             .map(contactPoint -> {
