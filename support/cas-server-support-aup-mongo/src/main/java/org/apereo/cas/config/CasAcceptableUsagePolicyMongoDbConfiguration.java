@@ -41,7 +41,7 @@ public class CasAcceptableUsagePolicyMongoDbConfiguration {
         val mongo = casProperties.getAcceptableUsagePolicy().getMongo();
         val factory = new MongoDbConnectionFactory();
         val mongoTemplate = factory.buildMongoTemplate(mongo);
-        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
 
