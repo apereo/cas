@@ -2,8 +2,14 @@
 
 clear
 
+dkc() {
+   export CID=$(docker ps -aqf "name=$1");
+   docker stop $CID 2>/dev/null
+   docker rm -f $CID 2>/dev/null
+}
+
 printHelp() {
-    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--coverage-report] [--coverage-upload] [--no-parallel] \n"
+    echo -e "\nUsage: ./testcas.sh [--no-container] --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--coverage-report] [--coverage-upload] [--no-parallel] \n"
     echo -e "Available test categories are:\n"
     echo -e "simple,memcached,cassandra,groovy,kafka,ldap,rest,mfa,jdbc,mssql,oracle,radius,couchdb,\
 mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,hazelcast,jmx,ehcache,\
@@ -11,6 +17,7 @@ oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,cosmos
     echo -e "\nPlease see the test script for details.\n"
 }
 
+container=true
 uploadCoverage=false
 parallel="--parallel "
 gradleCmd="./gradlew"
@@ -19,6 +26,10 @@ flags="--build-cache -x javadoc -x check -DignoreTestFailures=false -DskipNested
 
 while (( "$#" )); do
     case "$1" in
+    --no-container)
+        container=false
+        shift
+        ;;
     --no-parallel)
         parallel=""
         shift
@@ -73,7 +84,7 @@ while (( "$#" )); do
                 task+="testSimple "
                 ;;
             memcached|memcache|kryo)
-                ./ci/tests/memcached/run-memcached-server.sh
+                test "${container}" == true && dkc ${category} && ./ci/tests/memcached/run-memcached-server.sh
                 task+="testMemcached "
                 ;;
             x509)
@@ -98,60 +109,60 @@ while (( "$#" )); do
                 task+="testHazelcast "
                 ;;
             mssql)
-                ./ci/tests/mssqlserver/run-mssql-server.sh
+                test "${container}" == true && dkc ${category} && ./ci/tests/mssqlserver/run-mssql-server.sh
                 task+="testMsSqlServer "
                 ;;
             ignite)
                 task+="testIgnite "
                 ;;
             influx|influxdb)
-                ./ci/tests/influxdb/run-influxdb-server.sh
+                test "${container}" == true && dkc ${category} && ./ci/tests/influxdb/run-influxdb-server.sh
                 task+="testInfluxDb "
                 ;;
             cosmosdb|cosmos)
                 task+="testCosmosDb "
                 ;;
             ehcache)
-                ./ci/tests/ehcache/run-terracotta-server.sh
+                test "${container}" == true && dkc ${category} && ./ci/tests/ehcache/run-terracotta-server.sh
                 task+="testEhcache "
                 ;;
             ldap|ad|activedirectory)
-                ./ci/tests/ldap/run-ldap-server.sh
-                ./ci/tests/ldap/run-ad-server.sh true
+                test "${container}" == true && dkc ${category} && ./ci/tests/ldap/run-ldap-server.sh
+                test "${container}" == true && dkc samba && ./ci/tests/ldap/run-ad-server.sh true
                 task+="testLdap "
                 ;;
             couchbase)
-                ./ci/tests/couchbase/run-couchbase-server.sh
+                test "${container}" == true && dkc ${category} && ./ci/tests/couchbase/run-couchbase-server.sh
                 task+="testCouchbase "
                 ;;
             mongo|mongodb)
-                ./ci/tests/mongodb/run-mongodb-server.sh
+                test "${container}" == true && dkc ${category} && ./ci/tests/mongodb/run-mongodb-server.sh
                 task+="testMongoDb "
                 ;;
             couchdb)
-                ./ci/tests/couchdb/run-couchdb-server.sh
+                test "${container}" == true && dkc ${category} &&./ci/tests/couchdb/run-couchdb-server.sh
                 task+="testCouchDb "
                 ;;
             rest|restful|restapi)
                 task+="testRestful "
                 ;;
             mysql)
-                ./ci/tests/mysql/run-mysql-server.sh
+                test "${container}" == true && dkc ${category} &&./ci/tests/mysql/run-mysql-server.sh
                 task+="testMySQL "
                 ;;
             maria|mariadb)
-                ./ci/tests/mariadb/run-mariadb-server.sh
+                test "${container}" == true && dkc ${category} &&./ci/tests/mariadb/run-mariadb-server.sh
                 task+="testMariaDb "
                 ;;
             jdbc|jpa|database|db|hibernate|rdbms|hsql)
                 task+="testJDBC "
                 ;;
             postgres|pg|postgresql)
-                ./ci/tests/postgres/run-postgres-server.sh
+                test "${container}" == true && dkc ${category} &&./ci/tests/postgres/run-postgres-server.sh
                 task+="testPostgres "
                 ;;
             cassandra)
-                ./ci/tests/cassandra/run-cassandra-server.sh
+                test "${container}" == true && dkc ${category} &&./ci/tests/cassandra/run-cassandra-server.sh
                 task+="testCassandra "
                 ;;
             kafka)
@@ -161,7 +172,7 @@ while (( "$#" )); do
                 task+="testOAuth "
                 ;;
             aws)
-                ./ci/tests/aws/run-aws-server.sh
+                test "${container}" == true && dkc ${category} &&./ci/tests/aws/run-aws-server.sh
                 task+="testAWS "
                 ;;
             oidc)
@@ -174,34 +185,34 @@ while (( "$#" )); do
                 task+="testSAML "
                 ;;
             radius)
-                ./ci/tests/radius/run-radius-server.sh
+                test "${container}" == true && dkc ${category} &&./ci/tests/radius/run-radius-server.sh
                 task+="testRadius "
                 ;;
             mail|email)
-                ./ci/tests/mail/run-mail-server.sh
+                test "${container}" == true && ./ci/tests/mail/run-mail-server.sh
                 task+="testMail "
                 ;;
             zoo|zookeeper)
-                ./ci/tests/zookeeper/run-zookeeper-server.sh
+                test "${container}" == true && dkc ${category} && ./ci/tests/zookeeper/run-zookeeper-server.sh
                 task+="testZooKeeper "
                 ;;
             dynamodb|dynamo)
-                ./ci/tests/dynamodb/run-dynamodb-server.sh
+                test "${container}" == true && dkc ${category} && ./ci/tests/dynamodb/run-dynamodb-server.sh
                 task+="testDynamoDb "
                 ;;
             webflow|swf)
                 task+="testWebflow "
                 ;;
             oracle)
-                ./ci/tests/oracle/run-oracle-server.sh
+                test "${container}" == true && dkc ${category} && ./ci/tests/oracle/run-oracle-server.sh
                 task+="testOracle "
                 ;;
             redis)
-                ./ci/tests/redis/run-redis-server.sh
+                test "${container}" == true && dkc ${category} && ./ci/tests/redis/run-redis-server.sh
                 task+="testRedis "
                 ;;
             activemq|amq|jms)
-                ./ci/tests/activemq/run-activemq-server.sh
+                test "${container}" == true && dkc ${category} && ./ci/tests/activemq/run-activemq-server.sh
                 task+="testJMS "
                 ;;
             simple|unit)

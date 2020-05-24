@@ -47,12 +47,12 @@ import static org.junit.jupiter.api.Assertions.*;
     LdapPasswordSynchronizationConfiguration.class
 },
     properties = {
-        "cas.authn.passwordSync.ldap[0].ldap-url=ldap://localhost:10389",
-        "cas.authn.passwordSync.ldap[0].baseDn=dc=example,dc=org",
-        "cas.authn.passwordSync.ldap[0].searchFilter=cn={user}",
-        "cas.authn.passwordSync.ldap[0].bindDn=cn=Directory Manager",
-        "cas.authn.passwordSync.ldap[0].bindCredential=password",
-        "cas.authn.passwordSync.ldap[0].enabled=true"
+        "cas.authn.password-sync.ldap[0].ldap-url=ldap://localhost:10389",
+        "cas.authn.password-sync.ldap[0].baseDn=dc=example,dc=org",
+        "cas.authn.password-sync.ldap[0].search-filter=cn={user}",
+        "cas.authn.password-sync.ldap[0].bind-dn=cn=Directory Manager",
+        "cas.authn.password-sync.ldap[0].bind-credential=password",
+        "cas.authn.password-sync.ldap[0].enabled=true"
     })
 @Tag("Ldap")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
