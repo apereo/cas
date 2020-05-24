@@ -35,7 +35,8 @@ public class MongoDbConnectionFactoryTests {
     public void verifyClient() {
         val props = new SingleCollectionMongoDbProperties();
         props.setClientUri(URI);
-        val client = MongoDbConnectionFactory.buildMongoDbClient(props);
+        val factory = new MongoDbConnectionFactory();
+        val client = factory.buildMongoDbClient(props);
         assertNotNull(client);
     }
 }
