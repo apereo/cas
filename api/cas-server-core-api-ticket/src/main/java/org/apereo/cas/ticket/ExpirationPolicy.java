@@ -1,8 +1,10 @@
 package org.apereo.cas.ticket;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
+import java.time.Clock;
 
 /**
  * Strategy that determines if the ticket is expired. Implementations of the
@@ -55,4 +57,12 @@ public interface ExpirationPolicy extends Serializable {
      * @return the name
      */
     String getName();
+
+    /**
+     * Gets clock of this expiration policy.
+     *
+     * @return the clock
+     */
+    @JsonIgnore
+    Clock getClock();
 }

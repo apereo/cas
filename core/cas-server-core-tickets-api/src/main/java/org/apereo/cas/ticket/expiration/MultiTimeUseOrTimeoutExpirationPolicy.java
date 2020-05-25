@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.Assert;
 
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -64,7 +63,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
             LOGGER.debug("Ticket usage count [{}] is greater than or equal to [{}]. Ticket has expired", countUses, this.numberOfUses);
             return true;
         }
-        val systemTime = getCurrentSystemTime();
+        val systemTime = ZonedDateTime.now(getClock());
         val lastTimeUsed = ticketState.getLastTimeUsed();
         val expirationTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
         if (systemTime.isAfter(expirationTime)) {
@@ -73,15 +72,6 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
             return true;
         }
         return super.isExpired(ticketState);
-    }
-
-    /**
-     * Gets current system time.
-     *
-     * @return the current system time
-     */
-    protected ZonedDateTime getCurrentSystemTime() {
-        return ZonedDateTime.now(ZoneOffset.UTC);
     }
 
     @Override

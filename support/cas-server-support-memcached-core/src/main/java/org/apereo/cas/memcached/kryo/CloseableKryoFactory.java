@@ -125,7 +125,9 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -359,6 +361,8 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(LocalDate.class, new JodaLocalDateSerializer());
         kryo.register(DateTime.class, new JodaDateTimeSerializer());
         kryo.register(LocalDateTime.class, new JodaLocalDateTimeSerializer());
+        kryo.register(Clock.systemUTC().getClass());
+        kryo.register(ZoneOffset.class);
         kryo.register(EnumSet.class, new EnumSetSerializer());
     }
 
