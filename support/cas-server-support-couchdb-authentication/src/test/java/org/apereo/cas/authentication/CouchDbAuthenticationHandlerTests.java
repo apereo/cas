@@ -77,12 +77,12 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 },
     properties = {
-        "cas.authn.couch-db.dbName=authentication",
+        "cas.authn.couch-db.db-name=authentication",
         "cas.authn.couch-db.attributes=loc,state",
-        "cas.authn.couch-db.usernameAttribute=username",
-        "cas.authn.couch-db.passwordAttribute=password",
+        "cas.authn.couch-db.username-attribute=username",
+        "cas.authn.couch-db.password-attribute=password",
         "cas.authn.couch-db.username=cas",
-        "cas.authn.couchdb.password=password",
+        "cas.authn.couch-db.password=password",
         "cas.authn.pac4j.typedIdUsed=false"
     })
 @Tag("CouchDb")

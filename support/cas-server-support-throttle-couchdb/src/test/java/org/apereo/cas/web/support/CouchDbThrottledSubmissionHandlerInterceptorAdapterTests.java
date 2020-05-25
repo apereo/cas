@@ -29,11 +29,11 @@ import org.springframework.boot.test.context.SpringBootTest;
     BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class
 },
     properties = {
-        "cas.audit.couch-db.dbName=throttle",
+        "cas.audit.couch-db.db-name=throttle",
         "cas.audit.couch-db.asynchronous=false",
         "cas.audit.couch-db.username=cas",
-        "cas.audit.couchdb.password=password",
-        "cas.authn.throttle.usernameParameter=username",
+        "cas.audit.couch-db.password=password",
+        "cas.authn.throttle.username-parameter=username",
         "cas.authn.throttle.failure.range-seconds=5"
     })
 @Getter

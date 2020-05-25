@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.acceptable-usage-policy.mongo.port=27017",
     "cas.acceptable-usage-policy.mongo.dropCollection=true",
     "cas.acceptable-usage-policy.mongo.collection=acceptable-usage-policy",
-    "cas.acceptable-usage-policy.mongo.userId=root",
+    "cas.acceptable-usage-policy.mongo.user-id=root",
     "cas.acceptable-usage-policy.mongo.password=secret",
     "cas.acceptable-usage-policy.mongo.databaseName=acceptableUsagePolicy",
     "cas.acceptable-usage-policy.mongo.authenticationDatabaseName=admin",

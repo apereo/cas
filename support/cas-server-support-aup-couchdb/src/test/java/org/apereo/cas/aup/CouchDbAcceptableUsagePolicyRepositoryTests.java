@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.acceptable-usage-policy.couch-db.asynchronous=false",
     "cas.acceptable-usage-policy.couch-db.username=cas",
-    "cas.acceptable-usage-policy.couchdb.password=password"
+    "cas.acceptable-usage-policy.couch-db.password=password"
 })
 @Tag("CouchDb")
 @Getter

@@ -31,12 +31,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.authn.passwordless.accounts.mongo.host=localhost",
     "cas.authn.passwordless.accounts.mongo.port=27017",
-    "cas.authn.passwordless.accounts.mongo.dropCollection=true",
+    "cas.authn.passwordless.accounts.mongo.drop-collection=true",
     "cas.authn.passwordless.accounts.mongo.collection=PasswordlessAccounts",
-    "cas.authn.passwordless.accounts.mongo.userId=root",
+    "cas.authn.passwordless.accounts.mongo.user-id=root",
     "cas.authn.passwordless.accounts.mongo.password=secret",
-    "cas.authn.passwordless.accounts.mongo.databaseName=audit",
-    "cas.authn.passwordless.accounts.mongo.authenticationDatabaseName=admin"
+    "cas.authn.passwordless.accounts.mongo.database-name=audit",
+    "cas.authn.passwordless.accounts.mongo.authentication-database-name=admin"
 })
 @Tag("MongoDb")
 @Getter

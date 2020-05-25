@@ -34,10 +34,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
         "cas.audit.mongo.port=27017",
         "cas.audit.mongo.dropCollection=true",
         "cas.audit.mongo.asynchronous=false",
-        "cas.audit.mongo.userId=root",
+        "cas.audit.mongo.user-id=root",
         "cas.audit.mongo.password=secret",
-        "cas.audit.mongo.databaseName=audit",
-        "cas.audit.mongo.authenticationDatabaseName=admin"
+        "cas.audit.mongo.database-name=audit",
+        "cas.audit.mongo.authentication-database-name=admin"
     })
 @Tag("MongoDb")
 @Getter
