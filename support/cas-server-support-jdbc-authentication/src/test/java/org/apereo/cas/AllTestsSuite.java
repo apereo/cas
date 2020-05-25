@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.jdbc.NamedQueryDatabaseAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandlerTests;
+import org.apereo.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandlerMariaDbTests;
 import org.apereo.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandlerPostgresTests;
 import org.apereo.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandlerTests;
@@ -21,6 +22,7 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     QueryAndEncodeDatabaseAuthenticationHandlerTests.class,
     QueryDatabaseAuthenticationHandlerTests.class,
+    QueryDatabaseAuthenticationHandlerMariaDbTests.class,
     QueryDatabaseAuthenticationHandlerPostgresTests.class,
     NamedQueryDatabaseAuthenticationHandlerTests.class,
     BindModeSearchDatabaseAuthenticationHandlerTests.class,
