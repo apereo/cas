@@ -1,22 +1,24 @@
-package org.apereo.cas.adaptors.cassandra.services;
+package org.apereo.cas.services.cassandra;
+
 
 import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.configuration.model.support.cassandra.serviceregistry.CassandraServiceRegistryProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.serialization.StringSerializer;
 
-import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.MappingManager;
+import com.datastax.oss.driver.api.core.DefaultConsistencyLevel;
+import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.data.cassandra.core.InsertOptions;
+import org.springframework.data.cassandra.core.query.Query;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,10 +34,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @ToString
 public class CassandraServiceRegistry extends AbstractServiceRegistry implements DisposableBean {
-    private static final StringSerializer<RegisteredService> SERIALIZER = new RegisteredServiceJsonSerializer();
+    private static final StringSerializer<RegisteredService> SERIALIZER =
+        new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
 
-    private final Mapper<CassandraRegisteredServiceHolder> entityManager;
-    private final Session cassandraSession;
+    private final CassandraSessionFactory cassandraSessionFactory;
+
     private final CassandraServiceRegistryProperties properties;
 
     public CassandraServiceRegistry(final CassandraSessionFactory cassandraSessionFactory,
@@ -44,9 +47,7 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
                                     final Collection<ServiceRegistryListener> serviceRegistryListeners) {
         super(applicationContext, serviceRegistryListeners);
         this.properties = properties;
-        this.cassandraSession = cassandraSessionFactory.getSession();
-        val mappingManager = new MappingManager(this.cassandraSession);
-        this.entityManager = mappingManager.mapper(CassandraRegisteredServiceHolder.class);
+        this.cassandraSessionFactory = cassandraSessionFactory;
     }
 
     @Override
@@ -54,7 +55,14 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
         try {
             val data = SERIALIZER.toString(rs);
             invokeServiceRegistryListenerPreSave(rs);
-            entityManager.save(new CassandraRegisteredServiceHolder(rs.getId(), data), getConsistencyLevel());
+            val options = InsertOptions.builder()
+                .consistencyLevel(DefaultConsistencyLevel.valueOf(properties.getConsistencyLevel()))
+                .serialConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getSerialConsistencyLevel()))
+                .timeout(Beans.newDuration(properties.getTimeout()))
+                .build();
+            val result = cassandraSessionFactory.getCassandraTemplate()
+                .insert(new CassandraRegisteredServiceHolder(rs.getId(), data), options);
+            return SERIALIZER.from(result.getEntity().getData());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -64,7 +72,9 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
     @Override
     public boolean delete(final RegisteredService registeredService) {
         try {
-            entityManager.delete(registeredService.getId(), getConsistencyLevel());
+            
+            cassandraSessionFactory.getCassandraTemplate()
+                .deleteById(registeredService.getId(), CassandraRegisteredServiceHolder.class);
             return true;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -75,8 +85,8 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
     @Override
     public long size() {
         try {
-            val query = String.format("SELECT COUNT(*) FROM %s", CassandraRegisteredServiceHolder.TABLE_NAME);
-            return cassandraSession.execute(query).one().getLong(0);
+            return cassandraSessionFactory.getCassandraTemplate()
+                .count(CassandraRegisteredServiceHolder.class);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -86,12 +96,8 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
     @Override
     public Collection<RegisteredService> load() {
         try {
-            val query = String.format("SELECT id, data FROM %s", CassandraRegisteredServiceHolder.TABLE_NAME);
-            val results = cassandraSession.execute(query);
-            val mappedResults = entityManager.map(results);
-            return mappedResults
-                .all()
-                .stream()
+            val results = cassandraSessionFactory.getCassandraTemplate().select(Query.query(), CassandraRegisteredServiceHolder.class);
+            return results.stream()
                 .map(holder -> SERIALIZER.from(holder.getData()))
                 .filter(Objects::nonNull)
                 .map(this::invokeServiceRegistryListenerPostLoad)
@@ -106,7 +112,7 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
     @Override
     public RegisteredService findServiceById(final long id) {
         try {
-            val holder = entityManager.get(id);
+            val holder = cassandraSessionFactory.getCassandraTemplate().selectOneById(id, CassandraRegisteredServiceHolder.class);
             if (holder != null) {
                 return SERIALIZER.from(holder.getData());
             }
@@ -117,12 +123,8 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
     }
 
     @Override
-    public void destroy() {
-        this.cassandraSession.close();
-    }
-
-    private Mapper.Option getConsistencyLevel() {
-        return Mapper.Option.consistencyLevel(ConsistencyLevel.valueOf(properties.getConsistencyLevel()));
+    public void destroy() throws Exception {
+        this.cassandraSessionFactory.close();
     }
 
 }

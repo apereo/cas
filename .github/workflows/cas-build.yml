@@ -159,7 +159,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: binary-artifacts
-      - name: SpotBugs Main Analysis
+      - name: Static Analysis
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./gradlew --build-cache --configure-on-demand --parallel --no-daemon ${{ matrix.category }} -x test -x javadoc -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true
         
@@ -544,6 +544,7 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     needs: [build]
+    continue-on-error: true
     strategy:
       matrix:
         category:
@@ -601,24 +602,9 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: binary-artifacts
-      - name: Simple Unit Tests
+      - name: Run Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category ${{ matrix.category }}
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.github_token }}
-          flag-name: run-${{ matrix.category }}
-          parallel: true
 
-  tests-finish:
-    needs: tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Coveralls Finished
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.github_token }}
-          parallel-finished: true
 ##########################################################################
 
   tests-performance-locust:

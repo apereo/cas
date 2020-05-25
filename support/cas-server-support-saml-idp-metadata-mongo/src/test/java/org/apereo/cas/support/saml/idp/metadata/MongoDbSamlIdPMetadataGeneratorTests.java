@@ -20,13 +20,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @TestPropertySource(properties = {
-    "cas.authn.saml-idp.metadata.mongo.databaseName=saml-idp-generator",
+    "cas.authn.saml-idp.metadata.mongo.database-name=saml-idp-generator",
     "cas.authn.saml-idp.metadata.mongo.host=localhost",
     "cas.authn.saml-idp.metadata.mongo.port=27017",
-    "cas.authn.saml-idp.metadata.mongo.userId=root",
+    "cas.authn.saml-idp.metadata.mongo.user-id=root",
     "cas.authn.saml-idp.metadata.mongo.password=secret",
-    "cas.authn.saml-idp.metadata.mongo.authenticationDatabaseName=admin",
-    "cas.authn.saml-idp.metadata.mongo.dropCollection=true",
+    "cas.authn.saml-idp.metadata.mongo.authentication-database-name=admin",
+    "cas.authn.saml-idp.metadata.mongo.drop-collection=true",
     "cas.authn.saml-idp.metadata.mongo.idp-metadata-collection=saml-idp-metadata"
     })
 @Tag("MongoDb")

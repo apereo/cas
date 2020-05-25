@@ -252,7 +252,9 @@ public abstract class BaseTicketRegistryTests {
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
             CoreAuthenticationTestUtils.getAuthentication(),
             NeverExpiresExpirationPolicy.INSTANCE));
-        assertSame(0, ticketRegistry.deleteTicket(ticketGrantingTicketId + "NON-EXISTING-SUFFIX"));
+        val ticketId = ticketGrantingTicketId + "NON-EXISTING-SUFFIX";
+        ticketRegistry.deleteTicket(ticketId);
+        assertEquals(0, ticketRegistry.getTickets(ticket -> ticket.getId().equals(ticketId)).count());
     }
 
     @RepeatedTest(2)

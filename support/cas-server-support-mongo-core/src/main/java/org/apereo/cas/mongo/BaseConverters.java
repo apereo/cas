@@ -184,10 +184,10 @@ public abstract class BaseConverters {
     }
 
     @ReadingConverter
-    static class ObjectIdToLongConverter implements Converter<ObjectId, Long> {
+    static class ObjectIdToLongConverter implements Converter<ObjectId, String> {
         @Override
-        public Long convert(final ObjectId source) {
-            return (long) source.getMachineIdentifier();
+        public String convert(final ObjectId source) {
+            return source.toHexString();
         }
     }
 
