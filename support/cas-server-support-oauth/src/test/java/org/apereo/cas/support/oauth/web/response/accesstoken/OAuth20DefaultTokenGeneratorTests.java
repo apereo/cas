@@ -77,7 +77,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         val jwt = JwtClaims.parse(decoded);
         assertNotNull(jwt);
         assertNotNull(jwt.getIssuedAt());
-        assertNotEquals(authentication.getAuthenticationDate().toEpochSecond(), jwt.getIssuedAt().getValue());
+        assertNotEquals(authentication.getAuthenticationDate().toInstant().toEpochMilli(), jwt.getIssuedAt().getValueInMillis());
         assertNotNull(jwt.getExpirationTime());
 
         mv = generateAccessTokenResponseAndGetModelAndView(
@@ -92,7 +92,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         val refreshedJwt = JwtClaims.parse(refreshedDecoded);
         assertNotNull(refreshedJwt);
         assertNotNull(refreshedJwt.getIssuedAt());
-        assertNotEquals(authentication.getAuthenticationDate().toEpochSecond(), refreshedJwt.getIssuedAt().getValue());
+        assertNotEquals(authentication.getAuthenticationDate().toInstant().toEpochMilli(), refreshedJwt.getIssuedAt().getValueInMillis());
         assertNotNull(refreshedJwt.getExpirationTime());
         assertNotEquals(jwt.getExpirationTime().getValue(), refreshedJwt.getExpirationTime().getValue());
     }
