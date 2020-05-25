@@ -10,11 +10,10 @@ import org.apache.wss4j.common.saml.OpenSAMLUtil;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ReflectionUtils;
-
-import javax.annotation.PostConstruct;
 
 /**
  * This is {@link CoreWsSecuritySecurityTokenServiceSamlConfiguration}.
@@ -26,14 +25,14 @@ import javax.annotation.PostConstruct;
 @Configuration(value = "coreWsSecuritySecurityTokenServiceSamlConfiguration", proxyBeanMethods = false)
 @Slf4j
 @AutoConfigureAfter(CoreSamlConfiguration.class)
-public class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
+public class CoreWsSecuritySecurityTokenServiceSamlConfiguration implements InitializingBean {
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
-    @PostConstruct
-    public void afterPropertiesSet() {
+    @Override
+    public void afterPropertiesSet() throws Exception {
         val warningMessage = "The security token service configuration of CAS will try to disable the OpenSAML bootstrapping process by wss4j, "
             + "as it interferes with and prevents CAS' own initialization of OpenSAML. Given the current API limitations of the wss4j library, "
             + "which is responsible for the implementation of the security token service in CAS, "

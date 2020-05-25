@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 
-import javax.annotation.Nonnull;
+import lombok.NonNull;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,7 +32,6 @@ import java.util.Set;
 public class PrincipalAttributeRepositoryFetcher {
     private final IPersonAttributeDao attributeRepository;
 
-    @Nonnull
     private final String principalId;
 
     @Builder.Default

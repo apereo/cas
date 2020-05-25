@@ -13,7 +13,8 @@ import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
-import javax.annotation.Nonnull;
+
+import lombok.NonNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,7 +33,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
     }
 
     @Override
-    public long expireAfterCreate(@Nonnull final SamlRegisteredServiceCacheKey cacheKey,
+    public long expireAfterCreate(@NonNull final SamlRegisteredServiceCacheKey cacheKey,
                                   final MetadataResolver chainingMetadataResolver,
                                   final long currentTime) {
         val service = cacheKey.getRegisteredService();
@@ -51,16 +52,16 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
 
 
     @Override
-    public long expireAfterUpdate(@Nonnull final SamlRegisteredServiceCacheKey cacheKey,
-                                  @Nonnull final MetadataResolver chainingMetadataResolver,
+    public long expireAfterUpdate(@NonNull final SamlRegisteredServiceCacheKey cacheKey,
+                                  @NonNull final MetadataResolver chainingMetadataResolver,
                                   final long currentTime, final long currentDuration) {
         LOGGER.trace("Cache expiration duration after updates is set to [{}]", currentDuration);
         return currentDuration;
     }
 
     @Override
-    public long expireAfterRead(@Nonnull final SamlRegisteredServiceCacheKey cacheKey,
-                                @Nonnull final MetadataResolver chainingMetadataResolver,
+    public long expireAfterRead(@NonNull final SamlRegisteredServiceCacheKey cacheKey,
+                                @NonNull final MetadataResolver chainingMetadataResolver,
                                 final long currentTime, final long currentDuration) {
         LOGGER.trace("Cache expiration duration after reads is set to [{}]", currentDuration);
         return currentDuration;

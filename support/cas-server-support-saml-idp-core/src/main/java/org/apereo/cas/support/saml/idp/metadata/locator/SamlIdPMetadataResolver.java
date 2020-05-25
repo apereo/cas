@@ -16,7 +16,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.util.ReflectionUtils;
 import org.w3c.dom.Element;
 
-import javax.annotation.Nonnull;
+import lombok.NonNull;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
@@ -51,7 +51,6 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
         }
     }
 
-    @Nonnull
     @Override
     @Retryable(value = ResolverException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, maxDelay = 5000))
     public Iterable<EntityDescriptor> resolve(final CriteriaSet criteria) throws ResolverException {

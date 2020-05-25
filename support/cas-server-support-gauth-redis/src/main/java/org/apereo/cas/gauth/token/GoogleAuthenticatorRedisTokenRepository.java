@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import javax.persistence.NoResultException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 
 /**
  * This is {@link GoogleAuthenticatorRedisTokenRepository}.
@@ -35,7 +36,7 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
         LOGGER.trace("Saving token [{}] using key [{}]", token, redisKey);
         val ops = this.template.boundValueOps(redisKey);
         ops.set(gauthToken);
-        ops.expire(this.expireTokensInSeconds, TimeUnit.SECONDS);
+        ops.expire(Duration.ofSeconds(this.expireTokensInSeconds));
         LOGGER.trace("Saved token [{}]", token);
     }
 

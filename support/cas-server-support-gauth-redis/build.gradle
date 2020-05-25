@@ -3,7 +3,7 @@ ext {
     maxParallelForksForTests = 1
 }
 dependencies {
-    implementation libraries.springbootredis
+    implementation libraries.redis
     
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-api")

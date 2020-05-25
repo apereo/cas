@@ -18,7 +18,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.Nonnull;
+
+import lombok.NonNull;
 import javax.sql.DataSource;
 
 import java.io.Serializable;
@@ -43,8 +44,8 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     public JdbcPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                          final String issuer,
                                          final PasswordManagementProperties passwordManagementProperties,
-                                         @Nonnull final DataSource dataSource,
-                                         @Nonnull final TransactionTemplate transactionTemplate,
+                                         @NonNull final DataSource dataSource,
+                                         @NonNull final TransactionTemplate transactionTemplate,
                                          final PasswordHistoryService passwordHistoryService,
                                          final PasswordEncoder passwordEncoder) {
         super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);

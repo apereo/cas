@@ -12,7 +12,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
 
-import javax.annotation.Nonnull;
+
+import lombok.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -155,7 +156,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         shutdown();
     }
 
-    private IMap<String, Ticket> getTicketMapInstance(@Nonnull final String mapName) {
+    private IMap<String, Ticket> getTicketMapInstance(@NonNull final String mapName) {
         try {
             val inst = hazelcastInstance.<String, Ticket>getMap(mapName);
             LOGGER.debug("Located Hazelcast map instance [{}]", mapName);

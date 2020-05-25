@@ -21,7 +21,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 
-import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.InitializingBean;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -133,13 +133,12 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
 
     @TestConfiguration
     @Lazy(false)
-    public static class BaseTestConfiguration {
+    public static class BaseTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;
 
-        @PostConstruct
-        public void init() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
+        public void afterPropertiesSet() throws Exception {
+	        SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+	    }
     }
 }

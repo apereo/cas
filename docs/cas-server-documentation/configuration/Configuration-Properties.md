@@ -5404,6 +5404,7 @@ Common LDAP settings for this feature are available [here](Configuration-Propert
 the configuration key `cas.authn.passwordSync.ldap[0]`.
 
 ```properties
+# cas.authn.password-sync.enabled=true
 # cas.authn.password-sync.ldap[0].enabled=false
 ``` 
 
