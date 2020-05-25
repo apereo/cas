@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.val;
 
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -61,13 +60,10 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
         if (ticketState == null) {
             return true;
         }
-        val now = ZonedDateTime.now(ZoneOffset.UTC);
+        val now = ZonedDateTime.now(getClock());
         val expirationTime = ticketState.getLastTimeUsed().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
         val expired = now.isAfter(expirationTime);
-        if (!expired) {
-            return super.isExpired(ticketState);
-        }
-        return expired;
+        return expired || super.isExpired(ticketState);
     }
 
     @JsonIgnore

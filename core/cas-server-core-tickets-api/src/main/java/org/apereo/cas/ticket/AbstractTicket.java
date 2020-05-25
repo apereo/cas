@@ -17,7 +17,6 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
@@ -101,8 +100,8 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     public AbstractTicket(final String id, final ExpirationPolicy expirationPolicy) {
         this.id = id;
-        this.creationTime = ZonedDateTime.now(ZoneOffset.UTC);
-        this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
+        this.creationTime = ZonedDateTime.now(expirationPolicy.getClock());
+        this.lastTimeUsed = this.creationTime;
         this.expirationPolicy = expirationPolicy;
     }
 
@@ -131,7 +130,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
             getId(), this.previousTimeUsed, this.lastTimeUsed, this.countOfUses);
 
         this.previousTimeUsed = ZonedDateTime.from(this.lastTimeUsed);
-        this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
+        this.lastTimeUsed = ZonedDateTime.now(this.expirationPolicy.getClock());
         this.countOfUses++;
 
         LOGGER.trace("After updating ticket [{}]\n\tPrevious time used: [{}]\n\tLast time used: [{}]\n\tUsage count: [{}]",
