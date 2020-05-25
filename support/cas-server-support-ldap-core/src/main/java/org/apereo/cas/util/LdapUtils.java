@@ -985,8 +985,7 @@ public class LdapUtils {
      * @param properties to inspect
      * @return the list of entry handlers
      */
-    public static List<LdapEntryHandler> newLdaptiveEntryHandlers(final List<LdapSearchEntryHandlersProperties> properties)
-    {
+    public static List<LdapEntryHandler> newLdaptiveEntryHandlers(final List<LdapSearchEntryHandlersProperties> properties) {
         val entryHandlers = new ArrayList<LdapEntryHandler>();
         properties.forEach(h -> {
             switch (h.getType()) {
@@ -1032,8 +1031,7 @@ public class LdapUtils {
      * @param properties to inspect
      * @return the list of search result handlers
      */
-    public static List<SearchResultHandler> newLdaptiveSearchResultHandlers(final List<LdapSearchEntryHandlersProperties> properties)
-    {
+    public static List<SearchResultHandler> newLdaptiveSearchResultHandlers(final List<LdapSearchEntryHandlersProperties> properties) {
         val searchResultHandlers = new ArrayList<SearchResultHandler>();
         properties.forEach(h -> {
             switch (h.getType()) {
