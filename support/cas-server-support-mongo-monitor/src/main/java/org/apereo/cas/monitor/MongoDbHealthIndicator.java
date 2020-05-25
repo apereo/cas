@@ -28,7 +28,7 @@ public class MongoDbHealthIndicator extends AbstractCacheHealthIndicator {
         final List<CacheStatistics> list = mongoTemplate.getCollectionNames()
             .stream()
             .map(c -> {
-                val db = this.mongoTemplate.getMongoDbFactory().getDb();
+                val db = this.mongoTemplate.getMongoDbFactory().getMongoDatabase();
                 val stats = db.runCommand(new Document("collStats", c));
                 return new MongoDbCacheStatistics(stats, c);
             })

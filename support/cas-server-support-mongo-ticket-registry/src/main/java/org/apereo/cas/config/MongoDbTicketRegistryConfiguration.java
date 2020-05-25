@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
+import org.apereo.cas.util.MongoDbTicketRegistryFacilitator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,6 +25,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
+import javax.net.ssl.SSLContext;
 
 /**
  * This is {@link MongoDbTicketRegistryConfiguration}.
@@ -42,14 +45,20 @@ public class MongoDbTicketRegistryConfiguration {
     @Qualifier("ticketSerializationManager")
     private ObjectProvider<TicketSerializationManager> ticketSerializationManager;
 
+    @Autowired
+    @Qualifier("sslContext")
+    private ObjectProvider<SSLContext> sslContext;
+
     @RefreshScope
     @Bean
     @Autowired
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         val mongo = casProperties.getTicket().getRegistry().getMongo();
-        val registry = new MongoDbTicketRegistry(ticketCatalog, mongoDbTicketRegistryTemplate(),
-            mongo.isDropCollection(), ticketSerializationManager.getObject());
+        val mongoTemplate = mongoDbTicketRegistryTemplate();
+        val registry = new MongoDbTicketRegistry(ticketCatalog, mongoTemplate, ticketSerializationManager.getObject());
         registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(mongo.getCrypto(), "mongo"));
+        new MongoDbTicketRegistryFacilitator(ticketCatalog, mongoTemplate, mongo.isDropCollection())
+            .createTicketCollections();
         return registry;
     }
 
@@ -71,9 +80,11 @@ public class MongoDbTicketRegistryConfiguration {
 
     @ConditionalOnMissingBean(name = "mongoDbTicketRegistryTemplate")
     @Bean
+    @RefreshScope
     public MongoTemplate mongoDbTicketRegistryTemplate() {
-        val factory = new MongoDbConnectionFactory();
+        val factory = new MongoDbConnectionFactory(sslContext.getObject());
         val mongo = casProperties.getTicket().getRegistry().getMongo();
         return factory.buildMongoTemplate(mongo);
     }
+
 }

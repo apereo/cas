@@ -18,7 +18,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link MongoDbServiceRegistryCloudTests}.
+ * This is {@link MongoDbServiceRegistryTests}.
  *
  * @author Misagh Moayyed
  * @since 4.2.0
@@ -30,17 +30,17 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 },
     properties = {
-        "cas.service-registry.mongo.databaseName=service-registry",
+        "cas.service-registry.mongo.database-name=service-registry",
         "cas.service-registry.mongo.host=localhost",
         "cas.service-registry.mongo.port=27017",
-        "cas.service-registry.mongo.userId=root",
+        "cas.service-registry.mongo.user-id=root",
         "cas.service-registry.mongo.password=secret",
-        "cas.service-registry.mongo.authenticationDatabaseName=admin",
-        "cas.service-registry.mongo.dropCollection=true"
+        "cas.service-registry.mongo.authentication-database-name=admin",
+        "cas.service-registry.mongo.drop-collection=true"
     })
 @Tag("MongoDb")
 @EnabledIfPortOpen(port = 27017)
-public class MongoDbServiceRegistryCloudTests extends AbstractServiceRegistryTests {
+public class MongoDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     @Qualifier("mongoDbServiceRegistry")

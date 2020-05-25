@@ -34,7 +34,7 @@ import javax.security.auth.login.FailedLoginException;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link DefaultCassandraRepositoryTests}.
+ * This is {@link CassandraAuthenticationHandlerTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -57,15 +57,16 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreConfiguration.class,
     CassandraAuthenticationConfiguration.class
 }, properties = {
-    "cas.authn.cassandra.tableName=users_table",
-    "cas.authn.cassandra.usernameAttribute=user_attr",
-    "cas.authn.cassandra.passwordAttribute=pwd_attr",
+    "cas.authn.cassandra.table-name=users_table",
+    "cas.authn.cassandra.local-dc=datacenter1",
+    "cas.authn.cassandra.username-attribute=user_attr",
+    "cas.authn.cassandra.password-attribute=pwd_attr",
     "cas.authn.cassandra.keyspace=cas"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Cassandra")
 @EnabledIfPortOpen(port = 9042)
-public class DefaultCassandraRepositoryTests {
+public class CassandraAuthenticationHandlerTests {
     @Autowired
     @Qualifier("cassandraAuthenticationHandler")
     private AuthenticationHandler cassandraAuthenticationHandler;

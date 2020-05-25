@@ -17,6 +17,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import javax.net.ssl.SSLContext;
+
 /**
  * This is {@link SamlIdPMongoDbIdPMetadataConfiguration}.
  *
@@ -34,6 +36,10 @@ public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
     @Qualifier("shibboleth.OpenSAMLConfig")
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
+    @Autowired
+    @Qualifier("sslContext")
+    private ObjectProvider<SSLContext> sslContext;
+    
     @Bean
     public SamlRegisteredServiceMetadataResolver mongoDbSamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
@@ -44,9 +50,9 @@ public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
     @Bean
     public MongoTemplate mongoDbSamlMetadataResolverTemplate() {
         val mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
-        val factory = new MongoDbConnectionFactory();
+        val factory = new MongoDbConnectionFactory(sslContext.getObject());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
-        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
 

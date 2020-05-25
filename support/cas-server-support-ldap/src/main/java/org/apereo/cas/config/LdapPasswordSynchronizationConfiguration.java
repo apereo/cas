@@ -8,11 +8,13 @@ import org.apereo.cas.configuration.model.core.authentication.passwordsync.LdapP
 import lombok.SneakyThrows;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ListFactoryBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,11 +29,13 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "ldapPasswordSynchronizationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "ldapPasswordSynchronizationConfiguration", proxyBeanMethods = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnProperty(prefix = "cas.authn.password-sync", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class LdapPasswordSynchronizationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
+
 
     @Bean
     @SneakyThrows
@@ -50,21 +54,24 @@ public class LdapPasswordSynchronizationConfiguration {
 
     @ConditionalOnMissingBean(name = "ldapPasswordSynchronizationAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @SneakyThrows
     @Autowired
     public AuthenticationEventExecutionPlanConfigurer ldapPasswordSynchronizationAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean")
         final ListFactoryBean ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean) {
-        val postProcessorList = ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean.getObject();
         return plan -> {
-            val ldap = casProperties.getAuthn().getPasswordSync().getLdap();
-            ldap.stream()
-                .filter(LdapPasswordSynchronizationProperties::isEnabled)
-                .forEach(instance -> {
-                    val postProcessor = new LdapPasswordSynchronizationAuthenticationPostProcessor(instance);
-                    postProcessorList.add(postProcessor);
-                    plan.registerAuthenticationPostProcessor(postProcessor);
-                });
+            try {
+                val postProcessorList = Objects.requireNonNull(ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean.getObject());
+                val ldap = casProperties.getAuthn().getPasswordSync().getLdap();
+                ldap.stream()
+                    .filter(LdapPasswordSynchronizationProperties::isEnabled)
+                    .forEach(instance -> {
+                        val postProcessor = new LdapPasswordSynchronizationAuthenticationPostProcessor(instance);
+                        postProcessorList.add(postProcessor);
+                        plan.registerAuthenticationPostProcessor(postProcessor);
+                    });
+            } catch (final Exception e) {
+                throw new BeanCreationException("Error creating ldapPasswordSynchronizationAuthenticationEventExecutionPlanConfigurer: " + e.getMessage(), e);
+            }
         };
     }
 }

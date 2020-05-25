@@ -26,6 +26,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import javax.net.ssl.SSLContext;
+
 /**
  * This is {@link SamlIdPMongoDbIdPMetadataConfiguration}.
  *
@@ -48,6 +50,10 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
     @Qualifier("samlSelfSignedCertificateWriter")
     private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
 
+    @Autowired
+    @Qualifier("sslContext")
+    private ObjectProvider<SSLContext> sslContext;
+
     @Bean
     @ConditionalOnMissingBean(name = "mongoDbSamlIdPMetadataCipherExecutor")
     public CipherExecutor mongoDbSamlIdPMetadataCipherExecutor() {
@@ -69,9 +75,9 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
     public MongoTemplate mongoDbSamlIdPMetadataTemplate() {
         val idp = casProperties.getAuthn().getSamlIdp();
         val mongo = idp.getMetadata().getMongo();
-        val factory = new MongoDbConnectionFactory();
+        val factory = new MongoDbConnectionFactory(sslContext.getObject());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
-        factory.createCollection(mongoTemplate, mongo.getIdpMetadataCollection(), mongo.isDropCollection());
+        MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getIdpMetadataCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
 
