@@ -10,4 +10,5 @@ docker exec samba bash -c "samba-tool user setpassword expireduser --newpassword
 docker exec samba bash -c "samba-tool user setpassword disableduser --newpassword=$DEFAULT_TESTUSER_PASSWORD"
 docker exec samba bash -c "samba-tool user setpassword changepassword --newpassword=$DEFAULT_TESTUSER_PASSWORD"
 docker exec samba bash -c "samba-tool user setpassword changepasswordnoreset --newpassword=$DEFAULT_TESTUSER_PASSWORD"
+docker exec samba bash -c "samba-tool user setpassword expirestomorrow --newpassword=$DEFAULT_TESTUSER_PASSWORD"
 
