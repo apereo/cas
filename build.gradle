@@ -166,11 +166,7 @@ allprojects {
     }
 
     repositories {
-        mavenLocal {
-            content {
-                includeGroup "org.apereo.service.persondir"
-            }
-        }
+        mavenLocal()
         mavenCentral()
         jcenter()
         maven {
