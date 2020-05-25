@@ -24,6 +24,11 @@ public class PasswordSynchronizationProperties implements Serializable {
     private static final long serialVersionUID = -3878237508646993100L;
 
     /**
+     * Allow password synchronization to be turned off globally.
+     */
+    private boolean enabled = true;
+
+    /**
      * Options for password sync via LDAP.
      */
     private List<LdapPasswordSynchronizationProperties> ldap = new ArrayList<>(0);

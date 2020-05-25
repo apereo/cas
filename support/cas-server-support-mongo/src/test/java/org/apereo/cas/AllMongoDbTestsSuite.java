@@ -1,4 +1,7 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas;
+
+import org.apereo.cas.authentication.MongoDbAuthenticationHandlerTests;
+import org.apereo.cas.authentication.MongoDbConnectionFactoryTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;

@@ -67,12 +67,12 @@ import org.springframework.test.annotation.DirtiesContext;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 }, properties = {
-    "cas.ticket.registry.mongo.databaseName=ticket-registry",
-    "cas.ticket.registry.mongo.authenticationDatabaseName=admin",
+    "cas.ticket.registry.mongo.database-name=ticket-registry",
+    "cas.ticket.registry.mongo.authentication-database-name=admin",
     "cas.ticket.registry.mongo.host=localhost",
     "cas.ticket.registry.mongo.port=27017",
-    "cas.ticket.registry.mongo.dropCollection=true",
-    "cas.ticket.registry.mongo.userId=root",
+    "cas.ticket.registry.mongo.drop-collection=true",
+    "cas.ticket.registry.mongo.user-id=root",
     "cas.ticket.registry.mongo.password=secret"
 })
 @EnableScheduling

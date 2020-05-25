@@ -22,13 +22,6 @@ public class MongoDbConnectionFactoryTests {
     private static final String URI = "mongodb://root:secret@localhost:27017/admin";
 
     @Test
-    public void verifyClientUri() {
-        val factory = new MongoDbConnectionFactory();
-        val template = factory.buildMongoTemplate(URI);
-        assertNotNull(template);
-    }
-
-    @Test
     public void verifyProps() {
         val factory = new MongoDbConnectionFactory();
         val props = new SingleCollectionMongoDbProperties();
@@ -42,7 +35,8 @@ public class MongoDbConnectionFactoryTests {
     public void verifyClient() {
         val props = new SingleCollectionMongoDbProperties();
         props.setClientUri(URI);
-        val client = MongoDbConnectionFactory.buildMongoDbClient(props);
+        val factory = new MongoDbConnectionFactory();
+        val client = factory.buildMongoDbClient(props);
         assertNotNull(client);
     }
 }

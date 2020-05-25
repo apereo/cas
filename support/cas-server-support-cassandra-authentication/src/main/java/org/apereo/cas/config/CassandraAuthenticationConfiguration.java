@@ -26,6 +26,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.net.ssl.SSLContext;
+
 /**
  * This is {@link CassandraAuthenticationConfiguration}.
  *
@@ -50,6 +52,10 @@ public class CassandraAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("sslContext")
+    private ObjectProvider<SSLContext> sslContext;
+
     @Bean
     @RefreshScope
     public PrincipalFactory cassandraPrincipalFactory() {
@@ -61,7 +67,7 @@ public class CassandraAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "cassandraAuthnSessionFactory")
     public CassandraSessionFactory cassandraAuthnSessionFactory() {
         val cassandra = casProperties.getAuthn().getCassandra();
-        return new DefaultCassandraSessionFactory(cassandra);
+        return new DefaultCassandraSessionFactory(cassandra, sslContext.getObject());
     }
 
     @Bean
