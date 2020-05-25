@@ -1316,14 +1316,6 @@ ext.libraries = [
                     exclude(group: "commons-cli", module: "commons-cli")
 
                 },
-                dependencies.create("com.github.kstyrc:embedded-redis:$embeddedRedisVersion") {
-                    exclude(module: "commons-io")
-
-                },
-                dependencies.create("com.github.kstyrc:embedded-redis:$embeddedRedisVersion") {
-                    exclude(module: "commons-io")
-
-                },
                 dependencies.create("org.mockito:mockito-core:$mockitoVersion") {
                     exclude(group: "org.hamcrest", module: "hamcrest-core")
                     exclude(group: "org.objenesis", module: "objenesis")
@@ -2216,7 +2208,7 @@ ext.libraries = [
 
                 }
         ],
-        springboot              : [
+        mail              : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-mail:$springBootVersion") {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
@@ -2230,8 +2222,10 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-context-support")
                     exclude(group: "org.springframework", module: "spring-beans")
-
                 },
+                dependencies.create("com.sun.mail:jakarta.mail:$jakartaMailVersion")
+        ],
+        springboot              : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-aop:$springBootVersion") {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
