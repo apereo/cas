@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,7 +48,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     protected ServicesManager getServicesManagerInstance() {
-        return new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class), new HashSet<>());
+        return new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class), new HashSet<>(), Caffeine.newBuilder().build());
     }
 
     protected ServiceRegistry getServiceRegistryInstance() {
@@ -65,7 +66,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         servicesManager.save(services);
         assertNotNull(this.servicesManager.findServiceBy(1100));
         assertNotNull(this.servicesManager.findServiceByName(TEST));
-        assertNotNull(this.servicesManager.findServiceByName(TEST,RegexRegisteredService.class));
+        assertNotNull(this.servicesManager.findServiceByName(TEST, RegexRegisteredService.class));
         assertTrue(this.servicesManager.count() > 0);
     }
 

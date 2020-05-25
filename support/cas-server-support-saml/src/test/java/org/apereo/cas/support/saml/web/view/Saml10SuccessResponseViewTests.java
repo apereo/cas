@@ -22,6 +22,7 @@ import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -66,7 +67,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         list.add(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
         val dao = new InMemoryServiceRegistry(appCtx, list, new ArrayList<>());
 
-        val mgmr = new DefaultServicesManager(dao, appCtx, new HashSet<>());
+        val mgmr = new DefaultServicesManager(dao, appCtx, new HashSet<>(), Caffeine.newBuilder().build());
         mgmr.load();
 
         val protocolAttributeEncoder = new DefaultCasProtocolAttributeEncoder(mgmr, CipherExecutor.noOpOfStringToString());

@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServiceRegistry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
@@ -48,7 +49,7 @@ public class SimpleWebApplicationServiceImplTests {
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE);
         val impl = new WebApplicationServiceFactory().createService(request);
         val response = new WebApplicationServiceResponseBuilder(
-            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>()))
+            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>(), Caffeine.newBuilder().build()))
             .build(impl, "ticketId", RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
@@ -78,7 +79,7 @@ public class SimpleWebApplicationServiceImplTests {
         val impl = new WebApplicationServiceFactory().createService(request);
 
         val response = new WebApplicationServiceResponseBuilder(
-            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>()))
+            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>(), Caffeine.newBuilder().build()))
             .build(impl, null,
                 RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
@@ -92,7 +93,7 @@ public class SimpleWebApplicationServiceImplTests {
         request.setParameter(SERVICE, "http://foo.com/");
         val impl = new WebApplicationServiceFactory().createService(request);
         val response = new WebApplicationServiceResponseBuilder(
-            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>()))
+            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>(), Caffeine.newBuilder().build()))
             .build(impl, null,
                 RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
@@ -107,7 +108,7 @@ public class SimpleWebApplicationServiceImplTests {
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "http://foo.com/?param=test");
         val impl = new WebApplicationServiceFactory().createService(request);
         val response = new WebApplicationServiceResponseBuilder(
-            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>()))
+            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>(), Caffeine.newBuilder().build()))
             .build(impl, null, RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());

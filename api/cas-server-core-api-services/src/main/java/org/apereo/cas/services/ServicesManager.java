@@ -72,7 +72,7 @@ public interface ServicesManager {
      * @return the RegisteredService that matches the supplied service.
      */
     RegisteredService findServiceBy(String serviceId);
-
+    
     /**
      * Find a RegisteredService by matching with the supplied service.
      *
@@ -80,7 +80,7 @@ public interface ServicesManager {
      * @return the RegisteredService that matches the supplied service.
      */
     RegisteredService findServiceBy(Service service);
-
+    
     /**
      * Find a collection of services by type.
      *
@@ -116,7 +116,7 @@ public interface ServicesManager {
      * @return the RegisteredService that matches the supplied service.
      */
     RegisteredService findServiceBy(long id);
-
+    
     /**
      * Find a RegisteredService by matching with the supplied id.
      *
@@ -132,6 +132,14 @@ public interface ServicesManager {
         }
         return null;
     }
+    
+    /**
+     * Find a RegisteredService by exact service id.
+     *
+     * @param serviceId the service
+     * @return the RegisteredService
+     */
+    RegisteredService findServiceByExactServiceId(String serviceId);
     
     /**
      * Find a RegisteredService by matching with the supplied name.

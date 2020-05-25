@@ -80,6 +80,18 @@ public interface ServiceRegistry {
         }
         return clazz.cast(service);
     }
+    
+    /**
+     * Find a service by matching with the service id.
+     *
+     * @param id the id to match with.
+     * @return the registered service
+     */
+    default RegisteredService findServiceBy(final String id) {
+        return getServicesStream().filter(r -> r.matches(id))
+                .findFirst()
+                .orElse(null);
+    }
 
     /**
      * Find a service by an exact match of the service id.

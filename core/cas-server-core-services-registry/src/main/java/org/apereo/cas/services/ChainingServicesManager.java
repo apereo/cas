@@ -105,7 +105,7 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
         val manager = findServicesManager(service);
         return manager.map(servicesManager -> servicesManager.findServiceBy(service)).orElse(null);
     }
-
+    
     @Override
     public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> clazz) {
         return serviceManagers.stream()
@@ -153,6 +153,15 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
     public <T extends RegisteredService> T findServiceByName(final String name, final Class<T> clazz) {
         val manager = findServicesManager(clazz);
         return manager.map(servicesManager -> servicesManager.findServiceByName(name, clazz)).orElse(null);
+    }
+    
+    @Override
+    public RegisteredService findServiceByExactServiceId(final String serviceId) {
+        return serviceManagers.stream()
+                .map(s -> s.findServiceByExactServiceId(serviceId))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
     }
 
     @Override

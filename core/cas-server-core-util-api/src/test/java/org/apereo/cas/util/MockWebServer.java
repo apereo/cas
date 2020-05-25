@@ -124,7 +124,7 @@ public class MockWebServer implements AutoCloseable {
         /**
          * Separates HTTP header from body.
          */
-        private static final String SEPARATOR = "\r\n";
+        private static final String SEPARATOR = "\r%n";
 
         /**
          * Response buffer size.

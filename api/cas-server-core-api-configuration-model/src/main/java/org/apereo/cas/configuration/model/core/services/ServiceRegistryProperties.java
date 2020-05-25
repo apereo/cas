@@ -164,7 +164,22 @@ public class ServiceRegistryProperties implements Serializable {
      * </ul>
      */
     private ServiceManagementTypes managementType = ServiceManagementTypes.DEFAULT;
+    
+    /**
+     * services cache duration.
+    */
+    private String cache = "PT5M";
 
+    /**
+     * services cache size.
+    */
+    private long cacheSize = Long.MAX_VALUE;
+
+    /**
+     * services cache capacity.
+    */
+    private int cachCapacity = Integer.MAX_VALUE;
+    
     /**
      * Types of service managers that one can control.
      */
