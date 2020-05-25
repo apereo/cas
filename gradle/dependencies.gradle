@@ -2209,21 +2209,20 @@ ext.libraries = [
                 }
         ],
         mail              : [
-                dependencies.create("org.springframework.boot:spring-boot-starter-mail:$springBootVersion") {
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.slf4j", module: "log4j-over-slf4j")
-                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-aop")
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.springframework", module: "spring-context-support")
-                    exclude(group: "org.springframework", module: "spring-beans")
-                },
-                dependencies.create("com.sun.mail:jakarta.mail:$jakartaMailVersion")
+            dependencies.create("org.springframework.boot:spring-boot-starter-mail:$springBootVersion") {
+                exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                exclude(group: "org.slf4j", module: "slf4j-api")
+                exclude(group: "org.slf4j", module: "log4j-over-slf4j")
+                exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                exclude(group: "org.springframework", module: "spring-web")
+                exclude(group: "org.springframework", module: "spring-core")
+                exclude(group: "org.springframework", module: "spring-aop")
+                exclude(group: "org.springframework", module: "spring-webmvc")
+                exclude(group: "org.springframework", module: "spring-context")
+                exclude(group: "org.springframework", module: "spring-context-support")
+                exclude(group: "org.springframework", module: "spring-beans")
+            }
         ],
         springboot              : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-aop:$springBootVersion") {
@@ -2441,7 +2440,11 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
-
+                },
+                dependencies.create("io.lettuce:lettuce-core:$redisLettuceVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    exclude(group: "org.apache.commons", module: "commons-pool2")
                 }
         ],
         springintegration       : [
