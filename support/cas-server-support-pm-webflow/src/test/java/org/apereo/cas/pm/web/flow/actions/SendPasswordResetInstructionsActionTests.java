@@ -2,6 +2,7 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -33,7 +34,7 @@ public class SendPasswordResetInstructionsActionTests extends BasePasswordManage
             request.addParameter("username", "casuser");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-            assertEquals("success", sendPasswordResetInstructionsAction.execute(context).getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }

@@ -66,15 +66,15 @@ ext {
     remoteDebuggingSuspend = Boolean.getBoolean("remoteDebuggingSuspend") ? "y" : "n"
     generateGitProperties = Boolean.getBoolean("generateGitProperties")
 
-    continuousIntegrationBuild = System.getenv("CI") || Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
+    continuousIntegrationBuild = System.getenv("CI") || Boolean.getBoolean("CI")
 
     excludedFilesFromTestCoverage = [
-            '**/**ConfigurationMetadata**',
-            '**/**Application**',
-            '**/**Application$**',
-            '**/**Exception$**',
-            '**/**Properties**',
-            '**/**Properties$**'
+        '**/**ConfigurationMetadata**',
+        '**/**Application**',
+        '**/**Application$**',
+        '**/**Exception$**',
+        '**/**Properties**',
+        '**/**Properties$**'
     ]
 }
 
