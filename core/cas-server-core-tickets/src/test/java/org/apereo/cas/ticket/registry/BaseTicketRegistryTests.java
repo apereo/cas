@@ -254,7 +254,7 @@ public abstract class BaseTicketRegistryTests {
             NeverExpiresExpirationPolicy.INSTANCE));
         val ticketId = ticketGrantingTicketId + "NON-EXISTING-SUFFIX";
         ticketRegistry.deleteTicket(ticketId);
-        assertEquals(0, ticketRegistry.getTickets(ticket -> ticket.getId().equals(ticketGrantingTicketId)).count());
+        assertEquals(0, ticketRegistry.getTickets(ticket -> ticket.getId().equals(ticketId)).count());
     }
 
     @RepeatedTest(2)
