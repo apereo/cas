@@ -48,14 +48,11 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword)
         throws GeneralSecurityException, PreventedException {
-
         val sql = "SELECT COUNT('x') FROM ".concat(this.tableUsers).concat(" WHERE ").concat(this.fieldUser)
             .concat(" = ? AND ").concat(this.fieldPassword).concat("= ?");
-
         val username = credential.getUsername();
         try {
             LOGGER.debug("Executing SQL query [{}]", sql);
-
             val count = getJdbcTemplate().queryForObject(sql, Integer.class, username, credential.getPassword());
             if (count == null || count == 0) {
                 throw new FailedLoginException(username + " not found with SQL query.");

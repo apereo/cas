@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -25,7 +26,8 @@ public abstract class BaseMongoDbProperties implements Serializable {
     /**
      * core connection-related settings.
      */
-    private MongoDbConnections conns = new MongoDbConnections();
+    @NestedConfigurationProperty
+    private MongoDbConnectionPoolProperties pool = new MongoDbConnectionPoolProperties();
 
     /**
      * The connection uri to the mongodb instance.
@@ -69,17 +71,36 @@ public abstract class BaseMongoDbProperties implements Serializable {
     private String timeout = "PT5S";
 
     /**
-     * MongoDb database connection idle timeout.
-     */
-    private String idleTimeout = "PT30S";
-
-    /**
      * Write concern describes the level of acknowledgement requested from
      * MongoDB for write operations to a standalone
      * mongo db or to replica sets or to sharded clusters. In sharded clusters,
      * mongo db instances will pass the write concern on to the shards.
      */
     private String writeConcern = "ACKNOWLEDGED";
+
+    /**
+     * Read concern. Accepted values are:
+     * <ul>
+     *     <li>{@code LOCAL}</li>
+     *     <li>{@code MAJORITY}</li>
+     *     <li>{@code LINEARIZABLE}</li>
+     *     <li>{@code SNAPSHOT}</li>
+     *     <li>{@code AVAILABLE}</li>
+     * </ul>
+     */
+    private String readConcern = "AVAILABLE";
+
+    /**
+     * Read preference. Accepted values are:
+     * <ul>
+     *     <li>{@code PRIMARY}</li>
+     *     <li>{@code SECONDARY}</li>
+     *     <li>{@code SECONDARY_PREFERRED}</li>
+     *     <li>{@code PRIMARY_PREFERRED}</li>
+     *     <li>{@code NEAREST}</li>
+     * </ul>
+     */
+    private String readPreference = "PRIMARY";
 
     /**
      * MongoDb database instance name.
@@ -103,30 +124,13 @@ public abstract class BaseMongoDbProperties implements Serializable {
     private String authenticationDatabaseName;
 
     /**
+     * Whether connections require SSL.
+     */
+    private boolean sslEnabled;
+    
+    /**
      * A replica set in MongoDB is a group of {@code mongod} processes that maintain
      * the same data set. Replica sets provide redundancy and high availability, and are the basis for all production deployments.
      */
     private String replicaSet;
-
-    /**
-     * Whether connections require SSL.
-     */
-    private boolean sslEnabled;
-
-    @Getter
-    @Setter
-    public static class MongoDbConnections implements Serializable {
-
-        private static final long serialVersionUID = -2398415870062168474L;
-
-        /**
-         * Maximum number of connections to keep around.
-         */
-        private int lifetime = 60_000;
-
-        /**
-         * Total number of connections allowed per host.
-         */
-        private int perHost = 10;
-    }
 }
