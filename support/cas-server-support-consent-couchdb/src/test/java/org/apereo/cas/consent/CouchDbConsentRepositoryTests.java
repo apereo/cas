@@ -27,7 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 },
     properties = {
         "cas.consent.couch-db.username=cas",
-        "cas.consent.couchdb.password=password"
+        "cas.consent.couch-db.password=password"
     })
 @Tag("CouchDb")
 @Getter

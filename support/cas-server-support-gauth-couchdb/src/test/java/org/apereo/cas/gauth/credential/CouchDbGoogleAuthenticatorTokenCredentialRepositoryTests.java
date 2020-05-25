@@ -87,8 +87,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     properties = {
         "cas.authn.mfa.gauth.crypto.enabled=false",
         "cas.authn.mfa.gauth.couch-db.username=cas",
-        "cas.authn.mfa.gauth.couch-db.dbName=gauth_credential",
-        "cas.authn.mfa.gauth.couchdb.password=password"
+        "cas.authn.mfa.gauth.couch-db.db-name=gauth_credential",
+        "cas.authn.mfa.gauth.couch-db.password=password"
     })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling

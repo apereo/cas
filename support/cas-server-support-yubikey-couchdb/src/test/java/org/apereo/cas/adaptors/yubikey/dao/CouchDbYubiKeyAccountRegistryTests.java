@@ -89,7 +89,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
         "cas.authn.mfa.yubikey.clientId=18423",
         "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As=",
         "cas.authn.mfa.yubikey.couch-db.username=cas",
-        "cas.authn.mfa.yubikey.couchdb.password=password"
+        "cas.authn.mfa.yubikey.couch-db.password=password"
     })
 @Getter
 @EnableConfigurationProperties(CasConfigurationProperties.class)

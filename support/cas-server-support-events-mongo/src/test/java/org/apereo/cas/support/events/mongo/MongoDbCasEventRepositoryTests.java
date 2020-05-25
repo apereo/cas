@@ -21,13 +21,13 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @Tag("MongoDb")
 @SpringBootTest(classes = {MongoDbEventsConfiguration.class, RefreshAutoConfiguration.class},
     properties = {
-        "cas.events.mongo.userId=root",
+        "cas.events.mongo.user-id=root",
         "cas.events.mongo.password=secret",
         "cas.events.mongo.host=localhost",
         "cas.events.mongo.port=27017",
-        "cas.events.mongo.authenticationDatabaseName=admin",
-        "cas.events.mongo.databaseName=events",
-        "cas.events.mongo.dropCollection=true"
+        "cas.events.mongo.authentication-database-name=admin",
+        "cas.events.mongo.database-name=events",
+        "cas.events.mongo.drop-collection=true"
     })
 @Getter
 @EnabledIfPortOpen(port = 27017)

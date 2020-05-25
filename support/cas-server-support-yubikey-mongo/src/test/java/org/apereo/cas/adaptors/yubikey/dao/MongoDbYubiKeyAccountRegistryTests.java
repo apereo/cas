@@ -91,7 +91,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.yubikey.mongo.host=localhost",
         "cas.authn.mfa.yubikey.mongo.port=27017",
         "cas.authn.mfa.yubikey.mongo.drop-collection=true",
-        "cas.authn.mfa.yubikey.mongo.userId=root",
+        "cas.authn.mfa.yubikey.mongo.user-id=root",
         "cas.authn.mfa.yubikey.mongo.password=secret",
         "cas.authn.mfa.yubikey.mongo.authentication-database-name=admin",
         "cas.authn.mfa.yubikey.client-id=18423",
@@ -107,6 +107,9 @@ public class MongoDbYubiKeyAccountRegistryTests {
     @Qualifier("yubiKeyAccountRegistry")
     private YubiKeyAccountRegistry yubiKeyAccountRegistry;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     @Test
     public void verifyAccountNotRegistered() {
         assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("missing-user"));
@@ -114,6 +117,7 @@ public class MongoDbYubiKeyAccountRegistryTests {
 
     @Test
     public void verifyAccountNotRegisteredWithBadToken() {
+        casProperties.getAuthn().getMfa().getYubikey().getMongo().getu
         assertFalse(yubiKeyAccountRegistry.registerAccountFor("casuser", BAD_TOKEN));
         assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuser"));
     }

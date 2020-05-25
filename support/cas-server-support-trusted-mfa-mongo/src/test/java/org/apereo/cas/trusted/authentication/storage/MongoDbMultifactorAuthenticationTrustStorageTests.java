@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.trusted.mongo.database-name=mfa-trusted",
         "cas.authn.mfa.trusted.mongo.host=localhost",
         "cas.authn.mfa.trusted.mongo.port=27017",
-        "cas.authn.mfa.trusted.mongo.userid=root",
+        "cas.authn.mfa.trusted.mongo.user-id=root",
         "cas.authn.mfa.trusted.mongo.password=secret",
         "cas.authn.mfa.trusted.mongo.authentication-database-name=admin",
         "cas.authn.mfa.trusted.mongo.drop-collection=true"

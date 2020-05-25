@@ -82,11 +82,11 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasThemesConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
     }, properties = {
-    "cas.authn.surrogate.couch-db.dbName=surrogate_profile",
-    "cas.authn.surrogate.couch-db.profileBased=true",
-    "cas.authn.surrogate.couch-db.surrogatePrincipalsAttribute=surrogateFor",
+    "cas.authn.surrogate.couch-db.db-name=surrogate_profile",
+    "cas.authn.surrogate.couch-db.profile-based=true",
+    "cas.authn.surrogate.couch-db.surrogate-principals-attribute=surrogateFor",
     "cas.authn.surrogate.couch-db.username=cas",
-    "cas.authn.surrogate.couchdb.password=password"
+    "cas.authn.surrogate.couch-db.password=password"
 })
 @Getter
 @EnabledIfPortOpen(port = 5984)
