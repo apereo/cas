@@ -12,8 +12,8 @@ ext["hazelcastVersion"] = "4.0.1"
 ext["infinispanVersion"] = "10.1.8.Final"
 
 ext["springVersion"] = "5.2.6.RELEASE"
-ext["springSessionVersion"] = "2.2.2.RELEASE"
-ext["springSessionMongoVersion"] = "2.2.3.RELEASE"
+ext["springSessionVersion"] = "2.3.0.RELEASE"
+ext["springSessionMongoVersion"] = "2.3.0.RELEASE"
 
 ext["springBootTomcatVersion"] = "9.0.35"
 
