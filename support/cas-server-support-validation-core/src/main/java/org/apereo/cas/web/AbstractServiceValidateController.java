@@ -369,7 +369,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param assertion the assertion
      * @return map of objects each keyed to a name
      */
-    protected static Map<String, ?> augmentSuccessViewModelObjects(final Assertion assertion) {
+    protected Map<String, ?> augmentSuccessViewModelObjects(final Assertion assertion) {
         return new HashMap<>(0);
     }
 
