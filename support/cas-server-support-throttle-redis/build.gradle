@@ -2,7 +2,7 @@ description = "Apereo CAS Redis Authentication Throttling"
 dependencies {
     api project(":api:cas-server-core-api-throttle")
 
-    implementation libraries.springbootredis
+    implementation libraries.redis
     
     implementation project(":core:cas-server-core-audit")
     implementation project(":core:cas-server-core-audit-api")

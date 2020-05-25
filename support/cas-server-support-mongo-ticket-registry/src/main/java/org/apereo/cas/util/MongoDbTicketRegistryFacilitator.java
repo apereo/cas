@@ -39,16 +39,15 @@ public class MongoDbTicketRegistryFacilitator {
      */
     public void createTicketCollections() {
         val definitions = ticketCatalog.findAll();
-        val factory = new MongoDbConnectionFactory();
+        
         definitions.forEach(t -> {
-            val c = createTicketCollection(t, factory);
+            val c = createTicketCollection(t);
             LOGGER.debug("Created MongoDb collection configuration for [{}]", c.getNamespace().getFullName());
         });
         LOGGER.info("Configured MongoDb Ticket Registry instance with available collections: [{}]", mongoTemplate.getCollectionNames());
     }
     
-    private MongoCollection createTicketCollection(final TicketDefinition ticket,
-                                                   final MongoDbConnectionFactory factory) {
+    private MongoCollection createTicketCollection(final TicketDefinition ticket) {
         val collectionName = ticket.getProperties().getStorageName();
         LOGGER.trace("Setting up MongoDb Ticket Registry instance [{}]", collectionName);
         MongoDbConnectionFactory.createCollection(mongoTemplate, collectionName, this.dropCollection);

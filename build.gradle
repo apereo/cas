@@ -69,12 +69,12 @@ ext {
     continuousIntegrationBuild = System.getenv("CI") || Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
 
     excludedFilesFromTestCoverage = [
-            '**/**ConfigurationMetadata**',
-            '**/**Application**',
-            '**/**Application$**',
-            '**/**Exception$**',
-            '**/**Properties**',
-            '**/**Properties$**'
+        '**/**ConfigurationMetadata**',
+        '**/**Application**',
+        '**/**Application$**',
+        '**/**Exception$**',
+        '**/**Properties**',
+        '**/**Properties$**'
     ]
 }
 
@@ -166,11 +166,7 @@ allprojects {
     }
 
     repositories {
-        mavenLocal {
-            content {
-                includeGroup "org.apereo.service.persondir"
-            }
-        }
+        mavenLocal()
         mavenCentral()
         jcenter()
         maven {

@@ -2222,8 +2222,10 @@ ext.libraries = [
                 exclude(group: "org.springframework", module: "spring-context")
                 exclude(group: "org.springframework", module: "spring-context-support")
                 exclude(group: "org.springframework", module: "spring-beans")
-            }
+            },
+            dependencies.create("com.sun.mail:jakarta.mail:$jakartaMailVersion")
         ],
+
         springboot              : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-aop:$springBootVersion") {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
@@ -2423,12 +2425,10 @@ ext.libraries = [
                 }
         ],
         springbootundertow      : [
-                dependencies.create("org.springframework.boot:spring-boot-starter-undertow:$springBootVersion") {
-
-                }
+                dependencies.create("org.springframework.boot:spring-boot-starter-undertow:$springBootVersion")
         ],
-        springbootredis         : [
-                dependencies.create("org.springframework.boot:spring-boot-starter-data-redis:$springBootVersion") {
+        redis         : [
+                dependencies.create("org.springframework.data:spring-data-redis:$springDataRedisVersion") {
                     exclude(group: "org.springframework", module: "spring-tx")
                     exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.springframework", module: "spring-context-support")
@@ -2441,11 +2441,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                 },
-                dependencies.create("io.lettuce:lettuce-core:$redisLettuceVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
-                    exclude(group: "org.apache.commons", module: "commons-pool2")
-                }
+                dependencies.create("io.lettuce:lettuce-core:$redisLettuceVersion")
         ],
         springintegration       : [
                 dependencies.create("org.springframework.integration:spring-integration-core:$springIntegrationVersion") {

@@ -13,7 +13,7 @@ import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.profile.AbstractSAML2NameIDGenerator;
 import org.opensaml.saml.saml2.profile.SAML2NameIDGenerator;
 
-import javax.annotation.Nonnull;
+import lombok.NonNull;
 import java.util.Optional;
 
 /**
@@ -62,7 +62,7 @@ public class SamlAttributeBasedNameIdGenerator extends AbstractSAML2NameIDGenera
     }
 
     @Override
-    protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext) {
+    protected String getIdentifier(@NonNull final ProfileRequestContext profileRequestContext) {
         return this.attributeValue;
     }
 }
