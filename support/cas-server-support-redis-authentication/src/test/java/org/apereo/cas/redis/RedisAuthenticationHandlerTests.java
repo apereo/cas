@@ -24,10 +24,9 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -37,7 +36,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import redis.embedded.RedisServer;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
@@ -76,14 +74,14 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 }, properties = {
     "cas.authn.redis.host=localhost",
-    "cas.authn.redis.port=6377",
+    "cas.authn.redis.port=6379",
     "cas.authn.redis.password-encoder.type=DEFAULT",
     "cas.authn.redis.password-encoder.encoding-algorithm=SHA-512"
 })
 @EnableScheduling
 @Tag("Redis")
+@EnabledIfPortOpen(port = 6379)
 public class RedisAuthenticationHandlerTests {
-    private static RedisServer REDIS_SERVER;
 
     @Autowired
     @Qualifier("redisAuthenticationHandler")
@@ -92,17 +90,6 @@ public class RedisAuthenticationHandlerTests {
     @Autowired
     @Qualifier("authenticationRedisTemplate")
     private RedisTemplate authenticationRedisTemplate;
-
-    @BeforeAll
-    public static void startRedis() throws Exception {
-        REDIS_SERVER = new RedisServer(6377);
-        REDIS_SERVER.start();
-    }
-
-    @AfterAll
-    public static void stopRedis() {
-        REDIS_SERVER.stop();
-    }
 
     @BeforeEach
     public void initialize() {

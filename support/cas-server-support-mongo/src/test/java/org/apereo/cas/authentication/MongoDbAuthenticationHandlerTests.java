@@ -33,11 +33,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -69,13 +65,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = {
+    "cas.authn.mongo.client-uri=mongodb://root:secret@localhost:27017/admin",
     "cas.authn.mongo.collection=users",
-    "cas.authn.mongo.databaseName=cas",
-    "cas.authn.mongo.clientUri=mongodb://root:secret@localhost:27017/admin",
+    "cas.authn.mongo.database-name=cas",
     "cas.authn.mongo.attributes=loc,state",
-    "cas.authn.mongo.usernameAttribute=username",
-    "cas.authn.mongo.passwordAttribute=password",
-    "cas.authn.pac4j.typedIdUsed=false"
+    "cas.authn.mongo.username-attribute=username",
+    "cas.authn.mongo.password-attribute=password"
 })
 @EnableScheduling
 @EnabledIfPortOpen(port = 27017)
@@ -91,12 +86,11 @@ public class MongoDbAuthenticationHandlerTests {
 
     @BeforeEach
     public void initialize() {
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(new MockHttpServletRequest(), new MockHttpServletResponse()));
-
         val mongo = casProperties.getAuthn().getMongo();
-        try(val mongoClient = MongoDbConnectionFactory.buildMongoDbClient(mongo)) {
-            mongoClient.dropDatabase(mongo.getDatabaseName());
+        val factory = new MongoDbConnectionFactory();
+        try (val mongoClient = factory.buildMongoDbClient(mongo)) {
             val database = mongoClient.getDatabase(mongo.getDatabaseName());
+            database.drop();
             val col = database.getCollection(mongo.getCollection());
             val account = new Document();
             account.append(mongo.getUsernameAttribute(), "u1");
@@ -109,7 +103,8 @@ public class MongoDbAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthentication() throws Exception {
-        val result = this.authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("u1", "p1"));
+        val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("u1", "p1");
+        val result = this.authenticationHandler.authenticate(creds);
         assertEquals("u1", result.getPrincipal().getId());
         val attributes = result.getPrincipal().getAttributes();
         assertTrue(attributes.containsKey("loc"));

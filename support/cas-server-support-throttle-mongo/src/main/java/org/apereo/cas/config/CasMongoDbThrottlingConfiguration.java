@@ -18,6 +18,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.net.ssl.SSLContext;
+
 /**
  * This is {@link CasMongoDbThrottlingConfiguration}.
  *
@@ -40,6 +42,10 @@ public class CasMongoDbThrottlingConfiguration {
     private ObjectProvider<ThrottledRequestExecutor> throttledRequestExecutor;
 
     @Autowired
+    @Qualifier("sslContext")
+    private ObjectProvider<SSLContext> sslContext;
+
+    @Autowired
     @Bean
     @RefreshScope
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle(
@@ -48,9 +54,9 @@ public class CasMongoDbThrottlingConfiguration {
         val failure = throttle.getFailure();
 
         val mongo = casProperties.getAudit().getMongo();
-        val factory = new MongoDbConnectionFactory();
+        val factory = new MongoDbConnectionFactory(sslContext.getObject());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
-        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
 
         val context = ThrottledSubmissionHandlerConfigurationContext.builder()
             .failureThreshold(failure.getThreshold())

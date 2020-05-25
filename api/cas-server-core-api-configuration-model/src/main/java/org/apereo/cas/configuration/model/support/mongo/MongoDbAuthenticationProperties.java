@@ -61,6 +61,11 @@ public class MongoDbAuthenticationProperties extends SingleCollectionMongoDbProp
      */
     private String name;
 
+    /**
+     * Order of authentication handler in chain.
+     */
+    private int order = Integer.MAX_VALUE;
+
     public MongoDbAuthenticationProperties() {
         setCollection("users");
     }

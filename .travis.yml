@@ -33,4 +33,4 @@ env:
     - TERM=xterm
 jdk:
   - openjdk11
-install: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
+install: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel --refresh-dependencies

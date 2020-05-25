@@ -6,14 +6,16 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off" additivity="false" />
-        <Logger name="org.pac4j" level="off">
+        <Logger name="org.apereo.cas" level="error" >
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="com.mongodb" level="off">
+        <Logger name="com.mongodb" level="warn" >
             <AppenderRef ref="console"/>
         </Logger>
-        <Root level="off">
+        <Logger name="org.springframework.data.mongodb" level="warn" >
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>
