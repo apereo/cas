@@ -72,10 +72,6 @@ while (( "$#" )); do
             test|simple|run|basic|unit|unittests)
                 task+="testSimple "
                 ;;
-            memcached|memcache|kryo)
-                ./ci/tests/memcached/run-memcached-server.sh
-                task+="testMemcached "
-                ;;
             x509)
                 task+="testX509 "
                 ;;
@@ -91,25 +87,53 @@ while (( "$#" )); do
             groovy|script)
                 task+="testGroovy "
                 ;;
+            jdbc|jpa|database|db|hibernate|rdbms|hsql)
+                task+="testJDBC "
+                ;;
+            oauth)
+                task+="testOAuth "
+                ;;
+            oidc)
+                task+="testOIDC "
+                ;;
+            mfa|duo|gauth|webauthn|authy|fido|u2f|swivel|acceptto)
+                task+="testMFA "
+                ;;
+            saml|saml2)
+                task+="testSAML "
+                ;;
             jmx|jmx)
                 task+="testJMX "
                 ;;
+            rest|restful|restapi)
+                task+="testRestful "
+                ;;
+            webflow|swf)
+                task+="testWebflow "
+                ;;
             hz|hazelcast)
                 task+="testHazelcast "
+                ;;
+            ignite)
+                task+="testIgnite "
+                ;;
+            cosmosdb|cosmos)
+                task+="testCosmosDb "
+                ;;
+            simple|unit)
+                task+="testSimple "
                 ;;
             mssql)
                 ./ci/tests/mssqlserver/run-mssql-server.sh
                 task+="testMsSqlServer "
                 ;;
-            ignite)
-                task+="testIgnite "
-                ;;
             influx|influxdb)
                 ./ci/tests/influxdb/run-influxdb-server.sh
                 task+="testInfluxDb "
                 ;;
-            cosmosdb|cosmos)
-                task+="testCosmosDb "
+            memcached|memcache|kryo)
+                ./ci/tests/memcached/run-memcached-server.sh
+                task+="testMemcached "
                 ;;
             ehcache)
                 ./ci/tests/ehcache/run-terracotta-server.sh
@@ -132,9 +156,6 @@ while (( "$#" )); do
                 ./ci/tests/couchdb/run-couchdb-server.sh
                 task+="testCouchDb "
                 ;;
-            rest|restful|restapi)
-                task+="testRestful "
-                ;;
             mysql)
                 ./ci/tests/mysql/run-mysql-server.sh
                 task+="testMySQL "
@@ -142,9 +163,6 @@ while (( "$#" )); do
             maria|mariadb)
                 ./ci/tests/mariadb/run-mariadb-server.sh
                 task+="testMariaDb "
-                ;;
-            jdbc|jpa|database|db|hibernate|rdbms|hsql)
-                task+="testJDBC "
                 ;;
             postgres|pg|postgresql)
                 ./ci/tests/postgres/run-postgres-server.sh
@@ -155,23 +173,12 @@ while (( "$#" )); do
                 task+="testCassandra "
                 ;;
             kafka)
+                ./ci/tests/kafka/run-kafka-server.sh
                 task+="testKafka "
-                ;;
-            oauth)
-                task+="testOAuth "
                 ;;
             aws)
                 ./ci/tests/aws/run-aws-server.sh
                 task+="testAWS "
-                ;;
-            oidc)
-                task+="testOIDC "
-                ;;
-            mfa|duo|gauth|webauthn|authy|fido|u2f|swivel|acceptto)
-                task+="testMFA "
-                ;;
-            saml|saml2)
-                task+="testSAML "
                 ;;
             radius)
                 ./ci/tests/radius/run-radius-server.sh
@@ -189,9 +196,6 @@ while (( "$#" )); do
                 ./ci/tests/dynamodb/run-dynamodb-server.sh
                 task+="testDynamoDb "
                 ;;
-            webflow|swf)
-                task+="testWebflow "
-                ;;
             oracle)
                 ./ci/tests/oracle/run-oracle-server.sh
                 task+="testOracle "
@@ -203,9 +207,6 @@ while (( "$#" )); do
             activemq|amq|jms)
                 ./ci/tests/activemq/run-activemq-server.sh
                 task+="testJMS "
-                ;;
-            simple|unit)
-                task+="testSimple "
                 ;;
             esac
         done
