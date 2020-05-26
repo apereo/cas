@@ -64,12 +64,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        experimental: [false]
-        include:
-            - os: [windows-latest, macos-latest]
-              experimental: true
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.experimental }}
     steps:
       - uses: actions/checkout@v2
       - name: Setup tmate session
