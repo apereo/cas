@@ -43,8 +43,9 @@ In this context, maintenance strictly means that the release line and the target
 The following CAS releases will transition into a security-patch mode (SPM) only and will be EOLed at the indicated dates.
 
 | Release        | SPM Starting Date    | Full EOL  |
-| -------------- |:--------------------:| -------------------:|
-| `6.1.x`        | July 1st, 2020      | October 1st, 2020      |
+| -------------- |:--------------------:| ----------------------:|
+| `6.2.x`        | December 31st, 2020  | June 30th, 2021        |
+| `6.1.x`        | July 1st, 2020       | October 1st, 2020      |
 | `5.3.x`        | October 29th, 2019   | October 29th, 2020     |
 
 All previous releases absent in the above table are considered EOLed.
