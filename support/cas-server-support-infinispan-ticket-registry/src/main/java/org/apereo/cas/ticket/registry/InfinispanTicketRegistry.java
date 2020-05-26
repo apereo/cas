@@ -42,7 +42,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
             : expirationPolicy.getTimeToIdle();
 
         val ttl = getTimeToLive(expirationPolicy);
-        LOGGER.debug("Adding ticket [{}] to cache store to live [{}] seconds and stay idle for [{}]", ticketToAdd.getId(), ttl, idleTime);
+        LOGGER.debug("Adding ticket [{}] to cache to live [{}] seconds and stay idle for [{}] seconds", ticketToAdd.getId(), ttl, idleTime);
         this.cache.put(ticket.getId(), ticket, ttl, TimeUnit.SECONDS, idleTime, TimeUnit.SECONDS);
     }
 
