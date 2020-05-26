@@ -1308,10 +1308,10 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "net.sf.ehcache", module: "ehcache-core")
-                }
-        ],
-        testContainers : [
+                },
                 dependencies.create("org.testcontainers:testcontainers:$testContainersVersion") {
+                },
+                dependencies.create("org.testcontainers:junit-jupiter:$testContainersVersion") {
                 },
                 dependencies.create("org.testcontainers:influxdb:$testContainersVersion") {
                 },
