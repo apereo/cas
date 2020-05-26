@@ -34,6 +34,7 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CoreTicketUtils;
@@ -125,6 +126,17 @@ public abstract class BaseTicketRegistryTests {
         assertNotNull(authentication.getSuccesses());
         assertNotNull(authentication.getWarnings());
         assertNotNull(authentication.getFailures());
+    }
+
+
+    @RepeatedTest(2)
+    public void verifyTicketWithTimeoutPolicy() {
+        val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
+        ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            originalAuthn,
+            TimeoutExpirationPolicy.builder().timeToKillInSeconds(5).build()));
+        val tgt = ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        assertNotNull(tgt);
     }
 
     @RepeatedTest(2)
