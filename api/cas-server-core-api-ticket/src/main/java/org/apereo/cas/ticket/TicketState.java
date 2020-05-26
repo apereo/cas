@@ -63,4 +63,11 @@ public interface TicketState {
      * @since 5.0.0
      */
     void update();
+
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
+    String getId();
 }
