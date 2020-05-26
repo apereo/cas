@@ -2502,7 +2502,9 @@ ext.libraries = [
                     exclude(group: "org.scala-lang", module: "scala-library")
                     exclude(group: "org.apache.kafka", module: "kafka-clients")
 
-                },
+                }
+        ],
+        springkafka : [
                 dependencies.create("org.springframework.kafka:spring-kafka:$kafkaSpringVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.springframework", module: "spring-messaging")
@@ -2512,7 +2514,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.scala-lang", module: "scala-library")
-
                 }
         ],
         springintegrationamqp   : [
