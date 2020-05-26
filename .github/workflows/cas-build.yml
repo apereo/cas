@@ -63,14 +63,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-          - macos-latest
+        os: [ubuntu-latest, windows-latest, macos-latest]
         experimental: [false]
         include:
-            os: [windows-latest, macos-latest]
-            experimental: true
+            - os: [windows-latest, macos-latest]
+              experimental: true
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
     steps:
