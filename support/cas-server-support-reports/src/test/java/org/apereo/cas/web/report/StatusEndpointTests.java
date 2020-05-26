@@ -14,12 +14,14 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated since 6.2.0
  */
 @TestPropertySource(properties = {
     "management.endpoint.status.enabled=true",
     "management.endpoint.health.enabled=false"
 })
 @Tag("Simple")
+@Deprecated(since ="6.2.0")
 public class StatusEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("statusEndpoint")
