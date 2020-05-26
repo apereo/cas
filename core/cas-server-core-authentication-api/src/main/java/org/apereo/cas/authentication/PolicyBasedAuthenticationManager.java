@@ -47,6 +47,37 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
     private final ConfigurableApplicationContext applicationContext;
 
+    @Override
+    @Audit(
+        action = "AUTHENTICATION",
+        actionResolverName = "AUTHENTICATION_RESOLVER",
+        resourceResolverName = "AUTHENTICATION_RESOURCE_RESOLVER")
+    public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
+        val result = invokeAuthenticationPreProcessors(transaction);
+        if (!result) {
+            LOGGER.warn("An authentication pre-processor could not successfully process the authentication transaction");
+            throw new AuthenticationException("Authentication pre-processor has failed to process transaction");
+        }
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(transaction.getCredentials());
+        val builder = authenticateInternal(transaction);
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(builder);
+
+        val authentication = builder.build();
+        addAuthenticationMethodAttribute(builder, authentication);
+        populateAuthenticationMetadataAttributes(builder, transaction);
+        invokeAuthenticationPostProcessors(builder, transaction);
+
+        val auth = builder.build();
+        val principal = auth.getPrincipal();
+        if (principal instanceof NullPrincipal) {
+            throw new UnresolvedPrincipalException(auth);
+        }
+        LOGGER.info("Authenticated principal [{}] with attributes [{}] via credentials [{}].",
+            principal.getId(), principal.getAttributes(), transaction.getCredentials());
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(auth);
+        return auth;
+    }
+
     /**
      * Populate authentication metadata attributes.
      *
@@ -120,37 +151,6 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         return null;
     }
 
-    @Override
-    @Audit(
-        action = "AUTHENTICATION",
-        actionResolverName = "AUTHENTICATION_RESOLVER",
-        resourceResolverName = "AUTHENTICATION_RESOURCE_RESOLVER")
-    public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
-        val result = invokeAuthenticationPreProcessors(transaction);
-        if (!result) {
-            LOGGER.warn("An authentication pre-processor could not successfully process the authentication transaction");
-            throw new AuthenticationException("Authentication pre-processor has failed to process transaction");
-        }
-        AuthenticationCredentialsThreadLocalBinder.bindCurrent(transaction.getCredentials());
-        val builder = authenticateInternal(transaction);
-        AuthenticationCredentialsThreadLocalBinder.bindCurrent(builder);
-
-        val authentication = builder.build();
-        addAuthenticationMethodAttribute(builder, authentication);
-        populateAuthenticationMetadataAttributes(builder, transaction);
-        invokeAuthenticationPostProcessors(builder, transaction);
-
-        val auth = builder.build();
-        val principal = auth.getPrincipal();
-        if (principal instanceof NullPrincipal) {
-            throw new UnresolvedPrincipalException(auth);
-        }
-        LOGGER.info("Authenticated principal [{}] with attributes [{}] via credentials [{}].",
-            principal.getId(), principal.getAttributes(), transaction.getCredentials());
-        AuthenticationCredentialsThreadLocalBinder.bindCurrent(auth);
-        return auth;
-    }
-
     /**
      * Invoke authentication pre processors.
      *
@@ -201,25 +201,20 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
         var principal = result.getPrincipal();
 
-        if (resolver == null) {
-            LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]", authenticationHandlerName, principal);
-        } else {
+        if (resolver != null) {
             principal = resolvePrincipal(handler, resolver, credential, principal);
-            if (principal == null) {
-                if (this.principalResolutionFailureFatal) {
-                    val resolverName = resolver.getName();
-                    LOGGER.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
-                        + "CAS is configured to treat principal resolution failures as fatal.", resolverName, credential);
-                    throw new UnresolvedPrincipalException();
-                }
-                LOGGER.warn("Principal resolution handled by [{}] produced a null principal. "
-                    + "This is likely due to misconfiguration or missing attributes; CAS will attempt to use the principal "
-                    + "produced by the authentication handler, if any.", resolver.getClass().getSimpleName());
-            }
         }
 
         if (principal == null) {
-            LOGGER.warn("Principal resolution for authentication by [{}] produced a null principal.", authenticationHandlerName);
+            val resolverName = resolver == null ? authenticationHandlerName : resolver.getName();
+            if (this.principalResolutionFailureFatal) {
+                LOGGER.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
+                    + "CAS is configured to treat principal resolution failures as fatal.", resolverName, credential);
+                throw new UnresolvedPrincipalException();
+            }
+            LOGGER.warn("Principal resolution handled by [{}] produced a null principal. "
+                + "This is likely due to misconfiguration or missing attributes; CAS will attempt to use the principal "
+                + "produced by the authentication handler, if any.", resolverName);
         } else {
             builder.setPrincipal(principal);
         }
