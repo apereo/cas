@@ -49,7 +49,7 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
 
         val redirectView = (RedirectView) result;
         val redirectUrl = redirectView.getUrl();
-        assertEquals("https://cas.example.org:8443/cas/logout", redirectUrl);
+        assertEquals("https://cas.example.org:8443/cas/logout?state=abcd1234", redirectUrl);
     }
 
     @Test
