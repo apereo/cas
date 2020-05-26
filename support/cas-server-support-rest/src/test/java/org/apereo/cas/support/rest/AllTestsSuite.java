@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
  * @since 5.2.0
  */
 @SelectClasses({
+    RestResourceUtilsTests.class,
     TicketGrantingTicketResourceTests.class,
     ServiceTicketResourceTests.class,
     TicketStatusResourceTests.class,

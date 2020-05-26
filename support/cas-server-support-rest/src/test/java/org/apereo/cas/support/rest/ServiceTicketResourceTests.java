@@ -161,7 +161,7 @@ public class ServiceTicketResourceTests {
             .param(PASSWORD, TEST_VALUE))
             .andExpect(status().isUnauthorized())
             .andReturn().getResponse().getContentAsString();
-        assertTrue(content.contains("LoginException"));
+        assertTrue(content.contains("Login failed"));
     }
 
     private void configureCasMockSTCreationToThrow(final Throwable e) {
