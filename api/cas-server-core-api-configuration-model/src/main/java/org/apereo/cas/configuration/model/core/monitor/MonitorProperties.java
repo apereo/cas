@@ -209,6 +209,12 @@ public class MonitorProperties implements Serializable {
          */
         private LdapSecurity ldap = new LdapSecurity();
 
+        /**
+         * Control whether access to endpoints can be controlled
+         * via form-based login over the web via a special admin login endpoint.
+         */
+        private boolean formLoginEnabled;
+
         @Getter
         @Setter
         public static class JaasSecurity implements Serializable {

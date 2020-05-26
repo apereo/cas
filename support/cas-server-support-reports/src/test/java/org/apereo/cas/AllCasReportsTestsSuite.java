@@ -1,7 +1,6 @@
 package org.apereo.cas;
 
 import org.apereo.cas.web.report.AuditLogEndpointTests;
-import org.apereo.cas.web.report.CasApplicationContextReloadEndpointTests;
 import org.apereo.cas.web.report.CasInfoEndpointContributorTests;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpointTests;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpointTests;
@@ -30,7 +29,6 @@ import org.junit.runner.RunWith;
     StatusEndpointTests.class,
     StatusEndpointWithHealthTests.class,
     StatisticsEndpointTests.class,
-    CasApplicationContextReloadEndpointTests.class,
     SingleSignOnSessionsEndpointTests.class,
     SpringWebflowEndpointTests.class,
     LoggingConfigurationEndpointTests.class,

@@ -12,7 +12,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.report.AuditLogEndpoint;
-import org.apereo.cas.web.report.CasApplicationContextReloadEndpoint;
 import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
@@ -24,6 +23,7 @@ import org.apereo.cas.web.report.SpringWebflowEndpoint;
 import org.apereo.cas.web.report.StatisticsEndpoint;
 import org.apereo.cas.web.report.StatusEndpoint;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -153,20 +153,17 @@ public class CasReportsConfiguration {
             principalFactory.getObject());
     }
 
-    @Bean
-    @ConditionalOnAvailableEndpoint
-    public CasApplicationContextReloadEndpoint casApplicationContextReloadEndpoint() {
-        return new CasApplicationContextReloadEndpoint(casProperties, contextRefresher.getObject());
-    }
-
     /**
      * This this {@link StatusEndpointConfiguration}.
      *
      * @author Misagh Moayyed
      * @since 6.0.0
+     * @deprecated since 6.2.0
      */
     @Configuration("statusEndpointConfiguration")
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @Slf4j
+    @Deprecated(since ="6.2.0")
     public static class StatusEndpointConfiguration {
         @Autowired
         private CasConfigurationProperties casProperties;
@@ -177,6 +174,8 @@ public class CasReportsConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         public StatusEndpoint statusEndpoint() {
+            LOGGER.warn("The status actuator endpoint is deprecated and is scheduled to be removed from CAS in the future. "
+                + "To obtain status and health inforation, please configure and use the health endpoint instead.");
             return new StatusEndpoint(casProperties, healthEndpoint.getIfAvailable());
         }
     }
