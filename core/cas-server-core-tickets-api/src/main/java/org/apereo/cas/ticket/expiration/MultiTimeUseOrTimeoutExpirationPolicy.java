@@ -60,15 +60,16 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
         }
         val countUses = ticketState.getCountOfUses();
         if (countUses >= this.numberOfUses) {
-            LOGGER.debug("Ticket usage count [{}] is greater than or equal to [{}]. Ticket has expired", countUses, this.numberOfUses);
+            LOGGER.debug("Ticket usage count [{}] is greater than or equal to [{}]. Ticket [{}] has expired",
+                countUses, this.numberOfUses, ticketState.getId());
             return true;
         }
         val systemTime = ZonedDateTime.now(getClock());
         val lastTimeUsed = ticketState.getLastTimeUsed();
         val expirationTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
         if (systemTime.isAfter(expirationTime)) {
-            LOGGER.debug("Ticket has expired because the difference between current time [{}] and ticket time [{}] is greater than or equal to [{}].",
-                systemTime, lastTimeUsed, this.timeToKillInSeconds);
+            LOGGER.debug("Ticket [{}] has expired because the difference between current time [{}] and ticket time [{}] is greater than or equal to [{}].",
+                ticketState.getId(), systemTime, lastTimeUsed, this.timeToKillInSeconds);
             return true;
         }
         return super.isExpired(ticketState);
