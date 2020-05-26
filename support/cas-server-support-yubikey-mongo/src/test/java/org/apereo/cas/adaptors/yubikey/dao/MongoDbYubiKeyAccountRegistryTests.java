@@ -107,9 +107,6 @@ public class MongoDbYubiKeyAccountRegistryTests {
     @Qualifier("yubiKeyAccountRegistry")
     private YubiKeyAccountRegistry yubiKeyAccountRegistry;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Test
     public void verifyAccountNotRegistered() {
         assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("missing-user"));
@@ -117,7 +114,6 @@ public class MongoDbYubiKeyAccountRegistryTests {
 
     @Test
     public void verifyAccountNotRegisteredWithBadToken() {
-        casProperties.getAuthn().getMfa().getYubikey().getMongo().getu
         assertFalse(yubiKeyAccountRegistry.registerAccountFor("casuser", BAD_TOKEN));
         assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuser"));
     }
