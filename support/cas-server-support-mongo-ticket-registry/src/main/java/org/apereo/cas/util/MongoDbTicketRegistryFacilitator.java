@@ -31,7 +31,9 @@ public class MongoDbTicketRegistryFacilitator {
     private static final ImmutableSet<String> MONGO_INDEX_KEYS = ImmutableSet.of("v", "key", "name", "ns");
 
     private final TicketCatalog ticketCatalog;
+
     private final MongoTemplate mongoTemplate;
+
     private final boolean dropCollection;
 
     /**
@@ -39,14 +41,14 @@ public class MongoDbTicketRegistryFacilitator {
      */
     public void createTicketCollections() {
         val definitions = ticketCatalog.findAll();
-        
+
         definitions.forEach(t -> {
             val c = createTicketCollection(t);
             LOGGER.debug("Created MongoDb collection configuration for [{}]", c.getNamespace().getFullName());
         });
         LOGGER.info("Configured MongoDb Ticket Registry instance with available collections: [{}]", mongoTemplate.getCollectionNames());
     }
-    
+
     private MongoCollection createTicketCollection(final TicketDefinition ticket) {
         val collectionName = ticket.getProperties().getStorageName();
         LOGGER.trace("Setting up MongoDb Ticket Registry instance [{}]", collectionName);
@@ -78,18 +80,20 @@ public class MongoDbTicketRegistryFacilitator {
         val indexes = (ListIndexesIterable<Document>) collection.listIndexes();
         var indexExistsWithDifferentOptions = false;
 
+        val indexKeys = index.getIndexKeys();
+        val indexOptions = index.getIndexOptions();
         for (val existingIndex : indexes) {
-            val keyMatches = existingIndex.get("key").equals(index.getIndexKeys());
-            val optionsMatch = index.getIndexOptions().entrySet().stream()
+            val keyMatches = existingIndex.get("key").equals(indexKeys);
+            val optionsMatch = indexOptions.entrySet().stream()
                 .allMatch(entry -> entry.getValue().equals(existingIndex.get(entry.getKey())));
             val noExtraOptions = existingIndex.keySet().stream()
-                .allMatch(key -> MONGO_INDEX_KEYS.contains(key) || index.getIndexOptions().keySet().contains(key));
+                .allMatch(key -> MONGO_INDEX_KEYS.contains(key) || indexOptions.keySet().contains(key));
             indexExistsWithDifferentOptions |= keyMatches && !(optionsMatch && noExtraOptions);
         }
 
         if (indexExistsWithDifferentOptions) {
-            LOGGER.debug("Removing MongoDb index [{}] from [{}]", index.getIndexKeys(), collection.getNamespace());
-            collection.dropIndex(index.getIndexKeys());
+            LOGGER.debug("Removing MongoDb index [{}] from [{}]", indexKeys, collection.getNamespace());
+            collection.dropIndex(indexKeys);
         }
     }
 }

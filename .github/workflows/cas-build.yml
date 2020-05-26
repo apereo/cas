@@ -69,6 +69,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v2
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
@@ -144,6 +146,8 @@ jobs:
           - checkstyleTest
     steps:
       - uses: actions/checkout@v2
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v2
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
@@ -452,6 +456,8 @@ jobs:
     needs: [cache]
     steps:
       - uses: actions/checkout@v2
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v2
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:

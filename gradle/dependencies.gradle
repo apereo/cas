@@ -1310,54 +1310,65 @@ ext.libraries = [
                     exclude(group: "net.sf.ehcache", module: "ehcache-core")
                 }
         ],
+        testContainers : [
+                dependencies.create("org.testcontainers:testcontainers:$testContainersVersion") {
+                },
+                dependencies.create("org.testcontainers:influxdb:$testContainersVersion") {
+                },
+                dependencies.create("org.testcontainers:mysql:$testContainersVersion") {
+                },
+                dependencies.create("org.testcontainers:postgresql:$testContainersVersion") {
+                },
+                dependencies.create("org.testcontainers:mariadb:$testContainersVersion") {
+                },
+                dependencies.create("org.testcontainers:mongodb:$testContainersVersion") {
+                },
+                dependencies.create("org.testcontainers:couchbase:$testContainersVersion") {
+                },
+                dependencies.create("org.testcontainers:mssqlserver:$testContainersVersion") {
+                },
+                dependencies.create("org.testcontainers:kafka:$testContainersVersion") {
+                },
+                dependencies.create("org.testcontainers:rabbitmq:$testContainersVersion") {
+                },
+                dependencies.create("org.testcontainers:cassandra:$testContainersVersion") {
+                },
+                dependencies.create("org.testcontainers:jdbc:$testContainersVersion") {
+                }
+        ],
         tests                   : [
                 dependencies.create("com.unboundid:unboundid-ldapsdk:$unboundidVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-cli", module: "commons-cli")
-
                 },
                 dependencies.create("org.mockito:mockito-core:$mockitoVersion") {
                     exclude(group: "org.hamcrest", module: "hamcrest-core")
                     exclude(group: "org.objenesis", module: "objenesis")
                     exclude(group: "junit", module: "junit")
                     exclude(group: "net.bytebuddy", module: "byte-buddy")
-
                 },
                 dependencies.create("org.mockito:mockito-junit-jupiter:$mockitoVersion") {
                     exclude(group: "org.mockito", module: "mockito-core")
                     exclude(group: "org.junit.jupiter", module: "junit-jupiter-api")
-
                 },
                 dependencies.create("org.objenesis:objenesis:$objenesisVersion") {
                     exclude(group: "org.mockito", module: "mockito-all")
-
-                },
-                dependencies.create("junit:junit:4.13") {
-
                 },
                 dependencies.create("org.junit.jupiter:junit-jupiter-api:$junitVersion") {
-
                 },
                 dependencies.create("org.junit.jupiter:junit-jupiter-engine:$junitVersion") {
-
                 },
                 dependencies.create("org.junit.jupiter:junit-jupiter-params:$junitVersion") {
-
                 },
                 dependencies.create("org.junit.vintage:junit-vintage-engine:$junitVersion") {
-
                 },
                 dependencies.create("org.junit.platform:junit-platform-engine:$junitPlatformVersion") {
-
                 },
                 dependencies.create("org.junit.platform:junit-platform-suite-api:$junitPlatformVersion") {
-
                 },
                 dependencies.create("org.junit.platform:junit-platform-launcher:$junitPlatformVersion") {
-
                 },
                 dependencies.create("org.junit.platform:junit-platform-runner:$junitPlatformVersion") {
-
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-test:$springBootVersion") {
                     exclude(group: "org.hamcrest", module: "hamcrest-core")
@@ -1381,38 +1392,31 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
-
                 },
                 dependencies.create("org.hsqldb:hsqldb:$hsqlVersion"),
                 dependencies.create("org.skyscreamer:jsonassert:$jsonassertVersion") {
                     exclude(group: "org.json", module: "json")
                     exclude(group: "com.vaadin.external.google", module: "android-json")
-
                 },
                 dependencies.create("org.springframework:spring-test:$springVersion") {
                     exclude(group: "junit", module: "junit")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
-
                 },
                 dependencies.create("org.json:json:$jsonVersion") {
-
                 }
         ],
         kryo                    : [
                 dependencies.create("com.esotericsoftware:kryo:$kryoVersion") {
                     exclude(group: "net.spy", module: "spymemcached")
                     exclude(group: "org.objenesis", module: "objenesis")
-
                 },
                 dependencies.create("de.javakaffee:kryo-serializers:$kryoSerializersVersion") {
                     exclude(group: "com.esotericsoftware", module: "kryo")
                     exclude(group: "org.objenesis", module: "objenesis")
-
                 },
                 dependencies.create("org.objenesis:objenesis:$objenesisVersion") {
                     exclude(group: "org.mockito", module: "mockito-all")
-
                 }
         ],
         memcached               : [
@@ -1427,12 +1431,10 @@ ext.libraries = [
                 dependencies.create("org.ldaptive:ldaptive:$ldaptiveVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-cli", module: "commons-cli")
-
                 },
                 dependencies.create("org.ldaptive:ldaptive-beans:$ldaptiveVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-cli", module: "commons-cli")
-
                 }
         ],
         log4j                   : [
@@ -1447,27 +1449,21 @@ ext.libraries = [
                     exclude(group: "org.apache.logging.log4j", module: "log4j-core")
                     exclude(group: "org.apache.logging.log4j", module: "log4j-api")
                     exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
-
                 },
                 dependencies.create("org.apache.logging.log4j:log4j-api:$log4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 },
                 dependencies.create("org.apache.logging.log4j:log4j-core:$log4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 },
                 dependencies.create("org.apache.logging.log4j:log4j-jcl:$log4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 },
                 dependencies.create("org.apache.logging.log4j:log4j-web:$log4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 },
                 dependencies.create("org.apache.logging.log4j:log4j-slf4j18-impl:$log4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 },
                 dependencies.create("com.lmax:disruptor:$disruptorVersion")
         ],
@@ -3337,7 +3333,6 @@ ext.libraries = [
                     exclude(group: "org.opensaml", module: "opensaml-xacml-saml-impl")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-saml-api")
                     exclude(group: "org.opensaml", module: "opensaml-core")
-
                 },
                 dependencies.create("wsdl4j:wsdl4j:$wsdl4jVersion") {
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
@@ -3398,36 +3393,27 @@ ext.libraries = [
         ],
         webjars                 : [
                 dependencies.create("org.webjars:headjs:$headjsVersion") {
-
                 },
                 dependencies.create("org.webjars:jquery:$jqueryVersion") {
-
                 },
                 dependencies.create("org.webjars.bowergithub.dropbox:zxcvbn:$zxcvbnVersion") {
-
                 },
                 dependencies.create("org.webjars:bootstrap:$bootstrapVersion") {
                     exclude(group: "org.webjars", module: "popper.js")
                     exclude(group: "org.webjars", module: "jquery")
-
                 },
                 dependencies.create("org.webjars:datatables:$datatablesVersion") {
                     exclude(group: "org.webjars", module: "jquery")
-
                 },
                 dependencies.create("org.webjars:bootstrap-select:$bootstrapSelectVersion") {
                     exclude(group: "org.webjars", module: "jquery")
                     exclude(group: "org.webjars", module: "bootstrap")
-
                 },
                 dependencies.create("org.webjars.npm:material-components-web:$materialVersion") {
-
                 },
                 dependencies.create("org.webjars.npm:mdi__font:$mdiFontVersion") {
-
                 },
                 dependencies.create("org.webjars.npm:normalize.css:$normalizeVersion") {
-
                 }
         ]
 ]
@@ -3439,7 +3425,6 @@ def createMetricsDependencies(String... coordinates) {
             exclude(group: "org.slf4j", module: "slf4j-api")
             exclude(group: "commons-lang", module: "commons-lang")
             excludeDependencyIfNecessary(it, "com.signalfx.public:signalfx-java")
-
         }
     }
 }

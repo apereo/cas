@@ -25,6 +25,7 @@ import org.apereo.cas.config.support.authentication.YubiKeyAuthenticationMultifa
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -98,6 +99,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As="
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnabledIfPortOpen(port = 27017)
 public class MongoDbYubiKeyAccountRegistryTests {
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
 
