@@ -53,8 +53,7 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     public TimeoutExpirationPolicy(@JsonProperty("timeToIdle") final long timeToKillInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
     }
-
-
+    
     @Override
     public boolean isExpired(final TicketState ticketState) {
         if (ticketState == null) {
@@ -76,6 +75,4 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     public Long getTimeToIdle() {
         return this.timeToKillInSeconds;
     }
-
-
 }
