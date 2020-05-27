@@ -74,11 +74,6 @@ public class OAuthProperties implements Serializable {
     private UserProfileViewTypes userProfileViewType = UserProfileViewTypes.NESTED;
 
     /**
-     * Response type determines the authentication flow on the Authentication Server.
-     */
-    private String responseType = "code";
-
-    /**
      * Profile view types.
      */
     public enum UserProfileViewTypes {

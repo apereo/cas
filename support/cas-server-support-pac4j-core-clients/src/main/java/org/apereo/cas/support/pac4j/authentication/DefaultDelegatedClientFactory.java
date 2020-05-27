@@ -520,7 +520,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 client.setAuthUrl(oauth.getAuthUrl());
                 client.setScope(oauth.getScope());
                 client.setCustomParams(oauth.getCustomParams());
-                client.getConfiguration().setResponseType(oauth.getResponseType())
+                client.getConfiguration().setResponseType(oauth.getResponseType());
 
                 if (StringUtils.isBlank(oauth.getClientName())) {
                     val count = index.intValue();
