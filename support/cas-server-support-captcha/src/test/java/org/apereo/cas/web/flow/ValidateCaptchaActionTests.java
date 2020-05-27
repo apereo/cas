@@ -129,7 +129,7 @@ public class ValidateCaptchaActionTests {
 
             val result = validateAction.execute(context);
             assertNotNull(result);
-            assertEquals(ValidateCaptchaAction.EVENT_ID_ERROR, result.getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_CAPTCHA_ERROR, result.getId());
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }

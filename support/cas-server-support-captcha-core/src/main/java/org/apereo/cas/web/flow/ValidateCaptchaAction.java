@@ -22,11 +22,6 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 @RequiredArgsConstructor
 public class ValidateCaptchaAction extends AbstractAction {
-    /**
-     * Captcha error event.
-     */
-    public static final String EVENT_ID_ERROR = "captchaError";
-
     private final GoogleRecaptchaProperties recaptchaProperties;
 
     @Override
@@ -51,7 +46,11 @@ public class ValidateCaptchaAction extends AbstractAction {
 
     private Event getError(final RequestContext requestContext) {
         val messageContext = requestContext.getMessageContext();
-        messageContext.addMessage(new MessageBuilder().error().code(EVENT_ID_ERROR).defaultText(EVENT_ID_ERROR).build());
-        return getEventFactorySupport().event(this, EVENT_ID_ERROR);
+        messageContext.addMessage(new MessageBuilder()
+            .error()
+            .code(CasWebflowConstants.TRANSITION_ID_CAPTCHA_ERROR)
+            .defaultText(CasWebflowConstants.TRANSITION_ID_CAPTCHA_ERROR)
+            .build());
+        return getEventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_CAPTCHA_ERROR);
     }
 }

@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
+import org.apereo.cas.pm.web.flow.PasswordManagementCaptchaWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.actions.HandlePasswordExpirationWarningMessagesAction;
 import org.apereo.cas.pm.web.flow.actions.InitPasswordChangeAction;
@@ -18,6 +19,8 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.InitializeCaptchaAction;
+import org.apereo.cas.web.flow.ValidateCaptchaAction;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +29,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -182,6 +186,43 @@ public class PasswordManagementWebflowConfiguration {
     @ConditionalOnMissingBean(name = "passwordManagementCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer passwordManagementCasWebflowExecutionPlanConfigurer() {
         return plan -> plan.registerWebflowConfigurer(passwordManagementWebflowConfigurer());
+    }
+
+    @ConditionalOnProperty(prefix = "cas.authn.pm", name = "captcha-enabled", havingValue = "true")
+    @Configuration(value = "passwordManagementCaptchaConfiguration")
+    @DependsOn("passwordManagementWebflowConfigurer")
+    public class PasswordManagementCaptchaConfiguration {
+
+        @ConditionalOnMissingBean(name = "passwordManagementCaptchaWebflowConfigurer")
+        @RefreshScope
+        @Bean
+        public CasWebflowConfigurer passwordManagementCaptchaWebflowConfigurer() {
+            val configurer = new PasswordManagementCaptchaWebflowConfigurer(flowBuilderServices.getObject(),
+                loginFlowDefinitionRegistry.getObject(),
+                applicationContext, casProperties);
+            configurer.setOrder(casProperties.getAuthn().getPm().getWebflow().getOrder() + 1);
+            return configurer;
+        }
+
+        @ConditionalOnMissingBean(name = "passwordResetValidateCaptchaAction")
+        @RefreshScope
+        @Bean
+        public Action passwordResetValidateCaptchaAction() {
+            return new ValidateCaptchaAction(casProperties.getGoogleRecaptcha());
+        }
+
+        @RefreshScope
+        @Bean
+        @ConditionalOnMissingBean(name = "passwordResetInitializeCaptchaAction")
+        public Action passwordResetInitializeCaptchaAction() {
+            return new InitializeCaptchaAction(casProperties);
+        }
+        
+        @Bean
+        @ConditionalOnMissingBean(name = "passwordManagementCaptchaWebflowExecutionPlanConfigurer")
+        public CasWebflowExecutionPlanConfigurer passwordManagementCaptchaWebflowExecutionPlanConfigurer() {
+            return plan -> plan.registerWebflowConfigurer(passwordManagementCaptchaWebflowConfigurer());
+        }
     }
 }
 
