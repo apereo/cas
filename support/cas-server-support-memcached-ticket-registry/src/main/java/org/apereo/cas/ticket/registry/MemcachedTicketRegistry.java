@@ -16,6 +16,9 @@ import java.util.function.Predicate;
 
 /**
  * Key-value ticket registry implementation that stores tickets in memcached keyed on the ticket ID.
+ * <p>
+ * If the number sent by a client is larger than {@link #THIRTY_DAYS_IN_SECONDS}, the expiration
+ * time of the ticket will be set to {@link #THIRTY_DAYS_IN_SECONDS} itself.
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
@@ -25,25 +28,12 @@ import java.util.function.Predicate;
 @Slf4j
 @RequiredArgsConstructor
 public class MemcachedTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
+    private static final int THIRTY_DAYS_IN_SECONDS = 60 * 60 * 24 * 30;
 
     /**
      * Memcached client.
      */
     private final ObjectPool<MemcachedClientIF> connectionPool;
-
-    /**
-     * If not time out value is specified, expire the ticket immediately.
-     *
-     * @param ticket the ticket
-     * @return timeout in milliseconds.
-     */
-    private static int getTimeout(final Ticket ticket) {
-        val ttl = ticket.getExpirationPolicy().getTimeToLive().intValue();
-        if (ttl == 0) {
-            return 1;
-        }
-        return ttl;
-    }
 
     @Override
     public Ticket updateTicket(final Ticket ticketToUpdate) {
@@ -127,6 +117,25 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
     @Override
     public void destroy() {
         this.connectionPool.close();
+    }
+
+    /**
+     * If not time out value is specified, expire the ticket immediately.
+     *
+     * @param ticket the ticket
+     * @return timeout in milliseconds.
+     */
+    private static int getTimeout(final Ticket ticket) {
+        val timeToLive = ticket.getExpirationPolicy().getTimeToLive();
+        var ttl = Long.MAX_VALUE == timeToLive ? Long.valueOf(Integer.MAX_VALUE) : timeToLive;
+        if (ttl == 0) {
+            return 1;
+        }
+        if (ttl >= THIRTY_DAYS_IN_SECONDS) {
+            LOGGER.warn("Time-to-live value [{}] is greater than or equal to [{}]", ttl, THIRTY_DAYS_IN_SECONDS);
+            return THIRTY_DAYS_IN_SECONDS;
+        }
+        return ttl.intValue();
     }
 
     @SneakyThrows
