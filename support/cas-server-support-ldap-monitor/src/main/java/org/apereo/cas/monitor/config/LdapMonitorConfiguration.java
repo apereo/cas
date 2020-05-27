@@ -33,7 +33,7 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "ldapMonitorConfiguration", proxyBeanMethods = false)
+@Configuration(value = "ldapMonitorConfiguration", proxyBeanMethods = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapMonitorConfiguration {
     private static final int MAP_SIZE = 8;
