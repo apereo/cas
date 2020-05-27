@@ -38,22 +38,3 @@
 
     /*]]>*/
 </script>
-
-<span th:if="${recaptchaVersion=='v2'}" th:remove="tag">
-    <script type="text/javascript" th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}" th:inline="javascript">
-        function onRecaptchaV2Submit(token) {
-            document.getElementById('fm1').submit();
-        }
-    </script>
-</span>
-
-<span th:if="${recaptchaVersion=='v3'}" th:remove="tag">
-    <script type="text/javascript" th:if="${recaptchaSiteKey != null}" th:inline="javascript">
-        grecaptcha.ready(function () {
-            grecaptcha.execute(/*[[${recaptchaSiteKey}]]*/, { action: 'login' })
-                .then(function (token) {
-                    document.getElementById('g-recaptcha-token').value(token)
-                });
-        });
-    </script>
-</span>

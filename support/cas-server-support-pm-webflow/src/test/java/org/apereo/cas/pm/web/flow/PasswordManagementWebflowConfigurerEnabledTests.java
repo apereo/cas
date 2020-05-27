@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.web.flow;
 
+import org.apereo.cas.web.flow.CasWebflowConstants;
+
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
@@ -19,7 +21,7 @@ public class PasswordManagementWebflowConfigurerEnabledTests extends PasswordMan
     @Override
     protected void verifyPasswordManagementStates(final Flow flow) {
         super.verifyPasswordManagementStates(flow);
-        var state = (TransitionableState) flow.getState(PasswordManagementWebflowConfigurer.STATE_ID_PASSWORD_CHANGE_ACTION);
+        var state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_PASSWORD_CHANGE_ACTION);
         assertNotNull(state);
     }
 }
