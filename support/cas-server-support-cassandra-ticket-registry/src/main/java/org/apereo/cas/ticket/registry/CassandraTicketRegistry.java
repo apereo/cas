@@ -59,13 +59,13 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
         }
 
         val holder = findCassandraTicketBy(definition, encodedTicketId);
-        if (holder == null || holder.isEmpty()) {
+        if (holder.isEmpty()) {
             LOGGER.debug("Ticket [{}] could not be found in Cassandra", encodedTicketId);
             return null;
         }
 
-        val deserialized = deserialize(holder.iterator().next());
-        val result = decodeTicket(deserialized);
+        val object = deserialize(holder.iterator().next());
+        val result = decodeTicket(object);
         if (result != null && predicate.test(result)) {
             return result;
         }
@@ -99,8 +99,8 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
                 return results
                     .stream()
                     .map(holder -> {
-                        val deserialized = deserialize(holder);
-                        return decodeTicket(deserialized);
+                        val result = deserialize(holder);
+                        return decodeTicket(result);
                     })
                     .collect(Collectors.toSet());
             })
@@ -169,12 +169,12 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     private static int getTimeToLive(final Ticket ticket) {
-        val expirationPolicy = ticket.getExpirationPolicy();
-        val ttl = Math.toIntExact(expirationPolicy.getTimeToLive());
+        val timeToLive = ticket.getExpirationPolicy().getTimeToLive();
+        val ttl = Long.MAX_VALUE == timeToLive ? Long.valueOf(Integer.MAX_VALUE) : timeToLive;
         if (ttl >= CassandraSessionFactory.MAX_TTL) {
             return CassandraSessionFactory.MAX_TTL;
         }
-        return ttl;
+        return ttl.intValue();
     }
 
     private Collection<CassandraTicketHolder> findCassandraTicketBy(final TicketDefinition definition) {
