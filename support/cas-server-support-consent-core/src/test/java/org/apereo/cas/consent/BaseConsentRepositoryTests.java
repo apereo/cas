@@ -4,6 +4,7 @@ import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasConsentCoreConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -87,6 +88,7 @@ public abstract class BaseConsentRepositoryTests {
     @Import({
         CasConsentCoreConfiguration.class,
         CasCoreAuditConfiguration.class,
+        CasCoreHttpConfiguration.class,
         CasCoreUtilConfiguration.class
     })
     static class SharedTestConfiguration {
