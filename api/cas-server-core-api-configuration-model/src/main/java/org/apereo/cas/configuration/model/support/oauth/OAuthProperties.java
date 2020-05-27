@@ -74,6 +74,11 @@ public class OAuthProperties implements Serializable {
     private UserProfileViewTypes userProfileViewType = UserProfileViewTypes.NESTED;
 
     /**
+     * Configurable response_type parameter in pac4j.
+     */
+    private String response_type = "code";
+
+    /**
      * Profile view types.
      */
     public enum UserProfileViewTypes {
