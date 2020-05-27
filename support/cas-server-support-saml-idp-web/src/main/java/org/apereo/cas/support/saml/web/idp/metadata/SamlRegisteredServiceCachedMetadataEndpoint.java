@@ -97,11 +97,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
         } catch (final Exception e) {
             if (LOGGER.isDebugEnabled()) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.error(e.getMessage(), e);
-                } else {
-                    LOGGER.error(e.getMessage());
-                }
+                LOGGER.error(e.getMessage(), e);
             } else {
                 LOGGER.error(e.getMessage());
             }
