@@ -3628,6 +3628,7 @@ identity provider are available [here](Configuration-Properties-Common.html#dele
 # cas.authn.pac4j.oauth2[0].profile-path=
 # cas.authn.pac4j.oauth2[0].scope=
 # cas.authn.pac4j.oauth2[0].profile-verb=GET|POST
+# cas.authn.pac4j.oauth2[0].response_type=code
 # cas.authn.pac4j.oauth2[0].profile-attrs.attr1=path-to-attr-in-profile
 # cas.authn.pac4j.oauth2[0].custom-params.param1=value1
 ```
