@@ -2,6 +2,7 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasSupportMongoDbAuditConfiguration;
@@ -26,9 +27,11 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreAuditConfiguration.class,
     CasSupportMongoDbAuditConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreHttpConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class,
-    CasCoreWebConfiguration.class},
+    CasCoreWebConfiguration.class
+},
     properties = {
         "cas.audit.mongo.host=localhost",
         "cas.audit.mongo.port=27017",

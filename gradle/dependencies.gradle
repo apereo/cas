@@ -189,10 +189,20 @@ ext.libraries = [
                 }
         ],
         cassandra               : [
-                dependencies.create("com.datastax.oss:java-driver-core:$cassandraDriverVersion"),
-                dependencies.create("com.datastax.oss:java-driver-mapper-runtime:$cassandraDriverVersion"),
+                dependencies.create("com.datastax.oss:java-driver-core:$cassandraDriverVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.codehaus.groovy", module: "groovy-json")
+                    exclude(group: "org.codehaus.groovy", module: "groovy")
+                },
+                dependencies.create("com.datastax.oss:java-driver-mapper-runtime:$cassandraDriverVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.codehaus.groovy", module: "groovy-json")
+                    exclude(group: "com.datastax.oss", module: "java-driver-core")
+                },
                 dependencies.create("org.springframework.data:spring-data-cassandra:$springDataCassandraVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.codehaus.groovy", module: "groovy")
+                    exclude(group: "com.datastax.oss", module: "java-driver-mapper-runtime")
                 }
         ],
         apachefediz             : [

@@ -67,8 +67,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v2
+#      - name: Setup tmate session
+#        uses: mxschmitt/action-tmate@v2
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
@@ -144,8 +144,8 @@ jobs:
           - checkstyleTest
     steps:
       - uses: actions/checkout@v2
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v2
+#      - name: Setup tmate session
+#        uses: mxschmitt/action-tmate@v2
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
@@ -454,8 +454,8 @@ jobs:
     needs: [cache]
     steps:
       - uses: actions/checkout@v2
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v2
+#      - name: Setup tmate session
+#        uses: mxschmitt/action-tmate@v2
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
@@ -668,28 +668,28 @@ jobs:
 
 ##########################################################################
 
-  renovate-dependency-updates:
-    runs-on: ubuntu-latest
-    needs: [cache]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: renovatebot/github-action@v1.0.0
-        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
-        with:
-          token: ${{ secrets.RENOVATE_TOKEN }}
-          configurationFile: .github/renovate.js
+#  renovate-dependency-updates:
+#    runs-on: ubuntu-latest
+#    needs: [cache]
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Set up JDK
+#        uses: actions/setup-java@v1
+#        with:
+#          java-version: ${{ env.JDK_CURRENT }}
+#      - name: Initialize
+#        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+#      - uses: actions/cache@v1
+#        with:
+#          path: ~/.gradle/caches
+#          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+#          restore-keys: |
+#            ${{ runner.os }}-gradle-
+#      - uses: renovatebot/github-action@v1.0.0
+#        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
+#        with:
+#          token: ${{ secrets.RENOVATE_TOKEN }}
+#          configurationFile: .github/renovate.js
 
 ##########################################################################
 
