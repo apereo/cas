@@ -42,6 +42,12 @@ public class PasswordManagementProperties implements Serializable {
     private boolean enabled;
 
     /**
+     * Indicates whether password management
+     * should activate captcha for password reset ops, etc.
+     */
+    private boolean captchaEnabled;
+
+    /**
      * Flag to indicate whether successful password change should trigger login automatically.
      */
     private boolean autoLogin;
