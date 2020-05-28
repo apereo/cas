@@ -518,7 +518,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: Publish SNAPSHOTs
-        if: ${{ !contains(github.event.head_commit.message, 'skip snapshots') && github.event_name == 'push' }}
+        if: ${{ github.event_name == 'push' && env.SONATYPE_USER != null && env.SONATYPE_PWD != null }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DpublishSnapshots=true -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
 
 ##########################################################################
@@ -540,7 +540,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Publish Documentation
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name == 'push' && env.GH_PAGES_TOKEN != null }}
         run: ./ci/push-docs-ghpages.sh
 
 ##########################################################################
@@ -686,7 +686,7 @@ jobs:
 #          restore-keys: |
 #            ${{ runner.os }}-gradle-
 #      - uses: renovatebot/github-action@v1.0.0
-#        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
+#        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.RENOVATE_TOKEN != null }}
 #        with:
 #          token: ${{ secrets.RENOVATE_TOKEN }}
 #          configurationFile: .github/renovate.js

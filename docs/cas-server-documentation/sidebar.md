@@ -110,7 +110,7 @@ layout: null
     *   [Adaptive](/$version/mfa/Configuring-Adaptive-Authentication.html)
     
 *   [SSO & SLO](#ssoandslo) 
-    *   [SSO Session](/$version/installation/Configuring-SSO-Session-Cookie.html)
+    *   [SSO Session](/$version/installation/Configuring-SSO.html)
     *   [Remember Me](/$version/installation/Configuring-LongTerm-Authentication.html)
     *   [Logout & SLO](/$version/installation/Logout-Single-Signout.html)
 
