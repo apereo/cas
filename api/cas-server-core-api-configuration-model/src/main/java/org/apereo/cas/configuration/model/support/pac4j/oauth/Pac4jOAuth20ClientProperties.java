@@ -59,6 +59,11 @@ public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientPropert
     private String profileVerb = "POST";
 
     /**
+     * Response type determines the authentication flow on the Authentication Server.
+     */
+    private String responseType = "code";
+
+    /**
      * Profile attributes to request and collect in form of key-value pairs.
      */
     private Map<String, String> profileAttrs = new LinkedHashMap<>(1);
