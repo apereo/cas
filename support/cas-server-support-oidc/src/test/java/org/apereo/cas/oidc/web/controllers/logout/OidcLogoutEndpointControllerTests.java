@@ -1,7 +1,6 @@
-package org.apereo.cas.oidc.web.controllers;
+package org.apereo.cas.oidc.web.controllers.logout;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
-import org.apereo.cas.oidc.web.controllers.logout.OidcLogoutEndpointController;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
