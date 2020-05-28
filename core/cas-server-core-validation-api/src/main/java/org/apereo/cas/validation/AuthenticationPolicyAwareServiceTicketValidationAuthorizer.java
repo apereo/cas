@@ -16,6 +16,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -55,7 +56,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizer implemen
             try {
                 val simpleName = p.getClass().getSimpleName();
                 LOGGER.trace("Executing authentication policy [{}]", simpleName);
-                if (!p.isSatisfiedBy(primaryAuthentication, assertedHandlers, applicationContext)) {
+                if (!p.isSatisfiedBy(primaryAuthentication, assertedHandlers, applicationContext, Optional.of(assertion))) {
                     throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
                 }
             } catch (final Exception e) {
