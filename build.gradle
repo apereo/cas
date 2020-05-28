@@ -69,12 +69,12 @@ ext {
     ci = System.getenv("CI") || Boolean.getBoolean("CI")
 
     excludedFilesFromTestCoverage = [
-            '**/**ConfigurationMetadata**',
-            '**/**Application**',
-            '**/**Application$**',
-            '**/**Exception$**',
-            '**/**Properties**',
-            '**/**Properties$**'
+        '**/**ConfigurationMetadata**',
+        '**/**Application**',
+        '**/**Application$**',
+        '**/**Exception$**',
+        '**/**Properties**',
+        '**/**Properties$**'
     ]
 }
 
