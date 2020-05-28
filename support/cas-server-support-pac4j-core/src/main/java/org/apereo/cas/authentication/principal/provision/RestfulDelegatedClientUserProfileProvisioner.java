@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.principal.provision;
 
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.support.RestEndpointProperties;
+import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.util.HttpUtils;
 
 import lombok.RequiredArgsConstructor;

@@ -39,7 +39,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
         for (final var c : name.toCharArray()) {
             result.append(Character.isUpperCase(c) && result.length() > 0
                 && result.charAt(result.length() - 1) != '-'
-                ? "-" + Character.toLowerCase(c) : c);
+                ? '-' + Character.toLowerCase(c) : c);
         }
         return new RelaxedPropertyNames(result.toString());
     }
@@ -71,7 +71,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
     /**
      * Name variations.
      */
-    enum Variation {
+    private enum Variation {
 
         NONE {
             @Override
@@ -104,7 +104,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
     /**
      * Name manipulations.
      */
-    enum Manipulation {
+    private enum Manipulation {
 
         NONE {
             @Override
@@ -220,7 +220,6 @@ public class RelaxedPropertyNames implements Iterable<String> {
         }
 
         public abstract String apply(String value);
-
     }
 
 }
