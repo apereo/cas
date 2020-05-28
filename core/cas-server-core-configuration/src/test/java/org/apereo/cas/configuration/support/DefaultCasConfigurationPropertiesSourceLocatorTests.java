@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreBootstrapStandaloneConfiguration.class
 },
     properties = {"spring.cloud.config.enabled=false", "spring.application.name=CAS"})
-@Tag("Simple")
+@Tag("CasConfiguration")
 public class DefaultCasConfigurationPropertiesSourceLocatorTests {
     static {
         System.setProperty("spring.application.name", "cas");

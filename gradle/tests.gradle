@@ -7,6 +7,15 @@ if (hasTestsOfCategory(project, "Kafka")) {
     }
 }
 
+if (hasTestsOfCategory(project, "CasConfiguration")) {
+    task testCasConfiguration(type: Test) {
+        enabled = shouldTest(project, "CasConfiguration")
+        useJUnitPlatform {
+            includeTags "CasConfiguration"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "Hazelcast")) {
     task testHazelcast(type: Test) {
         enabled = shouldTest(project, "Hazelcast")

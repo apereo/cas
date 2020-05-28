@@ -7,7 +7,7 @@ printHelp() {
     echo -e "Available test categories are:\n"
     echo -e "simple,memcached,cassandra,groovy,kafka,ldap,rest,mfa,jdbc,mssql,oracle,radius,couchdb,\
 mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,hazelcast,jmx,ehcache,\
-oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,cosmosdb"
+oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,cosmosdb,config"
     echo -e "\nPlease see the test script for details.\n"
 }
 
@@ -86,6 +86,9 @@ while (( "$#" )); do
                 ;;
             filesystem|files|file|fsys)
                 task+="testFileSystem "
+                ;;
+            config|casconfig|ccfg|cfg)
+                task+="testCasConfiguration "
                 ;;
             groovy|script)
                 task+="testGroovy "

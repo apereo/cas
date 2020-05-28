@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Iterator;
@@ -35,11 +36,11 @@ public class RelaxedPropertyNames implements Iterable<String> {
      * @return the relaxed names
      */
     public static RelaxedPropertyNames forCamelCase(final String name) {
-        final var result = new StringBuilder();
-        for (final var c : name.toCharArray()) {
+        val result = new StringBuilder();
+        for (val c : name.toCharArray()) {
             result.append(Character.isUpperCase(c) && result.length() > 0
                 && result.charAt(result.length() - 1) != '-'
-                ? '-' + Character.toLowerCase(c) : c);
+                ? "-" + Character.toLowerCase(c) : c);
         }
         return new RelaxedPropertyNames(result.toString());
     }

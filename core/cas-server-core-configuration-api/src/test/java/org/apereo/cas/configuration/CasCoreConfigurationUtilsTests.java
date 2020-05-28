@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.ldap[0].ldap-url=ldap://localhost:1389"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("CasConfiguration")
 public class CasCoreConfigurationUtilsTests {
 
     @Autowired
