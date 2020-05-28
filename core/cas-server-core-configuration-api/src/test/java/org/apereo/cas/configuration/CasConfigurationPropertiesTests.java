@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasConfigurationPropertiesTests.CasPropertiesTestConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@Tag("Simple")
+@Tag("CasConfiguration")
 public class CasConfigurationPropertiesTests {
     @Autowired
     private CasConfigurationProperties casProperties;

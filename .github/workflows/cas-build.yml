@@ -565,6 +565,7 @@ jobs:
           - hazelcast
           - x509
           - ldap
+          - casconfig
           - shell
           - mongo
           - jmx
