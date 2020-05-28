@@ -66,15 +66,15 @@ ext {
     remoteDebuggingSuspend = Boolean.getBoolean("remoteDebuggingSuspend") ? "y" : "n"
     generateGitProperties = Boolean.getBoolean("generateGitProperties")
 
-    continuousIntegrationBuild = System.getenv("CI") || Boolean.getBoolean("CI")
+    ci = System.getenv("CI") || Boolean.getBoolean("CI")
 
     excludedFilesFromTestCoverage = [
-        '**/**ConfigurationMetadata**',
-        '**/**Application**',
-        '**/**Application$**',
-        '**/**Exception$**',
-        '**/**Properties**',
-        '**/**Properties$**'
+            '**/**ConfigurationMetadata**',
+            '**/**Application**',
+            '**/**Application$**',
+            '**/**Exception$**',
+            '**/**Properties**',
+            '**/**Properties$**'
     ]
 }
 
@@ -131,9 +131,12 @@ dependencyCheck {
 allprojects {
     apply plugin: "idea"
     apply plugin: "eclipse"
+    apply plugin: "java-library"
     apply plugin: "jacoco"
-    apply plugin: "java"
-    apply plugin: "org.gradle.test-retry"
+
+    if (!Boolean.getBoolean("skipTestRetry")) {
+        apply plugin: "org.gradle.test-retry"
+    }
 
     apply from: rootProject.file("gradle/tasks.gradle")
 
@@ -205,7 +208,7 @@ subprojects {
             description: "Display a graph of all project dependencies") {
         doLast {}
     }
-    apply plugin: "java-library"
+
     if (projectShouldBePublished(project)) {
         apply plugin: "maven-publish"
         apply plugin: "signing"
@@ -279,6 +282,38 @@ subprojects {
 
     configurations {
         tests
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled(true)
+            html.enabled(true)
+        }
+        afterEvaluate {
+            classDirectories.setFrom(files(classDirectories.files.collect {
+                fileTree(dir: it, include: ['**/*.*'], exclude: rootProject.excludedFilesFromTestCoverage)
+            }))
+        }
+        sourceSets sourceSets.main
+        getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/*.exec"))
+    }
+
+
+    jacocoTestCoverageVerification {
+        getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/*.exec"))
+        afterEvaluate {
+            classDirectories.setFrom(files(classDirectories.files.collect {
+                fileTree(dir: it, include: ['**/*.*'], exclude: rootProject.excludedFilesFromTestCoverage)
+            }))
+        }
+        violationRules {
+            rule {
+                element = 'CLASS'
+                limit {
+                    minimum = 0.80
+                }
+            }
+        }
     }
 
     configurations.all {
@@ -396,7 +431,7 @@ subprojects {
             }
         }
     }
-    
+
     artifacts {
         tests testJar
         if (rootProject.publishReleases || rootProject.publishSnapshots) {
@@ -406,26 +441,11 @@ subprojects {
         }
         archives testJar
     }
-    
-    jacocoTestReport {
-        reports {
-            xml.enabled(true)
-            html.enabled(true)
-        }
-
-        jacocoTestReport {
-            afterEvaluate {
-                classDirectories.setFrom(files(classDirectories.files.collect {
-                    fileTree(dir: it, exclude: rootProject.excludedFilesFromTestCoverage)
-                }))
-            }
-        }
-    }
 
     sourceSets {
         main {
             java {
-                srcDirs = ["${projectDir}/src/main/java", "${projectDir}/src/main/groovy"]
+                srcDirs = ["${projectDir}/src/main/java"]
             }
             resources {
                 srcDirs = ["${projectDir}/src/main/resources"]
@@ -433,7 +453,7 @@ subprojects {
         }
         test {
             java {
-                srcDirs = ["${projectDir}/src/test/java", "${projectDir}/src/test/groovy"]
+                srcDirs = ["${projectDir}/src/test/java"]
 
             }
             resources {

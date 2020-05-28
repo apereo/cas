@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.services;
 
+import org.apereo.cas.configuration.model.BaseRestEndpointProperties;
 import org.apereo.cas.configuration.model.support.cassandra.serviceregistry.CassandraServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
@@ -16,7 +17,6 @@ import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegis
 import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.yaml.YamlServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
-import org.apereo.cas.configuration.support.BaseRestEndpointProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;

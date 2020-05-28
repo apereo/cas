@@ -1,4 +1,7 @@
-package org.apereo.cas.configuration.support;
+package org.apereo.cas.configuration.model;
+
+import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
