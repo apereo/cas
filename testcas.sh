@@ -132,7 +132,7 @@ while (( "$#" )); do
                 task+="testCouchDb "
                 ;;
             rest|restful|restapi)
-                task+="testRestful "
+                task+="testRestfulApi "
                 ;;
             mysql)
                 ./ci/tests/mysql/run-mysql-server.sh

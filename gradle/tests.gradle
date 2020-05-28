@@ -261,7 +261,7 @@ if (hasTestsOfCategory(project, "Mail")) {
 }
 
 if (hasTestsOfCategory(project, "RestfulApi")) {
-    task testRestful(type: Test) {
+    task testRestfulApi(type: Test) {
         enabled = shouldTest(project, "RestfulApi")
         useJUnitPlatform {
             includeTags "RestfulApi"
@@ -397,7 +397,7 @@ tasks.withType(Test) {
         afterSuite { desc, result ->
             if (!desc.parent) {
                 println """
-Results: ${result.resultType} @ ${new java.util.Date()} 
+Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.util.Date()} 
 (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)
 """
             }
@@ -417,6 +417,9 @@ Results: ${result.resultType} @ ${new java.util.Date()}
 
 def shouldTest(Project project, String category) {
     def foundTest = gradle.startParameter.taskNames.any {task -> task.toLowerCase().contains(category.toLowerCase())}
+    if (!foundTest) {
+        logger.info "No tests with category ${category} found for ${project.name}"
+    }
     return !Boolean.getBoolean("skipTests") && foundTest && hasTestsOfCategory(project, category)
 }
 
