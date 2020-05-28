@@ -14,7 +14,7 @@ oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,cosmos
 uploadCoverage=false
 parallel="--parallel "
 gradleCmd="./gradlew"
-flags="-x javadoc -x check -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true --no-daemon --configure-on-demand"
+flags="--no-daemon --configure-on-demand --build-cache -x javadoc -x check -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true "
 
 while (( "$#" )); do
     case "$1" in
