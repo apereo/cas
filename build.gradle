@@ -347,15 +347,15 @@ subprojects {
      * evaluate sub-projects to apply plugins, etc.
      */
     afterEvaluate { project ->
-        if (projectShouldBePublished(project)) {
-            logger.info "Project ${project.name} should be published"
+        if ((rootProject.publishReleases || rootProject.publishSnapshots) && projectShouldBePublished(project)) {
+            //logger.info "Project ${project.name} should be published"
             apply from: rootProject.file("gradle/maven.gradle")
 
             publishing {
                 publications {
                     def isWarPluginApplied = project.plugins.hasPlugin("war")
                     if (isWarPluginApplied) {
-                        logger.info "Project ${project.name} should be published as a WAR"
+                        //logger.info "Project ${project.name} should be published as a WAR"
                         mavenWeb(MavenPublication) {
                             from components.web
                             pom {
@@ -366,7 +366,7 @@ subprojects {
                             }
                         }
                     } else {
-                        logger.info "Project ${project.name} should be published as a JAR"
+                        //logger.info "Project ${project.name} should be published as a JAR"
                         mavenJava(MavenPublication) {
                             from components.java
                             artifact tasks['sourcesJar']

@@ -391,6 +391,9 @@ if (hasTestsOfCategory(project, "JDBC")) {
 
 test {
     enabled = false
+    onlyIf = {
+        false
+    }
 }
 
 tasks.withType(Test) {
@@ -466,9 +469,9 @@ Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.
 def shouldTest(Project project, String category) {
     def foundTest = gradle.startParameter.taskNames.any {task -> task.toLowerCase().contains(category.toLowerCase())}
     if (!foundTest) {
-        logger.info "No tests with category ${category} found for ${project.name}"
+        logger.debug "No tests with category ${category} found for ${project.name}"
     }
-    return !Boolean.getBoolean("skipTests") && foundTest && hasTestsOfCategory(project, category)
+    return !Boolean.getBoolean("skipTests") && foundTest  && hasTestsOfCategory(project, category)
 }
 
 def hasTestsOfCategory(Project project, String category) {

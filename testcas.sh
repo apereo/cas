@@ -3,7 +3,7 @@
 clear
 
 printHelp() {
-    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--coverage-report] [--coverage-upload] [--no-parallel] \n"
+    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--coverage-report] [--coverage-upload] [--no-parallel] [--dry-run] [--info] \n"
     echo -e "Available test categories are:\n"
     echo -e "simple,memcached,cassandra,groovy,kafka,ldap,rest,mfa,jdbc,mssql,oracle,radius,couchdb,\
 mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,hazelcast,jmx,ehcache,\
@@ -13,13 +13,23 @@ oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,cosmos
 
 uploadCoverage=false
 parallel="--parallel "
+dryRun=""
+info=""
 gradleCmd="./gradlew"
 flags="--no-daemon --configure-on-demand --build-cache -x javadoc -x check -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true "
 
 while (( "$#" )); do
     case "$1" in
     --no-parallel)
-        parallel=""
+        parallel="--no-parallel "
+        shift
+        ;;
+    --info)
+        info="--info "
+        shift
+        ;;
+    --dry-run)
+        dryRun="--dry-run "
         shift
         ;;
     --coverage-report)
@@ -227,10 +237,10 @@ then
   exit 1
 fi
 
-cmdstring="\033[1m$gradleCmd \e[32m$task\e[39m$tests\e[39m $flags ${coverage}${debug}${parallel}\e[39m"
+cmdstring="\033[1m$gradleCmd \e[32m$task\e[39m$tests\e[39m $flags ${coverage}${debug}${dryRun}${info}${parallel}\e[39m"
 printf "$cmdstring \e[0m\n"
 
-cmd="$gradleCmd $task $tests $flags ${coverage} ${debug} ${parallel}"
+cmd="$gradleCmd $task $tests $flags ${coverage} ${debug} ${parallel} ${dryRun} ${info}"
 eval "$cmd"
 retVal=$?
 echo -e "***************************************************************************************"
