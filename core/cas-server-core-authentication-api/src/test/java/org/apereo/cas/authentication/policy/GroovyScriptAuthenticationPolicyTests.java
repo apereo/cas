@@ -14,6 +14,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -35,7 +36,7 @@ public class GroovyScriptAuthenticationPolicyTests {
             + '}';
         val p = new GroovyScriptAuthenticationPolicy(script);
         assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(),
-            new LinkedHashSet<>(), mock(ConfigurableApplicationContext.class)));
+            new LinkedHashSet<>(), mock(ConfigurableApplicationContext.class), Optional.empty()));
     }
 
     @Test
@@ -48,7 +49,7 @@ public class GroovyScriptAuthenticationPolicyTests {
         val p = new GroovyScriptAuthenticationPolicy(script);
         assertThrows(GeneralSecurityException.class,
             () -> p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(),
-                new LinkedHashSet<>(), mock(ConfigurableApplicationContext.class)));
+                new LinkedHashSet<>(), mock(ConfigurableApplicationContext.class), Optional.empty()));
     }
 
     @Test
@@ -65,6 +66,6 @@ public class GroovyScriptAuthenticationPolicyTests {
         val p = new GroovyScriptAuthenticationPolicy("file:" + scriptFile.getCanonicalPath());
         assertThrows(GeneralSecurityException.class,
             () -> p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(),
-                new LinkedHashSet<>(), mock(ConfigurableApplicationContext.class)));
+                new LinkedHashSet<>(), mock(ConfigurableApplicationContext.class), Optional.empty()));
     }
 }

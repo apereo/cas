@@ -32,7 +32,9 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 
+import java.io.Serializable;
 import java.security.GeneralSecurityException;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -86,7 +88,8 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
     @Override
     public boolean isSatisfiedBy(final Authentication authentication,
                                  final Set<AuthenticationHandler> authenticationHandlers,
-                                 final ConfigurableApplicationContext applicationContext) throws Exception {
+                                 final ConfigurableApplicationContext applicationContext,
+                                 final Optional<Serializable> assertion) throws Exception {
         val principal = authentication.getPrincipal();
         try {
             val entity = buildHttpEntity(principal);

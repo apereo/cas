@@ -3,6 +3,7 @@ package org.apereo.cas.validation;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-public interface Assertion {
+public interface Assertion extends Serializable {
 
     /**
      * Gets the authentication event that is basis of this assertion.

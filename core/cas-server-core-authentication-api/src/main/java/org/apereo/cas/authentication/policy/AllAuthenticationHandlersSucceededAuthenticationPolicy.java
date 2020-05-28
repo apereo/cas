@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.io.Serializable;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,7 +33,8 @@ public class AllAuthenticationHandlersSucceededAuthenticationPolicy extends Base
 
     @Override
     public boolean isSatisfiedBy(final Authentication authn, final Set<AuthenticationHandler> authenticationHandlers,
-                                 final ConfigurableApplicationContext applicationContext) {
+                                 final ConfigurableApplicationContext applicationContext,
+                                 final Optional<Serializable> assertion) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Successful authentications: [{}], current authentication handlers [{}]", authn.getSuccesses().keySet(),
                 authenticationHandlers.stream().map(AuthenticationHandler::getName).collect(Collectors.joining(",")));

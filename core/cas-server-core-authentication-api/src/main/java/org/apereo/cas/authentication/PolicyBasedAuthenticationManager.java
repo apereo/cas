@@ -377,7 +377,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                     .stream()
                     .filter(handler -> transaction.getCredentials().stream().anyMatch(handler::supports))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
-                if (!p.isSatisfiedBy(authentication, supportingHandlers, this.applicationContext)) {
+                if (!p.isSatisfiedBy(authentication, supportingHandlers, this.applicationContext, Optional.empty())) {
                     failures.add(new AuthenticationException("Unable to satisfy authentication policy " + simpleName));
                 }
             } catch (final GeneralSecurityException e) {
