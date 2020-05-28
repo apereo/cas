@@ -3903,6 +3903,7 @@ If the user changes the language, a special cookie is created by CAS to contain 
 # cas.sso.create-sso-cookie-on-renew-authn=true
 # cas.sso.proxy-authn-enabled=true
 # cas.sso.renew-authn-enabled=true
+# cas.sso.sso-enabled=true
 # cas.sso.required-service-pattern=
 ```
 
