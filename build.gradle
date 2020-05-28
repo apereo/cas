@@ -69,12 +69,12 @@ ext {
     ci = System.getenv("CI") || Boolean.getBoolean("CI")
 
     excludedFilesFromTestCoverage = [
-        '**/**ConfigurationMetadata**',
-        '**/**Application**',
-        '**/**Application$**',
-        '**/**Exception$**',
-        '**/**Properties**',
-        '**/**Properties$**'
+            '**/**ConfigurationMetadata**',
+            '**/**Application**',
+            '**/**Application$**',
+            '**/**Exception$**',
+            '**/**Properties**',
+            '**/**Properties$**'
     ]
 }
 
@@ -645,38 +645,36 @@ if (rootProject.publishReleases || rootProject.publishSnapshots) {
     }
 }
 
-def publishedProjects = subprojects.findAll { !it.path.contains(':docs') }
 
-task jacocoMerge(type: JacocoMerge) {
-    publishedProjects.each { subproject ->
-        executionData subproject.tasks.withType(Test)
-        dependsOn tasks.withType(Test)
-    }
-    doFirst {
-        executionData = files(executionData.findAll { it.exists() })
-    }
-}
-
-task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
-    description = 'Generates an aggregate report from all projects'
-
+task jacocoRootReport(type: JacocoReport) {
     subprojects.each {
         if (!it.path.contains(":docs")) {
             it.tasks.withType(Test).each { task -> dependsOn(task) }
         }
     }
 
-    dependsOn jacocoMerge
+    additionalSourceDirs.setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
+    sourceDirectories.setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
+    classDirectories.setFrom(
+            files(subprojects.sourceSets.main.output).collect {
+                fileTree(dir: it,
+                        include: ['**/*.*'],
+                        exclude: rootProject.excludedFilesFromTestCoverage
+                        )
+            })
+    executionData.setFrom(files(subprojects.jacocoTestReport.executionData))
 
-    additionalSourceDirs.from(files(publishedProjects.sourceSets.main.allSource.srcDirs))
-    sourceDirectories.from(files(publishedProjects.sourceSets.main.allSource.srcDirs))
-    classDirectories.from(files(subprojects.sourceSets.main.output)).collect {
-        fileTree(dir: it, exclude: rootProject.excludedFilesFromTestCoverage)
-    }
-    executionData jacocoMerge.destinationFile
     reports {
         html.enabled = true
         xml.enabled = true
+    }
+    onlyIf = {
+        true
+    }
+    doFirst {
+        executionData files(executionData.findAll {
+            it.exists()
+        })
     }
 }
 
