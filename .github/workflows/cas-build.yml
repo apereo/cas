@@ -603,9 +603,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
+#      - uses: actions/download-artifact@v2
+#        with:
+#          name: binary-artifacts
       - name: Run Tests
         run: ./testcas.sh --coverage-report --coverage-upload --category ${{ matrix.category }}
 
