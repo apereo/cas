@@ -348,10 +348,6 @@ subprojects {
      */
     afterEvaluate { project ->
         if ((rootProject.publishReleases || rootProject.publishSnapshots) && projectShouldBePublished(project)) {
-            if (sonatypeUsername == null || sonatypePassword == null) {
-                throw new GradleException("No credentials are configured to publish releases or snapshots")
-            }
-
             //logger.info "Project ${project.name} should be published"
             apply from: rootProject.file("gradle/maven.gradle")
 
