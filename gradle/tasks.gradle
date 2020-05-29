@@ -138,41 +138,6 @@ task verifySpringConfigurationCanDisableBeanProxying(description: "Examine @Conf
      }
 }
 
-task validateTestsSuites(description: "Ensure all projects contain a tests suite that contains test classes") {
-    doLast {
-        def testSources = new File(project.getProjectDir(), "src/test/java")
-        if (testSources.exists()) {
-            def testSuites = new FileNameByRegexFinder().getFileNames(testSources.canonicalPath, /.*TestsSuite\.java/)
-            def testClasses = new FileNameByRegexFinder().getFileNames(testSources.canonicalPath, /.*Tests\.java/, /.*(Base|Abstract).+Tests\.java/)
-
-            if (testClasses.size() > 1 && testSuites.isEmpty()) {
-                throw new GradleException("Project ${project.displayName} is missing a TestsSuite class, while it contains ${testClasses.size()} tests")
-            }
-
-            if (testSuites.size() > 1) {
-                throw new GradleException("Project ${project.displayName} has more than one TestsSuite")
-            }
-
-            if (!testSuites.isEmpty()) {
-                def testSuiteFile = new File(testSuites.get(0))
-                def testSuiteFileBody = testSuiteFile.text
-                def missingClasses = testClasses.findAll({
-                    def testClass = new File(it).name.replace(".java", ".class")
-                    !testSuiteFileBody.contains(testClass)
-                })
-                if (!missingClasses.isEmpty()) {
-                    println "${testSuiteFile.name} of ${project.displayName} does not include:"
-                    println missingClasses
-                            .sort()
-                            .collect({ new File(it).name.replace(".java", ".class") })
-                            .join(", ")
-
-                    throw new GradleException("Found ${missingClasses.size()} missing test class(es) in test suites")
-                }
-            } 
-        }
-    }
-}
 
 def checkForSpringConfigurationFactories(String projectPath, String configurations) {
     def classes = configurations.split(",")
