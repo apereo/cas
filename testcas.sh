@@ -157,7 +157,7 @@ while (( "$#" )); do
                 ;;
             aws)
                 ./ci/tests/aws/run-aws-server.sh
-                task+="testAWS "
+                task+="testAmazonWebServices "
                 ;;
             oidc)
                 task+="testOIDC "

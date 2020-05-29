@@ -129,7 +129,7 @@ if (hasTestsOfCategory(project, "JMS")) {
 }
 
 if (hasTestsOfCategory(project, "AmazonWebServices")) {
-    task testAWS(type: Test) {
+    task testAmazonWebServices(type: Test) {
         enabled = shouldTest(project, "AmazonWebServices")
         finalizedBy jacocoTestReport
         useJUnitPlatform {
