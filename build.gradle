@@ -161,9 +161,10 @@ allprojects {
         module {
             downloadSources = false
             downloadJavadoc = false
-            excludeDirs << file(".gradle")
-            ["classes", "bin", "docs", "dependency-cache", "libs", "reports", "resources", "test-results", "tmp"].each {
-                excludeDirs << file("$buildDir/$it")
+            jdkName = project.targetCompatibility
+            excludeDirs += file(".gradle")
+            [".settings", "classes", "bin", "out", "docs", "dependency-cache", "libs", "reports", "resources", "test-results", "tmp"].each {
+                excludeDirs += file("$buildDir/$it")
             }
         }
     }
