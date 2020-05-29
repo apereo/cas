@@ -1,5 +1,6 @@
-package org.apereo.cas.adaptors.authy;
+package org.apereo.cas;
 
+import org.apereo.cas.adaptors.authy.AuthyAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationRegistrationWebflowActionTests;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorWebflowConfigurerTests;
 
