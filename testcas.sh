@@ -3,7 +3,7 @@
 clear
 
 printHelp() {
-    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--coverage-report] [--coverage-upload] [--no-parallel] [--dry-run] [--info] \n"
+    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--no-parallel] [--dry-run] [--info] \n"
     echo -e "Available test categories are:\n"
     echo -e "simple,memcached,cassandra,groovy,kafka,ldap,rest,mfa,jdbc,mssql,oracle,radius,couchdb,\
 mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,hazelcast,jmx,ehcache,\
@@ -11,7 +11,6 @@ oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,cosmos
     echo -e "\nPlease see the test script for details.\n"
 }
 
-uploadCoverage=false
 parallel="--parallel "
 dryRun=""
 info=""
@@ -30,22 +29,6 @@ while (( "$#" )); do
         ;;
     --dry-run)
         dryRun="--dry-run "
-        shift
-        ;;
-    --coverage-report)
-        currentDir=`pwd`
-        case "${currentDir}" in
-            *api*|*core*|*support*|*webapp*)
-                coverage="jacocoTestReport "
-                ;;
-            *)
-                coverage="jacocoRootReport "
-                ;;
-        esac
-        shift
-        ;;
-    --coverage-upload)
-        uploadCoverage=true
         shift
         ;;
     --no-wrapper)
@@ -237,10 +220,10 @@ then
   exit 1
 fi
 
-cmdstring="\033[1m$gradleCmd \e[32m$task\e[39m$tests\e[39m $flags ${coverage}${debug}${dryRun}${info}${parallel}\e[39m"
+cmdstring="\033[1m$gradleCmd \e[32m$task\e[39m$tests\e[39m $flags ${debug}${dryRun}${info}${parallel}\e[39m"
 printf "$cmdstring \e[0m\n"
 
-cmd="$gradleCmd $task $tests $flags ${coverage} ${debug} ${parallel} ${dryRun} ${info}"
+cmd="$gradleCmd $task $tests $flags ${debug} ${parallel} ${dryRun} ${info}"
 eval "$cmd"
 retVal=$?
 echo -e "***************************************************************************************"
@@ -248,10 +231,6 @@ echo -e "Gradle build finished at `date` with exit code $retVal"
 echo -e "***************************************************************************************"
 
 if [ $retVal == 0 ]; then
-#    if [ $uploadCoverage = true ]; then
-#        echo "Uploading test coverage results for ${category}..."
-#        bash <(curl -s https://codecov.io/bash) -F "$category"
-#    fi
     echo "Gradle build finished successfully."
 else
     echo "Gradle build did NOT finish successfully."
