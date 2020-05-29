@@ -29,9 +29,9 @@ of any kind, either express or implied. See the project license file for the spe
 - CAS adopters MAY expect a CAS release to be maintained for **six months**, starting from the [original release date](https://github.com/apereo/cas/releases).
 - Maintenance during this period includes bug fixes, security patches and general upkeep of the release. Patch releases may be expected during this period per the release schedule.
 - Afterwards, maintenance of the release is *strictly* limited to security patches and fixing vulnerabilities for another **six months** (i.e. SPM mode).
-- The lifespan of a release MAY be extended beyond a single year, to be decided by the [CAS PMC](Project-Commitee.html) and the community at large when and where reasonable.
+- The lifespan of a release MAY be extended beyond a single year, to be decided by the [CAS PMC](Project-Commitee.html) and the community at large when and where reasonable, assuming sufficient availability, resources and funding.
 
-“CAS Release” is any feature release and above. (i.e. `4.1.x`, `4.2.x`, `5.0.x`, `5.1.x`, etc).
+“CAS Release” is any CAS feature release. (i.e. `4.1.x`, `4.2.x`, `5.0.x`, `5.1.x`, etc).
 
 <div class="alert alert-info"><strong>Uh...Maintenance?</strong><p>
 In this context, maintenance strictly means that the release line and the target destination branch in the CAS codebase remains open to
