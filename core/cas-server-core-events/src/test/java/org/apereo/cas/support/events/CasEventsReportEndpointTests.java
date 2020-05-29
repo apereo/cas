@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("ActuatorEndpoint")
 public class CasEventsReportEndpointTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

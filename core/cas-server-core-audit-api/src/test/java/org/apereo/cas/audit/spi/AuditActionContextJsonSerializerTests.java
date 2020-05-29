@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("Webflow")
+@Tag("Simple")
 public class AuditActionContextJsonSerializerTests {
     @Test
     public void verifyOperation() {

@@ -494,7 +494,7 @@ jobs:
 #        with:
 #          name: binary-artifacts
       - name: Run Tests
-        run: ./testcas.sh --with-coverage --info --category ${{ matrix.category }}
+        run: ./testcas.sh --with-coverage --category ${{ matrix.category }}
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:

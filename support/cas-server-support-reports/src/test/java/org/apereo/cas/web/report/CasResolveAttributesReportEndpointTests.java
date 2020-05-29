@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @TestPropertySource(properties = "management.endpoint.resolveAttributes.enabled=true")
-@Tag("Simple")
+@Tag("ActuatorEndpoint")
 public class CasResolveAttributesReportEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("resolveAttributesReportEndpoint")

@@ -8,6 +8,16 @@ if (hasTestsOfCategory(project, "Kafka")) {
     }
 }
 
+if (hasTestsOfCategory(project, "ActuatorEndpoint")) {
+    task testActuatorEndpoint(type: Test) {
+        enabled = shouldTest(project, "ActuatorEndpoint")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "ActuatorEndpoint"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "CasConfiguration")) {
     task testCasConfiguration(type: Test) {
         enabled = shouldTest(project, "CasConfiguration")
