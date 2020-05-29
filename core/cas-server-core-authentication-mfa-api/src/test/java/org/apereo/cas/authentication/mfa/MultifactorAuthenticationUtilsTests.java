@@ -7,15 +7,11 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.expression.support.LiteralExpression;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
@@ -35,15 +31,15 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@DirtiesContext
-@SpringBootTest(classes = AopAutoConfiguration.class)
+
 @Tag("MFA")
 public class MultifactorAuthenticationUtilsTests {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     @Test
     public void verifyResolveByAttribute() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -67,6 +63,9 @@ public class MultifactorAuthenticationUtilsTests {
 
     @Test
     public void verifyMultivaluedAttrs() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
@@ -93,6 +92,9 @@ public class MultifactorAuthenticationUtilsTests {
 
     @Test
     public void verifyProviderByService() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         assertTrue(MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderFromApplicationContext(provider.getId()).isPresent());

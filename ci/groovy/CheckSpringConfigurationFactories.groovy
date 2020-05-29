@@ -34,7 +34,7 @@ def checkProjectContainsSpringConfigurations(String projectPath, File springFact
 }
 
 static void main(String[] args) {
-    def directory = new File("/Users/Misagh/Workspace/GitWorkspace/cas-server/core/cas-server-core-audit")
+    def directory = new File(".")
     def count = 0
 
     directory.eachFileRecurse(FileType.DIRECTORIES) { dir ->
