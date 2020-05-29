@@ -405,7 +405,7 @@ jobs:
           name: binary-artifacts
       - name: Publish SNAPSHOTs
         if: ${{ github.event_name == 'push' && env.SONATYPE_USER != null && env.SONATYPE_PWD != null }}
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
+        run: ./gradlew -DpublishSnapshots=true --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
 
 ##########################################################################
 
@@ -494,7 +494,7 @@ jobs:
 #        with:
 #          name: binary-artifacts
       - name: Run Tests
-        run: ./testcas.sh --info --category ${{ matrix.category }}
+        run: ./testcas.sh --with-coverage --info --category ${{ matrix.category }}
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:

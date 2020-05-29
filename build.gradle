@@ -53,8 +53,8 @@ ext {
     githubPackagesUsername = System.getProperty("githubPackagesUsername")
     githubPackagesToken = System.getProperty("githubPackagesToken")
 
-    publishSnapshots = project.version.endsWith("-SNAPSHOT")
-    publishReleases = !publishSnapshots
+    publishSnapshots = Boolean.getBoolean("publishSnapshots")
+    publishReleases = Boolean.getBoolean("publishReleases")
     
     skipBootifulArtifact = System.getProperty("skipBootifulArtifact")
     skipErrorProneCompiler = System.getProperty("skipErrorProneCompiler")
@@ -296,6 +296,12 @@ subprojects {
         }
         sourceSets sourceSets.main
         getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/*.exec"))
+//        doLast {
+//            def report = file("$project.buildDir/reports/jacoco/test/jacocoTestReport.xml")
+//            if (report.exists()) {
+//                println(report.text)
+//            }
+//        }
     }
 
 
@@ -648,13 +654,27 @@ if (rootProject.publishReleases || rootProject.publishSnapshots) {
 }
 
 
+task jacocoMerge(type: JacocoMerge) {
+    subprojects.each { subproject ->
+        executionData subproject.tasks.withType(Test)
+        dependsOn tasks.withType(Test)
+    }
+    doFirst {
+        executionData = files(executionData.findAll { it.exists() })
+    }
+}
+
 task jacocoRootReport(type: JacocoReport) {
+    description = 'Generates an aggregate report from all projects'
+
     subprojects.each {
         if (!it.path.contains(":docs")) {
             it.tasks.withType(Test).each { task -> dependsOn(task) }
         }
     }
 
+    dependsOn jacocoMerge
+    
     additionalSourceDirs.setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
     sourceDirectories.setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
     classDirectories.setFrom(
@@ -664,7 +684,8 @@ task jacocoRootReport(type: JacocoReport) {
                         exclude: rootProject.excludedFilesFromTestCoverage
                         )
             })
-    executionData.setFrom(files(subprojects.jacocoTestReport.executionData))
+    //executionData.setFrom(files(subprojects.jacocoTestReport.executionData))
+    executionData jacocoMerge.destinationFile
 
     reports {
         html.enabled = true
@@ -702,3 +723,5 @@ task verifyRequiredJavaVersion {
 boolean projectShouldBePublished(Project project) {
     return !["api", "core", "docs", "support", "webapp", "cas-server-documentation"].contains(project.name)
 }
+
+
