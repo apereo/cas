@@ -3,6 +3,7 @@
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
 echo "Running Couchbase docker image..."
+docker stop couchbase || true && docker rm couchbase || true
 docker run -d --name couchbase -p 8091-8094:8091-8094 -p 11210:11210 couchbase/server:6.5.0
 echo "Waiting for Couchbase server to come online..."
 sleep 20

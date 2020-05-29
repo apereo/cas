@@ -3,8 +3,6 @@ package org.apereo.cas.authentication;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.Optional;
@@ -19,7 +17,6 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("Groovy")
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
 public class GroovyAuthenticationPostProcessorTests {
     @Test
     public void verifyAction() {

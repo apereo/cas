@@ -50,6 +50,9 @@ ext {
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
 
+    githubPackagesUsername =System.getProperty("githubPackagesUsername")
+    githubPackagesToken = System.getProperty("githubPackagesToken")
+
     publishSnapshots = Boolean.getBoolean("publishSnapshots")
     publishReleases = Boolean.getBoolean("publishReleases")
 
@@ -398,15 +401,17 @@ subprojects {
                                 password "${sonatypePassword}"
                             }
                         }
-                        maven {
-                            name = "GitHubPackages-Releases"
-                            url = uri("${githubPackagesRepositoryUrl}")
-                            mavenContent {
-                                releasesOnly()
-                            }
-                            credentials {
-                                username = "${githubPackagesUsername}"
-                                password = "${githubPackagesToken}"
+                        if (rootProject.githubPackagesUsername != null && rootProject.githubPackagesToken != null) {
+                            maven {
+                                name = "GitHubPackages-Releases"
+                                url = uri("${githubPackagesRepositoryUrl}")
+                                mavenContent {
+                                    releasesOnly()
+                                }
+                                credentials {
+                                    username = "${githubPackagesUsername}"
+                                    password = "${githubPackagesToken}"
+                                }
                             }
                         }
                     }

@@ -6,8 +6,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.File;
@@ -26,7 +24,6 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Groovy")
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
 public class GroovyScriptAuthenticationPolicyTests {
     @Test
     public void verifyActionInlinedScriptPasses() throws Exception {
