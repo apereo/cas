@@ -6,7 +6,7 @@ printHelp() {
     echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--no-parallel] [--dry-run] [--info] [--with-coverage] \n"
     echo -e "Available test categories are:\n"
     echo -e "simple,memcached,cassandra,groovy,kafka,ldap,rest,mfa,jdbc,mssql,oracle,radius,couchdb,\
-mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,hazelcast,jmx,ehcache,\
+mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,hazelcast,jmx,ehcache,actuator,\
 oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,cosmosdb,config"
     echo -e "\nPlease see the test script for details.\n"
 }
@@ -24,7 +24,15 @@ while (( "$#" )); do
         shift
         ;;
     --with-coverage)
-        task+="jacocoRootReport "
+        currentDir=`pwd`
+        case "${currentDir}" in
+            *api*|*core*|*support*|*webapp*)
+                coverage="jacocoTestReport "
+                ;;
+            *)
+                coverage="jacocoRootReport "
+                ;;
+        esac
         shift
         ;;
     --info)
@@ -77,6 +85,9 @@ while (( "$#" )); do
                 ;;
             shell)
                 task+="testSHELL "
+                ;;
+            actuator|endpoint)
+                task+="testActuatorEndpoint "
                 ;;
             uma)
                 task+="testUma "
