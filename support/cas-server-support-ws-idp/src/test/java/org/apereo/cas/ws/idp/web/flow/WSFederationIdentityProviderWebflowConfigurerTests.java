@@ -44,10 +44,10 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.wsfedIdp.sts.subjectNameIdFormat=unspecified",
     "cas.authn.wsfedIdp.sts.encryptTokens=true",
 
-    "cas.authn.wsfedIdp.sts.realm.keystoreFile=classpath:stsrealm_a.jks",
-    "cas.authn.wsfedIdp.sts.realm.keystorePassword=storepass",
-    "cas.authn.wsfedIdp.sts.realm.keystoreAlias=realma",
-    "cas.authn.wsfedIdp.sts.realm.keyPassword=realma",
+    "cas.authn.wsfedIdp.sts.realm.keystore-file=classpath:stsrealm_a.jks",
+    "cas.authn.wsfedIdp.sts.realm.keystore-password=storepass",
+    "cas.authn.wsfedIdp.sts.realm.keystore-alias=realma",
+    "cas.authn.wsfedIdp.sts.realm.key-password=realma",
     "cas.authn.wsfedIdp.sts.realm.issuer=CAS"
 })
 @Tag("Webflow")
