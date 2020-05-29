@@ -50,16 +50,12 @@ ext {
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
 
-    githubPackagesUsername =System.getProperty("githubPackagesUsername")
+    githubPackagesUsername = System.getProperty("githubPackagesUsername")
     githubPackagesToken = System.getProperty("githubPackagesToken")
 
-    publishSnapshots = Boolean.getBoolean("publishSnapshots")
-    publishReleases = Boolean.getBoolean("publishReleases")
-
-    if ((publishSnapshots || publishReleases) && (sonatypeUsername == null || sonatypePassword == null)) {
-        throw new GradleException("No credentials are configured to publish releases or snapshots")
-    }
-
+    publishSnapshots = project.version.endsWith("-SNAPSHOT")
+    publishReleases = !publishSnapshots
+    
     skipBootifulArtifact = System.getProperty("skipBootifulArtifact")
     skipErrorProneCompiler = System.getProperty("skipErrorProneCompiler")
 
@@ -352,6 +348,10 @@ subprojects {
      */
     afterEvaluate { project ->
         if ((rootProject.publishReleases || rootProject.publishSnapshots) && projectShouldBePublished(project)) {
+            if (sonatypeUsername == null || sonatypePassword == null) {
+                throw new GradleException("No credentials are configured to publish releases or snapshots")
+            }
+
             //logger.info "Project ${project.name} should be published"
             apply from: rootProject.file("gradle/maven.gradle")
 
@@ -686,7 +686,7 @@ task jacocoRootReport(type: JacocoReport) {
 
 task casVersion(description: "Display current CAS version") {
     doLast {
-        println project.version
+        println rootProject.version
     }
 }
 
