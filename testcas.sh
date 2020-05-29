@@ -129,7 +129,7 @@ while (( "$#" )); do
                 ;;
             ldap|ad|activedirectory)
                 ./ci/tests/ldap/run-ldap-server.sh
-                /ci/tests/ldap/run-ad-server.sh true
+                ./ci/tests/ldap/run-ad-server.sh true
                 task+="testLdap "
                 ;;
             couchbase)
@@ -190,7 +190,7 @@ while (( "$#" )); do
                 task+="testRadius "
                 ;;
             mail|email)
-                /ci/tests/mail/run-mail-server.sh
+                ./ci/tests/mail/run-mail-server.sh
                 task+="testMail "
                 ;;
             zoo|zookeeper)
@@ -248,11 +248,11 @@ echo -e "Gradle build finished at `date` with exit code $retVal"
 echo -e "***************************************************************************************"
 
 if [ $retVal == 0 ]; then
-    if [ $uploadCoverage = true ]; then
-        echo "Uploading test coverage results for ${category}..."
-        bash <(curl -s https://codecov.io/bash) -F "$category"
-        echo "Gradle build finished successfully."
-    fi
+#    if [ $uploadCoverage = true ]; then
+#        echo "Uploading test coverage results for ${category}..."
+#        bash <(curl -s https://codecov.io/bash) -F "$category"
+#    fi
+    echo "Gradle build finished successfully."
 else
     echo "Gradle build did NOT finish successfully."
     exit $retVal
