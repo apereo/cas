@@ -30,7 +30,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
 
@@ -43,7 +43,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/checkout@v2
@@ -109,7 +109,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check -DskipNestedConfigMetadataGen=true --parallel
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel
         
 ##########################################################################
 

@@ -38,7 +38,7 @@ public class DuoSecurityHealthIndicatorTests {
         when(bean.getDuoAuthenticationService()).thenReturn(duoService);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, bean, "duoProvider");
 
-        val indicator = new DuoSecurityHealthIndicator(this.applicationContext);
+        val indicator = new DuoSecurityHealthIndicator(applicationContext);
         val health = indicator.health();
         assertNotNull(health);
         assertEquals(health.getStatus(), Status.UP);
