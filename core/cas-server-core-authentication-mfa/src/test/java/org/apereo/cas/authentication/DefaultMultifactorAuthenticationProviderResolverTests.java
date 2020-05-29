@@ -6,15 +6,11 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.expression.support.LiteralExpression;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
@@ -35,15 +31,15 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
-@DirtiesContext
+
 @Tag("MFA")
 public class DefaultMultifactorAuthenticationProviderResolverTests {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     @Test
     public void verifyResolutionByAuthenticationAttribute() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -70,6 +66,9 @@ public class DefaultMultifactorAuthenticationProviderResolverTests {
 
     @Test
     public void verifyResolutionByPrincipalAttribute() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -123,6 +122,9 @@ public class DefaultMultifactorAuthenticationProviderResolverTests {
 
     @Test
     public void verifyNoMatch() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

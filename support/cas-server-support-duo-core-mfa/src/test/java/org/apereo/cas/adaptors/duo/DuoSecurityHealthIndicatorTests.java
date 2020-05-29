@@ -8,11 +8,8 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Status;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -23,14 +20,13 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
 @Tag("MFA")
 public class DuoSecurityHealthIndicatorTests {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     @Test
     public void verifyOperation() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
 
         val duoService = mock(DuoSecurityAuthenticationService.class);

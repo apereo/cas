@@ -6,10 +6,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -22,14 +19,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
+
 @Tag("Simple")
 public class PasswordEncoderUtilsTests {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     @Test
     public void verifyNoType() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val properties = new PasswordEncoderProperties();
         properties.setType(null);
         var encoder = PasswordEncoderUtils.newPasswordEncoder(properties, applicationContext);
@@ -41,6 +39,8 @@ public class PasswordEncoderUtilsTests {
 
     @Test
     public void verifyGroovyType() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         val properties = new PasswordEncoderProperties();
         properties.setType("sample-encoder.groovy");
         val encoder = PasswordEncoderUtils.newPasswordEncoder(properties, applicationContext);
@@ -49,6 +49,8 @@ public class PasswordEncoderUtilsTests {
 
     @Test
     public void verifyClassType() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         val properties = new PasswordEncoderProperties();
         properties.setType("org.example.cas.SamplePasswordEncoder");
         val encoder = PasswordEncoderUtils.newPasswordEncoder(properties, applicationContext);
@@ -57,6 +59,8 @@ public class PasswordEncoderUtilsTests {
 
     @Test
     public void verifyAvailableTypes() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         val secret = UUID.randomUUID().toString();
         Arrays.stream(PasswordEncoderProperties.PasswordEncoderTypes.values()).forEach(type -> {
             val properties = new PasswordEncoderProperties();
