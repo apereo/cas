@@ -447,30 +447,6 @@ jobs:
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-bootadmin-webapp.sh
 
-##########################################################################
-
-  validate-tests:
-    runs-on: ubuntu-latest
-    needs: [cache]
-    steps:
-      - uses: actions/checkout@v2
-#      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Validate Tests & Test Suites
-        if: ${{ !contains(github.head_ref, 'renovate') }}
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel validateTestsSuites -x javadoc
 
 ##########################################################################
 
