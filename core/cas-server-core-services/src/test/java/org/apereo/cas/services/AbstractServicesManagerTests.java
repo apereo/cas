@@ -7,11 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.support.StaticApplicationContext;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -48,7 +50,8 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     protected ServicesManager getServicesManagerInstance() {
-        return new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class), new HashSet<>(), Caffeine.newBuilder().build());
+        return new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class), new HashSet<>(), 
+                Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(5)).build());
     }
 
     protected ServiceRegistry getServiceRegistryInstance() {
@@ -71,15 +74,58 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     @Test
+    public void verifySaveInRegistryAndGetById() {
+        val service = new RegexRegisteredService();
+        service.setId(2100);
+        service.setName(TEST);
+        service.setServiceId(TEST);
+        assertFalse(isServiceInCache(null, 2100));
+        this.serviceRegistry.save(service);
+        assertNotNull(this.serviceRegistry.findServiceById(2100));
+        assertNotNull(this.servicesManager.findServiceBy(2100));
+        assertTrue(isServiceInCache(null, 2100));
+    }
+
+    @Test
+    public void verifySaveInRegistryAndGetByServiceId() {
+        val service = new RegexRegisteredService();
+        service.setId(3100);
+        service.setName(TEST);
+        service.setServiceId(TEST);
+        assertFalse(isServiceInCache(TEST, 0));
+        serviceRegistry.save(service);
+        assertNotNull(serviceRegistry.findServiceByExactServiceId(TEST));
+        assertNotNull(servicesManager.findServiceByExactServiceId(TEST));
+        assertTrue(isServiceInCache(TEST, 0));
+    }
+    
+    @Test
+    public void verifySaveAndRemoveFromCache() throws InterruptedException{
+        val service = new RegexRegisteredService();
+        service.setId(4100);
+        service.setName(TEST);
+        service.setServiceId(TEST);
+        assertFalse(isServiceInCache(null, 4100));
+        this.servicesManager.save(service);
+        assertTrue(isServiceInCache(null, 4100));
+        TimeUnit.SECONDS.sleep(2L);
+        assertTrue(isServiceInCache(null, 4100));
+        TimeUnit.SECONDS.sleep(4L);
+        assertFalse(isServiceInCache(null, 4100));
+    }
+
+    @Test
     public void verifyDelete() {
         val r = new RegexRegisteredService();
         r.setId(1000);
         r.setName(TEST);
         r.setServiceId(TEST);
         this.servicesManager.save(r);
+        assertTrue(isServiceInCache(null, 1000));
         assertNotNull(this.servicesManager.findServiceBy(r.getServiceId()));
         this.servicesManager.delete(r);
         assertNull(this.servicesManager.findServiceBy(r.getId()));
+        assertFalse(isServiceInCache(null, 1000));
     }
 
     @Test
@@ -112,4 +158,8 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         assertNull(this.servicesManager.findServiceBy(r.getServiceId()));
     }
 
+    private boolean isServiceInCache(final String serviceId, final long id) {
+        return servicesManager.getAllServices().stream().filter(r -> serviceId != null
+                ? r.getServiceId().equals(serviceId) : r.getId() == id).findFirst().isPresent();
+    }
 }

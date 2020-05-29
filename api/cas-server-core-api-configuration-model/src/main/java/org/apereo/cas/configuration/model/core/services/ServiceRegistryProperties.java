@@ -166,17 +166,17 @@ public class ServiceRegistryProperties implements Serializable {
     private ServiceManagementTypes managementType = ServiceManagementTypes.DEFAULT;
     
     /**
-     * services cache duration.
+     * services cache duration specifies the fixed duration for an entry to be automatically removed from the cache after its creation or update.
     */
     private String cache = "PT5M";
 
     /**
-     * services cache size.
+     * services cache size specifies the maximum number of entries the cache may contain.
     */
     private long cacheSize = Long.MAX_VALUE;
 
     /**
-     * services cache capacity.
+     * services cache capacity sets the minimum total size for the internal data structures.
     */
     private int cachCapacity = Integer.MAX_VALUE;
     
