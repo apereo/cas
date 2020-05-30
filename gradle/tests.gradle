@@ -18,6 +18,16 @@ if (hasTestsOfCategory(project, "ActuatorEndpoint")) {
     }
 }
 
+if (hasTestsOfCategory(project, "SMS")) {
+    task testSMS(type: Test) {
+        enabled = shouldTest(project, "SMS")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "SMS"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "CasConfiguration")) {
     task testCasConfiguration(type: Test) {
         enabled = shouldTest(project, "CasConfiguration")
