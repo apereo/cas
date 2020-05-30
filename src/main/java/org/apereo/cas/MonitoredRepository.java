@@ -157,8 +157,12 @@ public class MonitoredRepository {
     }
 
     public List<PullRequestFile> getPullRequestFiles(final PullRequest pr) {
+        return getPullRequestFiles(pr.getNumber());
+    }
+
+    public List<PullRequestFile> getPullRequestFiles(final String pr) {
         List<PullRequestFile> files = new ArrayList<>();
-        Page<PullRequestFile> pages = this.gitHub.getPullRequestFiles(getOrganization(), getName(), pr.getNumber());
+        Page<PullRequestFile> pages = this.gitHub.getPullRequestFiles(getOrganization(), getName(), pr);
         while (pages != null) {
             files.addAll(pages.getContent());
             pages = pages.next();
