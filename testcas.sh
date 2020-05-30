@@ -27,10 +27,10 @@ while (( "$#" )); do
         currentDir=`pwd`
         case "${currentDir}" in
             *api*|*core*|*support*|*webapp*)
-                coverage="jacocoTestReport "
+                task+="jacocoTestReport "
                 ;;
             *)
-                coverage="jacocoRootReport "
+                task+="jacocoRootReport "
                 ;;
         esac
         shift
