@@ -459,7 +459,7 @@ tasks.withType(Test) {
         }
     }
     systemProperty("spring.main.banner-mode", "off")
-    systemProperty("spring.main.lazy-initialization", "true")
+//    systemProperty("spring.main.lazy-initialization", "true")
     systemProperty("CI", System.getProperty("CI"))
 
     failFast = true
