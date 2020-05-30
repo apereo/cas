@@ -453,6 +453,7 @@ jobs:
           - ldap
           - casconfig
           - shell
+          - wsfed
           - actuator
           - mongo
           - jmx

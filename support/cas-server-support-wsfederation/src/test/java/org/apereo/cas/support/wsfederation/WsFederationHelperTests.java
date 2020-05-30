@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2.0
  */
 @Setter
-@Tag("Simple")
+@Tag("WSFederation")
 public class WsFederationHelperTests extends AbstractWsFederationTests {
     private static final String GOOD_TOKEN = "goodToken";
 

@@ -27,26 +27,26 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     BaseCoreWsSecurityIdentityProviderConfigurationTests.SharedTestConfiguration.class
 }, properties = {
-    "cas.authn.wsfedIdp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",
-    "cas.authn.wsfedIdp.idp.realmName=CAS",
+    "cas.authn.wsfed-idp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",
+    "cas.authn.wsfed-idp.idp.realmName=CAS",
 
-    "cas.authn.wsfedIdp.sts.signingKeystoreFile=classpath:ststrust.jks",
-    "cas.authn.wsfedIdp.sts.signingKeystorePassword=storepass",
+    "cas.authn.wsfed-idp.sts.signingKeystoreFile=classpath:ststrust.jks",
+    "cas.authn.wsfed-idp.sts.signingKeystorePassword=storepass",
 
-    "cas.authn.wsfedIdp.sts.encryptionKeystoreFile=classpath:stsencrypt.jks",
-    "cas.authn.wsfedIdp.sts.encryptionKeystorePassword=storepass",
+    "cas.authn.wsfed-idp.sts.encryptionKeystoreFile=classpath:stsencrypt.jks",
+    "cas.authn.wsfed-idp.sts.encryptionKeystorePassword=storepass",
 
-    "cas.authn.wsfedIdp.sts.subjectNameIdFormat=unspecified",
-    "cas.authn.wsfedIdp.sts.encryptTokens=true",
+    "cas.authn.wsfed-idp.sts.subjectNameIdFormat=unspecified",
+    "cas.authn.wsfed-idp.sts.encryptTokens=true",
 
-    "cas.authn.wsfedIdp.sts.realm.keystoreFile=stsrealm_a.jks",
-    "cas.authn.wsfedIdp.sts.realm.keystorePassword=storepass",
-    "cas.authn.wsfedIdp.sts.realm.keystoreAlias=realma",
-    "cas.authn.wsfedIdp.sts.realm.keyPassword=realma",
-    "cas.authn.wsfedIdp.sts.realm.issuer=CAS"
+    "cas.authn.wsfed-idp.sts.realm.keystoreFile=stsrealm_a.jks",
+    "cas.authn.wsfed-idp.sts.realm.keystorePassword=storepass",
+    "cas.authn.wsfed-idp.sts.realm.keystoreAlias=realma",
+    "cas.authn.wsfed-idp.sts.realm.keyPassword=realma",
+    "cas.authn.wsfed-idp.sts.realm.issuer=CAS"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("WSFederation")
 public class WSFederationMetadataControllerTests {
     @Autowired
     @Qualifier("wsFederationMetadataController")
