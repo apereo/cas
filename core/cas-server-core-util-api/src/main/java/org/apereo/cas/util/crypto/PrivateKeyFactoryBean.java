@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.Security;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 
 /**
@@ -36,8 +37,6 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     }
 
     private Resource location;
-
-    private String algorithm;
 
     @Override
     protected PrivateKey createInstance() {
@@ -64,13 +63,21 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     }
 
     private PrivateKey readDERPrivateKey() {
+        String[] algorithms = {"RSA", "EC"};
         LOGGER.debug("Attempting to read key as DER [{}]", this.location);
         try (val privKey = this.location.getInputStream()) {
             val bytes = new byte[(int) this.location.contentLength()];
             privKey.read(bytes);
             val privSpec = new PKCS8EncodedKeySpec(bytes);
-            val factory = KeyFactory.getInstance(this.algorithm);
-            return factory.generatePrivate(privSpec);
+            for (val algorithm : algorithms) {
+                try {
+                    val factory = KeyFactory.getInstance(algorithm);
+                    return factory.generatePrivate(privSpec);
+                } catch (final InvalidKeySpecException e) {
+                    continue;
+                }
+            }
+            throw new InvalidKeySpecException("Unsupport key algorithm");
         } catch (final Exception e) {
             LOGGER.debug("Unable to read key", e);
             return null;

@@ -18,7 +18,6 @@ import org.bouncycastle.jce.provider.JCEECPrivateKey;
 import org.bouncycastle.jce.provider.JCEECPublicKey;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.keys.AesKey;
-import org.jose4j.keys.RsaKeyUtil;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -136,7 +135,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
             /* SIGN_JWS_ALGORITHM_LOOKUP_INTERFACE_MAP method definitions */
             SIGN_JWS_ALGORITHM_LOOKUP_INTERFACE_MAP.put("RSA", key -> EncodingUtils.SIGN_JWS_RSA_SHA512);
 
-            SIGN_JWS_ALGORITHM_LOOKUP_INTERFACE_MAP.put("EC", key -> {
+            SIGN_JWS_ALGORITHM_LOOKUP_INTERFACE_MAP.put("ECDSA", key -> {
                 if (key != null && key instanceof ECPrivateKey) {
                     val param = new CasECParameterSpec(((ECPrivateKey) key).getParams());
                     val result = SIGN_JWS_ALGORITHM_EC_MAP.get((CasECParameterSpec) param);
@@ -198,7 +197,6 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         LOGGER.debug("Attempting to extract private key...");
         val resource = ResourceUtils.getResourceFrom(signingSecretKey);
         val factory = new PrivateKeyFactoryBean();
-        factory.setAlgorithm(RsaKeyUtil.RSA);
         factory.setLocation(resource);
         factory.setSingleton(false);
         return factory.getObject();
@@ -214,7 +212,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
     public static PublicKey extractPublicKeyFromResource(final String secretKeyToUse) {
         LOGGER.debug("Attempting to extract public key from [{}]...", secretKeyToUse);
         val resource = ResourceUtils.getResourceFrom(secretKeyToUse);
-        val factory = new PublicKeyFactoryBean(resource, RsaKeyUtil.RSA);
+        val factory = new PublicKeyFactoryBean(resource);
         factory.setSingleton(false);
         return factory.getObject();
     }

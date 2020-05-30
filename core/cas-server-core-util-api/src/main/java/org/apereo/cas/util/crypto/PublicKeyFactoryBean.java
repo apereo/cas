@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 
 /**
@@ -28,9 +29,8 @@ import java.security.spec.X509EncodedKeySpec;
 @Getter
 @RequiredArgsConstructor
 public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
+    private static final String[] ALGORITHMS = {"RSA", "EC"};
     private final Resource resource;
-
-    private final String algorithm;
 
     /**
      * Initialize cipher based on service public key.
@@ -42,9 +42,10 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
         try {
             val publicKey = getObject();
             if (publicKey != null) {
-                val cipher = Cipher.getInstance(this.algorithm);
+                val algorithm = publicKey.getAlgorithm();
+                val cipher = Cipher.getInstance(algorithm);
                 cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-                LOGGER.trace("Initialized cipher in encrypt-mode via the public key algorithm [{}]", this.algorithm);
+                LOGGER.trace("Initialized cipher in encrypt-mode via the public key algorithm [{}]", algorithm);
                 return cipher;
             }
         } catch (final Exception e) {
@@ -80,8 +81,14 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
             if (pemObject != null) {
                 val content = pemObject.getContent();
                 val pubSpec = new X509EncodedKeySpec(content);
-                val factory = KeyFactory.getInstance(this.algorithm);
-                return factory.generatePublic(pubSpec);
+                for (val algorithm : ALGORITHMS) {
+                    try {
+                        val factory = KeyFactory.getInstance(algorithm);
+                        return factory.generatePublic(pubSpec);
+                    } catch (final InvalidKeySpecException e) {
+                        continue;
+                    }
+                }
             }
         }
         return null;
@@ -94,13 +101,20 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
      * @throws Exception the exception
      */
     protected PublicKey readDERPublicKey() throws Exception {
-        LOGGER.debug("Creating public key instance from [{}] using [{}]", this.resource.getFilename(), this.algorithm);
         try (val pubKey = this.resource.getInputStream()) {
             val bytes = new byte[(int) this.resource.contentLength()];
             pubKey.read(bytes);
             val pubSpec = new X509EncodedKeySpec(bytes);
-            val factory = KeyFactory.getInstance(this.algorithm);
-            return factory.generatePublic(pubSpec);
+            for (val algorithm : ALGORITHMS) {
+                try {
+                    val factory = KeyFactory.getInstance(algorithm);
+                    LOGGER.debug("Creating public key instance from [{}] using [{}]", this.resource.getFilename(), algorithm);
+                    return factory.generatePublic(pubSpec);
+                } catch (final InvalidKeySpecException e) {
+                    continue;
+                }
+            }
+            throw new InvalidKeySpecException("Unsupported key algorithm");
         }
     }
 }

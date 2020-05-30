@@ -9,8 +9,6 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.keys.AesKey;
-import org.jose4j.keys.EcKeyUtil;
-import org.jose4j.keys.RsaKeyUtil;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -34,7 +32,6 @@ public class EncodingUtilsTests {
     @SneakyThrows
     private static PrivateKey getRSAPrivateKey() {
         val factory = new PrivateKeyFactoryBean();
-        factory.setAlgorithm(RsaKeyUtil.RSA);
         factory.setLocation(new ClassPathResource("keys/RSA2048Private.key"));
         factory.setSingleton(false);
         return factory.getObject();
@@ -42,7 +39,7 @@ public class EncodingUtilsTests {
 
     @SneakyThrows
     private static PublicKey getRSAPublicKey() {
-        val factory = new PublicKeyFactoryBean(new ClassPathResource("keys/RSA2048Public.key"), RsaKeyUtil.RSA);
+        val factory = new PublicKeyFactoryBean(new ClassPathResource("keys/RSA2048Public.key"));
         factory.setSingleton(false);
         return factory.getObject();
     }
@@ -50,7 +47,6 @@ public class EncodingUtilsTests {
     @SneakyThrows
     private static PrivateKey getP256PrivateKey() {
         val factory = new PrivateKeyFactoryBean();
-        factory.setAlgorithm(EcKeyUtil.EC);
         factory.setLocation(new ClassPathResource("keys/ECsecp256r1Private.key"));
         factory.setSingleton(false);
         return factory.getObject();
@@ -58,7 +54,7 @@ public class EncodingUtilsTests {
 
     @SneakyThrows
     private static PublicKey getP256PublicKey() {
-        val factory = new PublicKeyFactoryBean(new ClassPathResource("keys/ECsecp256r1Public.key"), EcKeyUtil.EC);
+        val factory = new PublicKeyFactoryBean(new ClassPathResource("keys/ECsecp256r1Public.key"));
         factory.setSingleton(false);
         return factory.getObject();
     }
@@ -66,7 +62,6 @@ public class EncodingUtilsTests {
     @SneakyThrows
     private static PrivateKey getP384PrivateKey() {
         val factory = new PrivateKeyFactoryBean();
-        factory.setAlgorithm(EcKeyUtil.EC);
         factory.setLocation(new ClassPathResource("keys/ECsecp384r1Private.key"));
         factory.setSingleton(false);
         return factory.getObject();
@@ -74,7 +69,7 @@ public class EncodingUtilsTests {
 
     @SneakyThrows
     private static PublicKey getP384PublicKey() {
-        val factory = new PublicKeyFactoryBean(new ClassPathResource("keys/ECsecp384r1Public.key"), EcKeyUtil.EC);
+        val factory = new PublicKeyFactoryBean(new ClassPathResource("keys/ECsecp384r1Public.key"));
         factory.setSingleton(false);
         return factory.getObject();
     }
@@ -82,7 +77,6 @@ public class EncodingUtilsTests {
     @SneakyThrows
     private static PrivateKey getP521PrivateKey() {
         val factory = new PrivateKeyFactoryBean();
-        factory.setAlgorithm(EcKeyUtil.EC);
         factory.setLocation(new ClassPathResource("keys/ECsecp521r1Private.key"));
         factory.setSingleton(false);
         return factory.getObject();
@@ -90,7 +84,7 @@ public class EncodingUtilsTests {
 
     @SneakyThrows
     private static PublicKey getP521PublicKey() {
-        val factory = new PublicKeyFactoryBean(new ClassPathResource("keys/ECsecp521r1Public.key"), EcKeyUtil.EC);
+        val factory = new PublicKeyFactoryBean(new ClassPathResource("keys/ECsecp521r1Public.key"));
         factory.setSingleton(false);
         return factory.getObject();
     }
