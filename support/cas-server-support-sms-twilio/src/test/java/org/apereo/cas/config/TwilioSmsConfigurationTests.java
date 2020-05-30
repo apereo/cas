@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
    "cas.smsProvider.twilio.account-id=id",
    "cas.smsProvider.twilio.token=token"
 })
-@Tag("Simple")
+@Tag("SMS")
 public class TwilioSmsConfigurationTests {
     @Autowired
     @Qualifier("smsSender")
