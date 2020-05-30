@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assumptions.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Tag("Simple")
+@Tag("RegisteredService")
 public class GrouperRegisteredServiceAccessStrategyTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");

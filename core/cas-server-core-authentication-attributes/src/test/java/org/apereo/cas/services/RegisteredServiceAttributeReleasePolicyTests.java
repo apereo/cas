@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
     MailSenderAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-@Tag("Simple")
+@Tag("RegisteredService")
 public class RegisteredServiceAttributeReleasePolicyTests {
 
     private static final String ATTR_1 = "attr1";
