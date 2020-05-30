@@ -42,7 +42,6 @@ import org.apereo.cas.web.support.CookieUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jose4j.keys.RsaKeyUtil;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.BeanCreationException;
@@ -203,7 +202,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         if (location == null) {
             throw new BeanCreationException("No registration API public key is defined for the Acceptto integration.");
         }
-        val factory = new PublicKeyFactoryBean(location, RsaKeyUtil.RSA);
+        val factory = new PublicKeyFactoryBean(location);
         LOGGER.debug("Locating Acceptto registration API public key from [{}]", location);
         factory.setSingleton(false);
         return factory.getObject();

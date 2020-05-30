@@ -385,18 +385,11 @@ public class SamlIdPObjectSigner {
      * @throws Exception the exception
      */
     protected PrivateKey getSigningPrivateKey(final SamlRegisteredService registeredService) throws Exception {
-        val samlIdp = casProperties.getAuthn().getSamlIdp();
         val signingKey = samlIdPMetadataLocator.resolveSigningKey(Optional.of(registeredService));
         val privateKeyFactoryBean = new PrivateKeyFactoryBean();
         privateKeyFactoryBean.setLocation(signingKey);
-        if (StringUtils.isBlank(registeredService.getSigningKeyAlgorithm())) {
-            privateKeyFactoryBean.setAlgorithm(samlIdp.getMetadata().getPrivateKeyAlgName());
-        } else {
-            privateKeyFactoryBean.setAlgorithm(registeredService.getSigningKeyAlgorithm());
-        }
         privateKeyFactoryBean.setSingleton(false);
-        LOGGER.debug("Locating signature signing key for [{}] using algorithm [{}}",
-            registeredService, privateKeyFactoryBean.getAlgorithm());
+        LOGGER.debug("Locating signature signing key for [{}]", registeredService);
         return privateKeyFactoryBean.getObject();
     }
 }

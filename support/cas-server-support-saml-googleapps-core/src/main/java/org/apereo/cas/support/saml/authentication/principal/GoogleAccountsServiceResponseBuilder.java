@@ -159,9 +159,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             bean.setLocation(new FileSystemResource(this.privateKeyLocation));
         }
 
-        bean.setAlgorithm(this.keyAlgorithm);
-        LOGGER.debug("Loading Google Apps private key from [{}] with key algorithm [{}]",
-            bean.getLocation(), bean.getAlgorithm());
+        LOGGER.debug("Loading Google Apps private key from [{}]", bean.getLocation());
         bean.afterPropertiesSet();
         LOGGER.debug("Creating Google Apps private key instance via [{}]", this.privateKeyLocation);
         this.privateKey = bean.getObject();
@@ -186,9 +184,8 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         } else {
             resource = new FileSystemResource(this.publicKeyLocation);
         }
-        val bean = new PublicKeyFactoryBean(resource, this.keyAlgorithm);
-        LOGGER.debug("Loading Google Apps public key from [{}] with key algorithm [{}]",
-            bean.getResource(), bean.getAlgorithm());
+        val bean = new PublicKeyFactoryBean(resource);
+        LOGGER.debug("Loading Google Apps public key from [{}]", bean.getResource());
         bean.afterPropertiesSet();
         LOGGER.debug("Creating Google Apps public key instance via [{}]", this.publicKeyLocation);
         this.publicKey = bean.getObject();

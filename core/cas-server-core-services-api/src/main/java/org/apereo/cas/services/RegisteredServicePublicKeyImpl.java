@@ -70,7 +70,7 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
     private PublicKeyFactoryBean initializePublicKeyFactoryBean() {
         val resolved = SpringExpressionLanguageValueResolver.getInstance().resolve(this.location);
         val resource = ResourceUtils.getResourceFrom(resolved);
-        val factory = new PublicKeyFactoryBean(resource, this.algorithm);
+        val factory = new PublicKeyFactoryBean(resource);
         factory.setSingleton(false);
         return factory;
     }

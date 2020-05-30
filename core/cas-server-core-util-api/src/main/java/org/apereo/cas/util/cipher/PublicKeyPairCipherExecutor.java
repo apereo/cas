@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
-import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 
 import java.io.Serializable;
 import java.security.KeyPair;
@@ -13,7 +12,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 /**
- * This is {@link RsaKeyPairCipherExecutor}.
+ * This is {@link PublicKeyPairCipherExecuto}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -21,22 +20,22 @@ import java.security.PublicKey;
 @Getter
 @RequiredArgsConstructor
 @NoArgsConstructor(force = true)
-public class RsaKeyPairCipherExecutor extends BaseStringCipherExecutor {
+public class PublicKeyPairCipherExecutor extends BaseStringCipherExecutor {
     private final PrivateKey privateKeySigning;
     private final PublicKey publicKeySigning;
 
     private final PrivateKey privateKeyEncryption;
     private final PublicKey publicKeyEncryption;
 
-    public RsaKeyPairCipherExecutor(final KeyPair signing, final KeyPair encryption) {
+    public PublicKeyPairCipherExecutor(final KeyPair signing, final KeyPair encryption) {
         this(signing.getPrivate(), signing.getPublic(), encryption.getPrivate(), encryption.getPublic());
     }
 
-    public RsaKeyPairCipherExecutor(final KeyPair signing) {
+    public PublicKeyPairCipherExecutor(final KeyPair signing) {
         this(signing.getPrivate(), signing.getPublic(), null, null);
     }
 
-    public RsaKeyPairCipherExecutor(final String privateKeySigning, final String publicKeySigning,
+    public PublicKeyPairCipherExecutor(final String privateKeySigning, final String publicKeySigning,
                                     final String privateKeyEncryption, final String publicKeyEncryption) {
         this.privateKeySigning = extractPrivateKeyFromResource(privateKeySigning);
         this.publicKeySigning = extractPublicKeyFromResource(publicKeySigning);
@@ -45,7 +44,7 @@ public class RsaKeyPairCipherExecutor extends BaseStringCipherExecutor {
         this.publicKeyEncryption = StringUtils.isNotBlank(publicKeyEncryption) ? extractPublicKeyFromResource(publicKeyEncryption) : null;
     }
 
-    public RsaKeyPairCipherExecutor(final String privateKeySigning, final String publicKeySigning) {
+    public PublicKeyPairCipherExecutor(final String privateKeySigning, final String publicKeySigning) {
         this(privateKeySigning, publicKeySigning, null, null);
     }
 
@@ -70,13 +69,27 @@ public class RsaKeyPairCipherExecutor extends BaseStringCipherExecutor {
     private void configureEncryptionParametersForDecoding() {
         setSecretKeyEncryptionKey(privateKeyEncryption);
         setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
-        setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+        String keyManagementAlgorithm = null;
+        if (publicKeyEncryption != null) {
+            keyManagementAlgorithm = KEY_MANAGEMENT_ALGORITHM_IDENTIFIERS_MAP.get(privateKeyEncryption.getAlgorithm());
+            if (keyManagementAlgorithm == null) {
+                throw new IllegalArgumentException("Unsupported private key");
+            }
+        }
+        setEncryptionAlgorithm(keyManagementAlgorithm);
     }
 
     private void configureEncryptionParametersForEncoding() {
         setSecretKeyEncryptionKey(publicKeyEncryption);
         setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
-        setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+        String keyManagementAlgorithm = null;
+        if (publicKeyEncryption != null) {
+            keyManagementAlgorithm = KEY_MANAGEMENT_ALGORITHM_IDENTIFIERS_MAP.get(publicKeyEncryption.getAlgorithm());
+            if (keyManagementAlgorithm == null) {
+                throw new IllegalArgumentException("Unsupported public key");
+            }
+        }
+        setEncryptionAlgorithm(keyManagementAlgorithm);
     }
 
     private void configureSigningParametersForEncoding() {

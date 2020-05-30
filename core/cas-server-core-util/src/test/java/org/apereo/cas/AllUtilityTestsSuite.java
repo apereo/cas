@@ -16,7 +16,7 @@ import org.apereo.cas.util.cipher.BinaryCipherExecutorTests;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutorTests;
 import org.apereo.cas.util.cipher.JsonWebKeySetStringCipherExecutorTests;
 import org.apereo.cas.util.cipher.ProtocolTicketCipherExecutorTests;
-import org.apereo.cas.util.cipher.RsaKeyPairCipherExecutorTests;
+import org.apereo.cas.util.cipher.PublicKeyPairCipherExecutorTests;
 import org.apereo.cas.util.cipher.TicketGrantingCookieCipherExecutorTests;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutorTests;
 import org.apereo.cas.util.gen.Base64RandomStringGeneratorTests;
@@ -45,7 +45,7 @@ import org.junit.runner.RunWith;
     ProtocolTicketCipherExecutorTests.class,
     TicketGrantingCookieCipherExecutorTests.class,
     WebflowConversationStateCipherExecutorTests.class,
-    RsaKeyPairCipherExecutorTests.class,
+    PublicKeyPairCipherExecutorTests.class,
     HttpMessageTests.class,
     SimpleHttpClientTests.class,
     CasEmbeddedValueResolverTests.class,

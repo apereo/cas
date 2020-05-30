@@ -17,6 +17,8 @@ import org.jose4j.jwk.PublicJsonWebKey;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The {@link BaseStringCipherExecutor} is the default
@@ -31,6 +33,17 @@ import java.security.Key;
 @Setter
 @Getter
 public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Serializable, String> {
+    /**
+     * Maps key algorithm to KeyManagementAlgorithmIdentifier.
+     */
+    protected static Map<String, String> KEY_MANAGEMENT_ALGORITHM_IDENTIFIERS_MAP = new HashMap<>();
+
+    static {
+        KEY_MANAGEMENT_ALGORITHM_IDENTIFIERS_MAP.put("RSA", KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+        KEY_MANAGEMENT_ALGORITHM_IDENTIFIERS_MAP.put("EC", KeyManagementAlgorithmIdentifiers.ECDH_ES_A256KW);
+        KEY_MANAGEMENT_ALGORITHM_IDENTIFIERS_MAP.put("ECDSA", KeyManagementAlgorithmIdentifiers.ECDH_ES_A256KW);
+    }
+
     private CipherOperationsStrategyType strategyType = CipherOperationsStrategyType.ENCRYPT_AND_SIGN;
 
     private String encryptionAlgorithm = KeyManagementAlgorithmIdentifiers.DIRECT;
@@ -191,7 +204,11 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         val object = extractPublicKeyFromResource(secretKeyToUse);
         LOGGER.debug("Located encryption key resource [{}]", secretKeyToUse);
         setSecretKeyEncryptionKey(object);
-        setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+        val keyManagementAlgorithm = KEY_MANAGEMENT_ALGORITHM_IDENTIFIERS_MAP.get(object.getAlgorithm());
+        if (keyManagementAlgorithm == null) {
+            throw new IllegalArgumentException("Unsupported public key");
+        }
+        setEncryptionAlgorithm(keyManagementAlgorithm);
     }
 
     @Override
