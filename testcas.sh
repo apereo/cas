@@ -7,7 +7,7 @@ printHelp() {
     echo -e "Available test categories are:\n"
     echo -e "simple,memcached,cassandra,groovy,kafka,ldap,rest,mfa,jdbc,mssql,oracle,radius,couchdb,\
 mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,hazelcast,jmx,ehcache,actuator,\
-oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,cosmosdb,config,sms"
+oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,cosmosdb,config,sms,util"
     echo -e "\nPlease see the test script for details.\n"
 }
 
@@ -88,6 +88,9 @@ while (( "$#" )); do
                 ;;
             actuator|endpoint)
                 task+="testActuatorEndpoint "
+                ;;
+            utility|utils|util)
+                task+="testUtility "
                 ;;
             sms)
                 task+="testSMS "
