@@ -436,6 +436,7 @@ jobs:
     needs: [cache]
     continue-on-error: true
     strategy:
+      fail-fast: false
       matrix:
         category:
           - simple
