@@ -8,6 +8,7 @@ import org.apereo.cas.support.wsfederation.config.support.authentication.WsFedAu
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -33,17 +34,18 @@ import java.util.List;
  */
 @SpringBootTest(classes = AbstractWsFederationTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.wsfed[0].identityProviderUrl=https://adfs.example.com/adfs/ls/",
-        "cas.authn.wsfed[0].identityProviderIdentifier=http://adfs.example.com/adfs/services/trust",
-        "cas.authn.wsfed[0].relyingPartyIdentifier=urn:federation:cas",
-        "cas.authn.wsfed[0].attributesType=WSFED",
-        "cas.authn.wsfed[0].signingCertificateResources=classpath:adfs-signing.crt",
-        "cas.authn.wsfed[0].identityAttribute=upn",
-        "cas.authn.wsfed[0].attributeResolverEnabled=true",
-        "cas.authn.wsfed[0].autoRedirect=false",
+        "cas.authn.wsfed[0].identity-provider-url=https://adfs.example.com/adfs/ls/",
+        "cas.authn.wsfed[0].identity-provider-identifier=http://adfs.example.com/adfs/services/trust",
+        "cas.authn.wsfed[0].relying-party-identifier=urn:federation:cas",
+        "cas.authn.wsfed[0].attributes-type=WSFED",
+        "cas.authn.wsfed[0].signing-certificate-resources=classpath:adfs-signing.crt",
+        "cas.authn.wsfed[0].identity-attribute=upn",
+        "cas.authn.wsfed[0].attribute-resolver-enabled=true",
+        "cas.authn.wsfed[0].auto-redirect=false",
         "cas.authn.wsfed[0].name=Test ADFS1"
     })
 @ContextConfiguration(locations = "classpath:/applicationContext.xml")
+@Tag("WSFederation")
 public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
     protected static final String ISSUER = "http://adfs.example.com/adfs/services/trust";
 

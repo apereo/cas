@@ -28,6 +28,16 @@ if (hasTestsOfCategory(project, "Utility")) {
     }
 }
 
+if (hasTestsOfCategory(project, "WSFederation")) {
+    task testWSFederation(type: Test) {
+        enabled = shouldTest(project, "WSFederation")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "WSFederation"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "SMS")) {
     task testSMS(type: Test) {
         enabled = shouldTest(project, "SMS")
