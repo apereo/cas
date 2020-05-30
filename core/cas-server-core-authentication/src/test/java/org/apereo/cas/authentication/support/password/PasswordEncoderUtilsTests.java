@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 
-@Tag("Simple")
+@Tag("Utility")
 public class PasswordEncoderUtilsTests {
 
     @Test
