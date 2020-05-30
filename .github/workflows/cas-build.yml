@@ -442,6 +442,7 @@ jobs:
           - groovy
           - filesystem
           - webflow
+          - services
           - rest
           - mfa
           - oauth

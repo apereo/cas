@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Simple")
+@Tag("RegisteredService")
 public class DefaultRegisteredServiceAcceptableUsagePolicyTests {
     private static final File JSON_FILE =
         new File(FileUtils.getTempDirectoryPath(), "DefaultRegisteredServiceAcceptableUsagePolicyTests.json");

@@ -18,6 +18,16 @@ if (hasTestsOfCategory(project, "ActuatorEndpoint")) {
     }
 }
 
+if (hasTestsOfCategory(project, "RegisteredService")) {
+    task testRegisteredService(type: Test) {
+        enabled = shouldTest(project, "RegisteredService")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "RegisteredService"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "Utility")) {
     task testUtility(type: Test) {
         enabled = shouldTest(project, "Utility")
