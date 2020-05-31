@@ -296,12 +296,6 @@ subprojects {
         }
         sourceSets sourceSets.main
         getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/*.exec"))
-//        doLast {
-//            def report = file("$project.buildDir/reports/jacoco/test/jacocoTestReport.xml")
-//            if (report.exists()) {
-//                println(report.text)
-//            }
-//        }
     }
 
 
