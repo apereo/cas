@@ -3,7 +3,6 @@ package org.apereo.cas.ticket;
 import org.apereo.cas.ticket.registry.EncodedTicket;
 
 import lombok.val;
-import org.apache.commons.beanutils.BeanUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
