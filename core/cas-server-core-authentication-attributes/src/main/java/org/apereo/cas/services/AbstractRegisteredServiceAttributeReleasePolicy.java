@@ -111,7 +111,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             LOGGER.debug("Ignoring default attribute policy attributes");
         } else {
             LOGGER.trace("Checking default attribute policy attributes");
-            val defaultAttributes = getReleasedByDefaultAttributes(principal, policyAttributes);
+            val defaultAttributes = getReleasedByDefaultAttributes(principal, attributesFromDefinitions);
             LOGGER.debug("Default attributes found to be released are [{}]", defaultAttributes);
             if (!defaultAttributes.isEmpty()) {
                 LOGGER.debug("Adding default attributes first to the released set of attributes");
