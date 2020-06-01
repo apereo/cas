@@ -6,6 +6,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,7 +37,7 @@ import java.util.Map;
  */
 @Slf4j
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
     private static final int MAP_SIZE = 8;

@@ -41,7 +41,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
      */
     protected @NonNull ProfileCreator<C> profileCreator = AuthenticatorProfileCreator.INSTANCE;
 
-    public AbstractWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
+    protected AbstractWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
 

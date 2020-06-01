@@ -40,6 +40,7 @@ public class DefaultCloudDirectoryRepositoryTests {
     }
 
     @Test
+    @SuppressWarnings("JdkObsolete")
     public void verifyActionIndexResult() {
         val cloud = mock(AmazonCloudDirectory.class);
         val result = new ListIndexResult();
@@ -68,7 +69,6 @@ public class DefaultCloudDirectoryRepositoryTests {
         value3.setBooleanValue(Boolean.TRUE);
         attr3.setKey(key3);
         attr3.setValue(value3);
-
 
         val attr4 = new AttributeKeyAndValue();
         val key4 = new AttributeKey();

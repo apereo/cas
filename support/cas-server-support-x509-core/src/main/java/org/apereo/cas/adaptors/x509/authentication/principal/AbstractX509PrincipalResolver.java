@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
@@ -31,7 +32,7 @@ import java.util.Set;
  * @since 3.0.0
  */
 @ToString(callSuper = true)
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 @Setter
 public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrincipalResolver {
@@ -40,7 +41,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
 
     private String alternatePrincipalAttribute;
 
-    public AbstractX509PrincipalResolver(final IPersonAttributeDao attributeRepository,
+    protected AbstractX509PrincipalResolver(final IPersonAttributeDao attributeRepository,
                                          final PrincipalFactory principalFactory,
                                          final boolean returnNullIfNoAttributes,
                                          final String principalAttributeName,
@@ -54,7 +55,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
         this.alternatePrincipalAttribute = alternatePrincipalAttribute;
     }
 
-    public AbstractX509PrincipalResolver(final IPersonAttributeDao attributeRepository,
+    protected AbstractX509PrincipalResolver(final IPersonAttributeDao attributeRepository,
                                          final PrincipalFactory principalFactory,
                                          final boolean returnNullIfNoAttributes,
                                          final String principalAttributeName,

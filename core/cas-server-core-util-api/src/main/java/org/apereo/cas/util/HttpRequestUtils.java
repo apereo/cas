@@ -110,6 +110,7 @@ public class HttpRequestUtils {
      * @param request the request
      * @return the request headers
      */
+    @SuppressWarnings("JdkObsolete")
     public static Map<String, String> getRequestHeaders(final HttpServletRequest request) {
         val headers = new LinkedHashMap<String, Object>();
         val headerNames = request.getHeaderNames();

@@ -18,7 +18,7 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 public abstract class BaseMultifactorAuthenticationProviderEventResolver extends AbstractCasMultifactorAuthenticationWebflowEventResolver {
 
-    public BaseMultifactorAuthenticationProviderEventResolver(
+    protected BaseMultifactorAuthenticationProviderEventResolver(
         final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext) {
         super(webflowEventResolutionConfigurationContext);
     }

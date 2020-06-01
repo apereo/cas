@@ -35,9 +35,11 @@ public class JdbcServletContextListener implements ServletContextListener {
         logger.fine("Unregistering JDBC drivers...");
 
         val cl = Thread.currentThread().getContextClassLoader();
-        val drivers = DriverManager.getDrivers();
-        while (drivers.hasMoreElements()) {
-            val driver = drivers.nextElement();
+        @SuppressWarnings("JdkObsolete")
+        val drivers = DriverManager.getDrivers().asIterator();
+        
+        while (drivers.hasNext()) {
+            val driver = drivers.next();
             if (driver.getClass().getClassLoader() == cl) {
                 try {
                     logger.fine("Attempting to deregister JDBC driver " + driver);

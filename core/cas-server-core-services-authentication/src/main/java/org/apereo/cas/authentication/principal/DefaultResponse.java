@@ -109,7 +109,7 @@ public class DefaultResponse implements Response {
      */
     private static String sanitizeUrl(final String url) {
         val m = NON_PRINTABLE.matcher(url);
-        val sb = new StringBuffer(url.length());
+        val sb = new StringBuilder(url.length());
         var hasNonPrintable = false;
         while (m.find()) {
             m.appendReplacement(sb, " ");

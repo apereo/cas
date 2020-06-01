@@ -192,7 +192,15 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
-        val attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(), CoreAttributesTestUtils.getRegisteredService());
+        val registeredService = CoreAttributesTestUtils.getRegisteredService();
+        when(registeredService.getUsernameAttributeProvider()).thenReturn(new RegisteredServiceUsernameAttributeProvider() {
+            private static final long serialVersionUID = 771643288929352964L;
+            @Override
+            public String resolveUsername(final Principal principal, final Service service, final RegisteredService registeredService) {
+                    return principal.getId();
+            }
+        });
+        val attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(), registeredService);
         assertEquals(attr.size(), map.size());
 
         val data = SerializationUtils.serialize(policy);

@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.DateTimeUtils;
 
 import com.mongodb.client.MongoCollection;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,8 @@ import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.util.StreamUtils;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -262,8 +265,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         if (ttl < 1) {
             return null;
         }
-
-        return new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ttl));
+        return DateTimeUtils.dateOf(Instant.now(Clock.systemUTC()).plusSeconds(ttl));
     }
 
     private String serializeTicketForMongoDocument(final Ticket ticket) {

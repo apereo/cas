@@ -9,7 +9,7 @@ package org.apereo.cas.web.flow.resolver.impl;
  */
 public abstract class AbstractCasMultifactorAuthenticationWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
-    public AbstractCasMultifactorAuthenticationWebflowEventResolver(
+    protected AbstractCasMultifactorAuthenticationWebflowEventResolver(
         final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext) {
         super(webflowEventResolutionConfigurationContext);
     }
