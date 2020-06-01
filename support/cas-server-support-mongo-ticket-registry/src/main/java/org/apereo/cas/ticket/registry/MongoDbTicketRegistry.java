@@ -25,11 +25,11 @@ import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.util.StreamUtils;
 
-import java.time.Clock;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -264,7 +264,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         if (ttl < 1) {
             return null;
         }
-        return DateTimeUtils.dateOf(Instant.now(Clock.systemUTC()).plusSeconds(ttl));
+        val exp = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ttl);
+        return DateTimeUtils.dateOf(Instant.ofEpochMilli(exp));
     }
 
     private String serializeTicketForMongoDocument(final Ticket ticket) {
