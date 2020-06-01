@@ -1,4 +1,9 @@
-package org.apereo.cas.tomcat;
+package org.apereo.cas;
+
+import org.apereo.cas.config.CasEmbeddedContainerTomcatFiltersConfigurationTests;
+import org.apereo.cas.tomcat.CasTomcatServletWebServerFactoryCloudClusterTests;
+import org.apereo.cas.tomcat.CasTomcatServletWebServerFactoryClusterTests;
+import org.apereo.cas.tomcat.CasTomcatServletWebServerFactoryTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -13,6 +18,7 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     CasTomcatServletWebServerFactoryCloudClusterTests.class,
     CasTomcatServletWebServerFactoryClusterTests.class,
+    CasEmbeddedContainerTomcatFiltersConfigurationTests.class,
     CasTomcatServletWebServerFactoryTests.class
 })
 @RunWith(JUnitPlatform.class)
