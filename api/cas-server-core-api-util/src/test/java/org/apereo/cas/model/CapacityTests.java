@@ -1,4 +1,4 @@
-package org.apereo.cas;
+package org.apereo.cas.model;
 
 import org.apereo.cas.util.model.Capacity;
 
