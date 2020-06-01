@@ -89,7 +89,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasSupportActionsConfiguration.class
 },
     properties =
-        "cas.sso.allowMissingServiceParameter=false")
+        "cas.sso.allow-missing-service-parameter=false")
 @Tag("Webflow")
 public class InitialFlowSetupActionSsoTests {
     @Autowired

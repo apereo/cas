@@ -3,6 +3,7 @@ package org.apereo.cas.web.support;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.util.DateTimeUtils;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -33,7 +34,7 @@ import java.util.List;
 @Slf4j
 @ToString
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter
     implements ThrottledSubmissionHandlerInterceptor, InitializingBean {
     /**
@@ -136,6 +137,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @param failures the failures
      * @return true/false
      */
+    @SuppressWarnings("JdkObsolete")
     protected boolean calculateFailureThresholdRateAndCompare(final List<Date> failures) {
         if (failures.size() < 2) {
             return false;

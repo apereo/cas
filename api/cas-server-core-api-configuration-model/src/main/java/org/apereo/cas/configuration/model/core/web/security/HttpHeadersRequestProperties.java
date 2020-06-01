@@ -30,11 +30,11 @@ public class HttpHeadersRequestProperties implements Serializable {
 
     /**
      * When true, will inject the following headers into the response for non-static resources.
-     * <pre>
+     * &lt;pre&gt;
      * Cache-Control: no-cache, no-store, max-age=0, must-revalidate
      * Pragma: no-cache
      * Expires: 0
-     * </pre>
+     * &lt;/pre&gt;
      */
     private boolean cache = true;
 

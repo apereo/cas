@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Simple")
+@Tag("SMS")
 public class TwilioSmsSenderTests {
     @Test
     public void verifyAction() {

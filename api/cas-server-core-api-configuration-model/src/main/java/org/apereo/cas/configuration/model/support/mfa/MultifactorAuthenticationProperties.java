@@ -1,8 +1,8 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.RestEndpointProperties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -173,7 +173,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
      * to decide which provider makes the most sense at any given time.
      */
     private boolean providerSelectionEnabled;
-    
+
     /**
      * Activate and configure a multifactor authentication provider via U2F FIDO.
      */

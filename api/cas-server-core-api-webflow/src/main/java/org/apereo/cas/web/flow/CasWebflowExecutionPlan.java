@@ -23,4 +23,9 @@ public interface CasWebflowExecutionPlan {
      * @return the webflow configurers
      */
     Collection<CasWebflowConfigurer> getWebflowConfigurers();
+
+    /**
+     * Execute the plan.
+     */
+    void execute();
 }

@@ -27,6 +27,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,6 +45,7 @@ import java.util.Set;
 @Slf4j
 @Getter
 @RequiredArgsConstructor
+@SuppressWarnings("JdkObsolete")
 public class DynamoDbMultifactorTrustEngineFacilitator {
     private final DynamoDbMultifactorTrustProperties dynamoDbProperties;
 
@@ -118,7 +120,7 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
                 record.setPrincipal(item.get(ColumnNames.PRINCIPAL.getColumnName()).getS());
                 record.setRecordKey(item.get(ColumnNames.RECORD_KEY.getColumnName()).getS());
                 val time = Long.parseLong(item.get(ColumnNames.RECORD_DATE.getColumnName()).getS());
-                record.setRecordDate(DateTimeUtils.zonedDateTimeOf(new Date(time)));
+                record.setRecordDate(DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(time)));
                 val expTime = Long.parseLong(item.get(ColumnNames.EXPIRATION_DATE.getColumnName()).getS());
                 record.setExpirationDate(new Date(expTime));
 

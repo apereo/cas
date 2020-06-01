@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     TextMagicSmsConfiguration.class
 })
-@Tag("Simple")
+@Tag("SMS")
 public class TextMagicSmsConfigurationTests {
     @Autowired
     @Qualifier("smsSender")

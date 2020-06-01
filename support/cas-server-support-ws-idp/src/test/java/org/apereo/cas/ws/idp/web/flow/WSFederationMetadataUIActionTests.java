@@ -35,23 +35,23 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     BaseCoreWsSecurityIdentityProviderConfigurationTests.SharedTestConfiguration.class
 }, properties = {
-    "cas.authn.wsfedIdp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",
-    "cas.authn.wsfedIdp.idp.realmName=CAS",
+    "cas.authn.wsfed-idp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",
+    "cas.authn.wsfed-idp.idp.realm-name=CAS",
 
-    "cas.authn.wsfedIdp.sts.signingKeystoreFile=classpath:ststrust.jks",
-    "cas.authn.wsfedIdp.sts.signingKeystorePassword=storepass",
+    "cas.authn.wsfed-idp.sts.signing-keystore-file=classpath:ststrust.jks",
+    "cas.authn.wsfed-idp.sts.signing-keystore-password=storepass",
 
-    "cas.authn.wsfedIdp.sts.encryptionKeystoreFile=classpath:stsencrypt.jks",
-    "cas.authn.wsfedIdp.sts.encryptionKeystorePassword=storepass",
+    "cas.authn.wsfed-idp.sts.encryption-keystore-file=classpath:stsencrypt.jks",
+    "cas.authn.wsfed-idp.sts.encryption-keystore-password=storepass",
 
-    "cas.authn.wsfedIdp.sts.subjectNameIdFormat=unspecified",
-    "cas.authn.wsfedIdp.sts.encryptTokens=true",
+    "cas.authn.wsfed-idp.sts.subject-name-id-format=unspecified",
+    "cas.authn.wsfed-idp.sts.encrypt-tokens=true",
 
-    "cas.authn.wsfedIdp.sts.realm.keystoreFile=classpath:stsrealm_a.jks",
-    "cas.authn.wsfedIdp.sts.realm.keystorePassword=storepass",
-    "cas.authn.wsfedIdp.sts.realm.keystoreAlias=realma",
-    "cas.authn.wsfedIdp.sts.realm.keyPassword=realma",
-    "cas.authn.wsfedIdp.sts.realm.issuer=CAS"
+    "cas.authn.wsfed-idp.sts.realm.keystore-file=classpath:stsrealm_a.jks",
+    "cas.authn.wsfed-idp.sts.realm.keystore-password=storepass",
+    "cas.authn.wsfed-idp.sts.realm.keystore-alias=realma",
+    "cas.authn.wsfed-idp.sts.realm.key-password=realma",
+    "cas.authn.wsfed-idp.sts.realm.issuer=CAS"
 })
 @Tag("Webflow")
 public class WSFederationMetadataUIActionTests {

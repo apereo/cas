@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
  * @author battags
  * @since 3.0.0
  */
-@Tag("Simple")
+@Tag("RegisteredService")
 public class DefaultServicesManagerByEnvironmentTests extends AbstractServicesManagerTests {
     @Override
     protected ServicesManager getServicesManagerInstance() {

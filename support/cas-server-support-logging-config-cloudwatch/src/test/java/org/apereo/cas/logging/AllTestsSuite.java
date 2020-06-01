@@ -9,7 +9,10 @@ import org.junit.runner.RunWith;
  *
  * @since 6.2.0
  */
-@SelectClasses({CloudWatchAppenderSpecTests.class, CloudWatchAppenderTests.class})
+@SelectClasses({
+    CloudWatchAppenderSpecTests.class,
+    CloudWatchAppenderTests.class
+})
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

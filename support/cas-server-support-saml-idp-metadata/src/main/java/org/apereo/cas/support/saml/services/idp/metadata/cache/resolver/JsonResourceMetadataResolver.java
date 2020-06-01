@@ -60,7 +60,8 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
             this.metadataTemplate = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             val md = samlIdPProperties.getMetadata();
             val location = SpringExpressionLanguageValueResolver.getInstance().resolve(md.getLocation());
-            this.jsonResource = new FileSystemResource(new File(location, "saml-sp-metadata.json"));
+            val metadataDir = ResourceUtils.getRawResourceFrom(location).getFile();
+            this.jsonResource = new FileSystemResource(new File(metadataDir, "saml-sp-metadata.json"));
             if (this.jsonResource.exists()) {
                 this.metadataMap = readDecisionsFromJsonResource();
                 this.watcherService = new FileWatcherService(jsonResource.getFile(), file -> this.metadataMap = readDecisionsFromJsonResource());

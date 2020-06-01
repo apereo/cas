@@ -76,24 +76,6 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         return false;
     }
 
-    protected void verifyRepositoryAction(final String actualPrincipalId, final Map<String, List<Object>> profileAttributes) {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(actualPrincipalId);
-        val tgt = new MockTicketGrantingTicket(actualPrincipalId, c, profileAttributes);
-        ticketRegistry.getObject().addTicket(tgt);
-        val principal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
-        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(principal), context);
-        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-
-        assertFalse(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
-        assertTrue(getAcceptableUsagePolicyRepository().submit(context, c));
-        if (hasLiveUpdates()) {
-            assertTrue(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
-        }
-    }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
@@ -125,5 +107,23 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
     })
     public static class SharedTestConfiguration {
+    }
+
+    protected void verifyRepositoryAction(final String actualPrincipalId, final Map<String, List<Object>> profileAttributes) {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(actualPrincipalId);
+        val tgt = new MockTicketGrantingTicket(actualPrincipalId, c, profileAttributes);
+        ticketRegistry.getObject().addTicket(tgt);
+        val principal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(principal), context);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+
+        assertFalse(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
+        assertTrue(getAcceptableUsagePolicyRepository().submit(context, c));
+        if (hasLiveUpdates()) {
+            assertTrue(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
+        }
     }
 }

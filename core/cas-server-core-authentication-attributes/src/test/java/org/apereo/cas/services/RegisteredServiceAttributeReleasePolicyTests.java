@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
     MailSenderAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-@Tag("Simple")
+@Tag("RegisteredService")
 public class RegisteredServiceAttributeReleasePolicyTests {
 
     private static final String ATTR_1 = "attr1";
@@ -181,6 +181,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
     @Test
     public void verifyServiceAttributeFilterAllAttributes() {
         val policy = new ReturnAllAttributeReleasePolicy();
+        policy.setPrincipalIdAttribute("principalId");
         val p = mock(Principal.class);
 
         val map = new HashMap<String, List<Object>>();
@@ -191,13 +192,22 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
-        val attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(), CoreAttributesTestUtils.getRegisteredService());
+        val registeredService = CoreAttributesTestUtils.getRegisteredService();
+        when(registeredService.getUsernameAttributeProvider()).thenReturn(new RegisteredServiceUsernameAttributeProvider() {
+            private static final long serialVersionUID = 771643288929352964L;
+            @Override
+            public String resolveUsername(final Principal principal, final Service service, final RegisteredService registeredService) {
+                    return principal.getId();
+            }
+        });
+        val attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(), registeredService);
         assertEquals(attr.size(), map.size());
 
         val data = SerializationUtils.serialize(policy);
         val p2 = SerializationUtils.deserializeAndCheckObject(data, ReturnAllAttributeReleasePolicy.class);
         assertNotNull(p2);
     }
+
 
     @Test
     public void checkServiceAttributeFilterAllAttributesWithCachingTurnedOn() {

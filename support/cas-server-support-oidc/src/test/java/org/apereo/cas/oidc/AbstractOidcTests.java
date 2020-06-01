@@ -33,6 +33,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.oidc.config.OidcComponentSerializationConfiguration;
 import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
@@ -109,6 +110,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     OidcConfiguration.class,
+    OidcComponentSerializationConfiguration.class,
     RefreshAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
     CasCoreServicesConfiguration.class,

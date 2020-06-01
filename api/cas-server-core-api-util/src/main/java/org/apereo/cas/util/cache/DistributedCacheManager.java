@@ -15,12 +15,11 @@ import java.util.function.Predicate;
  * While mostly value and output are one of the same, these are made separate intentionally
  * to avoid serialization issues and provide flexibility to provide transformations on the final result.
  *
+ * @author Misagh Moayyed
  * @param <K> the type parameter
  * @param <V> the type parameter
- * @author Misagh Moayyed
  * @since 5.2.0
  */
-@FunctionalInterface
 public interface DistributedCacheManager<K extends Serializable, V extends DistributedCacheObject> extends Closeable {
 
     /**
@@ -47,8 +46,10 @@ public interface DistributedCacheManager<K extends Serializable, V extends Distr
      *
      * @param key  the key
      * @param item the item to store in the cache
+     * @return the distributed cache manager
      */
-    default void set(final K key, final V item) {
+    default DistributedCacheManager set(final K key, final V item) {
+        return this;
     }
 
     /**
@@ -66,8 +67,10 @@ public interface DistributedCacheManager<K extends Serializable, V extends Distr
      *
      * @param key  the key
      * @param item the item
+     * @return the distributed cache manager
      */
-    default void update(final K key, final V item) {
+    default DistributedCacheManager update(final K key, final V item) {
+        return this;
     }
 
     /**
@@ -75,8 +78,10 @@ public interface DistributedCacheManager<K extends Serializable, V extends Distr
      *
      * @param key  the key
      * @param item the item
+     * @return the distributed cache manager
      */
-    default void remove(final K key, final V item) {
+    default DistributedCacheManager remove(final K key, final V item) {
+        return this;
     }
 
     /**
@@ -110,5 +115,9 @@ public interface DistributedCacheManager<K extends Serializable, V extends Distr
             return Optional.empty();
         }
         return Optional.of(results.iterator().next());
+    }
+
+    @Override
+    default void close() {
     }
 }

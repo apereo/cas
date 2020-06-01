@@ -64,6 +64,9 @@ documentation page for the feature in question to learn more about administrativ
 
 ## Metrics
 
+Metrics allow to gain insight into the running CAS software, and provide ways to measure the behavior of critical components. 
+See [this guide](Configuring-Metrics.html) for more info.
+
 Navigating to `/actuator/metrics` displays a list of available meter names. You can drill down to view information about a 
 particular meter by providing its name as a selector, e.g. `/actuator/metrics/jvm.memory.max`.  The name you use here should match 
 the name used in the code, not the name after it has been naming-convention normalized for a monitoring system it is shipped to.
@@ -148,7 +151,3 @@ To enable additional logging, modify the logging configuration file to add the f
 </AsyncLogger>
 ```
 
-## Metrics
-
-Metrics allow to gain insight into the running CAS software, and provide ways to measure the behavior of critical components. 
-See [this guide](Configuring-Metrics.html) for more info.

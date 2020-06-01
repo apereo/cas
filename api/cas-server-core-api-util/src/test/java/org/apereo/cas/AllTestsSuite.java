@@ -1,5 +1,9 @@
 package org.apereo.cas;
 
+import org.apereo.cas.cache.DistributedCacheManagerTests;
+import org.apereo.cas.cache.DistributedCacheObjectTests;
+import org.apereo.cas.model.CapacityTests;
+
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
@@ -12,6 +16,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     CapacityTests.class,
+    DistributedCacheManagerTests.class,
     DistributedCacheObjectTests.class
 })
 @RunWith(JUnitPlatform.class)

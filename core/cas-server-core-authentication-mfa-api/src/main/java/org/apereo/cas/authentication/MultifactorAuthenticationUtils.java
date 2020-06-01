@@ -174,7 +174,6 @@ public class MultifactorAuthenticationUtils {
                 return evaluateEventForProviderInContext(principal, service, context, provider);
             }
             LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, attributeValue);
-
         }
         LOGGER.debug("Attribute value [{}] is not a single-valued attribute", providedAttributeValue);
         return null;

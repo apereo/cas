@@ -204,7 +204,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
             LOGGER.debug("Configuring embedded tomcat container for HTTP2 protocol support");
             connector.addUpgradeProtocol(new Http2Protocol());
 
-            http.getAttributes().forEach(connector::setAttribute);
+            http.getAttributes().forEach(connector::setProperty);
             tomcat.addAdditionalTomcatConnectors(connector);
         }
     }
@@ -232,7 +232,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
                 }
                 connector.addUpgradeProtocol(new Http2Protocol());
 
-                proxy.getAttributes().forEach(connector::setAttribute);
+                proxy.getAttributes().forEach(connector::setProperty);
                 LOGGER.info("Configured connector listening on port [{}]", tomcat.getPort());
             });
         } else {
@@ -269,9 +269,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
                 LOGGER.debug("Set AJP redirect port to [{}]", ajp.getRedirectPort());
                 ajpConnector.setRedirectPort(ajp.getRedirectPort());
             }
-
-            ajp.getAttributes().forEach(ajpConnector::setAttribute);
-
+            ajp.getAttributes().forEach(ajpConnector::setProperty);
             tomcat.addAdditionalTomcatConnectors(ajpConnector);
         }
     }

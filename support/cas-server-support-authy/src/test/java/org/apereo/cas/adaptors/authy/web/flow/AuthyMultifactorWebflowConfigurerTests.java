@@ -18,9 +18,9 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 @SpringBootTest(classes = BaseAuthyAuthenticationTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.authy.trusted-device-enabled=true",
-        "cas.authn.mfa.trusted.deviceRegistrationEnabled=true",
-        "cas.authn.mfa.authy.apiKey=example",
-        "cas.authn.mfa.authy.apiUrl=http://localhost:8080/authy"
+        "cas.authn.mfa.trusted.device-registration-enabled=true",
+        "cas.authn.mfa.authy.api-key=example",
+        "cas.authn.mfa.authy.api-url=http://localhost:8080/authy"
     })
 @Tag("Webflow")
 public class AuthyMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {

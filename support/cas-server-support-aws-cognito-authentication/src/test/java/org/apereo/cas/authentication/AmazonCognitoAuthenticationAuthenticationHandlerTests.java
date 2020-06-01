@@ -155,6 +155,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandlerTests {
     }
 
     @Test
+    @SuppressWarnings("JdkObsolete")
     public void verifyOK() throws Exception {
         val jwtProcessor = getConfigurableJWTProcessor("casuser");
 

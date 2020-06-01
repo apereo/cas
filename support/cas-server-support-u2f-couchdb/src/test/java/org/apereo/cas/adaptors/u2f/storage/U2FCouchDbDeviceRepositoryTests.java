@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.authn.mfa.u2f.couch-db.asynchronous=false",
         "cas.authn.mfa.u2f.couch-db.username=cas",
-        "cas.authn.mfa.u2f.couchdb.password=password"
+        "cas.authn.mfa.u2f.couch-db.password=password"
     })
 @Getter
 @EnabledIfPortOpen(port = 5984)

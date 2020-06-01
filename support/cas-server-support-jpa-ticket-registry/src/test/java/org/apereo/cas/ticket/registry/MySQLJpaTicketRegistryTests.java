@@ -14,7 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {
     "cas.ticket.registry.jpa.user=root",
     "cas.ticket.registry.jpa.password=password",
-    "cas.ticket.registry.jpa.driverClass=com.mysql.cj.jdbc.Driver",
+    "cas.ticket.registry.jpa.driver-class=com.mysql.cj.jdbc.Driver",
     "cas.ticket.registry.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "cas.ticket.registry.jpa.dialect=org.hibernate.dialect.MySQL57InnoDBDialect"
 })

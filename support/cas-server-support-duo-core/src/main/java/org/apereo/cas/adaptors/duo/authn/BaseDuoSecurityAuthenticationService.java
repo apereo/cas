@@ -73,7 +73,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private final transient Cache<String, DuoSecurityUserAccount> userAccountCache;
 
-    public BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties,
+    protected BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties,
                                                 final HttpClient httpClient) {
         this.duoProperties = duoProperties;
         this.httpClient = httpClient;

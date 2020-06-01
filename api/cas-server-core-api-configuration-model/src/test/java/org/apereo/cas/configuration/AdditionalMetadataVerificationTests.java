@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0
  */
 @SpringBootTest(classes = AopAutoConfiguration.class)
-@Tag("Simple")
+@Tag("CasConfiguration")
 public class AdditionalMetadataVerificationTests {
 
     @Autowired
@@ -52,7 +52,7 @@ public class AdditionalMetadataVerificationTests {
             try {
                 ConfigurationPropertyName.of(prop.getName());
             } catch (final InvalidConfigurationPropertyNameException e) {
-                fail(e::getMessage);
+                fail(e.getMessage());
             }
             val deprecation = prop.getDeprecation();
             if (deprecation != null && StringUtils.isNotBlank(deprecation.getReplacement())) {

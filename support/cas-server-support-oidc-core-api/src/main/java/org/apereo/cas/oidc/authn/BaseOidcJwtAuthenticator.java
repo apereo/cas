@@ -14,6 +14,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jwt.JWTParser;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -30,7 +31,7 @@ import org.springframework.context.ApplicationContext;
  * @since 6.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseOidcJwtAuthenticator implements Authenticator<UsernamePasswordCredentials> {
 
     /**

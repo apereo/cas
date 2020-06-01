@@ -22,6 +22,7 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -97,7 +98,7 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
         val passwordExpirationDate = authenticationResponse.getHeaders().getFirstZonedDateTime("X-CAS-PasswordExpirationDate");
         if (passwordExpirationDate != null) {
-            val days = Duration.between(Instant.now(), passwordExpirationDate).toDays();
+            val days = Duration.between(Instant.now(Clock.systemUTC()), passwordExpirationDate).toDays();
             messageDescriptors.add(new PasswordExpiringWarningMessageDescriptor(null, days));
         }
 

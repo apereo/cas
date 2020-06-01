@@ -117,11 +117,11 @@ password encoding. Most options are based on Spring Security's [support for pass
 The following options related to password encoding support in CAS apply equally to a number of CAS components (authentication handlers, etc) given the component's *configuration key*:
 
 ```properties
-# ${configurationKey}.passsword-encoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2
-# ${configurationKey}.passsword-encoder.character-encoding=
-# ${configurationKey}.passsword-encoder.encoding-algorithm=
-# ${configurationKey}.passsword-encoder.secret=
-# ${configurationKey}.passsword-encoder.strength=16
+# ${configurationKey}.password-encoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2
+# ${configurationKey}.password-encoder.character-encoding=
+# ${configurationKey}.password-encoder.encoding-algorithm=
+# ${configurationKey}.password-encoder.secret=
+# ${configurationKey}.password-encoder.strength=16
 ```
 
 The following options are supported:

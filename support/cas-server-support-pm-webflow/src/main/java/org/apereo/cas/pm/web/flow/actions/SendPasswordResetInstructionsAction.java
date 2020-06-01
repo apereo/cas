@@ -192,6 +192,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         messages.addMessage(new MessageBuilder()
             .error()
             .code("screen.pm.reset." + code)
+            .defaultText(defaultMessage)
             .build());
         LOGGER.error(defaultMessage);
         return new EventFactorySupport().event(this, CasWebflowConstants.VIEW_ID_ERROR);

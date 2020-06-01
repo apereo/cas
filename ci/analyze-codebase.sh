@@ -55,6 +55,30 @@ if [ $retVal != 0 ]; then
     exit $retVal
 fi
 
+echo -e "Checking for missing class in tests suites"
+groovy ./ci/groovy/CheckMissingClassInTestsSuite.groovy
+retVal=$?
+if [ $retVal != 0 ]; then
+    echo -e "Groovy analysis has found issues with test suites."
+    exit $retVal
+fi
+
+echo -e "Checking for bean proxying in Spring configuration files"
+groovy ./ci/groovy/CheckSpringConfigurationBeanProxying.groovy
+retVal=$?
+if [ $retVal != 0 ]; then
+    echo -e "Groovy analysis has found issues with bean proxying in Spring configuration files."
+    exit $retVal
+fi
+
+echo -e "Checking Spring configuration factories"
+groovy ./ci/groovy/CheckSpringConfigurationFactories.groovy
+retVal=$?
+if [ $retVal != 0 ]; then
+    echo -e "Groovy analysis has found issues with Spring configuration factories"
+    exit $retVal
+fi
+
 echo -e "Groovy analysis has successfully examined the codebase."
 echo -e "***************************************************************************************"
 echo -e "Build finished at `date`"

@@ -12,7 +12,6 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -42,15 +41,11 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
 
     @Override
     public OneTimeTokenAccount get(final String username) {
-        try {
-            val query = new Query();
-            query.addCriteria(Criteria.where("username").is(username));
-            val r = this.mongoTemplate.findOne(query, GoogleAuthenticatorAccount.class, this.collectionName);
-            if (r != null) {
-                return decode(r);
-            }
-        } catch (final NoResultException e) {
-            LOGGER.debug("No record could be found for google authenticator id [{}]", username);
+        val query = new Query();
+        query.addCriteria(Criteria.where("username").is(username));
+        val r = this.mongoTemplate.findOne(query, GoogleAuthenticatorAccount.class, this.collectionName);
+        if (r != null) {
+            return decode(r);
         }
         return null;
     }

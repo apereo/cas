@@ -69,7 +69,7 @@ public class PersonDirectoryPrincipalResolverTests {
     public void verifyNullAttributes() {
         val resolver = new PersonDirectoryPrincipalResolver(true, CoreAuthenticationTestUtils.CONST_USERNAME);
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        val p = resolver.resolve(c, null);
+        val p = resolver.resolve(c, Optional.empty());
         assertNull(p);
     }
 
@@ -89,7 +89,7 @@ public class PersonDirectoryPrincipalResolverTests {
         val resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository(),
             CoreAuthenticationTestUtils.CONST_USERNAME);
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        val p = resolver.resolve(c, null);
+        val p = resolver.resolve(c, Optional.empty());
         assertNotNull(p);
     }
 
@@ -97,7 +97,7 @@ public class PersonDirectoryPrincipalResolverTests {
     public void verifyAttributesWithPrincipal() {
         val resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository(), "cn");
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        val p = resolver.resolve(c, null);
+        val p = resolver.resolve(c, Optional.empty());
         assertNotNull(p);
         assertNotEquals(p.getId(), CoreAuthenticationTestUtils.CONST_USERNAME);
         assertTrue(p.getAttributes().containsKey("memberOf"));

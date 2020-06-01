@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @author Travis Schmidt
  * @since 6.1.0
  */
-@Tag("Simple")
+@Tag("RegisteredService")
 public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
 
     @Test

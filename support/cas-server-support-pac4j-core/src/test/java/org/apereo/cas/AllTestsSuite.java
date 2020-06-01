@@ -2,6 +2,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.audit.DelegatedAuthenticationAuditResourceResolverTests;
+import org.apereo.cas.authentication.principal.provision.ChainingDelegatedClientUserProfileProvisionerTests;
 import org.apereo.cas.authentication.principal.provision.GroovyDelegatedClientUserProfileProvisionerTests;
 import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientUserProfileProvisionerTests;
 import org.apereo.cas.validation.DelegatedAuthenticationServiceTicketValidationAuthorizerTests;
@@ -22,6 +23,7 @@ import org.junit.runner.RunWith;
     DelegatedClientIdentityProviderConfigurationFactoryTests.class,
     DelegatedAuthenticationServiceTicketValidationAuthorizerTests.class,
     GroovyDelegatedClientUserProfileProvisionerTests.class,
+    ChainingDelegatedClientUserProfileProvisionerTests.class,
     RestfulDelegatedClientUserProfileProvisionerTests.class
 })
 @RunWith(JUnitPlatform.class)

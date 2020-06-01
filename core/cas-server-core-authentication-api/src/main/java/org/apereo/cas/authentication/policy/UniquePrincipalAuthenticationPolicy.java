@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.io.Serializable;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -40,15 +42,17 @@ public class UniquePrincipalAuthenticationPolicy extends BaseAuthenticationPolic
     @Override
     public boolean isSatisfiedBy(final Authentication authentication,
                                  final Set<AuthenticationHandler> authenticationHandlers,
-                                 final ConfigurableApplicationContext applicationContext) {
-        val authPrincipal = authentication.getPrincipal();
-        val count = ticketRegistry.countSessionsFor(authPrincipal.getId());
-        if (count == 0) {
-            LOGGER.debug("Authentication policy is satisfied with [{}]", authPrincipal.getId());
-            return true;
+                                 final ConfigurableApplicationContext applicationContext,
+                                 final Optional<Serializable> assertionResult) {
+        if (assertionResult.isEmpty()) {
+            val authPrincipal = authentication.getPrincipal();
+            val count = ticketRegistry.countSessionsFor(authPrincipal.getId());
+            if (count > 0) {
+                LOGGER.warn("[{}] cannot be satisfied for [{}]; [{}] sessions currently exist",
+                    getName(), authPrincipal.getId(), count);
+                throw new UniquePrincipalRequiredException();
+            }
         }
-        LOGGER.warn("Authentication policy cannot be satisfied for principal [{}] because [{}] sessions currently exist",
-            authPrincipal.getId(), count);
-        throw new UniquePrincipalRequiredException();
+        return true;
     }
 }

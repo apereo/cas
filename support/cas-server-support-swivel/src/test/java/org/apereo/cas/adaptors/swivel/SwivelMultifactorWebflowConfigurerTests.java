@@ -17,11 +17,11 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
  */
 @SpringBootTest(classes = BaseSwivelAuthenticationTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.mfa.swivel.swivelUrl=http://localhost:9191",
-        "cas.authn.mfa.swivel.sharedSecret=$ecret",
-        "cas.authn.mfa.swivel.ignoreSslErrors=true",
+        "cas.authn.mfa.swivel.swivel-url=http://localhost:9191",
+        "cas.authn.mfa.swivel.shared-secret=$ecret",
+        "cas.authn.mfa.swivel.ignore-ssl-errors=true",
         "cas.authn.mfa.swivel.trusted-device-enabled=true",
-        "cas.authn.mfa.trusted.deviceRegistrationEnabled=true"
+        "cas.authn.mfa.trusted.device-registration-enabled=true"
     })
 @Tag("Webflow")
 public class SwivelMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {

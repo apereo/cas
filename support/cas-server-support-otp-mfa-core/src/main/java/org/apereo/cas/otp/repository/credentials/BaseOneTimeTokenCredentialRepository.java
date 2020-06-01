@@ -3,6 +3,7 @@ package org.apereo.cas.otp.repository.credentials;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -12,7 +13,7 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTokenCredentialRepository {
     /**
      * The Token credential cipher.
