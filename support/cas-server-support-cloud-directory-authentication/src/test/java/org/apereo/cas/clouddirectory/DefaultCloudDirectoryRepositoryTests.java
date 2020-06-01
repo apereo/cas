@@ -13,8 +13,6 @@ import com.amazonaws.services.clouddirectory.model.TypedAttributeValue;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -29,7 +27,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
 @Tag("AmazonWebServices")
 public class DefaultCloudDirectoryRepositoryTests {
     @Test
@@ -43,6 +40,7 @@ public class DefaultCloudDirectoryRepositoryTests {
     }
 
     @Test
+    @SuppressWarnings("JdkObsolete")
     public void verifyActionIndexResult() {
         val cloud = mock(AmazonCloudDirectory.class);
         val result = new ListIndexResult();
@@ -71,7 +69,6 @@ public class DefaultCloudDirectoryRepositoryTests {
         value3.setBooleanValue(Boolean.TRUE);
         attr3.setKey(key3);
         attr3.setValue(value3);
-
 
         val attr4 = new AttributeKeyAndValue();
         val key4 = new AttributeKey();

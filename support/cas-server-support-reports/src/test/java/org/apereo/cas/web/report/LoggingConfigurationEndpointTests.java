@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties =
     "management.endpoint.loggingConfig.enabled=true"
 )
-@Tag("Simple")
+@Tag("ActuatorEndpoint")
 public class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("loggingConfigurationEndpoint")

@@ -14,8 +14,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.util.List;
 import java.util.Map;
@@ -30,7 +28,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
 @ExtendWith(MockitoExtension.class)
 @Tag("Simple")
 public class SurrogatePrincipalResolverTests {

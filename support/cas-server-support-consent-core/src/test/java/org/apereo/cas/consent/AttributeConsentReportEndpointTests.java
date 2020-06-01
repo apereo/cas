@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoints.web.exposure.include=*",
         "management.endpoint.attributeConsent.enabled=true"
     })
-@Tag("Simple")
+@Tag("ActuatorEndpoint")
 public class AttributeConsentReportEndpointTests {
     @Autowired
     @Qualifier("attributeConsentReportEndpoint")

@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -78,7 +79,7 @@ import java.util.Map;
 @Slf4j
 @Setter
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = "name")
 public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigurer {
     /**
@@ -428,6 +429,19 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     public Transition createTransitionForState(final TransitionableState state, final String criteriaOutcome, final String targetState) {
         return createTransitionForState(state, criteriaOutcome, targetState, false);
+    }
+
+    /**
+     * Create transition for state transition.
+     *
+     * @param flow            the flow
+     * @param stateId         the state id
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @return the transition
+     */
+    public Transition createTransitionForState(final Flow flow, final String stateId, final String criteriaOutcome, final String targetState) {
+        return createTransitionForState(getTransitionableState(flow, stateId), criteriaOutcome, targetState, false);
     }
 
     /**

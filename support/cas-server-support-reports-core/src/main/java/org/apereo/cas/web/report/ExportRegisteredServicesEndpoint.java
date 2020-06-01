@@ -19,8 +19,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
 /**
@@ -53,7 +54,7 @@ public class ExportRegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation
     public WebEndpointResponse<Resource> exportServices() throws Exception {
-        val date = new SimpleDateFormat("yyyy-MM-dd-HH-mm").format(new Date());
+        val date = LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm"));
         val file = File.createTempFile("services-" + date, ".zip");
         Files.deleteIfExists(file.toPath());
 

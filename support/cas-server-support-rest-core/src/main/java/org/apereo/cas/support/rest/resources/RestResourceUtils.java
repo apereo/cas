@@ -83,7 +83,7 @@ public class RestResourceUtils {
                                                 final Throwable ex) {
         val authnMsg = StringUtils.defaultIfBlank(ex.getMessage(), "Authentication Failure: " + authnhandlerErrors.getMessage());
         val authnBundleMsg = getTranslatedMessageForExceptionClass(ex.getClass().getSimpleName(), request, applicationContext);
-        return String.format("%s:%s:%s", ex.getClass().getSimpleName(), authnMsg, authnBundleMsg);
+        return String.format("%s:%s", authnMsg, authnBundleMsg);
     }
 
     private String getTranslatedMessageForExceptionClass(final String className,

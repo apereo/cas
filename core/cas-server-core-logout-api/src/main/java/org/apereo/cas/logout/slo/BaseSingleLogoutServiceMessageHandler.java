@@ -11,6 +11,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.http.HttpClient;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLogoutServiceMessageHandler {
     private final HttpClient httpClient;

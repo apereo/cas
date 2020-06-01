@@ -65,7 +65,7 @@ public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
     @Test
     public void verifyOperation() {
         assertNotNull(acceptableUsagePolicyRepository);
-        verifyRepositoryAction("casuser",
-            CollectionUtils.wrap("carLicense", List.of("false"), "email", List.of("CASuser@example.org")));
+        verifyRepositoryAction("casaupldap",
+            CollectionUtils.wrap("carLicense", List.of("false"), "email", List.of("casaupldap@example.org")));
     }
 }

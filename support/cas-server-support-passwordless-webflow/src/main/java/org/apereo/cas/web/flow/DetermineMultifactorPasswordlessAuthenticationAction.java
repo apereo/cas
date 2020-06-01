@@ -106,7 +106,11 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends Abstra
         try {
             return multifactorTriggerSelectionStrategy.resolve(request, registeredService, auth, service);
         } catch (final MultifactorAuthenticationProviderAbsentException e) {
-            LOGGER.error(e.getMessage());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return Optional.empty();
     }

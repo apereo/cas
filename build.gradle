@@ -50,13 +50,12 @@ ext {
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
 
+    githubPackagesUsername = System.getProperty("githubPackagesUsername")
+    githubPackagesToken = System.getProperty("githubPackagesToken")
+
     publishSnapshots = Boolean.getBoolean("publishSnapshots")
     publishReleases = Boolean.getBoolean("publishReleases")
-
-    if ((publishSnapshots || publishReleases) && (sonatypeUsername == null || sonatypePassword == null)) {
-        throw new GradleException("No credentials are configured to publish releases or snapshots")
-    }
-
+    
     skipBootifulArtifact = System.getProperty("skipBootifulArtifact")
     skipErrorProneCompiler = System.getProperty("skipErrorProneCompiler")
 
@@ -66,7 +65,7 @@ ext {
     remoteDebuggingSuspend = Boolean.getBoolean("remoteDebuggingSuspend") ? "y" : "n"
     generateGitProperties = Boolean.getBoolean("generateGitProperties")
 
-    continuousIntegrationBuild = System.getenv("CI") || Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
+    ci = System.getenv("CI") || Boolean.getBoolean("CI")
 
     excludedFilesFromTestCoverage = [
         '**/**ConfigurationMetadata**',
@@ -131,9 +130,12 @@ dependencyCheck {
 allprojects {
     apply plugin: "idea"
     apply plugin: "eclipse"
+    apply plugin: "java-library"
     apply plugin: "jacoco"
-    apply plugin: "java"
-    apply plugin: "org.gradle.test-retry"
+
+    if (!Boolean.getBoolean("skipTestRetry")) {
+        apply plugin: "org.gradle.test-retry"
+    }
 
     apply from: rootProject.file("gradle/tasks.gradle")
 
@@ -158,9 +160,10 @@ allprojects {
         module {
             downloadSources = false
             downloadJavadoc = false
-            excludeDirs << file(".gradle")
-            ["classes", "bin", "docs", "dependency-cache", "libs", "reports", "resources", "test-results", "tmp"].each {
-                excludeDirs << file("$buildDir/$it")
+            jdkName = project.targetCompatibility
+            excludeDirs += file(".gradle")
+            [".settings", "classes", "bin", "out", "docs", "dependency-cache", "libs", "reports", "resources", "test-results", "tmp"].each {
+                excludeDirs += file("$buildDir/$it")
             }
         }
     }
@@ -205,7 +208,7 @@ subprojects {
             description: "Display a graph of all project dependencies") {
         doLast {}
     }
-    apply plugin: "java-library"
+
     if (projectShouldBePublished(project)) {
         apply plugin: "maven-publish"
         apply plugin: "signing"
@@ -281,6 +284,38 @@ subprojects {
         tests
     }
 
+    jacocoTestReport {
+        reports {
+            xml.enabled(true)
+            html.enabled(true)
+        }
+        afterEvaluate {
+            classDirectories.setFrom(files(classDirectories.files.collect {
+                fileTree(dir: it, include: ['**/*.*'], exclude: rootProject.excludedFilesFromTestCoverage)
+            }))
+        }
+        sourceSets sourceSets.main
+        getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/*.exec"))
+    }
+
+
+    jacocoTestCoverageVerification {
+        getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/*.exec"))
+        afterEvaluate {
+            classDirectories.setFrom(files(classDirectories.files.collect {
+                fileTree(dir: it, include: ['**/*.*'], exclude: rootProject.excludedFilesFromTestCoverage)
+            }))
+        }
+        violationRules {
+            rule {
+                element = 'CLASS'
+                limit {
+                    minimum = 0.80
+                }
+            }
+        }
+    }
+
     configurations.all {
         resolutionStrategy {
             if (!Boolean.getBoolean("skipVersionConflict")) {
@@ -312,15 +347,15 @@ subprojects {
      * evaluate sub-projects to apply plugins, etc.
      */
     afterEvaluate { project ->
-        if (projectShouldBePublished(project)) {
-            logger.info "Project ${project.name} should be published"
+        if ((rootProject.publishReleases || rootProject.publishSnapshots) && projectShouldBePublished(project)) {
+            //logger.info "Project ${project.name} should be published"
             apply from: rootProject.file("gradle/maven.gradle")
 
             publishing {
                 publications {
                     def isWarPluginApplied = project.plugins.hasPlugin("war")
                     if (isWarPluginApplied) {
-                        logger.info "Project ${project.name} should be published as a WAR"
+                        //logger.info "Project ${project.name} should be published as a WAR"
                         mavenWeb(MavenPublication) {
                             from components.web
                             pom {
@@ -331,7 +366,7 @@ subprojects {
                             }
                         }
                     } else {
-                        logger.info "Project ${project.name} should be published as a JAR"
+                        //logger.info "Project ${project.name} should be published as a JAR"
                         mavenJava(MavenPublication) {
                             from components.java
                             artifact tasks['sourcesJar']
@@ -362,15 +397,17 @@ subprojects {
                                 password "${sonatypePassword}"
                             }
                         }
-                        maven {
-                            name = "GitHubPackages-Releases"
-                            url = uri("${githubPackagesRepositoryUrl}")
-                            mavenContent {
-                                releasesOnly()
-                            }
-                            credentials {
-                                username = "${githubPackagesUsername}"
-                                password = "${githubPackagesToken}"
+                        if (rootProject.githubPackagesUsername != null && rootProject.githubPackagesToken != null) {
+                            maven {
+                                name = "GitHubPackages-Releases"
+                                url = uri("${githubPackagesRepositoryUrl}")
+                                mavenContent {
+                                    releasesOnly()
+                                }
+                                credentials {
+                                    username = "${githubPackagesUsername}"
+                                    password = "${githubPackagesToken}"
+                                }
                             }
                         }
                     }
@@ -396,7 +433,7 @@ subprojects {
             }
         }
     }
-    
+
     artifacts {
         tests testJar
         if (rootProject.publishReleases || rootProject.publishSnapshots) {
@@ -406,26 +443,11 @@ subprojects {
         }
         archives testJar
     }
-    
-    jacocoTestReport {
-        reports {
-            xml.enabled(true)
-            html.enabled(true)
-        }
-
-        jacocoTestReport {
-            afterEvaluate {
-                classDirectories.setFrom(files(classDirectories.files.collect {
-                    fileTree(dir: it, exclude: rootProject.excludedFilesFromTestCoverage)
-                }))
-            }
-        }
-    }
 
     sourceSets {
         main {
             java {
-                srcDirs = ["${projectDir}/src/main/java", "${projectDir}/src/main/groovy"]
+                srcDirs = ["${projectDir}/src/main/java"]
             }
             resources {
                 srcDirs = ["${projectDir}/src/main/resources"]
@@ -433,7 +455,7 @@ subprojects {
         }
         test {
             java {
-                srcDirs = ["${projectDir}/src/test/java", "${projectDir}/src/test/groovy"]
+                srcDirs = ["${projectDir}/src/test/java"]
 
             }
             resources {
@@ -447,7 +469,7 @@ subprojects {
 
     [compileTestJava, compileJava].each {
         it.doFirst {
-            it.options.fork = false
+            it.options.fork = true
             it.options.incremental = true
 
             def casCompilerArgs = ["-parameters"]
@@ -460,7 +482,7 @@ subprojects {
             if (!rootProject.skipErrorProneCompiler) {
                 it.options.errorprone.allErrorsAsWarnings = false
                 it.options.errorprone.disableWarningsInGeneratedCode = true
-                it.options.errorprone.errorproneArgs += ['-Xep:ParameterName:OFF', '-Xep:MissingOverride:OFF']
+                it.options.errorprone.errorproneArgs += ['-Xep:ParameterName:OFF', '-Xep:MissingOverride:OFF', '-Xep:MissingSummary:OFF']
 
                 casCompilerArgs.add("-XDcompilePolicy=byfile")
             }
@@ -625,10 +647,9 @@ if (rootProject.publishReleases || rootProject.publishSnapshots) {
     }
 }
 
-def publishedProjects = subprojects.findAll { !it.path.contains(':docs') }
 
 task jacocoMerge(type: JacocoMerge) {
-    publishedProjects.each { subproject ->
+    subprojects.each { subproject ->
         executionData subproject.tasks.withType(Test)
         dependsOn tasks.withType(Test)
     }
@@ -637,7 +658,7 @@ task jacocoMerge(type: JacocoMerge) {
     }
 }
 
-task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
+task jacocoRootReport(type: JacocoReport) {
     description = 'Generates an aggregate report from all projects'
 
     subprojects.each {
@@ -647,22 +668,36 @@ task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
     }
 
     dependsOn jacocoMerge
-
-    additionalSourceDirs.from(files(publishedProjects.sourceSets.main.allSource.srcDirs))
-    sourceDirectories.from(files(publishedProjects.sourceSets.main.allSource.srcDirs))
-    classDirectories.from(files(subprojects.sourceSets.main.output)).collect {
-        fileTree(dir: it, exclude: rootProject.excludedFilesFromTestCoverage)
-    }
+    
+    additionalSourceDirs.setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
+    sourceDirectories.setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
+    classDirectories.setFrom(
+            files(subprojects.sourceSets.main.output).collect {
+                fileTree(dir: it,
+                        include: ['**/*.*'],
+                        exclude: rootProject.excludedFilesFromTestCoverage
+                        )
+            })
+    //executionData.setFrom(files(subprojects.jacocoTestReport.executionData))
     executionData jacocoMerge.destinationFile
+
     reports {
         html.enabled = true
         xml.enabled = true
+    }
+    onlyIf = {
+        true
+    }
+    doFirst {
+        executionData files(executionData.findAll {
+            it.exists()
+        })
     }
 }
 
 task casVersion(description: "Display current CAS version") {
     doLast {
-        println project.version
+        println rootProject.version
     }
 }
 
@@ -682,3 +717,5 @@ task verifyRequiredJavaVersion {
 boolean projectShouldBePublished(Project project) {
     return !["api", "core", "docs", "support", "webapp", "cas-server-documentation"].contains(project.name)
 }
+
+

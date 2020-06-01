@@ -22,6 +22,7 @@ import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.UnauthorizedServiceTicketValidationException;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +54,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractServiceValidateController extends AbstractDelegateController {
     private final ServiceValidateConfigurationContext serviceValidateConfigurationContext;
 
@@ -369,7 +370,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param assertion the assertion
      * @return map of objects each keyed to a name
      */
-    protected static Map<String, ?> augmentSuccessViewModelObjects(final Assertion assertion) {
+    protected Map<String, ?> augmentSuccessViewModelObjects(final Assertion assertion) {
         return new HashMap<>(0);
     }
 

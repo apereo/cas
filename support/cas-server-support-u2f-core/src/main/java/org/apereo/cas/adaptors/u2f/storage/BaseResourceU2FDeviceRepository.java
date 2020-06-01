@@ -34,7 +34,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
 
     private final TimeUnit expirationTimeUnit;
 
-    public BaseResourceU2FDeviceRepository(final LoadingCache<String, String> requestStorage,
+    protected BaseResourceU2FDeviceRepository(final LoadingCache<String, String> requestStorage,
                                            final long expirationTime, final TimeUnit expirationTimeUnit) {
         super(requestStorage);
         this.expirationTime = expirationTime;

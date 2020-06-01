@@ -2,52 +2,45 @@
 
 clear
 
-dkc() {
-   export CID=$(docker ps -aqf "name=$1");
-   docker stop $CID 2>/dev/null
-   docker rm -f $CID 2>/dev/null
-}
-
 printHelp() {
-    echo -e "\nUsage: ./testcas.sh [--no-container] --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--coverage-report] [--coverage-upload] [--no-parallel] \n"
+    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--no-parallel] [--dry-run] [--info] [--with-coverage] \n"
     echo -e "Available test categories are:\n"
     echo -e "simple,memcached,cassandra,groovy,kafka,ldap,rest,mfa,jdbc,mssql,oracle,radius,couchdb,\
-mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,hazelcast,jmx,ehcache,\
-oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,cosmosdb"
+mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,hazelcast,jmx,ehcache,actuator,wsfed,\
+oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,cosmosdb,config,sms,util,services"
     echo -e "\nPlease see the test script for details.\n"
 }
 
-container=true
-uploadCoverage=false
 parallel="--parallel "
+dryRun=""
+info=""
 gradleCmd="./gradlew"
-flags="--build-cache -x javadoc -x check -DignoreTestFailures=false -DskipNestedConfigMetadataGen=true \
--DshowStandardStreams=true --no-daemon --configure-on-demand"
+flags="--no-daemon --configure-on-demand --build-cache -x javadoc -x check -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true "
 
 while (( "$#" )); do
     case "$1" in
-    --no-container)
-        container=false
-        shift
-        ;;
     --no-parallel)
-        parallel=""
+        parallel="--no-parallel "
         shift
         ;;
-    --coverage-report)
+    --with-coverage)
         currentDir=`pwd`
         case "${currentDir}" in
             *api*|*core*|*support*|*webapp*)
-                coverage="jacocoTestReport "
+                task+="jacocoTestReport "
                 ;;
             *)
-                coverage="jacocoRootReport "
+                task+="jacocoRootReport "
                 ;;
         esac
         shift
         ;;
-    --coverage-upload)
-        uploadCoverage=true
+    --info)
+        info="--info "
+        shift
+        ;;
+    --dry-run)
+        dryRun="--dry-run "
         shift
         ;;
     --no-wrapper)
@@ -84,7 +77,7 @@ while (( "$#" )); do
                 task+="testSimple "
                 ;;
             memcached|memcache|kryo)
-                test "${container}" == true && dkc ${category} && ./ci/tests/memcached/run-memcached-server.sh
+                ./ci/tests/memcached/run-memcached-server.sh
                 task+="testMemcached "
                 ;;
             x509)
@@ -93,11 +86,29 @@ while (( "$#" )); do
             shell)
                 task+="testSHELL "
                 ;;
+            services|regsvc)
+                task+="testRegisteredService "
+                ;;
+            actuator|endpoint)
+                task+="testActuatorEndpoint "
+                ;;
+            utility|utils|util)
+                task+="testUtility "
+                ;;
+            wsfed)
+                task+="testWSFederation "
+                ;;
+            sms)
+                task+="testSMS "
+                ;;
             uma)
                 task+="testUma "
                 ;;
             filesystem|files|file|fsys)
                 task+="testFileSystem "
+                ;;
+            config|casconfig|ccfg|cfg)
+                task+="testCasConfiguration "
                 ;;
             groovy|script)
                 task+="testGroovy "
@@ -109,60 +120,60 @@ while (( "$#" )); do
                 task+="testHazelcast "
                 ;;
             mssql)
-                test "${container}" == true && dkc ${category} && ./ci/tests/mssqlserver/run-mssql-server.sh
+                ./ci/tests/mssqlserver/run-mssql-server.sh
                 task+="testMsSqlServer "
                 ;;
             ignite)
                 task+="testIgnite "
                 ;;
             influx|influxdb)
-                test "${container}" == true && dkc ${category} && ./ci/tests/influxdb/run-influxdb-server.sh
+                ./ci/tests/influxdb/run-influxdb-server.sh
                 task+="testInfluxDb "
                 ;;
             cosmosdb|cosmos)
                 task+="testCosmosDb "
                 ;;
             ehcache)
-                test "${container}" == true && dkc ${category} && ./ci/tests/ehcache/run-terracotta-server.sh
+                ./ci/tests/ehcache/run-terracotta-server.sh
                 task+="testEhcache "
                 ;;
             ldap|ad|activedirectory)
-                test "${container}" == true && dkc ${category} && ./ci/tests/ldap/run-ldap-server.sh
-                test "${container}" == true && dkc samba && ./ci/tests/ldap/run-ad-server.sh true
+                ./ci/tests/ldap/run-ldap-server.sh
+                ./ci/tests/ldap/run-ad-server.sh true
                 task+="testLdap "
                 ;;
             couchbase)
-                test "${container}" == true && dkc ${category} && ./ci/tests/couchbase/run-couchbase-server.sh
+                ./ci/tests/couchbase/run-couchbase-server.sh
                 task+="testCouchbase "
                 ;;
             mongo|mongodb)
-                test "${container}" == true && dkc ${category} && ./ci/tests/mongodb/run-mongodb-server.sh
+                ./ci/tests/mongodb/run-mongodb-server.sh
                 task+="testMongoDb "
                 ;;
             couchdb)
-                test "${container}" == true && dkc ${category} &&./ci/tests/couchdb/run-couchdb-server.sh
+                ./ci/tests/couchdb/run-couchdb-server.sh
                 task+="testCouchDb "
                 ;;
             rest|restful|restapi)
-                task+="testRestful "
+                task+="testRestfulApi "
                 ;;
             mysql)
-                test "${container}" == true && dkc ${category} &&./ci/tests/mysql/run-mysql-server.sh
+                ./ci/tests/mysql/run-mysql-server.sh
                 task+="testMySQL "
                 ;;
             maria|mariadb)
-                test "${container}" == true && dkc ${category} &&./ci/tests/mariadb/run-mariadb-server.sh
+                ./ci/tests/mariadb/run-mariadb-server.sh
                 task+="testMariaDb "
                 ;;
             jdbc|jpa|database|db|hibernate|rdbms|hsql)
                 task+="testJDBC "
                 ;;
             postgres|pg|postgresql)
-                test "${container}" == true && dkc ${category} &&./ci/tests/postgres/run-postgres-server.sh
+                ./ci/tests/postgres/run-postgres-server.sh
                 task+="testPostgres "
                 ;;
             cassandra)
-                test "${container}" == true && dkc ${category} &&./ci/tests/cassandra/run-cassandra-server.sh
+                ./ci/tests/cassandra/run-cassandra-server.sh
                 task+="testCassandra "
                 ;;
             kafka)
@@ -172,8 +183,8 @@ while (( "$#" )); do
                 task+="testOAuth "
                 ;;
             aws)
-                test "${container}" == true && dkc ${category} &&./ci/tests/aws/run-aws-server.sh
-                task+="testAWS "
+                ./ci/tests/aws/run-aws-server.sh
+                task+="testAmazonWebServices "
                 ;;
             oidc)
                 task+="testOIDC "
@@ -185,34 +196,34 @@ while (( "$#" )); do
                 task+="testSAML "
                 ;;
             radius)
-                test "${container}" == true && dkc ${category} &&./ci/tests/radius/run-radius-server.sh
+                ./ci/tests/radius/run-radius-server.sh
                 task+="testRadius "
                 ;;
             mail|email)
-                test "${container}" == true && ./ci/tests/mail/run-mail-server.sh
+                ./ci/tests/mail/run-mail-server.sh
                 task+="testMail "
                 ;;
             zoo|zookeeper)
-                test "${container}" == true && dkc ${category} && ./ci/tests/zookeeper/run-zookeeper-server.sh
+                ./ci/tests/zookeeper/run-zookeeper-server.sh
                 task+="testZooKeeper "
                 ;;
             dynamodb|dynamo)
-                test "${container}" == true && dkc ${category} && ./ci/tests/dynamodb/run-dynamodb-server.sh
+                ./ci/tests/dynamodb/run-dynamodb-server.sh
                 task+="testDynamoDb "
                 ;;
             webflow|swf)
                 task+="testWebflow "
                 ;;
             oracle)
-                test "${container}" == true && dkc ${category} && ./ci/tests/oracle/run-oracle-server.sh
+                ./ci/tests/oracle/run-oracle-server.sh
                 task+="testOracle "
                 ;;
             redis)
-                test "${container}" == true && dkc ${category} && ./ci/tests/redis/run-redis-server.sh
+                ./ci/tests/redis/run-redis-server.sh
                 task+="testRedis "
                 ;;
             activemq|amq|jms)
-                test "${container}" == true && dkc ${category} && ./ci/tests/activemq/run-activemq-server.sh
+                ./ci/tests/activemq/run-activemq-server.sh
                 task+="testJMS "
                 ;;
             simple|unit)
@@ -236,10 +247,10 @@ then
   exit 1
 fi
 
-cmdstring="\033[1m$gradleCmd \e[32m$task\e[39m$tests\e[39m $flags ${coverage}${debug}${parallel}\e[39m"
+cmdstring="\033[1m$gradleCmd \e[32m$task\e[39m$tests\e[39m $flags ${debug}${dryRun}${info}${parallel}\e[39m"
 printf "$cmdstring \e[0m\n"
 
-cmd="$gradleCmd $task $tests $flags ${coverage} ${debug} ${parallel}"
+cmd="$gradleCmd $task $tests $flags ${debug} ${parallel} ${dryRun} ${info}"
 eval "$cmd"
 retVal=$?
 echo -e "***************************************************************************************"
@@ -247,11 +258,7 @@ echo -e "Gradle build finished at `date` with exit code $retVal"
 echo -e "***************************************************************************************"
 
 if [ $retVal == 0 ]; then
-    if [ $uploadCoverage = true ]; then
-        echo "Uploading test coverage results for ${category}..."
-        bash <(curl -s https://codecov.io/bash) -F "$category"
-        echo "Gradle build finished successfully."
-    fi
+    echo "Gradle build finished successfully."
 else
     echo "Gradle build did NOT finish successfully."
     exit $retVal

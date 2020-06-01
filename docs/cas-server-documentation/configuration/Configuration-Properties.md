@@ -752,7 +752,8 @@ To determine whether an endpoint is available, the calculation order for all end
 
 ```properties
 # management.endpoint.<endpoint-name>.enabled=true
-```
+```        
+
 2. If undefined, the global endpoint security is consulted from CAS settings.
 3. If undefined, the default built-in setting for the endpoint in CAS is consulted, which is typically `false` by default.
 
@@ -806,11 +807,14 @@ The following health indicator names are available, given the presence of the ap
 ### Endpoint Security
 
 Global endpoint security configuration activated by CAS may be controlled under the configuration key `cas.monitor.endpoints.endpoint.<endpoint-name>`.
-There is a special endpoint named `defaults`  which serves as a shortcut that controls the security of all endpoints, if left undefined in CAS settings. 
+There is a special endpoint named `defaults`  which serves as a shortcut that controls the security of all endpoints, if left undefined in CAS settings. Accessing an endpoint
+over the web can be allowed via a special login form whose access and presence can be controlled via:
 
-Note that any individual endpoint must be first enabled before any security can be applied.
+```properties
+# cas.monitor.endpoints.form-login-enabled=false
+``` 
 
-The security of all endpoints is controlled using the following settings:
+Note that any individual endpoint must be first enabled before any security can be applied. The security of all endpoints is controlled using the following settings:
 
 ```properties
 # ${configuration-key}.required-roles[0]=
@@ -3624,6 +3628,7 @@ identity provider are available [here](Configuration-Properties-Common.html#dele
 # cas.authn.pac4j.oauth2[0].profile-path=
 # cas.authn.pac4j.oauth2[0].scope=
 # cas.authn.pac4j.oauth2[0].profile-verb=GET|POST
+# cas.authn.pac4j.oauth2[0].response-type=code
 # cas.authn.pac4j.oauth2[0].profile-attrs.attr1=path-to-attr-in-profile
 # cas.authn.pac4j.oauth2[0].custom-params.param1=value1
 ```
@@ -3898,6 +3903,7 @@ If the user changes the language, a special cookie is created by CAS to contain 
 # cas.sso.create-sso-cookie-on-renew-authn=true
 # cas.sso.proxy-authn-enabled=true
 # cas.sso.renew-authn-enabled=true
+# cas.sso.sso-enabled=true
 # cas.sso.required-service-pattern=
 ```
 
@@ -5415,12 +5421,14 @@ To learn more about this topic, [please review this guide](../installation/Passw
 
 ```properties
 # cas.authn.pm.enabled=true
+# cas.authn.pm.captcha-enabled=false
 
 # Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character
 # cas.authn.pm.policy-pattern=^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}
 
 # cas.authn.pm.reset.expirationMinutes=1
 # cas.authn.pm.reset.security-questions-enabled=true
+
 # Whether the Password Management Token will contain the client or server IP Address.
 # cas.authn.pm.reset.include-server-ip-address=true
 # cas.authn.pm.reset.include-client-ip-address=true

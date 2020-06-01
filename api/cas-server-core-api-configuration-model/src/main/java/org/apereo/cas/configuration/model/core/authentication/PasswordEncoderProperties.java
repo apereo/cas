@@ -21,6 +21,7 @@ import java.io.Serializable;
 public class PasswordEncoderProperties implements Serializable {
 
     private static final long serialVersionUID = -2396781005262069816L;
+
     /**
      * Define the password encoder type to use.
      * Type may be specified as blank or 'NONE' to disable password encoding.
@@ -31,21 +32,25 @@ public class PasswordEncoderProperties implements Serializable {
      * @see PasswordEncoderTypes
      */
     private String type = "NONE";
+
     /**
      * The encoding algorithm to use such as 'MD5'.
      * Relevant when the type used is 'DEFAULT' or 'GLIBC_CRYPT'.
      */
     private String encodingAlgorithm;
+
     /**
      * The encoding algorithm to use such as 'UTF-8'.
      * Relevant when the type used is 'DEFAULT'.
      */
-    private String characterEncoding;
+    private String characterEncoding = "UTF-8";
+
     /**
      * Secret to use with STANDARD, PBKDF2, BCRYPT, GLIBC_CRYPT password encoders.
      * Secret usually is an optional setting.
      */
     private String secret;
+
     /**
      * Strength or number of iterations to use for password hashing.
      * Usually relevant when dealing with PBKDF2 or BCRYPT encoders.

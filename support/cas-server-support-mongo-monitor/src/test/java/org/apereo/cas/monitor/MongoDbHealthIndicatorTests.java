@@ -71,14 +71,15 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class
 },
     properties = {
-        "cas.monitor.mongo.userId=root",
+        "cas.monitor.mongo.user-id=root",
         "cas.monitor.mongo.password=secret",
         "cas.monitor.mongo.host=localhost",
         "cas.monitor.mongo.port=27017",
-        "cas.monitor.mongo.authenticationDatabaseName=admin",
-        "cas.monitor.mongo.databaseName=monitor"
+        "cas.monitor.mongo.authentication-database-name=admin",
+        "cas.monitor.mongo.database-name=monitor"
     })
 @EnabledIfPortOpen(port = 27017)
+@SuppressWarnings("JdkObsolete")
 public class MongoDbHealthIndicatorTests {
     @Autowired
     @Qualifier("mongoHealthIndicator")

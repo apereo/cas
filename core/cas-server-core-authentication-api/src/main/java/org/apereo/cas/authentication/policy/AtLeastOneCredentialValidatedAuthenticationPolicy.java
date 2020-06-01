@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.io.Serializable;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -39,7 +41,8 @@ public class AtLeastOneCredentialValidatedAuthenticationPolicy extends BaseAuthe
 
     @Override
     public boolean isSatisfiedBy(final Authentication authn, final Set<AuthenticationHandler> authenticationHandlers,
-                                 final ConfigurableApplicationContext applicationContext) throws Exception {
+                                 final ConfigurableApplicationContext applicationContext,
+                                 final Optional<Serializable> assertion) throws Exception {
         if (this.tryAll) {
             val sum = authn.getSuccesses().size() + authn.getFailures().size();
             if (authenticationHandlers.size() != sum) {

@@ -37,7 +37,7 @@ public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends A
     private final RemoteRequestPrincipalAttributesExtractor principalAttributesExtractor;
     private int order = Integer.MAX_VALUE;
 
-    public BasePrincipalFromNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+    protected BasePrincipalFromNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
                                                             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
                                                             final PrincipalFactory principalFactory, final RemoteRequestPrincipalAttributesExtractor extractor) {

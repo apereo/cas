@@ -42,7 +42,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
 
     private final boolean enableDeviceRegistration;
 
-    public AbstractMultifactorTrustedDeviceWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+    protected AbstractMultifactorTrustedDeviceWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                              final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                              final boolean enableDeviceRegistration,
                                                              final ConfigurableApplicationContext applicationContext,

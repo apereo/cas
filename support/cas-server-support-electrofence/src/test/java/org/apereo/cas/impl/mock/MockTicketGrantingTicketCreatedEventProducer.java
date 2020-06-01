@@ -27,6 +27,7 @@ import java.util.stream.IntStream;
  * @since 5.1.0
  */
 @NoArgsConstructor
+@SuppressWarnings("JdkObsolete")
 public class MockTicketGrantingTicketCreatedEventProducer {
 
     private static final List<String> ALL_USER_AGENTS = CollectionUtils.wrapList(

@@ -82,7 +82,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     private Pattern serviceFileNamePattern;
 
-    public AbstractResourceBasedServiceRegistry(final Resource configDirectory,
+    protected AbstractResourceBasedServiceRegistry(final Resource configDirectory,
                                                 final Collection<StringSerializer<RegisteredService>> serializers,
                                                 final ConfigurableApplicationContext applicationContext,
                                                 final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
@@ -92,7 +92,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             serviceRegistryListeners, WatcherService.noOp());
     }
 
-    public AbstractResourceBasedServiceRegistry(final Resource configDirectory,
+    protected AbstractResourceBasedServiceRegistry(final Resource configDirectory,
                                                 final Collection<StringSerializer<RegisteredService>> serializers,
                                                 final ConfigurableApplicationContext applicationContext,
                                                 final Collection<ServiceRegistryListener> serviceRegistryListeners,
@@ -104,7 +104,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     }
 
 
-    public AbstractResourceBasedServiceRegistry(final Path configDirectory, final StringSerializer<RegisteredService> serializer,
+    protected AbstractResourceBasedServiceRegistry(final Path configDirectory, final StringSerializer<RegisteredService> serializer,
                                                 final ConfigurableApplicationContext applicationContext,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                                 final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
@@ -115,7 +115,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             serviceRegistryListeners, serviceRegistryConfigWatcher);
     }
 
-    public AbstractResourceBasedServiceRegistry(final Path configDirectory,
+    protected AbstractResourceBasedServiceRegistry(final Path configDirectory,
                                                 final Collection<StringSerializer<RegisteredService>> serializers,
                                                 final ConfigurableApplicationContext applicationContext,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
@@ -127,7 +127,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             registeredServiceReplicationStrategy, resourceNamingStrategy, serviceRegistryConfigWatcher);
     }
 
-    public AbstractResourceBasedServiceRegistry(final Resource configDirectory,
+    protected AbstractResourceBasedServiceRegistry(final Resource configDirectory,
                                                 final Collection<StringSerializer<RegisteredService>> serializers,
                                                 final ConfigurableApplicationContext applicationContext,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,

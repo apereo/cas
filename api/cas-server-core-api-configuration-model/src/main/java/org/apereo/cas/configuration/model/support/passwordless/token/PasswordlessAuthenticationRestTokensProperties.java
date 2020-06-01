@@ -1,8 +1,8 @@
 package org.apereo.cas.configuration.model.support.passwordless.token;
 
+import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;

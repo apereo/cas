@@ -207,18 +207,8 @@ public class CasCoreWebflowConfiguration {
         val resolvers = applicationContext.getBeansOfType(SingleSignOnParticipationStrategyConfigurer.class, false, true);
         val providers = new ArrayList<SingleSignOnParticipationStrategyConfigurer>(resolvers.values());
         AnnotationAwareOrderComparator.sort(providers);
-
         val chain = new ChainingSingleSignOnParticipationStrategy();
         providers.forEach(provider -> provider.configureStrategy(chain));
-
-        val sso = casProperties.getSso();
-        val defaultStrategy = new DefaultSingleSignOnParticipationStrategy(servicesManager.getObject(),
-            sso.isCreateSsoCookieOnRenewAuthn(),
-            sso.isRenewAuthnEnabled(),
-            ticketRegistrySupport.getObject(),
-            authenticationServiceSelectionPlan.getObject());
-
-        chain.addStrategy(defaultStrategy);
         return chain;
     }
 
@@ -303,5 +293,22 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public SingleSignOnParticipationStrategyConfigurer requiredAuthenticationHandlersSingleSignOnParticipationStrategyConfigurer() {
         return chain -> chain.addStrategy(requiredAuthenticationHandlersSingleSignOnParticipationStrategy());
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "defaultSingleSignOnParticipationStrategy")
+    public SingleSignOnParticipationStrategy defaultSingleSignOnParticipationStrategy() {
+        return new DefaultSingleSignOnParticipationStrategy(servicesManager.getObject(),
+            casProperties.getSso(),
+            ticketRegistrySupport.getObject(),
+            authenticationServiceSelectionPlan.getObject());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "defaultSingleSignOnParticipationStrategyConfigurer")
+    @RefreshScope
+    public SingleSignOnParticipationStrategyConfigurer defaultSingleSignOnParticipationStrategyConfigurer() {
+        return chain -> chain.addStrategy(defaultSingleSignOnParticipationStrategy());
     }
 }

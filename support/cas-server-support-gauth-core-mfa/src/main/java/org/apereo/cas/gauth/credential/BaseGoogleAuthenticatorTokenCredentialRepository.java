@@ -22,7 +22,7 @@ public abstract class BaseGoogleAuthenticatorTokenCredentialRepository extends B
      */
     protected final IGoogleAuthenticator googleAuthenticator;
 
-    public BaseGoogleAuthenticatorTokenCredentialRepository(
+    protected BaseGoogleAuthenticatorTokenCredentialRepository(
         final CipherExecutor<String, String> tokenCredentialCipher,
         final IGoogleAuthenticator googleAuthenticator) {
         super(tokenCredentialCipher);

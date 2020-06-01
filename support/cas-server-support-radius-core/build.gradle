@@ -2,5 +2,15 @@ description = "Apereo CAS RADIUS Support"
 dependencies {
     api libraries.jradius
     implementation libraries.bouncycastle
+
     implementation project(":core:cas-server-core-util-api")
+    
+    testImplementation project(path: ":support:cas-server-support-aup-core", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-aup-webflow", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
 }

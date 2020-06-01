@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 @RequiredArgsConstructor
+@SuppressWarnings("JdkObsolete")
 public class DynamoDbAuditTrailManagerFacilitator {
     private final AuditDynamoDbProperties dynamoDbProperties;
 
@@ -122,12 +123,14 @@ public class DynamoDbAuditTrailManagerFacilitator {
      * @param localDate the local date
      * @return the audit records since
      */
+    @SuppressWarnings("JdkObsolete")
     public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
         val keys = new HashMap<String, AttributeValue>();
         val time = DateTimeUtils.dateOf(localDate).getTime();
         keys.put(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName(), new AttributeValue(String.valueOf(time)));
         return getRecordsByKeys(keys, ComparisonOperator.GE);
     }
+
 
     private Set<AuditActionContext> getRecordsByKeys(final Map<String, AttributeValue> keys,
                                                      final ComparisonOperator operator) {

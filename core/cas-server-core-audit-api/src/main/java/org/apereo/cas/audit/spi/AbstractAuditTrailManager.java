@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,8 +21,8 @@ import java.util.concurrent.ThreadFactory;
  */
 @Setter
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractAuditTrailManager implements AuditTrailManager, DisposableBean {
 
     /**

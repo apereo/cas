@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.Collection;
 import java.util.Objects;
@@ -49,10 +48,12 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
         try {
             val documents = this.entityManager.createQuery(SELECT_QUERY, SamlMetadataDocument.class).getResultList();
             return documents.stream().map(doc -> buildMetadataResolverFrom(service, doc)).filter(Objects::nonNull).collect(Collectors.toList());
-        } catch (final NoResultException e) {
-            LOGGER.debug(e.getMessage());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -63,7 +64,11 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
             val metadataLocation = service.getMetadataLocation();
             return metadataLocation.trim().startsWith("jdbc://");
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return false;
     }
@@ -73,7 +78,11 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
         try {
             this.entityManager.merge(document);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
     }
 

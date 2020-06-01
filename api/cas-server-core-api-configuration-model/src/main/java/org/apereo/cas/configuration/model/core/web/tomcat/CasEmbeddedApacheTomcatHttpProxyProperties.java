@@ -62,5 +62,5 @@ public class CasEmbeddedApacheTomcatHttpProxyProperties implements Serializable 
     /**
      * Custom attributes to set on the proxy connector.
      */
-    private Map<String, Object> attributes = new LinkedHashMap<>();
+    private Map<String, String> attributes = new LinkedHashMap<>();
 }

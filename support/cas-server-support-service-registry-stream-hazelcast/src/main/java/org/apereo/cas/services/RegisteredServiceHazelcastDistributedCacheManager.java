@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -22,6 +23,7 @@ public class RegisteredServiceHazelcastDistributedCacheManager extends
     BaseDistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> {
 
     private final HazelcastInstance instance;
+
     private final IMap<String, DistributedCacheObject<RegisteredService>> mapInstance;
 
     public RegisteredServiceHazelcastDistributedCacheManager(final HazelcastInstance instance) {
@@ -62,9 +64,11 @@ public class RegisteredServiceHazelcastDistributedCacheManager extends
     }
 
     @Override
-    public void set(final RegisteredService key, final DistributedCacheObject<RegisteredService> item) {
+    public DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> set(final RegisteredService key,
+                                                                                                     final DistributedCacheObject<RegisteredService> item) {
         LOGGER.debug("Broadcasting service definition [{}] via Hazelcast...", item);
         this.mapInstance.set(buildKey(key), item);
+        return this;
     }
 
     @Override
@@ -74,15 +78,19 @@ public class RegisteredServiceHazelcastDistributedCacheManager extends
     }
 
     @Override
-    public void remove(final RegisteredService service, final DistributedCacheObject<RegisteredService> item) {
+    public DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> remove(final RegisteredService service,
+                                                                                                        final DistributedCacheObject<RegisteredService> item) {
         val key = buildKey(service);
         this.mapInstance.remove(key);
+        return this;
     }
 
     @Override
-    public void update(final RegisteredService service, final DistributedCacheObject<RegisteredService> item) {
+    public DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> update(final RegisteredService service,
+                                                                                                        final DistributedCacheObject<RegisteredService> item) {
         remove(service, item);
         set(service, item);
+        return this;
     }
 
     @Override

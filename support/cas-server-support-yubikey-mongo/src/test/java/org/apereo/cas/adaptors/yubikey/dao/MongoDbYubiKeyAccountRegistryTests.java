@@ -25,6 +25,7 @@ import org.apereo.cas.config.support.authentication.YubiKeyAuthenticationMultifa
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -87,17 +88,18 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 },
     properties = {
-        "cas.authn.mfa.yubikey.mongo.databaseName=mfa-trusted",
+        "cas.authn.mfa.yubikey.mongo.database-name=mfa-trusted",
         "cas.authn.mfa.yubikey.mongo.host=localhost",
         "cas.authn.mfa.yubikey.mongo.port=27017",
-        "cas.authn.mfa.yubikey.mongo.dropCollection=true",
-        "cas.authn.mfa.yubikey.mongo.userId=root",
+        "cas.authn.mfa.yubikey.mongo.drop-collection=true",
+        "cas.authn.mfa.yubikey.mongo.user-id=root",
         "cas.authn.mfa.yubikey.mongo.password=secret",
-        "cas.authn.mfa.yubikey.mongo.authenticationDatabaseName=admin",
-        "cas.authn.mfa.yubikey.clientId=18423",
-        "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As="
+        "cas.authn.mfa.yubikey.mongo.authentication-database-name=admin",
+        "cas.authn.mfa.yubikey.client-id=18423",
+        "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As="
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnabledIfPortOpen(port = 27017)
 public class MongoDbYubiKeyAccountRegistryTests {
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
 

@@ -23,6 +23,12 @@ public class SingleSignOnProperties implements Serializable {
     private static final long serialVersionUID = -8777647966370741733L;
 
     /**
+     * Indicate whether single sign-on should be turned on
+     * and supported globally for the server.
+     */
+    private boolean ssoEnabled = true;
+    
+    /**
      * Flag that indicates whether to create SSO session on re-newed authentication event.
      */
     private boolean createSsoCookieOnRenewAuthn = true;

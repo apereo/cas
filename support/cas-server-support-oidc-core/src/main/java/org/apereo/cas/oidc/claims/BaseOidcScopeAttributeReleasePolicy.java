@@ -48,7 +48,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
     @JsonIgnore
     private String scopeType;
 
-    public BaseOidcScopeAttributeReleasePolicy(final String scopeType) {
+    protected BaseOidcScopeAttributeReleasePolicy(final String scopeType) {
         this.scopeType = scopeType;
     }
 

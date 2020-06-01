@@ -65,11 +65,11 @@ import org.springframework.test.context.web.WebAppConfiguration;
         "cas.monitor.endpoints.endpoint.sso.requiredAuthorities=EXAMPLE",
 
         "cas.monitor.endpoints.endpoint.info.access=ROLE",
-        "cas.monitor.endpoints.endpoint.info.requiredRoles=EXAMPLE"
+        "cas.monitor.endpoints.endpoint.info.required-roles=EXAMPLE"
     })
 @WebAppConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("Ldap")
 public class CasWebSecurityConfigurerAdapterTests {
     @Test
     public void verifyOperation() {

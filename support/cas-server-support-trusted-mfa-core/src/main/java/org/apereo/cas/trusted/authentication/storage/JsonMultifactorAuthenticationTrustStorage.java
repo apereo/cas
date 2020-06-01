@@ -58,6 +58,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     @Override
+    @SuppressWarnings("JdkObsolete")
     public void remove(final ZonedDateTime expirationDate) {
         val results = storage
             .values()

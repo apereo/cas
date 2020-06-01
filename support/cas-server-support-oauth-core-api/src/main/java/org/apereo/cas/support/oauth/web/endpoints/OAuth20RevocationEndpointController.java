@@ -122,21 +122,16 @@ public class OAuth20RevocationEndpointController extends BaseOAuth20Controller {
      * Revoke the provided Refresh Token and it's related Access Tokens.
      *
      * @param token the token
-     * @return the model and view
      */
     private void revokeToken(final OAuth20RefreshToken token) {
         revokeToken(token.getId());
-
-        token.getAccessTokens().forEach(item-> {
-            revokeToken(item);
-        });
+        token.getAccessTokens().forEach(this::revokeToken);
     }
 
     /**
      * Revoke the provided OAuth Token.
      *
      * @param token the token
-     * @return the model and view
      */
     private void revokeToken(final String token) {
         LOGGER.debug("Revoking token [{}]", token);

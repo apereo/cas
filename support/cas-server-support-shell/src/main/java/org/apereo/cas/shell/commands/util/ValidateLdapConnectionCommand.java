@@ -67,6 +67,7 @@ public class ValidateLdapConnectionCommand {
         return false;
     }
 
+    @SuppressWarnings("JdkObsolete")
     private static boolean connect(final String ldapUrl,
                                    final String bindDn,
                                    final String bindCredential,

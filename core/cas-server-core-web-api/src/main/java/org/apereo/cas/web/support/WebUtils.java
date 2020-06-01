@@ -680,6 +680,17 @@ public class WebUtils {
     }
 
     /**
+     * Gets recaptcha site key.
+     *
+     * @param context the context
+     * @return the recaptcha site key
+     */
+    public static String getRecaptchaSiteKey(final RequestContext context) {
+        val flowScope = context.getFlowScope();
+        return flowScope.get("recaptchaSiteKey", String.class);
+    }
+
+    /**
      * Put static authentication into flow scope.
      *
      * @param context the context
@@ -1196,6 +1207,7 @@ public class WebUtils {
      * @param request the request
      * @return the http request full url
      */
+    @SuppressWarnings("JdkObsolete")
     public static String getHttpRequestFullUrl(final HttpServletRequest request) {
         val requestURL = request.getRequestURL();
         val queryString = request.getQueryString();

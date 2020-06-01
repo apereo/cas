@@ -3,6 +3,7 @@
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
 echo "Running LDAP docker image"
+docker stop ldap-server || true && docker rm ldap-server || true
 docker run -d -p 10389:389 --name="ldap-server" mmoayyed/ldap
 
 docker ps | grep "ldap-server"

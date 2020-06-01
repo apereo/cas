@@ -94,7 +94,11 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
                     .findFirst()
                     .orElse(StringUtils.EMPTY);
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.error(e.getMessage(), e);
+                } else {
+                    LOGGER.error(e.getMessage());
+                }
             }
         }
         return null;

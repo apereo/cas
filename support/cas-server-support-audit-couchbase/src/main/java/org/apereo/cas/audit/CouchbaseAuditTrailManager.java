@@ -53,6 +53,7 @@ public class CouchbaseAuditTrailManager extends AbstractAuditTrailManager {
     }
 
     @Override
+    @SuppressWarnings("JdkObsolete")
     public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
         val parameters = JsonObject.create().put("whenActionWasPerformed", DateTimeUtils.dateOf(localDate).getTime());
         val result = this.couchbase.select("whenActionWasPerformed >= $whenActionWasPerformed", Optional.of(parameters));

@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.MongoDbServiceRegistryConfiguration;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     MongoDbServiceRegistryConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreHttpConfiguration.class,
     RefreshAutoConfiguration.class
 },
     properties = {

@@ -49,6 +49,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -91,11 +93,11 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.authn.mfa.gauth.mongo.host=localhost",
         "cas.authn.mfa.gauth.mongo.port=27017",
-        "cas.authn.mfa.gauth.mongo.dropCollection=true",
-        "cas.authn.mfa.gauth.mongo.userId=root",
+        "cas.authn.mfa.gauth.mongo.drop-collection=true",
+        "cas.authn.mfa.gauth.mongo.user-id=root",
         "cas.authn.mfa.gauth.mongo.password=secret",
-        "cas.authn.mfa.gauth.mongo.authenticationDatabaseName=admin",
-        "cas.authn.mfa.gauth.mongo.databaseName=gauth-token-credential",
+        "cas.authn.mfa.gauth.mongo.authentication-database-name=admin",
+        "cas.authn.mfa.gauth.mongo.database-name=gauth-token-credential",
         "cas.authn.mfa.gauth.crypto.enabled=false"
     })
 @EnableTransactionManagement(proxyTargetClass = true)
@@ -115,23 +117,28 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Test
     public void verifySave() {
-        registry.save("uid", "secret", 143211, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
-        val s = registry.get("uid");
+        val id = UUID.randomUUID().toString();
+        registry.save(id, "secret", 143211, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
+        val s = registry.get(id);
         assertEquals("secret", s.getSecretKey());
         val c = registry.load();
         assertFalse(c.isEmpty());
+        registry.delete(id);
+        val count = registry.count();
+        assertEquals(0, count);
     }
 
     @Test
     public void verifySaveAndUpdate() {
-        registry.save("casuser", "secret", 222222, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
-        val s = registry.get("casuser");
+        val casuser = UUID.randomUUID().toString();
+        registry.save(casuser, "secret", 222222, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
+        val s = registry.get(casuser);
         assertNotNull(s.getRegistrationDate());
         assertEquals(222222, s.getValidationCode());
         s.setSecretKey("newSecret");
         s.setValidationCode(999666);
         registry.update(s);
-        val s2 = registry.get("casuser");
+        val s2 = registry.get(casuser);
         assertEquals(999666, s2.getValidationCode());
         assertEquals("newSecret", s2.getSecretKey());
     }
