@@ -4,6 +4,7 @@ import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -20,7 +21,7 @@ import java.io.Serializable;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Setter
 public abstract class BaseMessageQueueCommand implements Serializable {
 

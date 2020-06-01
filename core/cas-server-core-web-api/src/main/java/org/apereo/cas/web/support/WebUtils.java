@@ -1207,6 +1207,7 @@ public class WebUtils {
      * @param request the request
      * @return the http request full url
      */
+    @SuppressWarnings("JdkObsolete")
     public static String getHttpRequestFullUrl(final HttpServletRequest request) {
         val requestURL = request.getRequestURL();
         val queryString = request.getQueryString();

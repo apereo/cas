@@ -39,9 +39,8 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     private final ArgumentExtractor samlArgumentExtractor;
 
     private final String encoding;
-
-
-    public AbstractSaml10ResponseView(final boolean successResponse,
+    
+    protected AbstractSaml10ResponseView(final boolean successResponse,
                                       final ProtocolAttributeEncoder protocolAttributeEncoder,
                                       final ServicesManager servicesManager,
                                       final ArgumentExtractor samlArgumentExtractor,

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.3.0
  */
 public abstract class AbstractInspektrAuditHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
-    public AbstractInspektrAuditHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext) {
+    protected AbstractInspektrAuditHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext) {
         super(configurationContext);
     }
 

@@ -29,22 +29,22 @@ public abstract class AbstractTicketValidationException extends AbstractTicketEx
      *
      * @param service original service
      */
-    public AbstractTicketValidationException(final Service service) {
+    protected AbstractTicketValidationException(final Service service) {
         this(CODE, service);
     }
 
-    public AbstractTicketValidationException(final String code, final Service service) {
+    protected AbstractTicketValidationException(final String code, final Service service) {
         super(code);
         this.service = service;
     }
 
-    public AbstractTicketValidationException(final String code, final String msg,
+    protected AbstractTicketValidationException(final String code, final String msg,
                                              final List<Object> args, final Service service) {
         super(code, msg, args);
         this.service = service;
     }
 
-    public AbstractTicketValidationException(final String code, final Throwable throwable,
+    protected AbstractTicketValidationException(final String code, final Throwable throwable,
                                              final List<Object> args, final Service service) {
         super(code, throwable, args);
         this.service = service;

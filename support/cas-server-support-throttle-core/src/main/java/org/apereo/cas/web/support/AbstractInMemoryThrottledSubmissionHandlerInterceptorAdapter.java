@@ -23,7 +23,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
     private final ConcurrentMap<String, ZonedDateTime> ipMap;
 
-    public AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter(
+    protected AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter(
         final ThrottledSubmissionHandlerConfigurationContext configurationContext,
         final ConcurrentMap<String, ZonedDateTime> ipMap) {
         super(configurationContext);

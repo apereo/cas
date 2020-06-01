@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -15,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "ticketTransactionManager")
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class BaseAccessTokenGrantRequestExtractor implements AccessTokenGrantRequestExtractor {
     private final OAuth20ConfigurationContext oAuthConfigurationContext;

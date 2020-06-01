@@ -23,6 +23,9 @@ public abstract class BaseSurrogateAuthenticationService implements SurrogateAut
 
     @Override
     public final boolean canAuthenticateAs(final String surrogate, final Principal principal, final Optional<Service> service) {
+        if (surrogate.equalsIgnoreCase(principal.getId())) {
+            return true;
+        }
         return canAuthenticateAsInternal(surrogate, principal, service);
     }
 

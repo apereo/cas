@@ -33,13 +33,13 @@ import java.util.Arrays;
  * Using the JAAS Authentication Handler requires you to configure the
  * appropriate JAAS modules. You can specify the location of a jass.conf file
  * using the following VM parameter:
- * <pre>
+ * &lt;pre&gt;
  * -Djava.security.auth.login.config=$PATH_TO_JAAS_CONF/jaas.conf
- * </pre>
+ * &lt;/pre&gt;
  * <p>
  * This example jaas.conf would try Kerberos based authentication, then try LDAP
  * authentication:
- * <pre>
+ * &lt;pre&gt;
  * CAS {
  *   com.sun.security.auth.module.Krb5LoginModule sufficient
  *     client=TRUE
@@ -52,7 +52,7 @@ import java.util.Arrays;
  *     Attribute="uid"
  *     startTLS="true";
  * };
- * </pre>
+ * &lt;/pre&gt;
  *
  * @author <a href="mailto:dotmatt@uconn.edu">Matthew J. Smith</a>
  * @author Marvin S. Addison

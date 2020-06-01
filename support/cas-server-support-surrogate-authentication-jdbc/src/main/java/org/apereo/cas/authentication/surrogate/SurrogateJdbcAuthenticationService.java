@@ -48,9 +48,6 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
     @Override
     public boolean canAuthenticateAsInternal(final String username, final Principal surrogate, final Optional<Service> service) {
         try {
-            if (username.equalsIgnoreCase(surrogate.getId())) {
-                return true;
-            }
             LOGGER.debug("Executing SQL query [{}]", surrogateSearchQuery);
             val count = this.jdbcTemplate.queryForObject(surrogateSearchQuery, Integer.class, surrogate.getId(), username);
             return Objects.requireNonNull(count) > 0;

@@ -37,7 +37,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
     private String principalAttributeId;
     private boolean isTypedIdUsed;
 
-    public AbstractPac4jAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    protected AbstractPac4jAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                               final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }

@@ -78,6 +78,7 @@ public class HttpRequestMultifactorAuthenticationTrigger implements MultifactorA
      * @param request the request
      * @return the list
      */
+    @SuppressWarnings("JdkObsolete")
     protected List<String> resolveEventFromHttpRequest(final HttpServletRequest request) {
         val mfaRequestHeader = casProperties.getAuthn().getMfa().getRequestHeader();
         val headers = request.getHeaders(mfaRequestHeader);

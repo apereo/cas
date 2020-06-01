@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Allows users to easily inject the default security headers to assist in protecting the application.
  * The default for is to include the following headers:
- * <pre>
+ * &lt;pre&gt;
  * Cache-Control: no-cache, no-store, max-age=0, must-revalidate
  * Pragma: no-cache
  * Expires: 0
@@ -27,7 +27,7 @@ import java.util.Map;
  * Strict-Transport-Security: max-age=15768000 ; includeSubDomains
  * X-Frame-Options: DENY
  * X-XSS-Protection: 1; mode=block
- * </pre>
+ * &lt;/pre&gt;
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -35,6 +35,7 @@ import java.util.Map;
 @Setter
 @Slf4j
 @Getter
+@SuppressWarnings("JdkObsolete")
 public class AddResponseHeadersFilter extends AbstractSecurityFilter implements Filter {
     private static final int MAP_SIZE = 8;
 

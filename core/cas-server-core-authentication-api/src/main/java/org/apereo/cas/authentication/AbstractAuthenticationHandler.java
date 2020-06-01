@@ -61,7 +61,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      * @param principalFactory the principal factory
      * @param order            the order
      */
-    public AbstractAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    protected AbstractAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                          final PrincipalFactory principalFactory, final Integer order) {
         this.name = StringUtils.isNotBlank(name) ? name : getClass().getSimpleName();
         this.servicesManager = servicesManager;

@@ -33,7 +33,7 @@ public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
 
     private Clock clock = Clock.systemUTC();
 
-    public AbstractCasExpirationPolicy() {
+    protected AbstractCasExpirationPolicy() {
         this.name = this.getClass().getSimpleName() + '-' + UUID.randomUUID().toString();
     }
 

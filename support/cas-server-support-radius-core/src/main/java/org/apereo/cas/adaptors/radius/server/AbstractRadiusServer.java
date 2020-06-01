@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.radius.server;
 import org.apereo.cas.adaptors.radius.CasRadiusResponse;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -47,7 +48,7 @@ import java.util.Optional;
 @Slf4j
 @ToString
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractRadiusServer implements RadiusServer {
 
     /**

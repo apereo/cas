@@ -57,6 +57,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         this.syncopeDomain = syncopeDomain;
     }
 
+    @SuppressWarnings("JdkObsolete")
     private static Map<String, List<Object>> buildSyncopeUserAttributes(final UserTO user) {
         val attributes = new HashMap<String, List<Object>>();
 

@@ -300,8 +300,8 @@ public class LdapUtils {
                         new AttributeModification(AttributeModification.Type.REPLACE, new UnicodePwdAttribute(newPassword))))
                     :
                     operation.execute(new ModifyRequest(currentDn,
-                        new AttributeModification(Type.DELETE, new UnicodePwdAttribute(oldPassword)),
-                        new AttributeModification(Type.ADD, new UnicodePwdAttribute(newPassword))));
+                        new AttributeModification(AttributeModification.Type.DELETE, new UnicodePwdAttribute(oldPassword)),
+                        new AttributeModification(AttributeModification.Type.ADD, new UnicodePwdAttribute(newPassword))));
                 LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
                 return response.getResultCode() == ResultCode.SUCCESS;
             }
