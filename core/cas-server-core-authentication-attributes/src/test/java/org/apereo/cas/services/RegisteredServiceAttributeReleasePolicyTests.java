@@ -181,6 +181,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
     @Test
     public void verifyServiceAttributeFilterAllAttributes() {
         val policy = new ReturnAllAttributeReleasePolicy();
+        policy.setPrincipalIdAttribute("principalId");
         val p = mock(Principal.class);
 
         val map = new HashMap<String, List<Object>>();
@@ -198,6 +199,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         val p2 = SerializationUtils.deserializeAndCheckObject(data, ReturnAllAttributeReleasePolicy.class);
         assertNotNull(p2);
     }
+
 
     @Test
     public void checkServiceAttributeFilterAllAttributesWithCachingTurnedOn() {
