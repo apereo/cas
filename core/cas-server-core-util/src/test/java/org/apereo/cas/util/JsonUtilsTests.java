@@ -30,6 +30,13 @@ public class JsonUtilsTests {
     }
 
     @Test
+    public void verifyRenderException() {
+        val response = new MockHttpServletResponse();
+        JsonUtils.renderException(new RuntimeException("error"), response);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
+    }
+
+    @Test
     public void verifyRenderModel() throws Exception {
         val response = new MockHttpServletResponse();
         val model = Map.of("key", List.of("one", "two"));
