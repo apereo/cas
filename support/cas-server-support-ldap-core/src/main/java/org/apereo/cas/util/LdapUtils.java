@@ -15,7 +15,6 @@ import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AttributeModification;
-import org.ldaptive.AttributeModification.Type;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.CompareConnectionValidator;
 import org.ldaptive.CompareRequest;

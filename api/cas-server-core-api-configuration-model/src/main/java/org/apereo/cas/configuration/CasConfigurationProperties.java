@@ -54,7 +54,6 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serializable;
 import java.time.Clock;
 import java.time.Instant;
-import java.util.Date;
 
 /**
  * This is {@link CasConfigurationProperties}.
