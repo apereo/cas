@@ -68,12 +68,12 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
      * This is done using a key-value structure where the key is the
      * name of the "attribute name" column  the value is the name of the "attribute value" column.
      * If the table structure is as such:
-     * <pre>
+     * &lt;pre&gt;
      * -----------------------------
      * uid | attr_name  | attr_value
      * -----------------------------
      * tom | first_name | Thomas
-     * </pre>
+     * &lt;/pre&gt;
      * Then a column mapping must be specified to teach CAS to use {@code attr_name}
      * and {@code attr_value} for attribute names and values.
      */

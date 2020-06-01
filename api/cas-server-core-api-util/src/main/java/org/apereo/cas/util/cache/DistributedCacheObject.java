@@ -5,6 +5,8 @@ import lombok.ToString;
 import lombok.val;
 
 import java.io.Serializable;
+import java.time.Clock;
+import java.time.Instant;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,7 +27,7 @@ public class DistributedCacheObject<V extends Serializable> implements Serializa
     private final Map<String, Object> properties = new LinkedHashMap<>(MAP_SIZE);
 
     public DistributedCacheObject(final V value) {
-        this(new Date().getTime(), value);
+        this(Instant.now(Clock.systemUTC()).toEpochMilli(), value);
     }
 
     public DistributedCacheObject(final long timestamp, final V value) {

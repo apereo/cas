@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.mfa.trusteddevice;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,7 +18,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-trusted-mfa")
 public abstract class BaseDeviceFingerprintComponentProperties implements Serializable {

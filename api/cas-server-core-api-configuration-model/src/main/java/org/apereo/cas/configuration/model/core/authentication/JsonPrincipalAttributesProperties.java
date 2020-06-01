@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
  * <p>
  * If you wish to directly and separately retrieve attributes from a static JSON source.
  * The resource syntax must be as such:
- * <pre>
+ * &lt;pre&gt;
  * {
  * "user1": {
  * "firstName":["Json1"],
@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
  * "eduPersonAffiliation":["employee", "student"]
  * }
  * }
- * </pre>
+ * &lt;/pre&gt;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
