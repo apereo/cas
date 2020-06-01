@@ -81,13 +81,13 @@ import org.springframework.core.io.ClassPathResource;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 }, properties = {
     "cas.authn.surrogate.ldap.ldap-url=ldap://localhost:10389",
-    "cas.authn.surrogate.ldap.baseDn=ou=surrogates,dc=example,dc=org",
-    "cas.authn.surrogate.ldap.bindDn=cn=Directory Manager",
-    "cas.authn.surrogate.ldap.bindCredential=password",
-    "cas.authn.surrogate.ldap.searchFilter=cn={user}",
-    "cas.authn.surrogate.ldap.surrogateSearchFilter=employeeType={surrogate}",
-    "cas.authn.surrogate.ldap.memberAttributeName=mail",
-    "cas.authn.surrogate.ldap.memberAttributeValueRegex=\\\\w+@example.org"
+    "cas.authn.surrogate.ldap.base-dn=ou=surrogates,dc=example,dc=org",
+    "cas.authn.surrogate.ldap.bind-dn=cn=Directory Manager",
+    "cas.authn.surrogate.ldap.bind-credential=password",
+    "cas.authn.surrogate.ldap.search-filter=cn={user}",
+    "cas.authn.surrogate.ldap.surrogate-search-filter=employeeType={surrogate}",
+    "cas.authn.surrogate.ldap.member-attribute-name=mail",
+    "cas.authn.surrogate.ldap.member-attribute-value-regex=\\\\w+@example.org"
 })
 @Getter
 @EnabledIfPortOpen(port = 10389)
