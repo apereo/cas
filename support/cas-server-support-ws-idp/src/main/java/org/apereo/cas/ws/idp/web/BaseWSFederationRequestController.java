@@ -11,6 +11,7 @@ import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.http.client.utils.URIBuilder;
+import org.jasig.cas.client.util.CommonUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -37,7 +39,8 @@ import java.util.concurrent.TimeUnit;
 @Controller
 @Slf4j
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@SuppressWarnings("JdkObsolete")
 public abstract class BaseWSFederationRequestController {
     private final WSFederationRequestConfigurationContext wsFederationRequestConfigurationContext;
 
@@ -74,7 +77,7 @@ public abstract class BaseWSFederationRequestController {
             val url = builder.build();
 
             LOGGER.trace("Built service callback url [{}]", url);
-            return org.jasig.cas.client.util.CommonUtils.constructServiceUrl(request, response,
+            return CommonUtils.constructServiceUrl(request, response,
                 url.toString(), wsFederationRequestConfigurationContext.getCasProperties().getServer().getName(),
                 CasProtocolConstants.PARAMETER_SERVICE,
                 CasProtocolConstants.PARAMETER_TICKET, false);

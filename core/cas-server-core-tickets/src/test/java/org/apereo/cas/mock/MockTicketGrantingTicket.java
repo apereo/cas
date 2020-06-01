@@ -39,6 +39,7 @@ import java.util.Map;
  */
 @Getter
 @EqualsAndHashCode(of = "id")
+@SuppressWarnings("JdkObsolete")
 public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketState {
 
     public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();

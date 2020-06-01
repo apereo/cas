@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
 
-    public AbstractSamlSLOProfileHandlerController(final SamlProfileHandlerConfigurationContext context) {
+    protected AbstractSamlSLOProfileHandlerController(final SamlProfileHandlerConfigurationContext context) {
         super(context);
     }
 
