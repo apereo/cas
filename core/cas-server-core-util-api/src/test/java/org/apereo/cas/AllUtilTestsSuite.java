@@ -1,5 +1,6 @@
-package org.apereo.cas.util;
+package org.apereo.cas;
 
+import org.apereo.cas.util.HttpRequestUtilsTests;
 import org.apereo.cas.util.crypto.GlibcCryptPasswordEncoderTests;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBeanTests;
 import org.apereo.cas.util.function.FunctionUtilsTests;
@@ -10,6 +11,8 @@ import org.apereo.cas.util.scripting.GroovyShellScriptTests;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResourceTests;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolverTests;
 import org.apereo.cas.util.spring.boot.DefaultCasBannerTests;
+import org.apereo.cas.util.ssl.CompositeX509KeyManagerTests;
+import org.apereo.cas.util.ssl.CompositeX509TrustManagerTests;
 import org.apereo.cas.util.transforms.GroovyPrincipalNameTransformerTests;
 import org.apereo.cas.util.transforms.RegexPrincipalNameTransformerTests;
 
@@ -30,6 +33,8 @@ import org.junit.runner.RunWith;
     DefaultCasBannerTests.class,
     GroovyShellScriptTests.class,
     FunctionUtilsTests.class,
+    CompositeX509TrustManagerTests.class,
+    CompositeX509KeyManagerTests.class,
     HttpRequestUtilsTests.class,
     WatchableGroovyScriptResourceTests.class,
     TemporaryFileSystemResourceTests.class,
