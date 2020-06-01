@@ -102,12 +102,12 @@ public abstract class AbstractServicesManager implements ServicesManager {
                 .orElse(null);
 
         if (service == null) {
-            LOGGER.trace("The service that matches the serviceId {} is not found in the cache, try to find it from [{}]",
+            LOGGER.trace("The service that matches the serviceId [{}] is not found in the cache, trying to find it from [{}]",
                     serviceId, serviceRegistry.getName());
             service = serviceRegistry.findServiceBy(serviceId);
             if (service != null) {
                 services.put(service.getId(), service);
-                LOGGER.trace("The service is found in [{}] and populated to the cache {}  ", serviceRegistry.getName(), 
+                LOGGER.trace("The service is found in [{}] and populated to the cache [{}]  ", serviceRegistry.getName(), 
                         service);
             }
         }
@@ -166,11 +166,15 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public <T extends RegisteredService> T findServiceBy(final long id, final Class<T> clazz) {
-        val result = this.serviceRegistry.findServiceById(id, clazz);
-        if (result != null) {
-            services.get(result.getId(), k -> result);
+        var service = getService(null, id);
+        if (service != null && service.getClass().equals(clazz)) {
+            return (T) service;
+        } else {
+            LOGGER.trace("The service with id [{}] and type [{}] is not found in the cache; trying to find it from [{}]",
+                    id, clazz, serviceRegistry.getName());
+            service = services.get(id, k -> this.serviceRegistry.findServiceById(id, clazz));
         }
-        return result;
+        return (T) validateRegisteredService(service);
     }
 
     @Override
@@ -179,18 +183,14 @@ public abstract class AbstractServicesManager implements ServicesManager {
             return null;
         }
 
-        var service = services.asMap().values().stream()
-                .filter(r -> r.getName().equals(name))
-                .findFirst()
-                .orElse(null);
-
+        var service = getService(name, 0);
         if (service == null) {
-            LOGGER.trace("The service with name {} is not found in the cache, try to find it from [{}]",
+            LOGGER.trace("The service with name [{}] is not found in the cache; trying to find it from [{}]",
                     name, serviceRegistry.getName());
             service = serviceRegistry.findServiceByExactServiceName(name);
             if (service != null) {
                 services.put(service.getId(), service);
-                LOGGER.trace("The service is found in [{}] and populated to the cache {}  ", serviceRegistry.getName(),
+                LOGGER.trace("The service is found in [{}] and populated to the cache [{}]  ", serviceRegistry.getName(),
                         service);
             }
         }
@@ -203,11 +203,23 @@ public abstract class AbstractServicesManager implements ServicesManager {
     
     @Override
     public <T extends RegisteredService> T findServiceByName(final String name, final Class<T> clazz) {
-        val result = this.serviceRegistry.findServiceByExactServiceName(name, clazz);
-        if (result != null) {
-            services.get(result.getId(), k -> result);
+        if (StringUtils.isBlank(name)) {
+            return null;
         }
-        return result;
+        var service = getService(name, 0);
+        if (service != null && service.getClass().equals(clazz)) {
+            return (T) service;
+        } else {
+            LOGGER.trace("The service with name [{}] and type [{}] is not found in the cache; trying to find it from [{}]",
+                    name, clazz, serviceRegistry.getName());
+            service = this.serviceRegistry.findServiceByExactServiceName(name, clazz);
+            if (service != null) {
+                services.put(service.getId(), service);
+                LOGGER.trace("The service is found in [{}] and populated to the cache [{}]  ",
+                        serviceRegistry.getName(), service);
+            }
+        }
+        return (T) validateRegisteredService(service);
     }
 
     @Override
@@ -222,12 +234,12 @@ public abstract class AbstractServicesManager implements ServicesManager {
                 .orElse(null);
 
         if (service == null) {
-            LOGGER.trace("The service with serviceId {} is not found in the cache, try to find it from [{}]",
+            LOGGER.trace("The service with service id [{}] is not found in the cache; trying to find it from [{}]",
                     serviceId, serviceRegistry.getName());
             service = serviceRegistry.findServiceByExactServiceId(serviceId);
             if (service != null) {
                 services.put(service.getId(), service);
-                LOGGER.trace("The service is found in [{}] and populated to the cache {}  ", serviceRegistry.getName(),
+                LOGGER.trace("The service is found in [{}] and populated to the cache [{}]  ", serviceRegistry.getName(),
                         service);
             }
         }
@@ -378,5 +390,10 @@ public abstract class AbstractServicesManager implements ServicesManager {
         return service.getEnvironments()
                 .stream()
                 .anyMatch(this.environments::contains);
+    }
+    
+    private RegisteredService getService(final String name, final long id) {
+        return services.asMap().values().stream().filter(r -> name != null
+                ? r.getServiceId().equals(name) : r.getId() == id).findFirst().orElse(null);
     }
 }
