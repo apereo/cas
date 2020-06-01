@@ -201,7 +201,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
             }
         });
         val attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(), registeredService);
-        assertEquals(attr.size(), map.size());
+        assertEquals(attr.size(), map.size() + 1);
 
         val data = SerializationUtils.serialize(policy);
         val p2 = SerializationUtils.deserializeAndCheckObject(data, ReturnAllAttributeReleasePolicy.class);

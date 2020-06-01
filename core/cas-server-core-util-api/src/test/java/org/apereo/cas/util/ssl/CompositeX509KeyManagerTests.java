@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 public class CompositeX509KeyManagerTests {
     @Test
     public void verifyOperation() throws Exception {
-        final KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        val kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
         val ks = KeyStore.getInstance("JKS");
         ks.load(null, "changeit".toCharArray());
         kmf.init(ks, "changeit".toCharArray());
