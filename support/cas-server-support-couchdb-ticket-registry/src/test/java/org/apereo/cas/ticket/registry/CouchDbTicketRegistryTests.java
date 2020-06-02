@@ -38,11 +38,7 @@ public class CouchDbTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistryCouchDbFactory")
     private CouchDbConnectorFactory couchDbFactory;
-
-    @Autowired
-    @Qualifier("ticketRegistryCouchDbRepository")
-    private TicketRepository ticketRepository;
-
+    
     @AfterEach
     public void afterEachTest() {
         couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
