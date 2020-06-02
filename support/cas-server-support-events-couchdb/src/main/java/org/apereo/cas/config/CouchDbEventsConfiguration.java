@@ -7,7 +7,6 @@ import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.CouchDbCasEventRepository;
 
-import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +39,7 @@ public class CouchDbEventsConfiguration {
     @Bean
     @RefreshScope
     public EventCouchDbRepository couchDbEventRepository(@Qualifier("eventCouchDbFactory") final CouchDbConnectorFactory eventCouchDbFactory) {
-        val repository = new EventCouchDbRepository(eventCouchDbFactory.getCouchDbConnector(), casProperties.getEvents().getCouchDb().isCreateIfNotExists());
-        repository.initStandardDesignDocument();
-        return repository;
+        return new EventCouchDbRepository(eventCouchDbFactory.getCouchDbConnector(), casProperties.getEvents().getCouchDb().isCreateIfNotExists());
     }
 
     @ConditionalOnMissingBean(name = "eventCouchDbFactory")

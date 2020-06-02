@@ -929,8 +929,7 @@ public class LdapUtils {
     private static DefaultConnectionFactory newLdaptiveDefaultConnectionFactory(final AbstractLdapProperties l) {
         LOGGER.debug("Creating LDAP connection factory for [{}]", l.getLdapUrl());
         val cc = newLdaptiveConnectionConfig(l);
-        val bindCf = new DefaultConnectionFactory(cc);
-        return bindCf;
+        return new DefaultConnectionFactory(cc);
     }
 
     /**

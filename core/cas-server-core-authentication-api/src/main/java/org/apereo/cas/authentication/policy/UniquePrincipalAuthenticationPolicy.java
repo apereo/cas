@@ -1,9 +1,11 @@
 package org.apereo.cas.authentication.policy;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.exceptions.UniquePrincipalRequiredException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.HttpRequestUtils;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.Serializable;
@@ -44,7 +47,10 @@ public class UniquePrincipalAuthenticationPolicy extends BaseAuthenticationPolic
                                  final Set<AuthenticationHandler> authenticationHandlers,
                                  final ConfigurableApplicationContext applicationContext,
                                  final Optional<Serializable> assertionResult) {
-        if (assertionResult.isEmpty()) {
+        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        val renew = request == null ? StringUtils.EMPTY : request.getParameter(CasProtocolConstants.PARAMETER_RENEW);
+
+        if (assertionResult.isEmpty() && StringUtils.isBlank(renew)) {
             val authPrincipal = authentication.getPrincipal();
             val count = ticketRegistry.countSessionsFor(authPrincipal.getId());
             if (count > 0) {

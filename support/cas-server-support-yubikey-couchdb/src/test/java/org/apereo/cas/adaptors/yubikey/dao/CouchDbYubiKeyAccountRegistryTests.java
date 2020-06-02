@@ -114,7 +114,6 @@ public class CouchDbYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRe
     @BeforeEach
     public void setUp() {
         couchDbInstance.createDatabaseIfNotExists(couchDbConnector.getDatabaseName());
-        couchDbRepository.initStandardDesignDocument();
     }
 
     @AfterEach

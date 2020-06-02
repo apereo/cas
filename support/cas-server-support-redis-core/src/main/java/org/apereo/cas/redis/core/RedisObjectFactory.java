@@ -105,25 +105,24 @@ public class RedisObjectFactory {
         val pool = redis.getPool();
         if (pool != null && pool.isEnabled()) {
             val config = new GenericObjectPoolConfig();
-            val props = pool;
-            config.setMaxTotal(props.getMaxActive());
-            config.setMaxIdle(props.getMaxIdle());
-            config.setMinIdle(props.getMinIdle());
-            config.setMaxWaitMillis(props.getMaxWait());
-            config.setLifo(props.isLifo());
-            config.setFairness(props.isFairness());
-            config.setTestWhileIdle(props.isTestWhileIdle());
-            config.setTestOnBorrow(props.isTestOnBorrow());
-            config.setTestOnReturn(props.isTestOnReturn());
-            config.setTestOnCreate(props.isTestOnCreate());
-            if (props.getMinEvictableIdleTimeMillis() > 0) {
-                config.setMinEvictableIdleTimeMillis(props.getMinEvictableIdleTimeMillis());
+            config.setMaxTotal(pool.getMaxActive());
+            config.setMaxIdle(pool.getMaxIdle());
+            config.setMinIdle(pool.getMinIdle());
+            config.setMaxWaitMillis(pool.getMaxWait());
+            config.setLifo(pool.isLifo());
+            config.setFairness(pool.isFairness());
+            config.setTestWhileIdle(pool.isTestWhileIdle());
+            config.setTestOnBorrow(pool.isTestOnBorrow());
+            config.setTestOnReturn(pool.isTestOnReturn());
+            config.setTestOnCreate(pool.isTestOnCreate());
+            if (pool.getMinEvictableIdleTimeMillis() > 0) {
+                config.setMinEvictableIdleTimeMillis(pool.getMinEvictableIdleTimeMillis());
             }
-            if (props.getNumTestsPerEvictionRun() > 0) {
-                config.setNumTestsPerEvictionRun(props.getNumTestsPerEvictionRun());
+            if (pool.getNumTestsPerEvictionRun() > 0) {
+                config.setNumTestsPerEvictionRun(pool.getNumTestsPerEvictionRun());
             }
-            if (props.getSoftMinEvictableIdleTimeMillis() > 0) {
-                config.setSoftMinEvictableIdleTimeMillis(props.getSoftMinEvictableIdleTimeMillis());
+            if (pool.getSoftMinEvictableIdleTimeMillis() > 0) {
+                config.setSoftMinEvictableIdleTimeMillis(pool.getSoftMinEvictableIdleTimeMillis());
             }
             poolConfig.poolConfig(config);
             LOGGER.trace("Redis configuration: the pool is configured to [{}]", config);

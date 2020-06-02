@@ -44,9 +44,7 @@ public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration {
     @RefreshScope
     public SamlMetadataDocumentCouchDbRepository samlMetadataDocumentCouchDbRepository() {
         val couch = casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb();
-        val repository = new SamlMetadataDocumentCouchDbRepository(samlMetadataCouchDbFactory.getObject().getCouchDbConnector(), couch.isCreateIfNotExists());
-        repository.initStandardDesignDocument();
-        return repository;
+        return new SamlMetadataDocumentCouchDbRepository(samlMetadataCouchDbFactory.getObject().getCouchDbConnector(), couch.isCreateIfNotExists());
     }
 
     @ConditionalOnMissingBean(name = "couchDbSamlRegisteredServiceMetadataResolver")

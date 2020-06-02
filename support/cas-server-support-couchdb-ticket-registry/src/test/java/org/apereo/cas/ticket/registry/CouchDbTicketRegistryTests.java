@@ -51,7 +51,6 @@ public class CouchDbTicketRegistryTests extends BaseTicketRegistryTests {
     @Override
     public TicketRegistry getNewTicketRegistry() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
-        ticketRepository.initStandardDesignDocument();
         return ticketRegistry;
     }
 

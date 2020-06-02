@@ -56,7 +56,6 @@ public class CouchDbThrottledSubmissionHandlerInterceptorAdapterTests extends
     @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
-        couchDbRepository.initStandardDesignDocument();
     }
 
     @AfterEach

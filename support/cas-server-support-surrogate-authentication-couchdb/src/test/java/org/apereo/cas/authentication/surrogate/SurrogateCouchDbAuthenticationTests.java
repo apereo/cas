@@ -102,7 +102,6 @@ public class SurrogateCouchDbAuthenticationTests extends BaseSurrogateAuthentica
     @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
-        repository.initStandardDesignDocument();
         repository.add(new CouchDbSurrogateAuthorization("banderson", "casuser"));
     }
 

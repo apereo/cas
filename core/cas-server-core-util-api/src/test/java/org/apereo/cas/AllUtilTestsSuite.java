@@ -7,6 +7,7 @@ import org.apereo.cas.util.function.FunctionUtilsTests;
 import org.apereo.cas.util.io.FileWatcherServiceTests;
 import org.apereo.cas.util.io.PathWatcherServiceTests;
 import org.apereo.cas.util.io.TemporaryFileSystemResourceTests;
+import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManagerTests;
 import org.apereo.cas.util.scripting.GroovyShellScriptTests;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResourceTests;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolverTests;
@@ -33,6 +34,7 @@ import org.junit.runner.RunWith;
     DefaultCasBannerTests.class,
     GroovyShellScriptTests.class,
     FunctionUtilsTests.class,
+    GroovyScriptResourceCacheManagerTests.class,
     CompositeX509TrustManagerTests.class,
     CompositeX509KeyManagerTests.class,
     HttpRequestUtilsTests.class,

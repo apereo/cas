@@ -57,7 +57,6 @@ public class CouchDbMultifactorAuthenticationTrustStorageTests extends AbstractM
     @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
-        couchDbRepository.initStandardDesignDocument();
     }
 
     @AfterEach

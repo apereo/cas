@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
@@ -9,6 +10,8 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
@@ -23,6 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1.0
  */
 @Tag("FileSystem")
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    CasCoreUtilConfiguration.class
+})
 public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
     @SneakyThrows
     @Override

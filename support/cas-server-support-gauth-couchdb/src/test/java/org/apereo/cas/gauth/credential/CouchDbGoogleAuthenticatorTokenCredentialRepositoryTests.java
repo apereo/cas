@@ -112,7 +112,6 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepositoryTests extends Ba
     @Override
     public void initialize() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
-        couchDbRepository.initStandardDesignDocument();
         super.initialize();
     }
 
