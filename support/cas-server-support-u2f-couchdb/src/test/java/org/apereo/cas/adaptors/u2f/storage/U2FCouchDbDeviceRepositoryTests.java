@@ -56,7 +56,6 @@ public class U2FCouchDbDeviceRepositoryTests extends AbstractU2FDeviceRepository
     @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
-        couchDbRepository.initStandardDesignDocument();
     }
 
     @AfterEach

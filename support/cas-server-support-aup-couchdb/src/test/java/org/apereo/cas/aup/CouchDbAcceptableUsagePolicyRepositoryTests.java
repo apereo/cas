@@ -57,7 +57,6 @@ public class CouchDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
     @BeforeEach
     public void setUp() {
         aupCouchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(aupCouchDbFactory.getCouchDbConnector().getDatabaseName());
-        couchDbRepository.initStandardDesignDocument();
     }
 
     @AfterEach

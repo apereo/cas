@@ -289,8 +289,7 @@ public class WsFederationHelper {
             },
             () -> securityTokenFromAssertion);
 
-        val securityToken = func.apply(securityTokenFromAssertion);
-        return securityToken;
+        return func.apply(securityTokenFromAssertion);
     }
 
     /**

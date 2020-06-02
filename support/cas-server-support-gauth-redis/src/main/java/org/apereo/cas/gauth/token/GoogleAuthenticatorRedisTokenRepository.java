@@ -9,8 +9,8 @@ import lombok.val;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.persistence.NoResultException;
-import java.util.Set;
 import java.time.Duration;
+import java.util.Set;
 
 /**
  * This is {@link GoogleAuthenticatorRedisTokenRepository}.
@@ -22,6 +22,7 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRepository {
     private static final String KEY_SEPARATOR = ":";
+
     private static final String CAS_PREFIX = GoogleAuthenticatorRedisTokenRepository.class.getSimpleName();
 
     private final RedisTemplate<String, GoogleAuthenticatorToken> template;
@@ -62,10 +63,6 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
         }
-    }
-
-    @Override
-    protected void cleanInternal() {
     }
 
     @Override
@@ -161,9 +158,14 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
         LOGGER.trace("Fetching Google Authenticator records based on key [{}] for [{}]", key, username);
         return this.template.keys(key);
     }
+
     private Set<String> getGoogleAuthenticatorTokenKeys(final Integer otp) {
         val key = getGoogleAuthenticatorTokenRedisKey(otp);
         LOGGER.trace("Fetching Google Authenticator records based on key [{}] for [{}]", key, otp);
         return this.template.keys(key);
+    }
+
+    @Override
+    protected void cleanInternal() {
     }
 }
