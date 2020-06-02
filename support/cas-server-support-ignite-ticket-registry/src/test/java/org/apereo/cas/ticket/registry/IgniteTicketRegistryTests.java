@@ -22,10 +22,10 @@ import org.springframework.boot.test.context.SpringBootTest;
     BaseTicketRegistryTests.SharedTestConfiguration.class
 },
     properties = {
-        "cas.ticket.registry.ignite.ticketsCache.writeSynchronizationMode=FULL_ASYNC",
-        "cas.ticket.registry.ignite.ticketsCache.atomicityMode=ATOMIC",
-        "cas.ticket.registry.ignite.ticketsCache.cacheMode=REPLICATED",
-        "cas.ticket.registry.ignite.igniteAddress[0]=localhost:47500"
+        "cas.ticket.registry.ignite.tickets-cache.write-synchronization-mode=FULL_ASYNC",
+        "cas.ticket.registry.ignite.tickets-cache.atomicity-mode=ATOMIC",
+        "cas.ticket.registry.ignite.tickets-cache.cache-mode=REPLICATED",
+        "cas.ticket.registry.ignite.ignite-address[0]=localhost:47500"
     })
 public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
