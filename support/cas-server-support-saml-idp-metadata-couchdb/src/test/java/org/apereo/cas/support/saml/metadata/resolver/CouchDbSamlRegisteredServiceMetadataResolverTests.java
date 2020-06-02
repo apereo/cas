@@ -119,10 +119,6 @@ public class CouchDbSamlRegisteredServiceMetadataResolverTests {
     private SamlRegisteredServiceMetadataResolver resolver;
 
     @Autowired
-    @Qualifier("samlMetadataDocumentCouchDbRepository")
-    private SamlMetadataDocumentCouchDbRepository couchDbRepository;
-
-    @Autowired
     @Qualifier("samlMetadataCouchDbFactory")
     private CouchDbConnectorFactory couchDbFactory;
 

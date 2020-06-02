@@ -79,11 +79,7 @@ public class CouchDbSamlIdPMetadataGeneratorTests {
     @Autowired
     @Qualifier("samlMetadataCouchDbFactory")
     private CouchDbConnectorFactory couchDbFactory;
-
-    @Autowired
-    @Qualifier("samlIdPMetadataCouchDbRepository")
-    private SamlIdPMetadataCouchDbRepository couchDbRepository;
-
+    
     @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
