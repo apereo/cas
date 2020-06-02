@@ -71,7 +71,6 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
         return new TreeMap<>(this.allowedAttributes);
     }
 
-
     @PostLoad
     private void initializeWatchableScriptIfNeeded() {
         if (this.attributeScriptCache == null) {

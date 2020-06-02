@@ -61,7 +61,6 @@ public class CouchDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
     @BeforeEach
     public void setUp() {
         auditCouchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(auditCouchDbFactory.getCouchDbConnector().getDatabaseName());
-        couchDbRepository.initStandardDesignDocument();
     }
 
     @AfterEach

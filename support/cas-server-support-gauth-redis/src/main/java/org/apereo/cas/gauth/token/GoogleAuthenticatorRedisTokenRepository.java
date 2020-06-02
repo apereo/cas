@@ -10,7 +10,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.persistence.NoResultException;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.time.Duration;
 
 /**

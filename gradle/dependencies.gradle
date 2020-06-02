@@ -22,6 +22,15 @@ ext.libraries = [
                     transitive = false
                 }
         ],
+        javaxel : [
+                dependencies.create("javax.el:javax.el-api:3.0.0") {
+                },
+                dependencies.create("org.glassfish.web:el-impl:2.2") {
+                    exclude(group: "javax.el", module: "javax.el-api")
+                    exclude(group: "javax.el", module: "el-api")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                }
+        ],
         aspectj                 : [
                 dependencies.create("org.aspectj:aspectjrt:$aspectjVersion") {
                 },
@@ -664,15 +673,6 @@ ext.libraries = [
                     exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "net.bytebuddy", module: "byte-buddy")
 
-                },
-                dependencies.create("javax.el:javax.el-api:3.0.0") {
-
-                },
-                dependencies.create("org.glassfish.web:el-impl:2.2") {
-                    exclude(group: "javax.el", module: "javax.el-api")
-                    exclude(group: "javax.el", module: "el-api")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-
                 }
         ],
         httpclient              : [
@@ -868,11 +868,10 @@ ext.libraries = [
         ],
         ignite                  : [
                 dependencies.create("org.apache.ignite:ignite-core:$igniteVersion") {
-
+                    exclude(group: "commons-logging", module: "commons-logging")
                 },
                 dependencies.create("org.apache.ignite:ignite-log4j2:$igniteVersion") {
                     exclude(group: "log4j", module: "log4j")
-
                 },
                 dependencies.create("org.apache.ignite:ignite-spring:$igniteVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -883,7 +882,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-expression")
                     exclude(group: "org.springframework", module: "spring-jdbc")
                     exclude(group: "org.springframework", module: "spring-tx")
-
                 }
         ],
         infinispan              : [
@@ -965,7 +963,8 @@ ext.libraries = [
         ],
         javax                   : [
                 dependencies.create("javax.servlet:javax.servlet-api:$javaxServletVersion") {
-
+                },
+                dependencies.create("jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationsVersion") {
                 }
         ],
         javaximpl               : [
@@ -2128,18 +2127,6 @@ ext.libraries = [
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-webflux")
-
-                },
-                dependencies.create("org.springframework.boot:spring-boot-starter-webflux:$springBootVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
-
                 }
         ],
         springbootadminclient   : [
