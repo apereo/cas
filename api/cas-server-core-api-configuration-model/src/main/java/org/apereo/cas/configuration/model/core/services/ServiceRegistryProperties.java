@@ -178,7 +178,7 @@ public class ServiceRegistryProperties implements Serializable {
     /**
      * Services cache capacity sets the minimum total size for the internal data structures.
     */
-    private int cachCapacity = Integer.MAX_VALUE;
+    private int cachCapacity = 1000;
     
     /**
      * Types of service managers that one can control.
