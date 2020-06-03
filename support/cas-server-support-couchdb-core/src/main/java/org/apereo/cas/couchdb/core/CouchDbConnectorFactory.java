@@ -84,7 +84,6 @@ public class CouchDbConnectorFactory {
             .useExpectContinue(couchDbProperties.isUseExpectContinue())
             .cleanupIdleConnections(couchDbProperties.isCleanupIdleConnections());
 
-
         if (StringUtils.isNotBlank(couchDbProperties.getProxyHost())) {
             builder.proxy(couchDbProperties.getProxyHost());
 

@@ -86,6 +86,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     "cas.authn.surrogate.couch-db.profile-based=true",
     "cas.authn.surrogate.couch-db.surrogate-principals-attribute=surrogateFor",
     "cas.authn.surrogate.couch-db.username=cas",
+    "cas.authn.surrogate.couch-db.caching=false",
     "cas.authn.surrogate.couch-db.password=password"
 })
 @Getter
@@ -107,6 +108,7 @@ public class SurrogateCouchDbProfileAuthenticationServiceTests extends BaseSurro
     @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
+        repository.initStandardDesignDocument();
 
         val profile = new CouchDbProfileDocument();
         profile.setUsername("casuser");

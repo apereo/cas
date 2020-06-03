@@ -64,7 +64,7 @@ public abstract class BaseCouchDbProperties implements Serializable {
     /**
      * Use a local cache to reduce fetches..
      */
-    private boolean caching = true;
+    private boolean caching;
 
     /**
      * Max entries in local cache.

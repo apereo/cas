@@ -65,7 +65,9 @@ public class CouchDbServiceRegistryConfiguration {
     public RegisteredServiceCouchDbRepository serviceRegistryCouchDbRepository() {
         val couchDbProperties = casProperties.getServiceRegistry().getCouchDb();
 
-        return new RegisteredServiceCouchDbRepository(couchDbFactory.getObject().getCouchDbConnector(), couchDbProperties.isCreateIfNotExists());
+        val serviceRepository = new RegisteredServiceCouchDbRepository(couchDbFactory.getObject().getCouchDbConnector(), couchDbProperties.isCreateIfNotExists());
+        serviceRepository.initStandardDesignDocument();
+        return serviceRepository;
     }
 
     @Bean

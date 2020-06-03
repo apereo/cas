@@ -81,6 +81,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreTicketsConfiguration.class
     }, properties = {
         "cas.authn.surrogate.couch-db.username=cas",
+        "cas.authn.surrogate.couch-db.caching=false",
         "cas.authn.surrogate.couch-db.password=password"
     })
 @Getter
@@ -102,6 +103,7 @@ public class SurrogateCouchDbAuthenticationTests extends BaseSurrogateAuthentica
     @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
+        repository.initStandardDesignDocument();
         repository.add(new CouchDbSurrogateAuthorization("banderson", "casuser"));
     }
 

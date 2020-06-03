@@ -78,8 +78,11 @@ public class CouchDbSamlIdPMetadataConfiguration {
     @Bean
     @RefreshScope
     public SamlIdPMetadataCouchDbRepository samlIdPMetadataCouchDbRepository() {
-        return new SamlIdPMetadataCouchDbRepository(samlMetadataCouchDbFactory.getObject().getCouchDbConnector(),
+        val repository = new SamlIdPMetadataCouchDbRepository(samlMetadataCouchDbFactory.getObject().getCouchDbConnector(),
             casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb().isCreateIfNotExists());
+        repository.initStandardDesignDocument();
+        return repository;
+
     }
 
     @Bean

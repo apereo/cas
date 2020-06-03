@@ -6,6 +6,7 @@ import org.apereo.cas.consent.CouchDbConsentRepository;
 import org.apereo.cas.couchdb.consent.ConsentDecisionCouchDbRepository;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 
+import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +44,10 @@ public class CasConsentCouchDbConfiguration {
     @Bean
     @RefreshScope
     public ConsentDecisionCouchDbRepository consentCouchDbRepository(@Qualifier("consentCouchDbFactory") final CouchDbConnectorFactory consentCouchDbFactory) {
-        return new ConsentDecisionCouchDbRepository(consentCouchDbFactory.getCouchDbConnector(),
+        val repository = new ConsentDecisionCouchDbRepository(consentCouchDbFactory.getCouchDbConnector(),
             casProperties.getConsent().getCouchDb().isCreateIfNotExists());
+        repository.initStandardDesignDocument();
+        return repository;
     }
 
     @ConditionalOnMissingBean(name = "couchDbConsentRepository")
