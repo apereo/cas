@@ -23,6 +23,16 @@ on:
 ##########################################################################
 
 jobs:
+  cancel:
+    name: Cancel Runs
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: styfle/cancel-workflow-action@0.3.1
+        with:
+          workflow_id: 1291155,1328268
+          access_token: ${{ github.token }}
+          
   initialize:
     runs-on: ubuntu-latest
     steps:
