@@ -1,12 +1,12 @@
 package org.apereo.cas.redis.core;
 
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
-import org.apereo.cas.util.function.FunctionUtils;
 
 import io.lettuce.core.ReadFrom;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisNode;
@@ -74,17 +74,55 @@ public class RedisObjectFactory {
      */
     public static RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis,
                                                                    final boolean initialize) {
-        val sentinel = redis.getSentinel();
+        var factory = (LettuceConnectionFactory) null;
+        if (redis.getSentinel() != null && StringUtils.hasText(redis.getSentinel().getMaster())) {
+            factory = new LettuceConnectionFactory(getSentinelConfig(redis), getRedisPoolConfig(redis));
+        } else if (redis.getCluster() != null && !redis.getCluster().getNodes().isEmpty()) {
+            factory = new LettuceConnectionFactory(getClusterConfig(redis), getRedisPoolConfig(redis));
+        } else {
+            factory = new LettuceConnectionFactory(getStandaloneConfig(redis), getRedisPoolConfig(redis));
+        }
 
-        val redisConfiguration = FunctionUtils.doIf(sentinel != null && StringUtils.hasText(sentinel.getMaster()),
-            () -> getSentinelConfig(redis),
-            () -> getStandaloneConfig(redis)).get();
-
-        val factory = new LettuceConnectionFactory(redisConfiguration, getRedisPoolConfig(redis));
         if (initialize) {
             factory.afterPropertiesSet();
         }
         return factory;
+    }
+
+    private static RedisClusterConfiguration getClusterConfig(final BaseRedisProperties redis) {
+        val redisConfiguration = new RedisClusterConfiguration();
+        val cluster = redis.getCluster();
+
+        cluster.getNodes()
+            .stream()
+            .filter(nodeConfig -> StringUtils.hasText(nodeConfig.getHost())
+                && nodeConfig.getPort() > 0
+                && StringUtils.hasText(nodeConfig.getType()))
+            .forEach(nodeConfig -> {
+                LOGGER.trace("Building redis cluster node for [{}]", nodeConfig);
+                
+                val nodeBuilder = new RedisNode.RedisNodeBuilder()
+                    .listeningAt(nodeConfig.getHost(), nodeConfig.getPort())
+                    .promotedAs(RedisNode.NodeType.valueOf(nodeConfig.getType()));
+
+                if (StringUtils.hasText(nodeConfig.getReplicaOf())) {
+                    nodeBuilder.replicaOf(nodeConfig.getReplicaOf());
+                }
+                if (StringUtils.hasText(nodeConfig.getId())) {
+                    nodeBuilder.withId(nodeConfig.getId());
+                }
+                if (StringUtils.hasText(nodeConfig.getName())) {
+                    nodeBuilder.withName(nodeConfig.getName());
+                }
+                redisConfiguration.clusterNode(nodeBuilder.build());
+            });
+        if (StringUtils.hasText(cluster.getPassword())) {
+            redisConfiguration.setPassword(cluster.getPassword());
+        }
+        if (cluster.getMaxRedirects() > 0) {
+            redisConfiguration.setMaxRedirects(cluster.getMaxRedirects());
+        }
+        return redisConfiguration;
     }
 
     private static LettucePoolingClientConfiguration getRedisPoolConfig(final BaseRedisProperties redis) {
@@ -131,6 +169,7 @@ public class RedisObjectFactory {
     }
 
     private static RedisConfiguration getStandaloneConfig(final BaseRedisProperties redis) {
+
         LOGGER.debug("Setting Redis standalone configuration on host [{}] and port [{}]", redis.getHost(), redis.getPort());
         val standaloneConfig = new RedisStandaloneConfiguration(redis.getHost(), redis.getPort());
         standaloneConfig.setDatabase(redis.getDatabase());

@@ -8,6 +8,7 @@ import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -18,10 +19,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.support.TransactionTemplate;
 
-
-import lombok.NonNull;
 import javax.sql.DataSource;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;

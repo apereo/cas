@@ -16,12 +16,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 
-import org.springframework.beans.factory.InitializingBean;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -138,7 +138,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         protected ApplicationContext applicationContext;
 
         public void afterPropertiesSet() throws Exception {
-	        SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-	    }
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+        }
     }
 }
