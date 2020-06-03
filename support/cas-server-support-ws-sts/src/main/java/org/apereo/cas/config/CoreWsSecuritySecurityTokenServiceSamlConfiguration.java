@@ -32,7 +32,7 @@ public class CoreWsSecuritySecurityTokenServiceSamlConfiguration implements Init
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         val warningMessage = "The security token service configuration of CAS will try to disable the OpenSAML bootstrapping process by wss4j, "
             + "as it interferes with and prevents CAS' own initialization of OpenSAML. Given the current API limitations of the wss4j library, "
             + "which is responsible for the implementation of the security token service in CAS, "
