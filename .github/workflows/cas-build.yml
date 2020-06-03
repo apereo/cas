@@ -24,7 +24,7 @@ on:
 
 jobs:
   cancel:
-    name: Cancel Runs
+    name: Cancel Previous Workflows
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
