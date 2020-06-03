@@ -573,7 +573,7 @@ subprojects {
         api libraries.springcloud
         api libraries.springboot
         api libraries.springsecurity
-
+        api libraries.javaxel
         api libraries.javax
 
         if (!Boolean.getBoolean("skipSpotbugs") && projectShouldBePublished(project)) {

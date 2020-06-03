@@ -23,9 +23,9 @@ ext.libraries = [
                 }
         ],
         javaxel : [
-                dependencies.create("javax.el:javax.el-api:3.0.0") {
+                dependencies.create("javax.el:javax.el-api:$javaxElVersion") {
                 },
-                dependencies.create("org.glassfish.web:el-impl:2.2") {
+                dependencies.create("org.glassfish.web:el-impl:$glassfishElImplVersion") {
                     exclude(group: "javax.el", module: "javax.el-api")
                     exclude(group: "javax.el", module: "el-api")
                     exclude(group: "org.slf4j", module: "slf4j-api")

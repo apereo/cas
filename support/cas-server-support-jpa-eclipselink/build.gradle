@@ -8,7 +8,6 @@ dependencies {
     api project(":api:cas-server-core-api-web")
     
     api libraries.eclipselink
-    api libraries.javaxel
 
     implementation libraries.hikaricp
 
