@@ -48,8 +48,9 @@ public class CouchDbTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "ticketRegistryCouchDbRepository")
     public TicketRepository ticketRegistryCouchDbRepository() {
         val couchDbProperties = casProperties.getTicket().getRegistry().getCouchDb();
-
-        return new TicketRepository(ticketRegistryCouchDbFactory().getCouchDbConnector(), couchDbProperties.isCreateIfNotExists());
+        val ticketRepository = new TicketRepository(ticketRegistryCouchDbFactory().getCouchDbConnector(), couchDbProperties.isCreateIfNotExists());
+        ticketRepository.initStandardDesignDocument();
+        return ticketRepository;
     }
 
     @RefreshScope

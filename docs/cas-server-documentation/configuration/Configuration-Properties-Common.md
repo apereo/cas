@@ -690,7 +690,7 @@ The following options related to CouchDb support in CAS apply equally to a numbe
 # ${configurationKey}.couch-db.max-connections=20
 # ${configurationKey}.couch-db.enable-ssl=
 # ${configurationKey}.couch-db.relaxed-ssl-settings=
-# ${configurationKey}.couch-db.caching=true
+# ${configurationKey}.couch-db.caching=false
 # ${configurationKey}.couch-db.max-cache-entries=1000
 # ${configurationKey}.couch-db.max-object-size-bytes=8192
 # ${configurationKey}.couch-db.use-expect-continue=true

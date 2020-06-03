@@ -11,6 +11,7 @@ import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,8 +64,11 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     @RefreshScope
     public GoogleAuthenticatorAccountCouchDbRepository couchDbOneTimeTokenAccountRepository(
         @Qualifier("oneTimeTokenAccountCouchDbFactory") final CouchDbConnectorFactory oneTimeTokenCouchDbFactory) {
-        return new GoogleAuthenticatorAccountCouchDbRepository(oneTimeTokenCouchDbFactory.getCouchDbConnector(),
+        val repository = new GoogleAuthenticatorAccountCouchDbRepository(oneTimeTokenCouchDbFactory.getCouchDbConnector(),
             casProperties.getAuthn().getMfa().getGauth().getCouchDb().isCreateIfNotExists());
+        repository.initStandardDesignDocument();
+        return repository;
+
     }
 
     @ConditionalOnMissingBean(name = "couchDbOneTimeTokenAutneticatorTokenRepository")

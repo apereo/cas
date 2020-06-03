@@ -64,5 +64,6 @@ public class U2FDeviceRegistrationCouchDbRepository extends CouchDbRepositorySup
     public void deleteAll() {
         this.couchDbInstance.deleteDatabase(db.getDatabaseName());
         this.couchDbInstance.createDatabaseIfNotExists(db.getDatabaseName());
+        initStandardDesignDocument();
     }
 }

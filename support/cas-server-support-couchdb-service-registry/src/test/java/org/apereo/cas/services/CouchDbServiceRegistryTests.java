@@ -27,6 +27,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 },
     properties = {
         "cas.service-registry.couch-db.username=cas",
+        "cas.service-registry.couch-db.caching=false",
         "cas.service-registry.couch-db.password=password"
     })
 @Tag("CouchDb")

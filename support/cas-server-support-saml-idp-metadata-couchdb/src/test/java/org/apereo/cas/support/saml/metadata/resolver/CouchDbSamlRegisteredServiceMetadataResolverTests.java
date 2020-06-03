@@ -108,6 +108,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.saml-idp.metadata.location=classpath:",
         "cas.authn.saml-idp.metadata.couch-db.db-name=saml_resolver",
         "cas.authn.saml-idp.metadata.couch-db.username=cas",
+        "cas.authn.saml-idp.metadata.couch-db.caching=false",
         "cas.authn.saml-idp.metadata.couch-db.password=password"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -122,9 +123,15 @@ public class CouchDbSamlRegisteredServiceMetadataResolverTests {
     @Qualifier("samlMetadataCouchDbFactory")
     private CouchDbConnectorFactory couchDbFactory;
 
+    @Autowired
+    @Qualifier("samlMetadataDocumentCouchDbRepository")
+    private SamlMetadataDocumentCouchDbRepository couchDbRepository;
+
+
     @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
+        couchDbRepository.initStandardDesignDocument();
     }
 
     @AfterEach

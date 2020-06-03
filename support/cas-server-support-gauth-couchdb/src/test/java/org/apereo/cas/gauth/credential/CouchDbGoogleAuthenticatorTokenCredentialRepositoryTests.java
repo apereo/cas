@@ -87,6 +87,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     properties = {
         "cas.authn.mfa.gauth.crypto.enabled=false",
         "cas.authn.mfa.gauth.couch-db.username=cas",
+        "cas.authn.mfa.gauth.couch-db.caching=false",
         "cas.authn.mfa.gauth.couch-db.db-name=gauth_credential",
         "cas.authn.mfa.gauth.couch-db.password=password"
     })
@@ -112,6 +113,8 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepositoryTests extends Ba
     @Override
     public void initialize() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
+        couchDbRepository.initStandardDesignDocument();
+
         super.initialize();
     }
 

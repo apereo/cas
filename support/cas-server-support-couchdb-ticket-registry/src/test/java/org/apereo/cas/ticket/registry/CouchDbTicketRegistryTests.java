@@ -25,12 +25,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 },
     properties = {
         "cas.ticket.registry.couch-db.username=cas",
+        "cas.ticket.registry.couch-db.caching=false",
         "cas.ticket.registry.couch-db.password=password"
     })
 @Tag("CouchDb")
 @EnabledIfPortOpen(port = 5984)
 public class CouchDbTicketRegistryTests extends BaseTicketRegistryTests {
 
+    @Autowired
+    @Qualifier("ticketRegistryCouchDbRepository")
+    private TicketRepository ticketRepository;
+    
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
@@ -47,6 +52,8 @@ public class CouchDbTicketRegistryTests extends BaseTicketRegistryTests {
     @Override
     public TicketRegistry getNewTicketRegistry() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
+        ticketRepository.initStandardDesignDocument();
+
         return ticketRegistry;
     }
 
