@@ -177,6 +177,7 @@ while (( "$#" )); do
                 task+="testCassandra "
                 ;;
             kafka)
+                ./ci/tests/kafka/run-kafka-server.sh
                 task+="testKafka "
                 ;;
             oauth)
@@ -225,9 +226,6 @@ while (( "$#" )); do
             activemq|amq|jms)
                 ./ci/tests/activemq/run-activemq-server.sh
                 task+="testJMS "
-                ;;
-            simple|unit)
-                task+="testSimple "
                 ;;
             esac
         done

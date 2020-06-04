@@ -103,7 +103,7 @@ public class RedisObjectFactory {
                 
                 val nodeBuilder = new RedisNode.RedisNodeBuilder()
                     .listeningAt(nodeConfig.getHost(), nodeConfig.getPort())
-                    .promotedAs(RedisNode.NodeType.valueOf(nodeConfig.getType()));
+                    .promotedAs(RedisNode.NodeType.valueOf(nodeConfig.getType().toUpperCase()));
 
                 if (StringUtils.hasText(nodeConfig.getReplicaOf())) {
                     nodeBuilder.replicaOf(nodeConfig.getReplicaOf());
@@ -181,7 +181,8 @@ public class RedisObjectFactory {
 
     private static RedisSentinelConfiguration getSentinelConfig(final BaseRedisProperties redis) {
         LOGGER.debug("Setting Redis with Sentinel configuration on master [{}]", redis.getSentinel().getMaster());
-        val sentinelConfig = new RedisSentinelConfiguration().master(redis.getSentinel().getMaster());
+        val sentinelConfig = new RedisSentinelConfiguration()
+            .master(redis.getSentinel().getMaster());
         LOGGER.debug("Sentinel nodes configured are [{}]", redis.getSentinel().getNode());
         sentinelConfig.setSentinels(createRedisNodesForProperties(redis));
         sentinelConfig.setDatabase(redis.getDatabase());
