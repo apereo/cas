@@ -39,7 +39,7 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
         super(applicationContext, serviceRegistryListeners);
         this.template = template;
     }
-
+                          
     @Override
     public RegisteredService save(final RegisteredService rs) {
         try {

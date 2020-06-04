@@ -1,7 +1,7 @@
 package org.apereo.cas;
 
+import org.apereo.cas.adaptors.redis.services.RedisSentinelServerServiceRegistryTests;
 import org.apereo.cas.adaptors.redis.services.RedisServerServiceRegistryTests;
-import org.apereo.cas.adaptors.redis.services.SentinelServerServiceRegistryTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     RedisServerServiceRegistryTests.class,
-    SentinelServerServiceRegistryTests.class
+    RedisSentinelServerServiceRegistryTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllRedisServiceRegistryTestsSuite {

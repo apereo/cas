@@ -25,5 +25,5 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfPortOpen(port = 6379)
 @Tag("Redis")
-public class SentinelServerServiceRegistryTests extends BaseRedisSentinelServiceRegistryTests {
+public class RedisSentinelServerServiceRegistryTests extends BaseRedisSentinelServiceRegistryTests {
 }
