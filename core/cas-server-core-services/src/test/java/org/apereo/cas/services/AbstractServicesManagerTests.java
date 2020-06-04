@@ -108,9 +108,9 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         assertFalse(isServiceInCache(null, 4100));
         this.servicesManager.save(service);
         assertTrue(isServiceInCache(null, 4100));
-        TimeUnit.SECONDS.sleep(2L);
+        Thread.sleep(1000);
         assertTrue(isServiceInCache(null, 4100));
-        TimeUnit.SECONDS.sleep(4L);
+        Thread.sleep(5000);
         assertFalse(isServiceInCache(null, 4100));
     }
 
