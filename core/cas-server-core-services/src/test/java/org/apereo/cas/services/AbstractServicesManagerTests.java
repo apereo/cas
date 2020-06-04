@@ -13,7 +13,6 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -102,21 +101,6 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
     
     @Test
-    public void verifySaveAndRemoveFromCache() throws InterruptedException{
-        val service = new RegexRegisteredService();
-        service.setId(4100);
-        service.setName(TEST);
-        service.setServiceId(TEST);
-        assertFalse(isServiceInCache(null, 4100));
-        this.servicesManager.save(service);
-        assertTrue(isServiceInCache(null, 4100));
-        Thread.sleep(1000);
-        assertTrue(isServiceInCache(null, 4100));
-        Thread.sleep(5000);
-        assertFalse(isServiceInCache(null, 4100));
-    }
-
-    @Test
     public void verifyDelete() {
         val r = new RegexRegisteredService();
         r.setId(1000);
@@ -160,7 +144,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         assertNull(this.servicesManager.findServiceBy(r.getServiceId()));
     }
 
-    private boolean isServiceInCache(final String serviceId, final long id) {
+    protected boolean isServiceInCache(final String serviceId, final long id) {
         return servicesManager.getAllServices().stream().filter(r -> serviceId != null
                 ? r.getServiceId().equals(serviceId) : r.getId() == id).findFirst().isPresent();
     }
