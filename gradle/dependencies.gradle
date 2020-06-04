@@ -681,10 +681,8 @@ ext.libraries = [
                 dependencies.create("org.apache.httpcomponents:httpclient:$httpclientVersion") {
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "org.apache.httpcomponents", module: "httpcore")
-
                 },
                 dependencies.create("org.apache.httpcomponents:httpcore:$httpCoreVersion") {
-
                 }
         ],
         awsclouddirectory       : [
@@ -1086,7 +1084,7 @@ ext.libraries = [
                 }
         ],
         jackson                 : [
-                dependencies.create("com.fasterxml.jackson.core:jackson-databind:$jacksonCoreVersion") {
+                dependencies.create("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
 
                 },
@@ -1484,21 +1482,66 @@ ext.libraries = [
                 dependencies.create("org.slf4j:jcl-over-slf4j:$slf4jVersion"),
         ],
         metrics                 : [
-                createMetricsDependencies(
-                        "com.timgroup:java-statsd-client:$statsdVersion",
-                        "io.micrometer:micrometer-core:$micrometerVersion",
-                        "io.micrometer:micrometer-registry-prometheus:$micrometerVersion",
-                        "io.micrometer:micrometer-registry-graphite:$micrometerVersion",
-                        "io.micrometer:micrometer-registry-ganglia:$micrometerVersion",
-                        "io.micrometer:micrometer-registry-jmx:$micrometerVersion",
-                        "io.micrometer:micrometer-registry-influx:$micrometerVersion",
-                        "io.micrometer:micrometer-registry-statsd:$micrometerVersion",
-                        "io.micrometer:micrometer-registry-atlas:$micrometerVersion",
-                        "io.micrometer:micrometer-registry-signalfx:$micrometerVersion",
-                        "io.micrometer:micrometer-registry-wavefront:$micrometerVersion",
-                        "io.micrometer:micrometer-registry-new-relic:$micrometerVersion",
-                        "io.micrometer:micrometer-registry-cloudwatch:$micrometerVersion",
-                        "com.signalfx.public:signalfx-java:$signalFxVersion")
+                dependencies.create("io.micrometer:micrometer-core:$micrometerVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                },
+                dependencies.create("io.micrometer:micrometer-registry-prometheus:$micrometerVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                },
+                dependencies.create("io.micrometer:micrometer-registry-graphite:$micrometerVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                },
+                dependencies.create("io.micrometer:micrometer-registry-ganglia:$micrometerVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                },
+                dependencies.create("io.micrometer:micrometer-registry-jmx:$micrometerVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                },
+                dependencies.create("io.micrometer:micrometer-registry-influx:$micrometerVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                },
+                dependencies.create("io.micrometer:micrometer-registry-statsd:$micrometerVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                },
+                dependencies.create("io.micrometer:micrometer-registry-atlas:$micrometerVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                },
+                dependencies.create("io.micrometer:micrometer-registry-signalfx:$micrometerVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                },
+                dependencies.create("io.micrometer:micrometer-registry-wavefront:$micrometerVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                },
+                dependencies.create("io.micrometer:micrometer-registry-new-relic:$micrometerVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                },
+                dependencies.create("io.micrometer:micrometer-registry-cloudwatch:$micrometerVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                }
         ],
         mongo                   : [
                 dependencies.create("org.mongodb:mongodb-driver-core:$mongoDriverVersion") {
@@ -2289,7 +2332,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
-
+                    exclude(group: "com.h2database", module: "h2")
                 },
                 dependencies.create("org.springframework.boot:spring-boot:$springBootVersion") {
                     exclude(group: "org.hibernate", module: "hibernate-validator")
@@ -2398,15 +2441,15 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
 
                 },
-                dependencies.create("org.apache.tomcat:tomcat-catalina-ha:$springBootTomcatVersion") {
+                dependencies.create("org.apache.tomcat:tomcat-catalina-ha:$tomcatVersion") {
                     exclude(group: "org.apache.tomcat", module: "tomcat-annotations-api")
 
                 },
-                dependencies.create("org.apache.tomcat.embed:tomcat-embed-core:$springBootTomcatVersion") {
+                dependencies.create("org.apache.tomcat.embed:tomcat-embed-core:$tomcatVersion") {
                     exclude(group: "org.apache.tomcat", module: "tomcat-annotations-api")
 
                 },
-                dependencies.create("org.apache.tomcat.embed:tomcat-embed-el:$springBootTomcatVersion") {
+                dependencies.create("org.apache.tomcat.embed:tomcat-embed-el:$tomcatVersion") {
                     exclude(group: "org.apache.tomcat", module: "tomcat-annotations-api")
 
                 }
@@ -3126,7 +3169,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-tx")
                     exclude(group: "org.mongodb", module: "mongo-java-driver")
-
+                    exclude(group: "com.h2database", module: "h2")
                 },
 
                 dependencies.create("org.springframework:spring-jms:$springVersion") {
@@ -3418,22 +3461,3 @@ ext.libraries = [
                 }
         ]
 ]
-
-def createMetricsDependencies(String... coordinates) {
-    coordinates.each {
-        dependencies.create(it) {
-            exclude(group: "commons-logging", module: "commons-logging")
-            exclude(group: "org.slf4j", module: "slf4j-api")
-            exclude(group: "commons-lang", module: "commons-lang")
-            excludeDependencyIfNecessary(it, "com.signalfx.public:signalfx-java")
-        }
-    }
-}
-
-def excludeDependencyIfNecessary(def dependency, String exclusion) {
-    def coords = dependency.group + ":" + dependency.name
-    if (!coords.equalsIgnoreCase(exclusion)) {
-        def exclusionCoords = exclusion.split(":")
-        dependency.exclude(group: exclusionCoords[0], module: exclusionCoords[1])
-    }
-}
