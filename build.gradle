@@ -81,7 +81,6 @@ def isArtifactSigningRequired = {
     return publishReleases
 }
 
-apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply from: rootProject.file("gradle/dependencyUpdates.gradle")
 
@@ -316,31 +315,7 @@ subprojects {
         }
     }
 
-    configurations.all {
-        resolutionStrategy {
-            if (!Boolean.getBoolean("skipVersionConflict")) {
-                failOnVersionConflict()
-            }
-            preferProjectModules()
-
-            cacheDynamicVersionsFor 5, 'days'
-            cacheChangingModulesFor 5, 'days'
-            /**
-             * Required for all JRadius modules
-             */
-            eachDependency { DependencyResolveDetails details ->
-                if (details.requested.group == "gnu-getopt") {
-                    details.useTarget group: "gnu.getopt", name: "java-getopt", version: details.requested.version
-                }
-            }
-        }
-        exclude(group: "cglib", module: "cglib")
-        exclude(group: "cglib", module: "cglib-full")
-        exclude(group: "org.slf4j", module: "slf4j-log4j12")
-        exclude(group: "org.slf4j", module: "slf4j-simple")
-        exclude(group: "org.apache.logging.log4j", module: "log4j-to-slf4j")
-        exclude(group: "pull-parser", module: "pull-parser")
-    }
+    apply from: rootProject.file("gradle/overrides.gradle")
 
     /**
      * Apply publishing rules after the build has had a chance to
