@@ -3,6 +3,7 @@ dependencies {
     api libraries.springbootadminserver
     
     implementation project(":core:cas-server-core-logging")
+    implementation project(":core:cas-server-core-logging-api")
     implementation project(":core:cas-server-core-util-api")
     
     implementation libraries.springsecurityweb
