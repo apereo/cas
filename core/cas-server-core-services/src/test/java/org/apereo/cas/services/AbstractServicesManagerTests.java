@@ -68,6 +68,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         services.setServiceId(TEST);
         servicesManager.save(services);
         assertNotNull(this.servicesManager.findServiceBy(1100));
+        assertNotNull(this.servicesManager.findServiceBy(1100, RegexRegisteredService.class));
         assertNotNull(this.servicesManager.findServiceByName(TEST));
         assertNotNull(this.servicesManager.findServiceByName(TEST, RegexRegisteredService.class));
         assertTrue(this.servicesManager.count() > 0);
@@ -96,6 +97,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         serviceRegistry.save(service);
         assertNotNull(serviceRegistry.findServiceByExactServiceId(TEST));
         assertNotNull(servicesManager.findServiceByExactServiceId(TEST));
+        assertNotNull(servicesManager.findServiceBy(TEST, RegexRegisteredService.class));
         assertTrue(isServiceInCache(TEST, 0));
     }
     
