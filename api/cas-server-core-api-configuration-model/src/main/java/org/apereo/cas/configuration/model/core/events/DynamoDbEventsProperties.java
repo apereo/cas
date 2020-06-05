@@ -24,5 +24,5 @@ public class DynamoDbEventsProperties extends AbstractDynamoDbProperties {
     /**
      * The table name used and created by CAS to hold events in DynamoDb.
      */
-    private String tableName = "DynamoDbCasEventsRecords";
+    private String tableName = "DynamoDbCasEvents";
 }
