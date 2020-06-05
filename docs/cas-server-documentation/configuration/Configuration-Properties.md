@@ -4253,7 +4253,7 @@ AWS settings for this feature are available [here](Configuration-Properties-Comm
 under the configuration key `cas.evnts.dynamo-db`.
 
 ```properties
-# cas.events.dynamo-db.table-name=DynamoDbCasServices
+# cas.events.dynamo-db.table-name=DynamoDbCasEvents
 ```
 
 ## Http Web Requests
