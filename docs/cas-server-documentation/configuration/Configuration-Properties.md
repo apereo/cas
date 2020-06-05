@@ -4242,6 +4242,20 @@ settings for this feature are available [here](Configuration-Properties-Common.h
 Decide how CAS should store authentication events inside a MongoDb instance. Common 
 configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.events`.
 
+### DynamoDb Events
+
+Decide how CAS should store authentication events inside a DynamoDb instance.
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
+under the configuration key `cas.events`.
+
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.evnts.dynamo-db`.
+
+```properties
+# cas.events.dynamo-db.table-name=DynamoDbCasServices
+```
+
 ## Http Web Requests
 
 Control how CAS should respond and validate incoming HTTP requests.
