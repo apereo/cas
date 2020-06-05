@@ -31,8 +31,8 @@ import static org.mockito.Mockito.*;
 @EnabledIfPortOpen(port = 8091)
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = {
-        "cas.authn.couchbase.clusterUsername=admin",
-        "cas.authn.couchbase.clusterPassword=password",
+        "cas.authn.couchbase.cluster-username=admin",
+        "cas.authn.couchbase.cluster-password=password",
         "cas.authn.couchbase.bucket=testbucket"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)

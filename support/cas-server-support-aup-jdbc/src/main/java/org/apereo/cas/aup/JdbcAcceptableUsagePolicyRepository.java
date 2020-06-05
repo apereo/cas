@@ -50,7 +50,11 @@ public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             LOGGER.debug("Executing update query [{}] for principal [{}]", sql, principalId);
             return this.jdbcTemplate.update(sql, principalId) > 0;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return false;
     }

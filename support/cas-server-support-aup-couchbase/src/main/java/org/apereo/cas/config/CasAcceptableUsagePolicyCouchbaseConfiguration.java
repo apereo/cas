@@ -1,34 +1,31 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
-import org.apereo.cas.aup.RedisAcceptableUsagePolicyRepository;
+import org.apereo.cas.aup.CouchbaseAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.redis.core.RedisObjectFactory;
+import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 
 /**
- * This is {@link CasAcceptableUsagePolicyRedisConfiguration} that stores AUP decisions in a mongo database.
+ * This is {@link CasAcceptableUsagePolicyCouchbaseConfiguration} that stores AUP decisions in a mongo database.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("casAcceptableUsagePolicyRedisConfiguration")
+@Configuration("casAcceptableUsagePolicyCouchbaseConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.acceptable-usage-policy", name = "enabled", havingValue = "true", matchIfMissing = true)
-public class CasAcceptableUsagePolicyRedisConfiguration {
+public class CasAcceptableUsagePolicyCouchbaseConfiguration {
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
@@ -39,24 +36,16 @@ public class CasAcceptableUsagePolicyRedisConfiguration {
 
     @RefreshScope
     @Bean
-    @ConditionalOnMissingBean(name = "redisAcceptableUsagePolicyTemplate")
-    public RedisTemplate redisAcceptableUsagePolicyTemplate() {
-        return RedisObjectFactory.newRedisTemplate(redisAcceptableUsagePolicyConnectionFactory());
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "redisAcceptableUsagePolicyConnectionFactory")
-    @RefreshScope
-    public RedisConnectionFactory redisAcceptableUsagePolicyConnectionFactory() {
-        val redis = casProperties.getAcceptableUsagePolicy().getRedis();
-        return RedisObjectFactory.newRedisConnectionFactory(redis);
+    public CouchbaseClientFactory aupCouchbaseClientFactory() {
+        val cb = casProperties.getAcceptableUsagePolicy().getCouchbase();
+        return new CouchbaseClientFactory(cb);
     }
 
     @RefreshScope
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-        return new RedisAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
+        return new CouchbaseAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
             casProperties.getAcceptableUsagePolicy(),
-            redisAcceptableUsagePolicyTemplate());
+            aupCouchbaseClientFactory());
     }
 }

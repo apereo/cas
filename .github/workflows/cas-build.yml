@@ -101,7 +101,7 @@ jobs:
 
 ##########################################################################
 
-  build-latest:
+  build-latest-jdk:
     runs-on: ubuntu-latest
     needs: [cache]
     steps:
