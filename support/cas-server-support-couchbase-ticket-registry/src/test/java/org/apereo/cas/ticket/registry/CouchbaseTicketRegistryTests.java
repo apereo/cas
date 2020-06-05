@@ -21,8 +21,8 @@ import org.springframework.boot.test.context.SpringBootTest;
     BaseTicketRegistryTests.SharedTestConfiguration.class
 },
     properties = {
-        "cas.ticket.registry.couchbase.clusterPassword=password",
-        "cas.ticket.registry.couchbase.clusterUsername=admin",
+        "cas.ticket.registry.couchbase.cluster-password=password",
+        "cas.ticket.registry.couchbase.cluster-username=admin",
         "cas.ticket.registry.couchbase.scanConsistency=REQUEST_PLUS",
         "cas.ticket.registry.couchbase.bucket=testbucket"
     })

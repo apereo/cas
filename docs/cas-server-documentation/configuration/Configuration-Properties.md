@@ -5092,11 +5092,18 @@ If AUP is controlled via JDBC, decide how choices should be remembered back insi
 
 #### CouchDb
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.acceptable-usage-policy`. This feature uses the `asynchronous` setting.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under 
+the configuration key `cas.acceptable-usage-policy`. This feature uses the `asynchronous` setting.
+
+#### Couchbase
+
+Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the 
+configuration key `cas.acceptable-usage-policy.couchbase`.
 
 #### MongoDb
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.acceptable-usage-policy`.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under 
+the configuration key `cas.acceptable-usage-policy`.
 
 #### Redis
 

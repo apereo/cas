@@ -49,7 +49,11 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
             val resource = ResourceUtils.getResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript));
             return ScriptingUtils.executeGroovyScript(resource, args, Map.class, true);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         LOGGER.warn("Groovy script [{}] does not exist or cannot be loaded", groovyScript);
         return new HashMap<>(0);
