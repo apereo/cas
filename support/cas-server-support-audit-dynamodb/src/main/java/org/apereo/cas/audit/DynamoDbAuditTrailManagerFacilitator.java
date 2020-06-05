@@ -51,7 +51,7 @@ public class DynamoDbAuditTrailManagerFacilitator {
     private final AmazonDynamoDB amazonDynamoDBClient;
 
     /**
-     * Build table attribute values map map.
+     * Build table attribute values map.
      *
      * @param record the record
      * @return the map
