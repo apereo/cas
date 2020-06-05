@@ -30,11 +30,11 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     RefreshAutoConfiguration.class,
     CasCoreWebConfiguration.class},
     properties = {
-        "cas.audit.dynamoDb.endpoint=http://localhost:8000",
-        "cas.audit.dynamoDb.dropTablesOnStartup=true",
-        "cas.audit.dynamoDb.localInstance=true",
-        "cas.audit.dynamoDb.region=us-east-1",
-        "cas.audit.dynamoDb.asynchronous=false"
+        "cas.audit.dynamo-db.endpoint=http://localhost:8000",
+        "cas.audit.dynamo-db.drop-tables-on-startup=true",
+        "cas.audit.dynamo-db.local-instance=true",
+        "cas.audit.dynamo-db.region=us-east-1",
+        "cas.audit.dynamo-db.asynchronous=false"
     }
 )
 @Tag("DynamoDb")

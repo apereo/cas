@@ -26,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import(DynamoDbMultifactorAuthenticationTrustConfiguration.class)
 @TestPropertySource(properties = {
-    "cas.authn.mfa.trusted.dynamoDb.endpoint=http://localhost:8000",
-    "cas.authn.mfa.trusted.dynamoDb.dropTablesOnStartup=true",
-    "cas.authn.mfa.trusted.dynamoDb.localInstance=true",
-    "cas.authn.mfa.trusted.dynamoDb.region=us-east-1"
+    "cas.authn.mfa.trusted.dynamo-db.endpoint=http://localhost:8000",
+    "cas.authn.mfa.trusted.dynamo-db.drop-tables-on-startup=true",
+    "cas.authn.mfa.trusted.dynamo-db.local-instance=true",
+    "cas.authn.mfa.trusted.dynamo-db.region=us-east-1"
 })
 @Tag("DynamoDb")
 @EnabledIfPortOpen(port = 8000)
