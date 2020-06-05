@@ -526,6 +526,17 @@ subprojects {
         }
     }
 
+    apply plugin: "com.github.jk1.dependency-license-report"
+    licenseReport {
+        outputDir = "$projectDir/build/licenses"
+        projects = project
+        excludeOwnGroup = true
+        configurations = ['runtimeClasspath']
+        filters = [new com.github.jk1.license.filter.ExcludeTransitiveDependenciesFilter()]
+        allowedLicensesFile = new File("$rootProject.projectDir/etc/allowed-licenses.json")
+    }
+    checkLicense.finalizedBy outputDependenciesWithoutLicense
+    
     dependencies {
         implementation libraries.aspectj
         implementation libraries.validationapi
@@ -565,31 +576,6 @@ subprojects {
         compileOnly libraries.spotbugsannotations
     }
 }
-
-task outputDependenciesWithoutLicense(description: "Output dependencies without approved license") {
-    doLast {
-        def results = file("${project.buildDir}/licenses/dependencies-without-allowed-license.json")
-        if (results.exists()) {
-            def slurper = new groovy.json.JsonSlurper()
-            def dependencies = slurper.parseText(results.text)
-            if (!dependencies.dependenciesWithoutAllowedLicenses.isEmpty()) {
-                println results.text
-                throw new GradleException("Dependencies found without allowed licenses")
-            }
-        }
-    }
-}
-
-apply plugin: "com.github.jk1.dependency-license-report"
-licenseReport {
-    outputDir = "$projectDir/build/licenses"
-    projects = [project] + project.subprojects
-    excludeOwnGroup = true
-    configurations = ['runtimeClasspath']
-    filters = [new com.github.jk1.license.filter.ExcludeTransitiveDependenciesFilter()]
-    allowedLicensesFile = new File("$projectDir/etc/allowed-licenses.json")
-}
-checkLicense.finalizedBy outputDependenciesWithoutLicense
 
 tasks.withType(Javadoc) {
     source subprojects.collect { project -> project.sourceSets.main.allJava }
