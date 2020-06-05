@@ -66,9 +66,9 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationPrincipalConfiguration.class
 },
     properties = {
-        "cas.authn.attributeRepository.couchbase.cluster-password=password",
-        "cas.authn.attributeRepository.couchbase.cluster-username=admin",
-        "cas.authn.attributeRepository.couchbase.bucket=testbucket"
+        "cas.authn.attribute-repository.couchbase.cluster-password=password",
+        "cas.authn.attribute-repository.couchbase.cluster-username=admin",
+        "cas.authn.attribute-repository.couchbase.bucket=testbucket"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchbasePersonAttributeDaoTests {
