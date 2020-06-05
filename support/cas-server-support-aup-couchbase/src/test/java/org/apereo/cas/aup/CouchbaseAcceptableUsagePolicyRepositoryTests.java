@@ -5,6 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,7 +45,8 @@ public class CouchbaseAcceptableUsagePolicyRepositoryTests extends BaseAcceptabl
     @Test
     public void verifyOperation() {
         assertNotNull(acceptableUsagePolicyRepository);
-        verifyRepositoryAction("casuser",
+        val id = UUID.randomUUID().toString();
+        verifyRepositoryAction(id,
             CollectionUtils.wrap(
                 "accepted", List.of("false"),
                 "email", List.of("CASuser@example.org")));

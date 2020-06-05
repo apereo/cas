@@ -71,8 +71,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationPrincipalConfiguration.class
 },
     properties = {
-        "cas.authn.attributeRepository.redis[0].host=localhost",
-        "cas.authn.attributeRepository.redis[0].port=6379"
+        "cas.authn.attribute-repository.redis[0].host=localhost",
+        "cas.authn.attribute-repository.redis[0].port=6379"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RedisPersonAttributeDaoTests {

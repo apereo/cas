@@ -87,10 +87,10 @@ import org.springframework.webflow.execution.Action;
     X509CertificateExtractorConfiguration.class
 },
     properties = {
-        "cas.authn.attributeRepository.stub.attributes.uid=uid",
-        "cas.authn.attributeRepository.stub.attributes.eduPersonAffiliation=developer",
-        "cas.authn.attributeRepository.stub.attributes.groupMembership=adopters",
-        "cas.authn.attributeRepository.stub.attributes.certificateRevocationList=certificateRevocationList",
+        "cas.authn.attribute-repository.stub.attributes.uid=uid",
+        "cas.authn.attribute-repository.stub.attributes.eduPersonAffiliation=developer",
+        "cas.authn.attribute-repository.stub.attributes.groupMembership=adopters",
+        "cas.authn.attribute-repository.stub.attributes.certificateRevocationList=certificateRevocationList",
         "cas.authn.x509.regExTrustedIssuerDnPattern=CN=\\\\w+,DC=jasig,DC=org",
         "cas.authn.x509.principalType=SERIAL_NO_DN",
         "cas.authn.policy.any.tryAll=true",

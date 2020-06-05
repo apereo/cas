@@ -25,9 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
     classes = BaseX509Tests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.x509.principal-type=SUBJECT_DN",
-        "cas.authn.attributeRepository.groovy[0].location=classpath:/GroovyAttributeDao.groovy",
-        "cas.authn.attributeRepository.groovy[0].order=1",
-        "cas.authn.attributeRepository.merger=multivalued"
+        "cas.authn.attribute-repository.groovy[0].location=classpath:/GroovyAttributeDao.groovy",
+        "cas.authn.attribute-repository.groovy[0].order=1",
+        "cas.authn.attribute-repository.merger=multivalued"
     })
 @Tag("X509")
 public class X509SubjectDNPrincipalResolverAggregateTests {

@@ -100,30 +100,7 @@ public class DynamoDbCasEventsFacilitator {
     public Set<CasEvent> getAll() {
         return getRecordsByKeys(List.of());
     }
-
-    /**
-     * Gets events of type for principal.
-     *
-     * @param type      the type
-     * @param principal the principal
-     * @return the events of type for principal
-     */
-    public Collection<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
-        val query =
-            List.of(
-                DynamoDbQuery.builder()
-                    .key(ColumnNames.PRINCIPAL.getColumnName())
-                    .attributeValue(List.of(new AttributeValue(principal)))
-                    .operator(ComparisonOperator.EQ)
-                    .build(),
-                DynamoDbQuery.builder()
-                    .key(ColumnNames.TYPE.getColumnName())
-                    .attributeValue(List.of(new AttributeValue(type)))
-                    .operator(ComparisonOperator.EQ)
-                    .build());
-        return getRecordsByKeys(query);
-    }
-
+    
     /**
      * Delete all.
      */
@@ -146,20 +123,6 @@ public class DynamoDbCasEventsFacilitator {
         return getRecordsByKeys(query);
     }
 
-    /**
-     * Gets events of type.
-     *
-     * @param type the type
-     * @return the events of type
-     */
-    public Collection<? extends CasEvent> getEventsOfType(final String type) {
-        val query = DynamoDbQuery.builder()
-            .key(ColumnNames.TYPE.getColumnName())
-            .attributeValue(List.of(new AttributeValue(type)))
-            .operator(ComparisonOperator.EQ)
-            .build();
-        return getRecordsByKeys(query);
-    }
 
     /**
      * Gets events for principal.
@@ -207,6 +170,21 @@ public class DynamoDbCasEventsFacilitator {
     }
 
     /**
+     * Gets events of type.
+     *
+     * @param type the type
+     * @return the events of type
+     */
+    public Collection<? extends CasEvent> getEventsOfType(final String type) {
+        val query = DynamoDbQuery.builder()
+            .key(ColumnNames.TYPE.getColumnName())
+            .attributeValue(List.of(new AttributeValue(type)))
+            .operator(ComparisonOperator.EQ)
+            .build();
+        return getRecordsByKeys(query);
+    }
+    
+    /**
      * Gets events of type for principal.
      *
      * @param type      the type
@@ -235,6 +213,29 @@ public class DynamoDbCasEventsFacilitator {
         return getRecordsByKeys(query);
     }
 
+    /**
+     * Gets events of type for principal.
+     *
+     * @param type      the type
+     * @param principal the principal
+     * @return the events of type for principal
+     */
+    public Collection<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
+        val query =
+            List.of(
+                DynamoDbQuery.builder()
+                    .key(ColumnNames.PRINCIPAL.getColumnName())
+                    .attributeValue(List.of(new AttributeValue(principal)))
+                    .operator(ComparisonOperator.EQ)
+                    .build(),
+                DynamoDbQuery.builder()
+                    .key(ColumnNames.TYPE.getColumnName())
+                    .attributeValue(List.of(new AttributeValue(type)))
+                    .operator(ComparisonOperator.EQ)
+                    .build());
+        return getRecordsByKeys(query);
+    }
+    
     /**
      * Build table attribute values map.
      *
