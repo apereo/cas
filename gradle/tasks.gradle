@@ -83,7 +83,19 @@ task downloadDependencies {
     }
 }
 
-
+task outputDependenciesWithoutLicense(description: "Output dependencies without approved license") {
+    doLast {
+        def results = file("${project.buildDir}/licenses/dependencies-without-allowed-license.json")
+        if (results.exists()) {
+            def slurper = new groovy.json.JsonSlurper()
+            def dependencies = slurper.parseText(results.text)
+            if (!dependencies.dependenciesWithoutAllowedLicenses.isEmpty()) {
+                println results.text
+                throw new GradleException("Dependencies found without allowed licenses")
+            }
+        }
+    }
+}
 
 
 

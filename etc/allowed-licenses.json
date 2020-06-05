@@ -55,6 +55,9 @@
       "moduleLicense": "BSD 2-Clause License"
     },
     {
+      "moduleLicense": "The New BSD License"
+    },
+    {
       "moduleLicense": "The Apache Software License, Version 2.0"
     },
     {
@@ -76,6 +79,13 @@
       "moduleLicense": "Eclipse Public License - v 1.0"
     },
     {
+      "moduleLicense": "Eclipse Public License v1.0"
+    },
+    {
+      "moduleLicense": null,
+      "moduleName": ".*"
+    },
+    {
       "moduleLicense": "Eclipse Public License v. 2.0"
     },
     {
@@ -83,6 +93,15 @@
     },
     {
       "moduleLicense": "Common Public License - v 1.0"
+    },
+    {
+      "moduleLicense": "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0"
+    },
+    {
+      "moduleLicense": "CDDL + GPLv2 with classpath exception"
+    },
+    {
+      "moduleLicense": "CDDL 1.1"
     }
   ]
 }
