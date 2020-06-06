@@ -64,7 +64,11 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
                 .insert(new CassandraRegisteredServiceHolder(rs.getId(), data), options);
             return SERIALIZER.from(result.getEntity().getData());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return rs;
     }
@@ -77,7 +81,11 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
                 .deleteById(registeredService.getId(), CassandraRegisteredServiceHolder.class);
             return true;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return false;
     }
@@ -88,7 +96,11 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
             return cassandraSessionFactory.getCassandraTemplate()
                 .count(CassandraRegisteredServiceHolder.class);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return 0;
     }
@@ -104,7 +116,11 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return new ArrayList<>(0);
     }
@@ -117,7 +133,11 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
                 return SERIALIZER.from(holder.getData());
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }

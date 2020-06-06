@@ -31,6 +31,7 @@ public abstract class BaseAuthenticationRiskContingencyPlan implements Authentic
      * CAS properties.
      */
     protected final CasConfigurationProperties casProperties;
+    
     /**
      * App context.
      */
