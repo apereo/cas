@@ -27,8 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RestfulApi")
 @TestPropertySource(properties = {
     "cas.authn.oidc.jwks.rest.url=http://localhost:9521",
-    "cas.authn.oidc.jwks.rest.basicAuthUsername=casuser",
-    "cas.authn.oidc.jwks.rest.basicAuthPassword=123456"
+    "cas.authn.oidc.jwks.rest.basic-auth-username=casuser",
+    "cas.authn.oidc.jwks.rest.basic-auth-password=123456"
 })
 public class OidcRestfulJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
     private static MockWebServer SERVER;

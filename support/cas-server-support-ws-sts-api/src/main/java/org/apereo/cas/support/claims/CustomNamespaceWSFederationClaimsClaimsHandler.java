@@ -64,5 +64,10 @@ public class CustomNamespaceWSFederationClaimsClaimsHandler extends NonWSFederat
             }
             return StringUtils.isNotBlank(uri) && namespaces.stream().anyMatch(uri::startsWith);
         }
+
+        @Override
+        public boolean isEmpty() {
+            return namespaces.isEmpty();
+        }
     }
 }

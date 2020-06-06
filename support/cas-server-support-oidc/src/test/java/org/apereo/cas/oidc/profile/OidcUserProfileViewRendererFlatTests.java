@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-@TestPropertySource(properties = "cas.authn.oauth.userProfileViewType=FLAT")
+@TestPropertySource(properties = "cas.authn.oauth.user-profile-view-type=FLAT")
 public class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
@@ -44,7 +44,6 @@ public class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
         assertTrue(result.containsKey(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID));
         assertTrue(result.containsKey(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_CLIENT_ID));
         assertTrue(result.containsKey(CasProtocolConstants.PARAMETER_SERVICE));
-        assertTrue(result.containsKey("email"));
         assertTrue(result.containsKey("email"));
         assertEquals("casuser@example.org", result.get("email"));
     }
