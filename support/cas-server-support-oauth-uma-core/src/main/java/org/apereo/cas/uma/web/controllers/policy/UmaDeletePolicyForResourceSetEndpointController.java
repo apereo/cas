@@ -65,7 +65,11 @@ public class UmaDeletePolicyForResourceSetEndpointController extends BaseUmaEndp
             val model = CollectionUtils.wrap("entity", saved, "code", HttpStatus.OK);
             return new ResponseEntity(model, HttpStatus.OK);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return new ResponseEntity("Unable to locate resource-set.", HttpStatus.BAD_REQUEST);
     }

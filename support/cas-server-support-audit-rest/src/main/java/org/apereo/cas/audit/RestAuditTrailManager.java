@@ -47,7 +47,11 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
             LOGGER.trace("Sending audit action context to REST endpoint [{}]", properties.getUrl());
             response = HttpUtils.executePost(properties.getUrl(), properties.getBasicAuthUsername(), properties.getBasicAuthPassword(), auditJson);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         } finally {
             HttpUtils.close(response);
         }
@@ -71,7 +75,11 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
                 return MAPPER.readValue(JsonValue.readHjson(result).toString(), values);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         } finally {
             HttpUtils.close(response);
         }

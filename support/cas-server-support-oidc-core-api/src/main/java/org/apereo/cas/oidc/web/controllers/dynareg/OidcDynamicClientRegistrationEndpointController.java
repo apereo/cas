@@ -206,7 +206,11 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             getOAuthConfigurationContext().getServicesManager().save(registeredService);
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             val map = new HashMap<String, String>();
             map.put("error", "invalid_client_metadata");
             map.put("error_description", StringUtils.defaultString(e.getMessage(), "None"));

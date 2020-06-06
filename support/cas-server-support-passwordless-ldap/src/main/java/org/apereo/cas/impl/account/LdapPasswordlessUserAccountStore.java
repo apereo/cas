@@ -56,7 +56,11 @@ public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccount
                 return Optional.of(acct);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return Optional.empty();
     }

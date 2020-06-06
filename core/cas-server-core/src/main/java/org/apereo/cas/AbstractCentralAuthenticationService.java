@@ -177,7 +177,11 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
                 return authentication;
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         throw new UnsatisfiedAuthenticationPolicyException(policy);
     }

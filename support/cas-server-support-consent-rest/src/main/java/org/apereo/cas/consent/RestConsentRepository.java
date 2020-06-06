@@ -51,7 +51,11 @@ public class RestConsentRepository implements ConsentRepository {
                 return result.getBody();
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return new ArrayList<>(0);
     }
@@ -67,7 +71,11 @@ public class RestConsentRepository implements ConsentRepository {
                 return result.getBody();
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return new ArrayList<>(0);
     }
@@ -85,7 +93,11 @@ public class RestConsentRepository implements ConsentRepository {
                 return result.getBody();
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -99,7 +111,11 @@ public class RestConsentRepository implements ConsentRepository {
             val result = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, ConsentDecision.class);
             return result.getStatusCodeValue() == HttpStatus.OK.value();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return false;
     }
@@ -114,7 +130,11 @@ public class RestConsentRepository implements ConsentRepository {
             val result = restTemplate.exchange(deleteEndpoint, HttpMethod.DELETE, entity, Boolean.class);
             return result.getStatusCodeValue() == HttpStatus.OK.value();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return false;
     }

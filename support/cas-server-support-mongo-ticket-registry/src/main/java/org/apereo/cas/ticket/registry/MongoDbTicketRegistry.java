@@ -246,7 +246,11 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Located MongoDb collection instance [{}]", mapName);
             return inst;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -272,7 +276,11 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         try {
             return ticketSerializationManager.serializeTicket(ticket);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }

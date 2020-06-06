@@ -89,7 +89,11 @@ public class CasAddonsRegisteredServicesJsonSerializer extends RegisteredService
                 LOGGER.warn("Converted legacy service definition for [{}] may be reviewed at [{}]", s.getServiceId(), fileName);
             }));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return results;
     }

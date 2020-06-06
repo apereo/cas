@@ -49,7 +49,11 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
             LOGGER.trace("Mapping JSON value [{}] to consent object", json);
             return MAPPER.readValue(JsonValue.readHjson(json).toString(), ConsentDecision.class);
         } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -60,7 +64,11 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
             LOGGER.trace("Transformed consent object [{}] as JSON value [{}]", consent, json);
             return json;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }

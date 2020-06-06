@@ -64,7 +64,11 @@ public class AccepttoMultifactorValidateChannelAction extends AbstractAction {
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);
         } catch (final Exception e) {
             eventAttributes.put("error", e);
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return new EventFactorySupport().event(this,
             CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, eventAttributes);

@@ -51,7 +51,11 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
             query.addCriteria(Criteria.where("userId").exists(true));
             this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
         }
     }
 
@@ -62,7 +66,11 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
             query.addCriteria(Criteria.where("issuedDateTime").gte(LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(this.expireTokensInSeconds)));
             this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
         }
     }
 
@@ -73,7 +81,11 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
             query.addCriteria(Criteria.where("userId").is(uid).and("token").is(otp));
             this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
         }
     }
 
@@ -84,7 +96,11 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
             query.addCriteria(Criteria.where("userId").is(uid));
             this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
         }
     }
 
@@ -95,7 +111,11 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
             query.addCriteria(Criteria.where("token").is(otp));
             this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
         }
     }
 
@@ -106,7 +126,11 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
             query.addCriteria(Criteria.where("userId").is(uid));
             return this.mongoTemplate.count(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
         }
         return 0;
     }
@@ -118,7 +142,11 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
             query.addCriteria(Criteria.where("userId").exists(true));
             return this.mongoTemplate.count(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
         }
         return 0;
     }

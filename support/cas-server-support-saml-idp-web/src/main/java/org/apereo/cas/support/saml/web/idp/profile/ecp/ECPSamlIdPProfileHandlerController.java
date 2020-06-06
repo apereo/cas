@@ -54,7 +54,11 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
                 return new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
             }
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
         }
         return null;
     }
@@ -121,7 +125,11 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
             LOGGER.trace("CAS assertion to use for building ECP SAML response is [{}]", casAssertion);
             buildSamlResponse(response, request, authenticationContext, casAssertion, binding);
         } catch (final AuthenticationException e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             val error = e.getHandlerErrors().values()
                 .stream()
                 .map(Throwable::getMessage)
@@ -129,7 +137,11 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
                 .collect(Collectors.joining(","));
             buildEcpFaultResponse(response, request, Pair.of(authnRequest, error), soapContext);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             buildEcpFaultResponse(response, request, Pair.of(authnRequest, e.getMessage()), soapContext);
         }
     }

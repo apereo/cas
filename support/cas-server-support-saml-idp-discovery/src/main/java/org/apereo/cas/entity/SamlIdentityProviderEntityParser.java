@@ -43,7 +43,11 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
                         clear();
                         importResource(resource);
                     } catch (final Exception e) {
-                        LOGGER.error(e.getMessage(), e);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.error(e.getMessage(), e);
+                        } else {
+                            LOGGER.error(e.getMessage());
+                        }
                     }
                 });
                 discoveryFeedResourceWatchers.start(getClass().getSimpleName());
@@ -70,7 +74,11 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
                 return true;
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return false;
     }

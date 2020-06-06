@@ -69,7 +69,11 @@ public class DefaultDelegatedAuthenticationNavigationController extends BaseDele
             if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
                 LOGGER.debug("Authentication request was denied from the provider [{}]", clientName, e);
             } else {
-                LOGGER.warn(e.getMessage(), e);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.warn(e.getMessage(), e);
+                } else {
+                    LOGGER.warn(e.getMessage());
+                }
             }
             throw new UnauthorizedServiceException(e.getMessage(), e);
         }

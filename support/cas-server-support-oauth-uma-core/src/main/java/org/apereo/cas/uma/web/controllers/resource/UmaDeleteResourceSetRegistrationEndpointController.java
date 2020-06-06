@@ -61,7 +61,11 @@ public class UmaDeleteResourceSetRegistrationEndpointController extends BaseUmaE
         } catch (final InvalidResourceSetException e) {
             return new ResponseEntity(buildResponseEntityErrorModel(e), HttpStatus.BAD_REQUEST);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return new ResponseEntity("Unable to complete the delete request.", HttpStatus.BAD_REQUEST);
     }

@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.util.DigestUtilsTests;
 import org.apereo.cas.util.HttpRequestUtilsTests;
 import org.apereo.cas.util.crypto.GlibcCryptPasswordEncoderTests;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBeanTests;
@@ -34,6 +35,7 @@ import org.junit.runner.RunWith;
     DefaultCasBannerTests.class,
     GroovyShellScriptTests.class,
     FunctionUtilsTests.class,
+    DigestUtilsTests.class,
     GroovyScriptResourceCacheManagerTests.class,
     CompositeX509TrustManagerTests.class,
     CompositeX509KeyManagerTests.class,

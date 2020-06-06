@@ -143,7 +143,11 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
                 result = new ResponseEntity<>(introspect, HttpStatus.OK);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             result = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return result;

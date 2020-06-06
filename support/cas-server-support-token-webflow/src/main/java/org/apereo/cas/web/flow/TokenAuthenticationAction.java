@@ -55,7 +55,11 @@ public class TokenAuthenticationAction extends AbstractNonInteractiveCredentials
                 LOGGER.debug("Received token authentication request [{}] ", credential);
                 return credential;
             } catch (final Exception e) {
-                LOGGER.warn(e.getMessage(), e);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.warn(e.getMessage(), e);
+                } else {
+                    LOGGER.warn(e.getMessage());
+                }
             }
         }
         return null;

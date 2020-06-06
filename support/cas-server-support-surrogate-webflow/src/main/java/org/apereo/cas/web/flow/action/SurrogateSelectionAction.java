@@ -55,7 +55,11 @@ public class SurrogateSelectionAction extends AbstractAction {
                 .code("screen.surrogates.account.selection.error")
                 .defaultText("Unable to accept or authorize selection")
                 .build());
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return error();
     }

@@ -71,7 +71,11 @@ public class OidcJwksEndpointController extends BaseOAuth20Controller {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             return new ResponseEntity<>(body, HttpStatus.OK);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

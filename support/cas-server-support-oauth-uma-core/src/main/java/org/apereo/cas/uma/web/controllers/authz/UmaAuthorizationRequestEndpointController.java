@@ -95,7 +95,11 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             return handleMismatchedClaims(request, response, resourceSet, profileResult, results, permissionTicket);
 
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return new ResponseEntity("Unable to handle authorization request", HttpStatus.BAD_REQUEST);
     }

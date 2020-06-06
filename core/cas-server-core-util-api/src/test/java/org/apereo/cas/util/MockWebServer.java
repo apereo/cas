@@ -93,7 +93,11 @@ public class MockWebServer implements AutoCloseable {
         try {
             this.workerThread.join();
         } catch (final InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
     }
 
@@ -180,7 +184,11 @@ public class MockWebServer implements AutoCloseable {
                     LOGGER.debug("Stopping on socket close.");
                     this.running = false;
                 } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.error(e.getMessage(), e);
+                    } else {
+                        LOGGER.error(e.getMessage());
+                    }
                 }
             }
         }

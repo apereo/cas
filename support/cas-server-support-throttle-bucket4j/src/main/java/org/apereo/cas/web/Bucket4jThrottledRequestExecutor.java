@@ -57,7 +57,11 @@ public class Bucket4jThrottledRequestExecutor implements ThrottledRequestExecuto
                 result = !this.bucket.tryConsume(1);
             }
         } catch (final InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             Thread.currentThread().interrupt();
         }
         if (result) {
