@@ -43,7 +43,11 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
             }
             super.doHealthCheck(builder);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             builder.down()
                 .withException(e)
                 .withDetail("message", "Unable to determine memcached server status.");
@@ -71,7 +75,11 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
                 });
             return statsList.toArray(CacheStatistics[]::new);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return List.of().toArray(CacheStatistics[]::new);
     }

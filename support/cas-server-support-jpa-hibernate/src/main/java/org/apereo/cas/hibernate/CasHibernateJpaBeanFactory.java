@@ -71,7 +71,11 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
                 }
                 properties.put(Environment.PHYSICAL_NAMING_STRATEGY, namingStrategy);
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.error(e.getMessage(), e);
+                } else {
+                    LOGGER.error(e.getMessage());
+                }
             }
         }
         properties.putAll(jpaProperties.getProperties());

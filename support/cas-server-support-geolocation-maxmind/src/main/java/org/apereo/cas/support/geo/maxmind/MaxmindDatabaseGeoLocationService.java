@@ -56,7 +56,11 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
         } catch (final AddressNotFoundException e) {
             LOGGER.info(e.getMessage(), e);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -66,7 +70,11 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
         try {
             return locate(InetAddress.getByName(address));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }

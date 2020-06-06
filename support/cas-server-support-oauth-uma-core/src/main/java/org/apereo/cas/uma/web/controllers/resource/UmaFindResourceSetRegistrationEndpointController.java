@@ -51,7 +51,11 @@ public class UmaFindResourceSetRegistrationEndpointController extends BaseUmaEnd
             val model = resources.stream().map(ResourceSet::getId).collect(Collectors.toSet());
             return new ResponseEntity(model, HttpStatus.OK);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return new ResponseEntity("Unable to locate resource-sets.", HttpStatus.BAD_REQUEST);
     }
@@ -82,7 +86,11 @@ public class UmaFindResourceSetRegistrationEndpointController extends BaseUmaEnd
             val model = CollectionUtils.wrap("entity", resourceSet, "code", HttpStatus.FOUND);
             return new ResponseEntity(model, HttpStatus.OK);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return new ResponseEntity("Unable to locate resource-set.", HttpStatus.BAD_REQUEST);
     }

@@ -112,7 +112,11 @@ public class AccepttoApiUtils {
                 }
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         } finally {
             HttpUtils.close(response);
         }
@@ -193,7 +197,11 @@ public class AccepttoApiUtils {
             LOGGER.debug("Received final API response as [{}]", decodedResult);
             return MAPPER.readValue(decodedResult, Map.class);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         } finally {
             HttpUtils.close(response);
         }

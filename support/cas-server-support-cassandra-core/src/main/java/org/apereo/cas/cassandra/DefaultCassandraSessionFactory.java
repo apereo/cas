@@ -44,7 +44,11 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
             LOGGER.trace("Closing Cassandra session");
             session.close();
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
         }
     }
 

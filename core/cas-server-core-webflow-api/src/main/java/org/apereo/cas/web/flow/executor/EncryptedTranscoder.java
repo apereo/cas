@@ -57,7 +57,11 @@ public class EncryptedTranscoder implements Transcoder {
 
             writeObjectToOutputStream(o, out);
         } catch (final NotSerializableException e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
         }
         return encrypt(outBuffer);
     }
@@ -68,7 +72,11 @@ public class EncryptedTranscoder implements Transcoder {
             try {
                 object = Advised.class.cast(o).getTargetSource().getTarget();
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.error(e.getMessage(), e);
+                } else {
+                    LOGGER.error(e.getMessage());
+                }
             }
             if (object == null) {
                 LOGGER.error("Could not determine object [{}] from proxy",
@@ -86,7 +94,11 @@ public class EncryptedTranscoder implements Transcoder {
         try {
             return cipherBean.encrypt(outBuffer.toByteArray());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             throw new IOException("Encryption error", e);
         }
     }
@@ -100,7 +112,11 @@ public class EncryptedTranscoder implements Transcoder {
                  : new ObjectInputStream(inBuffer)) {
             return in.readObject();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             throw new IOException("Deserialization error", e);
         }
     }
@@ -109,7 +125,11 @@ public class EncryptedTranscoder implements Transcoder {
         try {
             return cipherBean.decrypt(encoded);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             throw new IOException("Decryption error", e);
         }
     }

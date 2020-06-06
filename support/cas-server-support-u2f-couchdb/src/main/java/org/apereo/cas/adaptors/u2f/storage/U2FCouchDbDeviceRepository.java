@@ -62,7 +62,11 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository implemen
                 try {
                     return DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord()));
                 } catch (final U2fBadInputException e) {
-                    LOGGER.error(e.getMessage(), e);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.error(e.getMessage(), e);
+                    } else {
+                        LOGGER.error(e.getMessage());
+                    }
                 }
                 return null;
             })

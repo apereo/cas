@@ -54,7 +54,11 @@ public class UmaRequestingPartyTokenJwksEndpointController extends BaseUmaEndpoi
             }
             return new ResponseEntity<>("UMA RPT JWKS resource is undefined or cannot be located", HttpStatus.NOT_IMPLEMENTED);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

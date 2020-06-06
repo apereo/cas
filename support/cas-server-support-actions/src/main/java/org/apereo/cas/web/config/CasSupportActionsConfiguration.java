@@ -53,7 +53,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.webflow.execution.Action;
@@ -70,9 +69,6 @@ import org.springframework.webflow.execution.Action;
 public class CasSupportActionsConfiguration {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private ResourceLoader resourceLoader;
 
     @Autowired
     @Qualifier("authenticationEventExecutionPlan")
@@ -280,7 +276,7 @@ public class CasSupportActionsConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redirectUnauthorizedServiceUrlAction")
     public Action redirectUnauthorizedServiceUrlAction() {
-        return new RedirectUnauthorizedServiceUrlAction(servicesManager.getObject(), resourceLoader, applicationContext);
+        return new RedirectUnauthorizedServiceUrlAction(servicesManager.getObject(), applicationContext);
     }
 
     @Bean

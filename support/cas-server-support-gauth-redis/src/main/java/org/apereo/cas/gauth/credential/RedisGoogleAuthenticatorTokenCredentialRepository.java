@@ -97,7 +97,11 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
             this.template.delete(redisKey);
             LOGGER.trace("Deleted tokens");
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
         }
     }
 
@@ -109,7 +113,11 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
             this.template.delete(redisKey);
             LOGGER.trace("Deleted tokens");
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
         }
     }
 
@@ -119,7 +127,11 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
             val keys = getGoogleAuthenticatorTokenKeys();
             return keys.size();
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
         }
         return 0;
     }

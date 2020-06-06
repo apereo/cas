@@ -61,7 +61,11 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
             FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
             git.commit().setSign(false).setMessage("Initial commit").call();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             fail(e.getMessage(), e);
         }
     }

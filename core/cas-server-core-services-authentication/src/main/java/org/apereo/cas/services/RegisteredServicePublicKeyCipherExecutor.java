@@ -42,7 +42,11 @@ public class RegisteredServicePublicKeyCipherExecutor implements RegisteredServi
                 }
             }
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
         }
         return null;
     }

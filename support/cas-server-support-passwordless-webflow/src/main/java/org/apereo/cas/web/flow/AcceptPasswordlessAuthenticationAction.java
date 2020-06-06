@@ -64,7 +64,11 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
                 return finalEvent;
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             val attributes = new LocalAttributeMap<>();
             attributes.put("error", e);
             val account = passwordlessUserAccountStore.findUser(principal.getUsername());

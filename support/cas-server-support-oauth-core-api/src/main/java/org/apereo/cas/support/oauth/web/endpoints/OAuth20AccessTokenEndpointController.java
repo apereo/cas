@@ -66,10 +66,18 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                 throw new IllegalArgumentException("Access token validation failed");
             }
         } catch (final OAuth20UnauthorizedScopeRequestException e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_SCOPE);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
         }
 
@@ -90,7 +98,11 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             LOGGER.error("Check for device user code approval is too quick and is throttled. Requests must slow down");
             return OAuth20Utils.writeError(response, OAuth20Constants.SLOW_DOWN);
         } catch (final OAuth20UnauthorizedScopeRequestException e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_SCOPE);
         } catch (final Exception e) {
             LOGGER.error("Could not identify and extract access token request", e);

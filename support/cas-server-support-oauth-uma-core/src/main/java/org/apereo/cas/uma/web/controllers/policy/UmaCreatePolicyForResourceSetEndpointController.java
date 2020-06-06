@@ -72,7 +72,11 @@ public class UmaCreatePolicyForResourceSetEndpointController extends BaseUmaEndp
             val model = CollectionUtils.wrap("entity", saved, "code", HttpStatus.CREATED);
             return new ResponseEntity(model, HttpStatus.OK);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return new ResponseEntity("Unable to save policy for resource-set.", HttpStatus.BAD_REQUEST);
     }

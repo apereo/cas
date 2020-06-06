@@ -482,7 +482,11 @@ public class CasPersonDirectoryConfiguration {
                                 try {
                                     dao.init();
                                 } catch (final Exception e) {
-                                    LOGGER.error(e.getMessage(), e);
+                                    if (LOGGER.isDebugEnabled()) {
+                                        LOGGER.error(e.getMessage(), e);
+                                    } else {
+                                        LOGGER.error(e.getMessage());
+                                    }
                                 }
                             });
                             watcherService.start(getClass().getSimpleName());

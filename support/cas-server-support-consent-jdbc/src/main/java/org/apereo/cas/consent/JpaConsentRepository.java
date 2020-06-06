@@ -98,7 +98,11 @@ public class JpaConsentRepository implements ConsentRepository {
             }
             return true;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return false;
     }
@@ -111,7 +115,11 @@ public class JpaConsentRepository implements ConsentRepository {
             this.entityManager.remove(decision);
             return true;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return false;
     }

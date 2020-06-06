@@ -43,7 +43,11 @@ public class AccepttoMultifactorValidateUserDeviceRegistrationAction extends Abs
             }
         } catch (final Exception e) {
             eventAttributes.put("error", e);
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         LOGGER.warn("Device linked to [{}] is not paired; authentication cannot proceed", email);
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_DENY, eventAttributes);

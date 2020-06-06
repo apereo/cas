@@ -32,7 +32,11 @@ public class SimpleConfigurationPropertiesLoader extends BaseConfigurationProper
             LOGGER.debug("Found settings [{}] in file [{}]", props.keySet(), getResource());
             props.putAll(decryptProperties(props));
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
         }
         return finalizeProperties(props);
     }

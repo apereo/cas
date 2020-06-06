@@ -72,7 +72,11 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
@@ -145,7 +149,11 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             val accessResult = getOAuthConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
         } catch (final UnauthorizedServiceException | PrincipalException e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 

@@ -43,7 +43,11 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
                 LOGGER.debug("Storing previously used tokens [{}] for user [{}]", tokens, token.getUserId());
                 this.storage.put(token.getUserId(), tokens);
             } catch (final Exception e) {
-                LOGGER.warn(e.getMessage(), e);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.warn(e.getMessage(), e);
+                } else {
+                    LOGGER.warn(e.getMessage());
+                }
             }
         } else {
             val tokens = new ArrayList<OneTimeToken>(1);
@@ -67,7 +71,11 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
                     .orElse(null);
             }
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
         }
         return null;
     }

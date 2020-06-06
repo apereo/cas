@@ -56,7 +56,11 @@ public class ClientFlowExecutionKey extends FlowExecutionKey {
             val decoded = CodecUtil.b64(tokens.get(1));
             return new ClientFlowExecutionKey(uuid, decoded);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
             throw new BadlyFormattedFlowExecutionKeyException(key, KEY_FORMAT);
         }
     }

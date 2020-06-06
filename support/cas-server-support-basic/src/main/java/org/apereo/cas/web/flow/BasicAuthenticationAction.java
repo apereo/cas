@@ -44,7 +44,11 @@ public class BasicAuthenticationAction extends AbstractNonInteractiveCredentials
                 return new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
             }
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn(e.getMessage(), e);
+            } else {
+                LOGGER.warn(e.getMessage());
+            }
         }
         return null;
     }

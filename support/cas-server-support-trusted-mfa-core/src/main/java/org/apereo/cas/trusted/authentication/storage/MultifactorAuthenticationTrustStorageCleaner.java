@@ -40,7 +40,11 @@ public class MultifactorAuthenticationTrustStorageCleaner {
                 SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
                 this.storage.remove();
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.error(e.getMessage(), e);
+                } else {
+                    LOGGER.error(e.getMessage());
+                }
             }
         }
     }

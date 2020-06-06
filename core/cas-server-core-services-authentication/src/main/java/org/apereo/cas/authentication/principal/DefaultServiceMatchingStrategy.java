@@ -31,7 +31,11 @@ public class DefaultServiceMatchingStrategy implements ServiceMatchingStrategy {
             LOGGER.trace("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
             return thisUrl.equalsIgnoreCase(serviceUrl);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return false;
     }
