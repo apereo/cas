@@ -35,8 +35,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RestfulApi")
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.metadata.rest.url=http://localhost:9433",
-    "cas.authn.saml-idp.metadata.rest.basicAuthUsername=user",
-    "cas.authn.saml-idp.metadata.rest.basicAuthPassword=passw0rd",
+    "cas.authn.saml-idp.metadata.rest.basic-auth-username=user",
+    "cas.authn.saml-idp.metadata.rest.basic-auth-password=passw0rd",
     "cas.authn.saml-idp.metadata.rest.idp-metadata-enabled=true",
     "cas.authn.saml-idp.metadata.rest.crypto.enabled=false"
 })

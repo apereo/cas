@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.mfa.MultifactorAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
 
 import lombok.val;
@@ -27,5 +28,12 @@ public abstract class BaseAbstractMultifactorAuthenticationProviderTests {
         assertEquals(RegisteredServiceMultifactorPolicyFailureModes.UNDEFINED, p.getFailureMode());
         val id = p.createUniqueId();
         assertTrue(p.validateId(id));
+    }
+
+    @Test
+    public void verifyPing() {
+        val service = MultifactorAuthenticationTestUtils.getRegisteredService();
+        val p = getMultifactorAuthenticationProvider();
+        assertDoesNotThrow(() -> p.isAvailable(service));
     }
 }
