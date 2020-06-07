@@ -25,6 +25,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("WSFederation")
+@SuppressWarnings("CollectionIncompatibleType")
 public class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
 
     @Test

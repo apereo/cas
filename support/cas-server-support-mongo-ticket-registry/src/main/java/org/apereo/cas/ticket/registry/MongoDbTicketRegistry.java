@@ -72,7 +72,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             this.mongoTemplate.upsert(query, update, collectionName);
             LOGGER.debug("Updated ticket [{}]", ticket);
         } catch (final Exception e) {
-            LOGGER.error("Failed updating [{}]: [{}]", ticket, e);
+            LOGGER.error("Failed updating [{}]", ticket);
+            LoggingUtils.error(LOGGER, e);
         }
         return ticket;
     }
@@ -97,7 +98,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             this.mongoTemplate.insert(holder, collectionName);
             LOGGER.debug("Added ticket [{}]", ticket.getId());
         } catch (final Exception e) {
-            LOGGER.error(String.format("Failed adding %s", ticket), e);
+            LOGGER.error("Failed adding [{}]", ticket);
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -128,7 +130,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                 return null;
             }
         } catch (final Exception e) {
-            LOGGER.error(String.format("Failed fetching %s", ticketId), e);
+            LOGGER.error("Failed fetching [{}]", ticketId);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -155,7 +158,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Deleted ticket [{}] with result [{}]", ticketIdToDelete, res);
             return true;
         } catch (final Exception e) {
-            LOGGER.error("Failed deleting [{}]: [{}]", ticketId, e);
+            LOGGER.error("Failed deleting [{}]", ticketId);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

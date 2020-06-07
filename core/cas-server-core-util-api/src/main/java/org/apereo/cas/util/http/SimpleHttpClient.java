@@ -113,7 +113,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
                 LOGGER.error("There was an error contacting the endpoint: [{}]; The error:\n[{}]", url.toExternalForm(), value);
             }
         } catch (final Exception e) {
-            LOGGER.error("Unable to send message", e);
+            LoggingUtils.error(LOGGER, e);
         }
 
         return null;
@@ -125,7 +125,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
             val u = new URL(url);
             return isValidEndPoint(u);
         } catch (final MalformedURLException e) {
-            LOGGER.error("Unable to build URL", e);
+            LoggingUtils.error(LOGGER, e);
             return false;
         }
     }

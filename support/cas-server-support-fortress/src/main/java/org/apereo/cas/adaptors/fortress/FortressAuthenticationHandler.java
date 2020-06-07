@@ -51,7 +51,7 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
             val jaxbContext = JAXBContext.newInstance(Session.class);
             this.marshaller = jaxbContext.createMarshaller();
         } catch (final Exception e) {
-            LOGGER.error("Failed initialize fortress context", e);
+            LoggingUtils.error(LOGGER, e);
             throw new IllegalArgumentException(e);
         }
     }

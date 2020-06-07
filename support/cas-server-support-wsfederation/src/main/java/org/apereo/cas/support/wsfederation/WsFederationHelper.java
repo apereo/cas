@@ -349,7 +349,7 @@ public class WsFederationHelper {
                 }
             }
         } catch (final SignatureException e) {
-            LOGGER.error("Failed to validate assertion signature", e);
+            LoggingUtils.error(LOGGER, "Failed to validate assertion signature", e);
         }
 
         SamlUtils.logSamlObject(this.configBean, assertion);
