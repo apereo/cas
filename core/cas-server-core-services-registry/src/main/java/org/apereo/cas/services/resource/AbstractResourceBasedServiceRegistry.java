@@ -10,6 +10,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicePreDeleteEvent;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.PathWatcherService;
@@ -310,7 +311,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         } catch (final Exception e) {
-            LOGGER.error("Error reading configuration file [{}]", fileName, e);
+            LOGGER.error("Error reading configuration file [{}]", fileName);
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }

@@ -1,6 +1,7 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
@@ -66,7 +67,7 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
                 .map(this::decode)
                 .collect(Collectors.toList());
         } catch (final Exception e) {
-            LOGGER.error("No record could be found for google authenticator", e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }

@@ -146,8 +146,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                 LoggingUtils.error(LOGGER, e);
             }
         } else {
-            LOGGER.warn(
-                "[{}] is configured to use [{}] but it does not support [{}], which suggests a configuration problem.",
+            LOGGER.warn("[{}] is configured to use [{}] but it does not support [{}], which suggests a configuration problem.",
                 handler.getName(), resolver, credential);
         }
         return null;

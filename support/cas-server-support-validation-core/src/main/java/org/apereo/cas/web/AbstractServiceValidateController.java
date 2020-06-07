@@ -18,6 +18,7 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationContextTicketValidationException;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.UnauthorizedServiceTicketValidationException;
@@ -96,7 +97,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 verifyRegisteredServiceProperties(registeredService, service);
                 return new HttpBasedServiceCredential(new URL(pgtUrl), registeredService);
             } catch (final Exception e) {
-                LOGGER.error("Error constructing [{}]", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, e);
+                LOGGER.error("Error constructing [{}]", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL);
+                LoggingUtils.error(LOGGER, e);
             }
         }
         return null;
@@ -200,11 +202,13 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                     new Object[]{serviceCredential.getId()}, request);
                 return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK, description, request, service);
             } catch (final InvalidTicketException e) {
-                LOGGER.error("Failed to create proxy granting ticket due to an invalid ticket for [{}]", serviceCredential, e);
+                LOGGER.error("Failed to create proxy granting ticket due to an invalid ticket for [{}]", serviceCredential);
+                LoggingUtils.error(LOGGER, e);
                 val description = getTicketValidationErrorDescription(e.getCode(), new Object[]{serviceTicketId}, request);
                 return generateErrorView(e.getCode(), description, request, service);
             } catch (final AbstractTicketException e) {
-                LOGGER.error("Failed to create proxy granting ticket for [{}]", serviceCredential, e);
+                LOGGER.error("Failed to create proxy granting ticket for [{}]", serviceCredential);
+                LoggingUtils.error(LOGGER, e);
                 val description = getTicketValidationErrorDescription(e.getCode(), new Object[]{serviceCredential.getId()}, request);
                 return generateErrorView(e.getCode(), description, request, service);
             }

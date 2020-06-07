@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -47,7 +48,7 @@ public class X509SubjectAlternativeNameRFC822EmailPrincipalResolver extends Abst
                 return email;
             }
         } catch (final CertificateParsingException e) {
-            LOGGER.error("Error encountered while trying to retrieve subject alternative names collection from certificate [{}]", e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return getAlternatePrincipal(certificate);
     }
