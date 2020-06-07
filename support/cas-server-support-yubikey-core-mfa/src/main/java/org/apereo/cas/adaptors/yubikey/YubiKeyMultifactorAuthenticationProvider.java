@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.YubiKeyMultifactorProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
 
@@ -48,11 +49,7 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
                 }
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
         return false;
     }

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -42,13 +43,13 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
     private String alternatePrincipalAttribute;
 
     protected AbstractX509PrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                         final PrincipalFactory principalFactory,
-                                         final boolean returnNullIfNoAttributes,
-                                         final String principalAttributeName,
-                                         final String alternatePrincipalAttribute,
-                                         final boolean useCurrentPrincipalId,
-                                         final boolean resolveAttributes,
-                                         final Set<String> activeAttributeRepositoryIdentifiers) {
+                                            final PrincipalFactory principalFactory,
+                                            final boolean returnNullIfNoAttributes,
+                                            final String principalAttributeName,
+                                            final String alternatePrincipalAttribute,
+                                            final boolean useCurrentPrincipalId,
+                                            final boolean resolveAttributes,
+                                            final Set<String> activeAttributeRepositoryIdentifiers) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes,
             principalAttributeName, useCurrentPrincipalId, resolveAttributes,
             activeAttributeRepositoryIdentifiers);
@@ -56,12 +57,12 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
     }
 
     protected AbstractX509PrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                         final PrincipalFactory principalFactory,
-                                         final boolean returnNullIfNoAttributes,
-                                         final String principalAttributeName,
-                                         final boolean useCurrentPrincipalId,
-                                         final boolean resolveAttributes,
-                                         final Set<String> activeAttributeRepositoryIdentifiers) {
+                                            final PrincipalFactory principalFactory,
+                                            final boolean returnNullIfNoAttributes,
+                                            final String principalAttributeName,
+                                            final boolean useCurrentPrincipalId,
+                                            final boolean resolveAttributes,
+                                            final Set<String> activeAttributeRepositoryIdentifiers) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes,
             principalAttributeName, useCurrentPrincipalId, resolveAttributes,
             activeAttributeRepositoryIdentifiers);
@@ -164,7 +165,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
                 }
             } catch (final CertificateParsingException e) {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.warn("Error parsing subject alternative names to get rfc822 email", e);
+                    LoggingUtils.warn(LOGGER, "Error parsing subject alternative names to get rfc822 email", e);
                 }
                 LOGGER.warn("Error parsing subject alternative names to get rfc822 email [{}]", e.getMessage());
             }
@@ -174,11 +175,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
                     attributes.put("x509subjectUPN", CollectionUtils.wrapList(x509subjectUPN));
                 }
             } catch (final CertificateParsingException e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.warn("Error parsing subject alternative names to get User Principal Name as an attribute", e);
-                } else {
-                    LOGGER.warn("Error parsing subject alternative names to get User Principal Name as an attribute [{}]", e.getMessage());
-                }
+                LoggingUtils.warn(LOGGER, e);
             }
         }
         return attributes;

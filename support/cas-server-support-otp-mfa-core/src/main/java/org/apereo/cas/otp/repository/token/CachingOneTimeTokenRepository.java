@@ -1,6 +1,7 @@
 package org.apereo.cas.otp.repository.token;
 
 import org.apereo.cas.authentication.OneTimeToken;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.RequiredArgsConstructor;
@@ -43,11 +44,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
                 LOGGER.debug("Storing previously used tokens [{}] for user [{}]", tokens, token.getUserId());
                 this.storage.put(token.getUserId(), tokens);
             } catch (final Exception e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.warn(e.getMessage(), e);
-                } else {
-                    LOGGER.warn(e.getMessage());
-                }
+                LoggingUtils.warn(LOGGER, e);
             }
         } else {
             val tokens = new ArrayList<OneTimeToken>(1);
@@ -71,11 +68,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
                     .orElse(null);
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
         return null;
     }

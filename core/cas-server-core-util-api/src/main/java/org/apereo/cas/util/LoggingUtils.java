@@ -13,6 +13,21 @@ import org.slf4j.Logger;
 public class LoggingUtils {
 
     /**
+     * Error.
+     *
+     * @param logger    the logger
+     * @param msg       the msg
+     * @param throwable the throwable
+     */
+    public static void error(final Logger logger, final String msg, final Throwable throwable) {
+        if (logger.isDebugEnabled()) {
+            logger.error(msg, throwable);
+        } else {
+            logger.error(msg);
+        }
+    }
+
+    /**
      * Log Error.
      *
      * @param logger    the logger
@@ -41,17 +56,18 @@ public class LoggingUtils {
     }
 
     /**
-     * Error.
+     * Log warning.
      *
      * @param logger    the logger
-     * @param msg       the msg
+     * @param message   the message
      * @param throwable the throwable
      */
-    public static void error(final Logger logger, final String msg, final Throwable throwable) {
+    public void warn(final Logger logger, final String message, final Throwable throwable) {
         if (logger.isDebugEnabled()) {
-            logger.error(msg, throwable);
+            logger.warn(message, throwable);
         } else {
-            logger.error(msg);
+            logger.warn(message);
         }
     }
+
 }

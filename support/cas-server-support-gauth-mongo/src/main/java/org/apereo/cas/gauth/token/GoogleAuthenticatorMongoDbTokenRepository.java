@@ -2,6 +2,7 @@ package org.apereo.cas.gauth.token;
 
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,11 +52,7 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
             query.addCriteria(Criteria.where("userId").exists(true));
             this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -66,11 +63,7 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
             query.addCriteria(Criteria.where("issuedDateTime").gte(LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(this.expireTokensInSeconds)));
             this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -81,11 +74,7 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
             query.addCriteria(Criteria.where("userId").is(uid).and("token").is(otp));
             this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -96,11 +85,7 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
             query.addCriteria(Criteria.where("userId").is(uid));
             this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -111,11 +96,7 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
             query.addCriteria(Criteria.where("token").is(otp));
             this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -126,11 +107,7 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
             query.addCriteria(Criteria.where("userId").is(uid));
             return this.mongoTemplate.count(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
         return 0;
     }
@@ -142,11 +119,7 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
             query.addCriteria(Criteria.where("userId").exists(true));
             return this.mongoTemplate.count(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
         return 0;
     }

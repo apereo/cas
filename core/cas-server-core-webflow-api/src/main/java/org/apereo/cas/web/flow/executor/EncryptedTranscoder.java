@@ -59,11 +59,7 @@ public class EncryptedTranscoder implements Transcoder {
 
             writeObjectToOutputStream(o, out);
         } catch (final NotSerializableException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
         return encrypt(outBuffer);
     }

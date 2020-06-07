@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.authentication.TokenCredential;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.TokenRequestExtractor;
 import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -55,11 +56,7 @@ public class TokenAuthenticationAction extends AbstractNonInteractiveCredentials
                 LOGGER.debug("Received token authentication request [{}] ", credential);
                 return credential;
             } catch (final Exception e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.warn(e.getMessage(), e);
-                } else {
-                    LOGGER.warn(e.getMessage());
-                }
+                LoggingUtils.warn(LOGGER, e);
             }
         }
         return null;

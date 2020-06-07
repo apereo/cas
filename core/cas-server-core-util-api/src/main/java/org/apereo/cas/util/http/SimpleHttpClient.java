@@ -80,7 +80,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
             val task = this.requestExecutorService.execute(request, HttpClientContext.create(), handler);
             return message.isAsynchronous() || task.get();
         } catch (final RejectedExecutionException e) {
-            LOGGER.warn("Execution rejected", e);
+            LoggingUtils.warn(LOGGER, e);
             return false;
         } catch (final Exception e) {
             LOGGER.debug("Unable to send message", e);

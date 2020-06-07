@@ -342,11 +342,7 @@ public class WsFederationHelper {
                 LOGGER.debug("Validating signature via trust engine for [{}]", configuration.getIdentityProviderIdentifier());
                 return engine.validate(signature, criteriaSet);
             } catch (final SecurityException e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.warn(e.getMessage(), e);
-                } else {
-                    LOGGER.warn(e.getMessage());
-                }
+                LoggingUtils.warn(LOGGER, e);
             }
         } catch (final SignatureException e) {
             LoggingUtils.error(LOGGER, "Failed to validate assertion signature", e);

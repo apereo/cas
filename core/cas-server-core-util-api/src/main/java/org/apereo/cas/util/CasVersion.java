@@ -57,11 +57,7 @@ public class CasVersion {
             val time = Instant.ofEpochMilli(resource.openConnection().getLastModified());
             return DateTimeUtils.zonedDateTimeOf(time);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
         LOGGER.warn("Unhandled url protocol: [{}] resource: [{}]", resource.getProtocol(), resource);
         return ZonedDateTime.now(ZoneOffset.UTC);

@@ -2,6 +2,7 @@ package org.apereo.cas.gauth.token;
 
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,11 +62,7 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
             this.template.delete(redisKey);
             LOGGER.trace("Deleted tokens");
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -77,11 +74,7 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
             this.template.delete(redisKey);
             LOGGER.trace("Deleted token [{}]", redisKey);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -94,18 +87,10 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
                 this.template.delete(redisKey);
                 LOGGER.trace("Deleted tokens [{}]", redisKey);
             } catch (final Exception e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.warn(e.getMessage(), e);
-                } else {
-                    LOGGER.warn(e.getMessage());
-                }
+                LoggingUtils.warn(LOGGER, e);
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -117,11 +102,7 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
             this.template.delete(redisKey);
             LOGGER.trace("Deleted tokens [{}]", redisKey);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -131,11 +112,7 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
             val keys = getGoogleAuthenticatorTokenKeys(uid);
             return keys.size();
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
         return 0;
     }
@@ -146,11 +123,7 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
             val keys = getGoogleAuthenticatorTokenKeys();
             return keys.size();
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
         return 0;
     }
