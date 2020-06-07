@@ -1,5 +1,6 @@
 package org.apereo.cas.support.sms;
 
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.io.SmsSender;
 
 import com.twilio.Twilio;
@@ -30,11 +31,7 @@ public class TwilioSmsSender implements SmsSender {
                 message).create();
             return StringUtils.isNotBlank(msg.getSid());
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

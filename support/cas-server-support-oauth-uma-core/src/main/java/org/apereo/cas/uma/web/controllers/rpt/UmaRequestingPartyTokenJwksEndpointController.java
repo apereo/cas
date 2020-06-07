@@ -3,6 +3,7 @@ package org.apereo.cas.uma.web.controllers.rpt;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -54,11 +55,7 @@ public class UmaRequestingPartyTokenJwksEndpointController extends BaseUmaEndpoi
             }
             return new ResponseEntity<>("UMA RPT JWKS resource is undefined or cannot be located", HttpStatus.NOT_IMPLEMENTED);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

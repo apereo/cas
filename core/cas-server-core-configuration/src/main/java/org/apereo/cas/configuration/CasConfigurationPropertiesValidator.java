@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration;
 
 import org.apereo.cas.util.CasVersion;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,11 +61,7 @@ public class CasConfigurationPropertiesValidator {
         try {
             validateConfiguration(CasConfigurationProperties.class, validationResults);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
     }
 

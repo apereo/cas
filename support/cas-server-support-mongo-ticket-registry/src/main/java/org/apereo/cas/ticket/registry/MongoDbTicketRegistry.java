@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.mongodb.client.MongoCollection;
 import lombok.RequiredArgsConstructor;
@@ -246,11 +247,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Located MongoDb collection instance [{}]", mapName);
             return inst;
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -276,11 +273,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         try {
             return ticketSerializationManager.serializeTicket(ticket);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

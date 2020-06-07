@@ -1,5 +1,7 @@
 package org.apereo.cas.util.crypto;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -46,11 +48,7 @@ public class DefaultPasswordEncoder implements PasswordEncoder {
                 encodingCharToUse, encoded);
             return encoded;
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

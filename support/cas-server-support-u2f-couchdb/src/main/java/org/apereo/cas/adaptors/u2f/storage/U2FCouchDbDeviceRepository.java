@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.u2f.storage;
 import org.apereo.cas.couchdb.u2f.CouchDbU2FDeviceRegistration;
 import org.apereo.cas.couchdb.u2f.U2FDeviceRegistrationCouchDbRepository;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
@@ -62,11 +63,7 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository implemen
                 try {
                     return DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord()));
                 } catch (final U2fBadInputException e) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.error(e.getMessage(), e);
-                    } else {
-                        LOGGER.error(e.getMessage());
-                    }
+                    LoggingUtils.error(LOGGER, e);
                 }
                 return null;
             })

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -51,11 +52,7 @@ public class RestConsentRepository implements ConsentRepository {
                 return result.getBody();
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }
@@ -71,11 +68,7 @@ public class RestConsentRepository implements ConsentRepository {
                 return result.getBody();
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }
@@ -93,11 +86,7 @@ public class RestConsentRepository implements ConsentRepository {
                 return result.getBody();
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -111,11 +100,7 @@ public class RestConsentRepository implements ConsentRepository {
             val result = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, ConsentDecision.class);
             return result.getStatusCodeValue() == HttpStatus.OK.value();
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -130,11 +115,7 @@ public class RestConsentRepository implements ConsentRepository {
             val result = restTemplate.exchange(deleteEndpoint, HttpMethod.DELETE, entity, Boolean.class);
             return result.getStatusCodeValue() == HttpStatus.OK.value();
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

@@ -1,5 +1,6 @@
 package org.apereo.cas.entity;
 
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 
@@ -43,11 +44,7 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
                         clear();
                         importResource(resource);
                     } catch (final Exception e) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.error(e.getMessage(), e);
-                        } else {
-                            LOGGER.error(e.getMessage());
-                        }
+                        LoggingUtils.error(LOGGER, e);
                     }
                 });
                 discoveryFeedResourceWatchers.start(getClass().getSimpleName());
@@ -74,11 +71,7 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
                 return true;
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

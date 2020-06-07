@@ -2,6 +2,7 @@ package org.apereo.cas.util.io;
 
 import org.apereo.cas.configuration.model.support.sms.SmsProvidersProperties;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -48,11 +49,7 @@ public class RestfulSmsSender implements SmsSender {
                 return status.is2xxSuccessful();
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

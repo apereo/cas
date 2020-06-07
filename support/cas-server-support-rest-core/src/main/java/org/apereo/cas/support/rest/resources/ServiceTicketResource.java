@@ -10,6 +10,7 @@ import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.RequiredArgsConstructor;
@@ -102,18 +103,10 @@ public class ServiceTicketResource {
         } catch (final AuthenticationException e) {
             return RestResourceUtils.createResponseEntityForAuthnFailure(e, httpServletRequest, applicationContext);
         } catch (final BadRestRequestException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } finally {
             AuthenticationCredentialsThreadLocalBinder.clear();

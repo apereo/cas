@@ -3,6 +3,7 @@ package org.apereo.cas.aup;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -45,7 +46,7 @@ public class RedisAcceptableUsagePolicyRepository extends BaseAcceptableUsagePol
             this.redisTemplate.boundValueOps(redisKey).set(Boolean.TRUE);
             return true;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

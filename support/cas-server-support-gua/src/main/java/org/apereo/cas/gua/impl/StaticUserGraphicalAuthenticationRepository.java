@@ -1,6 +1,7 @@
 package org.apereo.cas.gua.impl;
 
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.google.common.io.ByteSource;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +32,7 @@ public class StaticUserGraphicalAuthenticationRepository implements UserGraphica
             IOUtils.copy(this.graphicResource.getInputStream(), bos);
             return ByteSource.wrap(bos.toByteArray());
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return ByteSource.empty();
     }

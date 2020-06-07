@@ -3,6 +3,7 @@ package org.apereo.cas.consent;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +58,7 @@ public class RedisConsentRepository implements ConsentRepository {
                     .collect(Collectors.toList());
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new HashSet<>(0);
     }
@@ -75,7 +76,7 @@ public class RedisConsentRepository implements ConsentRepository {
                     .collect(Collectors.toList());
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new HashSet<>(0);
     }
@@ -87,7 +88,7 @@ public class RedisConsentRepository implements ConsentRepository {
             this.redisTemplate.boundValueOps(redisKey).set(decision);
             return true;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -101,7 +102,7 @@ public class RedisConsentRepository implements ConsentRepository {
             }
             return true;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

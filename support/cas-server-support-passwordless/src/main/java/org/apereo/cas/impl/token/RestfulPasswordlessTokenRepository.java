@@ -2,6 +2,7 @@ package org.apereo.cas.impl.token;
 
 import org.apereo.cas.configuration.model.support.passwordless.token.PasswordlessAuthenticationRestTokensProperties;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -50,11 +51,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
                 return Optional.of(result);
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -71,11 +68,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>(0));
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -92,11 +85,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>(0));
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -113,11 +102,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>(0));
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -131,11 +116,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 new HashMap<>(0), new HashMap<>(0));
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

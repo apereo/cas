@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.aup.LdapAcceptableUsagePolicyP
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -87,7 +88,7 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                 return LdapUtils.executeModifyOperation(currentDn, result.getKey(), attributes);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

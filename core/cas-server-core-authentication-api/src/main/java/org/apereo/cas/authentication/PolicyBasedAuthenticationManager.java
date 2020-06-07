@@ -10,6 +10,7 @@ import org.apereo.cas.support.events.authentication.CasAuthenticationPrincipalRe
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionStartedEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionSuccessfulEvent;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -141,7 +142,8 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                 LOGGER.debug("[{}] resolved [{}] from [{}]", resolver, p, credential);
                 return p;
             } catch (final Exception e) {
-                LOGGER.error("[{}] failed to resolve principal from [{}]", resolver, credential, e);
+                LOGGER.error("[{}] failed to resolve principal from [{}]", resolver, credential);
+                LoggingUtils.error(LOGGER, e);
             }
         } else {
             LOGGER.warn(

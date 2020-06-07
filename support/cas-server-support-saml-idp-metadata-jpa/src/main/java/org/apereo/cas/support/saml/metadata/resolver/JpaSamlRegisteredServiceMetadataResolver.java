@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSamlRegisteredServiceMetadataResolver;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -49,11 +50,7 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
             val documents = this.entityManager.createQuery(SELECT_QUERY, SamlMetadataDocument.class).getResultList();
             return documents.stream().map(doc -> buildMetadataResolverFrom(service, doc)).filter(Objects::nonNull).collect(Collectors.toList());
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -64,11 +61,7 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
             val metadataLocation = service.getMetadataLocation();
             return metadataLocation.trim().startsWith("jdbc://");
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -78,11 +71,7 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
         try {
             this.entityManager.merge(document);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -93,7 +82,7 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
             try (val con = ds.getConnection()) {
                 return con.isValid(DATA_SOURCE_VALIDITY_TIMEOUT_SECONDS);
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                LoggingUtils.error(LOGGER, e);
             }
         }
         return false;

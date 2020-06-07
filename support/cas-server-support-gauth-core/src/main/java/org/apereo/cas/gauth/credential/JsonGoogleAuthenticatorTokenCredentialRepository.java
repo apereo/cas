@@ -1,6 +1,7 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -60,11 +61,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 return decode(account);
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -89,7 +86,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             writeAccountsToJsonRepository(accounts);
             return encoded;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -106,7 +103,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             accounts.remove(username);
             writeAccountsToJsonRepository(accounts);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -116,7 +113,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             val accounts = readAccountsFromJsonRepository();
             return accounts.size();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return 0;
     }
@@ -126,7 +123,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         try {
             return readAccountsFromJsonRepository().values();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }

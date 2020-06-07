@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.SecurityTokenServiceClient;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
@@ -86,11 +87,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
                         writeAttributeValue(writer, WSFederationConstants.getClaimInCasNamespace(claimName), v, service);
                     }
                 } catch (final Exception e) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.error(e.getMessage(), e);
-                    } else {
-                        LOGGER.error(e.getMessage());
-                    }
+                    LoggingUtils.error(LOGGER, e);
                 }
             });
 
@@ -99,11 +96,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
             val claims = writer.getDocument().getDocumentElement();
             sts.setClaims(claims);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -157,7 +150,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
             if (ex.getFaultCode() != null && "RequestFailed".equals(ex.getFaultCode().getLocalPart())) {
                 throw new IllegalArgumentException(new ProcessingException(ProcessingException.TYPE.BAD_REQUEST));
             }
-            LOGGER.error(ex.getMessage(), ex);
+            LoggingUtils.error(LOGGER, ex);
             throw ex;
         }
     }

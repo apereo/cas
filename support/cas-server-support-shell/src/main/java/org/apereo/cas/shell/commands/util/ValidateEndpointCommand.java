@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.util;
 
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.SneakyThrows;
@@ -114,7 +115,7 @@ public class ValidateEndpointCommand {
                 tlsConnectionReport(httpsConnection);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage());
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -125,7 +126,7 @@ public class ValidateEndpointCommand {
         try {
             certificates = httpsConnection.getServerCertificates();
         } catch (final SSLPeerUnverifiedException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw new RuntimeException(e);
         }
 

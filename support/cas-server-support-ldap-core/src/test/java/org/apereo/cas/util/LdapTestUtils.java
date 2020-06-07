@@ -112,10 +112,10 @@ public class LdapTestUtils {
                 if (e.getResultCode().equals(ResultCode.ENTRY_ALREADY_EXISTS)) {
                     modifyLdapEntries(connection, entries, connInit);
                 } else {
-                    LOGGER.error(e.getMessage(), e);
+                    LoggingUtils.error(LOGGER, e);
                 }
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                LoggingUtils.error(LOGGER, e);
             }
         }
     }

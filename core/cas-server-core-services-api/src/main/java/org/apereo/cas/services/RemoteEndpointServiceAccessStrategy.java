@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
@@ -48,11 +49,7 @@ public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServic
                 return response != null && currentCodes.contains(String.valueOf(response.getStatusLine().getStatusCode()));
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
@@ -48,11 +49,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
             configureAndInitializeSingleMetadataResolver(metadataResolver, service);
             return CollectionUtils.wrap(metadataResolver);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }

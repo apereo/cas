@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.spy.memcached.MemcachedClientIF;
@@ -43,11 +45,7 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
             }
             super.doHealthCheck(builder);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             builder.down()
                 .withException(e)
                 .withDetail("message", "Unable to determine memcached server status.");
@@ -75,11 +73,7 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
                 });
             return statsList.toArray(CacheStatistics[]::new);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return List.of().toArray(CacheStatistics[]::new);
     }

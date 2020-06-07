@@ -5,6 +5,7 @@ import org.apereo.cas.audit.spi.AuditActionContextJsonSerializer;
 import org.apereo.cas.configuration.model.core.audit.AuditRestProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,11 +48,7 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
             LOGGER.trace("Sending audit action context to REST endpoint [{}]", properties.getUrl());
             response = HttpUtils.executePost(properties.getUrl(), properties.getBasicAuthUsername(), properties.getBasicAuthPassword(), auditJson);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -75,11 +72,7 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
                 return MAPPER.readValue(JsonValue.readHjson(result).toString(), values);
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

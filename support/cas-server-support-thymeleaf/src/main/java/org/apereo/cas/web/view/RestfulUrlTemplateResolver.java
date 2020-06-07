@@ -3,6 +3,7 @@ package org.apereo.cas.web.view;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -65,11 +66,7 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
                 return new StringTemplateResource(result);
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

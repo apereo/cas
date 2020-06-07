@@ -6,6 +6,7 @@ import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -51,11 +52,7 @@ public class UmaFindResourceSetRegistrationEndpointController extends BaseUmaEnd
             val model = resources.stream().map(ResourceSet::getId).collect(Collectors.toSet());
             return new ResponseEntity(model, HttpStatus.OK);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return new ResponseEntity("Unable to locate resource-sets.", HttpStatus.BAD_REQUEST);
     }
@@ -86,11 +83,7 @@ public class UmaFindResourceSetRegistrationEndpointController extends BaseUmaEnd
             val model = CollectionUtils.wrap("entity", resourceSet, "code", HttpStatus.FOUND);
             return new ResponseEntity(model, HttpStatus.OK);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return new ResponseEntity("Unable to locate resource-set.", HttpStatus.BAD_REQUEST);
     }

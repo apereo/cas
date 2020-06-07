@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.util;
 
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.gen.HexRandomStringGenerator;
 import org.apereo.cas.util.serialization.JacksonXmlSerializer;
 
@@ -136,11 +137,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             return builder.build(new ByteArrayInputStream(xmlString.getBytes(Charset.defaultCharset())));
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             return null;
         }
     }

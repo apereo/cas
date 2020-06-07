@@ -2,6 +2,7 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.configuration.model.support.throttle.Bucket4jThrottleProperties;
 import org.apereo.cas.throttle.ThrottledRequestExecutor;
+import org.apereo.cas.util.LoggingUtils;
 
 import io.github.bucket4j.AbstractBucket;
 import io.github.bucket4j.Bandwidth;
@@ -57,11 +58,7 @@ public class Bucket4jThrottledRequestExecutor implements ThrottledRequestExecuto
                 result = !this.bucket.tryConsume(1);
             }
         } catch (final InterruptedException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             Thread.currentThread().interrupt();
         }
         if (result) {

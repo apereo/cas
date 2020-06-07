@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.yubikey.registry;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.AccessLevel;
@@ -60,7 +61,7 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
         } catch (final NoResultException e) {
             LOGGER.debug("No registration record could be found for id [{}]", uid);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.util.http;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -152,11 +154,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
                 EntityUtils.consumeQuietly(entity);
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

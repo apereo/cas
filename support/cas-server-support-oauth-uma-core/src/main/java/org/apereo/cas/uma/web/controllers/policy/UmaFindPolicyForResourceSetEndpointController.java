@@ -4,6 +4,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -57,11 +58,7 @@ public class UmaFindPolicyForResourceSetEndpointController extends BaseUmaEndpoi
             val model = CollectionUtils.wrap("entity", resourceSet.getPolicies(), "code", HttpStatus.FOUND);
             return new ResponseEntity(model, HttpStatus.OK);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return new ResponseEntity("Unable to locate resource-set.", HttpStatus.BAD_REQUEST);
     }
@@ -100,11 +97,7 @@ public class UmaFindPolicyForResourceSetEndpointController extends BaseUmaEndpoi
             val model = CollectionUtils.wrap("code", HttpStatus.NOT_FOUND);
             return new ResponseEntity(model, HttpStatus.OK);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return new ResponseEntity("Unable to locate resource-set.", HttpStatus.BAD_REQUEST);
     }

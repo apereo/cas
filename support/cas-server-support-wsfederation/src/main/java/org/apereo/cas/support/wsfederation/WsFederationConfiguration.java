@@ -2,6 +2,7 @@ package org.apereo.cas.support.wsfederation;
 
 import org.apereo.cas.support.wsfederation.attributes.WsFederationAttributeMutator;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
@@ -80,7 +81,7 @@ public class WsFederationConfiguration implements Serializable {
             LOGGER.debug("Signing credential key retrieved from [{}].", resource);
             return publicCredential;
         } catch (final Exception ex) {
-            LOGGER.error(ex.getMessage(), ex);
+            LoggingUtils.error(LOGGER, ex);
         }
         return null;
     }

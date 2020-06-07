@@ -1,6 +1,7 @@
 package org.apereo.cas.util.cipher;
 
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -163,11 +164,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                 configureEncryptionKeyFromPublicKeyResource(secretKeyToUse);
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             if (this.secretKeyEncryptionKey == null) {
                 LOGGER.trace("Creating encryption key instance based on provided secret key");

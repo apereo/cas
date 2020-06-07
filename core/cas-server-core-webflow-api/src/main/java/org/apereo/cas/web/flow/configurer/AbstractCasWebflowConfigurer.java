@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.configurer;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
 import lombok.AccessLevel;
@@ -128,7 +129,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                 LOGGER.info("Webflow auto-configuration is disabled for [{}]", getClass().getName());
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -296,7 +297,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             LOGGER.trace("Added view state [{}]", viewState.getId());
             return viewState;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -466,7 +467,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             LOGGER.trace("Added transition [{}] to the state [{}]", transition.getId(), state.getId());
             return transition;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

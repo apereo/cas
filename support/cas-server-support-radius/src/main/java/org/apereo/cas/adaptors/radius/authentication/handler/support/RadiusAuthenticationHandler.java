@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -68,7 +69,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
             }
             throw new FailedLoginException("Radius authentication failed for user " + username);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException("Radius authentication failed " + e.getMessage());
         }
     }

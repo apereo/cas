@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.GroovyShellScript;
@@ -104,11 +105,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implement
                     scriptCache.put(mfaScript, script);
                     LOGGER.trace("Caching multifactor authentication trigger script as script resource [{}]", resource);
                 } catch (final Exception e) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.error(e.getMessage(), e);
-                    } else {
-                        LOGGER.error(e.getMessage());
-                    }
+                    LoggingUtils.error(LOGGER, e);
                 }
             }
         }

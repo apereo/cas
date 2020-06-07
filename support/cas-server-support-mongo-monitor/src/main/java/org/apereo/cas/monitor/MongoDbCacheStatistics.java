@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -53,11 +55,7 @@ public class MongoDbCacheStatistics implements CacheStatistics {
             json.writeTo(writer, Stringify.FORMATTED);
             builder.append(writer.toString());
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return builder.toString();
     }

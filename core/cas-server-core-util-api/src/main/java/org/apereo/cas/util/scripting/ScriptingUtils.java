@@ -1,5 +1,6 @@
 package org.apereo.cas.util.scripting;
 
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 
@@ -134,11 +135,7 @@ public class ScriptingUtils {
             val result = script.run();
             return getGroovyScriptExecutionResultOrThrow(clazz, result);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -291,11 +288,7 @@ public class ScriptingUtils {
             LOGGER.debug("Parsing groovy script [{}]", script);
             return shell.parse(script);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -322,11 +315,7 @@ public class ScriptingUtils {
                 if (failOnError) {
                     throw new RuntimeException(e);
                 }
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.error(e.getMessage(), e);
-                } else {
-                    LOGGER.error(e.getMessage());
-                }
+                LoggingUtils.error(LOGGER, e);
             }
             return null;
         });
@@ -365,11 +354,7 @@ public class ScriptingUtils {
             if (failOnError) {
                 throw e;
             }
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -419,11 +404,7 @@ public class ScriptingUtils {
             }
             LOGGER.warn("[{}] script [{}] does not exist, or cannot be loaded", StringUtils.capitalize(engineName), scriptFile);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -456,11 +437,7 @@ public class ScriptingUtils {
             val result = engine.eval(script, binding);
             return getGroovyScriptExecutionResultOrThrow(clazz, result);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -517,11 +494,7 @@ public class ScriptingUtils {
             }
             return result;
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

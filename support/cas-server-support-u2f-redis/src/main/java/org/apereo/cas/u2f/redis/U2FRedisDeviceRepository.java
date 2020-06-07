@@ -3,6 +3,7 @@ package org.apereo.cas.u2f.redis;
 import org.apereo.cas.adaptors.u2f.storage.BaseU2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
@@ -82,11 +83,7 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
                             }
                             LOGGER.warn("Unable to to decode device registration for record id [{}]", r.getId());
                         } catch (final Exception e) {
-                            if (LOGGER.isDebugEnabled()) {
-                                LOGGER.error(e.getMessage(), e);
-                            } else {
-                                LOGGER.error(e.getMessage());
-                            }
+                            LoggingUtils.error(LOGGER, e);
                         }
                         return null;
                     })
@@ -94,11 +91,7 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
                     .collect(Collectors.toList());
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }
@@ -133,11 +126,7 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
                 .collect(Collectors.toList());
             this.redisTemplate.delete(expiredKeys);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
     }
 

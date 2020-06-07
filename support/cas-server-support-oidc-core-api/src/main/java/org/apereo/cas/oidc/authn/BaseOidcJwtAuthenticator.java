@@ -11,6 +11,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jwt.JWTParser;
@@ -85,11 +86,7 @@ public abstract class BaseOidcJwtAuthenticator implements Authenticator<Username
                 return null;
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             return null;
         }
 

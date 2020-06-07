@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.GroovyShellScript;
@@ -111,11 +112,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                         cacheMgr.put(cacheKey, script);
                         LOGGER.trace("Cached groovy script [{}] for key [{}]", script, cacheKey);
                     } catch (final Exception e) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.error(e.getMessage(), e);
-                        } else {
-                            LOGGER.error(e.getMessage());
-                        }
+                        LoggingUtils.error(LOGGER, e);
                     }
                 }
                 if (script != null) {
