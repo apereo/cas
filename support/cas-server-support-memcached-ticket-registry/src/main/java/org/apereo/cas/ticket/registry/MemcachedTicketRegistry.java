@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -149,7 +150,7 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
                 this.connectionPool.returnObject(clientFromPool);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
     }
 }

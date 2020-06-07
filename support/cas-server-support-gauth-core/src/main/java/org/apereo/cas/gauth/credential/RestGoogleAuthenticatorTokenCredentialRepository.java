@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -69,11 +70,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 }
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -103,11 +100,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 }
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -130,11 +123,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
                 parameters, new HashMap<>(0));
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -151,7 +140,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 parameters, CollectionUtils.wrap("Accept", MediaType.APPLICATION_JSON,
                     "username", username));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -178,7 +167,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 }
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -211,11 +200,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 }
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

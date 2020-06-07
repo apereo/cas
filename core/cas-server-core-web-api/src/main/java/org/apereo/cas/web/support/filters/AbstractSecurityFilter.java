@@ -1,5 +1,7 @@
 package org.apereo.cas.web.support.filters;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -34,11 +36,7 @@ public abstract class AbstractSecurityFilter {
     }
 
     protected static void logException(final Exception e) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.error(e.getMessage(), e);
-        } else {
-            LOGGER.error(e.getMessage());
-        }
+        LoggingUtils.error(LOGGER, e);
         if (isThrowOnErrors()) {
             throw new RuntimeException(e);
         }

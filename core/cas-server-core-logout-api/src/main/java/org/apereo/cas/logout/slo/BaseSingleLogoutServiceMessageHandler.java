@@ -9,6 +9,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
 
 import lombok.AccessLevel;
@@ -92,11 +93,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
             val logoutRequest = createSingleLogoutMessage(request);
             return sendSingleLogoutMessage(request, logoutRequest);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

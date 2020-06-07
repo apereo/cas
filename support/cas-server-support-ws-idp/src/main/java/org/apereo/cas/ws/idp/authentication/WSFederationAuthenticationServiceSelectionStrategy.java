@@ -3,6 +3,7 @@ package org.apereo.cas.ws.idp.authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import lombok.Getter;
@@ -40,11 +41,7 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
                 .filter(p -> p.getName().equals(WSFederationConstants.WTREALM))
                 .findFirst();
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
     }
@@ -61,11 +58,7 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
                 .filter(p -> p.getName().equals(WSFederationConstants.WREPLY))
                 .findFirst();
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
     }

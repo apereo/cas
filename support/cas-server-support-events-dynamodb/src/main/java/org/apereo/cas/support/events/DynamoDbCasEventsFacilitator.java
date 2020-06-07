@@ -2,6 +2,7 @@ package org.apereo.cas.support.events;
 
 import org.apereo.cas.configuration.model.core.events.DynamoDbEventsProperties;
 import org.apereo.cas.support.events.dao.CasEvent;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
@@ -283,7 +284,7 @@ public class DynamoDbCasEventsFacilitator {
                 .map(DynamoDbCasEventsFacilitator::extractAttributeValuesFrom)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new HashSet<>(0);
     }

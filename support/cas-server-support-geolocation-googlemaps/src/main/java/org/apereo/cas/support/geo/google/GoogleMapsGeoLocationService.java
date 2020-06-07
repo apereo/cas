@@ -2,6 +2,7 @@ package org.apereo.cas.support.geo.google;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.support.geo.AbstractGeoLocationService;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
@@ -52,7 +53,7 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
                 return r;
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return r;
     }

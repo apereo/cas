@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
 import lombok.SneakyThrows;
@@ -43,7 +45,7 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
                 try {
                     return DeviceRegistration.fromJson(r);
                 } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    LoggingUtils.error(LOGGER, e);
                 }
                 return null;
             })

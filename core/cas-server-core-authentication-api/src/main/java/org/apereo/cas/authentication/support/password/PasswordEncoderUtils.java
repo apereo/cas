@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.support.password;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
 import org.apereo.cas.util.crypto.GlibcCryptPasswordEncoder;
@@ -60,11 +61,7 @@ public class PasswordEncoderUtils {
             } catch (final Exception e) {
                 val msg = "Falling back to a no-op password encoder as CAS has failed to create "
                     + "an instance of the custom password encoder class " + type;
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.error(msg, e);
-                } else {
-                    LOGGER.error(msg);
-                }
+                LoggingUtils.error(LOGGER, msg, e);
                 return NoOpPasswordEncoder.getInstance();
             }
         }

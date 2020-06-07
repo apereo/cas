@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -143,11 +144,7 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
                 result = new ResponseEntity<>(introspect, HttpStatus.OK);
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             result = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return result;

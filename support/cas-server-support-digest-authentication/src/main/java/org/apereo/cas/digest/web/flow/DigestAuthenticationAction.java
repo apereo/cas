@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.digest.DigestCredential;
 import org.apereo.cas.digest.DigestHashedCredentialRetriever;
 import org.apereo.cas.digest.util.DigestAuthenticationUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -80,7 +81,7 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
             }
             return new DigestCredential(credentials.getUsername(), this.realm, credentials.getToken());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

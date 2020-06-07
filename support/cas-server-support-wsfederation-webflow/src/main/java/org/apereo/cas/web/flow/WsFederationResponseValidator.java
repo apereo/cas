@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -81,7 +82,7 @@ public class WsFederationResponseValidator {
                 throw new IllegalArgumentException("Could not extract and identify credentials");
             }
 
-            if (credential != null && credential.isValid(rpId, configuration.getIdentityProviderIdentifier(), configuration.getTolerance())) {
+            if (credential.isValid(rpId, configuration.getIdentityProviderIdentifier(), configuration.getTolerance())) {
                 val currentAttributes = credential.getAttributes();
                 LOGGER.debug("Validated assertion for the created credential successfully and located attributes [{}]", currentAttributes);
                 if (configuration.getAttributeMutator() != null) {
@@ -105,7 +106,7 @@ public class WsFederationResponseValidator {
 
             LOGGER.info("Token validated and new [{}] created: [{}]", credential.getClass().getName(), credential);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw e;
         }
     }

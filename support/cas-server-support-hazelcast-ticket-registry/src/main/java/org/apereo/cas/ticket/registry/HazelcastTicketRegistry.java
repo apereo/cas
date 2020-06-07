@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
@@ -162,11 +163,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             LOGGER.debug("Located Hazelcast map instance [{}]", mapName);
             return inst;
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

@@ -17,6 +17,7 @@ import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
@@ -482,11 +483,7 @@ public class CasPersonDirectoryConfiguration {
                                 try {
                                     dao.init();
                                 } catch (final Exception e) {
-                                    if (LOGGER.isDebugEnabled()) {
-                                        LOGGER.error(e.getMessage(), e);
-                                    } else {
-                                        LOGGER.error(e.getMessage());
-                                    }
+                                    LoggingUtils.error(LOGGER, e);
                                 }
                             });
                             watcherService.start(getClass().getSimpleName());

@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.GitServiceRegistryConfiguration;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -61,11 +62,7 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
             FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
             git.commit().setSign(false).setMessage("Initial commit").call();
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             fail(e.getMessage(), e);
         }
     }

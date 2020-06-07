@@ -166,11 +166,7 @@ public class HttpUtils {
             prepareHttpRequest(request, basicAuthUsername, basicAuthPassword);
             return HTTP_CLIENT.execute(request);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -186,11 +182,7 @@ public class HttpUtils {
             try {
                 closeableHttpResponse.close();
             } catch (final IOException e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.error(e.getMessage(), e);
-                } else {
-                    LOGGER.error(e.getMessage());
-                }
+                LoggingUtils.error(LOGGER, e);
             }
         }
     }
@@ -211,11 +203,7 @@ public class HttpUtils {
         try {
             return executeGet(url, basicAuthUsername, basicAuthPassword, parameters, new HashMap<>(0));
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -238,11 +226,7 @@ public class HttpUtils {
         try {
             return execute(url, HttpMethod.GET.name(), basicAuthUsername, basicAuthPassword, parameters, headers);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -261,11 +245,7 @@ public class HttpUtils {
         try {
             return execute(url, HttpMethod.GET.name(), null, null, parameters, headers);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -282,11 +262,7 @@ public class HttpUtils {
         try {
             return executeGet(url, null, null, parameters);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -301,11 +277,7 @@ public class HttpUtils {
         try {
             return executeGet(url, null, null, new LinkedHashMap<>(MAP_SIZE));
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -324,11 +296,7 @@ public class HttpUtils {
         try {
             return executeGet(url, basicAuthUsername, basicAuthPassword, new HashMap<>(0));
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -381,11 +349,7 @@ public class HttpUtils {
         try {
             return executePost(url, basicAuthUsername, basicAuthPassword, entity, parameters, new HashMap<>(0));
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -410,11 +374,7 @@ public class HttpUtils {
         try {
             return execute(url, HttpMethod.POST.name(), basicAuthUsername, basicAuthPassword, parameters, headers, entity);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -433,11 +393,7 @@ public class HttpUtils {
         try {
             return execute(url, HttpMethod.POST.name(), null, null, parameters, headers, null);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -462,11 +418,7 @@ public class HttpUtils {
         try {
             return execute(url, HttpMethod.DELETE.name(), basicAuthUsername, basicAuthPassword, parameters, headers, entity);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -489,11 +441,7 @@ public class HttpUtils {
         try {
             return executeDelete(url, basicAuthUsername, basicAuthPassword, null, parameters, headers);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -512,11 +460,7 @@ public class HttpUtils {
         try {
             return executeDelete(url, basicAuthUsername, basicAuthPassword, null, null, null);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

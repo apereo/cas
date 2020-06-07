@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.WebUtils;
@@ -169,18 +170,10 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
             webflowEventResolutionConfigurationContext.getCentralAuthenticationService().updateTicket(tgt);
             return tgt;
         } catch (final PrincipalException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             throw e;
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             throw new InvalidTicketException(ticketGrantingTicket);
         }
     }

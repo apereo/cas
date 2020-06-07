@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionSt
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -106,11 +107,7 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends Abstra
         try {
             return multifactorTriggerSelectionStrategy.resolve(request, registeredService, auth, service);
         } catch (final MultifactorAuthenticationProviderAbsentException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
     }

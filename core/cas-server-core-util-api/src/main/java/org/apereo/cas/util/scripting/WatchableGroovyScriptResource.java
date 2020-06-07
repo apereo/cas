@@ -1,5 +1,6 @@
 package org.apereo.cas.util.scripting;
 
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 
@@ -37,11 +38,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
                         LOGGER.debug("Reloading script at [{}]", file);
                         compileScriptResource(script);
                     } catch (final Exception e) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.error(e.getMessage(), e);
-                        } else {
-                            LOGGER.error(e.getMessage());
-                        }
+                        LoggingUtils.error(LOGGER, e);
                     }
                 });
                 this.watcherService.start(script.getFilename());

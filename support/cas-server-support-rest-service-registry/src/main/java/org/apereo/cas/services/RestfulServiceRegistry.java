@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -59,7 +60,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 return registeredServiceEntityMapper.toRegisteredService(responseEntity.getBody());
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

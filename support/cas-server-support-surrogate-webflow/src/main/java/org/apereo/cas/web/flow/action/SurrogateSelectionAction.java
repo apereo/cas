@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.action;
 
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -55,11 +56,7 @@ public class SurrogateSelectionAction extends AbstractAction {
                 .code("screen.surrogates.account.selection.error")
                 .defaultText("Unable to accept or authorize selection")
                 .build());
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return error();
     }

@@ -11,6 +11,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.SneakyThrows;
@@ -72,11 +73,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
@@ -149,11 +146,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             val accessResult = getOAuthConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
         } catch (final UnauthorizedServiceException | PrincipalException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 

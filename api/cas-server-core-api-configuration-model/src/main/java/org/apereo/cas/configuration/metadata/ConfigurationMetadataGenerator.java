@@ -142,11 +142,7 @@ public class ConfigurationMetadataGenerator {
                     hints.add(hint);
                 }
             } catch (final Exception e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.error(e.getMessage(), e);
-                } else {
-                    LOGGER.error(e.getMessage());
-                }
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return hints;

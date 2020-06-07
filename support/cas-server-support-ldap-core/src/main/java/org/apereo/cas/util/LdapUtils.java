@@ -313,7 +313,7 @@ public class LdapUtils {
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -344,7 +344,7 @@ public class LdapUtils {
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -378,7 +378,7 @@ public class LdapUtils {
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -398,7 +398,7 @@ public class LdapUtils {
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

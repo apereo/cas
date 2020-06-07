@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.google.common.base.Predicates;
@@ -232,7 +233,7 @@ public class WsFederationHelper {
             }
             return reqToken;
         } catch (final Exception ex) {
-            LOGGER.error(ex.getMessage(), ex);
+            LoggingUtils.error(LOGGER, ex);
         }
         return null;
     }

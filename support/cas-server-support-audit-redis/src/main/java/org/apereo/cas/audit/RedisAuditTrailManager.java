@@ -2,6 +2,7 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -44,7 +45,7 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
             val redisKey = getAuditRedisKey(audit);
             this.redisTemplate.boundValueOps(redisKey).set(audit);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -62,7 +63,7 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
                 .filter(audit -> audit.getWhenActionWasPerformed().compareTo(dt) >= 0)
                 .collect(Collectors.toSet());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new HashSet<>(0);
     }

@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.consent.ConsentProperties.Ldap
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -49,11 +50,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
             LOGGER.trace("Mapping JSON value [{}] to consent object", json);
             return MAPPER.readValue(JsonValue.readHjson(json).toString(), ConsentDecision.class);
         } catch (final IOException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -64,11 +61,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
             LOGGER.trace("Transformed consent object [{}] as JSON value [{}]", consent, json);
             return json;
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

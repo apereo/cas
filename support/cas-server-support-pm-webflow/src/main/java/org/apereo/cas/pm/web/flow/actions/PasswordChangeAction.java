@@ -6,6 +6,7 @@ import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -62,11 +63,7 @@ public class PasswordChangeAction extends AbstractAction {
                 StringUtils.defaultIfBlank(e.getValidationMessage(), DEFAULT_MESSAGE),
                 e.getParams());
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return getErrorEvent(requestContext, "pm.updateFailure", DEFAULT_MESSAGE);
     }

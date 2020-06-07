@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.attribute;
 
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 
@@ -69,11 +70,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
                     try {
                         loadAttributeDefinitionsFromInputStream(new FileSystemResource(file));
                     } catch (final Exception e) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.error(e.getMessage(), e);
-                        } else {
-                            LOGGER.error(e.getMessage());
-                        }
+                        LoggingUtils.error(LOGGER, e);
                     }
                 });
                 this.storeWatcherService.start(getClass().getSimpleName());

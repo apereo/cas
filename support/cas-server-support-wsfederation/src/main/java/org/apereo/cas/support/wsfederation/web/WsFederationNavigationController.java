@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,7 +75,7 @@ public class WsFederationNavigationController {
             wsFederationCookieManager.store(request, response, cfg.getId(), service, cfg);
             return new RedirectView(url);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
     }

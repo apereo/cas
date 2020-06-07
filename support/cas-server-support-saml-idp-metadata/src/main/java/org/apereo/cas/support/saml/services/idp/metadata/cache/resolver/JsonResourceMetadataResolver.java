@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -87,7 +88,7 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
                 return CollectionUtils.wrap(resolver);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }
@@ -98,7 +99,7 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
             val metadataLocation = service.getMetadataLocation();
             return metadataLocation.trim().startsWith("json://");
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

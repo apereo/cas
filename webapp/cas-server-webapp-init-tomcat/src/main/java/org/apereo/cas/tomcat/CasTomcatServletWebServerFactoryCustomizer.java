@@ -3,6 +3,7 @@ package org.apereo.cas.tomcat;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProxyProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -304,11 +305,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
                             parse(buffer);
                         }
                     } catch (final Exception e) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.error(e.getMessage(), e);
-                        } else {
-                            LOGGER.error(e.getMessage());
-                        }
+                        LoggingUtils.error(LOGGER, e);
                     }
                 }
             };

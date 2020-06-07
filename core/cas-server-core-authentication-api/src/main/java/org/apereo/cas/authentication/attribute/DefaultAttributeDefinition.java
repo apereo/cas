@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.attribute;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.GroovyShellScript;
@@ -159,11 +160,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
                     val resource = ResourceUtils.getRawResourceFrom(scriptPath);
                     attributeScriptCache.put(attributeKey, new WatchableGroovyScriptResource(resource));
                 } catch (final Exception e) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.error(e.getMessage(), e);
-                    } else {
-                        LOGGER.error(e.getMessage());
-                    }
+                    LoggingUtils.error(LOGGER, e);
                 }
             }
         }

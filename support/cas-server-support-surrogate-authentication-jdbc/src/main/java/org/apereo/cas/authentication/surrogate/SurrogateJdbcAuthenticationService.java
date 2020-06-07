@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.surrogate;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -52,7 +53,7 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
             val count = this.jdbcTemplate.queryForObject(surrogateSearchQuery, Integer.class, surrogate.getId(), username);
             return Objects.requireNonNull(count) > 0;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -64,7 +65,7 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
                 new BeanPropertyRowMapper<>(SurrogateAccount.class), username);
             return results.stream().map(SurrogateAccount::getSurrogateAccount).collect(Collectors.toList());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }

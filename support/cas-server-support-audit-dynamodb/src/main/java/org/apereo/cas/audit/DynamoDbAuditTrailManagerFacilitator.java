@@ -2,6 +2,7 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.configuration.model.support.dynamodb.AuditDynamoDbProperties;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
@@ -161,11 +162,7 @@ public class DynamoDbAuditTrailManagerFacilitator {
                 })
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return new HashSet<>(0);
     }

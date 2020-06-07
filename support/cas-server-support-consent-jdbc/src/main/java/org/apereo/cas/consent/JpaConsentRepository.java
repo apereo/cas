@@ -3,6 +3,7 @@ package org.apereo.cas.consent;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +49,7 @@ public class JpaConsentRepository implements ConsentRepository {
         } catch (final NoResultException e) {
             LOGGER.debug(e.getMessage());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage());
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -61,7 +62,7 @@ public class JpaConsentRepository implements ConsentRepository {
         } catch (final NoResultException e) {
             LOGGER.debug(e.getMessage());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage());
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }
@@ -73,7 +74,7 @@ public class JpaConsentRepository implements ConsentRepository {
         } catch (final NoResultException e) {
             LOGGER.debug(e.getMessage());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage());
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }
@@ -98,11 +99,7 @@ public class JpaConsentRepository implements ConsentRepository {
             }
             return true;
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -115,11 +112,7 @@ public class JpaConsentRepository implements ConsentRepository {
             this.entityManager.remove(decision);
             return true;
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
