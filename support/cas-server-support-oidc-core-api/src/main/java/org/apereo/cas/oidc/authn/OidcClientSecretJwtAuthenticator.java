@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -63,11 +64,7 @@ public class OidcClientSecretJwtAuthenticator extends BaseOidcJwtAuthenticator {
             userProfile.setId(jwt.getClientID().getValue());
             credentials.setUserProfile(userProfile);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
 
     }

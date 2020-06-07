@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -42,11 +43,7 @@ public class RegisteredServicePublicKeyCipherExecutor implements RegisteredServi
                 }
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
         return null;
     }

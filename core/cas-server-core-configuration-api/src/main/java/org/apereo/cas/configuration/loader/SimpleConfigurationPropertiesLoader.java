@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.loader;
 
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -32,11 +33,7 @@ public class SimpleConfigurationPropertiesLoader extends BaseConfigurationProper
             LOGGER.debug("Found settings [{}] in file [{}]", props.keySet(), getResource());
             props.putAll(decryptProperties(props));
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
         return finalizeProperties(props);
     }

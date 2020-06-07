@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.couchdb.gauth.token.CouchDbGoogleAuthenticatorToken;
 import org.apereo.cas.couchdb.gauth.token.GoogleAuthenticatorTokenCouchDbRepository;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -73,11 +74,7 @@ public class GoogleAuthenticatorCouchDbTokenRepository extends BaseOneTimeTokenR
             LOGGER.debug("Removing tokens older than [{}]", since);
             couchDb.findByIssuedDateTimeBefore(since).forEach(couchDb::remove);
         } catch (final UpdateConflictException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 }

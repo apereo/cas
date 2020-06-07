@@ -81,7 +81,7 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
             LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException(errorMessage);
         } catch (final JAXBException e) {
-            LOGGER.warn("Cannot marshal fortress session with value", e);
+            LoggingUtils.warn(LOGGER, e);
             throw new PreventedException(e);
         }
         throw new FailedLoginException(String.format("[%s] could not authenticate with fortress", username));

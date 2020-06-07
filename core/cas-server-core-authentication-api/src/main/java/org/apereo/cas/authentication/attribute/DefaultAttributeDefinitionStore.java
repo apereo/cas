@@ -91,11 +91,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
             });
             map.forEach(this::registerAttributeDefinition);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 

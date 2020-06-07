@@ -55,11 +55,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
                 return new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
         return null;
     }

@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.mdui;
 
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -138,7 +139,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
             }
             LOGGER.warn("Input stream from resource [{}] appears empty. Moving on...", resource.getFilename());
         } catch (final Exception e) {
-            LOGGER.warn("Could not retrieve input stream from resource. Moving on...", e);
+            LoggingUtils.warn(LOGGER, "Could not retrieve input stream from resource. Moving on...", e);
         }
         return new ArrayList<>(0);
     }
@@ -168,7 +169,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
             resolvers.add(metadataProvider);
             return resolvers;
         } catch (final Exception ex) {
-            LOGGER.warn("Could not initialize metadata resolver. Resource will be ignored", ex);
+            LoggingUtils.warn(LOGGER, ex);
         }
         return new ArrayList<>(0);
     }

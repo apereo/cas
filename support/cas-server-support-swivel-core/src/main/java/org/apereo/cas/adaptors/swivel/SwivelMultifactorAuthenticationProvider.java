@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.swivel;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -57,11 +58,7 @@ public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactor
             connection.connect();
             return connection.getResponseCode() == HttpStatus.SC_OK;
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
         return false;
     }

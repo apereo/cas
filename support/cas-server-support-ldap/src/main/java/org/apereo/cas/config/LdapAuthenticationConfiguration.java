@@ -22,6 +22,7 @@ import org.apereo.cas.configuration.model.support.ldap.LdapPasswordPolicyPropert
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.google.common.collect.Multimap;
 import lombok.SneakyThrows;
@@ -95,7 +96,7 @@ public class LdapAuthenticationConfiguration {
                 val clazz = (Class<AuthenticationResponseHandler>) Class.forName(customPolicyClass);
                 handlers.add(clazz.getDeclaredConstructor().newInstance());
             } catch (final Exception e) {
-                LOGGER.warn("Unable to construct an instance of the password policy handler", e);
+                LoggingUtils.warn(LOGGER, "Unable to construct an instance of the password policy handler", e);
             }
         }
         LOGGER.debug("Password policy authentication response handler is set to accommodate directory type: [{}]", passwordPolicy.getType());
