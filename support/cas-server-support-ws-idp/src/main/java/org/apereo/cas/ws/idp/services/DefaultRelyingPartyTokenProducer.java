@@ -43,8 +43,20 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPartyTokenProducer {
     private final SecurityTokenServiceClientBuilder clientBuilder;
+
     private final CipherExecutor<String, String> credentialCipherExecutor;
+
     private final Set<String> customClaims;
+
+    @Override
+    public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
+                          final WSFederationRequest fedRequest, final HttpServletRequest request,
+                          final Assertion assertion) {
+        val sts = clientBuilder.buildClientForRelyingPartyTokenResponses(securityToken, service);
+        mapAttributesToRequestedClaims(service, sts, assertion);
+        val rpToken = requestSecurityTokenResponse(service, sts, assertion);
+        return serializeRelyingPartyToken(rpToken);
+    }
 
     @SneakyThrows
     private static String serializeRelyingPartyToken(final Element rpToken) {
@@ -57,7 +69,8 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         return sw.toString();
     }
 
-    private void mapAttributesToRequestedClaims(final WSFederationRegisteredService service, final SecurityTokenServiceClient sts,
+    private void mapAttributesToRequestedClaims(final WSFederationRegisteredService service,
+                                                final SecurityTokenServiceClient sts,
                                                 final Assertion assertion) {
         try {
             val writer = new W3CDOMStreamWriter();
@@ -100,6 +113,26 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         }
     }
 
+    @SneakyThrows
+    private Element requestSecurityTokenResponse(final WSFederationRegisteredService service,
+                                                 final SecurityTokenServiceClient sts,
+                                                 final Assertion assertion) {
+        try {
+            val properties = sts.getProperties();
+            properties.put(SecurityConstants.USERNAME, assertion.getPrincipal().getName());
+            val uid = credentialCipherExecutor.encode(assertion.getPrincipal().getName());
+            properties.put(SecurityConstants.PASSWORD, uid);
+
+            return sts.requestSecurityTokenResponse(service.getAppliesTo());
+        } catch (final SoapFault ex) {
+            if (ex.getFaultCode() != null && "RequestFailed".equals(ex.getFaultCode().getLocalPart())) {
+                throw new IllegalArgumentException(new ProcessingException(ProcessingException.TYPE.BAD_REQUEST));
+            }
+            LoggingUtils.error(LOGGER, ex);
+            throw ex;
+        }
+    }
+
     /**
      * Write attribute value.
      *
@@ -110,8 +143,8 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
      * @throws Exception the exception
      */
     protected void writeAttributeValue(final W3CDOMStreamWriter writer, final String uri,
-                                            final Object attributeValue,
-                                            final WSFederationRegisteredService service) throws Exception {
+                                       final Object attributeValue,
+                                       final WSFederationRegisteredService service) throws Exception {
         LOGGER.trace("Mapping attribute [{}] with value [{}] for service [{}]", uri, attributeValue, service.getServiceId());
         writer.writeStartElement("ic", "ClaimValue", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
         writer.writeAttribute("Uri", uri);
@@ -124,34 +157,5 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
             writer.writeEndElement();
         }
         writer.writeEndElement();
-    }
-
-    @Override
-    public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
-                          final WSFederationRequest fedRequest, final HttpServletRequest request,
-                          final Assertion assertion) {
-        val sts = clientBuilder.buildClientForRelyingPartyTokenResponses(securityToken, service);
-        mapAttributesToRequestedClaims(service, sts, assertion);
-        val rpToken = requestSecurityTokenResponse(service, sts, assertion);
-        return serializeRelyingPartyToken(rpToken);
-    }
-
-    @SneakyThrows
-    private Element requestSecurityTokenResponse(final WSFederationRegisteredService service,
-                                                 final SecurityTokenServiceClient sts,
-                                                 final Assertion assertion) {
-        try {
-            sts.getProperties().put(SecurityConstants.USERNAME, assertion.getPrincipal().getName());
-            val uid = credentialCipherExecutor.encode(assertion.getPrincipal().getName());
-            sts.getProperties().put(SecurityConstants.PASSWORD, uid);
-
-            return sts.requestSecurityTokenResponse(service.getAppliesTo());
-        } catch (final SoapFault ex) {
-            if (ex.getFaultCode() != null && "RequestFailed".equals(ex.getFaultCode().getLocalPart())) {
-                throw new IllegalArgumentException(new ProcessingException(ProcessingException.TYPE.BAD_REQUEST));
-            }
-            LoggingUtils.error(LOGGER, ex);
-            throw ex;
-        }
     }
 }
