@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.time.Clock;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -69,7 +69,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
     public void verifyThrottleNotTriggeredWithinOneSecond() {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
                 true);
-        val clock = Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusMillis(999), ZoneId.of("UTC"));
+        val clock = Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusMillis(999), ZoneOffset.UTC);
         expirationPolicy.setClock(clock);
         assertFalse(this.ticket.isExpired());
     }
@@ -78,7 +78,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
     public void verifyNotWaitingEnoughTime() {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
             true);
-        val clock = Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusSeconds(1), ZoneId.of("UTC"));
+        val clock = Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusSeconds(1), ZoneOffset.UTC);
         expirationPolicy.setClock(clock);
         assertTrue(this.ticket.isExpired());
     }

@@ -21,6 +21,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -143,6 +144,7 @@ public class WsFederationConfiguration implements Serializable {
     private void createSigningWallet(final List<Resource> signingCertificateFiles) {
         this.signingWallet = signingCertificateFiles.stream()
             .map(WsFederationConfiguration::getSigningCredential)
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 

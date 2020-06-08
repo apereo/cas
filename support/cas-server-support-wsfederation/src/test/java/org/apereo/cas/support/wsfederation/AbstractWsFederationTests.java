@@ -19,7 +19,6 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -45,7 +44,6 @@ import java.util.List;
         "cas.authn.wsfed[0].auto-redirect=false",
         "cas.authn.wsfed[0].name=Test ADFS1"
     })
-@ContextConfiguration(locations = "classpath:/applicationContext.xml")
 @Tag("WSFederation")
 public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
     protected static final String ISSUER = "http://adfs.example.com/adfs/services/trust";
@@ -81,7 +79,7 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
 
         val attributes = new HashMap<>(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
         attributes.put("upn", List.of("cas@example.org"));
-        
+
         standardCred.setAttributes(attributes);
         return standardCred;
     }

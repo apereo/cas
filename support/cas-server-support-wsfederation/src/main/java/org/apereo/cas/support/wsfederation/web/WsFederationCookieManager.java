@@ -47,17 +47,17 @@ public class WsFederationCookieManager {
     public Service retrieve(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
 
-        val wCtx = request.getParameter(WCTX);
-        LOGGER.debug("Parameter [{}] received: [{}]", WCTX, wCtx);
-        if (StringUtils.isBlank(wCtx)) {
+        val contextId = request.getParameter(WCTX);
+        LOGGER.debug("Parameter [{}] received: [{}]", WCTX, contextId);
+        if (StringUtils.isBlank(contextId)) {
             LOGGER.error("No [{}] parameter is found", WCTX);
             throw new IllegalArgumentException("No " + WCTX + " parameter is found");
         }
 
         val configuration = configurations.stream()
-            .filter(c -> c.getId().equalsIgnoreCase(wCtx))
+            .filter(c -> c.getId().equalsIgnoreCase(contextId))
             .findFirst()
-            .orElseThrow();
+            .orElseThrow(() -> new IllegalArgumentException("Could not locate WsFederation configuration for " + contextId));
         
         val cookieGen = configuration.getCookieGenerator();
         val value = cookieGen.retrieveCookieValue(request);
@@ -71,7 +71,7 @@ public class WsFederationCookieManager {
         request.setAttribute(this.localParamName, session.get(this.localParamName));
         request.setAttribute(CasProtocolConstants.PARAMETER_METHOD, session.get(CasProtocolConstants.PARAMETER_METHOD));
 
-        val serviceKey = CasProtocolConstants.PARAMETER_SERVICE + '-' + wCtx;
+        val serviceKey = CasProtocolConstants.PARAMETER_SERVICE + '-' + contextId;
         val service = (Service) session.get(serviceKey);
         LOGGER.debug("Located service [{}] from session cookie", service);
         WebUtils.putServiceIntoFlowScope(context, service);
