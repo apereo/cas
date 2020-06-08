@@ -3,7 +3,6 @@ package org.apereo.cas.support.wsfederation.web;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
-import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.val;
@@ -22,8 +21,6 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
-import java.util.Collection;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -38,10 +35,6 @@ public class WsFederationNavigationControllerTests extends AbstractWsFederationT
     @Autowired
     @Qualifier("wsFederationNavigationController")
     private WsFederationNavigationController wsFederationNavigationController;
-
-    @Autowired
-    @Qualifier("wsFederationConfigurations")
-    private Collection<WsFederationConfiguration> wsFederationConfigurations;
 
     @Test
     public void verifyOperation() {

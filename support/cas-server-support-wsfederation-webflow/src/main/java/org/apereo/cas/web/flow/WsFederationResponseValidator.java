@@ -28,11 +28,17 @@ import java.util.Collection;
 @Slf4j
 @RequiredArgsConstructor
 public class WsFederationResponseValidator {
-    private static final String WRESULT = "wresult";
+    /**
+     * {@code wresult} parameter.
+     */
+    public static final String WRESULT = "wresult";
 
     private final WsFederationHelper wsFederationHelper;
+
     private final Collection<WsFederationConfiguration> configurations;
+
     private final AuthenticationSystemSupport authenticationSystemSupport;
+
     private final WsFederationCookieManager wsFederationCookieManager;
 
     /**
