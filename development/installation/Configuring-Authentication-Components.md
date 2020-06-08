@@ -165,4 +165,4 @@ Please [see this guide](Configuring-Authentication-Throttling.html) for addition
 
 A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session.
 This cookie maintains login state for the client, and while it is valid, the client can present it to CAS in lieu of primary credentials.
-Please [see this guide](Configuring-SSO.html) for additional details.
+Please [see this guide](Configuring-SSO-Session-Cookie.html) for additional details.

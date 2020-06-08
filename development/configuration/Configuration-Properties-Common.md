@@ -690,7 +690,7 @@ The following options related to CouchDb support in CAS apply equally to a numbe
 # ${configurationKey}.couch-db.max-connections=20
 # ${configurationKey}.couch-db.enable-ssl=
 # ${configurationKey}.couch-db.relaxed-ssl-settings=
-# ${configurationKey}.couch-db.caching=false
+# ${configurationKey}.couch-db.caching=true
 # ${configurationKey}.couch-db.max-cache-entries=1000
 # ${configurationKey}.couch-db.max-object-size-bytes=8192
 # ${configurationKey}.couch-db.use-expect-continue=true
@@ -779,11 +779,7 @@ The following options related to Redis support in CAS apply equally to a number 
 # ${configurationKey}.redis.timeout=2000
 # ${configurationKey}.redis.use-ssl=false
 # ${configurationKey}.redis.read-from=MASTER
-```
 
-### Redis Pool Configuration
-
-```properties
 # ${configurationKey}.redis.pool.enabled=false
 # ${configurationKey}.redis.pool.max-active=20
 # ${configurationKey}.redis.pool.max-idle=8
@@ -799,28 +795,11 @@ The following options related to Redis support in CAS apply equally to a number 
 # ${configurationKey}.redis.pool.test-on-borrow=false
 # ${configurationKey}.redis.pool.test-on-return=false
 # ${configurationKey}.redis.pool.test-while-idle=false
-```
 
-### Redis Sentinel Configuration
-
-```properties
 # ${configurationKey}.redis.sentinel.master=mymaster
 # ${configurationKey}.redis.sentinel.node[0]=localhost:26377
 # ${configurationKey}.redis.sentinel.node[1]=localhost:26378
 # ${configurationKey}.redis.sentinel.node[2]=localhost:26379
-```
-
-### Redis Cluster Configuration
-
-```properties
-# ${configurationKey}.redis.cluster.password=
-# ${configurationKey}.redis.cluster.max-redirects=0
-# ${configurationKey}.redis.cluster.nodes[0].host=
-# ${configurationKey}.redis.cluster.nodes[0].port=
-# ${configurationKey}.redis.cluster.nodes[0].replica-of=
-# ${configurationKey}.redis.cluster.nodes[0].id=
-# ${configurationKey}.redis.cluster.nodes[0].name=
-# ${configurationKey}.redis.cluster.nodes[0].type=MASTER|SLAVE
 ```
 
 ## DDL Configuration
