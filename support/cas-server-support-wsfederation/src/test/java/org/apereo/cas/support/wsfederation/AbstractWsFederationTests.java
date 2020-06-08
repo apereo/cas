@@ -1,6 +1,7 @@
 package org.apereo.cas.support.wsfederation;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.apereo.cas.support.wsfederation.config.WsFederationAuthenticationConfiguration;
@@ -62,6 +63,10 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
     @Autowired
     @Qualifier("wsFederationHelper")
     protected WsFederationHelper wsFederationHelper;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    protected ServicesManager servicesManager;
 
     public static WsFederationCredential getCredential() {
         val standardCred = new WsFederationCredential();

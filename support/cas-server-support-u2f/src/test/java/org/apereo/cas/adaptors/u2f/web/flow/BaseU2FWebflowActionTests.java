@@ -76,6 +76,10 @@ public abstract class BaseU2FWebflowActionTests {
     protected Action u2fStartRegistrationAction;
 
     @Autowired
+    @Qualifier("u2fStartAuthenticationAction")
+    protected Action u2fStartAuthenticationAction;
+
+    @Autowired
     @Qualifier("u2fDeviceRepository")
     protected U2FDeviceRepository deviceRepository;
 

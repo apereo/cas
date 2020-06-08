@@ -41,11 +41,15 @@ public class WsFederationConfiguration implements Serializable {
     private static final String QUERYSTRING = "?wa=wsignin1.0&wtrealm=%s&wctx=%s";
 
     private transient Resource encryptionPrivateKey;
+
     private transient Resource encryptionCertificate;
 
     private String encryptionPrivateKeyPassword;
+
     private String identityAttribute;
+
     private String identityProviderIdentifier;
+
     private String identityProviderUrl;
 
     private transient List<Resource> signingCertificateResources = new ArrayList<>(0);
@@ -63,28 +67,10 @@ public class WsFederationConfiguration implements Serializable {
     private transient List<Credential> signingWallet;
 
     private String name;
+
     private String id = UUID.randomUUID().toString();
 
     private transient CasCookieBuilder cookieGenerator;
-
-    /**
-     * getSigningCredential loads up an X509Credential from a file.
-     *
-     * @param resource the signing certificate file
-     * @return an X509 credential
-     */
-    private static Credential getSigningCredential(final Resource resource) {
-        try (val inputStream = resource.getInputStream()) {
-            val certificateFactory = CertificateFactory.getInstance("X.509");
-            val certificate = (X509Certificate) certificateFactory.generateCertificate(inputStream);
-            val publicCredential = new BasicX509Credential(certificate);
-            LOGGER.debug("Signing credential key retrieved from [{}].", resource);
-            return publicCredential;
-        } catch (final Exception ex) {
-            LoggingUtils.error(LOGGER, ex);
-        }
-        return null;
-    }
 
     public String getName() {
         return StringUtils.isBlank(this.name) ? getClass().getSimpleName() : this.name;
@@ -124,10 +110,6 @@ public class WsFederationConfiguration implements Serializable {
         createSigningWallet(this.signingCertificateResources);
     }
 
-    private void createSigningWallet(final List<Resource> signingCertificateFiles) {
-        this.signingWallet = signingCertificateFiles.stream().map(WsFederationConfiguration::getSigningCredential).collect(Collectors.toList());
-    }
-
     /**
      * Gets authorization url.
      *
@@ -137,6 +119,31 @@ public class WsFederationConfiguration implements Serializable {
      */
     public String getAuthorizationUrl(final String relyingPartyIdentifier, final String wctx) {
         return String.format(getIdentityProviderUrl() + QUERYSTRING, relyingPartyIdentifier, wctx);
+    }
+
+    /**
+     * getSigningCredential loads up an X509Credential from a file.
+     *
+     * @param resource the signing certificate file
+     * @return an X509 credential
+     */
+    private static Credential getSigningCredential(final Resource resource) {
+        try (val inputStream = resource.getInputStream()) {
+            val certificateFactory = CertificateFactory.getInstance("X.509");
+            val certificate = (X509Certificate) certificateFactory.generateCertificate(inputStream);
+            val publicCredential = new BasicX509Credential(certificate);
+            LOGGER.debug("Signing credential key retrieved from [{}].", resource);
+            return publicCredential;
+        } catch (final Exception ex) {
+            LoggingUtils.error(LOGGER, ex);
+        }
+        return null;
+    }
+
+    private void createSigningWallet(final List<Resource> signingCertificateFiles) {
+        this.signingWallet = signingCertificateFiles.stream()
+            .map(WsFederationConfiguration::getSigningCredential)
+            .collect(Collectors.toList());
     }
 
     /**

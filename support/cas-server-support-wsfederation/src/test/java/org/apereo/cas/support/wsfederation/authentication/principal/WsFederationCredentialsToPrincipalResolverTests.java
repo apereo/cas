@@ -25,7 +25,7 @@ public class WsFederationCredentialsToPrincipalResolverTests extends AbstractWsF
     private AuthenticationManager authenticationManager;
 
     @Test
-    public void verifyAuth() throws Exception {
+    public void verifyAuth() {
         val creds = getCredential();
         val auth = authenticationManager.authenticate(DefaultAuthenticationTransaction.of(creds));
         assertNotNull(auth);
