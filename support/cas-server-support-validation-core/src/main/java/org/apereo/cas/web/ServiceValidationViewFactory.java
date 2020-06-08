@@ -143,26 +143,6 @@ public class ServiceValidationViewFactory {
     }
 
     /**
-     * Contains view .
-     *
-     * @param type the type
-     * @return true/false
-     */
-    public boolean containsView(final ServiceValidationViewTypes type) {
-        return containsView(type.getType());
-    }
-
-    /**
-     * Contains view .
-     *
-     * @param type the type
-     * @return true/false
-     */
-    public boolean containsView(final String type) {
-        return registeredViews.containsKey(type);
-    }
-
-    /**
      * Gets model and view.
      *
      * @param request    the request
