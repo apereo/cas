@@ -3903,6 +3903,7 @@ If the user changes the language, a special cookie is created by CAS to contain 
 # cas.sso.create-sso-cookie-on-renew-authn=true
 # cas.sso.proxy-authn-enabled=true
 # cas.sso.renew-authn-enabled=true
+# cas.sso.sso-enabled=true
 # cas.sso.required-service-pattern=
 ```
 
@@ -4240,6 +4241,20 @@ settings for this feature are available [here](Configuration-Properties-Common.h
 
 Decide how CAS should store authentication events inside a MongoDb instance. Common 
 configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.events`.
+
+### DynamoDb Events
+
+Decide how CAS should store authentication events inside a DynamoDb instance.
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
+under the configuration key `cas.events`.
+
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.evnts.dynamo-db`.
+
+```properties
+# cas.events.dynamo-db.table-name=DynamoDbCasEvents
+```
 
 ## Http Web Requests
 
@@ -5077,11 +5092,18 @@ If AUP is controlled via JDBC, decide how choices should be remembered back insi
 
 #### CouchDb
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.acceptable-usage-policy`. This feature uses the `asynchronous` setting.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under 
+the configuration key `cas.acceptable-usage-policy`. This feature uses the `asynchronous` setting.
+
+#### Couchbase
+
+Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the 
+configuration key `cas.acceptable-usage-policy.couchbase`.
 
 #### MongoDb
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.acceptable-usage-policy`.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under 
+the configuration key `cas.acceptable-usage-policy`.
 
 #### Redis
 
