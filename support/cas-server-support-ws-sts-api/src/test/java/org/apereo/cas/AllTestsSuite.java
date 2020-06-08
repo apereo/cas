@@ -4,6 +4,7 @@ import org.apereo.cas.support.claims.CustomNamespaceWSFederationClaimsClaimsHand
 import org.apereo.cas.support.claims.WrappingSecurityTokenServiceClaimsHandlerTests;
 import org.apereo.cas.support.saml.SamlAssertionRealmCodecTests;
 import org.apereo.cas.support.validation.CipheredCredentialsValidatorTests;
+import org.apereo.cas.support.validation.SecurityTokenServiceCredentialCipherExecutorTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -16,6 +17,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     SamlAssertionRealmCodecTests.class,
+    SecurityTokenServiceCredentialCipherExecutorTests.class,
     WrappingSecurityTokenServiceClaimsHandlerTests.class,
     CustomNamespaceWSFederationClaimsClaimsHandlerTests.class,
     CipheredCredentialsValidatorTests.class
