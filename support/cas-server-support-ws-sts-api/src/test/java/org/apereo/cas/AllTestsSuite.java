@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.support.claims.CustomNamespaceWSFederationClaimsClaimsHandlerTests;
+import org.apereo.cas.support.claims.WrappingSecurityTokenServiceClaimsHandlerTests;
 import org.apereo.cas.support.saml.SamlAssertionRealmCodecTests;
 import org.apereo.cas.support.validation.CipheredCredentialsValidatorTests;
 
@@ -15,6 +16,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     SamlAssertionRealmCodecTests.class,
+    WrappingSecurityTokenServiceClaimsHandlerTests.class,
     CustomNamespaceWSFederationClaimsClaimsHandlerTests.class,
     CipheredCredentialsValidatorTests.class
 })
