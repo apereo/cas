@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.u2f.web.flow;
 
-import org.apereo.cas.adaptors.u2f.U2FRegistration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.util.crypto.CertUtils;

@@ -1,7 +1,6 @@
 package org.apereo.cas.hz;
 
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastAzureDiscoveryProperties;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.JoinConfig;

@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     BlockingRadiusServerTests.class,
+    RadiusProtocolTests.class,
     NonBlockingRadiusServerTests.class,
     RadiusUtilsTests.class
 })
