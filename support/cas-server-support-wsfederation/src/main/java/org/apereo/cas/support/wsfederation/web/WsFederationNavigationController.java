@@ -46,10 +46,15 @@ public class WsFederationNavigationController {
     public static final String PARAMETER_NAME = "wsfedclientid";
 
     private final WsFederationCookieManager wsFederationCookieManager;
+
     private final WsFederationHelper wsFederationHelper;
+
     private final Collection<WsFederationConfiguration> configurations;
+
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
     private final String casLoginEndpoint;
 
     /**
@@ -65,10 +70,10 @@ public class WsFederationNavigationController {
     public View redirectToProvider(final HttpServletRequest request, final HttpServletResponse response) {
         val wsfedId = request.getParameter(PARAMETER_NAME);
         try {
-            val cfg = configurations.stream().filter(c -> c.getId().equals(wsfedId)).findFirst().orElse(null);
-            if (cfg == null) {
-                throw new IllegalArgumentException("Could not locate WsFederation configuration for " + wsfedId);
-            }
+            val cfg = configurations.stream()
+                .filter(c -> c.getId().equals(wsfedId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Could not locate WsFederation configuration for " + wsfedId));
             val service = determineService(request);
             val id = wsFederationHelper.getRelyingPartyIdentifier(service, cfg);
             val url = cfg.getAuthorizationUrl(id, cfg.getId());

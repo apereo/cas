@@ -6,6 +6,7 @@ import org.apereo.cas.support.wsfederation.attributes.GroovyWsFederationAttribut
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredentialTests;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredentialsToPrincipalResolverTests;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManagerTests;
+import org.apereo.cas.support.wsfederation.web.WsFederationNavigationControllerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -19,6 +20,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     WsFederationHelperTests.class,
+    WsFederationNavigationControllerTests.class,
     WsFederationCookieManagerTests.class,
     GroovyWsFederationAttributeMutatorTests.class,
     WsFederationCredentialsToPrincipalResolverTests.class,
