@@ -50,7 +50,7 @@ public class GrouperFacade {
      * @param subjectId the principal
      * @return the groups for subject id
      */
-    public Collection<WsGetGroupsResult> getGroupsForSubjectId(final String subjectId) {
+    public static Collection<WsGetGroupsResult> getGroupsForSubjectId(final String subjectId) {
         try {
             val groupsClient = new GcGetGroups().addSubjectId(subjectId);
             val results = groupsClient.execute().getResults();
