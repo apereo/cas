@@ -85,6 +85,7 @@ public class CasRemoteAuthenticationConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "remoteAddressAuthenticationHandler")
     public AuthenticationHandler remoteAddressAuthenticationHandler() {
         val remoteAddress = casProperties.getAuthn().getRemoteAddress();
         val bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName(),
@@ -96,6 +97,8 @@ public class CasRemoteAuthenticationConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "remoteAddressCheck")
+    @RefreshScope
     public Action remoteAddressCheck() {
         return new RemoteAddressNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
             serviceTicketRequestWebflowEventResolver.getObject(),
@@ -104,17 +107,21 @@ public class CasRemoteAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "remoteAddressPrincipalFactory")
     @Bean
+    @RefreshScope
     public PrincipalFactory remoteAddressPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "remoteAddressAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer remoteAddressAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(remoteAddressAuthenticationHandler(), defaultPrincipalResolver.getObject());
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(remoteAddressAuthenticationHandler(),
+            defaultPrincipalResolver.getObject());
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "remoteCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer remoteCasWebflowExecutionPlanConfigurer() {
         return plan -> plan.registerWebflowConfigurer(remoteAddressWebflowConfigurer());
