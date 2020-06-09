@@ -65,6 +65,7 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
 
     @JsonIgnore
     protected Collection<WsGetGroupsResult> getWsGetGroupsResults(final String principal) {
-        return GrouperFacade.getGroupsForSubjectId(principal);
+        val facade = new GrouperFacade();
+        return facade.getGroupsForSubjectId(principal);
     }
 }
