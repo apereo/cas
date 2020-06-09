@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.radius;
 
 import org.apereo.cas.adaptors.radius.server.NonBlockingRadiusServer;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
 
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.Tag;
  * @since 5.2.0
  */
 @Tag("Radius")
-@EnabledIfPortOpen(port = 1812)
 public class NonBlockingRadiusServerTests extends AbstractRadiusServerTests {
     @Override
     public RadiusServer getRadiusServer() {
