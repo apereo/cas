@@ -102,16 +102,19 @@ public class JaasAuthenticationHandlersConfigurationTests {
     public static class JaasAuthenticationHandlersConfigurationTestConfiguration {
 
         @Bean
+        @ConditionalOnMissingBean(name = "attributeRepository")
         public IPersonAttributeDao attributeRepository() {
             return new StubPersonAttributeDao();
         }
         
         @Bean
+        @ConditionalOnMissingBean(name = "authenticationServiceSelectionPlan")
         public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan() {
             return new DefaultAuthenticationServiceSelectionPlan();
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "servicesManager")
         public ServicesManager servicesManager() {
             return mock(ServicesManager.class);
         }
