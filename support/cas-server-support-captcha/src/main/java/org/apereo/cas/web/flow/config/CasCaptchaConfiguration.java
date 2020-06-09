@@ -56,6 +56,7 @@ public class CasCaptchaConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "validateCaptchaAction")
     public Action validateCaptchaAction() {
         return new ValidateCaptchaAction(casProperties.getGoogleRecaptcha());
     }
