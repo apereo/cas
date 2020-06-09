@@ -1,26 +1,23 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.config;
 
 import org.apereo.cas.AbstractCouchbaseTests;
-import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link CouchbasePersonAttributeDaoTests}.
+ * This is {@link CouchbaseConfigurationTests}.
  *
  * @author Misagh Moayyed
- * @since 5.3.0
+ * @since 6.3.0
  */
 @Tag("Couchbase")
 @EnabledIfPortOpen(port = 8091)
@@ -35,19 +32,18 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.couchbase.bucket=testbucket",
         "cas.authn.attribute-repository.couchbase.username-attribute=username"
     })
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CouchbasePersonAttributeDaoTests {
+public class CouchbaseConfigurationTests {
     @Autowired
-    @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
+    @Qualifier("couchbaseAttributeRepositoryPlanConfigurer")
+    private PersonDirectoryAttributeRepositoryPlanConfigurer couchbaseAttributeRepositoryPlanConfigurer;
+
+    @Autowired
+    @Qualifier("couchbaseAuthenticationHandler")
+    private AuthenticationHandler couchbaseAuthenticationHandler;
 
     @Test
-    public void verifyAttributes() {
-        val person = attributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
-        assertNotNull(person);
-        val attributes = person.getAttributes();
-        assertTrue(attributes.containsKey("firstname"));
-        assertTrue(attributes.containsKey("lastname"));
-        assertEquals("casuser", person.getName());
+    public void verifyOperation() {
+        assertNotNull(couchbaseAttributeRepositoryPlanConfigurer);
+        assertNotNull(couchbaseAuthenticationHandler);
     }
 }
