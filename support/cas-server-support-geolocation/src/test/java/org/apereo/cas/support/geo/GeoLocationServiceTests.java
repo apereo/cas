@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.net.InetAddress;
@@ -11,12 +12,13 @@ import java.net.InetAddress;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link AbstractGeoLocationServiceTests}.
+ * This is {@link GeoLocationServiceTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-public class AbstractGeoLocationServiceTests {
+@Tag("Simple")
+public class GeoLocationServiceTests {
     @Test
     public void verifyLocate() {
         val svc = new DummyGeoLocationService();
