@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalExceptionTest
 import org.apereo.cas.authentication.handler.ConvertCasePrincipalNameTransformerTests;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandlerSystemConfigurationTests;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandlerTests;
+import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandlersConfigurationTests;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordHandlerTests;
 import org.apereo.cas.authentication.metadata.CacheCredentialsCipherExecutorTests;
 import org.apereo.cas.authentication.policy.AllAuthenticationHandlersSucceededAuthenticationPolicyTests;
@@ -42,6 +43,7 @@ import org.junit.runner.RunWith;
     SimplePrincipalTests.class,
     ChainingPrincipalResolverTests.class,
     NullPrincipalTests.class,
+    JaasAuthenticationHandlersConfigurationTests.class,
     PasswordEncoderUtilsTests.class,
     SimplePrincipalFactoryTests.class,
     RememberMeAuthenticationMetaDataPopulatorTests.class,
