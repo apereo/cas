@@ -10,6 +10,7 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicyTests;
 import org.apereo.cas.services.ReturnMappedAttributeReleasePolicyTests;
 import org.apereo.cas.services.ReturnRestfulAttributeReleasePolicyTests;
 import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicyTests;
+import org.apereo.cas.services.consent.ChainingRegisteredServiceConsentPolicyTests;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicyTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -32,6 +33,7 @@ import org.junit.runner.RunWith;
     ScriptedRegisteredServiceAttributeReleasePolicyTests.class,
     ReturnAllowedAttributeReleasePolicyTests.class,
     ChainingAttributeReleasePolicyTests.class,
+    ChainingRegisteredServiceConsentPolicyTests.class,
     DefaultRegisteredServiceAcceptableUsagePolicyTests.class,
     DefaultRegisteredServiceConsentPolicyTests.class
 })

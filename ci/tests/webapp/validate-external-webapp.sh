@@ -1,6 +1,6 @@
 #!/bin/bash
 
-tomcatVersion="9.0.35"
+tomcatVersion="9.0.36"
 tomcatVersionTag="v${tomcatVersion}"
 tomcatUrl="https://www-eu.apache.org/dist/tomcat/tomcat-9/${tomcatVersionTag}/bin/apache-tomcat-${tomcatVersion}.zip"
 

@@ -1,7 +1,5 @@
 package org.apereo.cas.adaptors.radius;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
-
 import lombok.val;
 import net.jradius.dictionary.vsa_microsoft.Attr_MSCHAP2Success;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -19,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("Radius")
-@EnabledIfPortOpen(port = 1812)
 public abstract class AbstractRadiusServerTests {
     public static final int ACCOUNTING_PORT = 1813;
 
