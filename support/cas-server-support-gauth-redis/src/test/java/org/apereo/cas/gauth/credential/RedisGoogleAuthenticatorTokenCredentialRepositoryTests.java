@@ -44,6 +44,8 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -103,23 +105,33 @@ public class RedisGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Test
     public void verifySave() {
-        registry.save("uid", "secret", 143211, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
-        val s = registry.get("uid");
+        val id = UUID.randomUUID().toString();
+        registry.save(id, "secret", 143211, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
+        val s = registry.get(id);
         assertEquals("secret", s.getSecretKey());
         val c = registry.load();
         assertFalse(c.isEmpty());
     }
 
     @Test
+    public void verifyDelete() {
+        val id = UUID.randomUUID().toString();
+        registry.save(id, "secret", 143211, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
+        registry.delete(id);
+        assertEquals(0, registry.count());
+    }
+
+    @Test
     public void verifySaveAndUpdate() {
-        registry.save("casuser", "secret", 222222, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
-        val s = registry.get("casuser");
+        val id = UUID.randomUUID().toString();
+        registry.save(id, "secret", 222222, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
+        val s = registry.get(id);
         assertNotNull(s.getRegistrationDate());
         assertEquals(222222, s.getValidationCode());
         s.setSecretKey("newSecret");
         s.setValidationCode(999666);
         registry.update(s);
-        val s2 = registry.get("casuser");
+        val s2 = registry.get(id);
         assertEquals(999666, s2.getValidationCode());
         assertEquals("newSecret", s2.getSecretKey());
     }
