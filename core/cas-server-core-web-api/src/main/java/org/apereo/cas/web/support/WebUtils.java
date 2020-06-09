@@ -40,6 +40,7 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
+import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -1097,6 +1098,16 @@ public class WebUtils {
     }
 
     /**
+     * Gets available authentication handle names.
+     *
+     * @param context the context
+     * @return the available authentication handle names
+     */
+    public static Collection<String> getAvailableAuthenticationHandleNames(final RequestContext context) {
+        return context.getFlowScope().get("availableAuthenticationHandlerNames", Collection.class);
+    }
+
+    /**
      * Put acceptable usage policy status into flow scope.
      *
      * @param context the context
@@ -1161,6 +1172,16 @@ public class WebUtils {
         context.getFlowScope().put("existingSingleSignOnSessionAvailable", value);
     }
 
+    /**
+     * Is existing single sign on session available boolean.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static Boolean isExistingSingleSignOnSessionAvailable(final MockRequestContext context) {
+        return context.getFlowScope().get("existingSingleSignOnSessionAvailable", Boolean.class);
+    }
+    
     /**
      * Put existing single sign on session principal.
      *
@@ -1318,4 +1339,6 @@ public class WebUtils {
     public static List<String> getSelectableMultifactorAuthenticationProviders(final RequestContext requestContext) {
         return requestContext.getViewScope().get("mfaSelectableProviders", List.class);
     }
+
+
 }

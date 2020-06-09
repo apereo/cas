@@ -43,6 +43,7 @@ import static org.mockito.Mockito.*;
 public class InitialFlowSetupActionCookieTests extends AbstractWebflowActionsTests {
 
     private static final String CONST_CONTEXT_PATH = "/test";
+
     private static final String CONST_CONTEXT_PATH_2 = "/test1";
 
     @Autowired
@@ -54,7 +55,9 @@ public class InitialFlowSetupActionCookieTests extends AbstractWebflowActionsTes
     private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     private InitialFlowSetupAction action;
+
     private CasCookieBuilder warnCookieGenerator;
+
     private CasCookieBuilder tgtCookieGenerator;
 
     @BeforeEach
