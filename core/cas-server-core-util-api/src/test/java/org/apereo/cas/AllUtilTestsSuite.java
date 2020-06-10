@@ -2,6 +2,8 @@ package org.apereo.cas;
 
 import org.apereo.cas.util.DigestUtilsTests;
 import org.apereo.cas.util.HttpRequestUtilsTests;
+import org.apereo.cas.util.HttpUtilsTests;
+import org.apereo.cas.util.LoggingUtilsTests;
 import org.apereo.cas.util.crypto.GlibcCryptPasswordEncoderTests;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBeanTests;
 import org.apereo.cas.util.function.FunctionUtilsTests;
@@ -36,7 +38,9 @@ import org.junit.runner.RunWith;
     GroovyShellScriptTests.class,
     FunctionUtilsTests.class,
     DigestUtilsTests.class,
+    HttpUtilsTests.class,
     GroovyScriptResourceCacheManagerTests.class,
+    LoggingUtilsTests.class,
     CompositeX509TrustManagerTests.class,
     CompositeX509KeyManagerTests.class,
     HttpRequestUtilsTests.class,
