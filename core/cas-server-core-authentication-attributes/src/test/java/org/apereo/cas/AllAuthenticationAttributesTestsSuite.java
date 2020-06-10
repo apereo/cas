@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicyTests;
 import org.apereo.cas.services.ChainingAttributeReleasePolicyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicyTests;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicyTests;
@@ -30,6 +31,7 @@ import org.junit.runner.RunWith;
     ReturnAllAttributeReleasePolicyTests.class,
     ReturnMappedAttributeReleasePolicyTests.class,
     ReturnRestfulAttributeReleasePolicyTests.class,
+    DefaultAuthenticationAttributeReleasePolicyTests.class,
     ScriptedRegisteredServiceAttributeReleasePolicyTests.class,
     ReturnAllowedAttributeReleasePolicyTests.class,
     ChainingAttributeReleasePolicyTests.class,
