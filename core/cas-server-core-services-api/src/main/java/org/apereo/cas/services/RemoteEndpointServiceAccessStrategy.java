@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
-import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
@@ -42,14 +41,10 @@ public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServic
 
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
-        try {
-            if (super.doPrincipalAttributesAllowServiceAccess(principal, principalAttributes)) {
-                val response = HttpUtils.executeGet(this.endpointUrl, CollectionUtils.wrap("username", principal));
-                val currentCodes = StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes);
-                return response != null && currentCodes.contains(String.valueOf(response.getStatusLine().getStatusCode()));
-            }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+        if (super.doPrincipalAttributesAllowServiceAccess(principal, principalAttributes)) {
+            val response = HttpUtils.executeGet(this.endpointUrl, CollectionUtils.wrap("username", principal));
+            val currentCodes = StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes);
+            return response != null && currentCodes.contains(String.valueOf(response.getStatusLine().getStatusCode()));
         }
         return false;
     }

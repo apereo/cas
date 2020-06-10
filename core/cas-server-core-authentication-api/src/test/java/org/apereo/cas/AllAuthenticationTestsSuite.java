@@ -1,9 +1,22 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas;
 
+import org.apereo.cas.authentication.AuthenticationCredentialTypeMetaDataPopulatorTests;
+import org.apereo.cas.authentication.AuthenticationDateAttributeMetaDataPopulatorTests;
+import org.apereo.cas.authentication.CredentialCustomFieldsAttributeMetaDataPopulatorTests;
+import org.apereo.cas.authentication.DefaultAuthenticationBuilderTests;
+import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderTests;
+import org.apereo.cas.authentication.DefaultPrincipalFactoryTests;
+import org.apereo.cas.authentication.GroovyAuthenticationPostProcessorTests;
+import org.apereo.cas.authentication.GroovyAuthenticationPreProcessorTests;
+import org.apereo.cas.authentication.GroovyPrincipalFactoryTests;
+import org.apereo.cas.authentication.OneTimeTokenAccountTests;
+import org.apereo.cas.authentication.OneTimeTokenTests;
+import org.apereo.cas.authentication.RestfulPrincipalFactoryTests;
 import org.apereo.cas.authentication.adaptive.DefaultAdaptiveAuthenticationPolicyTests;
 import org.apereo.cas.authentication.adaptive.intel.BlackDotIPAddressIntelligenceServiceTests;
 import org.apereo.cas.authentication.adaptive.intel.GroovyIPAddressIntelligenceServiceTests;
 import org.apereo.cas.authentication.adaptive.intel.RestfulIPAddressIntelligenceServiceTests;
+import org.apereo.cas.authentication.credential.CredentialTests;
 import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolverTests;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolverTests;
 import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicyTests;
@@ -46,6 +59,8 @@ import org.junit.runner.RunWith;
     RejectResultCodePasswordPolicyHandlingStrategyTests.class,
     PasswordExpiringWarningMessageDescriptorTests.class,
     OneTimeTokenAccountTests.class,
+    CredentialTests.class,
+    OneTimeTokenTests.class,
     ProxyingPrincipalResolverTests.class,
     CredentialCustomFieldsAttributeMetaDataPopulatorTests.class,
     AuthenticationDateAttributeMetaDataPopulatorTests.class,
