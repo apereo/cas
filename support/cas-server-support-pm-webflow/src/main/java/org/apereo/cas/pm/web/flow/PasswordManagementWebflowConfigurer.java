@@ -2,7 +2,6 @@ package org.apereo.cas.pm.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
-import org.apereo.cas.pm.web.flow.actions.PasswordChangeAction;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -201,7 +200,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         val pswChangeAction = createActionState(flow, CasWebflowConstants.STATE_ID_PASSWORD_CHANGE_ACTION,
             createEvaluateAction(CasWebflowConstants.STATE_ID_PASSWORD_CHANGE_ACTION));
         val transitionSet = pswChangeAction.getTransitionSet();
-        transitionSet.add(createTransition(PasswordChangeAction.PASSWORD_UPDATE_SUCCESS, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS));
+        transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_PASSWORD_UPDATE_SUCCESS, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS));
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, id));
     }
 }
