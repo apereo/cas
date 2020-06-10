@@ -196,6 +196,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_SUCCESS_WITH_WARNINGS = "successWithWarnings";
 
     /**
+     * Transition id 'passwordUpdateSuccess'.
+     */
+    String TRANSITION_ID_PASSWORD_UPDATE_SUCCESS = "passwordUpdateSuccess";
+
+    /**
      * Transition id 'resetPassword'.
      */
     String TRANSITION_ID_RESET_PASSWORD = "resetPassword";

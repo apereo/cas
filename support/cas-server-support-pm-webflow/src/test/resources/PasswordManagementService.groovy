@@ -1,7 +1,15 @@
+import org.apereo.cas.pm.InvalidPasswordException
+
 def change(Object[] args) {
     def credential = args[0]
     def passwordChangeBean = args[1]
     def logger = args[2]
+    switch (credential.username) {
+        case "bad-credential":
+            return false
+        case "error-credential":
+            throw new InvalidPasswordException()
+    }
     return true
 }
 
