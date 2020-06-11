@@ -44,6 +44,7 @@ import org.apereo.cas.oidc.web.controllers.OidcIntrospectionEndpointControllerTe
 import org.apereo.cas.oidc.web.controllers.OidcWellKnownEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientConfigurationEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistrationEndpointControllerTests;
+import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.logout.OidcLogoutEndpointControllerTests;
 import org.apereo.cas.oidc.web.flow.OidcAuthenticationContextWebflowEventResolverTests;
 import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTriggerTests;
@@ -98,6 +99,7 @@ import org.junit.runner.RunWith;
     OidcDefaultAttributeToScopeClaimMapperTests.class,
     OidcAccessTokenAuthenticatorTests.class,
     OidcWebflowConfigurerTests.class,
+    OidcJwksEndpointControllerTests.class,
     OidcMultifactorAuthenticationTriggerTests.class,
     OidcWebFingerDiscoveryServiceTests.class,
     OidcCasClientRedirectActionBuilderTests.class,
