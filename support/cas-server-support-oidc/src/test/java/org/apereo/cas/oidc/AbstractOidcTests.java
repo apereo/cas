@@ -182,6 +182,10 @@ public abstract class AbstractOidcTests {
     protected OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenAndTokenCallbackUrlBuilder;
 
     @Autowired
+    @Qualifier("oidcImplicitIdTokenCallbackUrlBuilder")
+    protected OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder;
+
+    @Autowired
     @Qualifier("oauthRegisteredServiceJwtAccessTokenCipherExecutor")
     protected RegisteredServiceCipherExecutor oauthRegisteredServiceJwtAccessTokenCipherExecutor;
 
