@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,7 +33,7 @@ public class DelegatingController extends AbstractController {
      */
     private static final String DEFAULT_ERROR_VIEW_NAME = "casServiceFailureView";
 
-    private List<AbstractDelegateController> delegates;
+    private List<AbstractDelegateController> delegates = new ArrayList<>();
 
     /**
      * The view to redirect if no delegate can handle the request.
