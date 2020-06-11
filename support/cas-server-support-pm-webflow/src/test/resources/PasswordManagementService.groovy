@@ -34,5 +34,8 @@ def findPhone(Object[] args) {
 def findUsername(Object[] args) {
     def email = args[0]
     def logger = args[1]
+    if (email.contains("@baddomain")) {
+        return null
+    }
     return "casuser"
 }
