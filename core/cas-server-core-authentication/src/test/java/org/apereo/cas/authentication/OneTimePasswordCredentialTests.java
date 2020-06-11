@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OneTimePasswordCredentialTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oneTimePasswordCredential.json");
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Test

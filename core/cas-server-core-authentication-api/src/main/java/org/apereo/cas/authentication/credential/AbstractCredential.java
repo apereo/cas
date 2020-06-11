@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.ToString;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.validation.ValidationContext;
 
@@ -37,6 +39,30 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
         return StringUtils.isNotBlank(getId());
     }
 
+    @Override
+    public boolean equals(final Object other) {
+        if (other == null) {
+            return false;
+        }
+        if (!(other instanceof Credential)) {
+            return false;
+        }
+        if (other == this) {
+            return true;
+        }
+        val builder = new EqualsBuilder();
+        builder.append(getId(), ((Credential) other).getId());
+        return builder.isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        val builder = new HashCodeBuilder(11, 41);
+        builder.append(getClass().getName());
+        builder.append(getId());
+        return builder.toHashCode();
+    }
+    
     /**
      * Validate.
      *

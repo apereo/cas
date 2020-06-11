@@ -23,16 +23,20 @@ public class CredentialTests {
 
     @Test
     public void verifyCred() {
-        val c = new AbstractCredential() {
-            private static final long serialVersionUID = -1746359565306558329L;
+        val c1 = getCredential();
+        assertNotNull(c1.getCredentialClass());
+        assertTrue(c1.isValid());
+    }
 
-            @Override
-            public String getId() {
-                return UUID.randomUUID().toString();
-            }
-        };
-        assertNotNull(c.getCredentialClass());
-        assertTrue(c.isValid());
+    @Test
+    public void verifyEquals() {
+        val c1 = getCredential();
+        val c2 = getCredential();
+        assertNotNull(c1.getCredentialClass());
+        assertTrue(c1.isValid());
+        assertTrue(Math.abs(c1.hashCode()) > 0);
+        assertFalse(c1.equals(c2));
+        assertTrue(c1.equals(c1));
     }
 
     @Test
@@ -53,6 +57,17 @@ public class CredentialTests {
                 c.validate(context);
             }
         });
+    }
+
+    private AbstractCredential getCredential() {
+        return new AbstractCredential() {
+            private static final long serialVersionUID = -1746359565306558329L;
+
+            @Override
+            public String getId() {
+                return UUID.randomUUID().toString();
+            }
+        };
     }
 
 }
