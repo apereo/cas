@@ -12,18 +12,13 @@ import org.springframework.binding.message.MessageContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.webflow.context.ExternalContextHolder.setExternalContext;
-import static org.springframework.webflow.execution.RequestContextHolder.setRequestContext;
 
 /**
  * This is {@link SendForgotUsernameInstructionsActionTests}.

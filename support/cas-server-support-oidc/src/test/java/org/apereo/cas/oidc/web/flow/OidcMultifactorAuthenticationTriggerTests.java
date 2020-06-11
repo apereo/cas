@@ -2,7 +2,6 @@ package org.apereo.cas.oidc.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderAbsentException;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.oidc.AbstractOidcTests;
@@ -19,16 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.AfterEach;
-
-import static org.apereo.cas.util.junit.Assertions.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
-
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -14,7 +14,6 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.CollectionUtils;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -38,7 +37,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -67,7 +65,7 @@ import static org.mockito.Mockito.*;
     "cas.authn.jaas[0].realm=CAS",
     "cas.authn.jaas[0].password-policy.enabled=true",
     "cas.authn.jaas[0].password-policy.account-state-handling-enabled=true",
-    "cas.authn.jaas[0].login-config-type=JavaLoginConfig",
+    "cas.authn.jaas[0].login-config-type=JavaLoginConfig"
 })
 public class JaasAuthenticationHandlersConfigurationTests {
     @Autowired

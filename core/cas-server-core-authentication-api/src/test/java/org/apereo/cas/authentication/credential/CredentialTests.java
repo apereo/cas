@@ -2,23 +2,15 @@ package org.apereo.cas.authentication.credential;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.validation.ValidationContext;
 
 import java.util.UUID;
 
-import static org.apereo.cas.util.junit.Assertions.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
-
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CredentialTests}.
@@ -33,6 +25,7 @@ public class CredentialTests {
     public void verifyCred() {
         val c = new AbstractCredential() {
             private static final long serialVersionUID = -1746359565306558329L;
+
             @Override
             public String getId() {
                 return UUID.randomUUID().toString();
@@ -46,6 +39,7 @@ public class CredentialTests {
     public void verifyValid() {
         val c = new AbstractCredential() {
             private static final long serialVersionUID = -1746359565306558329L;
+
             @Override
             public String getId() {
                 return null;
@@ -60,5 +54,5 @@ public class CredentialTests {
             }
         });
     }
-    
+
 }
