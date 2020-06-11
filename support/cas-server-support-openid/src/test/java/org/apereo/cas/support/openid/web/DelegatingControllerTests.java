@@ -6,6 +6,7 @@ import org.apereo.cas.web.DelegatingController;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.3.0
+ * @deprecated Since 6.2.0
  */
 @Deprecated(since = "6.2.0")
 @Tag("Simple")
@@ -32,6 +34,11 @@ public class DelegatingControllerTests {
         request.setMethod("POST");
         val response = new MockHttpServletResponse();
         val ctrl = new DelegatingController();
+
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        ctrl.setApplicationContext(applicationContext);
+
         val mv = ctrl.handleRequest(request, response);
         assertNotNull(mv);
         assertEquals(ctrl.getFailureView(), mv.getViewName());
