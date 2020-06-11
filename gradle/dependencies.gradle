@@ -198,12 +198,12 @@ ext.libraries = [
                 }
         ],
         cassandra               : [
-                dependencies.create("com.datastax.oss:java-driver-core:$cassandraDriverVersion") {
+                dependencies.create("com.datastax.oss:java-driver-core:$apacheCassandraVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.codehaus.groovy", module: "groovy-json")
                     exclude(group: "org.codehaus.groovy", module: "groovy")
                 },
-                dependencies.create("com.datastax.oss:java-driver-mapper-runtime:$cassandraDriverVersion") {
+                dependencies.create("com.datastax.oss:java-driver-mapper-runtime:$apacheCassandraVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.codehaus.groovy", module: "groovy-json")
                     exclude(group: "org.codehaus.groovy", module: "groovy")
@@ -867,13 +867,13 @@ ext.libraries = [
                 }
         ],
         ignite                  : [
-                dependencies.create("org.apache.ignite:ignite-core:$igniteVersion") {
+                dependencies.create("org.apache.ignite:ignite-core:$apacheIgniteVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                 },
-                dependencies.create("org.apache.ignite:ignite-log4j2:$igniteVersion") {
+                dependencies.create("org.apache.ignite:ignite-log4j2:$apacheIgniteVersion") {
                     exclude(group: "log4j", module: "log4j")
                 },
-                dependencies.create("org.apache.ignite:ignite-spring:$igniteVersion") {
+                dependencies.create("org.apache.ignite:ignite-spring:$apacheIgniteVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-beans")
@@ -2087,7 +2087,7 @@ ext.libraries = [
 
         },
         shiro                   : [
-                dependencies.create("org.apache.shiro:shiro-core:$shiroVersion") {
+                dependencies.create("org.apache.shiro:shiro-core:$apacheShiroVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-beanutils", module: "commons-beanutils")
 
@@ -2548,7 +2548,7 @@ ext.libraries = [
                     exclude(group: "org.apache.kafka", module: "kafka-clients")
 
                 },
-                dependencies.create("org.springframework.kafka:spring-kafka:$kafkaSpringVersion") {
+                dependencies.create("org.springframework.kafka:spring-kafka:$springKafkaVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.springframework", module: "spring-messaging")
                     exclude(group: "org.springframework", module: "spring-tx")

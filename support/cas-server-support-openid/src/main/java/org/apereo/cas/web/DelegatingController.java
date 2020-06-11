@@ -2,6 +2,7 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.CasProtocolConstants;
 
+import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.text.StringEscapeUtils;
@@ -23,6 +24,7 @@ import java.util.List;
  */
 @Setter
 @Deprecated(since = "6.2.0")
+@Getter
 public class DelegatingController extends AbstractController {
 
     /**
