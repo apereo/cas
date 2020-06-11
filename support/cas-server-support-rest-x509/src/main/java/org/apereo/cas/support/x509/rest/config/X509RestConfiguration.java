@@ -13,8 +13,10 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -48,11 +50,14 @@ public class X509RestConfiguration {
 
     @ConditionalOnProperty(prefix = "cas.rest", name = "tls-client-auth", havingValue = "true")
     @Bean
+    @RefreshScope
     public RestHttpRequestCredentialFactory x509RestTlsClientCert() {
         return new X509RestTlsClientCertCredentialFactory();
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "x509RestHttpRequestCredentialFactoryConfigurer")
     public RestHttpRequestCredentialFactoryConfigurer x509RestHttpRequestCredentialFactoryConfigurer() {
         return factory -> {
             val restProperties = casProperties.getRest();
