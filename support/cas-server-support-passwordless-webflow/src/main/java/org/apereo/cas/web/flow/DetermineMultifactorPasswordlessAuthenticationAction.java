@@ -121,7 +121,16 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends Abstra
      */
     protected boolean shouldActivateMultifactorAuthenticationFor(final RequestContext requestContext,
                                                                  final PasswordlessUserAccount user) {
-        return casProperties.getAuthn().getPasswordless().isMultifactorAuthenticationActivated()
-            || user.isMultifactorAuthenticationEligible();
+        val status = user.getMultifactorAuthenticationEligible();
+        if (status.isTrue()) {
+            LOGGER.trace("Passwordless account [{}] is eligible for multifactor authentication", user);
+            return true;
+        }
+        if (status.isFalse()) {
+            LOGGER.trace("Passwordless account [{}] is not eligible for multifactor authentication", user);
+            return false;
+        }
+        return casProperties.getAuthn().getPasswordless().isMultifactorAuthenticationActivated();
+
     }
 }

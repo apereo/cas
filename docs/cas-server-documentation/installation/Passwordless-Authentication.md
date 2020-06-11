@@ -99,7 +99,7 @@ def run(Object[] args) {
     account.setName("TestUser")
     account.setPhone("123-456-7890") 
     account.setAttributes(Map.of("...", List.of("...", "...")) 
-    account.setMultifactorAuthenticationEligible(false)  
+    account.setMultifactorAuthenticationEligible(TriStateBoolean.FALSE)  
     account.setRequestPassword(false)
     return account
 }
@@ -117,8 +117,8 @@ would produce a response body similar to the following:
   "email" : "cas@example.org",
   "phone" : "123-456-7890",
   "name" : "CASUser",        
-  "multifactorAuthenticationEligible": false,  
-  "delegatedAuthenticationEligible": false,  
+  "multifactorAuthenticationEligible": FALSE,  
+  "delegatedAuthenticationEligible": FALSE,  
   "requestPassword": false,
   "attributes":{ "lastName" : ["...", "..."] }
 }
