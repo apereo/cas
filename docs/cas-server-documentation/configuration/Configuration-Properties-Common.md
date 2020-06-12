@@ -471,6 +471,25 @@ The following options related to Person Directory support in CAS when it attempt
 # ${configurationKey}.active-attribute-repository-ids=StubRepository,etc
 ```
 
+## Git Configuration
+
+The following options related to Git integration support in CAS when it attempts to connect and pull/push changes, given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.git.repository-url=https://github.com/repository
+# ${configurationKey}.git.branches-to-clone=master
+# ${configurationKey}.git.active-branch=master
+# ${configurationKey}.git.sign-commits=false
+# ${configurationKey}.git.username=
+# ${configurationKey}.git.password=
+# ${configurationKey}.git.clone-directory=file:/tmp/cas-service-registry
+# ${configurationKey}.git.push-changes=false
+# ${configurationKey}.git.private-key-passphrase=
+# ${configurationKey}.git.private-key-path=
+# ${configurationKey}.git.ssh-session-password=
+# ${configurationKey}.git.timeout=PT10S
+```
+
 ## InfluxDb Configuration
 
 The following options related to InfluxDb support in CAS apply equally to a number of CAS components given the component's *configuration key*:

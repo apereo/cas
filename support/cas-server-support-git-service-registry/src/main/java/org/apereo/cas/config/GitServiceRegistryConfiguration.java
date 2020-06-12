@@ -77,6 +77,7 @@ public class GitServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "gitServiceRegistryExecutionPlanConfigurer")
+    @RefreshScope
     public ServiceRegistryExecutionPlanConfigurer gitServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(gitServiceRegistry());
     }
