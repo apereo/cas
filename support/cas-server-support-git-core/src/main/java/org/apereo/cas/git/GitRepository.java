@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.MergeCommand;
 import org.eclipse.jgit.api.TransportConfigCallback;
@@ -121,11 +122,14 @@ public class GitRepository implements DisposableBean {
     @SneakyThrows
     public void commitAll(final String message) {
         this.gitInstance.add().addFilepattern(".").call();
+        val config = this.gitInstance.getRepository().getConfig();
+        val name = StringUtils.defaultIfBlank(config.getString("user", null, "name"), "CAS");
+        val email = StringUtils.defaultIfBlank(config.getString("user", null, "email"), "cas@apereo.org");
         this.gitInstance.commit()
             .setMessage(message)
             .setAll(true)
             .setSign(this.signCommits)
-            .setAuthor("CAS", "cas@apereo.org")
+            .setAuthor(name, email)
             .call();
     }
 
