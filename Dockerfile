@@ -1,5 +1,6 @@
-FROM gradle/build-cache-node:latest
+FROM adoptopenjdk/openjdk11:alpine-slim as jar
+RUN wget -O build-cache.jar https://docs.gradle.com/build-cache-node/jar/build-cache-node-9.1.jar
 
-# CMD "java -jar ./build-cache-node.jar --port $PORT"
-ENTRYPOINT ["java", "-jar", "build-cache-node.jar", "--port $PORT"]
-
+FROM adoptopenjdk/openjdk11:alpine-slim
+COPY --from=jar build-cache.jar .
+RUN java -jar ./build-cache.jar --port $PORT
