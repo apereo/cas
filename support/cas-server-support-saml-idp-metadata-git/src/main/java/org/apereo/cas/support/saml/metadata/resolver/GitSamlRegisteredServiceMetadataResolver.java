@@ -16,7 +16,6 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jgit.treewalk.TreeWalk;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 import java.io.File;
