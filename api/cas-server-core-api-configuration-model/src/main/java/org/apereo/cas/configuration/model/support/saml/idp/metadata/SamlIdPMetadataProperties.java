@@ -64,6 +64,12 @@ public class SamlIdPMetadataProperties implements Serializable {
     private MongoDbSamlMetadataProperties mongo = new MongoDbSamlMetadataProperties();
 
     /**
+     * Properties pertaining to git saml metadata resolvers.
+     */
+    @NestedConfigurationProperty
+    private GitSamlMetadataProperties git = new GitSamlMetadataProperties();
+
+    /**
      * Properties pertaining to jpa metadata resolution.
      */
     @NestedConfigurationProperty

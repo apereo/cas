@@ -100,16 +100,17 @@ public class GitRepository implements DisposableBean {
      */
     @SneakyThrows
     public GitObject readObject(final TreeWalk treeWalk) {
-        val objectId = treeWalk.getObjectId(0);
-        val repository = this.gitInstance.getRepository();
-        val loader = repository.open(objectId);
-        val out = new ByteArrayOutputStream();
-        loader.copyTo(out);
-        return GitObject.builder()
-            .content(out.toString(StandardCharsets.UTF_8))
-            .treeWalk(treeWalk)
-            .objectId(objectId)
-            .build();
+        try (val out = new ByteArrayOutputStream()) {
+            val objectId = treeWalk.getObjectId(0);
+            val repository = this.gitInstance.getRepository();
+            val loader = repository.open(objectId);
+            loader.copyTo(out);
+            return GitObject.builder()
+                .content(out.toString(StandardCharsets.UTF_8))
+                .path(treeWalk.getPathString())
+                .objectId(objectId)
+                .build();
+        }
     }
 
     /**
@@ -155,7 +156,13 @@ public class GitRepository implements DisposableBean {
     public boolean pull() {
         val providers = this.credentialsProvider.toArray(CredentialsProvider[]::new);
         val remotes = this.gitInstance.getRepository().getRemoteNames();
-        return !remotes.isEmpty() && this.gitInstance.pull()
+
+        if (remotes.isEmpty()) {
+            LOGGER.debug("No remote repositories are specified to pull changes");
+            return false;
+        }
+
+        return this.gitInstance.pull()
             .setTimeout((int) timeoutInSeconds)
             .setFastForward(MergeCommand.FastForwardMode.FF_ONLY)
             .setRebase(false)
@@ -181,8 +188,8 @@ public class GitRepository implements DisposableBean {
     public static class GitObject {
         private final String content;
 
-        private final TreeWalk treeWalk;
-
         private final ObjectId objectId;
+
+        private final String path;
     }
 }

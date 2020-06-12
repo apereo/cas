@@ -3271,6 +3271,14 @@ under the configuration key `cas.authn.saml-idp.metadata`.
 The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption 
 settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.saml-idp.metadata.mongo`.
 
+#### SAML Metadata Git
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#git-configuration) under the configuration key `cas.authn.saml-idp.metadata`.
+ 
+The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & 
+encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the 
+configuration key `cas.authn.saml-idp.metadata.git`.
+
 #### SAML Metadata MongoDb
 
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.saml-idp.metadata`.
@@ -4380,20 +4388,8 @@ To learn more about this topic, [please review this guide](../services/YAML-Serv
 
 Works with git repository to fetch and manage service registry definitions.
 
-```properties
-# cas.service-registry.git.repository-url=https://github.com/repository
-# cas.service-registry.git.branches-to-clone=master
-# cas.service-registry.git.active-branch=master
-# cas.service-registry.git.sign-commits=false
-# cas.service-registry.git.username=
-# cas.service-registry.git.password=
-# cas.service-registry.git.clone-directory=file:/tmp/cas-service-registry
-# cas.service-registry.git.push-changes=false
-# cas.service-registry.git.private-key-passphrase=
-# cas.service-registry.git.private-key-path=
-# cas.service-registry.git.ssh-session-password=
-# cas.service-registry.git.timeout=PT10S
-```
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#git-configuration) 
+under the configuration key `cas.service-registry`.
 
 To learn more about this topic, [please review this guide](../services/Git-Service-Management.html).
 
