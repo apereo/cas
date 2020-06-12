@@ -1,0 +1,20 @@
+version: 2
+cache:
+  targetSize: 10000
+  maxArtifactSize: 200
+  credentials:
+    anonymousLevel: "READ"
+    users:
+      - username: "ci"
+        password:
+          hash: "5eecd58bbdf968954504549f157f7f0b5390164e7a701a9be5da8a8e68f05f08"
+          salt: "f4870e81d6eac2483faa6c7eb536fc7d7e7f4c13d4d12ff85a927185f0a7c368"
+          algorithm: "sha256"
+        level: "READWRITE"
+        note: "Continuous Integration User"
+uiAccess:
+  username: "cas"
+  password:
+    hash: "28c9c0fd01858b535eac9a96ba5b561e88fa0a36e5caf7ecc266379ff2d8ff12"
+    salt: "4d33ba520fba9c38613ee26ba66f0fbe1325c4905d0858c56ad29f22290e4563"
+    algorithm: "sha256"

@@ -1,1 +1,1 @@
-web:    java $JAVA_OPTS -jar build-cache-node.jar --port $PORT 
+web:    java $JAVA_OPTS -jar build-cache-node.jar --port $PORT --data-dir .
