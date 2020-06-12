@@ -1,8 +1,5 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
-import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.support.saml.BaseGitSamlMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
@@ -17,9 +14,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
@@ -36,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @TestPropertySource(properties = {
+    "cas.authn.saml-idp.metadata.location=file:/tmp",
     "cas.saml.idp.metadata.git.sign-commits=false",
     "cas.saml.idp.metadata.git.repository-url=file:/tmp/cas-metadata-data.git"
 })

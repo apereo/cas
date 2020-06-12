@@ -104,7 +104,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @WebAppConfiguration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableWebMvc
-@Tag("Simple")
+@Tag("WebApp")
 public class WiringConfigurationTests {
     @Autowired
     private ApplicationContext applicationContext;

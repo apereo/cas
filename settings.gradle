@@ -1,3 +1,22 @@
+ext.isCiServer = System.getenv().containsKey("CI")
+
+buildCache {
+    local {
+        enabled = !isCiServer
+    }
+    remote(HttpBuildCache) {
+        url = 'https://cas-gradle-buildcache.herokuapp.com/cache/'
+        push = isCiServer
+        
+        /*
+        credentials {
+            username = 'some-user'
+            password = 'some-complicated-password'
+        }
+        */
+    }
+}
+
 rootProject.name = "cas-server"
 
 include "api:cas-server-core-api"

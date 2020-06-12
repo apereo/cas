@@ -27,12 +27,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfPortOpen(port = 10389)
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = {
-        "cas.monitor.endpoints.ldap.ldap-authz.groupFilter=businessCategory={user}",
-        "cas.monitor.endpoints.ldap.ldap-authz.groupBaseDn=ou=people,dc=example,dc=org",
+        "cas.monitor.endpoints.ldap.ldap-authz.group-filter=businessCategory={user}",
+        "cas.monitor.endpoints.ldap.ldap-authz.group-base-dn=ou=people,dc=example,dc=org",
         "cas.monitor.endpoints.ldap.ldap-authz.baseDn=ou=people,dc=example,dc=org",
-        "cas.monitor.endpoints.ldap.ldap-authz.searchFilter=cn={user}",
-        "cas.monitor.endpoints.ldap.ldap-authz.groupAttribute=roomNumber",
-        "cas.monitor.endpoints.ldap.ldap-authz.groupPrefix=ROLE_",
+        "cas.monitor.endpoints.ldap.ldap-authz.search-filter=cn={user}",
+        "cas.monitor.endpoints.ldap.ldap-authz.group-attribute=roomNumber",
+        "cas.monitor.endpoints.ldap.ldap-authz.group-prefix=ROLE_",
         "cas.monitor.endpoints.ldap.ldap-url=ldap://localhost:10389",
         "cas.monitor.endpoints.ldap.base-dn=ou=people,dc=example,dc=org",
         "cas.monitor.endpoints.ldap.search-filter=cn={user}",

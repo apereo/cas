@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     },
     webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
-@Tag("Simple")
+@Tag("WebApp")
 public class CasEmbeddedContainerTomcatFiltersConfigurationTests {
     @Autowired
     @Qualifier("tomcatCsrfPreventionFilter")
