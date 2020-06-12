@@ -4302,8 +4302,9 @@ Control how CAS should respond and validate incoming HTTP requests.
 # cas.http-web-request.custom-headers.header-name1=headerValue1
 # cas.http-web-request.custom-headers.header-name2=headerValue2
 
-# spring.http.encoding.charset=UTF-8
-# spring.http.encoding.force=true
+# server.servlet.encoding.charset=UTF-8
+# server.servlet.encoding.enabled=true
+# server.servlet.encoding.force=true
 ```
 
 ## Http Client
