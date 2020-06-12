@@ -1,1 +1,1 @@
-web:    java $JAVA_OPTS -jar build-cache-node-9.1.jar --port=$PORT 
+web:    java $JAVA_OPTS -jar build-cache-node-9.1.jar --port $PORT 
