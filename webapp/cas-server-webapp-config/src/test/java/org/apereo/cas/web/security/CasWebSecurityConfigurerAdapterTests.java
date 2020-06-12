@@ -41,16 +41,16 @@ import org.springframework.test.context.web.WebAppConfiguration;
         "cas.monitor.endpoints.jaas.login-context-name=CAS",
 
         "cas.monitor.endpoints.ldap.ldap-url=ldap://localhost:10389",
-        "cas.monitor.endpoints.ldap.baseDn=ou=people,dc=example,dc=org",
-        "cas.monitor.endpoints.ldap.searchFilter=uid={user}",
-        "cas.monitor.endpoints.ldap.bindDn=cn=Directory Manager",
-        "cas.monitor.endpoints.ldap.bindCredential=password",
+        "cas.monitor.endpoints.ldap.base-dn=ou=people,dc=example,dc=org",
+        "cas.monitor.endpoints.ldap.search-filter=uid={user}",
+        "cas.monitor.endpoints.ldap.bind-dn=cn=Directory Manager",
+        "cas.monitor.endpoints.ldap.bind-credential=password",
 
         "cas.monitor.endpoints.jdbc.query=SELECT * FROM USERS",
         "cas.monitor.endpoints.jdbc.role-prefix=USER_",
 
-        "cas.monitor.endpoints.defaultEndpointProperties.requiredIpAddresses=127.+",
-        "cas.monitor.endpoints.defaultEndpointProperties.access=IP_ADDRESS",
+        "cas.monitor.endpoints.default-endpoint-properties.requiredIpAddresses=127.+",
+        "cas.monitor.endpoints.default-endpoint-properties.access=IP_ADDRESS",
 
         "cas.monitor.endpoints.endpoint.health.access=IP_ADDRESS",
         "cas.monitor.endpoints.endpoint.health.requiredIpAddresses=196.+",
