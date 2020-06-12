@@ -1,1 +1,1 @@
-web:    wget --no-check-certificate -O cache.jar https://docs.gradle.com/build-cache-node/jar/build-cache-node-9.1.jar && java $JAVA_OPTS -jar cache.jar --port=$PORT 
+web:    java $JAVA_OPTS -jar cache.jar --port=$PORT 
