@@ -4,4 +4,4 @@ RUN wget --no-check-certificate -O build-cache.jar https://docs.gradle.com/build
 FROM adoptopenjdk/openjdk11:alpine-slim
 COPY --from=jar build-cache.jar .
 
-ENTRYPOINT ["java", "-jar", "./build-cache.jar", "--port", "$PORT"]
+ENTRYPOINT ["java", "-jar", "./build-cache.jar", "--port", $PORT]
