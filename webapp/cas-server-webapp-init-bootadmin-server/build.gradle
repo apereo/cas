@@ -5,7 +5,8 @@ dependencies {
     implementation project(":core:cas-server-core-logging")
     implementation project(":core:cas-server-core-logging-api")
     implementation project(":core:cas-server-core-util-api")
-    
+
+    implementation libraries.springbootwebflux
     implementation libraries.springsecurityweb
     implementation libraries.springsecurityconfig
     implementation libraries.thymeleaf

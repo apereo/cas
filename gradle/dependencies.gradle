@@ -2210,6 +2210,24 @@ ext.libraries = [
 
                 }
         ],
+        springbootwebflux : [
+                dependencies.create("org.springframework.boot:spring-boot-starter-webflux:$springBootVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "log4j-over-slf4j")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-messaging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.hibernate", module: "hibernate-validator")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                }
+        ],
         springbootlogging       : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-logging:$springBootVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
