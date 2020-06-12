@@ -115,7 +115,7 @@ document to carry the service definition's name and numeric identifier using the
 
 ## Git
 
-Metadata documents may also be stored in and fetched from a Git repositories. This may specially be used to avoid copying metadata files across CAS nodes in a cluster, particularly where one needs to deal with more than a few bilateral SAML integrations. Metadata documents are stored as XML files, and their signing certificate, optionally, is expected to be found in a `.pem` file by the same name. (i.e. `SP.xml`'s signature can be found in `SP.pem`).
+Metadata documents may also be stored in and fetched from Git repositories. This may specially be used to avoid copying metadata files across CAS nodes in a cluster, particularly where one needs to deal with more than a few bilateral SAML integrations. Metadata documents are stored as XML files, and their signing certificate, optionally, is expected to be found in a `.pem` file by the same name in the repository. (i.e. `SP.xml`'s certificate can be found in `SP.pem`).
 
 Support is enabled by including the following module in the overlay:
 
@@ -139,6 +139,9 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
   "metadataLocation" : "git://"
 }
 ```
+
+Give the above definition, the expectation is that the git repository 
+contains a `SAMLService.xml` file which may optionally also be accompanied by a `SAMLService.pem` file.
 
 <div class="alert alert-info"><strong>Metadata Location</strong><p>
 The metadata location in the registration record above simply needs to be specified as <code>git://</code> to signal to CAS that 
