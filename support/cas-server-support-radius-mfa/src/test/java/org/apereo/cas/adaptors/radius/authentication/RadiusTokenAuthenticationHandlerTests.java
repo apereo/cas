@@ -7,7 +7,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import net.jradius.dictionary.Attr_State;
-import net.jradius.packet.attribute.value.AttributeValue;
 import net.jradius.packet.attribute.value.StringValue;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -22,13 +21,9 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
-import net.jradius.dictionary.Attr_State;
-import net.jradius.packet.attribute.value.AttributeValue;
-
 import javax.security.auth.login.FailedLoginException;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
