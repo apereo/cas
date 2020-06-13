@@ -272,46 +272,9 @@ When you're done, create a remote debugger configuration in your IDE that connec
 
 ![image](https://cloud.githubusercontent.com/assets/1205228/26517058/d09a8288-4245-11e7-962e-004bfe174a0a.png)
 
-### Dependency Updates
 
-In order to get a full report on dependencies, run the following command at the root:
-
-```bash
-./gradlew dependencyUpdates -Drevision=release
-```
-
-## Continuous Integration
-
-CAS uses [Travis CI](https://travis-ci.org/apereo/cas/builds) as its main continuous integration tool. The build primarily is
-controlled by the `.travis.yml` file, defined at the root of the project directory. 
-
-The following special commit messages are recognized by Travis CI to control aspects
-of build behavior:
-
-| Commit Message                    | Description
-|-----------------------------------+-----------------------------------------------------------------------------------+
-| `[skip ci]`                       | Skip running a build completely.
-| `[force build]`                   | Ensure the build job is executed forcefully regardless of the commit changeset.
-
-Travis CI is mainly responsible for the following tasks:
-
-- Running a full build, including tests and style checks.
-- Pushing project documentation artifacts into the `gh-pages` branch.
-- Uploading snapshots to relevant repositories.
-
-The build is triggered for automatically for all pull requests, direct commits, etc where different
-policies may apply for each change type.
 
 ## Manual submodule testing
-
-The following shell commands may be used to test a submodule manually:
-
-```bash
-# change directory to a submodule
-../../gradlew --build-cache -DtestCategoryType=SIMPLE test --parallel -x check
-```
-
-`testCategoryType` need to be specified in order for the test to run. List of `testCategoryType` and their usage can be found in `gradle/tests.gradle` file.
 
 To simplify the test execution process, you may take advantage of the `testcas.sh` script found at the root of the repository as such:
 
@@ -319,12 +282,3 @@ To simplify the test execution process, you may take advantage of the `testcas.s
 # chmod +x ./testcas.sh
 ./testcas.sh --category <category> [--test <test-class>] [--debug] [--coverage]
 ```
-
-The accepted parameters are:
-
-| Parameter            | Description
-|----------------------+--------------------------------+
-| `category`           | `testCategoryType` to use.
-| `test`               | Optional. When specified using the syntax `<fully-qualified-class-name#testMethodName>`, it will filter test execution by class and/or method.
-| `debug`              | Optional. When set to `true`, it will launch the tests in debug mode.
-| `coverage`           | Optional. When set to `true`, it will launch collect test coverage results.
