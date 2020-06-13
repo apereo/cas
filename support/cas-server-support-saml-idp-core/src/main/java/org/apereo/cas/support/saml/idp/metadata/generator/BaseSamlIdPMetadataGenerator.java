@@ -108,7 +108,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
     private String buildMetadataGeneratorParameters(final Pair<String, String> signing,
                                                     final Pair<String, String> encryption,
                                                     final Optional<SamlRegisteredService> registeredService) {
-        val template = configurationContext.getResourceLoader().getResource("classpath:/template-idp-metadata.xml");
+        val template = configurationContext.getApplicationContext().getResource("classpath:/template-idp-metadata.xml");
         val signingCert = SamlIdPMetadataGenerator.cleanCertificate(signing.getKey());
         val encryptionCert = SamlIdPMetadataGenerator.cleanCertificate(encryption.getKey());
 

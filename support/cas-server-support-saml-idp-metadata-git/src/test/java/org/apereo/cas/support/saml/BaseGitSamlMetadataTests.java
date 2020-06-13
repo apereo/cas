@@ -22,6 +22,7 @@ import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.SamlIdPConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
+import org.apereo.cas.config.SamlIdPGitIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPGitRegisteredServiceMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -53,6 +54,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @Tag("FileSystem")
 @SpringBootTest(classes = {
     SamlIdPGitRegisteredServiceMetadataConfiguration.class,
+    SamlIdPGitIdPMetadataConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,

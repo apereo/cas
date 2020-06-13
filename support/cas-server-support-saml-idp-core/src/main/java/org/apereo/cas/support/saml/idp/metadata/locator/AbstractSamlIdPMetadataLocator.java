@@ -136,6 +136,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
             LOGGER.trace("Fetched and cached SAML IdP metadata document [{}] under key [{}]", metadataDocument, key);
             map.put(key, metadataDocument);
         }
+        LOGGER.trace("SAML IdP metadata document [{}] is considered invalid", metadataDocument);
         return metadataDocument;
     }
 

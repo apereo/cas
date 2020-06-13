@@ -59,7 +59,7 @@ public class CouchDbTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry() {
         val couchDb = casProperties.getTicket().getRegistry().getCouchDb();
         val c = new CouchDbTicketRegistry(ticketRegistryCouchDbRepository(), couchDb.getRetries());
-        c.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(couchDb.getCrypto(), "couchdb"));
+        c.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(couchDb.getCrypto(), "couch-db"));
         return c;
     }
 

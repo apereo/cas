@@ -88,7 +88,7 @@ public class GenerateSamlIdPMetadataCommand {
             val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
                 .samlIdPMetadataLocator(locator)
                 .samlIdPCertificateAndKeyWriter(writer)
-                .resourceLoader(resourceLoader)
+                .a(resourceLoader)
                 .casProperties(props)
                 .metadataCipherExecutor(CipherExecutor.noOpOfStringToString())
                 .build();
