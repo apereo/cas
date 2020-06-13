@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.mdui;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.ext.saml2mdui.DisplayName;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("Utility")
 public class MetadataUIUtilsTests {
     @Test
     public void verifyNoDescriptor() {
