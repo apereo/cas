@@ -1,6 +1,6 @@
 ext.isCiServer = System.getenv().containsKey("CI")
-ext.buildCacheUser = System.getenv().containsKey("GRADLE_BUILDCACHE_USER") 
-ext.buildCachePsw = System.getenv().containsKey("GRADLE_BUILDCACHE_PSW")  
+ext.buildCacheUser = System.getenv("GRADLE_BUILDCACHE_USER") 
+ext.buildCachePsw = System.getenv("GRADLE_BUILDCACHE_PSW")  
 
 buildCache {
     local {
