@@ -150,6 +150,18 @@ SAML metadata for registered service provider must be fetched from Git repositor
 
 To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-git).
 
+### Identity Provider Metadata
+
+Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored via Git. Artifacts such as the metadata, signing and encryption keys, etc are kept on the file-system in distinct directory locations inside the repository and data is pushed to or pulled from git repositories on demand.
+
+Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-git).
+
+#### Per Service
+
+Identity provider metadata, certificates and keys can also be defined on a per-service basis to override the global defaults.
+Metadata documents that would be applicable to a service definition need to adjust the `appliesTo` field in the metadata
+document, which is used to construct the directory path to metadata artifacts.
+
 ## MongoDb
 
 Metadata documents may also be stored in and fetched from a MongoDb instance.  This may specially be used to avoid copying metadata files across CAS nodes in a cluster, particularly where one needs to deal with more than a few bilateral SAML integrations. Metadata documents are stored in and fetched from a single pre-defined collection that is taught to CAS via settings.  The outline of the document is as follows:

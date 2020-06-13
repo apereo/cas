@@ -38,12 +38,14 @@ public class SamlIdPAmazonS3RegisteredServiceMetadataConfiguration {
     private ObjectProvider<AmazonS3> amazonS3Client;
 
     @Bean
+    @RefreshScope
     public SamlRegisteredServiceMetadataResolver amazonS3SamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new AmazonS3SamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject(), amazonS3Client.getObject());
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "amazonS3SamlRegisteredServiceMetadataResolutionPlanConfigurer")
     public SamlRegisteredServiceMetadataResolutionPlanConfigurer amazonS3SamlRegisteredServiceMetadataResolutionPlanConfigurer() {
         return plan -> plan.registerMetadataResolver(amazonS3SamlRegisteredServiceMetadataResolver());

@@ -42,6 +42,7 @@ public class SamlIdPRestfulMetadataConfiguration {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "restSamlRegisteredServiceMetadataResolutionPlanConfigurer")
     public SamlRegisteredServiceMetadataResolutionPlanConfigurer restSamlRegisteredServiceMetadataResolutionPlanConfigurer() {
         return plan -> plan.registerMetadataResolver(restSamlRegisteredServiceMetadataResolver());

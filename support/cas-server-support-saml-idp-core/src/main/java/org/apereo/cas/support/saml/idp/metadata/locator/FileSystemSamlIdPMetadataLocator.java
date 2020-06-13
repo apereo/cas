@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -22,6 +23,7 @@ import java.util.Optional;
  * @since 5.3.0
  */
 @Slf4j
+@Getter
 public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     private final File metadataLocation;
 
@@ -100,7 +102,14 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
         }
     }
 
-    private Resource getMetadataArtifact(final Optional<SamlRegisteredService> result, final String artifactName) {
+    /**
+     * Gets metadata artifact.
+     *
+     * @param result       the result
+     * @param artifactName the artifact name
+     * @return the metadata artifact
+     */
+    protected Resource getMetadataArtifact(final Optional<SamlRegisteredService> result, final String artifactName) {
         if (result.isPresent()) {
             val serviceDirectory = new File(this.metadataLocation, getAppliesToFor(result));
             LOGGER.trace("Metadata directory location for [{}] is [{}]", result.get().getName(), serviceDirectory);

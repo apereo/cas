@@ -56,6 +56,7 @@ public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "couchDbSamlRegisteredServiceMetadataResolutionPlanConfigurer")
     public SamlRegisteredServiceMetadataResolutionPlanConfigurer couchDbSamlRegisteredServiceMetadataResolutionPlanConfigurer() {
         return plan -> plan.registerMetadataResolver(couchDbSamlRegisteredServiceMetadataResolver());
