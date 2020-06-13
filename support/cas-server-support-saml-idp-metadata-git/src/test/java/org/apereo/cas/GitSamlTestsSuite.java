@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.support.saml.idp.metadata.GitSamlIdPMetadataGeneratorTests;
 import org.apereo.cas.support.saml.idp.metadata.GitSamlIdPMetadataLocatorTests;
 import org.apereo.cas.support.saml.metadata.resolver.GitSamlRegisteredServiceMetadataResolverTests;
 
@@ -15,6 +16,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     GitSamlRegisteredServiceMetadataResolverTests.class,
+    GitSamlIdPMetadataGeneratorTests.class,
     GitSamlIdPMetadataLocatorTests.class
 })
 @RunWith(JUnitPlatform.class)
