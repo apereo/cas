@@ -20,5 +20,8 @@ The following demos are provided by the Apereo CAS project:
 | [CAS Service Discovery Server](installation/Service-Discovery-Guide.html)                 | `heroku-discoveryserver` | [Link](https://caseureka.herokuapp.com/) | ![](https://heroku-badge.herokuapp.com/?app=caseureka)
 | [CAS Configuration Server](configuration/Configuration-Server-Management.html)             | `heroku-casconfigserver` | [Link](https://casconfigserver.herokuapp.com/casconfigserver/env) | ![](https://heroku-badge.herokuapp.com/?app=casconfigserver&root=casconfigserver)
 | CAS GitHub Repository Bot | `heroku-githubbot` | [Link](https://apereocas-githubbot.herokuapp.com/) | ![](https://heroku-badge.herokuapp.com/?app=apereocas-githubbot)
+| CAS Gradle Build Remote Cache | `heroku-gradle-buildcache` | [Link](https://cas-gradle-buildcache.herokuapp.com/cache/) | ![](https://heroku-badge.herokuapp.com/?app=cas-gradle-buildcache)
 
 Credentials used for the above demos, where needed, are: `casuser` / `Mellon`.
+
+
