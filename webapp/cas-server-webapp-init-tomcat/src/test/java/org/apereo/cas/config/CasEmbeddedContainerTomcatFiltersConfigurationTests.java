@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
     CasEmbeddedContainerTomcatConfiguration.class,
     CasEmbeddedContainerTomcatFiltersConfiguration.class
 },
@@ -44,6 +46,8 @@ public class CasEmbeddedContainerTomcatFiltersConfigurationTests {
     @Test
     public void verifyOperation() {
         assertNotNull(tomcatCsrfPreventionFilter);
+        assertNotNull(tomcatCsrfPreventionFilter.getFilter());
         assertNotNull(tomcatRemoteAddressFilter);
+        assertNotNull(tomcatRemoteAddressFilter.getFilter());
     }
 }
