@@ -125,7 +125,7 @@ public abstract class BaseWSFederationRequestController {
      */
     protected boolean shouldRenewAuthentication(final WSFederationRequest fedRequest,
                                                 final HttpServletRequest request) {
-        if (StringUtils.isBlank(fedRequest.getWfresh()) || NumberUtils.isCreatable(fedRequest.getWfresh())) {
+        if (StringUtils.isBlank(fedRequest.getWfresh()) || !NumberUtils.isCreatable(fedRequest.getWfresh())) {
             return false;
         }
         val ttl = Long.parseLong(fedRequest.getWfresh().trim());
