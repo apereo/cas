@@ -126,8 +126,13 @@ public class MongoDbYubiKeyAccountRegistryTests {
         assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", OTP));
         assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", OTP + OTP));
         assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuser"));
+        assertEquals(1, yubiKeyAccountRegistry.getAccounts().size());
         val account = yubiKeyAccountRegistry.getAccount("casuser");
         account.ifPresent(acct -> assertEquals(2, acct.getDeviceIdentifiers().size()));
+
+        yubiKeyAccountRegistry.delete("casuser");
+        assertTrue(yubiKeyAccountRegistry.getAccount("casuser").isEmpty());
+        yubiKeyAccountRegistry.deleteAll();
     }
 
     @Test

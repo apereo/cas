@@ -8,6 +8,7 @@ import org.apache.catalina.filters.CsrfPreventionFilter;
 import org.apache.catalina.filters.RemoteAddrFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -32,6 +33,7 @@ public class CasEmbeddedContainerTomcatFiltersConfiguration {
     @ConditionalOnProperty(prefix = "cas.server.tomcat.csrf", name = "enabled", havingValue = "true")
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "tomcatCsrfPreventionFilter")
     public FilterRegistrationBean tomcatCsrfPreventionFilter() {
         val bean = new FilterRegistrationBean();
         bean.setFilter(new CsrfPreventionFilter());
@@ -43,6 +45,7 @@ public class CasEmbeddedContainerTomcatFiltersConfiguration {
     @ConditionalOnProperty(prefix = "cas.server.tomcat.remote-addr", name = "enabled", havingValue = "true")
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "tomcatRemoteAddressFilter")
     public FilterRegistrationBean tomcatRemoteAddressFilter() {
         val bean = new FilterRegistrationBean();
         val addr = casProperties.getServer().getTomcat().getRemoteAddr();

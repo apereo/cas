@@ -3,10 +3,14 @@ package org.apereo.cas.adaptors.yubikey;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.BaseAbstractMultifactorAuthenticationProviderTests;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.http.HttpMessage;
 
 import com.yubico.client.v2.YubicoClient;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
+
+import java.net.URL;
 
 import static org.mockito.Mockito.*;
 
@@ -18,10 +22,14 @@ import static org.mockito.Mockito.*;
  */
 @Tag("MFA")
 public class YubiKeyMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
+
     @Override
+    @SneakyThrows
     public AbstractMultifactorAuthenticationProvider getMultifactorAuthenticationProvider() {
         val client = mock(YubicoClient.class);
+        when(client.getWsapiUrls()).thenReturn(new String[]{"http://localhost:1234"});
         val http = mock(HttpClient.class);
+        when(http.sendMessageToEndPoint(any(URL.class))).thenReturn(new HttpMessage(new URL("http://localhost:1234"), "message"));
         return new YubiKeyMultifactorAuthenticationProvider(client, http);
     }
 }
