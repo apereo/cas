@@ -31,8 +31,11 @@ public class GenerateYamlRegisteredServiceCommandTests extends BaseCasShellComma
         val file = File.createTempFile("service", ".json");
         val yaml = File.createTempFile("service", ".yaml");
         val svc = RegisteredServiceTestUtils.getRegisteredService("example");
-        new RegisteredServiceJsonSerializer().to(Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8), svc);
-        assertTrue(file.exists());
+        try (val writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
+            new RegisteredServiceJsonSerializer().to(writer, svc);
+            writer.flush();
+        }
+        assertTrue(file.exists() && file.length() > 0);
         assertNotNull(shell.evaluate(() -> "generate-yaml --file " + file.getPath() + " --destination " + yaml.getPath()));
         assertTrue(yaml.exists());
     }
