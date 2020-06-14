@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @SuppressWarnings("JdkObsolete")
 public abstract class BaseWSFederationRequestController {
-    private final WSFederationRequestConfigurationContext wsFederationRequestConfigurationContext;
+    private final WSFederationRequestConfigurationContext configContext;
 
     /**
      * Construct service url string.
@@ -55,7 +55,7 @@ public abstract class BaseWSFederationRequestController {
     protected String constructServiceUrl(final HttpServletRequest request, final HttpServletResponse response,
                                          final WSFederationRequest wsfedRequest) {
         try {
-            val builder = new URIBuilder(wsFederationRequestConfigurationContext.getCallbackService().getId());
+            val builder = new URIBuilder(configContext.getCallbackService().getId());
 
             builder.addParameter(WSFederationConstants.WA, wsfedRequest.getWa());
             builder.addParameter(WSFederationConstants.WREPLY, wsfedRequest.getWreply());
@@ -78,7 +78,7 @@ public abstract class BaseWSFederationRequestController {
 
             LOGGER.trace("Built service callback url [{}]", url);
             return CommonUtils.constructServiceUrl(request, response,
-                url.toString(), wsFederationRequestConfigurationContext.getCasProperties().getServer().getName(),
+                url.toString(), configContext.getCasProperties().getServer().getName(),
                 CasProtocolConstants.PARAMETER_SERVICE,
                 CasProtocolConstants.PARAMETER_TICKET, false);
         } catch (final Exception e) {
@@ -93,16 +93,16 @@ public abstract class BaseWSFederationRequestController {
      * @return the security token from request
      */
     protected SecurityToken getSecurityTokenFromRequest(final HttpServletRequest request) {
-        val cookieValue = wsFederationRequestConfigurationContext.getTicketGrantingTicketCookieGenerator().retrieveCookieValue(request);
+        val cookieValue = configContext.getTicketGrantingTicketCookieGenerator().retrieveCookieValue(request);
         if (StringUtils.isNotBlank(cookieValue)) {
-            val tgt = wsFederationRequestConfigurationContext.getTicketRegistry().getTicket(cookieValue, TicketGrantingTicket.class);
+            val tgt = configContext.getTicketRegistry().getTicket(cookieValue, TicketGrantingTicket.class);
             if (tgt != null) {
                 val sts = tgt.getDescendantTickets().stream()
                     .filter(t -> t.startsWith(SecurityTokenTicket.PREFIX))
                     .findFirst()
                     .orElse(null);
                 if (StringUtils.isNotBlank(sts)) {
-                    val stt = wsFederationRequestConfigurationContext.getTicketRegistry().getTicket(sts, SecurityTokenTicket.class);
+                    val stt = configContext.getTicketRegistry().getTicket(sts, SecurityTokenTicket.class);
                     if (stt == null || stt.isExpired()) {
                         LOGGER.warn("Security token ticket [{}] is not found or has expired", sts);
                         return null;
@@ -128,7 +128,7 @@ public abstract class BaseWSFederationRequestController {
      */
     protected boolean shouldRenewAuthentication(final WSFederationRequest fedRequest,
                                                 final HttpServletRequest request) {
-        if (StringUtils.isBlank(fedRequest.getWfresh()) || NumberUtils.isCreatable(fedRequest.getWfresh())) {
+        if (StringUtils.isBlank(fedRequest.getWfresh()) || !NumberUtils.isCreatable(fedRequest.getWfresh())) {
             return false;
         }
         val ttl = Long.parseLong(fedRequest.getWfresh().trim());
@@ -145,8 +145,7 @@ public abstract class BaseWSFederationRequestController {
         if (ttlMs > 0) {
             val createdDate = idpToken.getCreated();
             if (createdDate != null) {
-                val expiryDate = new Date();
-                expiryDate.setTime(createdDate.toEpochMilli() + ttlMs);
+                val expiryDate = new Date(createdDate.toEpochMilli() + ttlMs);
                 return expiryDate.before(new Date());
             }
         }
@@ -164,7 +163,7 @@ public abstract class BaseWSFederationRequestController {
                                                                                                  final WSFederationRequest fedRequest) {
         val svc = getWsFederationRegisteredService(targetService);
 
-        val idp = wsFederationRequestConfigurationContext.getCasProperties().getAuthn().getWsfedIdp().getIdp();
+        val idp = configContext.getCasProperties().getAuthn().getWsfedIdp().getIdp();
         if (StringUtils.isBlank(fedRequest.getWtrealm()) || !StringUtils.equals(fedRequest.getWtrealm(), svc.getRealm())) {
             LOGGER.warn("Realm [{}] is not authorized for matching service [{}]", fedRequest.getWtrealm(), svc);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
@@ -184,7 +183,7 @@ public abstract class BaseWSFederationRequestController {
      * @return the ws federation registered service
      */
     protected WSFederationRegisteredService getWsFederationRegisteredService(final Service targetService) {
-        val svc = wsFederationRequestConfigurationContext.getServicesManager().findServiceBy(targetService, WSFederationRegisteredService.class);
+        val svc = configContext.getServicesManager().findServiceBy(targetService, WSFederationRegisteredService.class);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(targetService, svc);
         return svc;
     }

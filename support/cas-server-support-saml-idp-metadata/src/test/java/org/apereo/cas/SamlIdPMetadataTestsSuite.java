@@ -1,5 +1,6 @@
-package org.apereo.cas.support.saml.services;
+package org.apereo.cas;
 
+import org.apereo.cas.support.saml.services.SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.ClasspathResourceMetadataResolverTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.DynamicResourceMetadataResolverTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.GroovyResourceMetadataResolverTests;
