@@ -20,6 +20,7 @@ import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
@@ -29,6 +30,7 @@ import org.apereo.cas.config.SamlIdPConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPTicketCatalogConfiguration;
+import org.apereo.cas.config.SamlIdPTicketSerializationConfiguration;
 import org.apereo.cas.config.SamlIdpComponentSerializationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -223,6 +225,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
         SamlIdPEndpointsConfiguration.class,
         SamlIdPMetadataConfiguration.class,
+        SamlIdPTicketSerializationConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreLogoutConfiguration.class,
@@ -232,6 +235,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CoreSamlConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasCoreUtilSerializationConfiguration.class,
         CasCoreUtilConfiguration.class
     })
     public static class SharedTestConfiguration {

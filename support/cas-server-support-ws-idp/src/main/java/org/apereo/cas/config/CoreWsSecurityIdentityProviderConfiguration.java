@@ -145,6 +145,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceSelectionStrategyConfigurer")
     public AuthenticationServiceSelectionStrategyConfigurer wsFederationAuthenticationServiceSelectionStrategyConfigurer() {
         return plan -> plan.registerStrategy(wsFederationAuthenticationServiceSelectionStrategy());
     }

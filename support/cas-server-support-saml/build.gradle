@@ -35,6 +35,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-cookie-api")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-logging")
+    testImplementation project(":core:cas-server-core-rest")
     
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-person-directory")
