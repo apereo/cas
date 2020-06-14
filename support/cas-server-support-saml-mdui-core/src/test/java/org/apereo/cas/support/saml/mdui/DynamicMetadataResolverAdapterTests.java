@@ -2,8 +2,6 @@ package org.apereo.cas.support.saml.mdui;
 
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.util.MockWebServer;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.val;
 import org.apache.commons.io.IOUtils;

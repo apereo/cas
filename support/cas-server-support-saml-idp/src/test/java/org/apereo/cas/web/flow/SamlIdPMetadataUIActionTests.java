@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
@@ -21,16 +20,6 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.AfterEach;
-
-import static org.apereo.cas.util.junit.Assertions.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
-
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -62,7 +51,7 @@ public class SamlIdPMetadataUIActionTests extends BaseSamlIdPWebflowTests {
         val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
         WebUtils.putServiceIntoFlowScope(context, service);
         servicesManager.save(registeredService);
-        
+
         val result = samlIdPMetadataUIParserAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
         assertNotNull(WebUtils.getServiceUserInterfaceMetadata(context, SamlMetadataUIInfo.class));
