@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.SecurityTokenServiceTokenFetcherTests;
 import org.apereo.cas.config.CoreWsSecuritySecurityTokenServiceConfigurationTests;
+import org.apereo.cas.ws.idp.authentication.WSFederationAuthenticationServiceSelectionStrategyTests;
 import org.apereo.cas.ws.idp.metadata.WSFederationMetadataControllerTests;
 import org.apereo.cas.ws.idp.metadata.WSFederationMetadataWriterTests;
 import org.apereo.cas.ws.idp.services.DefaultRelyingPartyTokenProducerTests;
@@ -24,6 +25,7 @@ import org.junit.runner.RunWith;
     WSFederationIdentityProviderWebflowConfigurerTests.class,
     CoreWsSecuritySecurityTokenServiceConfigurationTests.class,
     WSFederationRequestTests.class,
+    WSFederationAuthenticationServiceSelectionStrategyTests.class,
     WSFederationValidateRequestControllerTests.class,
     DefaultRelyingPartyTokenProducerTests.class,
     WSFederationMetadataControllerTests.class,

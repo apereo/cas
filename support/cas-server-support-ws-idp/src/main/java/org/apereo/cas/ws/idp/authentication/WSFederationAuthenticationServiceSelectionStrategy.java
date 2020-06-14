@@ -30,38 +30,9 @@ import java.util.Optional;
 public class WSFederationAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = 8035218407906419228L;
 
-    private int order = Ordered.HIGHEST_PRECEDENCE;
     private final transient ServiceFactory webApplicationServiceFactory;
 
-    private static Optional<NameValuePair> getRealmAsParameter(final Service service) {
-        try {
-            val builder = new URIBuilder(service.getId());
-            return builder.getQueryParams()
-                .stream()
-                .filter(p -> p.getName().equals(WSFederationConstants.WTREALM))
-                .findFirst();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return Optional.empty();
-    }
-
-    private static Optional<NameValuePair> getReplyAsParameter(final Service service) {
-        try {
-            if (service == null) {
-                return Optional.empty();
-            }
-
-            val builder = new URIBuilder(service.getId());
-            return builder.getQueryParams()
-                .stream()
-                .filter(p -> p.getName().equals(WSFederationConstants.WREPLY))
-                .findFirst();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return Optional.empty();
-    }
+    private int order = Ordered.HIGHEST_PRECEDENCE;
 
     @Override
     public Service resolveServiceFrom(final Service service) {
@@ -93,5 +64,35 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
             return false;
         }
         return true;
+    }
+
+    private static Optional<NameValuePair> getRealmAsParameter(final Service service) {
+        try {
+            val builder = new URIBuilder(service.getId());
+            return builder.getQueryParams()
+                .stream()
+                .filter(p -> p.getName().equals(WSFederationConstants.WTREALM))
+                .findFirst();
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<NameValuePair> getReplyAsParameter(final Service service) {
+        try {
+            if (service == null) {
+                return Optional.empty();
+            }
+
+            val builder = new URIBuilder(service.getId());
+            return builder.getQueryParams()
+                .stream()
+                .filter(p -> p.getName().equals(WSFederationConstants.WREPLY))
+                .findFirst();
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return Optional.empty();
     }
 }

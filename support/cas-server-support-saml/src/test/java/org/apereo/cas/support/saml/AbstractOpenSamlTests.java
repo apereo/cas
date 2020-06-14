@@ -21,6 +21,7 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
+import org.apereo.cas.config.authentication.support.SamlRestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
@@ -121,6 +122,7 @@ public abstract class AbstractOpenSamlTests {
         CasThemesConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CoreSamlConfiguration.class,
+        SamlRestConfiguration.class,
         CasCoreWebConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreServicesConfiguration.class,

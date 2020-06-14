@@ -47,6 +47,7 @@ import org.apereo.cas.support.saml.web.idp.profile.sso.request.DefaultSSOSamlHtt
 import org.apereo.cas.support.saml.web.velocity.SamlTemplatesVelocityEngineTests;
 import org.apereo.cas.ticket.query.DefaultSamlAttributeQueryTicketFactoryTests;
 import org.apereo.cas.web.flow.SamlIdPConsentableAttributeBuilderTests;
+import org.apereo.cas.web.flow.SamlIdPMetadataUIActionTests;
 import org.apereo.cas.web.flow.SamlIdPMetadataUIWebflowConfigurerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -100,6 +101,7 @@ import org.junit.runner.RunWith;
     MetadataRequestedAttributesAttributeReleasePolicyTests.class,
     SamlObjectSignatureValidatorTests.class,
     SamlResponseArtifactEncoderTests.class,
+    SamlIdPMetadataUIActionTests.class,
     SamlRegisteredServiceMetadataHealthIndicatorTests.class,
     SamlTemplatesVelocityEngineTests.class,
     ECPSamlIdPProfileHandlerControllerTests.class,
