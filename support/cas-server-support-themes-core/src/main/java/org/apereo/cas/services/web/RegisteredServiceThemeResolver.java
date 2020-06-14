@@ -64,16 +64,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
 
     @Override
     public String resolveThemeName(final HttpServletRequest request) {
-        if (this.servicesManager == null) {
-            return rememberThemeName(request);
-        }
-
         val userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
-
-        if (StringUtils.isBlank(userAgent)) {
-            return rememberThemeName(request);
-        }
-
         overrides.entrySet()
             .stream()
             .filter(entry -> entry.getKey().matcher(userAgent).matches())
