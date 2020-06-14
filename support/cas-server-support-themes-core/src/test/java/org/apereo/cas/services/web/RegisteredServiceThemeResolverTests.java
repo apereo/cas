@@ -15,6 +15,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -139,6 +140,12 @@ public class RegisteredServiceThemeResolverTests {
         try (val webServer = new MockWebServer(6315,
             new ByteArrayResource("custom-theme".getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
+            assertDoesNotThrow(new Executable() {
+                @Override
+                public void execute() throws Throwable {
+                    resolver.setThemeName(request, response, "whatever");
+                }
+            });
             assertEquals("custom-theme", resolver.resolveThemeName(request));
         }
     }
