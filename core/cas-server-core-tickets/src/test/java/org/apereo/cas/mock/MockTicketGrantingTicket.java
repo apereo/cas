@@ -27,9 +27,12 @@ import lombok.val;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Mock ticket-granting ticket.
@@ -60,6 +63,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
 
     private boolean expired;
 
+    private final Set<String> descendantTickets = new LinkedHashSet<>();
+
     @Setter
     private ExpirationPolicy expirationPolicy = new TicketGrantingTicketExpirationPolicy(100, 100);
 
@@ -74,6 +79,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"),
             principalAttributes, authnAttributes);
     }
+
     public MockTicketGrantingTicket(final String principalId, final Credential c, final Map<String, List<Object>> principalAttributes,
                                     final Map<String, List<Object>> authnAttributes) {
         id = ID_GENERATOR.getNewTicketId("TGT");
@@ -112,6 +118,11 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
         val st = new MockServiceTicket(id, service, this, expirationPolicy);
         this.services.put(id, service);
         return st;
+    }
+
+    @Override
+    public Collection<String> getDescendantTickets() {
+        return this.descendantTickets;
     }
 
     @Override
@@ -182,6 +193,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     public void update() {
         usageCount++;
     }
+
 
     @Override
     public int compareTo(final Ticket o) {
