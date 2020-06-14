@@ -1,20 +1,25 @@
 package org.apereo.cas.support.saml.mdui;
 
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ClosedInputStream;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -47,15 +52,21 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
     @Override
     protected InputStream getResourceInputStream(final Resource resource, final String entityId) throws IOException {
         if (resource instanceof UrlResource && resource.getURL().toExternalForm().toLowerCase().endsWith("/entities/")) {
-            val encodedId = EncodingUtils.urlEncode(entityId);
-            val url = new URL(resource.getURL().toExternalForm().concat(encodedId));
-            LOGGER.debug("Locating metadata input stream for [{}] via [{}]", encodedId, url);
-            val httpcon = (HttpURLConnection) url.openConnection();
-            httpcon.setDoOutput(true);
-            httpcon.addRequestProperty("Accept", "*/*");
-            httpcon.setRequestMethod("GET");
-            httpcon.connect();
-            return httpcon.getInputStream();
+            HttpResponse response = null;
+            try {
+                val encodedId = EncodingUtils.urlEncode(entityId);
+                val url = resource.getURL().toExternalForm().concat(encodedId);
+                LOGGER.debug("Locating metadata input stream for [{}] via [{}]", encodedId, url);
+                response = HttpUtils.executeGet(url, Map.of(), Map.of("Accept", "*/*"));
+                if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                    val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                    return new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8));
+                }
+            } catch (final Exception e) {
+                LoggingUtils.error(LOGGER, e);
+            } finally {
+                HttpUtils.close(response);
+            }
         }
         return ClosedInputStream.CLOSED_INPUT_STREAM;
     }

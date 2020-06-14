@@ -129,10 +129,11 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * @param entityId       the entity id
      * @return the list
      */
-    private List<MetadataResolver> loadMetadataFromResource(final MetadataFilter metadataFilter, final Resource resource, final String entityId) {
+    private List<MetadataResolver> loadMetadataFromResource(final MetadataFilter metadataFilter, final Resource resource,
+                                                            final String entityId) {
         LOGGER.debug("Evaluating metadata resource [{}]", resource.getFilename());
         try (val in = getResourceInputStream(resource, entityId)) {
-            if (in.available() > 0 && in.markSupported()) {
+            if (in.available() > 0) {
                 LOGGER.debug("Parsing [{}]", resource.getFilename());
                 val document = this.configBean.getParserPool().parse(in);
                 return buildSingleMetadataResolver(metadataFilter, resource, document);
@@ -152,7 +153,8 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * @param document            the xml document to parse
      * @return list of resolved metadata from resources.
      */
-    private List<MetadataResolver> buildSingleMetadataResolver(final MetadataFilter metadataFilterChain, final Resource resource, final Document document) {
+    private List<MetadataResolver> buildSingleMetadataResolver(final MetadataFilter metadataFilterChain, final Resource resource,
+                                                               final Document document) {
         try {
             val metadataRoot = document.getDocumentElement();
             val metadataProvider = new DOMMetadataResolver(metadataRoot);
