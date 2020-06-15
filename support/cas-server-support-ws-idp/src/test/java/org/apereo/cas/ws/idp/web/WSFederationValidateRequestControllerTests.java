@@ -112,7 +112,6 @@ public class WSFederationValidateRequestControllerTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        val registeredService = getWsFederationRegisteredService();
         request.addParameter(WSFederationConstants.WA, WSFederationConstants.WSIGNOUT10);
 
         assertDoesNotThrow(new Executable() {
