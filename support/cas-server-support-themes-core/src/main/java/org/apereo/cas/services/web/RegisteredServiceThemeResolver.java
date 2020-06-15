@@ -65,15 +65,17 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
     @Override
     public String resolveThemeName(final HttpServletRequest request) {
         val userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
-        overrides.entrySet()
-            .stream()
-            .filter(entry -> entry.getKey().matcher(userAgent).matches())
-            .findFirst()
-            .ifPresent(entry -> {
-                request.setAttribute("isMobile", Boolean.TRUE.toString());
-                request.setAttribute("browserType", entry.getValue());
-            });
-
+        if (StringUtils.isNotBlank(userAgent)) {
+            overrides.entrySet()
+                .stream()
+                .filter(entry -> entry.getKey().matcher(userAgent).matches())
+                .findFirst()
+                .ifPresent(entry -> {
+                    request.setAttribute("isMobile", Boolean.TRUE.toString());
+                    request.setAttribute("browserType", entry.getValue());
+                });
+        }
+        
         val context = RequestContextHolder.getRequestContext();
         val serviceContext = WebUtils.getService(context);
         val service = this.authenticationRequestServiceSelectionStrategies.resolveService(serviceContext);
