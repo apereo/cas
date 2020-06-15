@@ -46,6 +46,7 @@ import org.apereo.cas.services.support.RegisteredServiceChainingAttributeFilterT
 import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilterTests;
 import org.apereo.cas.services.support.RegisteredServiceMutantRegexAttributeFilterTests;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilterTests;
+import org.apereo.cas.services.support.RegisteredServiceReverseMappedRegexAttributeFilterTests;
 import org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilterTests;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializerTests;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializerTests;
@@ -100,6 +101,7 @@ import org.junit.runner.RunWith;
     CasServiceRegistryInitializationConfigurationTests.class,
     DefaultRegisteredServiceAuthenticationPolicyTests.class,
     UnauthorizedProxyingExceptionTests.class,
+    RegisteredServiceReverseMappedRegexAttributeFilterTests.class,
     ReturnEncryptedAttributeReleasePolicyTests.class,
     UnauthorizedServiceExceptionTests.class,
     RegisteredServiceChainingAttributeFilterTests.class,

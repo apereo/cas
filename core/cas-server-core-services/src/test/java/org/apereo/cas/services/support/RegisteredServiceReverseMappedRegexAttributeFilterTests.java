@@ -26,4 +26,13 @@ public class RegisteredServiceReverseMappedRegexAttributeFilterTests {
         val attrs = CollectionUtils.<String, List<Object>>wrap("username", List.of("cas-user"));
         assertFalse(filter.filter(attrs).isEmpty());
     }
+
+    @Test
+    public void verifyMatch() {
+        val filter = new RegisteredServiceReverseMappedRegexAttributeFilter();
+        filter.setCompleteMatch(true);
+        filter.setPatterns(Map.of("username", "^cas_user$"));
+        val attrs = CollectionUtils.<String, List<Object>>wrap("username", List.of("cas-user"));
+        assertFalse(filter.filter(attrs).isEmpty());
+    }
 }

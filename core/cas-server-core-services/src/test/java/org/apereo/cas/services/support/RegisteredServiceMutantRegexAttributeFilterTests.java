@@ -48,7 +48,7 @@ public class RegisteredServiceMutantRegexAttributeFilterTests {
     @BeforeEach
     public void initialize() {
         MockitoAnnotations.initMocks(this);
-        when(this.registeredService.getName()).thenReturn("sample test service");
+        when(this.registeredService.getName()).thenReturn("Sample test service1");
         when(this.registeredService.getServiceId()).thenReturn("https://www.apereo.org");
         this.filter = new RegisteredServiceMutantRegexAttributeFilter();
 
