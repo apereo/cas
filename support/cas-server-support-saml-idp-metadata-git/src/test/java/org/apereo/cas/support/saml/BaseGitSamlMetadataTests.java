@@ -37,7 +37,6 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
-import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -51,7 +50,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("FileSystem")
 @SpringBootTest(classes = {
     SamlIdPGitRegisteredServiceMetadataConfiguration.class,
     SamlIdPGitIdPMetadataConfiguration.class,
