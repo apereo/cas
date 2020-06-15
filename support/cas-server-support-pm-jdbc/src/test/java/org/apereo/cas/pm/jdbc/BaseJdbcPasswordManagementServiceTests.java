@@ -68,14 +68,15 @@ import javax.sql.DataSource;
     JdbcPasswordHistoryManagementConfiguration.class,
     PasswordManagementConfiguration.class
 }, properties = {
-    "cas.jdbc.showSql=true",
+    "cas.jdbc.show-sql=true",
     "cas.authn.pm.enabled=true",
     "cas.authn.pm.history.enabled=true",
-    "cas.authn.pm.jdbc.autoCommit=false",
-    "cas.authn.pm.jdbc.sqlSecurityQuestions=SELECT question, answer FROM pm_table_questions WHERE userid=?",
-    "cas.authn.pm.jdbc.sqlFindEmail=SELECT email FROM pm_table_accounts WHERE userid=?",
-    "cas.authn.pm.jdbc.sqlFindPhone=SELECT phone FROM pm_table_accounts WHERE userid=?",
-    "cas.authn.pm.jdbc.sqlChangePassword=UPDATE pm_table_accounts SET password=? WHERE userid=?"
+    "cas.authn.pm.jdbc.auto-commit=false",
+    "cas.authn.pm.jdbc.sql-security-questions=SELECT question, answer FROM pm_table_questions WHERE userid=?",
+    "cas.authn.pm.jdbc.sql-find-email=SELECT email FROM pm_table_accounts WHERE userid=?",
+    "cas.authn.pm.jdbc.sql-find-user=SELECT userid FROM pm_table_accounts WHERE email=?",
+    "cas.authn.pm.jdbc.sql-find-phone=SELECT phone FROM pm_table_accounts WHERE userid=?",
+    "cas.authn.pm.jdbc.sql-change-password=UPDATE pm_table_accounts SET password=? WHERE userid=?"
 })
 @Tag("JDBC")
 @EnableTransactionManagement(proxyTargetClass = true)

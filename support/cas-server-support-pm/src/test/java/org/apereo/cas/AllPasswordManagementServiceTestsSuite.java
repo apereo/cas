@@ -1,9 +1,12 @@
-package org.apereo.cas.pm;
+package org.apereo.cas;
 
+import org.apereo.cas.pm.DefaultPasswordValidationServiceTests;
+import org.apereo.cas.pm.PasswordManagementServiceTests;
 import org.apereo.cas.pm.history.GroovyPasswordHistoryServiceTests;
 import org.apereo.cas.pm.history.InMemoryPasswordHistoryServiceTests;
 import org.apereo.cas.pm.impl.GroovyResourcePasswordManagementServiceTests;
 import org.apereo.cas.pm.impl.JsonResourcePasswordManagementServiceTests;
+import org.apereo.cas.pm.impl.NoOpPasswordManagementServiceTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -17,6 +20,8 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     JsonResourcePasswordManagementServiceTests.class,
+    PasswordManagementServiceTests.class,
+    NoOpPasswordManagementServiceTests.class,
     GroovyResourcePasswordManagementServiceTests.class,
     GroovyPasswordHistoryServiceTests.class,
     DefaultPasswordValidationServiceTests.class,
