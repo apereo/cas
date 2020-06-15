@@ -25,6 +25,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.syncope.common.lib.to.MembershipTO;
+import org.apache.syncope.common.lib.to.RelationshipTO;
 import org.apache.syncope.common.lib.to.UserTO;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -38,6 +40,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -66,7 +69,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutConfiguration.class,
     CasCoreConfiguration.class,
     CasPersonDirectoryTestConfiguration.class
-}, properties ="cas.authn.syncope.url=http://localhost:8095")
+},
+    properties = "cas.authn.syncope.url=http://localhost:8095")
 @ResourceLock("Syncope")
 @Tag("Simple")
 public class SyncopeAuthenticationHandlerTests {
@@ -76,20 +80,18 @@ public class SyncopeAuthenticationHandlerTests {
     @Qualifier("syncopeAuthenticationHandler")
     private AuthenticationHandler syncopeAuthenticationHandler;
 
-    @SneakyThrows
-    private static MockWebServer startMockSever(final UserTO user) {
-        val data = MAPPER.writeValueAsString(user);
-        val webServer = new MockWebServer(8095,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
-            MediaType.APPLICATION_JSON_VALUE);
-        webServer.start();
-        return webServer;
-    }
-
     @Test
     public void verifyHandlerPasses() {
         val user = new UserTO();
         user.setUsername("casuser");
+        user.setSecurityQuestion("SecurityQuestion");
+        user.setCreationDate(new Date());
+        user.setChangePwdDate(new Date());
+        user.getDynRoles().add("Role1");
+        user.getMemberships().add(new MembershipTO.Builder().group("GroupKey").build());
+        user.getDynMemberships().add(new MembershipTO.Builder().group("GroupKey").build());
+        user.getRelationships().add(new RelationshipTO.Builder().type("Type").build());
+
         @Cleanup("stop")
         val webserver = startMockSever(user);
         assertDoesNotThrow(() ->
@@ -118,5 +120,15 @@ public class SyncopeAuthenticationHandlerTests {
 
         assertThrows(AccountDisabledException.class,
             () -> syncopeAuthenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser")));
+    }
+
+    @SneakyThrows
+    private static MockWebServer startMockSever(final UserTO user) {
+        val data = MAPPER.writeValueAsString(user);
+        val webServer = new MockWebServer(8095,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
+            MediaType.APPLICATION_JSON_VALUE);
+        webServer.start();
+        return webServer;
     }
 }

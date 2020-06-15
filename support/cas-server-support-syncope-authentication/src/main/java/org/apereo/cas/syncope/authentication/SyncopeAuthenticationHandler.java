@@ -97,7 +97,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
                 .map(MembershipTO::getGroupName)
                 .collect(Collectors.toList()));
         }
-        if (user.getMemberships() != null && !user.getMemberships().isEmpty()) {
+        if (user.getDynMemberships() != null && !user.getDynMemberships().isEmpty()) {
             attributes.put("syncopeUserDynMemberships", user.getDynMemberships()
                 .stream()
                 .map(MembershipTO::getGroupName)

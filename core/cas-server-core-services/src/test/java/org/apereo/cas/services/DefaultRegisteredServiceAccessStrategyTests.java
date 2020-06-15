@@ -28,40 +28,21 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RegisteredService")
 public class DefaultRegisteredServiceAccessStrategyTests {
 
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "x509CertificateCredential.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "DefaultRegisteredServiceAccessStrategyTests.json");
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private static final String TEST = "test";
+
     private static final String PHONE = "phone";
+
     private static final String GIVEN_NAME = "givenName";
+
     private static final String CAS = "cas";
+
     private static final String KAZ = "KAZ";
+
     private static final String CN = "cn";
-
-    private static Map<String, Set<String>> getRequiredAttributes() {
-        val map = new HashMap<String, Set<String>>();
-        map.put(CN, Stream.of(CAS, "SSO").collect(Collectors.toSet()));
-        map.put(GIVEN_NAME, Stream.of("CAS", KAZ).collect(Collectors.toSet()));
-        map.put(PHONE, Collections.singleton("\\d\\d\\d-\\d\\d\\d-\\d\\d\\d"));
-        return map;
-    }
-
-    private static Map<String, Set<String>> getRejectedAttributes() {
-        val map = new HashMap<String, Set<String>>();
-        map.put("address", Collections.singleton(".+"));
-        map.put("role", Collections.singleton("staff"));
-        return map;
-    }
-
-    private static Map<String, Object> getPrincipalAttributes() {
-        val map = new HashMap<String, Object>();
-        map.put(CN, CAS);
-        map.put(GIVEN_NAME, Arrays.asList(CAS, KAZ));
-        map.put("sn", "surname");
-        map.put(PHONE, "123-456-7890");
-
-        return map;
-    }
 
     @Test
     public void checkDefaultImpls() {
@@ -74,6 +55,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     @Test
     public void checkLoad() {
         val authz = new DefaultRegisteredServiceAccessStrategy(getRequiredAttributes(), getRejectedAttributes());
+        authz.postLoad();
         assertEquals(0, authz.getOrder());
     }
 
@@ -313,5 +295,30 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         val strategyRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceAccessStrategy.class);
 
         assertEquals(strategyWritten, strategyRead);
+    }
+
+    private static Map<String, Set<String>> getRequiredAttributes() {
+        val map = new HashMap<String, Set<String>>();
+        map.put(CN, Stream.of(CAS, "SSO").collect(Collectors.toSet()));
+        map.put(GIVEN_NAME, Stream.of("CAS", KAZ).collect(Collectors.toSet()));
+        map.put(PHONE, Collections.singleton("\\d\\d\\d-\\d\\d\\d-\\d\\d\\d"));
+        return map;
+    }
+
+    private static Map<String, Set<String>> getRejectedAttributes() {
+        val map = new HashMap<String, Set<String>>();
+        map.put("address", Collections.singleton(".+"));
+        map.put("role", Collections.singleton("staff"));
+        return map;
+    }
+
+    private static Map<String, Object> getPrincipalAttributes() {
+        val map = new HashMap<String, Object>();
+        map.put(CN, CAS);
+        map.put(GIVEN_NAME, Arrays.asList(CAS, KAZ));
+        map.put("sn", "surname");
+        map.put(PHONE, "123-456-7890");
+
+        return map;
     }
 }
