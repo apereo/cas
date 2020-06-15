@@ -81,6 +81,7 @@ public class SyncopeAuthenticationHandlerTests {
     private AuthenticationHandler syncopeAuthenticationHandler;
 
     @Test
+    @SuppressWarnings("JdkObsolete")
     public void verifyHandlerPasses() {
         val user = new UserTO();
         user.setUsername("casuser");
