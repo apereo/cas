@@ -269,6 +269,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
     @Override
     public Collection<RegisteredService> load() {
         LOGGER.trace("Loading services from [{}]", serviceRegistry.getName());
+        this.services.invalidateAll();
         this.services.putAll(this.serviceRegistry.load()
                 .stream()
                 .collect(Collectors.toMap(r -> {
