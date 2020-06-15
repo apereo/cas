@@ -41,10 +41,11 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 },
     properties = {
-        "cas.authn.pm.rest.endpointUrlChange=http://localhost:9090",
-        "cas.authn.pm.rest.endpointUrlSecurityQuestions=http://localhost:9090",
-        "cas.authn.pm.rest.endpointUrlEmail=http://localhost:9090",
-        "cas.authn.pm.rest.endpointUrlPhone=http://localhost:9090"
+        "cas.authn.pm.rest.endpoint-url-change=http://localhost:9090",
+        "cas.authn.pm.rest.endpoint-url-security-questions=http://localhost:9090",
+        "cas.authn.pm.rest.endpoint-url-email=http://localhost:9090",
+        "cas.authn.pm.rest.endpoint-url-user=http://localhost:9090",
+        "cas.authn.pm.rest.endpoint-url-phone=http://localhost:9090"
     })
 @Tag("RestfulApi")
 public class RestPasswordManagementServiceTests {
@@ -71,6 +72,20 @@ public class RestPasswordManagementServiceTests {
             webServer.stop();
             assertNotNull(email);
             assertEquals(data, email);
+        }
+    }
+
+    @Test
+    public void verifyUserFound() {
+        val data = "casuser";
+        try (val webServer = new MockWebServer(9090,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
+            MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+            val username = this.passwordChangeService.findUsername("casuser@example.org");
+            webServer.stop();
+            assertNotNull(username);
+            assertEquals(data, username);
         }
     }
 
