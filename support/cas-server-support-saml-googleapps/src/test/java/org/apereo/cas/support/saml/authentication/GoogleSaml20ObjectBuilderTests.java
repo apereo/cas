@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.0.0
+ * @deprecated Since 6.2
  */
 @SpringBootTest(classes = {
     SamlGoogleAppsConfiguration.class,
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.google-apps.public-key-location=classpath:DSAPublicKey01.key",
     "cas.google-apps.private-key-location=classpath:DSAPrivateKey01.key"
 })
+@Deprecated(since = "6.2.0")
 public class GoogleSaml20ObjectBuilderTests extends AbstractOpenSamlTests {
 
     private static final String BASE64_SAML_AUTHN_REQUEST = "fVJNT+MwEL2vtP/B8j1JEy6V1QR1QWgrwW5EA4e9uc4kMbU9weO0u/9+3RQEHOD6/OZ9jGd1+dcadgBPGl3J83TBGTiFrXZ9yR"
