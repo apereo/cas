@@ -63,7 +63,6 @@ public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMe
         }
     }
 
-
     @Test
     public void verifyResolver() throws IOException {
         val md = new SamlMetadataDocument();
