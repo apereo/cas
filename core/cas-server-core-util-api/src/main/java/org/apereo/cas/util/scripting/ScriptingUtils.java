@@ -233,11 +233,7 @@ public class ScriptingUtils {
             if (failOnError) {
                 throw cause;
             }
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(cause.getMessage(), cause);
-            } else {
-                LOGGER.error(cause.getMessage());
-            }
+            LoggingUtils.error(LOGGER, cause);
         }
         return null;
     }

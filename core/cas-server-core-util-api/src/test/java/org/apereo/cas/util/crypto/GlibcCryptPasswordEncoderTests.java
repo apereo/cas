@@ -42,7 +42,8 @@ public class GlibcCryptPasswordEncoderTests {
     public void sha512EncodingTest() {
         assertTrue(testEncodingRoundtrip("SHA-512"));
         assertTrue(testEncodingRoundtrip("6"));
-        assertTrue(testMatchWithDifferentSalt("SHA-512", "$6$rounds=1000$df273de606d3609a$GAPcq.K4jO3KkfusCM7Zr8Cci4qf.jOsWj5hkGBpwRg515bKk93afAXHy/lg.2LPr8ZItHoR3AR5X3XOXndZI0"));
+        assertTrue(testMatchWithDifferentSalt("SHA-512",
+            "$6$rounds=1000$df273de606d3609a$GAPcq.K4jO3KkfusCM7Zr8Cci4qf.jOsWj5hkGBpwRg515bKk93afAXHy/lg.2LPr8ZItHoR3AR5X3XOXndZI0"));
     }
 
     @Test
@@ -64,6 +65,14 @@ public class GlibcCryptPasswordEncoderTests {
         assertTrue(testEncodingRoundtrip("aB"));
         assertTrue(testEncodingRoundtrip("42xyz"));
         assertTrue(testMatchWithDifferentSalt("aB", "aB4fMcNOggJoQ"));
+    }
+
+    @Test
+    public void verifyBadInput() {
+        val encoder = new GlibcCryptPasswordEncoder(null, 0, null);
+        assertNull(encoder.encode(null));
+        assertNull(encoder.encode("password"));
+        assertFalse(encoder.matches("rawPassword", null));
     }
 
 }
