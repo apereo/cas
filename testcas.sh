@@ -16,6 +16,7 @@ dryRun=""
 info=""
 gradleCmd="./gradlew"
 flags="--no-daemon --configure-on-demand --build-cache -x javadoc -x check -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true "
+coverageTask=""
 
 while (( "$#" )); do
     case "$1" in
@@ -27,10 +28,10 @@ while (( "$#" )); do
         currentDir=`pwd`
         case "${currentDir}" in
             *api*|*core*|*support*|*webapp*)
-                task+="jacocoTestReport "
+                coverageTask="jacocoTestReport "
                 ;;
             *)
-                task+="jacocoRootReport "
+                coverageTask="jacocoRootReport "
                 ;;
         esac
         shift
@@ -248,10 +249,10 @@ then
   exit 1
 fi
 
-cmdstring="\033[1m$gradleCmd \e[32m$task\e[39m$tests\e[39m $flags ${debug}${dryRun}${info}${parallel}\e[39m"
+cmdstring="\033[1m$gradleCmd \e[32m$task\e[39m$tests\e[39m $flags ${debug}${dryRun}${info}${parallel}\e[39m\e[32m$coverageTask\e[39m"
 printf "$cmdstring \e[0m\n"
 
-cmd="$gradleCmd $task $tests $flags ${debug} ${parallel} ${dryRun} ${info}"
+cmd="$gradleCmd $task $tests $flags ${debug} ${parallel} ${dryRun} ${info} ${coverageTask}"
 eval "$cmd"
 retVal=$?
 echo -e "***************************************************************************************"

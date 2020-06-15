@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Tag("SAML")
+@Tag("RegisteredService")
 public class ShibbolethCompatiblePersistentIdGeneratorTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "shibbolethCompatiblePersistentIdGenerator.json");
@@ -27,7 +27,7 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
     @Test
     public void verifyGenerator() {
         val generator = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
-
+        assertNotNull(generator.toString());
         val p = mock(Principal.class);
         when(p.getId()).thenReturn("testuser");
         val value = generator.generate(p, RegisteredServiceTestUtils.getService());

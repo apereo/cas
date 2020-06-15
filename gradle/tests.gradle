@@ -31,7 +31,7 @@ if (hasTestsOfCategory(project, "ActuatorEndpoint")) {
 if (hasTestsOfCategory(project, "RegisteredService")) {
     task testRegisteredService(type: Test) {
         enabled = shouldTest(project, "RegisteredService")
-        //finalizedBy jacocoTestReport
+//        finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "RegisteredService"
         }
