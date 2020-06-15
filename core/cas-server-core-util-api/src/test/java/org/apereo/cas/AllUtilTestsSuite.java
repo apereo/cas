@@ -13,6 +13,7 @@ import org.apereo.cas.util.io.TemporaryFileSystemResourceTests;
 import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManagerTests;
 import org.apereo.cas.util.scripting.GroovyShellScriptTests;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResourceTests;
+import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolatorTests;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolverTests;
 import org.apereo.cas.util.spring.boot.DefaultCasBannerTests;
 import org.apereo.cas.util.ssl.CompositeX509KeyManagerTests;
@@ -38,6 +39,7 @@ import org.junit.runner.RunWith;
     GroovyShellScriptTests.class,
     FunctionUtilsTests.class,
     DigestUtilsTests.class,
+    SpringAwareMessageMessageInterpolatorTests.class,
     HttpUtilsTests.class,
     GroovyScriptResourceCacheManagerTests.class,
     LoggingUtilsTests.class,

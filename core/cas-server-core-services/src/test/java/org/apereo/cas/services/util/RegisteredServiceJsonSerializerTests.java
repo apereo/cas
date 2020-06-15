@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +31,14 @@ public class RegisteredServiceJsonSerializerTests {
     public void verifyPrinter() {
         val zer = new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
         assertFalse(zer.supports(new File("bad-file")));
+    }
+
+    @Test
+    public void verifyWriter() {
+        val zer = new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
+        val writer = new StringWriter();
+        zer.to(writer, new RegexRegisteredService());
+        assertNotNull(zer.from(writer));
     }
 
     @Test
