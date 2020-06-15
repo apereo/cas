@@ -6,9 +6,6 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
@@ -26,10 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML")
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
 public class CasSamlArtifactMapTests extends BaseSamlIdPConfigurationTests {
-    @Autowired
-    @Qualifier("samlArtifactMap")
-    private SAMLArtifactMap samlArtifactMap;
-
     @Test
     public void verifyOperation() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
