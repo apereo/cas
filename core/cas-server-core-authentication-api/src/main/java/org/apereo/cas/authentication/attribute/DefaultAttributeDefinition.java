@@ -54,8 +54,6 @@ import java.util.stream.Collectors;
 public class DefaultAttributeDefinition implements AttributeDefinition {
     private static final long serialVersionUID = 6898745248727445565L;
 
-    private static final int MAP_SIZE = 20;
-
     private String key;
 
     private String name;
