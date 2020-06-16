@@ -53,12 +53,10 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
 
     public WSFederationClaimsReleasePolicy() {
         this.allowedAttributes = new LinkedHashMap<>(MAP_SIZE);
-        initializeWatchableScriptIfNeeded();
     }
 
     public WSFederationClaimsReleasePolicy(final Map<String, String> allowedAttributes) {
         setAllowedAttributes(allowedAttributes);
-        initializeWatchableScriptIfNeeded();
     }
 
     private static void mapSimpleSingleAttributeDefinition(final String attributeName,
