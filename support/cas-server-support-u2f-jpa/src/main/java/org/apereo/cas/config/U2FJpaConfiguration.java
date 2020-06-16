@@ -105,7 +105,7 @@ public class U2FJpaConfiguration {
                 .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
                 .build(key -> StringUtils.EMPTY);
         val repo = new U2FJpaDeviceRepository(requestStorage,
-            u2f.getExpireRegistrations(),
+            u2f.getExpireDevices(),
             u2f.getExpireDevicesTimeUnit());
         repo.setCipherExecutor(u2fRegistrationRecordCipherExecutor.getObject());
         return repo;

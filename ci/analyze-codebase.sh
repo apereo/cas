@@ -2,9 +2,9 @@
 
 echo -e "Installing Groovy...\n"
 groovyVersion=3.0.4
-#wget https://dl.bintray.com/groovy/maven/apache-groovy-binary-${groovyVersion}.zip -O ./groovy.zip
-#unzip ./groovy.zip -d $PWD/.groovy
-#export PATH=$PWD/.groovy/groovy-${groovyVersion}/bin:$PATH
+wget https://dl.bintray.com/groovy/maven/apache-groovy-binary-${groovyVersion}.zip -O ./groovy.zip
+unzip ./groovy.zip -d $PWD/.groovy
+export PATH=$PWD/.groovy/groovy-${groovyVersion}/bin:$PATH
 groovy --version
 
 echo -e "***********************************************"
