@@ -59,7 +59,6 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     @JsonCreator
     public ReturnMappedAttributeReleasePolicy(@JsonProperty("allowedAttributes") final Map<String, Object> attributes) {
         this.allowedAttributes = attributes;
-        initializeWatchableScriptIfNeeded();
     }
 
     /**

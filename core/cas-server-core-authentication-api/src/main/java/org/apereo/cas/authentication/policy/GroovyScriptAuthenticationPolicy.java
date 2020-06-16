@@ -53,7 +53,6 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
 
     public GroovyScriptAuthenticationPolicy(final String script) {
         this.script = script;
-        initializeWatchableScriptIfNeeded();
     }
 
     @Override
