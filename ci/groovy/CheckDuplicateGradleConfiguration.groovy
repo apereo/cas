@@ -7,7 +7,7 @@ static void main(String[] args) {
     def testPattern = Pattern.compile(/testImplementation\s+(project.+)/)
 
     def directory = new File(".")
-    println "Starting from ${directory.absolutePath}"
+//    println "Starting from ${directory.absolutePath}"
     
     def failBuild = false
     directory.eachFileRecurse(FileType.FILES) { file ->
