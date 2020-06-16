@@ -17,9 +17,9 @@ CAS user interface should properly and comfortably lend itself to all major brow
 * Google Chrome
 * Mozilla Firefox
 * Apple Safari
-* Microsoft Internet Explorer
+* Microsoft Edge
 
-Note that certain older version of IE, particularly IE 9 and below may impose additional difficulty in getting the right UI configuration in place.
+Note that certain older version of IE, particularly IE 11 and below may impose additional difficulty in getting the right UI configuration in place.
 
 ## Internet Explorer
 
