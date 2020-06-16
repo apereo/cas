@@ -37,6 +37,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -89,7 +90,7 @@ public class RedisPersonAttributeDaoTests {
         val conn = RedisObjectFactory.newRedisConnectionFactory(redis, true);
         val template = RedisObjectFactory.newRedisTemplate(conn);
         template.afterPropertiesSet();
-        val attr = new HashMap<>();
+        val attr = new HashMap<String, List<Object>>();
         attr.put("name", CollectionUtils.wrapList("John", "Jon"));
         attr.put("age", CollectionUtils.wrapList("42"));
         template.opsForHash().putAll("casuser", attr);
