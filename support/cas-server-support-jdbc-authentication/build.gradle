@@ -7,6 +7,8 @@ dependencies {
 
     implementation libraries.shiro
 
+    implementation 'org.sakaiproject.kernel:sakai-kernel-impl:12.2'
+
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
