@@ -12,19 +12,19 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link WhitelistYubiKeyAccountRegistry}.
+ * This is {@link PermissiveYubiKeyAccountRegistry}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
+public class PermissiveYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     /**
      * Device registrations.
      */
     protected final MultiValueMap<String, String> devices;
 
-    public WhitelistYubiKeyAccountRegistry(final MultiValueMap<String, String> devices,
-                                           final YubiKeyAccountValidator validator) {
+    public PermissiveYubiKeyAccountRegistry(final MultiValueMap<String, String> devices,
+                                            final YubiKeyAccountValidator validator) {
         super(validator);
         this.devices = devices;
     }

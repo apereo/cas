@@ -1055,7 +1055,7 @@ Password policy strategy types are outlined below. The strategy evaluates the au
 |---------------|-----------------------------------------------------------------------------
 | `DEFAULT`     | Accepts the authentication response as is, and processes account state, if any.
 | `GROOVY`      | Examine the authentication response as part of a Groovy script dynamically. The responsibility of handling account state changes and warnings is entirely delegated to the script.
-| `REJECT_RESULT_CODE`  | An extension of the `DEFAULT` where account state is processed only if the result code of the authentication response is not blacklisted in the configuration. By default `INVALID_CREDENTIALS(49)` prevents CAS from handling account states.
+| `REJECT_RESULT_CODE`  | An extension of the `DEFAULT` where account state is processed only if the result code of the authentication response is not denied in the configuration. By default `INVALID_CREDENTIALS(49)` prevents CAS from handling account states.
 
 If the password policy strategy is to be handed off to a Groovy script, the outline of the script may be as follows:
 

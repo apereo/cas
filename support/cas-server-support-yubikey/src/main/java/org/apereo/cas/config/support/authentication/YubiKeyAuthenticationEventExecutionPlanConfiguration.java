@@ -8,7 +8,7 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyCredential;
 import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.yubikey.registry.JsonYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.registry.OpenYubiKeyAccountRegistry;
-import org.apereo.cas.adaptors.yubikey.registry.WhitelistYubiKeyAccountRegistry;
+import org.apereo.cas.adaptors.yubikey.registry.PermissiveYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.registry.YubiKeyAccountRegistryEndpoint;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountCheckRegistrationAction;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountSaveRegistrationAction;
@@ -167,7 +167,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
             LOGGER.debug("Using statically-defined devices for [{}] as the YubiKey account registry",
                 yubi.getAllowedDevices().keySet());
             val map = CollectionUtils.asMultiValueMap(yubi.getAllowedDevices());
-            val registry = new WhitelistYubiKeyAccountRegistry(map, yubiKeyAccountValidator());
+            val registry = new PermissiveYubiKeyAccountRegistry(map, yubiKeyAccountValidator());
             registry.setCipherExecutor(cipher);
             return registry;
         }
