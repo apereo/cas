@@ -21,6 +21,8 @@ CAS user interface should properly and comfortably lend itself to all major brow
 
 Note that certain older version of IE, particularly IE 11 and below may impose additional difficulty in getting the right UI configuration in place.
 
+<div class="alert alert-info"><strong>Supported Browsers</strong><p>The supported browsers listed here are in reference to the default CAS user interface. Customizations can be implemented to support other browsers using the overlay, themes, etc.</p></div>
+
 ## Internet Explorer
 
 To instruct CAS to render UI in compatibility mode, the following is added automatically to relevant UI components:
