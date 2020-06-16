@@ -1,4 +1,7 @@
-package org.apereo.cas.redis;
+package org.apereo.cas;
+
+import org.apereo.cas.redis.RedisAuthenticationHandlerTests;
+import org.apereo.cas.redis.RedisPersonAttributeDaoTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;

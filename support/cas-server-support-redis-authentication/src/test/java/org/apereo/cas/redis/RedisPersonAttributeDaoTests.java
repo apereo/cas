@@ -38,6 +38,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -77,6 +78,8 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RedisPersonAttributeDaoTests {
+    private static final String USER_ID = UUID.randomUUID().toString();
+
     @Autowired
     @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
@@ -93,15 +96,15 @@ public class RedisPersonAttributeDaoTests {
         val attr = new HashMap<String, List<Object>>();
         attr.put("name", CollectionUtils.wrapList("John", "Jon"));
         attr.put("age", CollectionUtils.wrapList("42"));
-        template.opsForHash().putAll("casuser", attr);
+        template.opsForHash().putAll(USER_ID, attr);
     }
 
     @Test
     public void verifyAttributes() {
-        val person = attributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
+        val person = attributeRepository.getPerson(USER_ID, IPersonAttributeDaoFilter.alwaysChoose());
         assertNotNull(person);
         val attributes = person.getAttributes();
-        assertEquals("casuser", person.getName());
+        assertEquals(USER_ID, person.getName());
         assertTrue(attributes.containsKey("name"));
         assertTrue(attributes.containsKey("age"));
     }
