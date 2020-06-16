@@ -140,7 +140,9 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                 fetchAttributeValueFromScript(script, attributeName, resolvedAttributes, attributesToRelease);
             }
         },
-            () -> LOGGER.warn("No groovy script cache manager is available to execute attribute mappings"));
+            () -> {
+                throw new RuntimeException("No groovy script cache manager is available to execute attribute mappings");
+            });
     }
 
     private static void fetchAttributeValueAsInlineGroovyScript(final String attributeName,
@@ -164,7 +166,9 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                 }
                 fetchAttributeValueFromScript(script, attributeName, resolvedAttributes, attributesToRelease);
             },
-                () -> LOGGER.warn("No groovy script cache manager is available to execute attribute mappings"));
+                () -> {
+                    throw new RuntimeException("No groovy script cache manager is available to execute attribute mappings");
+                });
     }
 
     private static void fetchAttributeValueFromScript(final ExecutableCompiledGroovyScript script,

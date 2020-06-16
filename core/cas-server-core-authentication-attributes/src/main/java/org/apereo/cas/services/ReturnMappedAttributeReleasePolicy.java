@@ -119,8 +119,9 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                     fetchAttributeValueFromScript(script, attributeName, resolvedAttributes, attributesToRelease);
                 }
             },
-                () -> LOGGER.warn("No groovy script cache manager is available to execute attribute mappings"));
-
+                () -> {
+                    throw new RuntimeException("No groovy script cache manager is available to execute attribute mappings");
+                });
     }
 
     private static void fetchAttributeValueAsInlineGroovyScript(final String attributeName,
@@ -144,7 +145,9 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                 }
                 fetchAttributeValueFromScript(script, attributeName, resolvedAttributes, attributesToRelease);
             },
-                () -> LOGGER.warn("No groovy script cache manager is available to execute attribute mappings"));
+                () -> {
+                    throw new RuntimeException("No groovy script cache manager is available to execute attribute mappings");
+                });
     }
 
     private static void mapSimpleSingleAttributeDefinition(final String attributeName,

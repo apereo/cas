@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class
-}, properties = "cas.smsProvider.groovy.location=classpath:/GroovySmsSender.groovy")
+}, properties = "cas.sms-provider.groovy.location=classpath:/GroovySmsSender.groovy")
 @Tag("Groovy")
 public class GroovySmsSenderTests {
     @Autowired
