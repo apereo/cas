@@ -1925,9 +1925,9 @@ Radius  settings for this feature are available [here](Configuration-Properties-
 # cas.authn.radius.name=
 ```
 
-## File (Whitelist) Authentication
+## File Authentication
 
-To learn more about this topic, [please review this guide](../installation/Whitelist-Authentication.html).
+To learn more about this topic, [please review this guide](../installation/Permissive-Authentication.html).
 
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.file`.
 
@@ -1948,9 +1948,9 @@ To learn more about this topic, [please review this guide](../installation/Groov
 # cas.authn.groovy.name=
 ```
 
-## JSON (Whitelist) Authentication
+## JSON Authentication
 
-To learn more about this topic, [please review this guide](../installation/Whitelist-Authentication.html).
+To learn more about this topic, [please review this guide](../installation/Permissive-Authentication.html).
 
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.json`.
 
@@ -1963,9 +1963,9 @@ Password policy settings for this feature are available [here](Configuration-Pro
 # cas.authn.json.name=
 ```
 
-## Reject Users (Blacklist) Authentication
+## Reject Users Authentication
 
-To learn more about this topic, [please review this guide](../installation/Blacklist-Authentication.html).
+To learn more about this topic, [please review this guide](../installation/Reject-Authentication.html).
 
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.reject`.
 
@@ -2992,7 +2992,7 @@ Multifactor authentication bypass settings for this provider are available [here
 # cas.authn.mfa.yubikey.json-file=file:/etc/cas/deviceRegistrations.json
 ```
 
-#### YubiKey Whitelist Device Store
+#### YubiKey Allowed Device Store
 
 ```properties
 # cas.authn.mfa.yubikey.allowed-devices.uid1=yubikeyPublicId1

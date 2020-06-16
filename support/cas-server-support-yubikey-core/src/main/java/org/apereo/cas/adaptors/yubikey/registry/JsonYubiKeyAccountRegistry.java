@@ -18,7 +18,7 @@ import org.springframework.util.MultiValueMap;
  * @since 5.2.0
  */
 @Slf4j
-public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry {
+public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

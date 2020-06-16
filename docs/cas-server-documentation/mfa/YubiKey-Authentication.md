@@ -48,9 +48,10 @@ The JSON structure is a simple map of user id to yubikey public id representing 
 }
 ```
 
-### Whitelist
+### Permissive
 
-Registration records may be specified statically via CAS settings in form of a map that links registered usernames with the public id of the YubiKey device. See [review this guide](../configuration/Configuration-Properties.html#yubikey) for more info.
+Registration records may be specified statically via CAS settings in form of a map that links registered usernames 
+with the public id of the YubiKey device. See [review this guide](../configuration/Configuration-Properties.html#yubikey) for more info.
 
 ### JPA
 
