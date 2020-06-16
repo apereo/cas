@@ -6,6 +6,8 @@ import lombok.SneakyThrows;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.DisposableBean;
 
+import java.util.Set;
+
 /**
  * This is {@link ScriptResourceCacheManager}.
  *
@@ -57,6 +59,13 @@ public interface ScriptResourceCacheManager<K extends String, V extends Executab
      * @return the script resource cache manager
      */
     ScriptResourceCacheManager<K, V> remove(K key);
+
+    /**
+     * Gets keys.
+     *
+     * @return the keys
+     */
+    Set<String> getKeys();
 
     /**
      * Clear items.

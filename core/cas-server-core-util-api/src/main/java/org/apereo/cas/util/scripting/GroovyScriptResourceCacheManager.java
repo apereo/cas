@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * This is {@link GroovyScriptResourceCacheManager}.
@@ -63,5 +64,10 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
     @Override
     public boolean isEmpty() {
         return cache.asMap().isEmpty();
+    }
+
+    @Override
+    public Set<String> getKeys() {
+        return this.cache.asMap().keySet();
     }
 }
