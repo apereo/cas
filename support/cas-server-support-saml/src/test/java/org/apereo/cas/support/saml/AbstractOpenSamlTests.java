@@ -32,6 +32,7 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.junit.jupiter.api.Test;
@@ -130,6 +131,7 @@ public abstract class AbstractOpenSamlTests {
         SamlRestConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCoreWebflowConfiguration.class,
+        CasWebflowContextConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreValidationConfiguration.class,

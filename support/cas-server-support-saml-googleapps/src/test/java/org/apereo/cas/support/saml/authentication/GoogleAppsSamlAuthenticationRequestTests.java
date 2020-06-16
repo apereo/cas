@@ -32,11 +32,11 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.server.name=http://localhost:8080",
     "cas.server.prefix=${server.name}/cas",
     "cas.samlCore.issuer=localhost",
-    "cas.samlCore.skewAllowance=200",
-    "cas.samlCore.ticketidSaml2=false",
-    "cas.googleApps.keyAlgorithm=DSA",
-    "cas.googleApps.publicKeyLocation=classpath:DSAPublicKey01.key",
-    "cas.googleApps.privateKeyLocation=classpath:DSAPrivateKey01.key"
+    "cas.samlCore.skew-allowance=200",
+    "cas.samlCore.ticketid-saml2=false",
+    "cas.googleApps.key-algorithm=DSA",
+    "cas.googleApps.public-key-location=classpath:DSAPublicKey01.key",
+    "cas.googleApps.private-key-location=classpath:DSAPrivateKey01.key"
 })
 @Deprecated(since = "6.2.0")
 public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTests {
