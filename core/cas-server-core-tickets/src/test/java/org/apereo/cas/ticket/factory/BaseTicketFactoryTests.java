@@ -15,7 +15,6 @@ import org.apereo.cas.ticket.TicketFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -36,8 +35,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreTicketComponentSerializationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     RefreshAutoConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    MailSenderAutoConfiguration.class
+    CasCoreUtilConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseTicketFactoryTests {

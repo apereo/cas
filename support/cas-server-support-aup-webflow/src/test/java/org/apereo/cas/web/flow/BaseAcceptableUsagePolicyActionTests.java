@@ -20,7 +20,6 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -43,7 +42,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCookieConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreConfiguration.class,
-    MailSenderAutoConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
