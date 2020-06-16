@@ -114,6 +114,8 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         assertNotEquals(authentication.getAuthenticationDate().toInstant().toEpochMilli(), jwt.getIssuedAt().getValueInMillis());
         assertNotNull(jwt.getExpirationTime());
 
+        Thread.sleep(500);
+        
         mv = generateAccessTokenResponseAndGetModelAndView(registeredService, authentication, OAuth20GrantTypes.REFRESH_TOKEN);
         assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
         val refreshedAt = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();

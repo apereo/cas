@@ -30,6 +30,7 @@ import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 
 import net.shibboleth.utilities.java.support.xml.ParserPool;
@@ -128,6 +129,7 @@ public abstract class AbstractOpenSamlTests {
         SamlUniqueTicketIdGeneratorConfiguration.class,
         SamlRestConfiguration.class,
         CasCoreWebConfiguration.class,
+        CasCoreWebflowConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreValidationConfiguration.class,
