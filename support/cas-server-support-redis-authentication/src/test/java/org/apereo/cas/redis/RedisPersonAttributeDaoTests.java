@@ -92,15 +92,15 @@ public class RedisPersonAttributeDaoTests {
         val attr = new HashMap<>();
         attr.put("name", CollectionUtils.wrapList("John", "Jon"));
         attr.put("age", CollectionUtils.wrapList("42"));
-        template.opsForHash().putAll("casuser", attr);
+        template.opsForHash().putAll("casuserredis", attr);
     }
 
     @Test
     public void verifyAttributes() {
-        val person = attributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
+        val person = attributeRepository.getPerson("casuserredis", IPersonAttributeDaoFilter.alwaysChoose());
         assertNotNull(person);
         val attributes = person.getAttributes();
-        assertEquals("casuser", person.getName());
+        assertEquals("casuserredis", person.getName());
         assertTrue(attributes.containsKey("name"));
         assertTrue(attributes.containsKey("age"));
     }
