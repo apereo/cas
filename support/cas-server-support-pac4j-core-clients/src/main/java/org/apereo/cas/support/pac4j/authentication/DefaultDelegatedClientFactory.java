@@ -458,8 +458,8 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                         .forEach(attribute -> cfg.getRequestedServiceProviderAttributes().add(attribute));
                 }
 
-                if (!saml.getBlackListedSignatureSigningAlgorithms().isEmpty()) {
-                    cfg.setBlackListedSignatureSigningAlgorithms(saml.getBlackListedSignatureSigningAlgorithms());
+                if (!saml.getBlockedSignatureSigningAlgorithms().isEmpty()) {
+                    cfg.setBlackListedSignatureSigningAlgorithms(saml.getBlockedSignatureSigningAlgorithms());
                 }
                 if (!saml.getSignatureAlgorithms().isEmpty()) {
                     cfg.setSignatureAlgorithms(saml.getSignatureAlgorithms());

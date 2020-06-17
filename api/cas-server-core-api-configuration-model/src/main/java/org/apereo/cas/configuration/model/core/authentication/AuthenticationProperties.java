@@ -241,7 +241,7 @@ public class AuthenticationProperties implements Serializable {
     private FileAuthenticationProperties file = new FileAuthenticationProperties();
 
     /**
-     * Blacklist-based authentication.
+     * Blocked authentication.
      */
     @NestedConfigurationProperty
     private RejectAuthenticationProperties reject = new RejectAuthenticationProperties();

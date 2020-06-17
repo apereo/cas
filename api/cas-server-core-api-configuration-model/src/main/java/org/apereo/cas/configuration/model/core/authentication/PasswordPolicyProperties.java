@@ -106,7 +106,7 @@ public class PasswordPolicyProperties implements Serializable {
         GROOVY,
         /**
          * Strategy to only activate password policy
-         * if the authentication response code is not blacklisted.
+         * if the authentication response code is not blocked.
          */
         REJECT_RESULT_CODE
     }

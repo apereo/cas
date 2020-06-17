@@ -290,10 +290,10 @@ public class SamlIdPObjectSigner {
 
     private BasicSignatureSigningConfiguration configureSignatureSigningSecurityConfiguration(final SamlRegisteredService service) {
         val config = DefaultSecurityConfigurationBootstrap.buildDefaultSignatureSigningConfiguration();
-        LOGGER.trace("Default signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
+        LOGGER.trace("Default signature signing blocked algorithms: [{}]", config.getBlacklistedAlgorithms());
         LOGGER.trace("Default signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
         LOGGER.trace("Default signature signing signature canonicalization algorithm: [{}]", config.getSignatureCanonicalizationAlgorithm());
-        LOGGER.trace("Default signature signing whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
+        LOGGER.trace("Default signature signing allowed algorithms: [{}]", config.getWhitelistedAlgorithms());
         LOGGER.trace("Default signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
 
         val samlIdp = casProperties.getAuthn().getSamlIdp();
@@ -313,18 +313,18 @@ public class SamlIdPObjectSigner {
             config.setSignatureAlgorithms(overrideSignatureAlgorithms);
         }
 
-        val overrideBlackListedSignatureAlgorithms = service.getSigningSignatureBlackListedAlgorithms().isEmpty()
-            ? globalAlgorithms.getOverrideBlackListedSignatureSigningAlgorithms()
+        val overrideBlockedSignatureAlgorithms = service.getSigningSignatureBlackListedAlgorithms().isEmpty()
+            ? globalAlgorithms.getOverrideBlockedSignatureSigningAlgorithms()
             : service.getSigningSignatureBlackListedAlgorithms();
-        if (overrideBlackListedSignatureAlgorithms != null && !overrideBlackListedSignatureAlgorithms.isEmpty()) {
-            config.setBlacklistedAlgorithms(overrideBlackListedSignatureAlgorithms);
+        if (overrideBlockedSignatureAlgorithms != null && !overrideBlockedSignatureAlgorithms.isEmpty()) {
+            config.setBlacklistedAlgorithms(overrideBlockedSignatureAlgorithms);
         }
 
-        val overrideWhiteListedAlgorithms = service.getSigningSignatureWhiteListedAlgorithms().isEmpty()
-            ? globalAlgorithms.getOverrideWhiteListedSignatureSigningAlgorithms()
+        val overrideAllowedAlgorithms = service.getSigningSignatureWhiteListedAlgorithms().isEmpty()
+            ? globalAlgorithms.getOverrideAllowedSignatureSigningAlgorithms()
             : service.getSigningSignatureWhiteListedAlgorithms();
-        if (overrideWhiteListedAlgorithms != null && !overrideWhiteListedAlgorithms.isEmpty()) {
-            config.setWhitelistedAlgorithms(overrideWhiteListedAlgorithms);
+        if (overrideAllowedAlgorithms != null && !overrideAllowedAlgorithms.isEmpty()) {
+            config.setWhitelistedAlgorithms(overrideAllowedAlgorithms);
         }
 
         if (StringUtils.isNotBlank(service.getSigningSignatureCanonicalizationAlgorithm())) {
@@ -332,10 +332,10 @@ public class SamlIdPObjectSigner {
         } else if (StringUtils.isNotBlank(globalAlgorithms.getOverrideSignatureCanonicalizationAlgorithm())) {
             config.setSignatureCanonicalizationAlgorithm(globalAlgorithms.getOverrideSignatureCanonicalizationAlgorithm());
         }
-        LOGGER.trace("Finalized signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
+        LOGGER.trace("Finalized signature signing blocked algorithms: [{}]", config.getBlacklistedAlgorithms());
         LOGGER.trace("Finalized signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
         LOGGER.trace("Finalized signature signing signature canonicalization algorithm: [{}]", config.getSignatureCanonicalizationAlgorithm());
-        LOGGER.trace("Finalized signature signing whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
+        LOGGER.trace("Finalized signature signing allowed algorithms: [{}]", config.getWhitelistedAlgorithms());
         LOGGER.trace("Finalized signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
 
         if (StringUtils.isNotBlank(service.getWhiteListBlackListPrecedence())) {
