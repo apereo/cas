@@ -61,7 +61,7 @@ public interface RegisteredServiceConsentPolicy extends Serializable, Ordered {
      */
     @JsonIgnore
     default int size() {
-        return 1;
+        return 0;
     }
 
     @JsonIgnore
