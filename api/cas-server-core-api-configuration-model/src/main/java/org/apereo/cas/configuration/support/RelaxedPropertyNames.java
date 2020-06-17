@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -14,6 +15,7 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Getter
 public class RelaxedPropertyNames implements Iterable<String> {
 
     private static final Pattern CAMEL_CASE_PATTERN = Pattern.compile("([^A-Z-])([A-Z])");
@@ -36,17 +38,13 @@ public class RelaxedPropertyNames implements Iterable<String> {
      * @return the relaxed names
      */
     public static RelaxedPropertyNames forCamelCase(final String name) {
-        var result = new StringBuilder();
+        val result = new StringBuilder();
         for (var c : name.toCharArray()) {
             result.append(Character.isUpperCase(c) && result.length() > 0
                 && result.charAt(result.length() - 1) != '-'
                 ? "-" + Character.toLowerCase(c) : c);
         }
         return new RelaxedPropertyNames(result.toString());
-    }
-
-    public Set<String> getValues() {
-        return values;
     }
 
     @Override
@@ -105,7 +103,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
     /**
      * Name manipulations.
      */
-    private enum Manipulation {
+    enum Manipulation {
 
         NONE {
             @Override
@@ -197,6 +195,8 @@ public class RelaxedPropertyNames implements Iterable<String> {
 
         private static final char[] SUFFIXES = new char[]{'_', '-', '.'};
 
+        public abstract String apply(String value);
+
         private static String separatedToCamelCase(final String value, final boolean caseInsensitive) {
             if (value.isEmpty()) {
                 return value;
@@ -215,8 +215,6 @@ public class RelaxedPropertyNames implements Iterable<String> {
             }
             return builder.toString();
         }
-
-        public abstract String apply(String value);
     }
 
 }
