@@ -6,6 +6,8 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
 
     implementation libraries.shiro
+
+    implementation 'org.sakaiproject.kernel:sakai-kernel-impl:20.0'
     
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     
