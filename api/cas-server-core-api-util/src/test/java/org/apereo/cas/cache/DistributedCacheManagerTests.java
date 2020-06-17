@@ -31,5 +31,8 @@ public class DistributedCacheManagerTests {
         assertDoesNotThrow(() -> mgr.set("key", new DistributedCacheObject("value")));
         assertDoesNotThrow(() -> mgr.set("key", new DistributedCacheObject("value")));
         assertDoesNotThrow(() -> mgr.remove("key", new DistributedCacheObject("value")));
+
+        assertNotNull(mgr.update("key", new DistributedCacheObject("value")));
+        mgr.close();
     }
 }
