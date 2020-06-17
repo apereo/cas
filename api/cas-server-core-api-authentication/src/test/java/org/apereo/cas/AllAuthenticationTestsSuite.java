@@ -1,5 +1,8 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.AuthenticationHandlerTests;
+import org.apereo.cas.authentication.AuthenticationPostProcessorTests;
+import org.apereo.cas.authentication.AuthenticationPreProcessorTests;
 import org.apereo.cas.authentication.AuthenticationTransactionTests;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationExceptionTests;
 
@@ -15,6 +18,9 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     UnauthorizedAuthenticationExceptionTests.class,
+    AuthenticationHandlerTests.class,
+    AuthenticationPreProcessorTests.class,
+    AuthenticationPostProcessorTests.class,
     AuthenticationTransactionTests.class
 })
 @RunWith(JUnitPlatform.class)
