@@ -178,15 +178,17 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
     }
 
     @Override
-    public boolean storeConsentDecision(final ConsentDecision decision) {
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
         LOGGER.debug("Storing consent decision [{}]", decision);
         val entry = readConsentEntry(decision.getPrincipal());
         if (entry != null) {
             val newConsent = mergeDecision(entry.getAttribute(ldapProperties.getConsentAttributeName()), decision);
-            return executeModifyOperation(newConsent, entry);
+            if (executeModifyOperation(newConsent, entry)) {
+                return decision;
+            }
         }
         LOGGER.debug("Unable to read consent entry for [{}]. Consent decision is not stored", decision.getPrincipal());
-        return false;
+        return null;
     }
 
     @Override

@@ -53,18 +53,21 @@ public class CouchDbConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public boolean storeConsentDecision(final ConsentDecision decision) {
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
         try {
             val consent = couchDb.findFirstConsentDecision(decision);
+            var updated = (CouchDbConsentDecision) null;
             if (consent == null) {
-                couchDb.add(new CouchDbConsentDecision(decision));
+                updated = new CouchDbConsentDecision(decision);
+                couchDb.add(updated);
             } else {
-                couchDb.update(consent.copyDetailsFrom(decision));
+                updated = consent.copyDetailsFrom(decision);
+                couchDb.update(updated);
             }
-            return true;
+            return updated;
         } catch (final DbAccessException e) {
             LoggingUtils.warn(LOGGER, "Failure storing consent decision", e);
-            return false;
+            return null;
         }
     }
 

@@ -53,7 +53,7 @@ public abstract class BaseConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public boolean storeConsentDecision(final ConsentDecision decision) {
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
         val consent = getConsentDecisions()
             .stream()
             .anyMatch(d -> d.getId() == decision.getId());
@@ -63,7 +63,7 @@ public abstract class BaseConsentRepository implements ConsentRepository {
             decision.setId(RandomUtils.getNativeInstance().nextInt());
         }
         getConsentDecisions().add(decision);
-        return true;
+        return decision;
     }
 
 

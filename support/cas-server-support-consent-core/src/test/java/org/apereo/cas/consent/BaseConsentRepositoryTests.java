@@ -24,6 +24,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -58,22 +59,30 @@ public abstract class BaseConsentRepositoryTests {
         val repo = getRepository("verifyConsentDecisionIsNotFound");
         val decision = BUILDER.build(SVC, REG_SVC, "casuser", ATTR);
         decision.setId(1);
-        assertTrue(repo.storeConsentDecision(decision));
+        assertNotNull(repo.storeConsentDecision(decision));
         assertFalse(repo.findConsentDecisions().isEmpty());
+        assertFalse(repo.findConsentDecisions("casuser").isEmpty());
         assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication()));
+        assertFalse(repo.deleteConsentDecision(decision.getId(), UUID.randomUUID().toString()));
     }
 
     @Test
     public void verifyConsentDecisionIsFound() {
         val repo = getRepository("verifyConsentDecisionIsFound");
-        val decision = BUILDER.build(SVC, REG_SVC, CASUSER_2, ATTR);
+        var decision = BUILDER.build(SVC, REG_SVC, CASUSER_2, ATTR);
         decision.setId(100);
-        assertTrue(repo.storeConsentDecision(decision));
+        decision = repo.storeConsentDecision(decision);
+        assertNotNull(decision);
+        /*
+         * Update the decision now that its record is created.
+         */
+        decision = repo.storeConsentDecision(decision);
+        assertNotNull(decision);
 
         val d = repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(CASUSER_2));
         assertNotNull(d);
         assertEquals(CASUSER_2, d.getPrincipal());
-        
+
         assertTrue(repo.deleteConsentDecision(d.getId(), d.getPrincipal()));
         assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(CASUSER_2)));
     }
