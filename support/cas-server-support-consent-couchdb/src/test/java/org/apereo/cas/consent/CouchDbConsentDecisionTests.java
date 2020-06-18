@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,7 +41,7 @@ public class CouchDbConsentDecisionTests {
     public void verifyOperation() {
         val consent = new ConsentDecision();
         consent.setAttributes("attributes");
-        consent.setCreatedDate(LocalDateTime.now());
+        consent.setCreatedDate(LocalDateTime.now(ZoneId.systemDefault()));
         consent.setOptions(ConsentReminderOptions.ATTRIBUTE_NAME);
         consent.setPrincipal("casuser");
         consent.setReminder(10L);
