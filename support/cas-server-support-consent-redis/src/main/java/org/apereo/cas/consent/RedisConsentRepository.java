@@ -82,15 +82,15 @@ public class RedisConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public boolean storeConsentDecision(final ConsentDecision decision) {
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
         try {
             val redisKey = CAS_CONSENT_DECISION_PREFIX + decision.getPrincipal() + ':' + decision.getId();
             this.redisTemplate.boundValueOps(redisKey).set(decision);
-            return true;
+            return decision;
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
-        return false;
+        return null;
     }
 
     @Override

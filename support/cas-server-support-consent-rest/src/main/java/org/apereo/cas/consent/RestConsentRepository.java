@@ -74,7 +74,8 @@ public class RestConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService, final Authentication authentication) {
+    public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService,
+                                               final Authentication authentication) {
         try {
             val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
@@ -92,17 +93,19 @@ public class RestConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public boolean storeConsentDecision(final ConsentDecision decision) {
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
         try {
             val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             val entity = new HttpEntity<ConsentDecision>(decision, headers);
             val result = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, ConsentDecision.class);
-            return result.getStatusCodeValue() == HttpStatus.OK.value();
+            if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
+                return decision;
+            }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
-        return false;
+        return null;
     }
 
     @Override
