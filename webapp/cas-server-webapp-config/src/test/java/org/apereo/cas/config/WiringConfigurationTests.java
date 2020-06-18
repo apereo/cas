@@ -50,6 +50,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebAppConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    AcceptUsersAuthenticationEventExecutionPlanConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
@@ -71,15 +73,18 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebConfiguration.class,
     CasCoreValidationConfiguration.class,
     CasCoreConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    AcceptUsersAuthenticationEventExecutionPlanConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     WebMvcAutoConfiguration.class,
     AopAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class
-}, properties = "cas.http-web-request.cors.enabled=true")
+}, properties = {
+    "cas.authn.accept.users=casuser::Mellon",
+    "cas.http-web-request.cors.enabled=true",
+    "cas.http-web-request.pattern-to-block=.*",
+    "cas.http-web-request.header.content-security-policy=policy"
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @WebAppConfiguration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
