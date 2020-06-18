@@ -2,6 +2,7 @@ package org.apereo.cas.web.security;
 
 import org.apereo.cas.config.CasWebAppSecurityConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAu
 import org.springframework.boot.actuate.autoconfigure.info.InfoEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -28,6 +30,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
     EndpointAutoConfiguration.class,
     InfoEndpointAutoConfiguration.class,
     BeansEndpointAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     WebEndpointAutoConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class
@@ -70,6 +73,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @WebAppConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Ldap")
+@EnabledIfPortOpen(port = 10389)
 public class CasWebSecurityConfigurerAdapterTests {
     @Test
     public void verifyOperation() {
