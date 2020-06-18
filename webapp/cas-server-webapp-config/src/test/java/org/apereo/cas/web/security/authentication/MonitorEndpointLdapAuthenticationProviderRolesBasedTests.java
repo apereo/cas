@@ -43,6 +43,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
         val provider = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
+        assertTrue(provider.supports(UsernamePasswordAuthenticationToken.class));
         val token = provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456"));
         assertNotNull(token);
         assertAll(new Executable() {

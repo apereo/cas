@@ -2,22 +2,12 @@ package org.apereo.cas.services;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.AfterEach;
-
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
-
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -47,6 +37,7 @@ public class RegisteredServicePropertyTests {
     @RequiredArgsConstructor
     private static class DefaultRegisteredServiceProperty implements RegisteredServiceProperty {
         private static final long serialVersionUID = -4878764188998002053L;
+
         private final String value;
 
         @Override

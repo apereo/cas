@@ -1,4 +1,4 @@
-package org.apereo.cas;
+package org.apereo.cas.webflow;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;

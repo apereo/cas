@@ -1,4 +1,4 @@
-package org.apereo.cas;
+package org.apereo.cas.webflow;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
