@@ -11,7 +11,7 @@
 
 <body>
     <main role="main" class="container mt-3 mb-3">
-        <div layout:fragment="content" class="m-auto w-lg-66">
+        <div layout:fragment="content" class="m-auto w-lg-66 w-100">
             <form method="post" id="duo_form" th:object="${credential}" th:action="@{/login}">
                 <div id="msg" class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${#fields.hasErrors('*')}">
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">this error block and text is only shown if there are errors</span>
