@@ -1,6 +1,8 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.config.CasAcceptableUsagePolicyWebflowConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -108,20 +110,31 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     }
 
     protected void verifyRepositoryAction(final String actualPrincipalId, final Map<String, List<Object>> profileAttributes) {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(actualPrincipalId);
-        val tgt = new MockTicketGrantingTicket(actualPrincipalId, c, profileAttributes);
-        ticketRegistry.getObject().addTicket(tgt);
-        val principal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
-        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(principal), context);
-        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        val c = getCredential(actualPrincipalId);
+        val context = getRequestContext(actualPrincipalId, profileAttributes, c);
 
         assertFalse(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
         assertTrue(getAcceptableUsagePolicyRepository().submit(context, c));
         if (hasLiveUpdates()) {
             assertTrue(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
         }
+    }
+
+    protected UsernamePasswordCredential getCredential(final String actualPrincipalId) {
+        return CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(actualPrincipalId);
+    }
+
+    protected MockRequestContext getRequestContext(final String actualPrincipalId,
+                                                   final Map<String, List<Object>> profileAttributes,
+                                                   final Credential c) {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val tgt = new MockTicketGrantingTicket(actualPrincipalId, c, profileAttributes);
+        ticketRegistry.getObject().addTicket(tgt);
+        val principal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(principal), context);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        return context;
     }
 }
