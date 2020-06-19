@@ -79,7 +79,8 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
      */
     public static final String INIT_PARAM_CONTENT_SECURITY_POLICY = "contentSecurityPolicy";
 
-    private static final Pattern CACHE_CONTROL_STATIC_RESOURCES_PATTERN = Pattern.compile(".css|.js|.png|.txt|.jpg|.ico|.jpeg|.bmp|.gif");
+    private static final Pattern CACHE_CONTROL_STATIC_RESOURCES_PATTERN = 
+                    Pattern.compile("^.+\\.(css|js|png|txt|jpg|ico|jpeg|bmp|gif)$", Pattern.CASE_INSENSITIVE);
 
     private final Object lock = new Object();
 
