@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.monitor.endpoints.ldap.ldap-authz.group-filter=businessCategory={user}",
         "cas.monitor.endpoints.ldap.ldap-authz.group-base-dn=ou=people,dc=example,dc=org",
-        "cas.monitor.endpoints.ldap.ldap-authz.baseDn=ou=people,dc=example,dc=org",
+        "cas.monitor.endpoints.ldap.ldap-authz.base-dn=ou=people,dc=example,dc=org",
         "cas.monitor.endpoints.ldap.ldap-authz.search-filter=cn={user}",
         "cas.monitor.endpoints.ldap.ldap-authz.group-attribute=roomNumber",
         "cas.monitor.endpoints.ldap.ldap-authz.group-prefix=ROLE_",

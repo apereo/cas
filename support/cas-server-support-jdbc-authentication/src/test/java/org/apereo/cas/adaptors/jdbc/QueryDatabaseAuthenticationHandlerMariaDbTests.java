@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "database.user=root",
     "database.password=mypass",
-    "database.driverClass=org.mariadb.jdbc.Driver",
+    "database.driver-class=org.mariadb.jdbc.Driver",
     "database.name=mysql",
     "database.url=jdbc:mariadb://localhost:3306/",
     "database.dialect=org.hibernate.dialect.MariaDB103Dialect"

@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.service-registry.cosmosDb.uri=https://localhost:8081",
     "cas.service-registry.cosmosDb.key=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
     "cas.service-registry.cosmosDb.database=TestDB",
-    "cas.service-registry.cosmosDb.dropCollection=true"
+    "cas.service-registry.cosmosDb.drop-collection=true"
 })
 @EnabledIfSystemProperty(named = "cosmosDbEnabled", matches = "true")
 @ResourceLock("cosmosdb-service")

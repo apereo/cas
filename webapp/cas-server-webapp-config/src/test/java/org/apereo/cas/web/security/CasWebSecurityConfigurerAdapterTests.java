@@ -56,7 +56,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
         "cas.monitor.endpoints.default-endpoint-properties.access=IP_ADDRESS",
 
         "cas.monitor.endpoints.endpoint.health.access=IP_ADDRESS",
-        "cas.monitor.endpoints.endpoint.health.requiredIpAddresses=196.+",
+        "cas.monitor.endpoints.endpoint.health.required-ip-addresses=196.+",
 
         "cas.monitor.endpoints.endpoint.status.access=AUTHENTICATED",
 
@@ -65,7 +65,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
         "cas.monitor.endpoints.endpoint.springWebflow.access=ANONYMOUS",
 
         "cas.monitor.endpoints.endpoint.sso.access=AUTHORITY",
-        "cas.monitor.endpoints.endpoint.sso.requiredAuthorities=EXAMPLE",
+        "cas.monitor.endpoints.endpoint.sso.required-authorities=EXAMPLE",
 
         "cas.monitor.endpoints.endpoint.info.access=ROLE",
         "cas.monitor.endpoints.endpoint.info.required-roles=EXAMPLE"

@@ -15,7 +15,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.jdbc.showSql=true",
     "cas.authn.saml-idp.metadata.jpa.user=system",
     "cas.authn.saml-idp.metadata.jpa.password=Oradoc_db1",
-    "cas.authn.saml-idp.metadata.jpa.driverClass=oracle.jdbc.driver.OracleDriver",
+    "cas.authn.saml-idp.metadata.jpa.driver-class=oracle.jdbc.driver.OracleDriver",
     "cas.authn.saml-idp.metadata.jpa.url=jdbc:oracle:thin:@localhost:1521:ORCLCDB",
     "cas.authn.saml-idp.metadata.jpa.dialect=org.hibernate.dialect.Oracle12cDialect"
 })

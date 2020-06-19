@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 }, properties = {
     "cas.service-registry.ldap.ldap-url=ldap://localhost:10389",
-    "cas.service-registry.ldap.baseDn=dc=example,dc=org"
+    "cas.service-registry.ldap.base-dn=dc=example,dc=org"
 })
 public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegistryTests {
 
