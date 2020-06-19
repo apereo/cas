@@ -18,7 +18,6 @@
             <span class="fa fa-unlock"></span>
             <a th:utext="#{screen.pm.button.resetPassword}" href="javascript:void(0)"
                 onclick="document.getElementById('passwordManagementForm').submit();" />
-            <p />
         </form>
 
         <form th:if="${passwordManagementEnabled}" method="post" id="passwordManagementUserForm">
@@ -27,14 +26,12 @@
             <span class="fa fa-unlock"></span>
             <a th:utext="#{screen.pm.button.forgotUsername}" href="javascript:void(0)"
                 onclick="document.getElementById('passwordManagementUserForm').submit();" />
-            <p />
         </form>
 
         <div th:unless="${passwordManagementEnabled}">
             <br />
             <span class="fa fa-question-circle"></span>
             <span th:utext="#{screen.pm.button.forgotpwd('https://pwd.example.org')}">Forgot your password?</span>
-            <p />
         </div>
     </div>
 </body>
