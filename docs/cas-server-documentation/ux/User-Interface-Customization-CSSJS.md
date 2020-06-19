@@ -6,7 +6,7 @@ category: User Interface
 
 # CSS
 
-The default styles are all contained in two single files located in `src/main/resources/static/css/cas.css` and `src/main/resources/static/css/admin.css`. This location is set in `cas-theme-default.properties`. CAS by default uses [Material.io](https://material.io/) library and design specification as a base for its user experience.
+The default styles are all contained in one single file located in `src/main/resources/static/css/cas.css`. This location is set in `cas-theme-default.properties`. CAS by default uses [Material.io](https://material.io/) library and design specification as a base for its user experience.
 
 If you would like to create your own `css/custom.css file`, for example, you will need to update `cas.standard.css.file` key in that file.
 

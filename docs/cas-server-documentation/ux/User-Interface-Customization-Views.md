@@ -31,9 +31,9 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ## Thymeleaf
 
-CAS uses [Thymeleaf (v3.x)](https://www.thymeleaf.org) for its markup rendering engine. Each template is decorated by `layout.html` template file, which provides a layout structure for the template's content. Individual components optimized for re-use among multiple templates are stored in the `src/main/resources/templates/fragments` folder, and referenced by the templates in `src/main/resources/templates`.
+CAS uses [Thymeleaf](https://www.thymeleaf.org) for its markup rendering engine. Each template is decorated by `layout.html` template file, which provides a layout structure for the template's content. Individual components optimized for re-use among multiple templates are stored in the `src/main/resources/templates/fragments` folder, and referenced by the templates in `src/main/resources/templates`.
 
-Refer to the [Thymeleaf documentation](https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html) for more information on its use and syntax.
+Refer to the [Thymeleaf documentation](https://www.thymeleaf.org/) for more information on its use and syntax.
 
 ## Warning Before Accessing Application
 
