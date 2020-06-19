@@ -50,7 +50,12 @@ public class MonitoredRepository {
     public Version getCurrentVersionInMaster() {
         try {
             val rest = new RestTemplate();
-            val uri = URI.create(gitHubProperties.getRepository().getUrl() + "/raw/master/gradle.properties");
+
+            val url = String.format("https://raw.githubusercontent.com/%s/%s/master/gradle.properties",
+                gitHubProperties.getRepository().getOrganization(),
+                gitHubProperties.getRepository().getName());
+
+            val uri = URI.create(url);
             val entity = rest.getForEntity(uri, String.class);
             val properties = new Properties();
             properties.load(new StringReader(Objects.requireNonNull(entity.getBody())));
