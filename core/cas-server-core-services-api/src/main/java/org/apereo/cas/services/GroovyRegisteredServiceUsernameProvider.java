@@ -52,7 +52,6 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
     @JsonCreator
     public GroovyRegisteredServiceUsernameProvider(@JsonProperty("groovyScript") final String script) {
         this.groovyScript = script;
-        initializeWatchableScriptIfNeeded();
     }
 
     @PostLoad
