@@ -24,7 +24,10 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web"
 
     implementation "io.spring.initializr:initializr-web"
+    implementation "io.spring.initializr:initializr-actuator"
     implementation "io.spring.initializr:initializr-generator-spring"
+    implementation "io.spring.initializr:initializr-generator-test"
+    implementation "io.spring.initializr:initializr-generator"
 
     runtime "org.springframework.boot:spring-boot-starter-tomcat"
 }

@@ -10,7 +10,7 @@ initializr:
   version:
     value: 6.3.0-SNAPSHOT
   package-name:
-    value: org.apereo.cas
+    value: org.apereo
   javaVersions:
     - id: 11
       default: true
@@ -25,12 +25,46 @@ initializr:
   types:
     - name: Gradle Project
       id: gradle-project
-      description: Generate a Gradle-based project
+      description: Generate a Gradle-based project as a zip file
       tags:
         build: gradle
         format: project
       default: true
       action: /starter.zip
+    - name: Gradle Project
+      id: gradle-project
+      description: Generate a Gradle-based project as a tgz file
+      tags:
+        build: gradle
+        format: project
+      default: false
+      action: /starter.tgz
+    - name: Gradle build
+      id: gradle-build
+      description: Generate a Gradle-based build
+      tags:
+        build: gradle
+        format: project
+      default: false
+      action: /build.gradle
   boot-versions:
     - id: 2.3.1.RELEASE
       default: true
+  env:
+    boms:
+      cas-bom:
+        groupId: org.apereo.cas
+        artifactId: cas-server-support-bom
+        version: 6.3.0-SNAPSHOT
+  dependencies:
+    - name: Core
+      content:
+        - name: core
+          id: core
+          groupId: org.apereo.cas
+          artifactId: cas-server-core
+          description: A solid description for this dependency
+          bom: cas-bom
+          aliases:
+            - core
+
