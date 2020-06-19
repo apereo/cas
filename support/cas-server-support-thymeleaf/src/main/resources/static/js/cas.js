@@ -1,4 +1,4 @@
-(function (material) {
+(function (material, $) {
     var cas = {
         init: function () {
             cas.attachFields();
@@ -7,12 +7,14 @@
         attachFields: function () {
             var divs = document.querySelectorAll('.mdc-text-field'),
                 field;
-            divs.forEach(function (div) {
+            var div;
+            for (i = 0; i < divs.length; ++i) {
+                div = divs[i];
                 field = material.textField.MDCTextField.attachTo(div);
                 if (div.classList.contains('caps-check')) {
                     field.foundation_.adapter_.registerInputInteractionHandler('keypress', cas.checkCaps);
                 }
-            });
+            }
 
             //MDCTextFieldIconAdapter
         },
@@ -30,7 +32,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         cas.init();
     });
-})(mdc);
+})(mdc, jQuery);
 
 function requestGeoPosition() {
     // console.log('Requesting GeoLocation data from the browser...');

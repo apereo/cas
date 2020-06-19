@@ -3426,6 +3426,10 @@ ext.libraries = [
                 dependencies.create("org.webjars.npm:mdi__font:$mdiFontVersion") {
                 },
                 dependencies.create("org.webjars.npm:normalize.css:$normalizeVersion") {
+                },
+                dependencies.create("org.webjars:es5-shim:$es5ShimVersion") {
+                },
+                dependencies.create("org.webjars.npm:css-vars-ponyfill:$cssVarsPonyfillVersion") {
                 }
         ]
 ]
