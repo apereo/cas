@@ -15,7 +15,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.jdbc.showSql=true",
     "cas.authn.saml-idp.metadata.jpa.user=postgres",
     "cas.authn.saml-idp.metadata.jpa.password=password",
-    "cas.authn.saml-idp.metadata.jpa.driverClass=org.postgresql.Driver",
+    "cas.authn.saml-idp.metadata.jpa.driver-class=org.postgresql.Driver",
     "cas.authn.saml-idp.metadata.jpa.url=jdbc:postgresql://localhost:5432/saml",
     "cas.authn.saml-idp.metadata.jpa.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
 })

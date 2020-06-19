@@ -18,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.yubikey.jpa.ddlAuto=create-drop",
     "cas.authn.mfa.yubikey.jpa.user=root",
     "cas.authn.mfa.yubikey.jpa.password=password",
-    "cas.authn.mfa.yubikey.jpa.driverClass=com.mysql.cj.jdbc.Driver",
+    "cas.authn.mfa.yubikey.jpa.driver-class=com.mysql.cj.jdbc.Driver",
     "cas.authn.mfa.yubikey.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "cas.authn.mfa.yubikey.jpa.dialect=org.hibernate.dialect.MySQL57InnoDBDialect"
 })

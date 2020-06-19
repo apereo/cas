@@ -16,7 +16,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.jdbc.showSql=true",
     "cas.authn.pm.jdbc.user=postgres",
     "cas.authn.pm.jdbc.password=password",
-    "cas.authn.pm.jdbc.driverClass=org.postgresql.Driver",
+    "cas.authn.pm.jdbc.driver-class=org.postgresql.Driver",
     "cas.authn.pm.jdbc.url=jdbc:postgresql://localhost:5432/pm",
     "cas.authn.pm.jdbc.dialect=org.hibernate.dialect.PostgreSQL95Dialect",
     "cas.authn.pm.history.enabled=true"

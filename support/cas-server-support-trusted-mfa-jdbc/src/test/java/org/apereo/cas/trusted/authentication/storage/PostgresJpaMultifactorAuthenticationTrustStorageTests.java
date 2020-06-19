@@ -16,7 +16,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.trusted.jpa.ddlAuto=create-drop",
     "cas.authn.mfa.trusted.jpa.user=postgres",
     "cas.authn.mfa.trusted.jpa.password=password",
-    "cas.authn.mfa.trusted.jpa.driverClass=org.postgresql.Driver",
+    "cas.authn.mfa.trusted.jpa.driver-class=org.postgresql.Driver",
     "cas.authn.mfa.trusted.jpa.url=jdbc:postgresql://localhost:5432/mfa",
     "cas.authn.mfa.trusted.jpa.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
 })

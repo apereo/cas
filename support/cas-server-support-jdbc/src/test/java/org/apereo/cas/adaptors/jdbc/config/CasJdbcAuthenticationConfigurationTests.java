@@ -69,7 +69,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
     "cas.authn.jdbc.query[0].user=sa",
     "cas.authn.jdbc.query[0].password=",
-    "cas.authn.jdbc.query[0].driver=org.hsqldb.jdbcDriver",
+    "cas.authn.jdbc.query[0].driver-class=org.hsqldb.jdbcDriver",
     "cas.authn.jdbc.query[0].url=jdbc:hsqldb:mem:cas-hsql-authn-db",
     "cas.authn.jdbc.query[0].dialect=org.hibernate.dialect.HSQLDialect",
     
