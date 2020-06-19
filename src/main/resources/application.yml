@@ -1,0 +1,36 @@
+initializr:
+  name:
+    value: cas
+  description:
+    value: 'Generic CAS WAR overlay to exercise the latest versions of CAS. This overlay could be freely used as a starting template for local CAS war overlays.'
+  group-id:
+    value: org.apereo.cas
+  artifact-id:
+    value: cas
+  version:
+    value: 6.3.0-SNAPSHOT
+  package-name:
+    value: org.apereo.cas
+  javaVersions:
+    - id: 11
+      default: true
+  languages:
+    - name: Java
+      id: java
+      default: true
+  packagings:
+    - name: War
+      id: war
+      default: true
+  types:
+    - name: Gradle Project
+      id: gradle-project
+      description: Generate a Gradle-based project
+      tags:
+        build: gradle
+        format: project
+      default: true
+      action: /starter.zip
+  boot-versions:
+    - id: 2.3.1.RELEASE
+      default: true

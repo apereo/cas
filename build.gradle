@@ -1,5 +1,5 @@
 plugins {
-    id "org.springframework.boot" version "2.3.1.RELEASE"
+    id "org.springframework.boot" version "2.2.7.RELEASE"
     id "io.spring.dependency-management" version "1.0.9.RELEASE"
     id "java-library"
 }
@@ -21,7 +21,6 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.boot:spring-boot-starter-web"
 
     implementation "io.spring.initializr:initializr-web"
