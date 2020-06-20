@@ -1,13 +1,16 @@
 package org.apereo.cas.authentication;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 
 import javax.persistence.CollectionTable;
@@ -36,6 +39,8 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode
+@SuperBuilder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeTokenAccount>, Cloneable {
     /**
      * Table name used to hold otp scratch codes.
@@ -47,23 +52,30 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @Id
     @Transient
     @JsonProperty("id")
-    private long id = -1;
+    @Builder.Default
+    private long id = System.currentTimeMillis();
 
     @Column(nullable = false, length = 2048)
+    @JsonProperty("secretKey")
     private String secretKey;
 
     @Column(nullable = false)
+    @JsonProperty("validationCode")
     private int validationCode;
 
     @ElementCollection
     @CollectionTable(name = TABLE_NAME_SCRATCH_CODES, joinColumns = @JoinColumn(name = "username"))
     @Column(nullable = false)
+    @Builder.Default
     private List<Integer> scratchCodes = new ArrayList<>(0);
 
     @Column(nullable = false, unique = true)
+    @JsonProperty("username")
     private String username;
 
     @Column
+    @JsonProperty("registrationDate")
+    @Builder.Default
     private ZonedDateTime registrationDate = ZonedDateTime.now(ZoneOffset.UTC);
 
     public OneTimeTokenAccount() {
@@ -78,7 +90,9 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
      * @param validationCode the validation code
      * @param scratchCodes   the scratch codes
      */
-    public OneTimeTokenAccount(final String username, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
+    public OneTimeTokenAccount(final String username, final String secretKey,
+                               final int validationCode,
+                               final List<Integer> scratchCodes) {
         this();
         this.secretKey = secretKey;
         this.validationCode = validationCode;

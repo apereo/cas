@@ -105,7 +105,7 @@ public class SurrogateAuthenticationPostProcessorTests {
         when(builder.build()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("casuser"));
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() throws Throwable {
+            public void execute() {
                 surrogateAuthenticationPostProcessor.process(builder, transaction);
             }
         });
@@ -137,7 +137,7 @@ public class SurrogateAuthenticationPostProcessorTests {
         when(builder.build()).thenReturn(CoreAuthenticationTestUtils.getAuthentication(principal));
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() throws Throwable {
+            public void execute() {
                 surrogateAuthenticationPostProcessor.process(builder, transaction);
             }
         });

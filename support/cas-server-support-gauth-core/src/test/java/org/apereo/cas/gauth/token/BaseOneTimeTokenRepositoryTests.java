@@ -114,7 +114,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         protected ApplicationContext applicationContext;
 
         @Override
-        public void afterPropertiesSet() throws Exception {
+        public void afterPropertiesSet() {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }

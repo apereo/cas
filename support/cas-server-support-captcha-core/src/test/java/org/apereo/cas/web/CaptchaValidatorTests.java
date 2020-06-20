@@ -55,7 +55,7 @@ public class CaptchaValidatorTests {
     }
 
     @Test
-    public void verifyBadResponse() throws Exception {
+    public void verifyBadResponse() {
         val secret = UUID.randomUUID().toString();
         val validator = new CaptchaValidator("http://localhost:8812", secret, .1);
         try (val webServer = new MockWebServer(8812,

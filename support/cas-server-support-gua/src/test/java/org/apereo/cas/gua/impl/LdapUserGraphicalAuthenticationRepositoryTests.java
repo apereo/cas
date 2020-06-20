@@ -57,7 +57,7 @@ public class LdapUserGraphicalAuthenticationRepositoryTests {
         assertTrue(repo.getGraphics("bad-user").isEmpty());
         assertAll(new Executable() {
             @Override
-            public void execute() throws Exception {
+            public void execute() {
                 repo.destroy();
             }
         });

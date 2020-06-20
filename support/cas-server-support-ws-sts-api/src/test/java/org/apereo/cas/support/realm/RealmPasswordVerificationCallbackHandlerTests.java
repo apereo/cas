@@ -24,7 +24,7 @@ public class RealmPasswordVerificationCallbackHandlerTests {
         val callback = new WSPasswordCallback("casuser", "password", "type", WSPasswordCallback.USERNAME_TOKEN);
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() throws Throwable {
+            public void execute() {
                 realm.handle(new Callback[]{callback});
                 assertEquals(realm.getPassword(), callback.getPassword());
             }

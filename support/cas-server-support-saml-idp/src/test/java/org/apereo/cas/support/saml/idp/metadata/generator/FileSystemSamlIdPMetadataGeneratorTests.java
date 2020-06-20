@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FileSystemSamlIdPMetadataGeneratorTests extends BaseSamlIdPConfigurationTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    public void verifyOperation() {
         assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));

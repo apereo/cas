@@ -42,7 +42,7 @@ public class UsernamePasswordWrapperAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthWithNoContext() throws Exception {
+    public void verifyAuthWithNoContext() {
         val handler = new UsernamePasswordWrapperAuthenticationHandler("Handler1", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0);
         assertThrows(FailedLoginException.class,

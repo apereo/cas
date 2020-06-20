@@ -48,7 +48,7 @@ public class CoreAuthenticationUtilsTests {
     }
 
     @Test
-    public void verifyAttributeRepositories() throws Exception {
+    public void verifyAttributeRepositories() {
         val repository = CoreAuthenticationTestUtils.getAttributeRepository();
         val attrs = CoreAuthenticationUtils.retrieveAttributesFromAttributeRepository(repository, "casuser",
             Set.of("StubAttributeRepository"), Optional.of(CoreAuthenticationTestUtils.getPrincipal("casuser")));

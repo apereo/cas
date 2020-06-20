@@ -82,7 +82,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         val acct = getAccount("verifySaveAndUpdate", casuser);
         val repo = getRegistry("verifySaveAndUpdate");
         repo.save(acct.getUsername(), acct.getSecretKey(), acct.getValidationCode(), acct.getScratchCodes());
-        var s = repo.get(acct.getUsername());
+        var s = repo.get(acct.getUsername()).iterator().next();
         assertNotNull(s, "Account not found");
         assertNotNull(s.getRegistrationDate());
         assertEquals(acct.getValidationCode(), s.getValidationCode());
@@ -90,7 +90,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         s.setSecretKey("newSecret");
         s.setValidationCode(999666);
         getRegistry("verifySaveAndUpdate").update(s);
-        s = getRegistry("verifySaveAndUpdate").get(casuser);
+        s = getRegistry("verifySaveAndUpdate").get(casuser).iterator().next();
         assertEquals(999666, s.getValidationCode());
         assertEquals("newSecret", s.getSecretKey());
     }
@@ -100,10 +100,10 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         val casuser = UUID.randomUUID().toString();
         val repo = getRegistry("verifyGet");
         val acct = repo.get(casuser);
-        assertNull(acct);
+        assertTrue(acct.isEmpty());
         val acct2 = getAccount("verifyGet", casuser);
         repo.save(acct2.getUsername(), acct2.getSecretKey(), acct2.getValidationCode(), acct2.getScratchCodes());
-        val acct3 = repo.get(casuser);
+        val acct3 = repo.get(casuser).iterator().next();
         assertNotNull(acct3, "Account not found");
         assertEquals(acct2.getUsername(), acct3.getUsername());
         assertEquals(acct2.getValidationCode(), acct3.getValidationCode());
@@ -121,7 +121,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         acct.setSecretKey(PLAIN_SECRET);
         repo.save(acct.getUsername(), acct.getSecretKey(), acct.getValidationCode(), acct.getScratchCodes());
 
-        acct = repo.get(casuser);
+        acct = repo.get(casuser).iterator().next();
         assertEquals(PLAIN_SECRET, acct.getSecretKey());
     }
 
@@ -137,7 +137,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         @Autowired
         protected ApplicationContext applicationContext;
 
-        public void afterPropertiesSet() throws Exception {
+        public void afterPropertiesSet() {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }

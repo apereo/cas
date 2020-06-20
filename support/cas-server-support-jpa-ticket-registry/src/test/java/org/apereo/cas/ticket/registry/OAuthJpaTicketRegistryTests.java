@@ -88,7 +88,7 @@ import static org.junit.jupiter.api.Assertions.*;
     OAuth20ProtocolTicketCatalogConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasWsSecurityTokenTicketCatalogConfiguration.class
-}, properties = "cas.jdbc.showSql=true")
+}, properties = "cas.jdbc.show-sql=true")
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
 @ResourceLock("oauth-jpa-tickets")
 @Tag("JDBC")

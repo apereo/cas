@@ -9,6 +9,7 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -19,10 +20,6 @@ import java.util.Collection;
  */
 @Slf4j
 public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorCredentialRepository {
-
-    /**
-     * CouchDb instance for tokens storage.
-     */
     private final GoogleAuthenticatorAccountCouchDbRepository couchDb;
 
     public CouchDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
@@ -33,13 +30,13 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     }
 
     @Override
-    public OneTimeTokenAccount get(final String username) {
-        val tokenAccount = couchDb.findOneByUsername(username);
-        if (tokenAccount == null) {
+    public Collection<? extends OneTimeTokenAccount> get(final String username) {
+        val accounts = couchDb.findByUsername(username);
+        if (accounts == null || accounts.isEmpty()) {
             LOGGER.debug("No record could be found for google authenticator id [{}]", username);
-            return null;
+            return new ArrayList<>(0);
         }
-        return decode(tokenAccount);
+        return decode(accounts);
     }
 
     @Override
@@ -49,14 +46,17 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
 
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
-        val couchDbOneTimeTokenAccount = couchDb.findOneByUsername(account.getUsername());
-        if (couchDbOneTimeTokenAccount == null) {
-            val newAccount = new CouchDbGoogleAuthenticatorAccount(encode(account));
+        val records = couchDb.findByUsername(account.getUsername());
+        if (records == null || records.isEmpty()) {
+            val newAccount = CouchDbGoogleAuthenticatorAccount.from(encode(account));
             couchDb.add(newAccount);
             return newAccount;
         }
-        couchDb.update(couchDbOneTimeTokenAccount.update(encode(account)));
-        return couchDbOneTimeTokenAccount;
+        records.stream()
+            .filter(rec -> rec.getId() == account.getId())
+            .findFirst()
+            .ifPresent(act -> couchDb.update(CouchDbGoogleAuthenticatorAccount.from(account)));
+        return account;
     }
 
     @Override

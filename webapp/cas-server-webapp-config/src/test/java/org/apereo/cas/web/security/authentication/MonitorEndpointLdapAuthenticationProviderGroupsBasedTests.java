@@ -54,7 +54,7 @@ public class MonitorEndpointLdapAuthenticationProviderGroupsBasedTests extends B
         assertNotNull(provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456")));
         assertAll(new Executable() {
             @Override
-            public void execute() throws Exception {
+            public void execute() {
                 provider.destroy();
             }
         });

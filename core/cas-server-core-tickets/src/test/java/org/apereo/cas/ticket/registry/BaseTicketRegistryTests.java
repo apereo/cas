@@ -310,7 +310,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    public void verifyTicketCountsEqualToTicketsAdded() throws Exception {
+    public void verifyTicketCountsEqualToTicketsAdded() {
         assumeTrue(isIterableRegistry());
         val tgts = new ArrayList<Ticket>();
         val sts = new ArrayList<Ticket>();

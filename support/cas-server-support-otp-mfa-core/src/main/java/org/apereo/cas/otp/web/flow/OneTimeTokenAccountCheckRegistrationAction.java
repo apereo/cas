@@ -7,7 +7,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -42,7 +41,7 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractAction {
         val uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
 
         val acct = repository.get(uid);
-        if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {
+        if (acct == null || acct.isEmpty()) {
             val keyAccount = this.repository.create(uid);
             val keyUri = "otpauth://totp/" + this.label + ':' + uid + "?secret=" + keyAccount.getSecretKey() + "&issuer=" + this.issuer;
             val flowScope = requestContext.getFlowScope();

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 public class EncodedTicketTests {
     @Test
-    public void verifyDefaults() throws Exception {
+    public void verifyDefaults() {
         val id = UUID.randomUUID().toString();
         val ticket1 = new EncodedTicket(UUID.randomUUID().toString(),
             id, TicketGrantingTicket.PREFIX);
@@ -34,7 +34,7 @@ public class EncodedTicketTests {
         assertEquals(0, ticket1.getCountOfUses());
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() throws Throwable {
+            public void execute() {
                 ticket1.markTicketExpired();
             }
         });

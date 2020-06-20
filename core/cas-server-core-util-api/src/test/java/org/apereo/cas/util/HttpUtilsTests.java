@@ -29,7 +29,7 @@ public class HttpUtilsTests {
     public void verifyClose() {
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() throws Throwable {
+            public void execute() {
                 HttpUtils.close(null);
             }
         });

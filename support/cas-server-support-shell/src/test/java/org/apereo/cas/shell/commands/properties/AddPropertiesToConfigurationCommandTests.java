@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import java.io.File;
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,7 +29,7 @@ public class AddPropertiesToConfigurationCommandTests extends BaseCasShellComman
         exportProperties(file);
     }
 
-    private void exportProperties(final File file) throws IOException {
+    private void exportProperties(final File file) {
         assertDoesNotThrow(() -> shell.evaluate(() -> "add-properties --file " + file + " --group cas.server"));
         assertTrue(file.exists());
         file.deleteOnExit();

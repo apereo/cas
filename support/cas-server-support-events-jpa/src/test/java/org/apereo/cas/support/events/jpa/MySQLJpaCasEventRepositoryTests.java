@@ -14,7 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfPortOpen(port = 3306)
 @Tag("MySQL")
 @TestPropertySource(properties = {
-    "cas.jdbc.showSql=true",
+    "cas.jdbc.show-sql=true",
     "cas.events.jpa.ddlAuto=create-drop",
     "cas.events.jpa.user=root",
     "cas.events.jpa.password=password",

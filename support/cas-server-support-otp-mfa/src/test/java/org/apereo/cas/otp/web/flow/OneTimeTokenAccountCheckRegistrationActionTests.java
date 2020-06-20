@@ -17,6 +17,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,7 +36,7 @@ public class OneTimeTokenAccountCheckRegistrationActionTests {
     public void verifyExistingAccount() {
         val account = new OneTimeTokenAccount("casuser", UUID.randomUUID().toString(), 123456, List.of());
         val repository = mock(OneTimeTokenCredentialRepository.class);
-        when(repository.get(anyString())).thenReturn(account);
+        when(repository.get(anyString())).thenReturn((Collection) List.of(account));
         val action = new OneTimeTokenAccountCheckRegistrationAction(repository, "CAS", "CAS");
 
         val context = new MockRequestContext();

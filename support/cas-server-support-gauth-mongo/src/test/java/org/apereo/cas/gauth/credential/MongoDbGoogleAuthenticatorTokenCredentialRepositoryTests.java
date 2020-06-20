@@ -119,7 +119,7 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
     public void verifySave() {
         val id = UUID.randomUUID().toString();
         registry.save(id, "secret", 143211, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
-        val s = registry.get(id);
+        val s = registry.get(id).iterator().next();
         assertEquals("secret", s.getSecretKey());
         val c = registry.load();
         assertFalse(c.isEmpty());
@@ -132,13 +132,13 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
     public void verifySaveAndUpdate() {
         val casuser = UUID.randomUUID().toString();
         registry.save(casuser, "secret", 222222, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
-        val s = registry.get(casuser);
+        val s = registry.get(casuser).iterator().next();
         assertNotNull(s.getRegistrationDate());
         assertEquals(222222, s.getValidationCode());
         s.setSecretKey("newSecret");
         s.setValidationCode(999666);
         registry.update(s);
-        val s2 = registry.get(casuser);
+        val s2 = registry.get(casuser).iterator().next();
         assertEquals(999666, s2.getValidationCode());
         assertEquals("newSecret", s2.getSecretKey());
     }

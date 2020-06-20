@@ -22,7 +22,7 @@ public class GroovyShellScriptTests {
         val shell = new GroovyShellScript("println 'test'");
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() throws Throwable {
+            public void execute() {
                 shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY);
             }
         });

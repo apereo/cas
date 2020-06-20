@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 @Getter
 public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
     private final MongoOperations mongoTemplate;
+
     private final String collectionName;
 
     public MongoDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
@@ -41,14 +42,11 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     }
 
     @Override
-    public OneTimeTokenAccount get(final String username) {
+    public Collection<? extends OneTimeTokenAccount> get(final String username) {
         val query = new Query();
         query.addCriteria(Criteria.where("username").is(username));
-        val r = this.mongoTemplate.findOne(query, GoogleAuthenticatorAccount.class, this.collectionName);
-        if (r != null) {
-            return decode(r);
-        }
-        return null;
+        val r = this.mongoTemplate.find(query, GoogleAuthenticatorAccount.class, this.collectionName);
+        return decode(r);
     }
 
     @Override
@@ -67,7 +65,12 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
 
     @Override
     public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
-        val account = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
+        val account = GoogleAuthenticatorAccount.builder()
+            .username(userName)
+            .secretKey(secretKey)
+            .validationCode(validationCode)
+            .scratchCodes(scratchCodes)
+            .build();
         update(account);
     }
 

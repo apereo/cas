@@ -38,6 +38,11 @@ public abstract class BaseGoogleAuthenticatorTokenCredentialRepository extends B
     @Override
     public OneTimeTokenAccount create(final String username) {
         val key = getGoogleAuthenticator().createCredentials();
-        return new GoogleAuthenticatorAccount(username, key.getKey(), key.getVerificationCode(), key.getScratchCodes());
+        return GoogleAuthenticatorAccount.builder()
+            .username(username)
+            .secretKey(key.getKey())
+            .validationCode(key.getVerificationCode())
+            .scratchCodes(key.getScratchCodes())
+            .build();
     }
 }
