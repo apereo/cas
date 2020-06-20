@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,24 +41,15 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     }
 
     @Override
-    public OneTimeTokenAccount get(final String username) {
+    public Collection<? extends OneTimeTokenAccount> get(final String username) {
         try {
-            val account = fetchAccount(username);
-            this.entityManager.detach(account);
-            return decode(account);
-        } catch (final NoResultException e) {
-            LOGGER.debug("No record could be found for google authenticator id [{}]", username);
+            val accounts = fetchAccounts(username);
+            accounts.forEach(entityManager::detach);
+            return decode(accounts);
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
         }
-        return null;
-    }
-
-    private JpaGoogleAuthenticatorAccount fetchAccount(final String username) {
-        return this.entityManager.createQuery("SELECT r FROM "
-            + ENTITY_NAME + " r where r.username = :username", JpaGoogleAuthenticatorAccount.class)
-            .setParameter("username", username)
-            .getSingleResult();
+        return new ArrayList<>(0);
     }
 
     @Override
@@ -81,25 +71,28 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
 
     @Override
     public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
-        val r = new JpaGoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
+        val r = GoogleAuthenticatorAccount.builder()
+            .username(userName)
+            .secretKey(secretKey)
+            .validationCode(validationCode)
+            .scratchCodes(scratchCodes)
+            .build();
         update(r);
     }
 
     @Override
     @SneakyThrows
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
-        val ac = get(account.getUsername());
+        val ac = this.entityManager.find(JpaGoogleAuthenticatorAccount.class, account.getId());
         if (ac != null) {
             ac.setValidationCode(account.getValidationCode());
             ac.setScratchCodes(account.getScratchCodes());
             ac.setSecretKey(account.getSecretKey());
             val encoded = encode(ac);
-            this.entityManager.merge(encoded);
-            return encoded;
+            return this.entityManager.merge(encoded);
         }
         val encoded = encode(account);
-        this.entityManager.merge(encoded);
-        return encoded;
+        return this.entityManager.merge(encoded);
     }
 
     @Override
@@ -110,8 +103,8 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
 
     @Override
     public void delete(final String username) {
-        val acct = fetchAccount(username);
-        this.entityManager.remove(acct);
+        val acct = fetchAccounts(username);
+        acct.forEach(entityManager::remove);
         LOGGER.debug("Deleted account record for [{}]", username);
     }
 
@@ -120,5 +113,12 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
         val count = (Number) this.entityManager.createQuery("SELECT COUNT(r.username) FROM " + ENTITY_NAME + " r").getSingleResult();
         LOGGER.debug("Counted [{}] record(s)", count);
         return count.longValue();
+    }
+
+    private List<JpaGoogleAuthenticatorAccount> fetchAccounts(final String username) {
+        return this.entityManager.createQuery("SELECT r FROM "
+            + ENTITY_NAME + " r where r.username = :username", JpaGoogleAuthenticatorAccount.class)
+            .setParameter("username", username)
+            .getResultList();
     }
 }

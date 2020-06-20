@@ -18,7 +18,7 @@ public interface OneTimeTokenCredentialRepository {
      * @param username the username
      * @return the secret
      */
-    OneTimeTokenAccount get(String username);
+    Collection<? extends OneTimeTokenAccount> get(String username);
 
     /**
      * Load all accounts into collection.

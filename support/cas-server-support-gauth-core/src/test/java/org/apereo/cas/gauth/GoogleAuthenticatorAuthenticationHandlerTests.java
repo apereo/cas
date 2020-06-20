@@ -112,7 +112,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
         assertNotNull(result);
         val otp = Integer.valueOf(credential.getToken());
         assertNotNull(handler.getTokenRepository().get("casuser", otp));
-        assertFalse(handler.getCredentialRepository().get("casuser").getScratchCodes().contains(otp));
+        assertFalse(handler.getCredentialRepository().get("casuser").iterator().next().getScratchCodes().contains(otp));
     }
 
     private GoogleAuthenticatorTokenCredential getGoogleAuthenticatorTokenCredential() {

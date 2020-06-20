@@ -56,7 +56,7 @@ public class CouchbaseAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyBadEncoding() throws Exception {
+    public void verifyBadEncoding() {
         val props = casProperties.getAuthn().getCouchbase();
         val factory = new CouchbaseClientFactory(props);
         val handler = new CouchbaseAuthenticationHandler(mock(ServicesManager.class),

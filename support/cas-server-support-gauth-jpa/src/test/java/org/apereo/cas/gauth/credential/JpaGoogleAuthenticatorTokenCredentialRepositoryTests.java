@@ -87,7 +87,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     RefreshAutoConfiguration.class
 },
     properties = {
-        "cas.jdbc.showSql=true",
+        "cas.jdbc.show-sql=true",
         "cas.authn.mfa.gauth.crypto.enabled=false"
     })
 @EnableTransactionManagement(proxyTargetClass = true)

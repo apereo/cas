@@ -60,7 +60,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
      * The unique identifier for this ticket.
      */
     @Id
-    @Column(name = "ID", nullable = false)
+    @Column(name = "ID", nullable = false, length = 512)
     @Getter
     private String id;
 

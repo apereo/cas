@@ -48,7 +48,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         assertNotNull(token);
         assertAll(new Executable() {
             @Override
-            public void execute() throws Exception {
+            public void execute() {
                 provider.destroy();
             }
         });
@@ -65,7 +65,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         assertThrows(BadCredentialsException.class, () -> provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456")));
         assertAll(new Executable() {
             @Override
-            public void execute() throws Exception {
+            public void execute() {
                 provider.destroy();
             }
         });
@@ -82,7 +82,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         assertThrows(BadCredentialsException.class, () -> provider.authenticate(new UsernamePasswordAuthenticationToken("UNKNOWN_USER", "123456")));
         assertAll(new Executable() {
             @Override
-            public void execute() throws Exception {
+            public void execute() {
                 provider.destroy();
             }
         });
@@ -99,7 +99,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         assertThrows(BadCredentialsException.class, () -> provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "BAD_PASSWORD")));
         assertAll(new Executable() {
             @Override
-            public void execute() throws Exception {
+            public void execute() {
                 provider.destroy();
             }
         });

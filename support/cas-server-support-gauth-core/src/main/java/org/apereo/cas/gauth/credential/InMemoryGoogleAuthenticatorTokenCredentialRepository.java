@@ -1,16 +1,19 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.val;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link InMemoryGoogleAuthenticatorTokenCredentialRepository}.
@@ -21,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Getter
 public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
 
-    private final Map<String, OneTimeTokenAccount> accounts;
+    private final Map<String, List<OneTimeTokenAccount>> accounts;
 
     public InMemoryGoogleAuthenticatorTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher,
                                                                 final IGoogleAuthenticator googleAuthenticator) {
@@ -30,12 +33,12 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
     }
 
     @Override
-    public OneTimeTokenAccount get(final String userName) {
+    public Collection<? extends OneTimeTokenAccount> get(final String userName) {
         if (contains(userName)) {
             val account = this.accounts.get(userName);
             return decode(account);
         }
-        return null;
+        return new ArrayList<>(0);
     }
 
     @Override
@@ -43,13 +46,24 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
                      final int validationCode,
                      final List<Integer> scratchCodes) {
         val account = new OneTimeTokenAccount(userName, secretKey, validationCode, scratchCodes);
-        update(account);
+        val encoded = encode(account);
+        this.accounts.put(account.getUsername(), CollectionUtils.wrapList(encoded));
     }
 
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         val encoded = encode(account);
-        this.accounts.put(account.getUsername(), encoded);
+        if (accounts.containsKey(account.getUsername())) {
+            val records = accounts.get(account.getUsername());
+            records.stream()
+                .filter(rec -> rec.getId()== account.getId())
+                .findFirst()
+                .ifPresent(act -> {
+                    act.setSecretKey(account.getSecretKey());
+                    act.setScratchCodes(account.getScratchCodes());
+                    act.setValidationCode(account.getValidationCode());
+                });
+        }
         return encoded;
     }
 
@@ -74,6 +88,6 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
 
     @Override
     public Collection<? extends OneTimeTokenAccount> load() {
-        return accounts.values();
+        return accounts.values().stream().flatMap(List::stream).collect(Collectors.toList());
     }
 }

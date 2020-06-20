@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("JdkObsolete")
 public class OAuth20JwtBuilderTests extends AbstractOAuth20Tests {
     @Test
-    public void verifyJwt() throws Exception {
+    public void verifyJwt() {
         servicesManager.save(getRegisteredService("clientid-jwt", "secret-jwt"));
         val service = CoreAuthenticationTestUtils.getService("https://service.example.com");
         val request = JwtBuilder.JwtRequest.builder()

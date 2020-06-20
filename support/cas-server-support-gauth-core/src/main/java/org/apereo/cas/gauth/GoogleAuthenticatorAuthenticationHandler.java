@@ -68,7 +68,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
 
         LOGGER.trace("Received principal id [{}]. Attempting to locate account in credential repository...", uid);
         val acct = this.credentialRepository.get(uid);
-        if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {
+        if (acct == null || acct.isEmpty()) {
             throw new AccountNotFoundException(uid + " cannot be found in the registry");
         }
 
@@ -78,17 +78,22 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         }
 
         LOGGER.debug("Attempting to authorize OTP token [{}]...", otp);
-        var isCodeValid = this.googleAuthenticatorInstance.authorize(acct.getSecretKey(), otp);
+        var authzAccount = acct.stream()
+            .filter(ac -> this.googleAuthenticatorInstance.authorize(ac.getSecretKey(), otp))
+            .findFirst()
+            .orElse(null);
 
-        if (!isCodeValid && acct.getScratchCodes().contains(otp)) {
-            LOGGER.warn("Using scratch code [{}] to authenticate user [{}]. Scratch code will be removed", otp, uid);
-            acct.getScratchCodes().removeIf(token -> token == otp);
-            this.credentialRepository.update(acct);
-            isCodeValid = true;
+        if (authzAccount == null) {
+            authzAccount = acct.stream().filter(ac -> ac.getScratchCodes().contains(otp)).findFirst().orElse(null);
+            if (authzAccount != null) {
+                LOGGER.warn("Using scratch code [{}] to authenticate user [{}]. Scratch code will be removed", otp, uid);
+                authzAccount.getScratchCodes().removeIf(token -> token == otp);
+                this.credentialRepository.update(authzAccount);
+            }
         }
-
-        if (isCodeValid) {
-            LOGGER.debug("Validated OTP token [{}] successfully for [{}]", otp, uid);
+        
+        if (authzAccount != null) {
+            LOGGER.debug("Validated OTP token [{}] successfully for [{}]", otp, authzAccount);
             this.tokenRepository.store(new GoogleAuthenticatorToken(otp, uid));
             LOGGER.debug("Creating authentication result and building principal for [{}]", uid);
             return createHandlerResult(tokenCredential, this.principalFactory.createPrincipal(uid));

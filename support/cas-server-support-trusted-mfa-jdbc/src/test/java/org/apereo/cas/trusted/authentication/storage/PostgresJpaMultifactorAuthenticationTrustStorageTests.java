@@ -12,7 +12,7 @@ import org.springframework.test.context.TestPropertySource;
  * @since 5.3.0
  */
 @TestPropertySource(properties = {
-    "cas.jdbc.showSql=true",
+    "cas.jdbc.show-sql=true",
     "cas.authn.mfa.trusted.jpa.ddlAuto=create-drop",
     "cas.authn.mfa.trusted.jpa.user=postgres",
     "cas.authn.mfa.trusted.jpa.password=password",

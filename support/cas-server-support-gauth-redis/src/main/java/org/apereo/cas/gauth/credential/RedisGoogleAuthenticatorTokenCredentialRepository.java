@@ -1,6 +1,7 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -30,23 +31,24 @@ import java.util.stream.Collectors;
 @Getter
 public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
     private static final String KEY_SEPARATOR = ":";
+
     private static final String CAS_PREFIX = RedisGoogleAuthenticatorTokenCredentialRepository.class.getSimpleName();
 
-    private final RedisTemplate template;
+    private final RedisTemplate<String, List<? extends OneTimeTokenAccount>> template;
 
     public RedisGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-                                                             final RedisTemplate template,
+                                                             final RedisTemplate<String, List<? extends OneTimeTokenAccount>> template,
                                                              final CipherExecutor<String, String> tokenCredentialCipher) {
         super(tokenCredentialCipher, googleAuthenticator);
         this.template = template;
     }
 
     @Override
-    public OneTimeTokenAccount get(final String username) {
+    public Collection<? extends OneTimeTokenAccount> get(final String username) {
         try {
             val redisKey = getGoogleAuthenticatorRedisKey(username);
             val ops = this.template.boundValueOps(redisKey);
-            val r = (OneTimeTokenAccount) ops.get();
+            val r = ops.get();
             if (r != null) {
                 return decode(r);
             }
@@ -59,11 +61,10 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
     @Override
     public Collection<? extends OneTimeTokenAccount> load() {
         try {
-            return getGoogleAuthenticatorTokenKeys()
+            return (Collection) getGoogleAuthenticatorTokenKeys()
                 .stream()
                 .map(redisKey -> this.template.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
-                .map(r -> (OneTimeTokenAccount) r)
                 .map(this::decode)
                 .collect(Collectors.toList());
         } catch (final Exception e) {
@@ -73,20 +74,24 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
     }
 
     @Override
-    public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
-        val account = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
+    public void save(final String userName, final String secretKey,
+                     final int validationCode, final List<Integer> scratchCodes) {
+        val account = GoogleAuthenticatorAccount.builder()
+            .username(userName)
+            .secretKey(secretKey)
+            .validationCode(validationCode)
+            .scratchCodes(scratchCodes)
+            .build();
         update(account);
     }
 
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         val encodedAccount = encode(account);
-
         val redisKey = getGoogleAuthenticatorRedisKey(account.getUsername());
         LOGGER.trace("Saving [{}] using key [{}]", encodedAccount, redisKey);
         val ops = this.template.boundValueOps(redisKey);
-        ops.set(encodedAccount);
-
+        ops.set(CollectionUtils.wrapList(encodedAccount));
         return encodedAccount;
     }
 

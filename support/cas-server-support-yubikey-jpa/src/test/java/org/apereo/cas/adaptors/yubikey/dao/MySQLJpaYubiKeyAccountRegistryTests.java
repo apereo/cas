@@ -14,7 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfPortOpen(port = 3306)
 @Tag("MySQL")
 @TestPropertySource(properties = {
-    "cas.jdbc.showSql=true",
+    "cas.jdbc.show-sql=true",
     "cas.authn.mfa.yubikey.jpa.ddlAuto=create-drop",
     "cas.authn.mfa.yubikey.jpa.user=root",
     "cas.authn.mfa.yubikey.jpa.password=password",

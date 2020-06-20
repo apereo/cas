@@ -21,20 +21,32 @@ public abstract class BaseGoogleAuthenticatorCredentialRepository extends BaseOn
      */
     protected IGoogleAuthenticator googleAuthenticator;
 
-    protected BaseGoogleAuthenticatorCredentialRepository(final IGoogleAuthenticator googleAuthenticator, final CipherExecutor<String, String> tokenCredentialCipher) {
+    protected BaseGoogleAuthenticatorCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
+                                                          final CipherExecutor<String, String> tokenCredentialCipher) {
         super(tokenCredentialCipher);
         this.googleAuthenticator = googleAuthenticator;
     }
 
     @Override
     public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
-        val account = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
+        val account = GoogleAuthenticatorAccount.builder()
+            .username(userName)
+            .secretKey(secretKey)
+            .validationCode(validationCode)
+            .scratchCodes(scratchCodes)
+            .build();
+
         update(account);
     }
 
     @Override
     public OneTimeTokenAccount create(final String username) {
         val key = this.googleAuthenticator.createCredentials();
-        return new GoogleAuthenticatorAccount(username, key.getKey(), key.getVerificationCode(), key.getScratchCodes());
+        return GoogleAuthenticatorAccount.builder()
+            .username(username)
+            .secretKey(key.getKey())
+            .validationCode(key.getVerificationCode())
+            .scratchCodes(key.getScratchCodes())
+            .build();
     }
 }

@@ -57,7 +57,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
         FileUtils.writeStringToFile(file, "{}", StandardCharsets.UTF_8);
         val repo = new JsonGoogleAuthenticatorTokenCredentialRepository(new FileSystemResource(file),
             googleAuthenticatorInstance, CipherExecutor.noOpOfStringToString());
-        assertNull(repo.get("casuser"));
+        assertTrue(repo.get("casuser").isEmpty());
         repo.deleteAll();
         assertTrue(repo.load().isEmpty());
 
@@ -75,6 +75,6 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
     public void verifyBadResource() throws Exception {
         val repo = new JsonGoogleAuthenticatorTokenCredentialRepository(new UrlResource(new URL("https://httpbin.org/get")),
             googleAuthenticatorInstance, CipherExecutor.noOpOfStringToString());
-        assertNull(repo.get("casuser"));
+        assertTrue(repo.get("casuser").isEmpty());
     }
 }

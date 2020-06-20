@@ -142,7 +142,7 @@ public class RegisteredServiceThemeResolverTests {
             webServer.start();
             assertDoesNotThrow(new Executable() {
                 @Override
-                public void execute() throws Throwable {
+                public void execute() {
                     resolver.setThemeName(request, response, "whatever");
                 }
             });

@@ -26,7 +26,7 @@ public class AmnesiacPasswordHistoryServiceTests {
 
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() throws Throwable {
+            public void execute() {
                 service.removeAll();
                 service.remove("casuser");
             }

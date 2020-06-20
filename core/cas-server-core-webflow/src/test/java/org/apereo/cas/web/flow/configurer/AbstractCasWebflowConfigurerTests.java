@@ -305,7 +305,7 @@ public class AbstractCasWebflowConfigurerTests {
         when(flow.getState("endStateId")).thenReturn(state);
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() throws Throwable {
+            public void execute() {
                 cfg.createTransitionsForState(flow, "endStateId", Map.of());
             }
         });

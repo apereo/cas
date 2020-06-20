@@ -7,6 +7,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 /**
  * This is {@link BaseOneTimeTokenCredentialRepository}.
  *
@@ -29,6 +32,17 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
     protected OneTimeTokenAccount encode(final OneTimeTokenAccount account) {
         account.setSecretKey(tokenCredentialCipher.encode(account.getSecretKey()));
         return account;
+    }
+
+
+    /**
+     * Decode collection.
+     *
+     * @param account the account
+     * @return the collection
+     */
+    protected Collection<? extends OneTimeTokenAccount> decode(final Collection<? extends OneTimeTokenAccount> account) {
+        return account.stream().map(this::decode).collect(Collectors.toList());
     }
 
     /**

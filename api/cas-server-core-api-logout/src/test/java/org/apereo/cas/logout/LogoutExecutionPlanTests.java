@@ -26,7 +26,7 @@ public class LogoutExecutionPlanTests {
         assertTrue(plan.getSingleLogoutServiceMessageHandlers().isEmpty());
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() throws Throwable {
+            public void execute() {
                 plan.registerSingleLogoutServiceMessageHandler(mock(SingleLogoutServiceMessageHandler.class));
                 plan.registerLogoutPostProcessor(mock(LogoutPostProcessor.class));
             }
