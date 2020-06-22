@@ -94,7 +94,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         val casuser = UUID.randomUUID().toString();
         val acct = getAccount("verifySaveAndUpdate", casuser);
         val repo = getRegistry("verifySaveAndUpdate");
-        val toSave = OneTimeTokenAccount.builder()
+        var toSave = OneTimeTokenAccount.builder()
             .username(acct.getUsername())
             .secretKey(acct.getSecretKey())
             .validationCode(acct.getValidationCode())
@@ -109,8 +109,9 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         assertEquals(acct.getSecretKey(), s.getSecretKey());
         s.setSecretKey("newSecret");
         s.setValidationCode(999666);
-        getRegistry("verifySaveAndUpdate").update(s);
-        s = getRegistry("verifySaveAndUpdate").get(casuser).iterator().next();
+        repo.update(s);
+        val accts = repo.get(casuser);
+        s = accts.iterator().next();
         assertEquals(999666, s.getValidationCode());
         assertEquals("newSecret", s.getSecretKey());
     }

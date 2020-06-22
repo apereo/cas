@@ -113,17 +113,19 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             val accounts = readAccountsFromJsonRepository();
             if (accounts.containsKey(account.getUsername())) {
                 val records = accounts.get(account.getUsername());
-                records.stream()
+                return records.stream()
                     .filter(rec -> rec.getId() == account.getId())
                     .findFirst()
-                    .ifPresent(act -> {
-                        act.setSecretKey(account.getSecretKey());
-                        act.setScratchCodes(account.getScratchCodes());
-                        act.setValidationCode(account.getValidationCode());
-                    });
+                    .map(act -> {
+                        val encoded = encode(account);
+                        act.setSecretKey(encoded.getSecretKey());
+                        act.setScratchCodes(encoded.getScratchCodes());
+                        act.setValidationCode(encoded.getValidationCode());
+                        writeAccountsToJsonRepository(accounts);
+                        return encoded;
+                    })
+                    .orElse(null);
             }
-            writeAccountsToJsonRepository(accounts);
-            return encode(account);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -161,7 +163,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     public long count(final String username) {
         try {
             val accounts = readAccountsFromJsonRepository();
-            return accounts.get("username").size();
+            return accounts.get(username).size();
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }

@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @SpringBootTest(classes = BaseGoogleAuthenticatorTests.SharedTestConfiguration.class,
-    properties = "cas.authn.mfa.gauth.json.location=classpath:/repository.json")
+    properties = "cas.authn.mfa.gauth.json.location=file:/tmp/repository.json")
 @Getter
 @Tag("MFA")
 public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
@@ -48,7 +48,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
     public void verifyNotExists() {
         val repo = new JsonGoogleAuthenticatorTokenCredentialRepository(new ClassPathResource("acct-bad.json"),
             googleAuthenticatorInstance, CipherExecutor.noOpOfStringToString());
-        assertNull(repo.get("casuser"));
+        assertTrue(repo.get("casuser").isEmpty());
     }
 
     @Test
@@ -63,9 +63,9 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
 
         val account = repo.create(UUID.randomUUID().toString());
         account.setUsername(null);
-        assertNull(repo.update(account));
+        assertNull(repo.save(account));
         account.setUsername(UUID.randomUUID().toString());
-        assertNotNull(repo.update(account));
+        assertNotNull(repo.save(account));
         assertEquals(1, repo.count());
         repo.delete(account.getUsername());
         assertTrue(repo.load().isEmpty());
