@@ -7,7 +7,7 @@ import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 /**
  * This is {@link CasSwaggerConfiguration}.
@@ -16,7 +16,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @since 5.2.0
  */
 @Configuration(value = "casSwaggerConfiguration", proxyBeanMethods = false)
-@EnableSwagger2
+@EnableSwagger2WebMvc
 public class CasSwaggerConfiguration {
 
     @Bean
