@@ -1,5 +1,6 @@
-package org.apereo.cas.gauth;
+package org.apereo.cas;
 
+import org.apereo.cas.gauth.GoogleAuthenticatorMultifactorAuthenticationProviderTests;
 import org.apereo.cas.gauth.rest.GoogleAuthenticatorRestHttpRequestCredentialFactoryTests;
 
 import org.junit.platform.runner.JUnitPlatform;

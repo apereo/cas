@@ -2,6 +2,7 @@ package org.apereo.cas.gauth;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -63,6 +64,11 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         return GoogleAuthenticatorTokenCredential.class.isAssignableFrom(credential.getClass());
     }
 
+    private static boolean isCredentialAssignedToAccount(final GoogleAuthenticatorTokenCredential credential,
+                                                         final OneTimeTokenAccount account) {
+        return credential.getAccountId() == null || credential.getAccountId() == account.getId();
+    }
+
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential)
         throws GeneralSecurityException, PreventedException {
@@ -71,12 +77,9 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         if (!StringUtils.isNumeric(tokenCredential.getToken())) {
             throw new PreventedException("Invalid non-numeric OTP format specified.");
         }
-        if (tokenCredential.getAccountId() == null) {
-            throw new PreventedException("No account identifier is provided");
-        }
-        
+
         val otp = Integer.parseInt(tokenCredential.getToken());
-        LOGGER.trace("Received OTP [{}]", otp);
+        LOGGER.trace("Received OTP [{}] assigned to account [{}}", otp, tokenCredential.getAccountId());
 
         val authentication = WebUtils.getInProgressAuthentication();
         val uid = authentication.getPrincipal().getId();
@@ -87,6 +90,9 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
             throw new AccountNotFoundException(uid + " cannot be found in the registry");
         }
 
+        if (accounts.size() > 1 && tokenCredential.getAccountId() == null) {
+            throw new PreventedException("Account identifier must be specified if multiple accounts are registered for " + uid);
+        }
         LOGGER.trace("Attempting to locate OTP token [{}] in token repository for [{}]...", otp, uid);
         if (this.tokenRepository.exists(uid, otp)) {
             throw new AccountExpiredException(uid + " cannot reuse OTP " + otp + " as it may be expired/invalid");
@@ -95,7 +101,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         LOGGER.debug("Attempting to authorize OTP token [{}]...", otp);
         var authzAccount = accounts.stream()
             .filter(ac -> {
-                if (tokenCredential.getAccountId() == ac.getId()) {
+                if (isCredentialAssignedToAccount(tokenCredential, ac)) {
                     return this.googleAuthenticatorInstance.authorize(ac.getSecretKey(), otp);
                 }
                 return false;
@@ -107,7 +113,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
             authzAccount = accounts
                 .stream()
                 .filter(ac -> {
-                    if (tokenCredential.getAccountId() == ac.getId()) {
+                    if (isCredentialAssignedToAccount(tokenCredential, ac)) {
                         return ac.getScratchCodes().contains(otp);
                     }
                     return false;
