@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Response;
@@ -1339,6 +1340,24 @@ public class WebUtils {
     public static List<String> getSelectableMultifactorAuthenticationProviders(final RequestContext requestContext) {
         return requestContext.getViewScope().get("mfaSelectableProviders", List.class);
     }
+    
+    /**
+     * Put one time token account.
+     *
+     * @param requestContext the request context
+     * @param account        the account
+     */
+    public static void putOneTimeTokenAccount(final RequestContext requestContext, final OneTimeTokenAccount account) {
+        requestContext.getFlowScope().put("registeredDevice", account);
+    }
 
-
+    /**
+     * Put one time token accounts.
+     *
+     * @param requestContext the request context
+     * @param accounts       the accounts
+     */
+    public static void putOneTimeTokenAccounts(final RequestContext requestContext, final Collection accounts) {
+        requestContext.getFlowScope().put("registeredDevices", accounts);
+    }
 }

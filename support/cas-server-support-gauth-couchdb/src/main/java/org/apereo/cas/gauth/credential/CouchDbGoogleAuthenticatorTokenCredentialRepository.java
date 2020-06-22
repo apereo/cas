@@ -19,19 +19,29 @@ import java.util.Collection;
  * @since 6.0.0
  */
 @Slf4j
-public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorCredentialRepository {
-    private final GoogleAuthenticatorAccountCouchDbRepository couchDb;
+public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
+    private final GoogleAuthenticatorAccountCouchDbRepository couchDbRepository;
 
     public CouchDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-                                                               final GoogleAuthenticatorAccountCouchDbRepository googleAuthenticatorAccountRepository,
+                                                               final GoogleAuthenticatorAccountCouchDbRepository couchDbRepository,
                                                                final CipherExecutor<String, String> tokenCredentialCipher) {
-        super(googleAuthenticator, tokenCredentialCipher);
-        this.couchDb = googleAuthenticatorAccountRepository;
+        super(tokenCredentialCipher, googleAuthenticator);
+        this.couchDbRepository = couchDbRepository;
+    }
+
+    @Override
+    public OneTimeTokenAccount get(final String username, final long id) {
+        return this.couchDbRepository.findByIdAndUsername(id, username);
+    }
+
+    @Override
+    public OneTimeTokenAccount get(final long id) {
+        return this.couchDbRepository.findById(id);
     }
 
     @Override
     public Collection<? extends OneTimeTokenAccount> get(final String username) {
-        val accounts = couchDb.findByUsername(username);
+        val accounts = couchDbRepository.findByUsername(username);
         if (accounts == null || accounts.isEmpty()) {
             LOGGER.debug("No record could be found for google authenticator id [{}]", username);
             return new ArrayList<>(0);
@@ -41,36 +51,41 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
 
     @Override
     public Collection<? extends OneTimeTokenAccount> load() {
-        return couchDb.getAll();
+        return couchDbRepository.getAll();
+    }
+
+    @Override
+    public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
+        return update(account);
     }
 
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
-        val records = couchDb.findByUsername(account.getUsername());
+        val records = couchDbRepository.findByUsername(account.getUsername());
         if (records == null || records.isEmpty()) {
             val newAccount = CouchDbGoogleAuthenticatorAccount.from(encode(account));
-            couchDb.add(newAccount);
+            couchDbRepository.add(newAccount);
             return newAccount;
         }
         records.stream()
             .filter(rec -> rec.getId() == account.getId())
             .findFirst()
-            .ifPresent(act -> couchDb.update(CouchDbGoogleAuthenticatorAccount.from(account)));
+            .ifPresent(act -> couchDbRepository.update(CouchDbGoogleAuthenticatorAccount.from(account)));
         return account;
     }
 
     @Override
     public void deleteAll() {
-        couchDb.getAll().forEach(couchDb::deleteTokenAccount);
+        couchDbRepository.getAll().forEach(couchDbRepository::deleteTokenAccount);
     }
 
     @Override
     public void delete(final String username) {
-        couchDb.findByUsername(username).forEach(couchDb::deleteTokenAccount);
+        couchDbRepository.findByUsername(username).forEach(couchDbRepository::deleteTokenAccount);
     }
 
     @Override
     public long count() {
-        return couchDb.count();
+        return couchDbRepository.count();
     }
 }

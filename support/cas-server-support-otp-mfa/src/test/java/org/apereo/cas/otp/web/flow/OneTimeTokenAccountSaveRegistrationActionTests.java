@@ -33,18 +33,25 @@ import static org.mockito.Mockito.*;
 public class OneTimeTokenAccountSaveRegistrationActionTests {
     @Test
     public void verifyCreateAccount() {
-        val account = new OneTimeTokenAccount("casuser", UUID.randomUUID().toString(), 123456, List.of());
+        val account = OneTimeTokenAccount.builder()
+            .username("casuser")
+            .secretKey(UUID.randomUUID().toString())
+            .validationCode(123456)
+            .scratchCodes(List.of())
+            .name(UUID.randomUUID().toString())
+            .build();
         val repository = mock(OneTimeTokenCredentialRepository.class);
         val action = new OneTimeTokenAccountSaveRegistrationAction(repository);
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
+        request.addParameter("accountName", "ExampleAccount");
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
-        context.getFlowScope().put(OneTimeTokenAccountCheckRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT, account);
+        context.getFlowScope().put(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT, account);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.doExecute(context).getId());
     }
 }

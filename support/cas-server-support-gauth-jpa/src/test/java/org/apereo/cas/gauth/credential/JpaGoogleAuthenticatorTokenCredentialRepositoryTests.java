@@ -25,27 +25,28 @@ import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthentic
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
-import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.Getter;
+import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.springframework.beans.factory.InitializingBean;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link JpaGoogleAuthenticatorTokenCredentialRepository}.
@@ -55,7 +56,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @SpringBootTest(classes = {
     GoogleAuthenticatorJpaConfiguration.class,
-    JpaGoogleAuthenticatorTokenCredentialRepositoryTests.JpaTestConfiguration.class,
     CasHibernateJpaConfiguration.class,
     GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
     GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration.class,
@@ -104,16 +104,26 @@ public class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOn
     public void cleanUp() {
         this.getRegistry().deleteAll();
     }
+    
+    @Test
+    public void verifyCreateUniqueNames() {
+        var acct1 = getAccount("verifyCreateUniqueNames", UUID.randomUUID().toString());
+        assertNotNull(acct1);
+        val repo = getRegistry("verifyCreate");
+        acct1 = repo.save(acct1);
+        assertNotNull(acct1);
 
-    @TestConfiguration("JpaTestConfiguration")
-    @Lazy(false)
-    public static class JpaTestConfiguration implements InitializingBean {
-        @Autowired
-        protected ApplicationContext applicationContext;
+        var acct2 = getAccount("verifyCreateUniqueNames", UUID.randomUUID().toString());
+        acct2.setName(acct1.getName());
+        acct2 = repo.save(acct2);
+        assertNotNull(acct2);
 
-        @Override
-        public void afterPropertiesSet() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
+        acct2.setName("NewAccount");
+        acct2 = repo.update(acct2);
+        assertNotNull(acct2);
+
+        acct1 = repo.save(acct1);
+        assertNotNull(acct1);
     }
+
 }

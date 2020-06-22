@@ -35,7 +35,9 @@ import java.security.GeneralSecurityException;
 public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private final IGoogleAuthenticator googleAuthenticatorInstance;
+
     private final OneTimeTokenRepository tokenRepository;
+
     private final OneTimeTokenCredentialRepository credentialRepository;
 
     public GoogleAuthenticatorAuthenticationHandler(final String name,
@@ -52,14 +54,27 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return GoogleAuthenticatorTokenCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return GoogleAuthenticatorTokenCredential.class.isAssignableFrom(credential.getClass());
+    }
+
+    @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential)
         throws GeneralSecurityException, PreventedException {
         val tokenCredential = (GoogleAuthenticatorTokenCredential) credential;
 
         if (!StringUtils.isNumeric(tokenCredential.getToken())) {
-            throw new PreventedException("Invalid non-numeric OTP format specified.",
-                new IllegalArgumentException("Invalid token " + tokenCredential.getToken()));
+            throw new PreventedException("Invalid non-numeric OTP format specified.");
         }
+        if (tokenCredential.getAccountId() == null) {
+            throw new PreventedException("No account identifier is provided");
+        }
+        
         val otp = Integer.parseInt(tokenCredential.getToken());
         LOGGER.trace("Received OTP [{}]", otp);
 
@@ -67,8 +82,8 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         val uid = authentication.getPrincipal().getId();
 
         LOGGER.trace("Received principal id [{}]. Attempting to locate account in credential repository...", uid);
-        val acct = this.credentialRepository.get(uid);
-        if (acct == null || acct.isEmpty()) {
+        val accounts = this.credentialRepository.get(uid);
+        if (accounts == null || accounts.isEmpty()) {
             throw new AccountNotFoundException(uid + " cannot be found in the registry");
         }
 
@@ -78,20 +93,35 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         }
 
         LOGGER.debug("Attempting to authorize OTP token [{}]...", otp);
-        var authzAccount = acct.stream()
-            .filter(ac -> this.googleAuthenticatorInstance.authorize(ac.getSecretKey(), otp))
+        var authzAccount = accounts.stream()
+            .filter(ac -> {
+                if (tokenCredential.getAccountId() == ac.getId()) {
+                    return this.googleAuthenticatorInstance.authorize(ac.getSecretKey(), otp);
+                }
+                return false;
+            })
             .findFirst()
             .orElse(null);
 
         if (authzAccount == null) {
-            authzAccount = acct.stream().filter(ac -> ac.getScratchCodes().contains(otp)).findFirst().orElse(null);
+            authzAccount = accounts
+                .stream()
+                .filter(ac -> {
+                    if (tokenCredential.getAccountId() == ac.getId()) {
+                        return ac.getScratchCodes().contains(otp);
+                    }
+                    return false;
+                })
+                .findFirst()
+                .orElse(null);
+
             if (authzAccount != null) {
                 LOGGER.warn("Using scratch code [{}] to authenticate user [{}]. Scratch code will be removed", otp, uid);
                 authzAccount.getScratchCodes().removeIf(token -> token == otp);
                 this.credentialRepository.update(authzAccount);
             }
         }
-        
+
         if (authzAccount != null) {
             LOGGER.debug("Validated OTP token [{}] successfully for [{}]", otp, authzAccount);
             this.tokenRepository.store(new GoogleAuthenticatorToken(otp, uid));
@@ -101,15 +131,5 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
 
         LOGGER.warn("Authorization of OTP token [{}] has failed", otp);
         throw new FailedLoginException("Failed to authenticate code " + otp);
-    }
-
-    @Override
-    public boolean supports(final Class<? extends Credential> clazz) {
-        return GoogleAuthenticatorTokenCredential.class.isAssignableFrom(clazz);
-    }
-
-    @Override
-    public boolean supports(final Credential credential) {
-        return GoogleAuthenticatorTokenCredential.class.isAssignableFrom(credential.getClass());
     }
 }

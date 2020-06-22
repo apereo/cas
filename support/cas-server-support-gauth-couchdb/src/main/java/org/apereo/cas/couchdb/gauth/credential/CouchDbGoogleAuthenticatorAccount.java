@@ -36,6 +36,7 @@ public class CouchDbGoogleAuthenticatorAccount extends GoogleAuthenticatorAccoun
     public static CouchDbGoogleAuthenticatorAccount from(final OneTimeTokenAccount acct) {
         return CouchDbGoogleAuthenticatorAccount.builder()
             .id(acct.getId())
+            .name(acct.getName())
             .username(acct.getUsername())
             .secretKey(acct.getSecretKey())
             .validationCode(acct.getValidationCode())

@@ -24,34 +24,23 @@ import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthentic
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
-import lombok.val;
+import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests}.
@@ -60,7 +49,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @SpringBootTest(classes = {
-    MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests.MongoTestConfiguration.class,
     GoogleAuthenticatorMongoDbConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
@@ -89,7 +77,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreUtilConfiguration.class,
     RefreshAutoConfiguration.class,
-    CasCoreWebConfiguration.class},
+    CasCoreWebConfiguration.class
+},
     properties = {
         "cas.authn.mfa.gauth.mongo.host=localhost",
         "cas.authn.mfa.gauth.mongo.port=27017",
@@ -104,8 +93,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
 @Tag("MongoDb")
+@Getter
 @EnabledIfPortOpen(port = 27017)
-public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
+public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;
@@ -113,45 +103,5 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
     @BeforeEach
     public void cleanUp() {
         registry.deleteAll();
-    }
-
-    @Test
-    public void verifySave() {
-        val id = UUID.randomUUID().toString();
-        registry.save(id, "secret", 143211, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
-        val s = registry.get(id).iterator().next();
-        assertEquals("secret", s.getSecretKey());
-        val c = registry.load();
-        assertFalse(c.isEmpty());
-        registry.delete(id);
-        val count = registry.count();
-        assertEquals(0, count);
-    }
-
-    @Test
-    public void verifySaveAndUpdate() {
-        val casuser = UUID.randomUUID().toString();
-        registry.save(casuser, "secret", 222222, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
-        val s = registry.get(casuser).iterator().next();
-        assertNotNull(s.getRegistrationDate());
-        assertEquals(222222, s.getValidationCode());
-        s.setSecretKey("newSecret");
-        s.setValidationCode(999666);
-        registry.update(s);
-        val s2 = registry.get(casuser).iterator().next();
-        assertEquals(999666, s2.getValidationCode());
-        assertEquals("newSecret", s2.getSecretKey());
-    }
-
-    @TestConfiguration("MongoTestConfiguration")
-    @Lazy(false)
-    public static class MongoTestConfiguration implements InitializingBean {
-        @Autowired
-        protected ApplicationContext applicationContext;
-
-        @Override
-        public void afterPropertiesSet() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
     }
 }

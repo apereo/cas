@@ -69,7 +69,18 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         val acct = getAccount("verifyCreate", casuser);
         assertNotNull(acct);
         val repo = getRegistry("verifyCreate");
-        repo.save(acct.getUsername(), acct.getSecretKey(), acct.getValidationCode(), acct.getScratchCodes());
+
+        var toSave = OneTimeTokenAccount.builder()
+            .username(acct.getUsername())
+            .secretKey(acct.getSecretKey())
+            .validationCode(acct.getValidationCode())
+            .scratchCodes(acct.getScratchCodes())
+            .name(UUID.randomUUID().toString())
+            .build();
+        toSave = repo.save(toSave);
+        assertNotNull(toSave);
+        assertNotNull(repo.get(toSave.getId()));
+        assertNotNull(repo.get(toSave.getUsername(), toSave.getId()));
         assertEquals(1, repo.count());
         repo.delete(acct.getUsername());
         assertTrue(repo.load().isEmpty());
@@ -81,7 +92,14 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         val casuser = UUID.randomUUID().toString();
         val acct = getAccount("verifySaveAndUpdate", casuser);
         val repo = getRegistry("verifySaveAndUpdate");
-        repo.save(acct.getUsername(), acct.getSecretKey(), acct.getValidationCode(), acct.getScratchCodes());
+        val toSave = OneTimeTokenAccount.builder()
+            .username(acct.getUsername())
+            .secretKey(acct.getSecretKey())
+            .validationCode(acct.getValidationCode())
+            .scratchCodes(acct.getScratchCodes())
+            .name(UUID.randomUUID().toString())
+            .build();
+        repo.save(toSave);
         var s = repo.get(acct.getUsername()).iterator().next();
         assertNotNull(s, "Account not found");
         assertNotNull(s.getRegistrationDate());
@@ -102,7 +120,14 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         val acct = repo.get(casuser);
         assertTrue(acct.isEmpty());
         val acct2 = getAccount("verifyGet", casuser);
-        repo.save(acct2.getUsername(), acct2.getSecretKey(), acct2.getValidationCode(), acct2.getScratchCodes());
+        val toSave = OneTimeTokenAccount.builder()
+            .username(acct2.getUsername())
+            .secretKey(acct2.getSecretKey())
+            .validationCode(acct2.getValidationCode())
+            .scratchCodes(acct2.getScratchCodes())
+            .name(UUID.randomUUID().toString())
+            .build();
+        repo.save(toSave);
         val acct3 = repo.get(casuser).iterator().next();
         assertNotNull(acct3, "Account not found");
         assertEquals(acct2.getUsername(), acct3.getUsername());
@@ -119,7 +144,14 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         val repo = getRegistry("verifyGetWithDecodedSecret");
         var acct = getAccount("verifyGetWithDecodedSecret", casuser);
         acct.setSecretKey(PLAIN_SECRET);
-        repo.save(acct.getUsername(), acct.getSecretKey(), acct.getValidationCode(), acct.getScratchCodes());
+        val toSave = OneTimeTokenAccount.builder()
+            .username(acct.getUsername())
+            .secretKey(acct.getSecretKey())
+            .validationCode(acct.getValidationCode())
+            .scratchCodes(acct.getScratchCodes())
+            .name(UUID.randomUUID().toString())
+            .build();
+        repo.save(toSave);
 
         acct = repo.get(casuser).iterator().next();
         assertEquals(PLAIN_SECRET, acct.getSecretKey());
