@@ -20,6 +20,7 @@ public class OneTimeTokenAuthenticationWebflowAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
+        
         return this.casWebflowEventResolver.resolveSingle(requestContext);
     }
 }

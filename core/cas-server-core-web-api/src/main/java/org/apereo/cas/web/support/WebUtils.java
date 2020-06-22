@@ -1182,7 +1182,7 @@ public class WebUtils {
     public static Boolean isExistingSingleSignOnSessionAvailable(final MockRequestContext context) {
         return context.getFlowScope().get("existingSingleSignOnSessionAvailable", Boolean.class);
     }
-    
+
     /**
      * Put existing single sign on session principal.
      *
@@ -1340,7 +1340,7 @@ public class WebUtils {
     public static List<String> getSelectableMultifactorAuthenticationProviders(final RequestContext requestContext) {
         return requestContext.getViewScope().get("mfaSelectableProviders", List.class);
     }
-    
+
     /**
      * Put one time token account.
      *
@@ -1359,5 +1359,38 @@ public class WebUtils {
      */
     public static void putOneTimeTokenAccounts(final RequestContext requestContext, final Collection accounts) {
         requestContext.getFlowScope().put("registeredDevices", accounts);
+    }
+
+    /**
+     * Gets one time token account.
+     *
+     * @param <T>            the type parameter
+     * @param requestContext the request context
+     * @param clazz          the clazz
+     * @return the one time token account
+     */
+    public static <T extends OneTimeTokenAccount> T getOneTimeTokenAccount(final RequestContext requestContext, final Class<T> clazz) {
+        return requestContext.getFlowScope().get("registeredDevice", clazz);
+    }
+
+    /**
+     * Put google authenticator multiple device registration enabled.
+     *
+     * @param requestContext the request context
+     * @param enabled        the enabled
+     */
+    public static void putGoogleAuthenticatorMultipleDeviceRegistrationEnabled(final RequestContext requestContext,
+                                                                               final boolean enabled) {
+        requestContext.getFlowScope().put("multipleDeviceRegistrationEnabled", enabled);
+    }
+
+    /**
+     * Is google authenticator multiple device registration enabled?
+     *
+     * @param requestContext the request context
+     * @return true/false
+     */
+    public static Boolean isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("multipleDeviceRegistrationEnabled", Boolean.class);
     }
 }

@@ -96,6 +96,11 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
     }
 
     @Override
+    public long count(final String username) {
+        return get(username).size();
+    }
+
+    @Override
     public Collection<? extends OneTimeTokenAccount> load() {
         return accounts.values().stream().flatMap(List::stream).collect(Collectors.toList());
     }

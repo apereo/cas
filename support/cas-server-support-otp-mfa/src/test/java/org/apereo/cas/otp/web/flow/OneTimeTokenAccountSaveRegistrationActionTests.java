@@ -1,6 +1,7 @@
 package org.apereo.cas.otp.web.flow;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockServletContext;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.*;
 public class OneTimeTokenAccountSaveRegistrationActionTests {
     @Test
     public void verifyCreateAccount() {
+        val props = new CasConfigurationProperties();
         val account = OneTimeTokenAccount.builder()
             .username("casuser")
             .secretKey(UUID.randomUUID().toString())
@@ -41,11 +43,11 @@ public class OneTimeTokenAccountSaveRegistrationActionTests {
             .name(UUID.randomUUID().toString())
             .build();
         val repository = mock(OneTimeTokenCredentialRepository.class);
-        val action = new OneTimeTokenAccountSaveRegistrationAction(repository);
+        val action = new OneTimeTokenAccountSaveRegistrationAction(repository, props);
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
-        request.addParameter("accountName", "ExampleAccount");
+        request.addParameter(OneTimeTokenAccountSaveRegistrationAction.REQUEST_PARAMETER_ACCOUNT_NAME, "ExampleAccount");
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);

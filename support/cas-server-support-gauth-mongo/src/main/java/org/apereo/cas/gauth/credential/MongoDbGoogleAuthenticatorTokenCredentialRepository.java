@@ -108,4 +108,11 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
         query.addCriteria(Criteria.where("username").exists(true));
         return this.mongoTemplate.count(query, GoogleAuthenticatorAccount.class, this.collectionName);
     }
+
+    @Override
+    public long count(final String username) {
+        val query = new Query();
+        query.addCriteria(Criteria.where("username").is(username));
+        return this.mongoTemplate.count(query, GoogleAuthenticatorAccount.class, this.collectionName);
+    }
 }

@@ -19,7 +19,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
     properties = {
         "cas.authn.mfa.gauth.json.location=classpath:/repository.json",
         "cas.authn.mfa.gauth.trusted-device-enabled=true",
-        "cas.authn.mfa.trusted.deviceRegistrationEnabled=true"
+        "cas.authn.mfa.trusted.device-registration-enabled=true"
     })
 @Tag("Webflow")
 public class GoogleAuthenticatorMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {

@@ -160,6 +160,17 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
         return 0;
     }
 
+    @Override
+    public long count(final String username) {
+        try {
+            val keys = getGoogleAuthenticatorTokenKeys(username, "*");
+            return keys.size();
+        } catch (final Exception e) {
+            LoggingUtils.warn(LOGGER, e);
+        }
+        return 0;
+    }
+
     private static String getGoogleAuthenticatorRedisKey(final OneTimeTokenAccount account) {
         return CAS_PREFIX + KEY_SEPARATOR + account.getUsername() + KEY_SEPARATOR + account.getId();
     }

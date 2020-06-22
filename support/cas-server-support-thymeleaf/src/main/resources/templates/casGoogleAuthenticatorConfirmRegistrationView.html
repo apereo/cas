@@ -36,9 +36,9 @@
                 </div>
             </div>
 
-            <p>
-            <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
-            <form method="post" id="fm2">
+            <form method="post" id="fm2" th:if="${multipleDeviceRegistrationEnabled}">
+                <p>
+                <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
                 <input type="hidden" name="_eventId_register" value="Register"/>
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <button class="mdc-button mdc-button--raised mr-2" name="register" accesskey="r" value="Register">

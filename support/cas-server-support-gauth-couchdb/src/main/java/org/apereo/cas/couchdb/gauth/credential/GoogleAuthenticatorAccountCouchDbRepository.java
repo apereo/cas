@@ -65,6 +65,18 @@ public class GoogleAuthenticatorAccountCouchDbRepository extends CouchDbReposito
     }
 
     /**
+     * Count devices per user.
+     *
+     * @param username the username
+     * @return the count
+     */
+    @View(name = "count_by_username", map = "function(doc) { if(doc.secretKey) { emit(doc.username, doc._id, doc) } }", reduce = "_count")
+    public long count(final String username) {
+        val rows = db.queryView(createQuery("count_by_username").key(username)).getRows();
+        return rows.isEmpty() ? 0 : rows.get(0).getValueAsInt();
+    }
+    
+    /**
      * Find by id one time token account.
      *
      * @param id the id
@@ -93,4 +105,6 @@ public class GoogleAuthenticatorAccountCouchDbRepository extends CouchDbReposito
         }
         return null;
     }
+
+
 }

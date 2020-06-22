@@ -88,4 +88,9 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     public long count() {
         return couchDbRepository.count();
     }
+
+    @Override
+    public long count(final String username) {
+        return couchDbRepository.count(username);
+    }
 }

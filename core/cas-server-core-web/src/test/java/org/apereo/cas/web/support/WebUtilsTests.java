@@ -61,6 +61,7 @@ public class WebUtilsTests {
                     .name("Example")
                     .build();
                 WebUtils.putOneTimeTokenAccount(context, ac);
+                assertNotNull(WebUtils.getOneTimeTokenAccount(context, OneTimeTokenAccount.class));
                 WebUtils.putOneTimeTokenAccounts(context, List.of(ac));
             }
         });
