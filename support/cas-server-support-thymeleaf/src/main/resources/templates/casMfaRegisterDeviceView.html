@@ -21,6 +21,7 @@
                     <input class="mdc-text-field__input pwd" type="text" id="deviceName" name="deviceName" size="25"
                         autocomplete="off" th:field="*{deviceName}" />
                     <label for="deviceName" class="mdc-floating-label" th:utext="#{cas.mfa.registerdevice.label.name}">Name</label>
+                    <script>document.getElementById("deviceName").value = randomWord();</script>
                 </div>
 
                 <div><p>How long should we remember this device?</p></div>
