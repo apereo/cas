@@ -3,7 +3,6 @@ package org.apereo.cas.otp.repository.credentials;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * This is {@link OneTimeTokenCredentialRepository}.
@@ -13,7 +12,24 @@ import java.util.List;
  */
 public interface OneTimeTokenCredentialRepository {
     /**
-     * Gets secret.
+     * Get one time token account.
+     *
+     * @param id the id
+     * @return the one time token account
+     */
+    OneTimeTokenAccount get(long id);
+
+    /**
+     * Get one time token account.
+     *
+     * @param username the username
+     * @param id       the id
+     * @return the one time token account
+     */
+    OneTimeTokenAccount get(String username, long id);
+
+    /**
+     * Gets accounts.
      *
      * @param username the username
      * @return the secret
@@ -30,12 +46,10 @@ public interface OneTimeTokenCredentialRepository {
     /**
      * Save.
      *
-     * @param userName       the user name
-     * @param secretKey      the secret key
-     * @param validationCode the validation code
-     * @param scratchCodes   the scratch codes
+     * @param account the account
+     * @return one time token account
      */
-    void save(String userName, String secretKey, int validationCode, List<Integer> scratchCodes);
+    OneTimeTokenAccount save(OneTimeTokenAccount account);
 
     /**
      * Create one time token account.

@@ -1,7 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
@@ -33,6 +32,20 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
     }
 
     @Override
+    public OneTimeTokenAccount get(final String username, final long id) {
+        return get(username).stream().filter(ac -> ac.getId() == id).findFirst().orElse(null);
+    }
+
+    @Override
+    public OneTimeTokenAccount get(final long id) {
+        return this.accounts.values().stream()
+            .flatMap(List::stream)
+            .filter(ac -> ac.getId() == id)
+            .findFirst()
+            .orElse(null);
+    }
+
+    @Override
     public Collection<? extends OneTimeTokenAccount> get(final String userName) {
         if (contains(userName)) {
             val account = this.accounts.get(userName);
@@ -42,12 +55,12 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
     }
 
     @Override
-    public void save(final String userName, final String secretKey,
-                     final int validationCode,
-                     final List<Integer> scratchCodes) {
-        val account = new OneTimeTokenAccount(userName, secretKey, validationCode, scratchCodes);
+    public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
         val encoded = encode(account);
-        this.accounts.put(account.getUsername(), CollectionUtils.wrapList(encoded));
+        val records = accounts.getOrDefault(account.getUsername(), new ArrayList<>());
+        records.add(encoded);
+        accounts.put(account.getUsername(), records);
+        return encoded;
     }
 
     @Override
@@ -56,7 +69,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
         if (accounts.containsKey(account.getUsername())) {
             val records = accounts.get(account.getUsername());
             records.stream()
-                .filter(rec -> rec.getId()== account.getId())
+                .filter(rec -> rec.getId() == account.getId())
                 .findFirst()
                 .ifPresent(act -> {
                     act.setSecretKey(account.getSecretKey());
@@ -65,10 +78,6 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
                 });
         }
         return encoded;
-    }
-
-    private boolean contains(final String username) {
-        return this.accounts.containsKey(username);
     }
 
     @Override
@@ -89,5 +98,9 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
     @Override
     public Collection<? extends OneTimeTokenAccount> load() {
         return accounts.values().stream().flatMap(List::stream).collect(Collectors.toList());
+    }
+
+    private boolean contains(final String username) {
+        return this.accounts.containsKey(username);
     }
 }

@@ -26,10 +26,23 @@
 
                     <div class="border-rounded d-flex align-items-start mb-4 px-4">
                         <p class="mr-2">Scratch Codes:</p>
-                        <ul class="">
+                        <ul>
                             <li th:each="code : ${key.getScratchCodes()}" th:text="${code}">code</li>
                         </ul>
                     </div>
+
+                    <div class="mdc-text-field d-flex">
+                        <input class="mdc-text-field__input"
+                               id="accountName"
+                               name="accountName"
+                               size="50"
+                               type="text"
+                               autocomplete="off" />
+                        <label for="accountName" class="mdc-floating-label" th:utext="#{screen.authentication.gauth.name}">Name</label>
+                        <script>document.getElementById("accountName").value = randomWord();</script>
+                    </div>
+                    <br>
+
                     <input type="hidden" name="_eventId" value="submit" />
                     <div class="d-flex justify-content-center">
                         <button class="mdc-button mdc-button--raised mr-2" name="submit" accesskey="l" value="Register">

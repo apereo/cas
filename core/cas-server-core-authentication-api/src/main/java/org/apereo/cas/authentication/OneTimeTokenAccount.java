@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
@@ -20,7 +20,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
-
 import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -41,6 +40,7 @@ import java.util.List;
 @EqualsAndHashCode
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
 public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeTokenAccount>, Cloneable {
     /**
      * Table name used to hold otp scratch codes.
@@ -69,46 +69,18 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @Builder.Default
     private List<Integer> scratchCodes = new ArrayList<>(0);
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     @JsonProperty("username")
     private String username;
+
+    @Column(nullable = false)
+    @JsonProperty("name")
+    private String name;
 
     @Column
     @JsonProperty("registrationDate")
     @Builder.Default
     private ZonedDateTime registrationDate = ZonedDateTime.now(ZoneOffset.UTC);
-
-    public OneTimeTokenAccount() {
-        setId(System.currentTimeMillis());
-    }
-
-    /**
-     * Instantiates a new Google authenticator account.
-     *
-     * @param username       the user id
-     * @param secretKey      the secret key
-     * @param validationCode the validation code
-     * @param scratchCodes   the scratch codes
-     */
-    public OneTimeTokenAccount(final String username, final String secretKey,
-                               final int validationCode,
-                               final List<Integer> scratchCodes) {
-        this();
-        this.secretKey = secretKey;
-        this.validationCode = validationCode;
-        this.scratchCodes = scratchCodes;
-        this.username = username;
-    }
-
-    @JsonCreator
-    public OneTimeTokenAccount(@JsonProperty("username") final String username,
-                               @JsonProperty("secretKey") final String secretKey,
-                               @JsonProperty("validationCode") final int validationCode,
-                               @JsonProperty("scratchCodes") final List<Integer> scratchCodes,
-                               @JsonProperty("registrationDate") final ZonedDateTime registrationDate) {
-        this(username, secretKey, validationCode, scratchCodes);
-        this.registrationDate = registrationDate;
-    }
 
     @Override
     public int compareTo(final OneTimeTokenAccount o) {
@@ -116,7 +88,9 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
             .append(this.scratchCodes.toArray(), o.getScratchCodes().toArray())
             .append(this.validationCode, o.getValidationCode())
             .append(this.secretKey, o.getSecretKey())
-            .append(this.username, o.getUsername()).build();
+            .append(this.username, o.getUsername())
+            .append(this.name, o.getName())
+            .build();
     }
 
     @Override

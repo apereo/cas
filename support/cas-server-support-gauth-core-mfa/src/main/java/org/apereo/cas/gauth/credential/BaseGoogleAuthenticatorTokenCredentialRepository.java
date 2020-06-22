@@ -8,6 +8,8 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.val;
 
+import java.util.UUID;
+
 /**
  * This is {@link BaseGoogleAuthenticatorTokenCredentialRepository}.
  *
@@ -22,9 +24,8 @@ public abstract class BaseGoogleAuthenticatorTokenCredentialRepository extends B
      */
     protected final IGoogleAuthenticator googleAuthenticator;
 
-    protected BaseGoogleAuthenticatorTokenCredentialRepository(
-        final CipherExecutor<String, String> tokenCredentialCipher,
-        final IGoogleAuthenticator googleAuthenticator) {
+    protected BaseGoogleAuthenticatorTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher,
+                                                               final IGoogleAuthenticator googleAuthenticator) {
         super(tokenCredentialCipher);
         this.googleAuthenticator = googleAuthenticator;
     }
@@ -43,6 +44,7 @@ public abstract class BaseGoogleAuthenticatorTokenCredentialRepository extends B
             .secretKey(key.getKey())
             .validationCode(key.getVerificationCode())
             .scratchCodes(key.getScratchCodes())
+            .name(UUID.randomUUID().toString())
             .build();
     }
 }

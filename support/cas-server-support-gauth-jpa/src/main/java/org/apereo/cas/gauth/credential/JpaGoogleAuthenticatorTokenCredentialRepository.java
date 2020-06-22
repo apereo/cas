@@ -41,6 +41,25 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     }
 
     @Override
+    public OneTimeTokenAccount get(final long id) {
+        return this.entityManager.find(JpaGoogleAuthenticatorAccount.class, id);
+    }
+
+    @Override
+    public OneTimeTokenAccount get(final String username, final long id) {
+        try {
+            return this.entityManager.createQuery("SELECT r FROM "
+                + ENTITY_NAME + " r WHERE r.id=:id AND r.username = :username", JpaGoogleAuthenticatorAccount.class)
+                .setParameter("username", username)
+                .setParameter("id", id)
+                .getSingleResult();
+        } catch (final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    @Override
     public Collection<? extends OneTimeTokenAccount> get(final String username) {
         try {
             val accounts = fetchAccounts(username);
@@ -69,15 +88,12 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
         return new ArrayList<>(0);
     }
 
+
     @Override
-    public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
-        val r = GoogleAuthenticatorAccount.builder()
-            .username(userName)
-            .secretKey(secretKey)
-            .validationCode(validationCode)
-            .scratchCodes(scratchCodes)
-            .build();
-        update(r);
+    public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
+        val ac = JpaGoogleAuthenticatorAccount.from(account);
+        val encoded = encode(ac);
+        return this.entityManager.merge(encoded);
     }
 
     @Override
@@ -91,8 +107,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
             val encoded = encode(ac);
             return this.entityManager.merge(encoded);
         }
-        val encoded = encode(account);
-        return this.entityManager.merge(encoded);
+        return null;
     }
 
     @Override
@@ -117,7 +132,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
 
     private List<JpaGoogleAuthenticatorAccount> fetchAccounts(final String username) {
         return this.entityManager.createQuery("SELECT r FROM "
-            + ENTITY_NAME + " r where r.username = :username", JpaGoogleAuthenticatorAccount.class)
+            + ENTITY_NAME + " r WHERE r.username = :username", JpaGoogleAuthenticatorAccount.class)
             .setParameter("username", username)
             .getResultList();
     }

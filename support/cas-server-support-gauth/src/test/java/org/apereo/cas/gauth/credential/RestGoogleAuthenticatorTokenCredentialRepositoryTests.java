@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.util.CollectionUtils;
@@ -100,6 +101,36 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
+    public void verifyGetById() throws Exception {
+        val props = new GoogleAuthenticatorMultifactorProperties();
+        props.getRest().setUrl("http://localhost:8552");
+        val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
+            props, CipherExecutor.noOpOfStringToString());
+        val account = repo.create(UUID.randomUUID().toString());
+        val entity = MAPPER.writeValueAsString(account);
+        try (val webServer = new MockWebServer(8552,
+            new ByteArrayResource(entity.getBytes(UTF_8), "Results"), OK)) {
+            webServer.start();
+            assertNotNull(repo.get(account.getId()));
+        }
+    }
+
+    @Test
+    public void verifyGetByIdAndUser() throws Exception {
+        val props = new GoogleAuthenticatorMultifactorProperties();
+        props.getRest().setUrl("http://localhost:8552");
+        val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
+            props, CipherExecutor.noOpOfStringToString());
+        val account = repo.create(UUID.randomUUID().toString());
+        val entity = MAPPER.writeValueAsString(account);
+        try (val webServer = new MockWebServer(8552,
+            new ByteArrayResource(entity.getBytes(UTF_8), "Results"), OK)) {
+            webServer.start();
+            assertNotNull(repo.get(account.getUsername(), account.getId()));
+        }
+    }
+
+    @Test
     public void verifyCount() {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8552");
@@ -126,7 +157,14 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
             assertDoesNotThrow(new Executable() {
                 @Override
                 public void execute() {
-                    repo.save(account.getUsername(), account.getSecretKey(), 0, List.of());
+                    val toSave = OneTimeTokenAccount.builder()
+                        .username(account.getUsername())
+                        .secretKey(account.getSecretKey())
+                        .validationCode(0)
+                        .scratchCodes(List.of())
+                        .name(UUID.randomUUID().toString())
+                        .build();
+                    repo.save(toSave);
                 }
             });
         }

@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -31,6 +32,7 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
+import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -92,8 +94,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
 @Tag("Redis")
+@Getter
 @EnabledIfPortOpen(port = 6379)
-public class RedisGoogleAuthenticatorTokenCredentialRepositoryTests {
+public class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;
@@ -106,7 +109,15 @@ public class RedisGoogleAuthenticatorTokenCredentialRepositoryTests {
     @Test
     public void verifySave() {
         val id = UUID.randomUUID().toString();
-        registry.save(id, "secret", 143211, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
+        var toSave = OneTimeTokenAccount.builder()
+            .username(id)
+            .secretKey("secret")
+            .validationCode(143211)
+            .scratchCodes(CollectionUtils.wrapList(1, 2, 3, 4, 5, 6))
+            .name(UUID.randomUUID().toString())
+            .build();
+        toSave = registry.save(toSave);
+        
         val s = registry.get(id).iterator().next();
         assertEquals("secret", s.getSecretKey());
         val c = registry.load();
@@ -116,7 +127,14 @@ public class RedisGoogleAuthenticatorTokenCredentialRepositoryTests {
     @Test
     public void verifyDelete() {
         val id = UUID.randomUUID().toString();
-        registry.save(id, "secret", 143211, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
+        val toSave = OneTimeTokenAccount.builder()
+            .username(id)
+            .secretKey("secret")
+            .validationCode(143211)
+            .scratchCodes(CollectionUtils.wrapList(1, 2, 3, 4, 5, 6))
+            .name(UUID.randomUUID().toString())
+            .build();
+        registry.save(toSave);
         registry.delete(id);
         assertEquals(0, registry.count());
     }
@@ -124,7 +142,14 @@ public class RedisGoogleAuthenticatorTokenCredentialRepositoryTests {
     @Test
     public void verifySaveAndUpdate() {
         val id = UUID.randomUUID().toString();
-        registry.save(id, "secret", 222222, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
+        val toSave = OneTimeTokenAccount.builder()
+            .username(id)
+            .secretKey("secret")
+            .validationCode(222222)
+            .scratchCodes(CollectionUtils.wrapList(1, 2, 3, 4, 5, 6))
+            .name(UUID.randomUUID().toString())
+            .build();
+        registry.save(toSave);
         val s = registry.get(id).iterator().next();
         assertNotNull(s.getRegistrationDate());
         assertEquals(222222, s.getValidationCode());

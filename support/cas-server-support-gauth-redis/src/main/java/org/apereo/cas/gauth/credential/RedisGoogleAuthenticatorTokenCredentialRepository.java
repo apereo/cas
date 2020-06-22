@@ -44,18 +44,55 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
     }
 
     @Override
+    public OneTimeTokenAccount get(final String username, final long id) {
+        try {
+            val keys = getGoogleAuthenticatorTokenKeys(username, String.valueOf(id));
+            if (keys != null && keys.size() == 1) {
+                val r = this.template.boundValueOps(keys.iterator().next()).get();
+                if (r != null && !r.isEmpty()) {
+                    return decode(r.get(0));
+                }
+            }
+
+        } catch (final NoResultException e) {
+            LOGGER.debug("No record could be found for google authenticator id [{}]", id);
+        }
+        return null;
+    }
+
+    @Override
+    public OneTimeTokenAccount get(final long id) {
+        try {
+            val keys = getGoogleAuthenticatorTokenKeys("*", String.valueOf(id));
+            if (keys != null && keys.size() == 1) {
+                val r = this.template.boundValueOps(keys.iterator().next()).get();
+                if (r != null && !r.isEmpty()) {
+                    return decode(r.get(0));
+                }
+            }
+
+        } catch (final NoResultException e) {
+            LOGGER.debug("No record could be found for google authenticator id [{}]", id);
+        }
+        return null;
+    }
+
+    @Override
     public Collection<? extends OneTimeTokenAccount> get(final String username) {
         try {
-            val redisKey = getGoogleAuthenticatorRedisKey(username);
-            val ops = this.template.boundValueOps(redisKey);
-            val r = ops.get();
-            if (r != null) {
-                return decode(r);
-            }
+            val keys = getGoogleAuthenticatorTokenKeys(username, "*");
+            return keys
+                .stream()
+                .map(key -> this.template.boundValueOps(key).get())
+                .filter(Objects::nonNull)
+                .map(this::decode)
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
         } catch (final NoResultException e) {
             LOGGER.debug("No record could be found for google authenticator id [{}]", username);
         }
-        return null;
+        return new ArrayList<>(0);
     }
 
     @Override
@@ -74,21 +111,14 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
     }
 
     @Override
-    public void save(final String userName, final String secretKey,
-                     final int validationCode, final List<Integer> scratchCodes) {
-        val account = GoogleAuthenticatorAccount.builder()
-            .username(userName)
-            .secretKey(secretKey)
-            .validationCode(validationCode)
-            .scratchCodes(scratchCodes)
-            .build();
-        update(account);
+    public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
+        return update(account);
     }
 
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         val encodedAccount = encode(account);
-        val redisKey = getGoogleAuthenticatorRedisKey(account.getUsername());
+        val redisKey = getGoogleAuthenticatorRedisKey(account);
         LOGGER.trace("Saving [{}] using key [{}]", encodedAccount, redisKey);
         val ops = this.template.boundValueOps(redisKey);
         ops.set(CollectionUtils.wrapList(encodedAccount));
@@ -110,7 +140,7 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
     @Override
     public void delete(final String username) {
         try {
-            val redisKey = getGoogleAuthenticatorTokenKeys(username);
+            val redisKey = getGoogleAuthenticatorTokenKeys(username, "*");
             LOGGER.trace("Deleting tokens using key [{}]", redisKey);
             this.template.delete(redisKey);
             LOGGER.trace("Deleted tokens");
@@ -130,18 +160,18 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
         return 0;
     }
 
-    private static String getGoogleAuthenticatorRedisKey(final String username) {
-        return CAS_PREFIX + KEY_SEPARATOR + username;
+    private static String getGoogleAuthenticatorRedisKey(final OneTimeTokenAccount account) {
+        return CAS_PREFIX + KEY_SEPARATOR + account.getUsername() + KEY_SEPARATOR + account.getId();
     }
 
-    private Set<String> getGoogleAuthenticatorTokenKeys(final String username) {
-        val key = CAS_PREFIX + KEY_SEPARATOR + username;
+    private Set<String> getGoogleAuthenticatorTokenKeys(final String username, final String id) {
+        val key = CAS_PREFIX + KEY_SEPARATOR + username + KEY_SEPARATOR + id;
         LOGGER.trace("Fetching Google Authenticator records based on key [{}]", key);
         return this.template.keys(key);
     }
 
     private Set<String> getGoogleAuthenticatorTokenKeys() {
-        val key = CAS_PREFIX + KEY_SEPARATOR + '*';
+        val key = CAS_PREFIX + KEY_SEPARATOR + "*:*";
         LOGGER.trace("Fetching Google Authenticator records based on key [{}]", key);
         return this.template.keys(key);
     }

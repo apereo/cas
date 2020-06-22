@@ -2,9 +2,10 @@ package org.apereo.cas.otp.web.flow;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -17,15 +18,28 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class OneTimeTokenAccountSaveRegistrationAction extends AbstractAction {
     private final OneTimeTokenCredentialRepository repository;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val account = requestContext.getFlowScope()
-            .get(OneTimeTokenAccountCheckRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT, OneTimeTokenAccount.class);
-        val uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
-        repository.save(uid, account.getSecretKey(), account.getValidationCode(), account.getScratchCodes());
-        return success();
+        try {
+            val otpAcct = requestContext.getFlowScope()
+                .get(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT, OneTimeTokenAccount.class);
+            val acctName = requestContext.getRequestParameters().getRequired("accountName");
+            val account = OneTimeTokenAccount.builder()
+                .username(otpAcct.getUsername())
+                .secretKey(otpAcct.getSecretKey())
+                .validationCode(otpAcct.getValidationCode())
+                .scratchCodes(otpAcct.getScratchCodes())
+                .name(acctName)
+                .build();
+            repository.save(account);
+            return success();
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return error();
     }
 }

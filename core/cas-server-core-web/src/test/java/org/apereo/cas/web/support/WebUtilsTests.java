@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.util.MockServletContext;
 
@@ -37,7 +38,7 @@ public class WebUtilsTests {
         assertNull(WebUtils.getHttpServletRequestUserAgentFromRequestContext(context));
         assertNull(WebUtils.getHttpServletRequestUserAgentFromRequestContext(request));
         assertNull(WebUtils.getAuthenticationResult(context));
-        
+
         assertNotNull(WebUtils.produceUnauthorizedErrorView());
         assertNotNull(WebUtils.produceErrorView(new IllegalArgumentException()));
         assertNotNull(WebUtils.produceErrorView("error-view", new IllegalArgumentException()));
@@ -54,6 +55,13 @@ public class WebUtilsTests {
                 WebUtils.putPasswordManagementEnabled(context, true);
                 WebUtils.putRecaptchaPropertiesFlowScope(context, new GoogleRecaptchaProperties());
                 WebUtils.putLogoutUrls(context, Map.of());
+                val ac = OneTimeTokenAccount.builder()
+                    .validationCode(123456)
+                    .username("casuser")
+                    .name("Example")
+                    .build();
+                WebUtils.putOneTimeTokenAccount(context, ac);
+                WebUtils.putOneTimeTokenAccounts(context, List.of(ac));
             }
         });
     }

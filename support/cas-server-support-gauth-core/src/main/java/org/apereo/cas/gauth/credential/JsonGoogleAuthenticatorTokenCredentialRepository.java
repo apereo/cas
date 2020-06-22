@@ -41,6 +41,26 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     }
 
     @Override
+    public OneTimeTokenAccount get(final String username, final long id) {
+        return get(username).stream().filter(ac -> ac.getId() == id).findFirst().orElse(null);
+    }
+
+    @Override
+    public OneTimeTokenAccount get(final long id) {
+        try {
+            val accounts = readAccountsFromJsonRepository();
+            return accounts.values().stream()
+                .flatMap(List::stream)
+                .filter(ac -> ac.getId() == id)
+                .findFirst()
+                .orElse(null);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return null;
+    }
+
+    @Override
     public Collection<? extends OneTimeTokenAccount> get(final String username) {
         try {
             if (!location.getFile().exists()) {
@@ -69,21 +89,22 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     }
 
     @Override
-    public void save(final String userName, final String secretKey,
-                     final int validationCode, final List<Integer> scratchCodes) {
+    public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
         try {
-            LOGGER.debug("Storing google authenticator account for [{}]", userName);
-            val account = new OneTimeTokenAccount(userName, secretKey, validationCode, scratchCodes);
+            LOGGER.debug("Storing google authenticator account for [{}]", account.getUsername());
             val accounts = readAccountsFromJsonRepository();
-            LOGGER.debug("Found [{}] account(s) and added google authenticator account for [{}]", accounts.size(), account.getUsername());
+            LOGGER.debug("Found [{}] account(s) and added google authenticator account for [{}]",
+                accounts.size(), account.getUsername());
             val encoded = encode(account);
             val records = accounts.getOrDefault(account.getUsername(), new ArrayList<>());
             records.add(encoded);
             accounts.put(account.getUsername(), records);
             writeAccountsToJsonRepository(accounts);
+            return encoded;
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
+        return null;
     }
 
     @Override
@@ -149,7 +170,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
 
     @SneakyThrows
     private void writeAccountsToJsonRepository(final Map<String, List<OneTimeTokenAccount>> accounts) {
-        LOGGER.debug("Saving [{}] google authenticator accounts back to the JSON file at [{}]", accounts.size(), location.getFile());
+        LOGGER.debug("Saving [{}] google authenticator accounts to JSON file at [{}]", accounts.size(), location.getFile());
         this.serializer.to(location.getFile(), accounts);
     }
 

@@ -24,6 +24,8 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepositoryCleaner;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCheckRegistrationAction;
+import org.apereo.cas.otp.web.flow.OneTimeTokenAccountConfirmSelectionRegistrationAction;
+import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCreateRegistrationAction;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountSaveRegistrationAction;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
@@ -143,12 +145,25 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
-    @ConditionalOnMissingBean(name = "googleAccountRegistrationAction")
-    public Action googleAccountRegistrationAction() {
+    @ConditionalOnMissingBean(name = "googleAccountCheckRegistrationAction")
+    public Action googleAccountCheckRegistrationAction() {
+        return new OneTimeTokenAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry.getObject());
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "googleAccountConfirmSelectionAction")
+    public Action googleAccountConfirmSelectionAction() {
+        return new OneTimeTokenAccountConfirmSelectionRegistrationAction(googleAuthenticatorAccountRegistry.getObject());
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "googleAccountCreateRegistrationAction")
+    public Action googleAccountCreateRegistrationAction() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
-        return new OneTimeTokenAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry.getObject(),
-            gauth.getLabel(),
-            gauth.getIssuer());
+        return new OneTimeTokenAccountCreateRegistrationAction(googleAuthenticatorAccountRegistry.getObject(),
+            gauth.getLabel(), gauth.getIssuer());
     }
 
     @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)

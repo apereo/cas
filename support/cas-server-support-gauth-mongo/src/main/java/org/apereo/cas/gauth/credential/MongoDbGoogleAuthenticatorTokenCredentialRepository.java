@@ -15,7 +15,6 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -42,6 +41,22 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     }
 
     @Override
+    public OneTimeTokenAccount get(final String username, final long id) {
+        val query = new Query();
+        query.addCriteria(Criteria.where("username").is(username).and("id").is(id));
+        val r = this.mongoTemplate.findOne(query, GoogleAuthenticatorAccount.class, this.collectionName);
+        return r != null ? decode(r) : null;
+    }
+
+    @Override
+    public OneTimeTokenAccount get(final long id) {
+        val query = new Query();
+        query.addCriteria(Criteria.where("id").is(id));
+        val r = this.mongoTemplate.findOne(query, GoogleAuthenticatorAccount.class, this.collectionName);
+        return r != null ? decode(r) : null;
+    }
+
+    @Override
     public Collection<? extends OneTimeTokenAccount> get(final String username) {
         val query = new Query();
         query.addCriteria(Criteria.where("username").is(username));
@@ -64,14 +79,8 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     }
 
     @Override
-    public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
-        val account = GoogleAuthenticatorAccount.builder()
-            .username(userName)
-            .secretKey(secretKey)
-            .validationCode(validationCode)
-            .scratchCodes(scratchCodes)
-            .build();
-        update(account);
+    public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
+        return update(account);
     }
 
     @Override

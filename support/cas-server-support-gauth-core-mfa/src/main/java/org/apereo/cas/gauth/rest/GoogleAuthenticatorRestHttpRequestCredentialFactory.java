@@ -40,6 +40,6 @@ public class GoogleAuthenticatorRestHttpRequestCredentialFactory implements Rest
         if (StringUtils.isBlank(token)) {
             return new ArrayList<>(0);
         }
-        return CollectionUtils.wrap(new GoogleAuthenticatorTokenCredential(token));
+        return CollectionUtils.wrap(new GoogleAuthenticatorTokenCredential(token, null));
     }
 }
