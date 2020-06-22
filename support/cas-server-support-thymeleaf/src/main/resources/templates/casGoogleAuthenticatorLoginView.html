@@ -25,7 +25,7 @@
             <section class="cas-field my-3 mdc-input-group">
                 <div class="mdc-input-group-field mdc-input-group-field-append">
                     <div class="mdc-text-field mdc-text-field--with-trailing-icon d-flex caps-check">
-                        <input class="mdc-text-field__input pwd" type="hidden"
+                        <input class="mdc-text-field__input" type="hidden"
                                id="accountId" name="accountId" size="25"
                                autocomplete="off" th:field="*{accountId}"/>
                         <input class="mdc-text-field__input pwd"
@@ -76,10 +76,11 @@
                 </button>
             </form>
         </span>
-        <p>
-        <hr width="75%">
-        <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
-        <form method="post" id="fm2">
+        
+        <form method="post" id="fm2" th:if="${multipleDeviceRegistrationEnabled}">
+            <p>
+            <hr width="75%">
+            <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
             <input type="hidden" name="_eventId_register" value="register"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <button class="mdc-button mdc-button--raised mr-2" type="submit" name="register" accesskey="r" value="Register">

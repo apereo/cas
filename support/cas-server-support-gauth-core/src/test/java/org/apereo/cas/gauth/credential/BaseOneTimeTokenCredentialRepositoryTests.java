@@ -82,9 +82,11 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         assertNotNull(repo.get(toSave.getId()));
         assertNotNull(repo.get(toSave.getUsername(), toSave.getId()));
         assertEquals(1, repo.count());
+        assertEquals(1, repo.count(toSave.getUsername()));
         repo.delete(acct.getUsername());
         assertTrue(repo.load().isEmpty());
         assertEquals(0, repo.count());
+        assertEquals(0, repo.count(toSave.getUsername()));
     }
 
     @Test

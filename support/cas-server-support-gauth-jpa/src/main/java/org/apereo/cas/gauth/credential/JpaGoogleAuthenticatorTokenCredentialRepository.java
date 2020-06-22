@@ -130,6 +130,16 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
         return count.longValue();
     }
 
+    @Override
+    public long count(final String username) {
+        val count = (Number) this.entityManager.createQuery(
+            "SELECT COUNT(r.username) FROM " + ENTITY_NAME + " r WHERE r.username=:username")
+            .setParameter("username", username)
+            .getSingleResult();
+        LOGGER.debug("Counted [{}] record(s) for [{}]", count, username);
+        return count.longValue();
+    }
+
     private List<JpaGoogleAuthenticatorAccount> fetchAccounts(final String username) {
         return this.entityManager.createQuery("SELECT r FROM "
             + ENTITY_NAME + " r WHERE r.username = :username", JpaGoogleAuthenticatorAccount.class)

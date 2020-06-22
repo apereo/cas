@@ -12,25 +12,35 @@
 <body id="cas">
     <main role="main" class="container mt-3 mb-3">
         <div layout:fragment="content" id="login" class="mdc-card p-4 m-auto w-lg-66">
-            <h3 th:text="#{screen.authentication.gauth.register}">Your account is not registered. Use the below settings
-                to
-                register your device with CAS.</h3>
+            <h4 th:text="#{screen.authentication.gauth.register}">Your account is not registered.</h4>
 
             <form method="post" id="fm1" class="fm-v clearfix" th:action="@{/login}">
+                <table>
+                    <tr>
+                        <td>
+                            <img th:src="@{/otp/qrgen(key=${keyUri})}" />
+                        </td>
+
+                        <td>
+                            <div class="my-2">
+                                <p th:utext="#{screen.authentication.gauth.key(${key.getSecretKey()})}">Secret key to register is...</p>
+                            </div>
+                            <hr>
+                            <p>Scratch codes:</p>
+                            <div class="d-flex align-items-start mb-4">
+                                <div class="mdc-chip-set" role="grid">
+                                    <div th:each="code : ${key.getScratchCodes()}" class="mdc-chip" role="row">
+                                        <div class="mdc-chip__ripple"></div>
+                                        <span role="gridcell">
+                                          <span class="mdc-chip__text" th:text="${code}">Chip One</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
                 <div class="d-flex flex-column align-items-center">
-                    <img th:src="@{/otp/qrgen(key=${keyUri})}" />
-                    <div class="my-2">
-                        <p th:utext="#{screen.authentication.gauth.key(${key.getSecretKey()})}">Secret key to register
-                            is...</p>
-                    </div>
-
-                    <div class="border-rounded d-flex align-items-start mb-4 px-4">
-                        <p class="mr-2">Scratch Codes:</p>
-                        <ul>
-                            <li th:each="code : ${key.getScratchCodes()}" th:text="${code}">code</li>
-                        </ul>
-                    </div>
-
                     <div class="mdc-text-field d-flex">
                         <input class="mdc-text-field__input"
                                id="accountName"

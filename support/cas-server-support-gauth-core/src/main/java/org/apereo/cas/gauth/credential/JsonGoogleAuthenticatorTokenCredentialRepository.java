@@ -158,6 +158,17 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     }
 
     @Override
+    public long count(final String username) {
+        try {
+            val accounts = readAccountsFromJsonRepository();
+            return accounts.get("username").size();
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return 0;
+    }
+
+    @Override
     public Collection<? extends OneTimeTokenAccount> load() {
         try {
             return readAccountsFromJsonRepository().values()

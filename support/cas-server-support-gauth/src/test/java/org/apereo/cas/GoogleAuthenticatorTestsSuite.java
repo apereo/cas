@@ -1,10 +1,12 @@
-package org.apereo.cas.gauth;
+package org.apereo.cas;
 
 import org.apereo.cas.gauth.config.GoogleAuthenticatorConfigurationTests;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredentialRepositoryEndpointTests;
 import org.apereo.cas.gauth.credential.JsonGoogleAuthenticatorTokenCredentialRepositoryTests;
 import org.apereo.cas.gauth.credential.RestGoogleAuthenticatorTokenCredentialRepositoryTests;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurerTests;
+import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorPrepareLoginActionTests;
+import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorValidateSelectedRegistrationActionTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -17,7 +19,9 @@ import org.junit.runner.RunWith;
  * @since 5.3.0
  */
 @SelectClasses({
+    GoogleAuthenticatorValidateSelectedRegistrationActionTests.class,
     GoogleAuthenticatorConfigurationTests.class,
+    GoogleAuthenticatorPrepareLoginActionTests.class,
     GoogleAuthenticatorMultifactorWebflowConfigurerTests.class,
     GoogleAuthenticatorTokenCredentialRepositoryEndpointTests.class,
     RestGoogleAuthenticatorTokenCredentialRepositoryTests.class,

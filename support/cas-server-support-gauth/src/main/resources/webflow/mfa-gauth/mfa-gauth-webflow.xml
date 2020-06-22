@@ -10,6 +10,7 @@
     </on-start>
 
     <action-state id="initializeLoginForm">
+        <evaluate expression="prepareGoogleAuthenticatorLoginAction" />
         <evaluate expression="initializeLoginAction" />
         <transition on="success" to="accountRegistrationCheck"/>
     </action-state>
@@ -58,6 +59,7 @@
     </view-state>
 
     <action-state id="realSubmit">
+        <evaluate expression="validateSelectedRegistrationAction" />
         <evaluate expression="oneTimeTokenAuthenticationWebflowAction" />
         <transition on="success" to="success" />
         <transition on="error" to="viewLoginForm" />

@@ -85,4 +85,12 @@ public interface OneTimeTokenCredentialRepository {
      * @return the long
      */
     long count();
+
+    /**
+     * Count records for username.
+     *
+     * @param username the username
+     * @return the count
+     */
+    long count(String username);
 }

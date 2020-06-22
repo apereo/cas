@@ -59,7 +59,6 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         this.gauth = gauth;
     }
 
-
     @Override
     public Collection<? extends OneTimeTokenAccount> load() {
         val rest = gauth.getRest();
@@ -225,7 +224,36 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             val countUrl = StringUtils.appendIfMissing(rest.getUrl(), "/").concat("count");
             response = HttpUtils.execute(countUrl, HttpMethod.GET.name(),
                 rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
-                parameters, new HashMap<>(0));
+                parameters, CollectionUtils.wrap("Accept", MediaType.APPLICATION_JSON));
+
+            if (response != null) {
+                val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+                if (status.is2xxSuccessful()) {
+                    val content = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                    if (content != null) {
+                        return MAPPER.readValue(JsonValue.readHjson(content).toString(), Long.class);
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        } finally {
+            HttpUtils.close(response);
+        }
+        return 0;
+    }
+
+    @Override
+    public long count(final String username) {
+        val rest = gauth.getRest();
+        HttpResponse response = null;
+        try {
+            val parameters = new HashMap<String, Object>();
+            val countUrl = StringUtils.appendIfMissing(rest.getUrl(), "/").concat("count");
+            response = HttpUtils.execute(countUrl, HttpMethod.GET.name(),
+                rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
+                parameters, CollectionUtils.wrap("Accept", MediaType.APPLICATION_JSON,
+                    "username", username));
 
             if (response != null) {
                 val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
