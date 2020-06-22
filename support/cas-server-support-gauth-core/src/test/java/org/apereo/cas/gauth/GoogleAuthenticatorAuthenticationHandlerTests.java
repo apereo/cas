@@ -2,6 +2,7 @@ package org.apereo.cas.gauth;
 
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.gauth.credential.DummyCredentialRepository;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
@@ -17,7 +18,6 @@ import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -86,7 +86,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthnFailsTokenNotFound() {
+    public void verifyAuthnFailsTokenUsed() {
         val credential = getGoogleAuthenticatorTokenCredential();
         handler.getTokenRepository().store(new OneTimeToken(Integer.valueOf(credential.getToken()), "casuser"));
 
@@ -103,8 +103,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyAuthnTokenFound() {
+    public void verifyAuthnTokenFound() throws Exception {
         val credential = getGoogleAuthenticatorTokenCredential();
         val toSave = OneTimeTokenAccount.builder()
             .username("casuser")
@@ -121,8 +120,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyAuthnTokenScratchCode() {
+    public void verifyAuthnTokenScratchCode() throws Exception {
         val credential = getGoogleAuthenticatorTokenCredential();
         val toSave = OneTimeTokenAccount.builder()
             .username("casuser")
@@ -141,12 +139,49 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
         assertFalse(handler.getCredentialRepository().get("casuser").iterator().next().getScratchCodes().contains(otp));
     }
 
+    @Test
+    public void verifyMultipleDevices() throws Exception {
+        val credential = getGoogleAuthenticatorTokenCredential();
+        for (int i = 0; i < 2; i++) {
+            val toSave = OneTimeTokenAccount.builder()
+                .username("casuser")
+                .name("deviceName" + i)
+                .secretKey(account.getKey())
+                .validationCode(account.getVerificationCode())
+                .scratchCodes(account.getScratchCodes())
+                .build();
+            handler.getCredentialRepository().save(toSave);
+        }
+        credential.setAccountId(null);
+        assertThrows(PreventedException.class, () -> handler.authenticate(credential));
+
+        val oneAcct = handler.getCredentialRepository().get("casuser").iterator().next();
+        credential.setAccountId(oneAcct.getId());
+        val result = handler.authenticate(credential);
+        assertNotNull(result);
+    }
+
+    @Test
+    public void verifySingleDevicesNoAcctId() throws Exception {
+        val credential = getGoogleAuthenticatorTokenCredential();
+        val toSave = OneTimeTokenAccount.builder()
+            .username("casuser")
+            .name(UUID.randomUUID().toString())
+            .secretKey(account.getKey())
+            .validationCode(account.getVerificationCode())
+            .scratchCodes(account.getScratchCodes())
+            .build();
+        handler.getCredentialRepository().save(toSave);
+        credential.setAccountId(null);
+        val result = handler.authenticate(credential);
+        assertNotNull(result);
+    }
+
     private GoogleAuthenticatorTokenCredential getGoogleAuthenticatorTokenCredential() {
         val credential = new GoogleAuthenticatorTokenCredential();
         account = googleAuthenticator.createCredentials("casuser");
         val key = googleAuthenticator.getTotpPassword(account.getKey());
         credential.setToken(Integer.toString(key));
-        credential.setAccountId(123456L);
         return credential;
     }
 }
