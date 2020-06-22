@@ -33,11 +33,11 @@ public class OneTimeTokenAccountTests {
             .username("casuser")
             .secretKey("secret")
             .validationCode(987063)
-            .name(UUID.randomUUID().toString())
+            .name(otp1.getName())
             .scratchCodes(CollectionUtils.wrapList(1, 7, 3, 4, 2, 9))
             .build();
 
-        assertEquals(1, otp1.compareTo(otp2));
+        assertNotEquals(0, otp1.compareTo(otp2));
         assertEquals(0, otp1.compareTo(otp1.clone()));
     }
 }

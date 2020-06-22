@@ -4,7 +4,9 @@ import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
@@ -17,6 +19,8 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @SuperBuilder
+@NoArgsConstructor
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class CouchDbGoogleAuthenticatorAccount extends GoogleAuthenticatorAccount {
 
     private static final long serialVersionUID = -4286976777933886751L;

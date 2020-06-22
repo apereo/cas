@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.OneTimeTokenAccount;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.ektorp.ComplexKey;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.DocumentNotFoundException;
 import org.ektorp.support.CouchDbRepositorySupport;
@@ -95,10 +96,10 @@ public class GoogleAuthenticatorAccountCouchDbRepository extends CouchDbReposito
      * @param username the username
      * @return the one time token account
      */
-    @View(name = "by_id_username", map = "function(doc) { if(doc.secretKey) { emit(doc.id, doc.username, doc) } }")
+    @View(name = "by_id_username", map = "function(doc) { emit([doc.id, doc.username], doc) }")
     public OneTimeTokenAccount findByIdAndUsername(final long id, final String username) {
         try {
-            val view = createQuery("by_id_username").key(id).key(username).limit(1);
+            val view = createQuery("by_id_username").key(ComplexKey.of(id, username)).limit(1);
             return db.queryView(view, CouchDbGoogleAuthenticatorAccount.class).stream().findFirst().orElse(null);
         } catch (final DocumentNotFoundException e) {
             LOGGER.trace(e.getMessage(), e);
