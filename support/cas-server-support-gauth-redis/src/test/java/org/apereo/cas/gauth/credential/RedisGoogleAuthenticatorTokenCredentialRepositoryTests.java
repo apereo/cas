@@ -116,7 +116,7 @@ public class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends Base
             .scratchCodes(CollectionUtils.wrapList(1, 2, 3, 4, 5, 6))
             .name(UUID.randomUUID().toString())
             .build();
-        toSave = registry.save(toSave);
+        registry.save(toSave);
         
         val s = registry.get(id).iterator().next();
         assertEquals("secret", s.getSecretKey());
