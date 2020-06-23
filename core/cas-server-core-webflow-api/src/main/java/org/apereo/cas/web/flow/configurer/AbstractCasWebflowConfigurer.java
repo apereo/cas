@@ -2,8 +2,10 @@ package org.apereo.cas.web.flow.configurer;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -78,7 +80,7 @@ import java.util.Map;
 @Slf4j
 @Setter
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = "name")
 public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigurer {
     /**
@@ -127,7 +129,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                 LOGGER.info("Webflow auto-configuration is disabled for [{}]", getClass().getName());
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -295,7 +297,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             LOGGER.trace("Added view state [{}]", viewState.getId());
             return viewState;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -431,6 +433,19 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     /**
+     * Create transition for state transition.
+     *
+     * @param flow            the flow
+     * @param stateId         the state id
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @return the transition
+     */
+    public Transition createTransitionForState(final Flow flow, final String stateId, final String criteriaOutcome, final String targetState) {
+        return createTransitionForState(getTransitionableState(flow, stateId), criteriaOutcome, targetState, false);
+    }
+
+    /**
      * Add transition to action state.
      *
      * @param state           the action state
@@ -452,7 +467,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             LOGGER.trace("Added transition [{}] to the state [{}]", transition.getId(), state.getId());
             return transition;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.swiveltechnologies.pinsafe.client.agent.AgentXmlRequest;
@@ -105,7 +106,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
             LOGGER.debug("Submitting Swivel request to [{}] for [{}]", swivelProperties.getSwivelUrl(), uid);
             req.login(uid, StringUtils.EMPTY, swivelCredential.getToken());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
 
         /*

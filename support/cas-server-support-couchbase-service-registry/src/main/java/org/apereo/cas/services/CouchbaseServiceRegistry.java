@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.couchbase.core.CouchbaseException;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import com.couchbase.client.core.error.DocumentNotFoundException;
@@ -91,11 +92,7 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
                 .peek(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)))
                 .collect(Collectors.toList());
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
@@ -113,11 +110,7 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
         } catch (final DocumentNotFoundException e) {
             LOGGER.debug(e.getMessage(), e);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

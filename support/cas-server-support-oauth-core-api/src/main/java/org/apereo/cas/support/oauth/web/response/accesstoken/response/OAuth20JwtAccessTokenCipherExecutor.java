@@ -47,12 +47,12 @@ public class OAuth20JwtAccessTokenCipherExecutor extends JwtTicketCipherExecutor
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.authn.oauth.accessToken.crypto.encryption.key";
+        return "cas.authn.oauth.access-token.crypto.encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.authn.oauth.accessToken.crypto.signing.key";
+        return "cas.authn.oauth.access-token.crypto.signing.key";
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.principal.cache;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -87,11 +88,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
             cache.putCachedAttributesFor(registeredService, this, id, attributes);
             LOGGER.trace("Cached attributes for [{}]", id);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -108,11 +105,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
             val cache = getCacheInstanceFromApplicationContext();
             return cache.getCachedAttributesFor(registeredService, this, principal);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return new HashMap<>(0);
     }

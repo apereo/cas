@@ -414,8 +414,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public CipherExecutor securityTokenServiceCredentialCipherExecutor() {
-        val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
-        val crypto = wsfed.getCrypto();
+        val crypto = casProperties.getAuthn().getWsfedIdp().getSts().getCrypto();
         return CipherExecutorUtils.newStringCipherExecutor(crypto, SecurityTokenServiceCredentialCipherExecutor.class);
     }
 

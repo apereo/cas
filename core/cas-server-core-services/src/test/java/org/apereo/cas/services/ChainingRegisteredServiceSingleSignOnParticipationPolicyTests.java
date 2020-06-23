@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.util.model.TriStateBoolean;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -20,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Simple")
+@Tag("RegisteredService")
 public class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
     @Test
     public void verifySsoParticipationByAuthenticationDateFails() {
@@ -66,5 +67,13 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
         chain.addPolicy(new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 10, 0));
 
         assertTrue(chain.shouldParticipateInSso(state));
+    }
+
+    @Test
+    public void verifyPolicies() {
+        val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
+        chain.addPolicies(new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 10, 0));
+        assertFalse(chain.getPolicies().isEmpty());
+        assertEquals(TriStateBoolean.UNDEFINED, chain.isCreateCookieOnRenewedAuthentication());
     }
 }

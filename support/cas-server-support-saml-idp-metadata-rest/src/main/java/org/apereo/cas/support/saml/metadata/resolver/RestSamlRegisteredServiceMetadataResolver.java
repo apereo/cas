@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSaml
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +55,7 @@ public class RestSamlRegisteredServiceMetadataResolver extends BaseSamlRegistere
                 return CollectionUtils.wrapList(resolver);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -67,7 +68,7 @@ public class RestSamlRegisteredServiceMetadataResolver extends BaseSamlRegistere
             val metadataLocation = service.getMetadataLocation();
             return metadataLocation.trim().startsWith("rest://");
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

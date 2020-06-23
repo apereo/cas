@@ -42,7 +42,7 @@ public class DatabaseAuthenticationTestConfiguration {
     @Value("${database.name:cas-authentications}")
     private String databaseName;
 
-    @Value("${database.driverClass:org.hsqldb.jdbcDriver}")
+    @Value("${database.driver-class:org.hsqldb.jdbcDriver}")
     private String databaseDriverClassName;
 
     @Value("${database.dialect:org.hibernate.dialect.HSQLDialect}")

@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.rest.SurrogateAuthenticationRestHttpRequest
 import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticationServiceTests;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationServiceTests;
 import org.apereo.cas.ticket.expiration.SurrogateSessionExpirationPolicyJsonSerializerTests;
+import org.apereo.cas.ticket.expiration.SurrogateSessionExpirationPolicyTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -29,6 +30,7 @@ import org.junit.runner.RunWith;
     SurrogateAuthenticationPostProcessorTests.class,
     SurrogateAuthenticationMetaDataPopulatorTests.class,
     SurrogatePrincipalResolverTests.class,
+    SurrogateSessionExpirationPolicyTests.class,
     SurrogatePrincipalBuilderTests.class,
     SurrogateAuthenticationExpirationPolicyBuilderTests.class,
     SurrogateAuthenticationEventListenerTests.class,

@@ -471,6 +471,25 @@ The following options related to Person Directory support in CAS when it attempt
 # ${configurationKey}.active-attribute-repository-ids=StubRepository,etc
 ```
 
+## Git Configuration
+
+The following options related to Git integration support in CAS when it attempts to connect and pull/push changes, given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.git.repository-url=https://github.com/repository
+# ${configurationKey}.git.branches-to-clone=master
+# ${configurationKey}.git.active-branch=master
+# ${configurationKey}.git.sign-commits=false
+# ${configurationKey}.git.username=
+# ${configurationKey}.git.password=
+# ${configurationKey}.git.clone-directory=file:/tmp/cas-service-registry
+# ${configurationKey}.git.push-changes=false
+# ${configurationKey}.git.private-key-passphrase=
+# ${configurationKey}.git.private-key-path=
+# ${configurationKey}.git.ssh-session-password=
+# ${configurationKey}.git.timeout=PT10S
+```
+
 ## InfluxDb Configuration
 
 The following options related to InfluxDb support in CAS apply equally to a number of CAS components given the component's *configuration key*:
@@ -690,7 +709,7 @@ The following options related to CouchDb support in CAS apply equally to a numbe
 # ${configurationKey}.couch-db.max-connections=20
 # ${configurationKey}.couch-db.enable-ssl=
 # ${configurationKey}.couch-db.relaxed-ssl-settings=
-# ${configurationKey}.couch-db.caching=true
+# ${configurationKey}.couch-db.caching=false
 # ${configurationKey}.couch-db.max-cache-entries=1000
 # ${configurationKey}.couch-db.max-object-size-bytes=8192
 # ${configurationKey}.couch-db.use-expect-continue=true
@@ -779,7 +798,11 @@ The following options related to Redis support in CAS apply equally to a number 
 # ${configurationKey}.redis.timeout=2000
 # ${configurationKey}.redis.use-ssl=false
 # ${configurationKey}.redis.read-from=MASTER
+```
 
+### Redis Pool Configuration
+
+```properties
 # ${configurationKey}.redis.pool.enabled=false
 # ${configurationKey}.redis.pool.max-active=20
 # ${configurationKey}.redis.pool.max-idle=8
@@ -795,11 +818,28 @@ The following options related to Redis support in CAS apply equally to a number 
 # ${configurationKey}.redis.pool.test-on-borrow=false
 # ${configurationKey}.redis.pool.test-on-return=false
 # ${configurationKey}.redis.pool.test-while-idle=false
+```
 
+### Redis Sentinel Configuration
+
+```properties
 # ${configurationKey}.redis.sentinel.master=mymaster
 # ${configurationKey}.redis.sentinel.node[0]=localhost:26377
 # ${configurationKey}.redis.sentinel.node[1]=localhost:26378
 # ${configurationKey}.redis.sentinel.node[2]=localhost:26379
+```
+
+### Redis Cluster Configuration
+
+```properties
+# ${configurationKey}.redis.cluster.password=
+# ${configurationKey}.redis.cluster.max-redirects=0
+# ${configurationKey}.redis.cluster.nodes[0].host=
+# ${configurationKey}.redis.cluster.nodes[0].port=
+# ${configurationKey}.redis.cluster.nodes[0].replica-of=
+# ${configurationKey}.redis.cluster.nodes[0].id=
+# ${configurationKey}.redis.cluster.nodes[0].name=
+# ${configurationKey}.redis.cluster.nodes[0].type=MASTER|SLAVE
 ```
 
 ## DDL Configuration
@@ -1015,7 +1055,7 @@ Password policy strategy types are outlined below. The strategy evaluates the au
 |---------------|-----------------------------------------------------------------------------
 | `DEFAULT`     | Accepts the authentication response as is, and processes account state, if any.
 | `GROOVY`      | Examine the authentication response as part of a Groovy script dynamically. The responsibility of handling account state changes and warnings is entirely delegated to the script.
-| `REJECT_RESULT_CODE`  | An extension of the `DEFAULT` where account state is processed only if the result code of the authentication response is not blacklisted in the configuration. By default `INVALID_CREDENTIALS(49)` prevents CAS from handling account states.
+| `REJECT_RESULT_CODE`  | An extension of the `DEFAULT` where account state is processed only if the result code of the authentication response is not denied in the configuration. By default `INVALID_CREDENTIALS(49)` prevents CAS from handling account states.
 
 If the password policy strategy is to be handed off to a Groovy script, the outline of the script may be as follows:
 

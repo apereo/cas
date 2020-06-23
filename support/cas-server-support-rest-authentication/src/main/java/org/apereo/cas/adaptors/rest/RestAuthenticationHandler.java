@@ -22,6 +22,7 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -36,6 +37,15 @@ import java.util.List;
  */
 public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
+    /**
+     * Header name that explains the password expiration date.
+     */
+    public static final String HEADER_NAME_CAS_PASSWORD_EXPIRATION_DATE = "X-CAS-PasswordExpirationDate";
+    /**
+     * Header name that explains the warnings.
+     */
+    public static final String HEADER_NAME_CAS_WARNING = "X-CAS-Warning";
+
     private final RestAuthenticationApi api;
 
     public RestAuthenticationHandler(final String name, final RestAuthenticationApi api,
@@ -46,44 +56,43 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c, final String originalPassword)
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                                        final String originalPassword)
         throws GeneralSecurityException {
-
         try {
-            val creds = new UsernamePasswordCredential(c.getUsername(), c.getPassword());
-
+            val creds = new UsernamePasswordCredential(credential.getUsername(), credential.getPassword());
             val authenticationResponse = api.authenticate(creds);
             if (authenticationResponse.getStatusCode() == HttpStatus.OK) {
                 val principalFromRest = authenticationResponse.getBody();
                 if (principalFromRest == null || StringUtils.isBlank(principalFromRest.getId())) {
-                    throw new FailedLoginException("Could not determine authentication response from rest endpoint for " + c.getUsername());
+                    throw new FailedLoginException("Could not determine authentication response from rest endpoint for " + credential.getUsername());
                 }
-                val principal = this.principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes());
-                return createHandlerResult(c, principal, getWarnings(authenticationResponse));
+                val principal = principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes());
+                return createHandlerResult(credential, principal, getWarnings(authenticationResponse));
             }
         } catch (final HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
-                throw new AccountDisabledException("Could not authenticate forbidden account for " + c.getUsername());
+                throw new AccountDisabledException("Could not authenticate forbidden account for " + credential.getUsername());
             }
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                throw new FailedLoginException("Could not authenticate account for " + c.getUsername());
+                throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
             }
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                throw new AccountNotFoundException("Could not locate account for " + c.getUsername());
+                throw new AccountNotFoundException("Could not locate account for " + credential.getUsername());
             }
             if (e.getStatusCode() == HttpStatus.LOCKED) {
-                throw new AccountLockedException("Could not authenticate locked account for " + c.getUsername());
+                throw new AccountLockedException("Could not authenticate locked account for " + credential.getUsername());
             }
             if (e.getStatusCode() == HttpStatus.PRECONDITION_FAILED) {
-                throw new AccountExpiredException("Could not authenticate expired account for " + c.getUsername());
+                throw new AccountExpiredException("Could not authenticate expired account for " + credential.getUsername());
             }
             if (e.getStatusCode() == HttpStatus.PRECONDITION_REQUIRED) {
-                throw new AccountPasswordMustChangeException("Account password must change for " + c.getUsername());
+                throw new AccountPasswordMustChangeException("Account password must change for " + credential.getUsername());
             }
             throw new FailedLoginException("Rest endpoint returned an unknown status code "
-                + e.getStatusCode() + " for " + c.getUsername());
+                + e.getStatusCode() + " for " + credential.getUsername());
         }
-        throw new FailedLoginException("Rest endpoint returned an unknown response for " + c.getUsername());
+        throw new FailedLoginException("Rest endpoint returned an unknown response for " + credential.getUsername());
     }
 
     /**
@@ -95,13 +104,14 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     protected List<MessageDescriptor> getWarnings(final ResponseEntity<?> authenticationResponse) {
         val messageDescriptors = new ArrayList<MessageDescriptor>(2);
 
-        val passwordExpirationDate = authenticationResponse.getHeaders().getFirstZonedDateTime("X-CAS-PasswordExpirationDate");
+        val passwordExpirationDate = authenticationResponse.getHeaders()
+            .getFirstZonedDateTime(HEADER_NAME_CAS_PASSWORD_EXPIRATION_DATE);
         if (passwordExpirationDate != null) {
-            val days = Duration.between(Instant.now(), passwordExpirationDate).toDays();
+            val days = Duration.between(Instant.now(Clock.systemUTC()), passwordExpirationDate).toDays();
             messageDescriptors.add(new PasswordExpiringWarningMessageDescriptor(null, days));
         }
 
-        val warnings = authenticationResponse.getHeaders().get("X-CAS-Warning");
+        val warnings = authenticationResponse.getHeaders().get(HEADER_NAME_CAS_WARNING);
         if (warnings != null) {
             warnings.stream()
                 .map(DefaultMessageDescriptor::new)

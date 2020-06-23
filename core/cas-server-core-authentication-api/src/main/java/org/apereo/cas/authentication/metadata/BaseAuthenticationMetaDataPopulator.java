@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.metadata;
 
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,13 +17,13 @@ import org.springframework.core.Ordered;
  */
 @ToString
 @Getter
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Setter
 public abstract class BaseAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     private int order = Ordered.HIGHEST_PRECEDENCE;
 
-    public BaseAuthenticationMetaDataPopulator() {
+    protected BaseAuthenticationMetaDataPopulator() {
         this(Ordered.HIGHEST_PRECEDENCE);
     }
 

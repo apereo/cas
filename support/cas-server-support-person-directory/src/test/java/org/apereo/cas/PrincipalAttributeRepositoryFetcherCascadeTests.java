@@ -27,18 +27,18 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {
-    "cas.authn.attributeRepository.stub.attributes.uid=cas",
-    "cas.authn.attributeRepository.stub.attributes.givenName=apereo-cas",
-    "cas.authn.attributeRepository.stub.attributes.eppn=casuser",
+    "cas.authn.attribute-repository.stub.attributes.uid=cas",
+    "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
+    "cas.authn.attribute-repository.stub.attributes.eppn=casuser",
 
-    "cas.authn.attributeRepository.json[0].location=classpath:/json-attribute-repository.json",
-    "cas.authn.attributeRepository.json[0].order=1",
+    "cas.authn.attribute-repository.json[0].location=classpath:/json-attribute-repository.json",
+    "cas.authn.attribute-repository.json[0].order=1",
 
-    "cas.authn.attributeRepository.groovy[0].location=classpath:/GroovyAttributeRepository.groovy",
-    "cas.authn.attributeRepository.groovy[0].order=2",
+    "cas.authn.attribute-repository.groovy[0].location=classpath:/GroovyAttributeRepository.groovy",
+    "cas.authn.attribute-repository.groovy[0].order=2",
 
-    "cas.authn.attributeRepository.aggregation=cascade",
-    "cas.authn.attributeRepository.merger=multivalued"
+    "cas.authn.attribute-repository.aggregation=cascade",
+    "cas.authn.attribute-repository.merger=multivalued"
 })
 @Tag("Simple")
 public class PrincipalAttributeRepositoryFetcherCascadeTests {

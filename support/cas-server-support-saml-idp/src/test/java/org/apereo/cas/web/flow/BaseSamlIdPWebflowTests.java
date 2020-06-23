@@ -5,6 +5,7 @@ import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.SamlIdPConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
+import org.apereo.cas.config.SamlIdPTicketSerializationConfiguration;
 import org.apereo.cas.config.SamlIdPWebflowConfiguration;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
@@ -28,6 +29,7 @@ import org.springframework.core.io.FileSystemResource;
     BaseSamlIdPWebflowTests.SamlIdPMetadataTestConfiguration.class,
     CoreSamlConfiguration.class,
     SamlIdPConfiguration.class,
+    SamlIdPTicketSerializationConfiguration.class,
     SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
     SamlIdPMetadataConfiguration.class,
     SamlIdPEndpointsConfiguration.class,

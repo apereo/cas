@@ -51,7 +51,7 @@ public class LdapTestUtils {
 
     /**
      * Reads an LDIF into a collection of LDAP entries. The components performs a simple property
-     * replacement in the LDIF data where <pre>${ldapBaseDn}</pre> is replaced with the environment-specific base
+     * replacement in the LDIF data where &lt;pre&gt;${ldapBaseDn}&lt;/pre&gt; is replaced with the environment-specific base
      * DN.
      *
      * @param ldif   LDIF resource, typically a file on filesystem or classpath.
@@ -112,10 +112,10 @@ public class LdapTestUtils {
                 if (e.getResultCode().equals(ResultCode.ENTRY_ALREADY_EXISTS)) {
                     modifyLdapEntries(connection, entries, connInit);
                 } else {
-                    LOGGER.error(e.getMessage(), e);
+                    LoggingUtils.error(LOGGER, e);
                 }
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                LoggingUtils.error(LOGGER, e);
             }
         }
     }

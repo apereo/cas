@@ -20,6 +20,7 @@ import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenFactory;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -169,7 +170,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             }
             return deviceCodeTicket;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw new InvalidOAuth20DeviceTokenException(deviceCode);
         }
     }
@@ -201,6 +202,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         val clientId = holder.getRegisteredService().getClientId();
         val authn = DefaultAuthenticationBuilder
             .newInstance(holder.getAuthentication())
+            .setAuthenticationDate(ZonedDateTime.now(ZoneOffset.UTC))
             .addAttribute(OAuth20Constants.GRANT_TYPE, holder.getGrantType().toString())
             .addAttribute(OAuth20Constants.SCOPE, holder.getScopes())
             .addAttribute(OAuth20Constants.CLIENT_ID, clientId)

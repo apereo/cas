@@ -2,6 +2,8 @@ package org.apereo.cas;
 
 import org.apereo.cas.otp.repository.token.CachingOneTimeTokenRepositoryTests;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCheckRegistrationActionTests;
+import org.apereo.cas.otp.web.flow.OneTimeTokenAccountConfirmSelectionRegistrationActionTests;
+import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCreateRegistrationActionTests;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountSaveRegistrationActionTests;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAuthenticationWebflowActionTests;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAuthenticationWebflowEventResolverTests;
@@ -19,6 +21,8 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     CachingOneTimeTokenRepositoryTests.class,
+    OneTimeTokenAccountConfirmSelectionRegistrationActionTests.class,
+    OneTimeTokenAccountCreateRegistrationActionTests.class,
     OneTimeTokenAuthenticationWebflowEventResolverTests.class,
     OneTimeTokenAuthenticationWebflowActionTests.class,
     OneTimeTokenAccountSaveRegistrationActionTests.class,

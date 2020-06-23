@@ -50,7 +50,6 @@ public class DefaultConsentEngine implements ConsentEngine {
         val principalId = authentication.getPrincipal().getId();
 
         val decisionFound = findConsentDecision(service, registeredService, authentication);
-
         val supplier = FunctionUtils.doIfNull(decisionFound,
             () -> consentDecisionBuilder.build(service, registeredService, principalId, attributes),
             () -> consentDecisionBuilder.update(decisionFound, attributes));
@@ -59,11 +58,7 @@ public class DefaultConsentEngine implements ConsentEngine {
         decision.setOptions(options);
         decision.setReminder(reminder);
         decision.setReminderTimeUnit(reminderTimeUnit);
-
-        if (consentRepository.storeConsentDecision(decision)) {
-            return decision;
-        }
-        throw new IllegalArgumentException("Could not store consent decision");
+        return consentRepository.storeConsentDecision(decision);
     }
 
     @Override

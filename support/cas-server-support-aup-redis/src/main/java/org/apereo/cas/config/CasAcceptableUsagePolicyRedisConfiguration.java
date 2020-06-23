@@ -46,6 +46,7 @@ public class CasAcceptableUsagePolicyRedisConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisAcceptableUsagePolicyConnectionFactory")
+    @RefreshScope
     public RedisConnectionFactory redisAcceptableUsagePolicyConnectionFactory() {
         val redis = casProperties.getAcceptableUsagePolicy().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);

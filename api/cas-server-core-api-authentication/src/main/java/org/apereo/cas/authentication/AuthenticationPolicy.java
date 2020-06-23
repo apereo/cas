@@ -5,6 +5,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -22,11 +23,14 @@ public interface AuthenticationPolicy extends Ordered, Serializable {
      * @param authentication         Authentication event to examine for compliance with security policy.
      * @param authenticationHandlers the authentication handlers selected for this transaction.
      * @param applicationContext     the application context
+     * @param assertion              the assertion
      * @return True if authentication isSatisfiedBy security policy, false otherwise.
      * @throws Exception the exception
      */
-    boolean isSatisfiedBy(Authentication authentication, Set<AuthenticationHandler> authenticationHandlers,
-                          ConfigurableApplicationContext applicationContext) throws Exception;
+    boolean isSatisfiedBy(Authentication authentication,
+                          Set<AuthenticationHandler> authenticationHandlers,
+                          ConfigurableApplicationContext applicationContext,
+                          Optional<Serializable> assertion) throws Exception;
 
     @Override
     default int getOrder() {

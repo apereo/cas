@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.config.CasRestConfigurationTests;
+import org.apereo.cas.support.rest.RestResourceUtilsTests;
 import org.apereo.cas.support.rest.ServiceTicketResourceTests;
 import org.apereo.cas.support.rest.TicketGrantingTicketResourceTests;
 import org.apereo.cas.support.rest.TicketStatusResourceTests;
@@ -17,6 +18,7 @@ import org.junit.runner.RunWith;
  * @since 5.2.0
  */
 @SelectClasses({
+    RestResourceUtilsTests.class,
     CasRestConfigurationTests.class,
     TicketGrantingTicketResourceTests.class,
     ServiceTicketResourceTests.class,

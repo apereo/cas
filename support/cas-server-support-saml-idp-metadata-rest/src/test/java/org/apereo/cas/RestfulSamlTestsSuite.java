@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.support.saml.idp.metadata.RestfulSamlIdPMetadataCipherExecutorTests;
 import org.apereo.cas.support.saml.idp.metadata.RestfulSamlIdPMetadataGeneratorTests;
+import org.apereo.cas.support.saml.idp.metadata.RestfulSamlIdPMetadataGeneratorWithArtifactsTests;
 import org.apereo.cas.support.saml.idp.metadata.RestfulSamlIdPMetadataLocatorTests;
 import org.apereo.cas.support.saml.metadata.resolver.RestfulSamlRegisteredServiceMetadataResolverTests;
 
@@ -17,8 +18,10 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     RestfulSamlRegisteredServiceMetadataResolverTests.class,
-    RestfulSamlIdPMetadataGeneratorTests.class,
+    RestfulSamlIdPMetadataGeneratorWithArtifactsTests.class,
     RestfulSamlIdPMetadataCipherExecutorTests.class,
+    RestfulSamlIdPMetadataGeneratorTests.class,
+    RestfulSamlIdPMetadataGeneratorWithArtifactsTests.class,
     RestfulSamlIdPMetadataLocatorTests.class
 })
 @RunWith(JUnitPlatform.class)

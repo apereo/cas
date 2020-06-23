@@ -58,7 +58,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.io.ResourceLoader;
 
 import java.net.URL;
 
@@ -72,9 +71,6 @@ import java.net.URL;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SamlIdPMetadataConfiguration {
-
-    @Autowired
-    private ResourceLoader resourceLoader;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -138,7 +134,7 @@ public class SamlIdPMetadataConfiguration {
         val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
             .samlIdPMetadataLocator(samlIdPMetadataLocator())
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter())
-            .resourceLoader(resourceLoader)
+            .applicationContext(applicationContext)
             .metadataCipherExecutor(CipherExecutor.noOpOfStringToString())
             .casProperties(casProperties)
             .build();

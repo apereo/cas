@@ -3,40 +3,45 @@
 clear
 
 printHelp() {
-    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--coverage-report] [--coverage-upload] [--no-parallel] \n"
+    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--no-parallel] [--dry-run] [--info] [--with-coverage] \n"
     echo -e "Available test categories are:\n"
-    echo -e "simple,memcached,cassandra,groovy,kafka,ldap,rest,mfa,jdbc,mssql,oracle,radius,couchdb,\
-mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,hazelcast,jmx,ehcache,\
-oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,cosmosdb"
+    echo -e "simple,memcached,cassandra,groovy,kafka,ldap,rest,mfa,jdbc,mssql,oracle,radius,couchdb,webapp,\
+mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,hazelcast,jmx,ehcache,actuator,wsfed,\
+oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,cosmosdb,config,sms,util,services"
     echo -e "\nPlease see the test script for details.\n"
 }
 
-uploadCoverage=false
 parallel="--parallel "
+dryRun=""
+info=""
 gradleCmd="./gradlew"
-flags="--build-cache -x javadoc -x check -DignoreTestFailures=false -DskipNestedConfigMetadataGen=true \
--DshowStandardStreams=true --no-daemon --configure-on-demand"
+flags="--no-daemon --configure-on-demand --build-cache -x javadoc -x check -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true "
+coverageTask=""
 
 while (( "$#" )); do
     case "$1" in
     --no-parallel)
-        parallel=""
+        parallel="--no-parallel "
         shift
         ;;
-    --coverage-report)
+    --with-coverage)
         currentDir=`pwd`
         case "${currentDir}" in
             *api*|*core*|*support*|*webapp*)
-                coverage="jacocoTestReport "
+                coverageTask="jacocoTestReport "
                 ;;
             *)
-                coverage="jacocoRootReport "
+                coverageTask="jacocoRootReport "
                 ;;
         esac
         shift
         ;;
-    --coverage-upload)
-        uploadCoverage=true
+    --info)
+        info="--info "
+        shift
+        ;;
+    --dry-run)
+        dryRun="--dry-run "
         shift
         ;;
     --no-wrapper)
@@ -72,17 +77,38 @@ while (( "$#" )); do
             test|simple|run|basic|unit|unittests)
                 task+="testSimple "
                 ;;
+            webapp)
+                task+="testWebApp "
+                ;;
             x509)
                 task+="testX509 "
                 ;;
             shell)
                 task+="testSHELL "
                 ;;
+            services|regsvc)
+                task+="testRegisteredService "
+                ;;
+            actuator|endpoint)
+                task+="testActuatorEndpoint "
+                ;;
+            utility|utils|util)
+                task+="testUtility "
+                ;;
+            wsfed)
+                task+="testWSFederation "
+                ;;
+            sms)
+                task+="testSMS "
+                ;;
             uma)
                 task+="testUma "
                 ;;
             filesystem|files|file|fsys)
                 task+="testFileSystem "
+                ;;
+            config|casconfig|ccfg|cfg)
+                task+="testCasConfiguration "
                 ;;
             groovy|script)
                 task+="testGroovy "
@@ -141,7 +167,7 @@ while (( "$#" )); do
                 ;;
             ldap|ad|activedirectory)
                 ./ci/tests/ldap/run-ldap-server.sh
-                /ci/tests/ldap/run-ad-server.sh true
+                ./ci/tests/ldap/run-ad-server.sh true
                 task+="testLdap "
                 ;;
             couchbase)
@@ -178,14 +204,14 @@ while (( "$#" )); do
                 ;;
             aws)
                 ./ci/tests/aws/run-aws-server.sh
-                task+="testAWS "
+                task+="testAmazonWebServices "
                 ;;
             radius)
                 ./ci/tests/radius/run-radius-server.sh
                 task+="testRadius "
                 ;;
             mail|email)
-                /ci/tests/mail/run-mail-server.sh
+                ./ci/tests/mail/run-mail-server.sh
                 task+="testMail "
                 ;;
             zoo|zookeeper)
@@ -226,10 +252,10 @@ then
   exit 1
 fi
 
-cmdstring="\033[1m$gradleCmd \e[32m$task\e[39m$tests\e[39m $flags ${coverage}${debug}${parallel}\e[39m"
+cmdstring="\033[1m$gradleCmd \e[32m$task\e[39m$tests\e[39m $flags ${debug}${dryRun}${info}${parallel}\e[39m\e[32m$coverageTask\e[39m"
 printf "$cmdstring \e[0m\n"
 
-cmd="$gradleCmd $task $tests $flags ${coverage} ${debug} ${parallel}"
+cmd="$gradleCmd $task $tests $flags ${debug} ${parallel} ${dryRun} ${info} ${coverageTask}"
 eval "$cmd"
 retVal=$?
 echo -e "***************************************************************************************"
@@ -237,11 +263,7 @@ echo -e "Gradle build finished at `date` with exit code $retVal"
 echo -e "***************************************************************************************"
 
 if [ $retVal == 0 ]; then
-    if [ $uploadCoverage = true ]; then
-        echo "Uploading test coverage results for ${category}..."
-        bash <(curl -s https://codecov.io/bash) -F "$category"
-        echo "Gradle build finished successfully."
-    fi
+    echo "Gradle build finished successfully."
 else
     echo "Gradle build did NOT finish successfully."
     exit $retVal

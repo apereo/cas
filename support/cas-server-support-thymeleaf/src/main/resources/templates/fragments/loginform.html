@@ -123,14 +123,9 @@
                     </section>
 
                     <section class="cas-field">
-                        <span th:if="${recaptchaVersion=='v2'}" th:remove="tag">
-                            <section class="form-group" th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND !recaptchaInvisible}">
-                                <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
-                            </section>
-                        </span>
-                        <span th:if="${recaptchaVersion=='v3'}" th:remove="tag">
-                              <input type="hidden" id="g-recaptcha-token" name="g-recaptcha-token"/>
-                        </span>
+
+                        <div th:replace="fragments/recaptcha :: recaptchaToken" />
+
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                         <input type="hidden" name="_eventId" value="submit"/>
                         <input type="hidden" name="geolocation"/>
@@ -143,49 +138,9 @@
                             </span>
                         </p>
                     </section>
+                    
+                    <div th:replace="fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')" />
 
-                    <button
-                        class="mdc-button mdc-button--raised"
-                        th:if="${recaptchaSiteKey == null}"
-                        name="submit"
-                        accesskey="l"
-                        type="submit">
-                        <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
-                    </button>
-
-                    <span th:unless="${recaptchaSiteKey == null}" th:switch="${recaptchaVersion}">
-                        <span th:case="'v2'" th:remove="tag">
-                            <button th:unless="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
-                                   class="mdc-button mdc-button--raised"
-                                   name="submit"
-                                   accesskey="l"
-                                   type="submit"
-                                   value="Login3">
-                                <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
-                            </button>
-                            <button th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
-                                    class="mdc-button mdc-button--raised"
-                                    th:attr="data-sitekey=${recaptchaSiteKey}, data-badge=${recaptchaPosition}"
-                                    data-callback="onRecaptchaV2Submit"
-                                    name="submitBtn"
-                                    accesskey="l">
-                                <span class="mdc-button__label" th:text="#{screen.welcome.button.login}"></span>
-                            </button>
-                        </span>
-
-                        <span th:case="'v3'" th:remove="tag">
-                            <button class="mdc-button mdc-button--raised"
-                                   th:if="${recaptchaSiteKey != null}"
-                                   name="submit"
-                                   th:attr="data-sitekey=${recaptchaSiteKey}"
-                                   accesskey="l"
-                                   th:value="#{screen.welcome.button.login}"
-                                   type="submit"
-                                   value="Login3">
-                                <span class="mdc-button__label" th:text="#{screen.welcome.button.login}"></span>
-                            </button>
-                         </span>
-                    </span>
                 </form>
 
                 <hr class="my-4" />

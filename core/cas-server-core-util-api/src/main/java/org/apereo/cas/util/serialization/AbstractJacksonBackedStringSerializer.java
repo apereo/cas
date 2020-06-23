@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -43,7 +44,7 @@ import java.nio.file.Files;
  */
 @Slf4j
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractJacksonBackedStringSerializer<T> implements StringSerializer<T> {
     /**
      * Minimal pretty printer instance.
@@ -60,7 +61,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      * Instantiates a new Registered service json serializer.
      * Uses the {@link com.fasterxml.jackson.core.util.DefaultPrettyPrinter} for formatting.
      */
-    public AbstractJacksonBackedStringSerializer() {
+    protected AbstractJacksonBackedStringSerializer() {
         this(new DefaultPrettyPrinter());
     }
 
@@ -69,7 +70,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      *
      * @param prettyPrinter the pretty printer
      */
-    public AbstractJacksonBackedStringSerializer(final PrettyPrinter prettyPrinter) {
+    protected AbstractJacksonBackedStringSerializer(final PrettyPrinter prettyPrinter) {
         this.objectMapper = initializeObjectMapper();
         this.prettyPrinter = prettyPrinter;
     }

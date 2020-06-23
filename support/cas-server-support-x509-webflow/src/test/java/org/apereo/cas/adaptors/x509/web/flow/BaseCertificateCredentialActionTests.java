@@ -38,7 +38,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.webflow.execution.Action;
@@ -51,7 +50,6 @@ import org.springframework.webflow.execution.Action;
  */
 @SpringBootTest(classes = {
     AopAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
@@ -87,17 +85,17 @@ import org.springframework.webflow.execution.Action;
     X509CertificateExtractorConfiguration.class
 },
     properties = {
-        "cas.authn.attributeRepository.stub.attributes.uid=uid",
-        "cas.authn.attributeRepository.stub.attributes.eduPersonAffiliation=developer",
-        "cas.authn.attributeRepository.stub.attributes.groupMembership=adopters",
-        "cas.authn.attributeRepository.stub.attributes.certificateRevocationList=certificateRevocationList",
+        "cas.authn.attribute-repository.stub.attributes.uid=uid",
+        "cas.authn.attribute-repository.stub.attributes.eduPersonAffiliation=developer",
+        "cas.authn.attribute-repository.stub.attributes.groupMembership=adopters",
+        "cas.authn.attribute-repository.stub.attributes.certificateRevocationList=certificateRevocationList",
         "cas.authn.x509.regExTrustedIssuerDnPattern=CN=\\\\w+,DC=jasig,DC=org",
         "cas.authn.x509.principalType=SERIAL_NO_DN",
         "cas.authn.policy.any.tryAll=true",
         "cas.authn.x509.crlFetcher=ldap",
         "cas.authn.x509.ldap.ldap-url=ldap://localhost:1389",
-        "cas.authn.x509.ldap.baseDn=ou=people,dc=example,dc=org",
-        "cas.authn.x509.ldap.searchFilter=cn=X509",
+        "cas.authn.x509.ldap.base-dn=ou=people,dc=example,dc=org",
+        "cas.authn.x509.ldap.search-filter=cn=X509",
         "cas.authn.x509.ldap.bindDn=cn=Directory Manager,dc=example,dc=org",
         "cas.authn.x509.ldap.bindCredential=Password"
     })

@@ -276,7 +276,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
             + "Tickets that are issued during runtime will be LOST when the web server is restarted. This MAY impact SSO functionality.");
         val mem = casProperties.getTicket().getRegistry().getInMemory();
-        val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "inMemory");
+        val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "in-memory");
 
         if (mem.isCache()) {
             val logoutManager = applicationContext.getBean("logoutManager", LogoutManager.class);

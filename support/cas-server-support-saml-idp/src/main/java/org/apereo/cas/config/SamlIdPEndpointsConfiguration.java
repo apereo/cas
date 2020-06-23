@@ -154,8 +154,8 @@ public class SamlIdPEndpointsConfiguration {
         return new SamlIdPObjectSignatureValidator(
             algs.getOverrideSignatureReferenceDigestMethods(),
             algs.getOverrideSignatureAlgorithms(),
-            algs.getOverrideBlackListedSignatureSigningAlgorithms(),
-            algs.getOverrideWhiteListedSignatureSigningAlgorithms(),
+            algs.getOverrideBlockedSignatureSigningAlgorithms(),
+            algs.getOverrideAllowedSignatureSigningAlgorithms(),
             casSamlIdPMetadataResolver.getObject(),
             casProperties
         );
@@ -168,8 +168,8 @@ public class SamlIdPEndpointsConfiguration {
         return new SamlObjectSignatureValidator(
             algs.getOverrideSignatureReferenceDigestMethods(),
             algs.getOverrideSignatureAlgorithms(),
-            algs.getOverrideBlackListedSignatureSigningAlgorithms(),
-            algs.getOverrideWhiteListedSignatureSigningAlgorithms(),
+            algs.getOverrideBlockedSignatureSigningAlgorithms(),
+            algs.getOverrideAllowedSignatureSigningAlgorithms(),
             casProperties
         );
     }

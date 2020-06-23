@@ -33,7 +33,9 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.oidc.config.OidcComponentSerializationConfiguration;
 import org.apereo.cas.oidc.config.OidcConfiguration;
+import org.apereo.cas.oidc.config.OidcThrottleConfiguration;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponseTests;
@@ -83,7 +85,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -109,8 +111,10 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     OidcConfiguration.class,
+    OidcThrottleConfiguration.class,
+    OidcComponentSerializationConfiguration.class,
     RefreshAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreWebflowConfiguration.class,
@@ -148,7 +152,7 @@ import static org.mockito.Mockito.*;
 },
     properties = {
         "cas.authn.oidc.issuer=https://sso.example.org/cas/oidc",
-        "cas.authn.oidc.jwks.jwksFile=classpath:keystore.jwks"
+        "cas.authn.oidc.jwks.jwks-file=classpath:keystore.jwks"
     })
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -174,6 +178,10 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("oidcImplicitIdTokenAndTokenCallbackUrlBuilder")
     protected OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenAndTokenCallbackUrlBuilder;
+
+    @Autowired
+    @Qualifier("oidcImplicitIdTokenCallbackUrlBuilder")
+    protected OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder;
 
     @Autowired
     @Qualifier("oauthRegisteredServiceJwtAccessTokenCipherExecutor")

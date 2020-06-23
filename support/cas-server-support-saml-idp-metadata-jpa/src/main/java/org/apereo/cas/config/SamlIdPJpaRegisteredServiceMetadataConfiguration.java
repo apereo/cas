@@ -75,6 +75,7 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public List<String> jpaSamlMetadataPackagesToScan() {
         return CollectionUtils.wrapList(SamlMetadataDocument.class.getPackage().getName());
     }
@@ -103,6 +104,7 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "jpaSamlRegisteredServiceMetadataResolutionPlanConfigurer")
     public SamlRegisteredServiceMetadataResolutionPlanConfigurer jpaSamlRegisteredServiceMetadataResolutionPlanConfigurer() {
         return plan -> plan.registerMetadataResolver(jpaSamlRegisteredServiceMetadataResolver());

@@ -30,7 +30,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
 
     protected ServicesManager servicesManager;
 
-    public AbstractServicesManagerTests() {
+    protected AbstractServicesManagerTests() {
         val r = new RegexRegisteredService();
         r.setId(2500);
         r.setServiceId("serviceId");

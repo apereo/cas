@@ -44,7 +44,7 @@ public class NonBlockingRadiusServer extends AbstractRadiusServer {
         authenticator.setupRequest(client, accessRequest);
         authenticator.processRequest(accessRequest);
 
-        return client.sendReceive(accessRequest, getRadiusServerConfigurationContext().getRetries());
+        return client.sendReceive(accessRequest, getConfigurationContext().getRetries());
     }
 
 }

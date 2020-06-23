@@ -20,6 +20,7 @@ import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
@@ -29,6 +30,7 @@ import org.apereo.cas.config.SamlIdPConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPTicketCatalogConfiguration;
+import org.apereo.cas.config.SamlIdPTicketSerializationConfiguration;
 import org.apereo.cas.config.SamlIdpComponentSerializationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -46,6 +48,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
@@ -53,10 +56,12 @@ import lombok.Data;
 import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.velocity.app.VelocityEngine;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
 import org.junit.jupiter.api.Tag;
+import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
@@ -87,12 +92,16 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = BaseSamlIdPConfigurationTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.saml-idp.entityId=https://cas.example.org/idp",
+        "cas.authn.saml-idp.entity-id=https://cas.example.org/idp",
         "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("SAML")
 public abstract class BaseSamlIdPConfigurationTests {
+    @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    protected CasCookieBuilder ticketGrantingTicketCookieGenerator;
+
     @Autowired
     @Qualifier("casSamlIdPMetadataResolver")
     protected MetadataResolver casSamlIdPMetadataResolver;
@@ -100,6 +109,10 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     protected OpenSamlConfigBean openSamlConfigBean;
+
+    @Autowired
+    @Qualifier("shibboleth.VelocityEngine")
+    protected VelocityEngine velocityEngine;
 
     @Autowired
     @Qualifier("samlObjectSigner")
@@ -147,6 +160,10 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
+
+    @Autowired
+    @Qualifier("samlArtifactMap")
+    protected SAMLArtifactMap samlArtifactMap;
 
     @TestConfiguration
     @Lazy(false)
@@ -208,6 +225,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
         SamlIdPEndpointsConfiguration.class,
         SamlIdPMetadataConfiguration.class,
+        SamlIdPTicketSerializationConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreLogoutConfiguration.class,
@@ -217,6 +235,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CoreSamlConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasCoreUtilSerializationConfiguration.class,
         CasCoreUtilConfiguration.class
     })
     public static class SharedTestConfiguration {

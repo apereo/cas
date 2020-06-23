@@ -3,8 +3,12 @@ package org.apereo.cas.otp.repository.credentials;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link BaseOneTimeTokenCredentialRepository}.
@@ -12,7 +16,7 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTokenCredentialRepository {
     /**
      * The Token credential cipher.
@@ -28,6 +32,17 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
     protected OneTimeTokenAccount encode(final OneTimeTokenAccount account) {
         account.setSecretKey(tokenCredentialCipher.encode(account.getSecretKey()));
         return account;
+    }
+
+
+    /**
+     * Decode collection.
+     *
+     * @param account the account
+     * @return the collection
+     */
+    protected Collection<? extends OneTimeTokenAccount> decode(final Collection<? extends OneTimeTokenAccount> account) {
+        return account.stream().map(this::decode).collect(Collectors.toList());
     }
 
     /**

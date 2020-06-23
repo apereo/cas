@@ -1,7 +1,7 @@
 description = "Apereo CAS YubiKey Redis Support"
 dependencies {
     implementation libraries.yubicoapi
-    implementation libraries.springbootredis
+    implementation libraries.redis
 
     implementation project(":support:cas-server-support-yubikey-core")
     implementation project(":support:cas-server-support-yubikey-core-mfa")

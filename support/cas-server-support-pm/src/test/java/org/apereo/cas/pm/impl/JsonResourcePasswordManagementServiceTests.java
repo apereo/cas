@@ -69,7 +69,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.authn.pm.json.location=classpath:jsonResourcePassword.json",
         "cas.authn.pm.enabled=true",
-        "cas.authn.pm.policyPattern=^Test1.+"
+        "cas.authn.pm.policy-pattern=^Test1.+"
     })
 @Tag("FileSystem")
 public class JsonResourcePasswordManagementServiceTests {
@@ -85,6 +85,18 @@ public class JsonResourcePasswordManagementServiceTests {
     public void verifyUserEmailCanBeFound() {
         val email = passwordChangeService.findEmail("casuser");
         assertEquals("casuser@example.org", email);
+    }
+
+    @Test
+    public void verifyUserCanBeFound() {
+        val user = passwordChangeService.findUsername("casuser@example.org");
+        assertEquals("casuser", user);
+    }
+
+    @Test
+    public void verifyUserPhoneCanBeFound() {
+        val phone = passwordChangeService.findPhone("casuser");
+        assertEquals("1234567890", phone);
     }
 
     @Test

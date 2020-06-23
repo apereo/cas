@@ -3,6 +3,8 @@ package org.apereo.cas.git;
 import org.apereo.cas.configuration.model.support.git.services.BaseGitProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
+
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -138,11 +140,7 @@ public class GitRepositoryBuilder {
             }
             return cloneGitRepository(transportCallback, providers);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }

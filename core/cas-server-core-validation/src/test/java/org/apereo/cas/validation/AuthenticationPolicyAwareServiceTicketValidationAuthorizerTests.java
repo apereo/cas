@@ -41,7 +41,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -80,8 +79,7 @@ import static org.mockito.Mockito.*;
     CasCoreLogoutConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreServicesConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    MailSenderAutoConfiguration.class
+    CasWebApplicationServiceFactoryConfiguration.class
 })
 @Tag("Simple")
 public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {

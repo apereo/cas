@@ -63,7 +63,7 @@ import static org.mockito.Mockito.*;
     MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
-    properties = "cas.theme.defaultThemeName=test")
+    properties = "cas.theme.default-theme-name=test")
 @Tag("Simple")
 public class ServiceThemeResolverTests {
     private static final String MOZILLA = "Mozilla";

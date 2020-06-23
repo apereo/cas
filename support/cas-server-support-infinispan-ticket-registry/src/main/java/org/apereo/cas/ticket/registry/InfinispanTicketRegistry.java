@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 
 import lombok.RequiredArgsConstructor;
@@ -40,12 +41,9 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
             ? expirationPolicy.getTimeToLive()
             : expirationPolicy.getTimeToIdle();
 
-        LOGGER.debug("Adding ticket [{}] to cache store to live [{}] seconds and stay idle for [{}]",
-            ticketToAdd.getId(), expirationPolicy.getTimeToLive(), idleTime);
-
-        this.cache.put(ticket.getId(), ticket,
-            expirationPolicy.getTimeToLive(), TimeUnit.SECONDS,
-            idleTime, TimeUnit.SECONDS);
+        val ttl = getTimeToLive(expirationPolicy);
+        LOGGER.debug("Adding ticket [{}] to cache to live [{}] seconds and stay idle for [{}] seconds", ticketToAdd.getId(), ttl, idleTime);
+        this.cache.put(ticket.getId(), ticket, ttl, TimeUnit.SECONDS, idleTime, TimeUnit.SECONDS);
     }
 
     @Override
@@ -73,15 +71,14 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
         this.cache.clear();
         return size;
     }
-
-    /**
-     * Retrieve all tickets from the registry.
-     *
-     * @return collection of tickets currently stored in the registry. Tickets
-     * might or might not be valid i.e. expired.
-     */
+    
     @Override
     public Collection<? extends Ticket> getTickets() {
         return decodeTickets(this.cache.values());
+    }
+
+    private static Long getTimeToLive(final ExpirationPolicy expirationPolicy) {
+        val timeToLive = expirationPolicy.getTimeToLive();
+        return Long.MAX_VALUE == timeToLive ? Long.valueOf(Integer.MAX_VALUE) : timeToLive;
     }
 }

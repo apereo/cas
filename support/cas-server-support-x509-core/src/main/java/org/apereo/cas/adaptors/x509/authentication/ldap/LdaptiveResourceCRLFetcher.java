@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.x509.authentication.ldap;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -104,7 +105,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
             throw new CertificateException("Failed to establish a connection ldap and search.");
 
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw new CertificateException(e.getMessage());
         }
     }

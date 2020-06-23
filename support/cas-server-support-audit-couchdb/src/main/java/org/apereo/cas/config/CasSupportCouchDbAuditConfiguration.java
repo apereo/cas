@@ -53,7 +53,6 @@ public class CasSupportCouchDbAuditConfiguration {
     @Bean
     @RefreshScope
     public AuditTrailManager couchDbAuditTrailManager(@Qualifier("auditActionContextCouchDbRepository") final AuditActionContextCouchDbRepository repository) {
-        repository.initStandardDesignDocument();
         return new CouchDbAuditTrailManager(casProperties.getAudit().getCouchDb().isAsynchronous(), repository);
     }
 

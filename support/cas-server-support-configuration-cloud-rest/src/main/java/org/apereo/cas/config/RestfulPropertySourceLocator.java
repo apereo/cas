@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
@@ -72,7 +73,7 @@ public class RestfulPropertySourceLocator implements PropertySourceLocator {
                 props.putAll(payload);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

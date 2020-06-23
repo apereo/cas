@@ -207,9 +207,9 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
     private List<ServiceProviderRequestedAttribute> requestedAttributes = new ArrayList<>(0);
 
     /**
-     * Collection of signing signature blacklisted algorithms, if any, to override the global defaults.
+     * Collection of signing signature blocked algorithms, if any, to override the global defaults.
      */
-    private List<String> blackListedSignatureSigningAlgorithms = new ArrayList<>(0);
+    private List<String> blockedSignatureSigningAlgorithms = new ArrayList<>(0);
 
     /**
      * Collection of signing signature algorithms, if any, to override the global defaults.

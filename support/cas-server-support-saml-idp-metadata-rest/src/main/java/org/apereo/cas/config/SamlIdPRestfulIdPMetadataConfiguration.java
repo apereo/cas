@@ -20,9 +20,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ResourceLoader;
 
 /**
  * This is {@link SamlIdPRestfulIdPMetadataConfiguration}.
@@ -37,7 +38,7 @@ import org.springframework.core.io.ResourceLoader;
 public class SamlIdPRestfulIdPMetadataConfiguration {
 
     @Autowired
-    private ResourceLoader resourceLoader;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -47,6 +48,7 @@ public class SamlIdPRestfulIdPMetadataConfiguration {
     private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "restfulSamlIdPMetadataCipherExecutor")
     public CipherExecutor restfulSamlIdPMetadataCipherExecutor() {
         val idp = casProperties.getAuthn().getSamlIdp();
@@ -64,11 +66,12 @@ public class SamlIdPRestfulIdPMetadataConfiguration {
 
     @Bean
     @SneakyThrows
+    @RefreshScope
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
             .samlIdPMetadataLocator(samlIdPMetadataLocator())
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
-            .resourceLoader(resourceLoader)
+            .applicationContext(applicationContext)
             .casProperties(casProperties)
             .metadataCipherExecutor(restfulSamlIdPMetadataCipherExecutor())
             .build();
@@ -77,6 +80,7 @@ public class SamlIdPRestfulIdPMetadataConfiguration {
 
     @Bean
     @SneakyThrows
+    @RefreshScope
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new RestfulSamlIdPMetadataLocator(

@@ -14,7 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {
     "cas.ticket.registry.jpa.user=system",
     "cas.ticket.registry.jpa.password=Oradoc_db1",
-    "cas.ticket.registry.jpa.driverClass=oracle.jdbc.driver.OracleDriver",
+    "cas.ticket.registry.jpa.driver-class=oracle.jdbc.driver.OracleDriver",
     "cas.ticket.registry.jpa.url=jdbc:oracle:thin:@localhost:1521:ORCLCDB",
     "cas.ticket.registry.jpa.dialect=org.hibernate.dialect.Oracle12cDialect"
 })

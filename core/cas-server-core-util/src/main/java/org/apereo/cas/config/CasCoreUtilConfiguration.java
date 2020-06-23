@@ -7,6 +7,9 @@ import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.util.io.GroovySmsSender;
 import org.apereo.cas.util.io.RestfulSmsSender;
 import org.apereo.cas.util.io.SmsSender;
+import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.Converters;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolator;
@@ -98,6 +101,11 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     @ConditionalOnMissingBean(name = "casBeanValidationPostProcessor")
     public BeanValidationPostProcessor casBeanValidationPostProcessor() {
         return new BeanValidationPostProcessor();
+    }
+
+    @Bean
+    public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> scriptResourceCacheManager() {
+        return new GroovyScriptResourceCacheManager();
     }
 
     @Bean

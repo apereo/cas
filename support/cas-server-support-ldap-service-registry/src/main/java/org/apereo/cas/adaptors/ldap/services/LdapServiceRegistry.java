@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +65,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
             }
             insert(rs);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return rs;
     }
@@ -74,7 +75,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
             val entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
             LdapUtils.executeAddOperation(this.connectionFactory, entry);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return rs;
     }
@@ -106,7 +107,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
                 return response.getEntry().getDn();
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -120,11 +121,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
                 return LdapUtils.executeDeleteOperation(this.connectionFactory, entry);
             }
         } catch (final LdapException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -151,11 +148,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
                     .count();
             }
         } catch (final LdapException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return 0;
     }
@@ -178,11 +171,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
                     });
             }
         } catch (final LdapException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return list;
     }
@@ -200,11 +189,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
                 return this.ldapServiceMapper.mapToRegisteredService(response.getEntry());
             }
         } catch (final LdapException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

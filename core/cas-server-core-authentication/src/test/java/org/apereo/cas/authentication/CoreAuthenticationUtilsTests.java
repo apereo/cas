@@ -18,6 +18,8 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -32,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Tag("Simple")
+@Tag("Utility")
 public class CoreAuthenticationUtilsTests {
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
@@ -44,6 +46,17 @@ public class CoreAuthenticationUtilsTests {
         val readPolicy = MAPPER.readValue(file, Collection.class);
         assertEquals(policy, readPolicy);
     }
+
+    @Test
+    public void verifyAttributeRepositories() {
+        val repository = CoreAuthenticationTestUtils.getAttributeRepository();
+        val attrs = CoreAuthenticationUtils.retrieveAttributesFromAttributeRepository(repository, "casuser",
+            Set.of("StubAttributeRepository"), Optional.of(CoreAuthenticationTestUtils.getPrincipal("casuser")));
+        assertTrue(attrs.containsKey("uid"));
+        assertTrue(attrs.containsKey("mail"));
+        assertTrue(attrs.containsKey("memberOf"));
+    }
+
 
     @Test
     public void verifyAuthnPolicyRequired() throws Exception {

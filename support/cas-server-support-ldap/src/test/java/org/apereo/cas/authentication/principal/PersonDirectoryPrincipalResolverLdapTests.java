@@ -42,9 +42,10 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.ldap[0].search-filter=cn={user}",
     "cas.authn.attribute-repository.ldap[0].attributes.cn=cn",
     "cas.authn.attribute-repository.ldap[0].attributes.description=description",
+    "cas.authn.attribute-repository.ldap[0].attributes.entryDN=entryDN",
     "cas.authn.attribute-repository.ldap[0].bind-dn=cn=Directory Manager",
     "cas.authn.attribute-repository.ldap[0].bind-credential=password",
-    "cas.authn.attribute-repository.ldap[0].searchEntryHandlers[0].type=DN_ATTRIBUTE_ENTRY"
+    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[0].type=DN_ATTRIBUTE_ENTRY"
 })
 @DirtiesContext
 @Tag("Ldap")

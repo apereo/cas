@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @NoArgsConstructor
-@Tag("Simple")
+@Tag("RegisteredService")
 public class DefaultDomainAwareServicesManagerTests extends AbstractServicesManagerTests {
     private DefaultDomainAwareServicesManager defaultDomainAwareServicesManager;
 

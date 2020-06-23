@@ -276,7 +276,7 @@ public class CoreAuthenticationUtils {
     public static AuthenticationPasswordPolicyHandlingStrategy newPasswordPolicyHandlingStrategy(final PasswordPolicyProperties properties,
                                                                                                  final ApplicationContext applicationContext) {
         if (properties.getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
-            LOGGER.debug("Created password policy handling strategy based on blacklisted authentication result codes");
+            LOGGER.debug("Created password policy handling strategy based on blocked authentication result codes");
             return new RejectResultCodePasswordPolicyHandlingStrategy<>();
         }
 

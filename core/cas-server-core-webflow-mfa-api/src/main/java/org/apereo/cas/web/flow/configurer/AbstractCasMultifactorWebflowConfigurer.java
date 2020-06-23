@@ -52,7 +52,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
 
     private final List<CasMultifactorWebflowCustomizer> multifactorAuthenticationFlowCustomizers = new ArrayList<>();
 
-    public AbstractCasMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+    protected AbstractCasMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                    final ConfigurableApplicationContext applicationContext,
                                                    final CasConfigurationProperties casProperties,

@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -60,7 +61,8 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
             this.metadataTemplate = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             val md = samlIdPProperties.getMetadata();
             val location = SpringExpressionLanguageValueResolver.getInstance().resolve(md.getLocation());
-            this.jsonResource = new FileSystemResource(new File(location, "saml-sp-metadata.json"));
+            val metadataDir = ResourceUtils.getRawResourceFrom(location).getFile();
+            this.jsonResource = new FileSystemResource(new File(metadataDir, "saml-sp-metadata.json"));
             if (this.jsonResource.exists()) {
                 this.metadataMap = readDecisionsFromJsonResource();
                 this.watcherService = new FileWatcherService(jsonResource.getFile(), file -> this.metadataMap = readDecisionsFromJsonResource());
@@ -86,7 +88,7 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
                 return CollectionUtils.wrap(resolver);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }
@@ -97,7 +99,7 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
             val metadataLocation = service.getMetadataLocation();
             return metadataLocation.trim().startsWith("json://");
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

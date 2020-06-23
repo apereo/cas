@@ -63,6 +63,13 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorPro
     private int windowSize = 3;
 
     /**
+     * When enabled, allows the user/system to accept multiple accounts
+     * and device registrations per user, allowing one to switch between
+     * or register new devices/accounts automatically.
+     */
+    private boolean multipleDeviceRegistrationEnabled;
+    
+    /**
      * Store google authenticator devices inside a MongoDb instance.
      */
     @NestedConfigurationProperty

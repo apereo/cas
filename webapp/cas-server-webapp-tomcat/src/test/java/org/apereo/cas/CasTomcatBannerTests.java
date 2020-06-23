@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class
 })
-@Tag("Simple")
+@Tag("WebApp")
 public class CasTomcatBannerTests {
     @Autowired
     private Environment environment;

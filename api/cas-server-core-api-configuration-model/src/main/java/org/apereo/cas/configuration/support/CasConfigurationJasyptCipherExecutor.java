@@ -42,7 +42,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     };
 
     /**
-     * List version of blacklisted algorithms (due to Jasypt 1.9.2 bug).
+     * List version of blocked algorithms (due to Jasypt 1.9.2 bug).
      */
     public static final Set<String> ALGORITHM_BLACKLIST_SET = Set.of(ALGORITHM_BLACKLIST);
 

@@ -1,5 +1,7 @@
 package org.apereo.cas.util.io;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import com.sun.nio.file.SensitivityWatchEventModifier;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -111,11 +113,7 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
                 }
             });
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 

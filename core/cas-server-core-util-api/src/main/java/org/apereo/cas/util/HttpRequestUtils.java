@@ -110,6 +110,7 @@ public class HttpRequestUtils {
      * @param request the request
      * @return the request headers
      */
+    @SuppressWarnings("JdkObsolete")
     public static Map<String, String> getRequestHeaders(final HttpServletRequest request) {
         val headers = new LinkedHashMap<String, Object>();
         val headerNames = request.getHeaderNames();
@@ -184,11 +185,7 @@ public class HttpRequestUtils {
             connection.setRequestMethod(HttpMethod.HEAD.name());
             return HttpStatus.valueOf(connection.getResponseCode());
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return HttpStatus.SERVICE_UNAVAILABLE;
 

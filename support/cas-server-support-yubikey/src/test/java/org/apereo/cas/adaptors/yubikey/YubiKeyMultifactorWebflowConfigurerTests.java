@@ -17,11 +17,11 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
  */
 @SpringBootTest(classes = BaseYubiKeyTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.mfa.yubikey.clientId=18423",
-        "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As=",
-        "cas.authn.mfa.yubikey.jsonFile=file:/tmp/yubikey.json",
+        "cas.authn.mfa.yubikey.client-id=18423",
+        "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As=",
+        "cas.authn.mfa.yubikey.json-file=file:/tmp/yubikey.json",
         "cas.authn.mfa.yubikey.trusted-device-enabled=true",
-        "cas.authn.mfa.trusted.deviceRegistrationEnabled=true"
+        "cas.authn.mfa.trusted.device-registration-enabled=true"
     })
 @Tag("Webflow")
 public class YubiKeyMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {

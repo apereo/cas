@@ -57,8 +57,6 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
                                                     @JsonProperty("script") final String script) {
         this.order = order;
         this.script = script;
-
-        initializeWatchableScriptIfNeeded();
     }
 
     @PostLoad

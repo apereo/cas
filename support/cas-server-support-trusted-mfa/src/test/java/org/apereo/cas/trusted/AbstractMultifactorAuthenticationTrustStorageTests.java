@@ -1,6 +1,7 @@
 package org.apereo.cas.trusted;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
@@ -107,6 +108,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         CasCoreServicesConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CasCoreAuditConfiguration.class,
+        CasCoreHttpConfiguration.class,
         MultifactorAuthnTrustWebflowConfiguration.class,
         MultifactorAuthnTrustConfiguration.class,
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class

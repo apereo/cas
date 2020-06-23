@@ -1,6 +1,7 @@
 package org.apereo.cas.support.sms;
 
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.io.SmsSender;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -80,11 +81,7 @@ public class ClickatellSmsSender implements SmsSender {
                 errors.forEach(LOGGER::error);
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

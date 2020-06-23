@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.ResponseTests;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGeneratorTests;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImplTests;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactoryTests;
+import org.apereo.cas.config.CasServiceRegistryInitializationConfigurationTests;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProviderTests;
 import org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicyTests;
 import org.apereo.cas.services.ChainingServicesManagerTests;
@@ -45,6 +46,7 @@ import org.apereo.cas.services.support.RegisteredServiceChainingAttributeFilterT
 import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilterTests;
 import org.apereo.cas.services.support.RegisteredServiceMutantRegexAttributeFilterTests;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilterTests;
+import org.apereo.cas.services.support.RegisteredServiceReverseMappedRegexAttributeFilterTests;
 import org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilterTests;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializerTests;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializerTests;
@@ -96,8 +98,10 @@ import org.junit.runner.RunWith;
     ShibbolethCompatiblePersistentIdGeneratorTests.class,
     SimpleWebApplicationServiceImplTests.class,
     WebApplicationServiceFactoryTests.class,
+    CasServiceRegistryInitializationConfigurationTests.class,
     DefaultRegisteredServiceAuthenticationPolicyTests.class,
     UnauthorizedProxyingExceptionTests.class,
+    RegisteredServiceReverseMappedRegexAttributeFilterTests.class,
     ReturnEncryptedAttributeReleasePolicyTests.class,
     UnauthorizedServiceExceptionTests.class,
     RegisteredServiceChainingAttributeFilterTests.class,

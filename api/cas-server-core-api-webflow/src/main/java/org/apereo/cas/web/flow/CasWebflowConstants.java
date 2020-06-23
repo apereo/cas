@@ -18,6 +18,13 @@ public interface CasWebflowConstants {
      * Transitions.
      ****************************************
      */
+
+
+    /**
+     * The transition state 'captchaError'.
+     */
+    String TRANSITION_ID_CAPTCHA_ERROR = "captchaError";
+
     /**
      * The transition state 'authenticationFailure'.
      */
@@ -187,6 +194,11 @@ public interface CasWebflowConstants {
      * The transition state 'successWithWarnings'.
      */
     String TRANSITION_ID_SUCCESS_WITH_WARNINGS = "successWithWarnings";
+
+    /**
+     * Transition id 'passwordUpdateSuccess'.
+     */
+    String TRANSITION_ID_PASSWORD_UPDATE_SUCCESS = "passwordUpdateSuccess";
 
     /**
      * Transition id 'resetPassword'.
@@ -381,10 +393,12 @@ public interface CasWebflowConstants {
      * State id 'acceptableUsagePolicyView.
      */
     String STATE_ID_ACCEPTABLE_USAGE_POLICY_VIEW = "acceptableUsagePolicyView";
+
     /**
      * State id 'aupAcceptedAction.
      */
     String STATE_ID_AUP_ACCEPTED = "aupAcceptedAction";
+
     /**
      * State id 'acceptableUsagePolicyCheck.
      */
@@ -514,10 +528,12 @@ public interface CasWebflowConstants {
      * The state id 'spnego'.
      */
     String STATE_ID_SPNEGO = "spnego";
+
     /**
      * The state id 'startSpnegoAuthenticate'.
      */
     String STATE_ID_START_SPNEGO_AUTHENTICATE = "startSpnegoAuthenticate";
+
     /**
      * The state id 'evaluateClientRequest'.
      */
@@ -532,6 +548,21 @@ public interface CasWebflowConstants {
      * The view state 'casWsFedStopWebflow'.
      */
     String STATE_ID_WSFED_STOP_WEBFLOW = "casWsFedStopWebflow";
+
+    /**
+     * The view state 'sendPasswordResetInstructions'.
+     */
+    String STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS = "sendPasswordResetInstructions";
+
+    /**
+     * The view state 'sendForgotUsernameInstructions'.
+     */
+    String STATE_ID_FORGOT_USERNAME_INSTRUCTIONS = "sendForgotUsernameInstructions";
+
+    /**
+     * The view state 'passwordChangeAction'.
+     */
+    String STATE_ID_PASSWORD_CHANGE_ACTION = "passwordChangeAction";
 
     /*
      ****************************************
@@ -701,6 +732,26 @@ public interface CasWebflowConstants {
      * Actions.
      ****************************************
      */
+
+    /**
+     * Action id 'validateCaptchaAction'.
+     */
+    String ACTION_ID_VALIDATE_CAPTCHA = "validateCaptchaAction";
+    /**
+     * Action id 'initializeCaptchaAction'.
+     */
+    String ACTION_ID_INIT_CAPTCHA = "initializeCaptchaAction";
+
+    /**
+     * Action id 'validateCaptchaAction'.
+     */
+    String ACTION_ID_PASSWORD_RESET_VALIDATE_CAPTCHA = "passwordResetValidateCaptchaAction";
+    
+    /**
+     * Action id 'passwordResetInitializeCaptchaAction'.
+     */
+    String ACTION_ID_PASSWORD_RESET_INIT_CAPTCHA = "passwordResetInitializeCaptchaAction";
+
     /**
      * Action id 'renderLoginFormAction'.
      */

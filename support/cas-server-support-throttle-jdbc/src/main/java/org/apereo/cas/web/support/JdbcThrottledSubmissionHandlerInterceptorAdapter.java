@@ -34,13 +34,13 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-
+    @SuppressWarnings("JdkObsolete")
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
         val clientInfo = ClientInfoHolder.getClientInfo();
         val remoteAddress = clientInfo.getClientIpAddress();
 
-        val failuresInAudits = this.jdbcTemplate.query(
+        var failuresInAudits = this.jdbcTemplate.query(
             this.sqlQueryAudit,
             new Object[]{
                 remoteAddress,
@@ -50,7 +50,6 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
                 getFailureInRangeCutOffDate()},
             new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
             (resultSet, i) -> resultSet.getTimestamp(1));
-
         val failures = failuresInAudits.stream().map(t -> new Date(t.getTime())).collect(Collectors.toList());
         return calculateFailureThresholdRateAndCompare(failures);
     }

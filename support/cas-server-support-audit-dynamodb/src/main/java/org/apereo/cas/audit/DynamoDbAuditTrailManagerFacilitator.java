@@ -2,6 +2,7 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.configuration.model.support.dynamodb.AuditDynamoDbProperties;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
@@ -44,13 +45,14 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 @RequiredArgsConstructor
+@SuppressWarnings("JdkObsolete")
 public class DynamoDbAuditTrailManagerFacilitator {
     private final AuditDynamoDbProperties dynamoDbProperties;
 
     private final AmazonDynamoDB amazonDynamoDBClient;
 
     /**
-     * Build table attribute values map map.
+     * Build table attribute values map.
      *
      * @param record the record
      * @return the map
@@ -122,12 +124,14 @@ public class DynamoDbAuditTrailManagerFacilitator {
      * @param localDate the local date
      * @return the audit records since
      */
+    @SuppressWarnings("JdkObsolete")
     public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
         val keys = new HashMap<String, AttributeValue>();
         val time = DateTimeUtils.dateOf(localDate).getTime();
         keys.put(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName(), new AttributeValue(String.valueOf(time)));
         return getRecordsByKeys(keys, ComparisonOperator.GE);
     }
+
 
     private Set<AuditActionContext> getRecordsByKeys(final Map<String, AttributeValue> keys,
                                                      final ComparisonOperator operator) {
@@ -158,7 +162,7 @@ public class DynamoDbAuditTrailManagerFacilitator {
                 })
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new HashSet<>(0);
     }

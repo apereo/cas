@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class
     },
-    properties = "cas.jdbc.showSql=true"
+    properties = "cas.jdbc.show-sql=true"
 )
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)

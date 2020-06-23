@@ -37,7 +37,7 @@ import java.util.stream.Stream;
  * @since 5.2.0
  */
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class AbstractServicesManager implements ServicesManager {
 
