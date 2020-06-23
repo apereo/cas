@@ -6,7 +6,8 @@ category: User Interface
 
 # CSS
 
-The default styles are all contained in two single files located in `src/main/resources/static/css/cas.css` and `src/main/resources/static/css/admin.css`. This location is set in `cas-theme-default.properties`.
+The default styles are all contained in one single file located in `src/main/resources/static/css/cas.css`. This location is set in `cas-theme-default.properties`. CAS by default uses [Material.io](https://material.io/) library and design specification as a base for its user experience.
+
 If you would like to create your own `css/custom.css file`, for example, you will need to update `cas.standard.css.file` key in that file.
 
 ```bash
@@ -16,13 +17,13 @@ cas.standard.js.file=/js/cas.js
 
 ## Responsive Design
 
-CSS media queries bring responsive design features to CAS which would allow the adopter to focus on one theme for all appropriate devices and platforms. These queries are defined in the same `cas.css` file.
+CSS media queries bring responsive design features to CAS which would allow the adopter to focus on one theme for all appropriate devices and platforms. These queries are defined in the same `cas.css` file. They follow the Twitter Bootstrap breakpoints and grid.
 
 # Javascript
 
 If you need to add some JavaScript, feel free to append `src/main/resources/static/js/cas.js`.
 
-You can also create your own `custom.js` file, for example, and call it from within `bottom.html` like so:
+You can also create your own `custom.js` file, for example, and call it from within `scripts.html` like so:
 
 ```html
 <script type="text/javascript" src="/js/custom.js"></script>
@@ -32,15 +33,13 @@ If you are developing themes per service, each theme also has the ability to spe
 
 Most importantly, the following Javascript libraries are utilized by CAS automatically:
 
-* JQuery
-* Bootstrap
-* Bootstrap Material Web Components
+* [JQuery](https://jquery.com/)
+* [Bootstrap for grid / flex utilities](https://getbootstrap.com/docs/4.5/getting-started/contents/#css-files)
+* [Material.io](https://material.io/)
 
 ## Script Loading
 
-CAS provides a callback function that allows
-adopters to be notified when script loading has completed and this would be a safe time to execute/load other Javascript-related
-functions that depend on JQuery inside the actual page.
+CAS provides a callback function that allows adopters to be notified when script loading has completed and this would be a safe time to execute/load other Javascript-related functions that depend on JQuery inside the actual page.
 
 ```javascript
 function jqueryReady() {
