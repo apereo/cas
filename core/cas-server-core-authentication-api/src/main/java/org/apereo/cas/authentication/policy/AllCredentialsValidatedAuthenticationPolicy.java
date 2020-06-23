@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.io.Serializable;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -31,7 +33,8 @@ public class AllCredentialsValidatedAuthenticationPolicy extends BaseAuthenticat
     @Override
     public boolean isSatisfiedBy(final Authentication authn,
                                  final Set<AuthenticationHandler> authenticationHandlers,
-                                 final ConfigurableApplicationContext applicationContext) {
+                                 final ConfigurableApplicationContext applicationContext,
+                                 final Optional<Serializable> assertion) {
         LOGGER.debug("Successful authentications: [{}], credentials: [{}]", authn.getSuccesses().keySet(), authn.getCredentials());
         if (authn.getSuccesses().size() != authn.getCredentials().size()) {
             LOGGER.warn("Number of successful authentications, [{}], does not match the number of provided credentials, [{}].",

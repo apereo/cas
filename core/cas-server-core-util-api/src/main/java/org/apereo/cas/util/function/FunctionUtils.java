@@ -1,5 +1,7 @@
 package org.apereo.cas.util.function;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -40,11 +42,7 @@ public class FunctionUtils {
                 }
                 return falseFunction.get();
             } catch (final Throwable e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.warn(e.getMessage(), e);
-                } else {
-                    LOGGER.warn(e.getMessage());
-                }
+                LoggingUtils.warn(LOGGER, e);
                 return falseFunction.get();
             }
         };
@@ -69,11 +67,7 @@ public class FunctionUtils {
                 }
                 return falseFunction.get();
             } catch (final Throwable e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.warn(e.getMessage(), e);
-                } else {
-                    LOGGER.warn(e.getMessage());
-                }
+                LoggingUtils.warn(LOGGER, e);
                 return falseFunction.get();
             }
         };
@@ -98,11 +92,7 @@ public class FunctionUtils {
                 }
                 return falseFunction.apply(t);
             } catch (final Throwable e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.warn(e.getMessage(), e);
-                } else {
-                    LOGGER.warn(e.getMessage());
-                }
+                LoggingUtils.warn(LOGGER, e);
                 try {
                     return falseFunction.apply(t);
                 } catch (final Throwable ex) {
@@ -132,11 +122,7 @@ public class FunctionUtils {
                 }
                 return falseFunction.get();
             } catch (final Throwable e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.warn(e.getMessage(), e);
-                } else {
-                    LOGGER.warn(e.getMessage());
-                }
+                LoggingUtils.warn(LOGGER, e);
                 return falseFunction.get();
             }
         };
@@ -157,11 +143,7 @@ public class FunctionUtils {
                 trueFunction.accept(input);
             }
         } catch (final Throwable e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -185,11 +167,7 @@ public class FunctionUtils {
                 }
                 return falseFunction.get();
             } catch (final Throwable e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.warn(e.getMessage(), e);
-                } else {
-                    LOGGER.warn(e.getMessage());
-                }
+                LoggingUtils.warn(LOGGER, e);
                 return falseFunction.get();
             }
         };
@@ -210,11 +188,7 @@ public class FunctionUtils {
             try {
                 return function.apply(t);
             } catch (final Throwable e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.warn(e.getMessage(), e);
-                } else {
-                    LOGGER.warn(e.getMessage());
-                }
+                LoggingUtils.warn(LOGGER, e);
                 try {
                     return errorHandler.apply(e);
                 } catch (final Throwable ex) {
@@ -238,11 +212,7 @@ public class FunctionUtils {
             try {
                 return function.get();
             } catch (final Throwable e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.warn(e.getMessage(), e);
-                } else {
-                    LOGGER.warn(e.getMessage());
-                }
+                LoggingUtils.warn(LOGGER, e);
                 try {
                     return errorHandler.apply(e);
                 } catch (final Throwable ex) {
@@ -264,11 +234,7 @@ public class FunctionUtils {
             func.accept(params);
             return true;
         } catch (final Throwable e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.warn(e.getMessage(), e);
-            } else {
-                LOGGER.warn(e.getMessage());
-            }
+            LoggingUtils.warn(LOGGER, e);
             return false;
         }
     }

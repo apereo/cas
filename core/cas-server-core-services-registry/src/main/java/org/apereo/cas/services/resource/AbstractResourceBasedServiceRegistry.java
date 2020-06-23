@@ -10,6 +10,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicePreDeleteEvent;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.PathWatcherService;
@@ -82,7 +83,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     private Pattern serviceFileNamePattern;
 
-    public AbstractResourceBasedServiceRegistry(final Resource configDirectory,
+    protected AbstractResourceBasedServiceRegistry(final Resource configDirectory,
                                                 final Collection<StringSerializer<RegisteredService>> serializers,
                                                 final ConfigurableApplicationContext applicationContext,
                                                 final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
@@ -92,7 +93,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             serviceRegistryListeners, WatcherService.noOp());
     }
 
-    public AbstractResourceBasedServiceRegistry(final Resource configDirectory,
+    protected AbstractResourceBasedServiceRegistry(final Resource configDirectory,
                                                 final Collection<StringSerializer<RegisteredService>> serializers,
                                                 final ConfigurableApplicationContext applicationContext,
                                                 final Collection<ServiceRegistryListener> serviceRegistryListeners,
@@ -104,7 +105,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     }
 
 
-    public AbstractResourceBasedServiceRegistry(final Path configDirectory, final StringSerializer<RegisteredService> serializer,
+    protected AbstractResourceBasedServiceRegistry(final Path configDirectory, final StringSerializer<RegisteredService> serializer,
                                                 final ConfigurableApplicationContext applicationContext,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                                 final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
@@ -115,7 +116,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             serviceRegistryListeners, serviceRegistryConfigWatcher);
     }
 
-    public AbstractResourceBasedServiceRegistry(final Path configDirectory,
+    protected AbstractResourceBasedServiceRegistry(final Path configDirectory,
                                                 final Collection<StringSerializer<RegisteredService>> serializers,
                                                 final ConfigurableApplicationContext applicationContext,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
@@ -127,7 +128,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             registeredServiceReplicationStrategy, resourceNamingStrategy, serviceRegistryConfigWatcher);
     }
 
-    public AbstractResourceBasedServiceRegistry(final Resource configDirectory,
+    protected AbstractResourceBasedServiceRegistry(final Resource configDirectory,
                                                 final Collection<StringSerializer<RegisteredService>> serializers,
                                                 final ConfigurableApplicationContext applicationContext,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
@@ -310,7 +311,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         } catch (final Exception e) {
-            LOGGER.error("Error reading configuration file [{}]", fileName, e);
+            LOGGER.error("Error reading configuration file [{}]", fileName);
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }

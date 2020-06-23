@@ -69,10 +69,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class},
     properties = {
-        "cas.ticket.registry.dynamoDb.endpoint=http://localhost:8000",
-        "cas.ticket.registry.dynamoDb.dropTablesOnStartup=true",
-        "cas.ticket.registry.dynamoDb.localInstance=true",
-        "cas.ticket.registry.dynamoDb.region=us-east-1"
+        "cas.ticket.registry.dynamo-db.endpoint=http://localhost:8000",
+        "cas.ticket.registry.dynamo-db.drop-tables-on-startup=true",
+        "cas.ticket.registry.dynamo-db.local-instance=true",
+        "cas.ticket.registry.dynamo-db.region=us-east-1"
     })
 @Tag("DynamoDb")
 public class DynamoDbTicketRegistryFacilitatorTests {

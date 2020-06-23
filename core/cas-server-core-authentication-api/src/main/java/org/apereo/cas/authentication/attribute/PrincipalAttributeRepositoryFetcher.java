@@ -11,8 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 
-import javax.annotation.Nonnull;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,7 +30,6 @@ import java.util.Set;
 public class PrincipalAttributeRepositoryFetcher {
     private final IPersonAttributeDao attributeRepository;
 
-    @Nonnull
     private final String principalId;
 
     @Builder.Default
@@ -66,7 +63,7 @@ public class PrincipalAttributeRepositoryFetcher {
             query.putAll(currentPrincipal.getAttributes());
         }
         query.putAll(queryAttributes);
-        
+
         LOGGER.trace("Fetching person attributes for query [{}]", query);
         val people = attributeRepository.getPeople(query, filter);
         if (people == null || people.isEmpty()) {

@@ -22,6 +22,7 @@ public class NullableReturnValueAuditResourceResolver implements AuditResourceRe
     private final AuditResourceResolver delegate;
 
     @Override
+    @SuppressWarnings("JdkObsolete")
     public String[] resolveFrom(final JoinPoint joinPoint, final Object o) {
         if (o == null) {
             return ArrayUtils.EMPTY_STRING_ARRAY;

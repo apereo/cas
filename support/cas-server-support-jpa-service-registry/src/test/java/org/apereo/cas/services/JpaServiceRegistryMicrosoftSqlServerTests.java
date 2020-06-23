@@ -14,7 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {
     "cas.service-registry.jpa.user=sa",
     "cas.service-registry.jpa.password=p@ssw0rd",
-    "cas.service-registry.jpa.driverClass=com.microsoft.sqlserver.jdbc.SQLServerDriver",
+    "cas.service-registry.jpa.driver-class=com.microsoft.sqlserver.jdbc.SQLServerDriver",
     "cas.service-registry.jpa.url=jdbc:sqlserver://localhost:1433;databaseName=services",
     "cas.service-registry.jpa.dialect=org.hibernate.dialect.SQLServer2012Dialect"
 })

@@ -527,7 +527,7 @@ backend cas-pool
 
 #### Extended Access Log Valve
 
-Enable the [extended access log](http://tomcat.apache.org/tomcat-8.0-doc/config/valve.html#Extended_Access_Log_Valve)
+Enable the [extended access log](https://tomcat.apache.org/tomcat-9.0-doc/config/valve.html#Extended_Access_Log_Valve)
 for the embedded Tomcat container.
 
 ```properties
@@ -540,7 +540,7 @@ for the embedded Tomcat container.
 
 #### Rewrite Valve
 
-Enable the [rewrite valve](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.html) for the embedded Tomcat container.
+Enable the [rewrite valve](https://tomcat.apache.org/tomcat-9.0-doc/rewrite.html) for the embedded Tomcat container.
 
 ```properties
 # cas.server.tomcat.rewrite-valve.location=classpath://container/tomcat/rewrite.config
@@ -1925,9 +1925,9 @@ Radius  settings for this feature are available [here](Configuration-Properties-
 # cas.authn.radius.name=
 ```
 
-## File (Whitelist) Authentication
+## File Authentication
 
-To learn more about this topic, [please review this guide](../installation/Whitelist-Authentication.html).
+To learn more about this topic, [please review this guide](../installation/Permissive-Authentication.html).
 
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.file`.
 
@@ -1948,9 +1948,9 @@ To learn more about this topic, [please review this guide](../installation/Groov
 # cas.authn.groovy.name=
 ```
 
-## JSON (Whitelist) Authentication
+## JSON Authentication
 
-To learn more about this topic, [please review this guide](../installation/Whitelist-Authentication.html).
+To learn more about this topic, [please review this guide](../installation/Permissive-Authentication.html).
 
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.json`.
 
@@ -1963,9 +1963,9 @@ Password policy settings for this feature are available [here](Configuration-Pro
 # cas.authn.json.name=
 ```
 
-## Reject Users (Blacklist) Authentication
+## Reject Users Authentication
 
-To learn more about this topic, [please review this guide](../installation/Blacklist-Authentication.html).
+To learn more about this topic, [please review this guide](../installation/Reject-Authentication.html).
 
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.reject`.
 
@@ -2917,6 +2917,7 @@ To learn more about this topic, [please review this guide](../mfa/GoogleAuthenti
 # cas.authn.mfa.gauth.time-step-size=30
 # cas.authn.mfa.gauth.rank=0
 # cas.authn.mfa.gauth.trusted-device-enabled=false
+# cas.authn.mfa.gauth.multiple-device-registration-enabled=false
 
 # cas.authn.mfa.gauth.name=
 # cas.authn.mfa.gauth.order=
@@ -2992,7 +2993,7 @@ Multifactor authentication bypass settings for this provider are available [here
 # cas.authn.mfa.yubikey.json-file=file:/etc/cas/deviceRegistrations.json
 ```
 
-#### YubiKey Whitelist Device Store
+#### YubiKey Allowed Device Store
 
 ```properties
 # cas.authn.mfa.yubikey.allowed-devices.uid1=yubikeyPublicId1
@@ -3271,6 +3272,14 @@ under the configuration key `cas.authn.saml-idp.metadata`.
 The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption 
 settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.saml-idp.metadata.mongo`.
 
+#### SAML Metadata Git
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#git-configuration) under the configuration key `cas.authn.saml-idp.metadata`.
+ 
+The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & 
+encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the 
+configuration key `cas.authn.saml-idp.metadata.git`.
+
 #### SAML Metadata MongoDb
 
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.saml-idp.metadata`.
@@ -3322,12 +3331,12 @@ settings for this feature are available [here](Configuration-Properties-Common.h
 # cas.authn.saml-idp.algs.override-signature-canonicalization-algorithm=
 # cas.authn.saml-idp.algs.override-data-encryption-algorithms=
 # cas.authn.saml-idp.algs.override-key-encryption-algorithms=
-# cas.authn.saml-idp.algs.override-black-listed-encryption-algorithms=
-# cas.authn.saml-idp.algs.override-white-listed-algorithms=
+# cas.authn.saml-idp.algs.override-blocked-encryption-algorithms=
+# cas.authn.saml-idp.algs.override-allowed-algorithms=
 # cas.authn.saml-idp.algs.override-signature-reference-digest-methods=
 # cas.authn.saml-idp.algs.override-signature-algorithms=
-# cas.authn.saml-idp.algs.override-black-listed-signature-signing-algorithms=
-# cas.authn.saml-idp.algs.override-white-listed-signature-signing-algorithms=
+# cas.authn.saml-idp.algs.override-blocked-signature-signing-algorithms=
+# cas.authn.saml-idp.algs.override-allowed-signature-signing-algorithms=
 ```
 
 ### SAML Response
@@ -3628,6 +3637,7 @@ identity provider are available [here](Configuration-Properties-Common.html#dele
 # cas.authn.pac4j.oauth2[0].profile-path=
 # cas.authn.pac4j.oauth2[0].scope=
 # cas.authn.pac4j.oauth2[0].profile-verb=GET|POST
+# cas.authn.pac4j.oauth2[0].response-type=code
 # cas.authn.pac4j.oauth2[0].profile-attrs.attr1=path-to-attr-in-profile
 # cas.authn.pac4j.oauth2[0].custom-params.param1=value1
 ```
@@ -3902,6 +3912,7 @@ If the user changes the language, a special cookie is created by CAS to contain 
 # cas.sso.create-sso-cookie-on-renew-authn=true
 # cas.sso.proxy-authn-enabled=true
 # cas.sso.renew-authn-enabled=true
+# cas.sso.sso-enabled=true
 # cas.sso.required-service-pattern=
 ```
 
@@ -4240,6 +4251,20 @@ settings for this feature are available [here](Configuration-Properties-Common.h
 Decide how CAS should store authentication events inside a MongoDb instance. Common 
 configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.events`.
 
+### DynamoDb Events
+
+Decide how CAS should store authentication events inside a DynamoDb instance.
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
+under the configuration key `cas.events`.
+
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.evnts.dynamo-db`.
+
+```properties
+# cas.events.dynamo-db.table-name=DynamoDbCasEvents
+```
+
 ## Http Web Requests
 
 Control how CAS should respond and validate incoming HTTP requests.
@@ -4278,8 +4303,9 @@ Control how CAS should respond and validate incoming HTTP requests.
 # cas.http-web-request.custom-headers.header-name1=headerValue1
 # cas.http-web-request.custom-headers.header-name2=headerValue2
 
-# spring.http.encoding.charset=UTF-8
-# spring.http.encoding.force=true
+# server.servlet.encoding.charset=UTF-8
+# server.servlet.encoding.enabled=true
+# server.servlet.encoding.force=true
 ```
 
 ## Http Client
@@ -4364,20 +4390,8 @@ To learn more about this topic, [please review this guide](../services/YAML-Serv
 
 Works with git repository to fetch and manage service registry definitions.
 
-```properties
-# cas.service-registry.git.repository-url=https://github.com/repository
-# cas.service-registry.git.branches-to-clone=master
-# cas.service-registry.git.active-branch=master
-# cas.service-registry.git.sign-commits=false
-# cas.service-registry.git.username=
-# cas.service-registry.git.password=
-# cas.service-registry.git.clone-directory=file:/tmp/cas-service-registry
-# cas.service-registry.git.push-changes=false
-# cas.service-registry.git.private-key-passphrase=
-# cas.service-registry.git.private-key-path=
-# cas.service-registry.git.ssh-session-password=
-# cas.service-registry.git.timeout=PT10S
-```
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#git-configuration) 
+under the configuration key `cas.service-registry`.
 
 To learn more about this topic, [please review this guide](../services/Git-Service-Management.html).
 
@@ -5076,11 +5090,18 @@ If AUP is controlled via JDBC, decide how choices should be remembered back insi
 
 #### CouchDb
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.acceptable-usage-policy`. This feature uses the `asynchronous` setting.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under 
+the configuration key `cas.acceptable-usage-policy`. This feature uses the `asynchronous` setting.
+
+#### Couchbase
+
+Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the 
+configuration key `cas.acceptable-usage-policy.couchbase`.
 
 #### MongoDb
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.acceptable-usage-policy`.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under 
+the configuration key `cas.acceptable-usage-policy`.
 
 #### Redis
 
@@ -5419,12 +5440,14 @@ To learn more about this topic, [please review this guide](../installation/Passw
 
 ```properties
 # cas.authn.pm.enabled=true
+# cas.authn.pm.captcha-enabled=false
 
 # Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character
 # cas.authn.pm.policy-pattern=^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}
 
 # cas.authn.pm.reset.expirationMinutes=1
 # cas.authn.pm.reset.security-questions-enabled=true
+
 # Whether the Password Management Token will contain the client or server IP Address.
 # cas.authn.pm.reset.include-server-ip-address=true
 # cas.authn.pm.reset.include-client-ip-address=true

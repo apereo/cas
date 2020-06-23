@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "management.endpoint.health.enabled=true",
     "management.endpoint.health.show-details=always"
 })
-@Tag("Simple")
+@Tag("ActuatorEndpoint")
 @Deprecated(since ="6.2.0")
 public class StatusEndpointWithHealthTests extends AbstractCasEndpointTests {
     @Autowired

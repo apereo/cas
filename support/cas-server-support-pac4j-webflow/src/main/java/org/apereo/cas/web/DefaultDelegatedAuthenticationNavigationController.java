@@ -1,6 +1,7 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -69,7 +70,7 @@ public class DefaultDelegatedAuthenticationNavigationController extends BaseDele
             if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
                 LOGGER.debug("Authentication request was denied from the provider [{}]", clientName, e);
             } else {
-                LOGGER.warn(e.getMessage(), e);
+                LoggingUtils.warn(LOGGER, e);
             }
             throw new UnauthorizedServiceException(e.getMessage(), e);
         }

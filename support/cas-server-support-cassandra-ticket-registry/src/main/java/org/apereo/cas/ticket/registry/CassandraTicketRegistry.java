@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.datastax.oss.driver.api.core.DefaultConsistencyLevel;
 import com.datastax.oss.driver.api.core.cql.Statement;
@@ -45,7 +46,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
 
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
-        LOGGER.trace("Locating ticket  [{}]", ticketId);
+        LOGGER.trace("Locating ticket [{}]", ticketId);
         val encodedTicketId = encodeTicketId(ticketId);
         if (StringUtils.isBlank(encodedTicketId)) {
             LOGGER.debug("Ticket id [{}] could not be found", ticketId);
@@ -59,13 +60,13 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
         }
 
         val holder = findCassandraTicketBy(definition, encodedTicketId);
-        if (holder == null || holder.isEmpty()) {
+        if (holder.isEmpty()) {
             LOGGER.debug("Ticket [{}] could not be found in Cassandra", encodedTicketId);
             return null;
         }
 
-        val deserialized = deserialize(holder.iterator().next());
-        val result = decodeTicket(deserialized);
+        val object = deserialize(holder.iterator().next());
+        val result = decodeTicket(object);
         if (result != null && predicate.test(result)) {
             return result;
         }
@@ -99,8 +100,8 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
                 return results
                     .stream()
                     .map(holder -> {
-                        val deserialized = deserialize(holder);
-                        return decodeTicket(deserialized);
+                        val result = deserialize(holder);
+                        return decodeTicket(result);
                     })
                     .collect(Collectors.toSet());
             })
@@ -129,7 +130,8 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
             cassandraSessionFactory.getCqlTemplate().execute(delete);
             return true;
         } catch (final Exception e) {
-            LOGGER.error("Failed deleting [{}]: [{}]", ticketId, e);
+            LOGGER.error("Failed deleting [{}]", ticketId);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -169,12 +171,12 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     private static int getTimeToLive(final Ticket ticket) {
-        val expirationPolicy = ticket.getExpirationPolicy();
-        val ttl = Math.toIntExact(expirationPolicy.getTimeToLive());
+        val timeToLive = ticket.getExpirationPolicy().getTimeToLive();
+        val ttl = Long.MAX_VALUE == timeToLive ? Long.valueOf(Integer.MAX_VALUE) : timeToLive;
         if (ttl >= CassandraSessionFactory.MAX_TTL) {
             return CassandraSessionFactory.MAX_TTL;
         }
-        return ttl;
+        return ttl.intValue();
     }
 
     private Collection<CassandraTicketHolder> findCassandraTicketBy(final TicketDefinition definition) {

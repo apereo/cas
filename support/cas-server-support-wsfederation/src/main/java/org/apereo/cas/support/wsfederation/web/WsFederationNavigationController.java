@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,10 +46,15 @@ public class WsFederationNavigationController {
     public static final String PARAMETER_NAME = "wsfedclientid";
 
     private final WsFederationCookieManager wsFederationCookieManager;
+
     private final WsFederationHelper wsFederationHelper;
+
     private final Collection<WsFederationConfiguration> configurations;
+
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
     private final String casLoginEndpoint;
 
     /**
@@ -64,17 +70,17 @@ public class WsFederationNavigationController {
     public View redirectToProvider(final HttpServletRequest request, final HttpServletResponse response) {
         val wsfedId = request.getParameter(PARAMETER_NAME);
         try {
-            val cfg = configurations.stream().filter(c -> c.getId().equals(wsfedId)).findFirst().orElse(null);
-            if (cfg == null) {
-                throw new IllegalArgumentException("Could not locate WsFederation configuration for " + wsfedId);
-            }
+            val cfg = configurations.stream()
+                .filter(c -> c.getId().equals(wsfedId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Could not locate WsFederation configuration for " + wsfedId));
             val service = determineService(request);
             val id = wsFederationHelper.getRelyingPartyIdentifier(service, cfg);
             val url = cfg.getAuthorizationUrl(id, cfg.getId());
             wsFederationCookieManager.store(request, response, cfg.getId(), service, cfg);
             return new RedirectView(url);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
     }

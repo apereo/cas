@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderByp
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
 
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 @ToString
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = {"order", "id"})
 public abstract class AbstractMultifactorAuthenticationProvider implements MultifactorAuthenticationProvider {
 

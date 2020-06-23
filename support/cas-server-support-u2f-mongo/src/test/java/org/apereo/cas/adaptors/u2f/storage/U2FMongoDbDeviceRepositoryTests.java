@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.config.U2FMongoDbConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
@@ -26,16 +27,18 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     U2FMongoDbConfiguration.class,
     U2FConfiguration.class,
+    CasCoreHttpConfiguration.class,
     AopAutoConfiguration.class,
-    RefreshAutoConfiguration.class},
+    RefreshAutoConfiguration.class
+},
     properties = {
-        "cas.authn.mfa.u2f.mongo.databaseName=mfa-trusted",
+        "cas.authn.mfa.u2f.mongo.database-name=mfa-trusted",
         "cas.authn.mfa.u2f.mongo.host=localhost",
         "cas.authn.mfa.u2f.mongo.port=27017",
         "cas.authn.mfa.u2f.mongo.userId=root",
         "cas.authn.mfa.u2f.mongo.password=secret",
-        "cas.authn.mfa.u2f.mongo.authenticationDatabaseName=admin",
-        "cas.authn.mfa.u2f.mongo.dropCollection=true"
+        "cas.authn.mfa.u2f.mongo.authentication-database-name=admin",
+        "cas.authn.mfa.u2f.mongo.drop-collection=true"
     })
 @Getter
 public class U2FMongoDbDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {

@@ -16,8 +16,6 @@ import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 import org.apache.http.client.methods.HttpGet;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +27,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
 @Tag("AmazonWebServices")
 public class AmazonS3SamlRegisteredServiceMetadataResolverTests {
     @Test

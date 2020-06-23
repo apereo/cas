@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -68,12 +67,11 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 },
     properties = {
-        "cas.authn.radius.client.sharedSecret=NoSecret",
+        "cas.authn.radius.client.shared-secret=NoSecret",
         "cas.authn.radius.client.inet-address=localhost,localguest",
         "cas.authn.mfa.radius.id=" + TestMultifactorAuthenticationProvider.ID
     })
 @Tag("Radius")
-@EnabledIfPortOpen(port = 1812)
 public class RadiusConfigurationTests {
     @Autowired
     private CasConfigurationProperties casProperties;

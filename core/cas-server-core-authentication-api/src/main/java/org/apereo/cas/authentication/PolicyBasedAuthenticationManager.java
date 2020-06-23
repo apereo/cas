@@ -10,6 +10,7 @@ import org.apereo.cas.support.events.authentication.CasAuthenticationPrincipalRe
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionStartedEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionSuccessfulEvent;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -141,11 +142,11 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                 LOGGER.debug("[{}] resolved [{}] from [{}]", resolver, p, credential);
                 return p;
             } catch (final Exception e) {
-                LOGGER.error("[{}] failed to resolve principal from [{}]", resolver, credential, e);
+                LOGGER.error("[{}] failed to resolve principal from [{}]", resolver, credential);
+                LoggingUtils.error(LOGGER, e);
             }
         } else {
-            LOGGER.warn(
-                "[{}] is configured to use [{}] but it does not support [{}], which suggests a configuration problem.",
+            LOGGER.warn("[{}] is configured to use [{}] but it does not support [{}], which suggests a configuration problem.",
                 handler.getName(), resolver, credential);
         }
         return null;
@@ -377,7 +378,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                     .stream()
                     .filter(handler -> transaction.getCredentials().stream().anyMatch(handler::supports))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
-                if (!p.isSatisfiedBy(authentication, supportingHandlers, this.applicationContext)) {
+                if (!p.isSatisfiedBy(authentication, supportingHandlers, this.applicationContext, Optional.empty())) {
                     failures.add(new AuthenticationException("Unable to satisfy authentication policy " + simpleName));
                 }
             } catch (final GeneralSecurityException e) {

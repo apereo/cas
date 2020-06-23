@@ -5,9 +5,8 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import org.junit.jupiter.api.Tag;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,8 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    AopAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
+    RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
 @Tag("MFA")

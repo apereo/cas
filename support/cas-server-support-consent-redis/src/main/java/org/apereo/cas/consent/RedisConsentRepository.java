@@ -3,6 +3,7 @@ package org.apereo.cas.consent;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +58,7 @@ public class RedisConsentRepository implements ConsentRepository {
                     .collect(Collectors.toList());
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new HashSet<>(0);
     }
@@ -75,21 +76,21 @@ public class RedisConsentRepository implements ConsentRepository {
                     .collect(Collectors.toList());
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new HashSet<>(0);
     }
 
     @Override
-    public boolean storeConsentDecision(final ConsentDecision decision) {
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
         try {
             val redisKey = CAS_CONSENT_DECISION_PREFIX + decision.getPrincipal() + ':' + decision.getId();
             this.redisTemplate.boundValueOps(redisKey).set(decision);
-            return true;
+            return decision;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
-        return false;
+        return null;
     }
 
     @Override
@@ -101,7 +102,7 @@ public class RedisConsentRepository implements ConsentRepository {
             }
             return true;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

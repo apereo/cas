@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.boot.AbstractCasBanner;
 import org.apereo.cas.util.spring.boot.DefaultCasBanner;
 
@@ -45,7 +46,7 @@ public class CasEmbeddedContainerUtils {
             val clz = subTypes.iterator().next();
             return clz.getDeclaredConstructor().newInstance();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new DefaultCasBanner();
     }

@@ -1,8 +1,9 @@
 package org.apereo.cas.authentication.principal.provision;
 
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.support.RestEndpointProperties;
+import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,11 +50,7 @@ public class RestfulDelegatedClientUserProfileProvisioner extends BaseDelegatedC
                 }
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

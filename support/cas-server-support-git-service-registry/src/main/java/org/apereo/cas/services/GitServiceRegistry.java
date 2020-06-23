@@ -35,15 +35,19 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GitServiceRegistry extends AbstractServiceRegistry {
     private static final List<String> FILE_EXTENSIONS = CollectionUtils.wrapList("json", "yaml", "yml");
+
     private static final Pattern PATTERN_ACCEPTED_REPOSITORY_FILES = RegexUtils.createPattern(".+\\.("
         + String.join("|", FILE_EXTENSIONS) + ')', Pattern.CASE_INSENSITIVE);
 
-    private Collection<RegisteredService> registeredServices = new ArrayList<>(0);
-
     private final GitRepository gitRepository;
+
     private final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers;
+
     private final RegisteredServiceResourceNamingStrategy resourceNamingStrategy;
+
     private final boolean pushChanges;
+
+    private Collection<RegisteredService> registeredServices = new ArrayList<>(0);
 
     public GitServiceRegistry(final ConfigurableApplicationContext applicationContext,
                               final GitRepository gitRepository,
@@ -78,13 +82,6 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
         commitAndPush(message);
         load();
         return registeredService;
-    }
-
-    private void commitAndPush(final String message) {
-        this.gitRepository.commitAll(message);
-        if (this.pushChanges) {
-            this.gitRepository.push();
-        }
     }
 
     @SneakyThrows
@@ -125,6 +122,13 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService findServiceById(final long id) {
         return this.registeredServices.stream().filter(r -> r.getId() == id).findFirst().orElse(null);
+    }
+
+    private void commitAndPush(final String message) {
+        this.gitRepository.commitAll(message);
+        if (this.pushChanges) {
+            this.gitRepository.push();
+        }
     }
 
     private List<RegisteredService> parseGitObjectContentIntoRegisteredService(final GitRepository.GitObject obj) {

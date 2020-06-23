@@ -20,13 +20,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @TestPropertySource(properties = {
-    "cas.authn.attributeRepository.jdbc[0].attributes.uid=uid",
-    "cas.authn.attributeRepository.jdbc[0].attributes.displayName=displayName",
-    "cas.authn.attributeRepository.jdbc[0].attributes.cn=commonName",
-    "cas.authn.attributeRepository.jdbc[0].singleRow=true",
-    "cas.authn.attributeRepository.jdbc[0].requireAllAttributes=true",
-    "cas.authn.attributeRepository.jdbc[0].sql=SELECT * FROM table_users WHERE {0}",
-    "cas.authn.attributeRepository.jdbc[0].username=uid"
+    "cas.authn.attribute-repository.jdbc[0].attributes.uid=uid",
+    "cas.authn.attribute-repository.jdbc[0].attributes.displayName=displayName",
+    "cas.authn.attribute-repository.jdbc[0].attributes.cn=commonName",
+    "cas.authn.attribute-repository.jdbc[0].singleRow=true",
+    "cas.authn.attribute-repository.jdbc[0].requireAllAttributes=true",
+    "cas.authn.attribute-repository.jdbc[0].sql=SELECT * FROM table_users WHERE {0}",
+    "cas.authn.attribute-repository.jdbc[0].username=uid"
 })
 @Tag("JDBC")
 public class JdbcSingleRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {

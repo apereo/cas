@@ -27,7 +27,7 @@ public class GroovyConsentRepository extends BaseConsentRepository implements Di
     }
 
     @Override
-    public boolean storeConsentDecision(final ConsentDecision decision) {
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
         val result = super.storeConsentDecision(decision);
         writeAccountToGroovyResource(decision);
         return result;

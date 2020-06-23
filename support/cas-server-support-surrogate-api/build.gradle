@@ -1,14 +1,14 @@
 description = "Apereo CAS Surrogate Authentication API"
 dependencies {
     provided project(":core:cas-server-core-authentication")
+    provided project(":core:cas-server-core-tickets")
+    provided project(":core:cas-server-core-web")
+
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-services")
-    provided project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-audit-api")
-    provided project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-configuration-api")
 
-    
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

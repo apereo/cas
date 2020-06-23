@@ -118,7 +118,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
         LOGGER.debug("Resolving principal for [{}]", certificate);
-        val sb = new StringBuffer();
+        val sb = new StringBuilder();
         val m = ATTR_PATTERN.matcher(this.descriptor);
         val attrMap = new HashMap<String, AttributeContext>();
         val rdnSequence = new NameReader(certificate).readSubject();

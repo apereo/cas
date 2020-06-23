@@ -45,9 +45,8 @@ public class MongoDbConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public boolean storeConsentDecision(final ConsentDecision decision) {
-        this.mongoTemplate.save(decision, this.collectionName);
-        return true;
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
+        return this.mongoTemplate.save(decision, this.collectionName);
     }
 
     @Override

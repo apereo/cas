@@ -6,6 +6,7 @@ import org.apereo.cas.services.CosmosDbServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.microsoft.azure.documentdb.ConsistencyLevel;
 import com.microsoft.azure.documentdb.IndexingMode;
@@ -88,7 +89,7 @@ public class CosmosDbServiceRegistryConfiguration {
             try {
                 dbFactory.getDocumentClient().deleteCollection(collectionLink, options);
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                LoggingUtils.error(LOGGER, e);
             }
         }
         val indexingPolicy = new IndexingPolicy();

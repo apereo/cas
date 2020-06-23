@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 4.0.0
  */
 @ExtendWith(MockitoExtension.class)
-@Tag("Simple")
+@Tag("RegisteredService")
 public class RegisteredServiceResourceTests {
 
     @Mock

@@ -2,8 +2,10 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.nameid;
 
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +15,6 @@ import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.profile.AbstractSAML2NameIDGenerator;
 import org.opensaml.saml.saml2.profile.SAML2NameIDGenerator;
 
-import javax.annotation.Nonnull;
 import java.util.Optional;
 
 /**
@@ -62,7 +63,7 @@ public class SamlAttributeBasedNameIdGenerator extends AbstractSAML2NameIDGenera
     }
 
     @Override
-    protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext) {
+    protected String getIdentifier(@NonNull final ProfileRequestContext profileRequestContext) {
         return this.attributeValue;
     }
 }

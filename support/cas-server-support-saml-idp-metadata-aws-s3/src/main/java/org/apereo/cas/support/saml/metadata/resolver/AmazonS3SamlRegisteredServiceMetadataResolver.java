@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSamlRegisteredServiceMetadataResolver;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -67,14 +68,14 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
                         document.setValue(IOUtils.toString(is));
                         return buildMetadataResolverFrom(service, document);
                     } catch (final Exception e) {
-                        LOGGER.error(e.getMessage(), e);
+                        LoggingUtils.error(LOGGER, e);
                     }
                     return null;
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -85,7 +86,7 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
             val metadataLocation = service.getMetadataLocation();
             return metadataLocation.trim().startsWith("awss3://");
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

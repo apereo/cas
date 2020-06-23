@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "cas.authn.password-sync.ldap[0].ldap-url=ldap://localhost:10389",
-        "cas.authn.password-sync.ldap[0].baseDn=dc=example,dc=org",
+        "cas.authn.password-sync.ldap[0].base-dn=dc=example,dc=org",
         "cas.authn.password-sync.ldap[0].search-filter=cn={user}",
         "cas.authn.password-sync.ldap[0].bind-dn=cn=Directory Manager",
         "cas.authn.password-sync.ldap[0].bind-credential=password",

@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "database.user=postgres",
     "database.password=password",
-    "database.driverClass=org.postgresql.Driver",
+    "database.driver-class=org.postgresql.Driver",
     "database.name=postgres",
     "database.url=jdbc:postgresql://localhost:5432/",
     "database.dialect=org.hibernate.dialect.PostgreSQL95Dialect"

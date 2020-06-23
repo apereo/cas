@@ -2,7 +2,7 @@ description = "Apereo CAS Acceptto MFA Support"
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-util")
-
+                               
     implementation libraries.pac4jcore
     implementation libraries.jose4j
     

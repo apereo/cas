@@ -3,6 +3,7 @@ package org.apereo.cas.validation;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.ServicesManager;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 @Setter
-@RequiredArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class AbstractCasProtocolValidationSpecification implements CasProtocolValidationSpecification {
     private final ServicesManager servicesManager;

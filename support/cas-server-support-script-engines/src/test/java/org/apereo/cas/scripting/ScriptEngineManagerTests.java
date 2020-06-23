@@ -7,9 +7,6 @@ import org.apereo.cas.util.scripting.ScriptingUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -26,10 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  * @deprecated 6.2
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    AopAutoConfiguration.class
-})
 @Tag("Groovy")
 @Deprecated(since = "6.2.0")
 public class ScriptEngineManagerTests {

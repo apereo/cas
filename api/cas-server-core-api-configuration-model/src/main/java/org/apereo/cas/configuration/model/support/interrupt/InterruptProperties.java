@@ -1,8 +1,8 @@
 package org.apereo.cas.configuration.model.support.interrupt;
 
+import org.apereo.cas.configuration.model.RestEndpointProperties;
+import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.RestEndpointProperties;
-import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;

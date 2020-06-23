@@ -29,27 +29,27 @@ public class BasicResourceCredentialFactoryBeanTests {
     }
 
     @Test
-    public void verifyMissingPrivKeys() throws Exception {
+    public void verifyMissingPrivKeys() {
         val factory = new BasicResourceCredentialFactoryBean();
         factory.setPrivateKeyInfo(new ClassPathResource("keys/badprivate.pem"));
         assertThrows(BeanCreationException.class, factory::getObject);
     }
 
     @Test
-    public void verifyMissingSecretKeys() throws Exception {
+    public void verifyMissingSecretKeys() {
         val factory = new BasicResourceCredentialFactoryBean();
         factory.setSecretKeyInfo(new ClassPathResource("keys/badsec.pem"));
         assertThrows(BeanCreationException.class, factory::getObject);
     }
 
     @Test
-    public void verifyNoKeys() throws Exception {
+    public void verifyNoKeys() {
         val factory = new BasicResourceCredentialFactoryBean();
         assertThrows(BeanCreationException.class, factory::getObject);
     }
 
     @Test
-    public void verifyMismatchedKeys() throws Exception {
+    public void verifyMismatchedKeys() {
         val factory = new BasicResourceCredentialFactoryBean();
         factory.setPrivateKeyInfo(new ClassPathResource("keys/private.pem"));
         factory.setPublicKeyInfo(new ClassPathResource("keys/badpublic.key"));

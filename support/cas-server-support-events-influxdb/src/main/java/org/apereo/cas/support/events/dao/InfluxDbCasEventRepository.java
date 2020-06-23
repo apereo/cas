@@ -2,6 +2,7 @@ package org.apereo.cas.support.events.dao;
 
 import org.apereo.cas.influxdb.InfluxDbConnectionFactory;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -102,11 +103,7 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
                         }
                     }
                 } catch (final Exception e) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.error(e.getMessage(), e);
-                    } else {
-                        LOGGER.error(e.getMessage());
-                    }
+                    LoggingUtils.error(LOGGER, e);
                 }
             }));
         return events;

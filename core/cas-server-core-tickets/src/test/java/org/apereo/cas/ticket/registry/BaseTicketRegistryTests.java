@@ -34,6 +34,7 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CoreTicketUtils;
@@ -53,7 +54,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
@@ -125,6 +125,17 @@ public abstract class BaseTicketRegistryTests {
         assertNotNull(authentication.getSuccesses());
         assertNotNull(authentication.getWarnings());
         assertNotNull(authentication.getFailures());
+    }
+
+
+    @RepeatedTest(2)
+    public void verifyTicketWithTimeoutPolicy() {
+        val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
+        ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            originalAuthn,
+            TimeoutExpirationPolicy.builder().timeToKillInSeconds(5).build()));
+        val tgt = ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        assertNotNull(tgt);
     }
 
     @RepeatedTest(2)
@@ -299,7 +310,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    public void verifyTicketCountsEqualToTicketsAdded() throws Exception {
+    public void verifyTicketCountsEqualToTicketsAdded() {
         assumeTrue(isIterableRegistry());
         val tgts = new ArrayList<Ticket>();
         val sts = new ArrayList<Ticket>();
@@ -465,10 +476,7 @@ public abstract class BaseTicketRegistryTests {
         }
     }
 
-    @ImportAutoConfiguration({
-        RefreshAutoConfiguration.class,
-        MailSenderAutoConfiguration.class
-    })
+    @ImportAutoConfiguration(RefreshAutoConfiguration.class)
     @SpringBootConfiguration
     @Import({
         CasCoreHttpConfiguration.class,

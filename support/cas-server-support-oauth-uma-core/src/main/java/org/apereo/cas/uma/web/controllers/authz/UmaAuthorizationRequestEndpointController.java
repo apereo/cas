@@ -14,6 +14,7 @@ import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -95,7 +96,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             return handleMismatchedClaims(request, response, resourceSet, profileResult, results, permissionTicket);
 
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new ResponseEntity("Unable to handle authorization request", HttpStatus.BAD_REQUEST);
     }

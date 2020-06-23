@@ -1,6 +1,7 @@
 package org.apereo.cas.support.sms;
 
 import org.apereo.cas.configuration.model.support.sms.TextMagicProperties;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.io.SmsSender;
 
@@ -75,7 +76,7 @@ public class TextMagicSmsSender implements SmsSender {
             val result = this.api.sendMessage(message);
             return result != null && result.getMessageId() > 0;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

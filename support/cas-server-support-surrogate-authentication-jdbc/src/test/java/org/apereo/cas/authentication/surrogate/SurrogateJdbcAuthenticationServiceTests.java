@@ -62,9 +62,9 @@ import javax.sql.DataSource;
     CasCoreConfiguration.class,
     SurrogateJdbcAuthenticationConfiguration.class
 }, properties = {
-    "cas.authn.surrogate.jdbc.surrogateSearchQuery=select count(*) from surrogate_accounts where username=? and surrogateAccount=?",
-    "cas.authn.surrogate.jdbc.surrogateAccountQuery=select * from surrogate_accounts where username=?",
-    "cas.authn.surrogate.jdbc.autoCommit=true"
+    "cas.authn.surrogate.jdbc.surrogate-search-query=select count(*) from surrogate_accounts where username=? and surrogateAccount=?",
+    "cas.authn.surrogate.jdbc.surrogate-account-query=select * from surrogate_accounts where username=?",
+    "cas.authn.surrogate.jdbc.auto-commit=true"
 })
 @Getter
 @Tag("JDBC")

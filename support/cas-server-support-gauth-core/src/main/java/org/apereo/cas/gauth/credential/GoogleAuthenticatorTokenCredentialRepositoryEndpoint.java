@@ -35,7 +35,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
      * @return the one time token account
      */
     @ReadOperation
-    public OneTimeTokenAccount get(@Selector final String username) {
+    public Collection<? extends OneTimeTokenAccount> get(@Selector final String username) {
         return repository.get(username);
     }
 

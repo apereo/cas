@@ -9,6 +9,7 @@ import org.apereo.cas.adaptors.radius.authentication.RadiusTokenCredential;
 import org.apereo.cas.adaptors.radius.server.NonBlockingRadiusServer;
 import org.apereo.cas.adaptors.radius.server.RadiusServerConfigurationContext;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
@@ -65,6 +66,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "radiusMultifactorAuthenticationProvider")
     public MultifactorAuthenticationProvider radiusMultifactorAuthenticationProvider() {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val p = new RadiusMultifactorAuthenticationProvider(radiusTokenServers());
@@ -78,6 +80,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "radiusTokenServers")
     public List<RadiusServer> radiusTokenServers() {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val client = radius.getClient();
@@ -110,13 +113,15 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "radiusTokenPrincipalFactory")
     @Bean
+    @RefreshScope
     public PrincipalFactory radiusTokenPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @RefreshScope
     @Bean
-    public RadiusTokenAuthenticationHandler radiusTokenAuthenticationHandler() {
+    @ConditionalOnMissingBean(name = "radiusTokenAuthenticationHandler")
+    public AuthenticationHandler radiusTokenAuthenticationHandler() {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         return new RadiusTokenAuthenticationHandler(radius.getName(),
             servicesManager.getObject(),
@@ -129,6 +134,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "radiusAuthenticationMetaDataPopulator")
     public AuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator() {
         val attribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(attribute,
@@ -139,6 +145,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "radiusTokenAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer radiusTokenAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             val radius = casProperties.getAuthn().getMfa().getRadius();

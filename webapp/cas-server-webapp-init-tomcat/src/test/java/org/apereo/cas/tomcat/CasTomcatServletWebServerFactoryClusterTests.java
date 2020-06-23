@@ -35,11 +35,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         "server.port=8183",
         "server.ssl.enabled=false",
         "cas.server.tomcat.clustering.enabled=true",
-        "cas.server.tomcat.clustering.clusteringType=DEFAULT"
+        "cas.server.tomcat.clustering.clustering-type=DEFAULT"
     },
     webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
-@Tag("Simple")
+@Tag("WebApp")
 public class CasTomcatServletWebServerFactoryClusterTests {
     @Autowired
     protected CasConfigurationProperties casProperties;

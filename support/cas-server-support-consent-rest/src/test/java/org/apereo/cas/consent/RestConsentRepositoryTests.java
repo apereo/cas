@@ -23,6 +23,7 @@ import java.util.function.Function;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.ExpectedCount.manyTimes;
 import static org.springframework.test.web.client.ExpectedCount.once;
+import static org.springframework.test.web.client.ExpectedCount.twice;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
@@ -88,7 +89,7 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
         val body = HANDLER.apply(decision);
         val repo = getRepository("verifyConsentDecisionIsFound");
         val server = getNewServer((RestConsentRepository) repo);
-        server.expect(once(), requestTo(CONSENT))
+        server.expect(twice(), requestTo(CONSENT))
             .andExpect(method(HttpMethod.POST))
             .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
         server.expect(once(), requestTo(CONSENT))

@@ -62,7 +62,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Tag("SAML")
 @TestPropertySource(properties = {
-    "cas.jdbc.showSql=true",
+    "cas.jdbc.show-sql=true",
     "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/saml"
 })
 public abstract class BaseJpaSamlMetadataTests {

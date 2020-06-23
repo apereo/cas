@@ -3,6 +3,7 @@ package org.apereo.cas.web;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.springframework.http.HttpStatus;
 
@@ -74,6 +76,9 @@ public class CaptchaValidator {
 
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                if (StringUtils.isBlank(result)) {
+                    throw new IllegalArgumentException("Unable to parse empty entity response from " + verifyUrl);
+                }
                 LOGGER.debug("Recaptcha verification response received: [{}]", result);
                 val node = READER.readTree(result);
                 if (node.has("score") && node.get("score").doubleValue() <= this.score) {
@@ -86,7 +91,7 @@ public class CaptchaValidator {
                 }
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

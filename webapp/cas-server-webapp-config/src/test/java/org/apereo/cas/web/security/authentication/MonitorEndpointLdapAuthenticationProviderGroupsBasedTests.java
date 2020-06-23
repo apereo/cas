@@ -27,17 +27,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfPortOpen(port = 10389)
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = {
-        "cas.monitor.endpoints.ldap.ldapAuthz.groupFilter=businessCategory={user}",
-        "cas.monitor.endpoints.ldap.ldapAuthz.groupBaseDn=ou=people,dc=example,dc=org",
-        "cas.monitor.endpoints.ldap.ldapAuthz.baseDn=ou=people,dc=example,dc=org",
-        "cas.monitor.endpoints.ldap.ldapAuthz.searchFilter=cn={user}",
-        "cas.monitor.endpoints.ldap.ldapAuthz.groupAttribute=roomNumber",
-        "cas.monitor.endpoints.ldap.ldapAuthz.groupPrefix=ROLE_",
+        "cas.monitor.endpoints.ldap.ldap-authz.group-filter=businessCategory={user}",
+        "cas.monitor.endpoints.ldap.ldap-authz.group-base-dn=ou=people,dc=example,dc=org",
+        "cas.monitor.endpoints.ldap.ldap-authz.base-dn=ou=people,dc=example,dc=org",
+        "cas.monitor.endpoints.ldap.ldap-authz.search-filter=cn={user}",
+        "cas.monitor.endpoints.ldap.ldap-authz.group-attribute=roomNumber",
+        "cas.monitor.endpoints.ldap.ldap-authz.group-prefix=ROLE_",
         "cas.monitor.endpoints.ldap.ldap-url=ldap://localhost:10389",
-        "cas.monitor.endpoints.ldap.baseDn=ou=people,dc=example,dc=org",
-        "cas.monitor.endpoints.ldap.searchFilter=cn={user}",
-        "cas.monitor.endpoints.ldap.bindDn=cn=Directory Manager",
-        "cas.monitor.endpoints.ldap.bindCredential=password"
+        "cas.monitor.endpoints.ldap.base-dn=ou=people,dc=example,dc=org",
+        "cas.monitor.endpoints.ldap.search-filter=cn={user}",
+        "cas.monitor.endpoints.ldap.bind-dn=cn=Directory Manager",
+        "cas.monitor.endpoints.ldap.bind-credential=password"
     })
 @Tag("Ldap")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -54,7 +54,7 @@ public class MonitorEndpointLdapAuthenticationProviderGroupsBasedTests extends B
         assertNotNull(provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456")));
         assertAll(new Executable() {
             @Override
-            public void execute() throws Exception {
+            public void execute() {
                 provider.destroy();
             }
         });

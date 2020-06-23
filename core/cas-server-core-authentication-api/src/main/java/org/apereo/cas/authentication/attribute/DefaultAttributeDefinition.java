@@ -3,11 +3,14 @@ package org.apereo.cas.authentication.attribute;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.GroovyShellScript;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,15 +26,13 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
 
-import javax.persistence.Transient;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -52,14 +53,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DefaultAttributeDefinition implements AttributeDefinition {
     private static final long serialVersionUID = 6898745248727445565L;
-
-    private static final int MAP_SIZE = 20;
-
-    @JsonIgnore
-    @Transient
-    @org.springframework.data.annotation.Transient
-    @Builder.Default
-    private transient Map<String, ExecutableCompiledGroovyScript> attributeScriptCache = new LinkedHashMap<>(0);
 
     private String key;
 
@@ -133,7 +126,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
             }))
             .collect(Collectors.toCollection(ArrayList::new));
     }
-    
+
     private List<Object> formatValuesWithPattern(final List<Object> currentValues) {
         return currentValues
             .stream()
@@ -144,34 +137,81 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     @JsonIgnore
     private List<Object> getScriptedAttributeValue(final String attributeKey,
                                                    final List<Object> currentValues) {
-        if (this.attributeScriptCache == null) {
-            this.attributeScriptCache = new LinkedHashMap<>(MAP_SIZE);
-        }
         LOGGER.trace("Locating attribute value via script for definition [{}]", this);
-        if (!attributeScriptCache.containsKey(attributeKey)) {
-            val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(getScript());
-            val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(getScript());
-            if (matcherInline.find()) {
-                attributeScriptCache.put(attributeKey, new GroovyShellScript(matcherInline.group(1)));
-            } else if (matcherFile.find()) {
+        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(getScript());
+        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(getScript());
+
+        if (matcherInline.find()) {
+            return fetchAttributeValueAsInlineGroovyScript(attributeKey, currentValues, matcherInline.group(1));
+        }
+
+        if (matcherFile.find()) {
+            return fetchAttributeValueFromExternalGroovyScript(attributeKey, currentValues, matcherFile.group());
+        }
+
+        return new ArrayList<>(0);
+    }
+
+    private static List<Object> fetchAttributeValueFromExternalGroovyScript(final String attributeName,
+                                                                            final List<Object> currentValues,
+                                                                            final String file) {
+        val result = ApplicationContextProvider.getScriptResourceCacheManager();
+        if (result.isPresent()) {
+            val cacheMgr = result.get();
+            val cacheKey = ScriptResourceCacheManager.computeKey(Pair.of(attributeName, file));
+            LOGGER.trace("Constructed cache key [{}] for attribute [{}] mapped as groovy script", cacheKey, attributeName);
+            var script = (ExecutableCompiledGroovyScript) null;
+            if (cacheMgr.containsKey(cacheKey)) {
+                script = cacheMgr.get(cacheKey);
+                LOGGER.trace("Located cached groovy script [{}] for key [{}]", script, cacheKey);
+            } else {
                 try {
-                    val scriptPath = SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group());
+                    val scriptPath = SpringExpressionLanguageValueResolver.getInstance().resolve(file);
                     val resource = ResourceUtils.getRawResourceFrom(scriptPath);
-                    attributeScriptCache.put(attributeKey, new WatchableGroovyScriptResource(resource));
+                    LOGGER.trace("Groovy script [{}] for key [{}] is not cached", resource, cacheKey);
+                    script = new WatchableGroovyScriptResource(resource);
+                    cacheMgr.put(cacheKey, script);
+                    LOGGER.trace("Cached groovy script [{}] for key [{}]", script, cacheKey);
                 } catch (final Exception e) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.error(e.getMessage(), e);
-                    } else {
-                        LOGGER.error(e.getMessage());
-                    }
+                    LoggingUtils.error(LOGGER, e);
                 }
             }
+            if (script != null) {
+                return fetchAttributeValueFromScript(script, attributeName, currentValues);
+            }
         }
-        if (!attributeScriptCache.containsKey(attributeKey)) {
-            LOGGER.error("Unable to locate scripted attribute definition for attribute [{}]", attributeKey);
-            return new ArrayList<>(0);
+        LOGGER.warn("No groovy script cache manager is available to execute attribute mappings");
+        return new ArrayList<>(0);
+    }
+
+    private static List<Object> fetchAttributeValueAsInlineGroovyScript(final String attributeName,
+                                                                        final List<Object> currentValues,
+                                                                        final String inlineGroovy) {
+        val result = ApplicationContextProvider.getScriptResourceCacheManager();
+        if (result.isPresent()) {
+            val cacheMgr = result.get();
+            val cacheKey = ScriptResourceCacheManager.computeKey(Pair.of(attributeName, inlineGroovy));
+            LOGGER.trace("Constructed cache key [{}] for attribute [{}] mapped as inline groovy script", cacheKey, attributeName);
+
+            var executableScript = (ExecutableCompiledGroovyScript) null;
+            if (cacheMgr.containsKey(cacheKey)) {
+                LOGGER.trace("Inline groovy script for key [{}] is not cached", cacheKey);
+                executableScript = cacheMgr.get(cacheKey);
+            } else {
+                LOGGER.trace("Inline groovy script for key [{}] is not cached", cacheKey);
+                executableScript = new GroovyShellScript(inlineGroovy);
+                cacheMgr.put(cacheKey, executableScript);
+                LOGGER.trace("Cached inline groovy script for key [{}]", cacheKey);
+            }
+            return fetchAttributeValueFromScript(executableScript, attributeName, currentValues);
         }
-        val scriptToExec = attributeScriptCache.get(attributeKey);
+        LOGGER.warn("No groovy script cache manager is available to execute attribute mappings");
+        return new ArrayList<>(0);
+    }
+
+    private static List<Object> fetchAttributeValueFromScript(final ExecutableCompiledGroovyScript scriptToExec,
+                                                              final String attributeKey,
+                                                              final List<Object> currentValues) {
         val args = CollectionUtils.<String, Object>wrap("attributeName", attributeKey,
             "attributeValues", currentValues, "logger", LOGGER);
         scriptToExec.setBinding(args);

@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
@@ -34,7 +35,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
 
     private final TimeUnit expirationTimeUnit;
 
-    public BaseResourceU2FDeviceRepository(final LoadingCache<String, String> requestStorage,
+    protected BaseResourceU2FDeviceRepository(final LoadingCache<String, String> requestStorage,
                                            final long expirationTime, final TimeUnit expirationTimeUnit) {
         super(requestStorage);
         this.expirationTime = expirationTime;
@@ -62,7 +63,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
                         try {
                             return DeviceRegistration.fromJson(r.getRecord());
                         } catch (final Exception e) {
-                            LOGGER.error(e.getMessage(), e);
+                            LoggingUtils.error(LOGGER, e);
                         }
                         return null;
                     })
@@ -70,7 +71,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
                     .collect(Collectors.toList());
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }
@@ -96,7 +97,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
             writeDevicesBackToResource(list);
 
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -123,7 +124,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
                 writeDevicesBackToResource(list);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
     }
 

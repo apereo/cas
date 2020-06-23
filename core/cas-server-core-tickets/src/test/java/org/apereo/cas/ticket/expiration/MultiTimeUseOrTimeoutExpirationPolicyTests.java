@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.time.Clock;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,13 +51,13 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
 
     @Test
     public void verifyTicketIsNotExpired() {
-        this.expirationPolicy.setClock(Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusSeconds(TIMEOUT_SECONDS).minusNanos(1), ZoneId.of("UTC")));
+        this.expirationPolicy.setClock(Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusSeconds(TIMEOUT_SECONDS).minusNanos(1), ZoneOffset.UTC));
         assertFalse(this.ticket.isExpired());
     }
 
     @Test
-    public void verifyTicketIsExpiredByTime() throws InterruptedException {
-        this.expirationPolicy.setClock(Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusSeconds(TIMEOUT_SECONDS).plusNanos(1), ZoneId.of("UTC")));
+    public void verifyTicketIsExpiredByTime() {
+        this.expirationPolicy.setClock(Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusSeconds(TIMEOUT_SECONDS).plusNanos(1), ZoneOffset.UTC));
         assertTrue(this.ticket.isExpired());
     }
 

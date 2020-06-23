@@ -4,6 +4,7 @@ import org.apereo.cas.validation.ValidationResponseType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,7 +37,7 @@ import java.util.Map;
 @ToString
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
 public abstract class AbstractWebApplicationService implements WebApplicationService {
     private static final long serialVersionUID = 610105280927740076L;

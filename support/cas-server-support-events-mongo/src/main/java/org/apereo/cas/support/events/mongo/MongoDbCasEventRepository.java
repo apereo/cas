@@ -54,9 +54,13 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    public Collection<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal, final ZonedDateTime dateTime) {
+    public Collection<? extends CasEvent> getEventsOfTypeForPrincipal(final String type,
+                                                                      final String principal,
+                                                                      final ZonedDateTime dateTime) {
         val query = new Query();
-        query.addCriteria(Criteria.where(TYPE_PARAM).is(type).and(PRINCIPAL_ID_PARAM).is(principal).and(CREATION_TIME_PARAM).gte(dateTime.toString()));
+        query.addCriteria(Criteria.where(TYPE_PARAM).is(type)
+            .and(PRINCIPAL_ID_PARAM).is(principal)
+            .and(CREATION_TIME_PARAM).gte(dateTime.toString()));
         return this.mongoTemplate.find(query, CasEvent.class, this.collectionName);
     }
 

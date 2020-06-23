@@ -14,10 +14,10 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfPortOpen(port = 5432)
 @Tag("Postgres")
 @TestPropertySource(properties = {
-    "cas.jdbc.showSql=true",
+    "cas.jdbc.show-sql=true",
     "cas.authn.mfa.yubikey.jpa.user=postgres",
     "cas.authn.mfa.yubikey.jpa.password=password",
-    "cas.authn.mfa.yubikey.jpa.driverClass=org.postgresql.Driver",
+    "cas.authn.mfa.yubikey.jpa.driver-class=org.postgresql.Driver",
     "cas.authn.mfa.yubikey.jpa.url=jdbc:postgresql://localhost:5432/yubikey",
     "cas.authn.mfa.yubikey.jpa.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
 })

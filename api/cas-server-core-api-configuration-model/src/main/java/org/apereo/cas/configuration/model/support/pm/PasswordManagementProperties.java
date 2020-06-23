@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pm;
 
+import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
@@ -8,7 +9,6 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
@@ -40,6 +40,12 @@ public class PasswordManagementProperties implements Serializable {
      * Flag to indicate if password management facility is enabled.
      */
     private boolean enabled;
+
+    /**
+     * Indicates whether password management
+     * should activate captcha for password reset ops, etc.
+     */
+    private boolean captchaEnabled;
 
     /**
      * Flag to indicate whether successful password change should trigger login automatically.
@@ -87,7 +93,7 @@ public class PasswordManagementProperties implements Serializable {
      * Settings related to password history management.
      */
     private PasswordHistory history = new PasswordHistory();
-    
+
     /**
      * Handle password policy via Groovy script.
      */
@@ -223,7 +229,7 @@ public class PasswordManagementProperties implements Serializable {
         @NestedConfigurationProperty
         private SpringResourceProperties groovy = new SpringResourceProperties();
     }
-    
+
     @RequiresModule(name = "cas-server-support-pm-webflow")
     @Getter
     @Setter

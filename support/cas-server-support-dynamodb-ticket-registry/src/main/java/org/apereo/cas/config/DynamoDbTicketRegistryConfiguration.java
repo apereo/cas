@@ -37,7 +37,7 @@ public class DynamoDbTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         val db = casProperties.getTicket().getRegistry().getDynamoDb();
         val crypto = db.getCrypto();
-        return new DynamoDbTicketRegistry(CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "dynamoDb"),
+        return new DynamoDbTicketRegistry(CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "dynamo-db"),
             dynamoDbTicketRegistryFacilitator(ticketCatalog));
     }
 

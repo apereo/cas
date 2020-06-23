@@ -65,8 +65,8 @@ layout: null
         *   [Azure Active Directory](/$version/installation/Azure-ActiveDirectory-Authentication.html)
         *   [Okta](/$version/installation/Okta-Authentication.html)
         *   [Pac4J](/$version/installation/Pac4j-Authentication.html)
-        *   [Whitelist](/$version/installation/Whitelist-Authentication.html)
-        *   [Blacklist](/$version/installation/Blacklist-Authentication.html)
+        *   [Permissive](/$version/installation/Permissive-Authentication.html)
+        *   [Reject](/$version/installation/Reject-Authentication.html)
         *   [SOAP](/$version/installation/SOAP-Authentication.html)
         *   [Custom](/$version/installation/Configuring-Custom-Authentication.html)
     *   [Delegation](/$version/integration/Delegate-Authentication.html)
@@ -110,7 +110,7 @@ layout: null
     *   [Adaptive](/$version/mfa/Configuring-Adaptive-Authentication.html)
     
 *   [SSO & SLO](#ssoandslo) 
-    *   [SSO Session](/$version/installation/Configuring-SSO-Session-Cookie.html)
+    *   [SSO Session](/$version/installation/Configuring-SSO.html)
     *   [Remember Me](/$version/installation/Configuring-LongTerm-Authentication.html)
     *   [Logout & SLO](/$version/installation/Logout-Single-Signout.html)
 

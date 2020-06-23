@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Simple")
+@SuppressWarnings("JdkObsolete")
 public class FilterAndDelegateAuditTrailManagerTests {
 
     @Test

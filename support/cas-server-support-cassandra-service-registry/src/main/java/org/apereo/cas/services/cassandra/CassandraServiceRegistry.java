@@ -8,6 +8,7 @@ import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import com.datastax.oss.driver.api.core.DefaultConsistencyLevel;
@@ -64,7 +65,7 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
                 .insert(new CassandraRegisteredServiceHolder(rs.getId(), data), options);
             return SERIALIZER.from(result.getEntity().getData());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return rs;
     }
@@ -77,7 +78,7 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
                 .deleteById(registeredService.getId(), CassandraRegisteredServiceHolder.class);
             return true;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -88,7 +89,7 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
             return cassandraSessionFactory.getCassandraTemplate()
                 .count(CassandraRegisteredServiceHolder.class);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return 0;
     }
@@ -104,7 +105,7 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }
@@ -117,7 +118,7 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
                 return SERIALIZER.from(holder.getData());
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

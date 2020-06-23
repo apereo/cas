@@ -44,9 +44,9 @@ The parameters above can either be added as query string parameters or as a JSON
 
 ```json
 { 
-  "username": USERNAME,
-  "password": PASSWORD,
-  "service": SERVICE_URL
+  "username": "USERNAME",
+  "password": "PASSWORD",
+  "service": "SERVICE_URL"
 }
 ```
 

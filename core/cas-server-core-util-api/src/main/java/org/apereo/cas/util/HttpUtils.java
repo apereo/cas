@@ -166,11 +166,7 @@ public class HttpUtils {
             prepareHttpRequest(request, basicAuthUsername, basicAuthPassword);
             return HTTP_CLIENT.execute(request);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -186,11 +182,7 @@ public class HttpUtils {
             try {
                 closeableHttpResponse.close();
             } catch (final IOException e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.error(e.getMessage(), e);
-                } else {
-                    LOGGER.error(e.getMessage());
-                }
+                LoggingUtils.error(LOGGER, e);
             }
         }
     }
@@ -208,16 +200,7 @@ public class HttpUtils {
                                           final String basicAuthUsername,
                                           final String basicAuthPassword,
                                           final Map<String, Object> parameters) {
-        try {
-            return executeGet(url, basicAuthUsername, basicAuthPassword, parameters, new HashMap<>(0));
-        } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
-        }
-        return null;
+        return executeGet(url, basicAuthUsername, basicAuthPassword, parameters, new HashMap<>(0));
     }
 
     /**
@@ -235,16 +218,7 @@ public class HttpUtils {
                                           final String basicAuthPassword,
                                           final Map<String, Object> parameters,
                                           final Map<String, Object> headers) {
-        try {
-            return execute(url, HttpMethod.GET.name(), basicAuthUsername, basicAuthPassword, parameters, headers);
-        } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
-        }
-        return null;
+        return execute(url, HttpMethod.GET.name(), basicAuthUsername, basicAuthPassword, parameters, headers);
     }
 
     /**
@@ -258,16 +232,7 @@ public class HttpUtils {
     public static HttpResponse executeGet(final String url,
                                           final Map<String, Object> parameters,
                                           final Map<String, Object> headers) {
-        try {
-            return execute(url, HttpMethod.GET.name(), null, null, parameters, headers);
-        } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
-        }
-        return null;
+        return execute(url, HttpMethod.GET.name(), null, null, parameters, headers);
     }
 
     /**
@@ -282,11 +247,7 @@ public class HttpUtils {
         try {
             return executeGet(url, null, null, parameters);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -298,16 +259,7 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse executeGet(final String url) {
-        try {
-            return executeGet(url, null, null, new LinkedHashMap<>(MAP_SIZE));
-        } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
-        }
-        return null;
+        return executeGet(url, null, null, new LinkedHashMap<>(MAP_SIZE));
     }
 
     /**
@@ -321,16 +273,7 @@ public class HttpUtils {
     public static HttpResponse executeGet(final String url,
                                           final String basicAuthUsername,
                                           final String basicAuthPassword) {
-        try {
-            return executeGet(url, basicAuthUsername, basicAuthPassword, new HashMap<>(0));
-        } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
-        }
-        return null;
+        return executeGet(url, basicAuthUsername, basicAuthPassword, new HashMap<>(0));
     }
 
     /**
@@ -378,16 +321,7 @@ public class HttpUtils {
                                            final String basicAuthPassword,
                                            final String entity,
                                            final Map<String, Object> parameters) {
-        try {
-            return executePost(url, basicAuthUsername, basicAuthPassword, entity, parameters, new HashMap<>(0));
-        } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
-        }
-        return null;
+        return executePost(url, basicAuthUsername, basicAuthPassword, entity, parameters, new HashMap<>(0));
     }
 
     /**
@@ -407,16 +341,7 @@ public class HttpUtils {
                                            final String entity,
                                            final Map<String, Object> parameters,
                                            final Map<String, Object> headers) {
-        try {
-            return execute(url, HttpMethod.POST.name(), basicAuthUsername, basicAuthPassword, parameters, headers, entity);
-        } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
-        }
-        return null;
+        return execute(url, HttpMethod.POST.name(), basicAuthUsername, basicAuthPassword, parameters, headers, entity);
     }
 
     /**
@@ -430,16 +355,7 @@ public class HttpUtils {
     public static HttpResponse executePost(final String url,
                                            final Map<String, Object> parameters,
                                            final Map<String, Object> headers) {
-        try {
-            return execute(url, HttpMethod.POST.name(), null, null, parameters, headers, null);
-        } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
-        }
-        return null;
+        return execute(url, HttpMethod.POST.name(), null, null, parameters, headers, null);
     }
 
     /**
@@ -459,16 +375,7 @@ public class HttpUtils {
                                              final String entity,
                                              final Map<String, Object> parameters,
                                              final Map<String, Object> headers) {
-        try {
-            return execute(url, HttpMethod.DELETE.name(), basicAuthUsername, basicAuthPassword, parameters, headers, entity);
-        } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
-        }
-        return null;
+        return execute(url, HttpMethod.DELETE.name(), basicAuthUsername, basicAuthPassword, parameters, headers, entity);
     }
 
     /**
@@ -486,16 +393,7 @@ public class HttpUtils {
                                              final String basicAuthPassword,
                                              final Map<String, Object> parameters,
                                              final Map<String, Object> headers) {
-        try {
-            return executeDelete(url, basicAuthUsername, basicAuthPassword, null, parameters, headers);
-        } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
-        }
-        return null;
+        return executeDelete(url, basicAuthUsername, basicAuthPassword, null, parameters, headers);
     }
 
     /**
@@ -509,16 +407,7 @@ public class HttpUtils {
     public static HttpResponse executeDelete(final String url,
                                              final String basicAuthUsername,
                                              final String basicAuthPassword) {
-        try {
-            return executeDelete(url, basicAuthUsername, basicAuthPassword, null, null, null);
-        } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
-        }
-        return null;
+        return executeDelete(url, basicAuthUsername, basicAuthPassword, null, null, null);
     }
 
     /**

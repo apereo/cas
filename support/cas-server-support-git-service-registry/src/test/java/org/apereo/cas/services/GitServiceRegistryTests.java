@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.GitServiceRegistryConfiguration;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -38,8 +39,8 @@ import static org.junit.jupiter.api.Assertions.*;
     MailSenderAutoConfiguration.class
 },
     properties = {
-        "cas.service-registry.git.signCommits=false",
-        "cas.service-registry.git.repositoryUrl=file:/tmp/cas-sample-data.git"
+        "cas.service-registry.git.sign-commits=false",
+        "cas.service-registry.git.repository-url=file:/tmp/cas-sample-data.git"
     })
 @Slf4j
 @Tag("FileSystem")
@@ -61,7 +62,7 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
             FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
             git.commit().setSign(false).setMessage("Initial commit").call();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             fail(e.getMessage(), e);
         }
     }

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Response;
@@ -40,6 +41,7 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
+import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -680,6 +682,17 @@ public class WebUtils {
     }
 
     /**
+     * Gets recaptcha site key.
+     *
+     * @param context the context
+     * @return the recaptcha site key
+     */
+    public static String getRecaptchaSiteKey(final RequestContext context) {
+        val flowScope = context.getFlowScope();
+        return flowScope.get("recaptchaSiteKey", String.class);
+    }
+
+    /**
      * Put static authentication into flow scope.
      *
      * @param context the context
@@ -1086,6 +1099,16 @@ public class WebUtils {
     }
 
     /**
+     * Gets available authentication handle names.
+     *
+     * @param context the context
+     * @return the available authentication handle names
+     */
+    public static Collection<String> getAvailableAuthenticationHandleNames(final RequestContext context) {
+        return context.getFlowScope().get("availableAuthenticationHandlerNames", Collection.class);
+    }
+
+    /**
      * Put acceptable usage policy status into flow scope.
      *
      * @param context the context
@@ -1151,6 +1174,16 @@ public class WebUtils {
     }
 
     /**
+     * Is existing single sign on session available boolean.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static Boolean isExistingSingleSignOnSessionAvailable(final MockRequestContext context) {
+        return context.getFlowScope().get("existingSingleSignOnSessionAvailable", Boolean.class);
+    }
+
+    /**
      * Put existing single sign on session principal.
      *
      * @param context the context
@@ -1196,6 +1229,7 @@ public class WebUtils {
      * @param request the request
      * @return the http request full url
      */
+    @SuppressWarnings("JdkObsolete")
     public static String getHttpRequestFullUrl(final HttpServletRequest request) {
         val requestURL = request.getRequestURL();
         val queryString = request.getQueryString();
@@ -1305,5 +1339,58 @@ public class WebUtils {
      */
     public static List<String> getSelectableMultifactorAuthenticationProviders(final RequestContext requestContext) {
         return requestContext.getViewScope().get("mfaSelectableProviders", List.class);
+    }
+
+    /**
+     * Put one time token account.
+     *
+     * @param requestContext the request context
+     * @param account        the account
+     */
+    public static void putOneTimeTokenAccount(final RequestContext requestContext, final OneTimeTokenAccount account) {
+        requestContext.getFlowScope().put("registeredDevice", account);
+    }
+
+    /**
+     * Put one time token accounts.
+     *
+     * @param requestContext the request context
+     * @param accounts       the accounts
+     */
+    public static void putOneTimeTokenAccounts(final RequestContext requestContext, final Collection accounts) {
+        requestContext.getFlowScope().put("registeredDevices", accounts);
+    }
+
+    /**
+     * Gets one time token account.
+     *
+     * @param <T>            the type parameter
+     * @param requestContext the request context
+     * @param clazz          the clazz
+     * @return the one time token account
+     */
+    public static <T extends OneTimeTokenAccount> T getOneTimeTokenAccount(final RequestContext requestContext, final Class<T> clazz) {
+        return requestContext.getFlowScope().get("registeredDevice", clazz);
+    }
+
+    /**
+     * Put google authenticator multiple device registration enabled.
+     *
+     * @param requestContext the request context
+     * @param enabled        the enabled
+     */
+    public static void putGoogleAuthenticatorMultipleDeviceRegistrationEnabled(final RequestContext requestContext,
+                                                                               final boolean enabled) {
+        requestContext.getFlowScope().put("multipleDeviceRegistrationEnabled", enabled);
+    }
+
+    /**
+     * Is google authenticator multiple device registration enabled?
+     *
+     * @param requestContext the request context
+     * @return true/false
+     */
+    public static Boolean isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("multipleDeviceRegistrationEnabled", Boolean.class);
     }
 }

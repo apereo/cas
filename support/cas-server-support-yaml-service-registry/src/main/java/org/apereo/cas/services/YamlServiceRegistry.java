@@ -19,7 +19,7 @@ import java.util.Collection;
  * expected to be found inside a directory location and this registry will recursively look through
  * the directory structure to find relevant YAML files. Files are expected to have the
  * {@link #getExtensions()} extension. An example of the YAML file is included here:
- * <pre>
+ * &lt;pre&gt;
  * --- !&lt;org.apereo.cas.services.RegexRegisteredService&gt;
  * serviceId: "testId"
  * name: "YAML"
@@ -29,7 +29,7 @@ import java.util.Collection;
  * accessStrategy: !&lt;org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy&gt;
  * enabled: true
  * ssoEnabled: true
- * </pre>
+ * &lt;/pre&gt;
  *
  * @author Dmitriy Kopylenko
  * @author Misagh Moayyed

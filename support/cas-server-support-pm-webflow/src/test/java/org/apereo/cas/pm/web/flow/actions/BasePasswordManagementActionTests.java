@@ -79,7 +79,7 @@ import org.springframework.webflow.execution.Action;
     "cas.authn.pm.enabled=true",
     "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
     "cas.authn.pm.reset.mail.from=cas@example.org",
-
+    "cas.authn.pm.forgot-username.mail.from=cas@example.org",
     "cas.authn.pm.reset.security-questions-enabled=true"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)

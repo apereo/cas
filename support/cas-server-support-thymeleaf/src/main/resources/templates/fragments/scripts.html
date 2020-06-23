@@ -1,3 +1,5 @@
+<script type="text/javascript" th:src="@{#{webjars.es5shim.js}}"></script>
+<script type="text/javascript" th:src="@{#{webjars.cssVarsPonyfill.js}}"></script>
 <script src="//www.google.com/recaptcha/api.js" async defer
     th:if="${recaptchaSiteKey != null and recaptchaVersion=='v2'}"></script>
 <script th:src="${'//www.google.com/recaptcha/api.js?render=' + recaptchaSiteKey}"
@@ -10,6 +12,7 @@
 
 <script th:inline="javascript">
     resourceLoadedSuccessfully();
+    cssVars({});
 </script>
 
 <script th:inline="javascript">
@@ -38,22 +41,3 @@
 
     /*]]>*/
 </script>
-
-<span th:if="${recaptchaVersion=='v2'}" th:remove="tag">
-    <script type="text/javascript" th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}" th:inline="javascript">
-        function onRecaptchaV2Submit(token) {
-            document.getElementById('fm1').submit();
-        }
-    </script>
-</span>
-
-<span th:if="${recaptchaVersion=='v3'}" th:remove="tag">
-    <script type="text/javascript" th:if="${recaptchaSiteKey != null}" th:inline="javascript">
-        grecaptcha.ready(function () {
-            grecaptcha.execute(/*[[${recaptchaSiteKey}]]*/, { action: 'login' })
-                .then(function (token) {
-                    document.getElementById('g-recaptcha-token').value(token)
-                });
-        });
-    </script>
-</span>

@@ -17,6 +17,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaMicrosoftSql
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaPostgresTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceTests;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataHealthIndicatorTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacadeTests;
 import org.apereo.cas.support.saml.services.logout.SamlIdPProfileSingleLogoutMessageCreatorTests;
 import org.apereo.cas.support.saml.services.logout.SamlIdPSingleLogoutServiceLogoutUrlBuilderTests;
@@ -27,7 +28,9 @@ import org.apereo.cas.support.saml.web.idp.profile.SamlIdPInitiatedProfileHandle
 import org.apereo.cas.support.saml.web.idp.profile.artifact.CasSamlArtifactMapTests;
 import org.apereo.cas.support.saml.web.idp.profile.artifact.SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSamlRegisteredServiceAttributeBuilderTests;
+import org.apereo.cas.support.saml.web.idp.profile.builders.authn.DefaultAuthnContextClassRefBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidatorTests;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponseArtifactEncoderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.ecp.ECPSamlIdPProfileHandlerControllerTests;
@@ -44,6 +47,7 @@ import org.apereo.cas.support.saml.web.idp.profile.sso.request.DefaultSSOSamlHtt
 import org.apereo.cas.support.saml.web.velocity.SamlTemplatesVelocityEngineTests;
 import org.apereo.cas.ticket.query.DefaultSamlAttributeQueryTicketFactoryTests;
 import org.apereo.cas.web.flow.SamlIdPConsentableAttributeBuilderTests;
+import org.apereo.cas.web.flow.SamlIdPMetadataUIActionTests;
 import org.apereo.cas.web.flow.SamlIdPMetadataUIWebflowConfigurerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -80,6 +84,7 @@ import org.junit.runner.RunWith;
     SamlRegisteredServiceAttributeReleasePolicyTests.class,
     SamlIdPConsentableAttributeBuilderTests.class,
     SamlIdPServiceFactoryTests.class,
+    DefaultAuthnContextClassRefBuilderTests.class,
     SamlIdPMetadataResolverTests.class,
     SSOSamlIdPProfileCallbackHandlerControllerTests.class,
     SLOSamlIdPPostProfileHandlerControllerTests.class,
@@ -95,6 +100,9 @@ import org.junit.runner.RunWith;
     SSOSamlIdPPostProfileHandlerEndpointTests.class,
     MetadataRequestedAttributesAttributeReleasePolicyTests.class,
     SamlObjectSignatureValidatorTests.class,
+    SamlResponseArtifactEncoderTests.class,
+    SamlIdPMetadataUIActionTests.class,
+    SamlRegisteredServiceMetadataHealthIndicatorTests.class,
     SamlTemplatesVelocityEngineTests.class,
     ECPSamlIdPProfileHandlerControllerTests.class,
     SamlIdPSaml2AttributeQueryProfileHandlerControllerTests.class,

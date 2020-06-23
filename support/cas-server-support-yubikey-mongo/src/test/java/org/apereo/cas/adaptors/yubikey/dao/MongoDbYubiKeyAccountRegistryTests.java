@@ -37,7 +37,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -80,7 +79,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCookieConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreWebConfiguration.class,
-    MailSenderAutoConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
@@ -126,8 +124,13 @@ public class MongoDbYubiKeyAccountRegistryTests {
         assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", OTP));
         assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", OTP + OTP));
         assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuser"));
+        assertEquals(1, yubiKeyAccountRegistry.getAccounts().size());
         val account = yubiKeyAccountRegistry.getAccount("casuser");
         account.ifPresent(acct -> assertEquals(2, acct.getDeviceIdentifiers().size()));
+
+        yubiKeyAccountRegistry.delete("casuser");
+        assertTrue(yubiKeyAccountRegistry.getAccount("casuser").isEmpty());
+        yubiKeyAccountRegistry.deleteAll();
     }
 
     @Test

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Simple")
+@Tag("Utility")
 public class JsonUtilsTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
@@ -27,6 +27,13 @@ public class JsonUtilsTests {
         val response = new MockHttpServletResponse();
         JsonUtils.render(response);
         assertEquals(HttpStatus.OK.value(), response.getStatus());
+    }
+
+    @Test
+    public void verifyRenderException() {
+        val response = new MockHttpServletResponse();
+        JsonUtils.renderException(new RuntimeException("error"), response);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
     }
 
     @Test

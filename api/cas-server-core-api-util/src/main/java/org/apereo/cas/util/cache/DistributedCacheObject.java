@@ -1,11 +1,13 @@
 package org.apereo.cas.util.cache;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.val;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Clock;
+import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -17,20 +19,20 @@ import java.util.Map;
  */
 @ToString
 @Getter
+@RequiredArgsConstructor
 public class DistributedCacheObject<V extends Serializable> implements Serializable {
     private static final int MAP_SIZE = 8;
+
     private static final long serialVersionUID = -6776499291439952013L;
+
     private final long timestamp;
+
     private final V value;
+
     private final Map<String, Object> properties = new LinkedHashMap<>(MAP_SIZE);
 
     public DistributedCacheObject(final V value) {
-        this(new Date().getTime(), value);
-    }
-
-    public DistributedCacheObject(final long timestamp, final V value) {
-        this.timestamp = timestamp;
-        this.value = value;
+        this(Instant.now(Clock.systemUTC()).toEpochMilli(), value);
     }
 
     /**
@@ -48,7 +50,8 @@ public class DistributedCacheObject<V extends Serializable> implements Serializa
                 return null;
             }
             if (!clazz.isAssignableFrom(item.getClass())) {
-                throw new ClassCastException("Object [" + item + " is of type " + item.getClass() + " when we were expecting " + clazz);
+                throw new ClassCastException("Object [" + item + " is of type "
+                    + item.getClass() + " when we were expecting " + clazz);
             }
             return (T) item;
         }

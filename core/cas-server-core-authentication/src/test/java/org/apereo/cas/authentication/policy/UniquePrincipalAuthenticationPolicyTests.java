@@ -14,6 +14,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.validation.Assertion;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -21,15 +22,16 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.LinkedHashSet;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link UniquePrincipalAuthenticationPolicyTests}.
@@ -38,7 +40,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @SpringBootTest(classes = {
-    MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
@@ -66,7 +67,16 @@ public class UniquePrincipalAuthenticationPolicyTests {
         this.ticketRegistry.deleteAll();
         val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
-            new LinkedHashSet<>(), applicationContext));
+            new LinkedHashSet<>(), applicationContext, Optional.empty()));
+    }
+
+    @Test
+    @SneakyThrows
+    public void verifyPolicyWithAssertion() {
+        this.ticketRegistry.deleteAll();
+        val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
+        assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
+            new LinkedHashSet<>(), applicationContext, Optional.of(mock(Assertion.class))));
     }
 
     @Test
@@ -80,6 +90,6 @@ public class UniquePrincipalAuthenticationPolicyTests {
         val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertThrows(UniquePrincipalRequiredException.class,
             () -> p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
-                new LinkedHashSet<>(), applicationContext));
+                new LinkedHashSet<>(), applicationContext, Optional.empty()));
     }
 }

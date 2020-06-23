@@ -1,10 +1,12 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -82,10 +84,12 @@ public class BaseWebflowConfigurerTests {
         CasCookieConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
         CasCoreConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasCoreMultifactorAuthenticationAuditConfiguration.class,
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasCoreUtilConfiguration.class
     })
     public static class SharedTestConfiguration {

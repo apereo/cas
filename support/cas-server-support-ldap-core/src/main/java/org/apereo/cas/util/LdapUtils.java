@@ -15,7 +15,6 @@ import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AttributeModification;
-import org.ldaptive.AttributeModification.Type;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.CompareConnectionValidator;
 import org.ldaptive.CompareRequest;
@@ -300,8 +299,8 @@ public class LdapUtils {
                         new AttributeModification(AttributeModification.Type.REPLACE, new UnicodePwdAttribute(newPassword))))
                     :
                     operation.execute(new ModifyRequest(currentDn,
-                        new AttributeModification(Type.DELETE, new UnicodePwdAttribute(oldPassword)),
-                        new AttributeModification(Type.ADD, new UnicodePwdAttribute(newPassword))));
+                        new AttributeModification(AttributeModification.Type.DELETE, new UnicodePwdAttribute(oldPassword)),
+                        new AttributeModification(AttributeModification.Type.ADD, new UnicodePwdAttribute(newPassword))));
                 LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
                 return response.getResultCode() == ResultCode.SUCCESS;
             }
@@ -314,7 +313,7 @@ public class LdapUtils {
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -345,7 +344,7 @@ public class LdapUtils {
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -379,7 +378,7 @@ public class LdapUtils {
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -399,7 +398,7 @@ public class LdapUtils {
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -930,8 +929,7 @@ public class LdapUtils {
     private static DefaultConnectionFactory newLdaptiveDefaultConnectionFactory(final AbstractLdapProperties l) {
         LOGGER.debug("Creating LDAP connection factory for [{}]", l.getLdapUrl());
         val cc = newLdaptiveConnectionConfig(l);
-        val bindCf = new DefaultConnectionFactory(cc);
-        return bindCf;
+        return new DefaultConnectionFactory(cc);
     }
 
     /**

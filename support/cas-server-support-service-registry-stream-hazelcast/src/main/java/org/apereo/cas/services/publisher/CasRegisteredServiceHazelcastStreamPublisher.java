@@ -9,7 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationEvent;
 
-import java.util.Date;
+import java.time.Clock;
+import java.time.Instant;
 
 /**
  * This is {@link CasRegisteredServiceHazelcastStreamPublisher}.
@@ -43,7 +44,7 @@ public class CasRegisteredServiceHazelcastStreamPublisher extends BaseCasRegiste
     }
 
     private static DistributedCacheObject<RegisteredService> getCacheObject(final RegisteredService service, final ApplicationEvent event) {
-        val time = new Date().getTime();
+        val time = Instant.now(Clock.systemUTC()).toEpochMilli();
         val item = new DistributedCacheObject<RegisteredService>(time, service);
         item.getProperties().put("event", event);
         return item;

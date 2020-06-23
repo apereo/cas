@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.extern.slf4j.Slf4j;
@@ -94,7 +95,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
                     .findFirst()
                     .orElse(StringUtils.EMPTY);
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage());
+                LoggingUtils.error(LOGGER, e);
             }
         }
         return null;

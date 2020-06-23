@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This is {@link SamlIdPMetadataGeneratorConfigurationContext}.
@@ -23,8 +23,12 @@ import org.springframework.core.io.ResourceLoader;
 @Builder
 public class SamlIdPMetadataGeneratorConfigurationContext {
     private final SamlIdPMetadataLocator samlIdPMetadataLocator;
+
     private final SamlIdPCertificateAndKeyWriter samlIdPCertificateAndKeyWriter;
+
     private final CipherExecutor<String, String> metadataCipherExecutor;
-    private final ResourceLoader resourceLoader;
+
+    private final ConfigurableApplicationContext applicationContext;
+
     private final CasConfigurationProperties casProperties;
 }
