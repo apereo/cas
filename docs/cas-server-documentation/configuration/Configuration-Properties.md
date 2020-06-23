@@ -527,7 +527,7 @@ backend cas-pool
 
 #### Extended Access Log Valve
 
-Enable the [extended access log](http://tomcat.apache.org/tomcat-8.0-doc/config/valve.html#Extended_Access_Log_Valve)
+Enable the [extended access log](https://tomcat.apache.org/tomcat-9.0-doc/config/valve.html#Extended_Access_Log_Valve)
 for the embedded Tomcat container.
 
 ```properties
@@ -540,7 +540,7 @@ for the embedded Tomcat container.
 
 #### Rewrite Valve
 
-Enable the [rewrite valve](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.html) for the embedded Tomcat container.
+Enable the [rewrite valve](https://tomcat.apache.org/tomcat-9.0-doc/rewrite.html) for the embedded Tomcat container.
 
 ```properties
 # cas.server.tomcat.rewrite-valve.location=classpath://container/tomcat/rewrite.config
