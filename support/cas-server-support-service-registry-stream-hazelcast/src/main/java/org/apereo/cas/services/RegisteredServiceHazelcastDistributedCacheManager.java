@@ -5,6 +5,7 @@ import org.apereo.cas.util.cache.DistributedCacheObject;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -19,30 +20,13 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class RegisteredServiceHazelcastDistributedCacheManager extends
     BaseDistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> {
 
     private final HazelcastInstance instance;
 
     private final IMap<String, DistributedCacheObject<RegisteredService>> mapInstance;
-
-    public RegisteredServiceHazelcastDistributedCacheManager(final HazelcastInstance instance) {
-        this.instance = instance;
-
-        val mapName = instance.getConfig().getMapConfigs().keySet().iterator().next();
-        LOGGER.debug("Retrieving Hazelcast map [{}] for service replication", mapName);
-        this.mapInstance = instance.getMap(mapName);
-    }
-
-    /**
-     * Gets key.
-     *
-     * @param service the service
-     * @return the key
-     */
-    public static String buildKey(final RegisteredService service) {
-        return service.getId() + ";" + service.getName() + ';' + service.getServiceId();
-    }
 
     @Override
     public void close() {

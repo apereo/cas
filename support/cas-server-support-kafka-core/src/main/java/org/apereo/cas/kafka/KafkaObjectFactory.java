@@ -2,6 +2,7 @@ package org.apereo.cas.kafka;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -49,6 +50,15 @@ public class KafkaObjectFactory<K, V> {
         val configs = new HashMap<String, Object>();
         configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         return new KafkaAdmin(configs);
+    }
+
+    /**
+     * Gets kafka admin client.
+     *
+     * @return the kafka admin client
+     */
+    public AdminClient getKafkaAdminClient() {
+        return AdminClient.create(getKafkaAdmin().getConfigurationProperties());
     }
 
     /**

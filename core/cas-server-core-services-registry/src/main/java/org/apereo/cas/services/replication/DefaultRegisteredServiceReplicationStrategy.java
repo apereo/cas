@@ -38,7 +38,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
     }
     
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         if (this.distributedCacheManager != null) {
             this.distributedCacheManager.close();
         }

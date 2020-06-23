@@ -43,7 +43,6 @@ public abstract class BaseCasRegisteredServiceStreamPublisher implements CasRegi
      * @param event   the event
      */
     protected void publishInternal(final RegisteredService service, final ApplicationEvent event) {
-
         if (event instanceof CasRegisteredServiceDeletedEvent) {
             handleCasRegisteredServiceDeletedEvent(service, event);
             return;

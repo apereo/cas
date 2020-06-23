@@ -1,6 +1,6 @@
 ext.isCiServer = System.getenv().containsKey("CI")
-ext.buildCacheUser = System.getenv("GRADLE_BUILDCACHE_USER") 
-ext.buildCachePsw = System.getenv("GRADLE_BUILDCACHE_PSW")  
+ext.buildCacheUser = System.getenv("GRADLE_BUILDCACHE_USER")
+ext.buildCachePsw = System.getenv("GRADLE_BUILDCACHE_PSW")
 
 buildCache {
     local {
@@ -9,7 +9,7 @@ buildCache {
     remote(HttpBuildCache) {
         url = 'https://cas-gradle-buildcache.herokuapp.com/cache/'
         push = isCiServer
-        
+
         credentials {
             username = buildCacheUser
             password = buildCachePsw
@@ -309,7 +309,6 @@ include "support:cas-server-support-script-engines"
 include "support:cas-server-support-sentry"
 include "support:cas-server-support-service-registry-stream"
 include "support:cas-server-support-service-registry-stream-hazelcast"
-include "support:cas-server-support-service-registry-stream-kafka"
 include "support:cas-server-support-session-hazelcast"
 include "support:cas-server-support-session-jdbc"
 include "support:cas-server-support-session-mongo"

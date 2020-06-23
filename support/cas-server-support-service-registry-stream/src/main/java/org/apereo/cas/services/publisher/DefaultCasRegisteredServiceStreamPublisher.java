@@ -13,18 +13,18 @@ import java.time.Clock;
 import java.time.Instant;
 
 /**
- * This is {@link CasRegisteredServiceHazelcastStreamPublisher}.
+ * This is {@link DefaultCasRegisteredServiceStreamPublisher}.
  *
  * @author Misagh Moayyed
- * @since 5.2.0
+ * @since 6.3.0
  */
 @Slf4j
-public class CasRegisteredServiceHazelcastStreamPublisher extends BaseCasRegisteredServiceStreamPublisher {
+public class DefaultCasRegisteredServiceStreamPublisher extends BaseCasRegisteredServiceStreamPublisher {
 
     private final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> distributedCacheManager;
 
-    public CasRegisteredServiceHazelcastStreamPublisher(final DistributedCacheManager instance,
-                                                        final JmsQueueIdentifier publisherId) {
+    public DefaultCasRegisteredServiceStreamPublisher(final DistributedCacheManager instance,
+                                                      final JmsQueueIdentifier publisherId) {
         super(publisherId);
         this.distributedCacheManager = instance;
     }
@@ -32,18 +32,19 @@ public class CasRegisteredServiceHazelcastStreamPublisher extends BaseCasRegiste
     @Override
     protected void handleCasRegisteredServiceDeletedEvent(final RegisteredService service, final ApplicationEvent event) {
         val item = getCacheObject(service, event);
-        LOGGER.debug("Removing service [{}] from cache [{}] @ [{}]", service, this.distributedCacheManager.getName(), item.getTimestamp());
+        LOGGER.debug("Removing service [{}] from cache [{}] @ [{}]", service, distributedCacheManager.getName(), item.getTimestamp());
         this.distributedCacheManager.update(service, item);
     }
 
     @Override
     protected void handleCasRegisteredServiceUpdateEvents(final RegisteredService service, final ApplicationEvent event) {
         val item = getCacheObject(service, event);
-        LOGGER.debug("Storing item [{}] to cache [{}] @ [{}]", item, this.distributedCacheManager.getName(), item.getTimestamp());
+        LOGGER.debug("Storing item [{}] to cache [{}] @ [{}]", item, distributedCacheManager.getName(), item.getTimestamp());
         this.distributedCacheManager.set(service, item);
     }
 
-    private static DistributedCacheObject<RegisteredService> getCacheObject(final RegisteredService service, final ApplicationEvent event) {
+    private static DistributedCacheObject<RegisteredService> getCacheObject(final RegisteredService service,
+                                                                            final ApplicationEvent event) {
         val time = Instant.now(Clock.systemUTC()).toEpochMilli();
         val item = new DistributedCacheObject<RegisteredService>(time, service);
         item.getProperties().put("event", event);

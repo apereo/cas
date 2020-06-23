@@ -19,8 +19,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DistributedCacheManagerTests {
     @Test
     public void verifyDefaults() {
-        val mgr = new DistributedCacheManager<>() {
-        };
+        val mgr = DistributedCacheManager.noOp();
+
         assertNull(mgr.get("key"));
         assertNotNull(mgr.getAll());
         assertNotNull(mgr.findAll(distributedCacheObject -> true));

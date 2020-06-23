@@ -3,7 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
-import org.apereo.cas.services.publisher.CasRegisteredServiceHazelcastStreamPublisher;
+import org.apereo.cas.services.publisher.DefaultCasRegisteredServiceStreamPublisher;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Hazelcast")
 public class RegisteredServiceHazelcastDistributedCacheManagerTests {
     private HazelcastInstance hz;
+
     private RegisteredServiceHazelcastDistributedCacheManager mgr;
 
     @BeforeEach
@@ -37,7 +38,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
         val config = HazelcastConfigurationFactory.build(properties,
             HazelcastConfigurationFactory.buildMapConfig(properties, "cache", 10));
         this.hz = Hazelcast.newHazelcastInstance(config);
-        mgr = new RegisteredServiceHazelcastDistributedCacheManager(this.hz);
+        mgr = new RegisteredServiceHazelcastDistributedCacheManager(this.hz, hz.getMap("cache"));
     }
 
     @AfterEach
@@ -47,7 +48,6 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
 
     @Test
     public void verifyAction() {
-
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         var obj = mgr.get(registeredService);
         assertNull(obj);
@@ -67,7 +67,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
     @Test
     public void verifyPublisher() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
-        val publisher = new CasRegisteredServiceHazelcastStreamPublisher(mgr, new JmsQueueIdentifier("123456"));
+        val publisher = new DefaultCasRegisteredServiceStreamPublisher(mgr, new JmsQueueIdentifier("123456"));
         publisher.publish(registeredService, new CasRegisteredServiceDeletedEvent(this, registeredService));
         publisher.publish(registeredService, new CasRegisteredServiceSavedEvent(this, registeredService));
         publisher.publish(registeredService, new CasRegisteredServiceLoadedEvent(this, registeredService));
