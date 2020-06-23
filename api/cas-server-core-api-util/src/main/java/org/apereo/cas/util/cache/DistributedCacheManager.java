@@ -23,6 +23,16 @@ import java.util.function.Predicate;
 public interface DistributedCacheManager<K extends Serializable, V extends DistributedCacheObject> extends Closeable {
 
     /**
+     * No op distributed cache manager.
+     *
+     * @return the distributed cache manager
+     */
+    static DistributedCacheManager noOp() {
+        return new DistributedCacheManager() {
+        };
+    }
+
+    /**
      * Get item.
      *
      * @param key the key
