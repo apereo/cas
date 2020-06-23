@@ -8,7 +8,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
+import lombok.val;
 
 /**
  * This is {@link CouchDbGoogleAuthenticatorAccount}.
@@ -20,6 +22,7 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
+@Accessors(chain = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class CouchDbGoogleAuthenticatorAccount extends GoogleAuthenticatorAccount {
 
@@ -31,14 +34,8 @@ public class CouchDbGoogleAuthenticatorAccount extends GoogleAuthenticatorAccoun
     @JsonProperty("_rev")
     private String rev;
 
-    /**
-     * Update account info from account object.
-     *
-     * @param acct to be updated
-     * @return this
-     */
     public static CouchDbGoogleAuthenticatorAccount from(final OneTimeTokenAccount acct) {
-        return CouchDbGoogleAuthenticatorAccount.builder()
+        val account = CouchDbGoogleAuthenticatorAccount.builder()
             .id(acct.getId())
             .name(acct.getName())
             .username(acct.getUsername())
@@ -47,5 +44,11 @@ public class CouchDbGoogleAuthenticatorAccount extends GoogleAuthenticatorAccoun
             .scratchCodes(acct.getScratchCodes())
             .registrationDate(acct.getRegistrationDate())
             .build();
+
+        if (acct instanceof CouchDbGoogleAuthenticatorAccount) {
+            val gAcct = (CouchDbGoogleAuthenticatorAccount) acct;
+            return account.setCid(gAcct.getCid()).setRev(gAcct.getRev());
+        }
+        return account;
     }
 }

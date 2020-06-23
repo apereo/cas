@@ -42,8 +42,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * This is {@link CouchDbGoogleAuthenticatorTokenCredentialRepositoryTests}.
@@ -91,8 +89,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         "cas.authn.mfa.gauth.couch-db.db-name=gauth_credential",
         "cas.authn.mfa.gauth.couch-db.password=password"
     })
-@EnableAspectJAutoProxy(proxyTargetClass = true)
-@EnableScheduling
 @Getter
 @EnabledIfPortOpen(port = 5984)
 public class CouchDbGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
@@ -114,6 +110,7 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepositoryTests extends Ba
     public void initialize() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
+        registry.deleteAll();
         super.initialize();
     }
 
@@ -121,6 +118,7 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepositoryTests extends Ba
     @Override
     public void afterEach() {
         super.afterEach();
+        registry.deleteAll();
         couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
     }
 }
