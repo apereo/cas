@@ -40,6 +40,7 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
     private final CasConfigurationProperties casProperties;
     private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
     private final ApplicationContext applicationContext;
+    private final RestTemplate restTemplate;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -82,7 +83,6 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
      * @return return the rest response, typically the mfa id.
      */
     protected String callRestEndpointForMultifactor(final Principal principal, final Service resolvedService) {
-        val restTemplate = new RestTemplate();
         val restEndpoint = casProperties.getAuthn().getMfa().getRestEndpoint();
         val entity = new RestEndpointEntity(principal.getId(), resolvedService.getId());
         val responseEntity = restTemplate.postForEntity(restEndpoint, entity, String.class);

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
 
@@ -37,7 +38,7 @@ public class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMulti
             props.getAuthn().getMfa().setRestEndpoint("http://localhost:9313");
             val trigger = new RestEndpointMultifactorAuthenticationTrigger(props,
                 new DefaultMultifactorAuthenticationProviderResolver((providers, service, principal) -> providers.iterator().next()),
-                applicationContext);
+                applicationContext, new RestTemplate());
             val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
             assertTrue(result.isPresent());
         }
