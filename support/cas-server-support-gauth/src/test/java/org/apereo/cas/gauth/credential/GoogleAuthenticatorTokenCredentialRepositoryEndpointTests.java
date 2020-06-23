@@ -52,7 +52,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends A
         assertNotNull(endpoint.get(acct.getUsername()));
         assertFalse(endpoint.load().isEmpty());
         endpoint.delete(acct.getUsername());
-        assertNull(endpoint.get(acct.getUsername()));
+        assertTrue(endpoint.get(acct.getUsername()).isEmpty());
         endpoint.deleteAll();
         assertTrue(endpoint.load().isEmpty());
     }

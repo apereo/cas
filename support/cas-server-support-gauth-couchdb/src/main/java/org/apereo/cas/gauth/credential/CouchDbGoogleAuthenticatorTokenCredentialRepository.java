@@ -69,6 +69,7 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
         }
         records.stream()
             .filter(rec -> rec.getId() == account.getId())
+            .map(CouchDbGoogleAuthenticatorAccount.class::cast)
             .findFirst()
             .ifPresent(act -> couchDbRepository.update(CouchDbGoogleAuthenticatorAccount.from(account)));
         return account;

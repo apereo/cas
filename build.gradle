@@ -504,26 +504,7 @@ subprojects {
     }
 
     if (!Boolean.getBoolean("skipSpotbugs") && projectShouldBePublished(project)) {
-        apply plugin: "com.github.spotbugs"
         apply from: rootProject.file("gradle/spotbugs.gradle")
-        spotbugs {
-            toolVersion = "${spotbugsVersion}"
-            showProgress = true
-            ignoreFailures = false
-            reportsDir = file("$project.buildDir/spotbugs")
-            effort = "max"
-            reportLevel = "low"
-            includeFilter = file("$rootProject.projectDir/style/spotbugs-includes.xml")
-            excludeFilter = file("$rootProject.projectDir/style/spotbugs-excludes.xml")
-            maxHeapSize = "2g"
-        }
-
-        [spotbugsMain, spotbugsTest].each {
-            it.reports {
-                xml.enabled = true
-            }
-            it.finalizedBy outputSpotbugsReports
-        }
     }
 
     apply plugin: "com.github.jk1.dependency-license-report"
