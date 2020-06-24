@@ -7,9 +7,13 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
+import org.apache.kafka.common.serialization.Deserializer;
+import org.apache.kafka.common.serialization.Serializer;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaAdmin;
+import org.springframework.kafka.core.KafkaTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,13 +31,6 @@ import java.util.Map;
 public class KafkaObjectFactory<K, V> {
     private final String bootstrapAddress;
 
-    private Class keySerializerClass = StringSerializer.class;
-
-    private Class valueSerializerClass = StringSerializer.class;
-
-    private Class keyDeserializerClass = StringDeserializer.class;
-
-    private Class valueDeserializerClass = StringDeserializer.class;
 
     private String consumerGroupId;
 
@@ -70,8 +67,6 @@ public class KafkaObjectFactory<K, V> {
         configProps.put(ProducerConfig.ACKS_CONFIG, "all");
         configProps.put(ProducerConfig.LINGER_MS_CONFIG, 1);
         configProps.put(ProducerConfig.RETRIES_CONFIG, 1);
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, this.keySerializerClass);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, this.valueSerializerClass);
         return configProps;
     }
 
@@ -83,9 +78,35 @@ public class KafkaObjectFactory<K, V> {
     public Map<String, Object> getConsumerConfiguration() {
         val props = new HashMap<String, Object>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, this.keyDeserializerClass);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, this.consumerGroupId);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, this.valueDeserializerClass);
         return props;
+    }
+
+    /**
+     * Gets kafka listener container factory.
+     *
+     * @param keyDeserializer   the key deserializer
+     * @param valueDeserializer the value deserializer
+     * @return the kafka listener container factory
+     */
+    public ConcurrentKafkaListenerContainerFactory<K, V> getKafkaListenerContainerFactory(final Deserializer<K> keyDeserializer,
+                                                                                          final Deserializer<V> valueDeserializer) {
+        val listenerContainerFactory = new ConcurrentKafkaListenerContainerFactory<K, V>();
+        val consumerFactory = new DefaultKafkaConsumerFactory<>(getConsumerConfiguration(), keyDeserializer, valueDeserializer);
+        listenerContainerFactory.setConsumerFactory(consumerFactory);
+        return listenerContainerFactory;
+    }
+
+    /**
+     * Gets kafka template.
+     *
+     * @param keySerializer   the key serializer
+     * @param valueSerializer the value serializer
+     * @return the kafka template
+     */
+    public KafkaTemplate<K, V> getKafkaTemplate(final Serializer<K> keySerializer,
+                                                final Serializer<V> valueSerializer) {
+        val producerFactory = new DefaultKafkaProducerFactory<K, V>(getProducerConfiguration(), keySerializer, valueSerializer);
+        return new KafkaTemplate<>(producerFactory);
     }
 }

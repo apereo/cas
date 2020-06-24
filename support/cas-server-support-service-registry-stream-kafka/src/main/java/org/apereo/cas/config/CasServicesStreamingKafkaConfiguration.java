@@ -29,8 +29,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.TopicBuilder;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
@@ -57,19 +55,15 @@ public class CasServicesStreamingKafkaConfiguration {
     @Autowired
     @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
     private ObjectProvider<PublisherIdentifier> casRegisteredServiceStreamPublisherIdentifier;
-    
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, DistributedCacheObject> kafkaListenerContainerFactory() {
-        val kafka = casProperties.getServiceRegistry().getStream().getKafka();
-        val factory = new KafkaObjectFactory<String, DistributedCacheObject<RegisteredService>>(kafka.getBootstrapAddress());
-        factory.setConsumerGroupId("registeredServices");
-        val listenerContainerFactory = new ConcurrentKafkaListenerContainerFactory<String, DistributedCacheObject>();
 
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, DistributedCacheObject> registeredServiceKafkaListenerContainerFactory() {
+        val kafka = casProperties.getServiceRegistry().getStream().getKafka();
+        val factory = new KafkaObjectFactory<String, DistributedCacheObject>(kafka.getBootstrapAddress());
+        factory.setConsumerGroupId("registeredServices");
         val mapper = new RegisteredServiceJsonSerializer().getObjectMapper();
-        val consumerFactory = new DefaultKafkaConsumerFactory<>(factory.getConsumerConfiguration(),
-            new StringDeserializer(), new JsonDeserializer<>(DistributedCacheObject.class, mapper));
-        listenerContainerFactory.setConsumerFactory(consumerFactory);
-        return listenerContainerFactory;
+        return factory.getKafkaListenerContainerFactory(new StringDeserializer(),
+            new JsonDeserializer<>(DistributedCacheObject.class, mapper));
     }
 
     @Bean
@@ -91,10 +85,7 @@ public class CasServicesStreamingKafkaConfiguration {
         val kafka = casProperties.getServiceRegistry().getStream().getKafka();
         val mapper = new RegisteredServiceJsonSerializer().getObjectMapper();
         val factory = new KafkaObjectFactory<String, DistributedCacheObject<RegisteredService>>(kafka.getBootstrapAddress());
-        val producerFactory = new DefaultKafkaProducerFactory<>(
-            factory.getProducerConfiguration(), new StringSerializer(),
-            new JsonSerializer<DistributedCacheObject<RegisteredService>>(mapper));
-        return new KafkaTemplate<>(producerFactory);
+        return factory.getKafkaTemplate(new StringSerializer(), new JsonSerializer<>(mapper));
     }
 
     @SneakyThrows

@@ -26,7 +26,8 @@ public class RegisteredServiceKafkaDistributedCacheListener {
         DistributedCacheObject<RegisteredService>,
         PublisherIdentifier> cacheManager;
 
-    @KafkaListener(topics = "#{registeredServiceDistributedCacheKafkaTopic.name()}", groupId = "registeredServices")
+    @KafkaListener(topics = "#{registeredServiceDistributedCacheKafkaTopic.name()}",
+        groupId = "registeredServices", containerFactory = "registeredServiceKafkaListenerContainerFactory")
     public void registeredServiceDistributedCacheKafkaListener(@Payload final DistributedCacheObject<RegisteredService> item) {
         if (!item.getPublisherIdentifier().getId().equals(publisherIdentifier.getId())) {
             if (!deleteObjectFromCache(item)) {
