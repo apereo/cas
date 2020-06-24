@@ -1,17 +1,18 @@
 package org.apereo.cas.kafka;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.val;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaAdmin;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is {@link KafkaObjectFactory}.
@@ -22,24 +23,19 @@ import java.util.HashMap;
  * @since 6.2.0
  */
 @RequiredArgsConstructor
+@Setter
 public class KafkaObjectFactory<K, V> {
     private final String bootstrapAddress;
 
-    /**
-     * Gets producer factory.
-     *
-     * @return the producer factory
-     */
-    private ProducerFactory<K, V> getProducerFactory() {
-        val configProps = new HashMap<String, Object>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        configProps.put(ProducerConfig.ACKS_CONFIG, "all");
-        configProps.put(ProducerConfig.LINGER_MS_CONFIG, 1);
-        configProps.put(ProducerConfig.RETRIES_CONFIG, 0);
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        return new DefaultKafkaProducerFactory<>(configProps);
-    }
+    private Class keySerializerClass = StringSerializer.class;
+
+    private Class valueSerializerClass = StringSerializer.class;
+
+    private Class keyDeserializerClass = StringDeserializer.class;
+
+    private Class valueDeserializerClass = StringDeserializer.class;
+
+    private String consumerGroupId;
 
     /**
      * Gets kafka admin.
@@ -49,7 +45,9 @@ public class KafkaObjectFactory<K, V> {
     public KafkaAdmin getKafkaAdmin() {
         val configs = new HashMap<String, Object>();
         configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        return new KafkaAdmin(configs);
+        val admin = new KafkaAdmin(configs);
+        admin.setFatalIfBrokerNotAvailable(true);
+        return admin;
     }
 
     /**
@@ -62,11 +60,32 @@ public class KafkaObjectFactory<K, V> {
     }
 
     /**
-     * Gets kafka template.
+     * Gets producer configuration.
      *
-     * @return the kafka template
+     * @return the producer configuration
      */
-    public KafkaTemplate<K, V> getKafkaTemplate() {
-        return new KafkaTemplate<>(getProducerFactory());
+    public Map<String, Object> getProducerConfiguration() {
+        val configProps = new HashMap<String, Object>();
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        configProps.put(ProducerConfig.ACKS_CONFIG, "all");
+        configProps.put(ProducerConfig.LINGER_MS_CONFIG, 1);
+        configProps.put(ProducerConfig.RETRIES_CONFIG, 1);
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, this.keySerializerClass);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, this.valueSerializerClass);
+        return configProps;
+    }
+
+    /**
+     * Gets consumer configuration.
+     *
+     * @return the consumer configuration
+     */
+    public Map<String, Object> getConsumerConfiguration() {
+        val props = new HashMap<String, Object>();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, this.keyDeserializerClass);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, this.consumerGroupId);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, this.valueDeserializerClass);
+        return props;
     }
 }

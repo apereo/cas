@@ -1,11 +1,11 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.queue.AddTicketMessageQueueCommand;
 import org.apereo.cas.ticket.registry.queue.DeleteTicketMessageQueueCommand;
 import org.apereo.cas.ticket.registry.queue.DeleteTicketsMessageQueueCommand;
 import org.apereo.cas.ticket.registry.queue.UpdateTicketMessageQueueCommand;
+import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +22,9 @@ public class JmsTicketRegistry extends DefaultTicketRegistry {
 
     private final JmsTicketRegistryPublisher ticketPublisher;
 
-    private final JmsQueueIdentifier id;
+    private final PublisherIdentifier id;
 
-    public JmsTicketRegistry(final JmsTicketRegistryPublisher publisher, final JmsQueueIdentifier id,
+    public JmsTicketRegistry(final JmsTicketRegistryPublisher publisher, final PublisherIdentifier id,
                              final CipherExecutor cipherExecutor) {
         super(cipherExecutor);
         this.ticketPublisher = publisher;

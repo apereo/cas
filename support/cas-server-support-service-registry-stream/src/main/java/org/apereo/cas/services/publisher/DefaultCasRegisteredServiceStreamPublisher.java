@@ -1,16 +1,15 @@
 package org.apereo.cas.services.publisher;
 
-import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationEvent;
-
-import java.time.Clock;
-import java.time.Instant;
 
 /**
  * This is {@link DefaultCasRegisteredServiceStreamPublisher}.
@@ -19,35 +18,36 @@ import java.time.Instant;
  * @since 6.3.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class DefaultCasRegisteredServiceStreamPublisher extends BaseCasRegisteredServiceStreamPublisher {
 
-    private final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> distributedCacheManager;
+    private final DistributedCacheManager<RegisteredService,
+        DistributedCacheObject<RegisteredService>,
+        PublisherIdentifier> distributedCacheManager;
 
-    public DefaultCasRegisteredServiceStreamPublisher(final DistributedCacheManager instance,
-                                                      final JmsQueueIdentifier publisherId) {
-        super(publisherId);
-        this.distributedCacheManager = instance;
+    private static DistributedCacheObject getCacheObject(final RegisteredService service,
+                                                         final ApplicationEvent event,
+                                                         final PublisherIdentifier publisherId) {
+        return DistributedCacheObject.<RegisteredService>builder()
+            .value(service)
+            .publisherIdentifier(publisherId)
+            .properties(CollectionUtils.wrap("event", event.getClass().getSimpleName()))
+            .build();
     }
 
     @Override
-    protected void handleCasRegisteredServiceDeletedEvent(final RegisteredService service, final ApplicationEvent event) {
-        val item = getCacheObject(service, event);
+    protected void handleCasRegisteredServiceDeletedEvent(final RegisteredService service, final ApplicationEvent event,
+                                                          final PublisherIdentifier publisherId) {
+        val item = getCacheObject(service, event, publisherId);
         LOGGER.debug("Removing service [{}] from cache [{}] @ [{}]", service, distributedCacheManager.getName(), item.getTimestamp());
-        this.distributedCacheManager.update(service, item);
+        this.distributedCacheManager.update(service, item, true);
     }
 
     @Override
-    protected void handleCasRegisteredServiceUpdateEvents(final RegisteredService service, final ApplicationEvent event) {
-        val item = getCacheObject(service, event);
+    protected void handleCasRegisteredServiceUpdateEvents(final RegisteredService service, final ApplicationEvent event,
+                                                          final PublisherIdentifier publisherId) {
+        val item = getCacheObject(service, event, publisherId);
         LOGGER.debug("Storing item [{}] to cache [{}] @ [{}]", item, distributedCacheManager.getName(), item.getTimestamp());
-        this.distributedCacheManager.set(service, item);
-    }
-
-    private static DistributedCacheObject<RegisteredService> getCacheObject(final RegisteredService service,
-                                                                            final ApplicationEvent event) {
-        val time = Instant.now(Clock.systemUTC()).toEpochMilli();
-        val item = new DistributedCacheObject<RegisteredService>(time, service);
-        item.getProperties().put("event", event);
-        return item;
+        this.distributedCacheManager.set(service, item, true);
     }
 }

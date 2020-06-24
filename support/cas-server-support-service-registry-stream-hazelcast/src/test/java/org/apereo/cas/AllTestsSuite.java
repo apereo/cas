@@ -8,10 +8,10 @@ import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
 
 /**
- * Test suite to run all SAML tests.
+ * Test suite to run all tests.
  *
  * @author Misagh Moayyed
- * @since 4.2.0
+ * @since 6.2.0
  */
 @SelectClasses({
     RegisteredServiceHazelcastDistributedCacheManagerTests.class,

@@ -1,7 +1,6 @@
-package org.apereo.cas.cache;
+package org.apereo.cas.util.cache;
 
-import org.apereo.cas.util.cache.DistributedCacheManager;
-import org.apereo.cas.util.cache.DistributedCacheObject;
+import org.apereo.cas.util.PublisherIdentifier;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -28,11 +27,16 @@ public class DistributedCacheManagerTests {
         assertFalse(mgr.contains("key"));
         assertFalse(mgr.find(distributedCacheObject -> true).isPresent());
 
-        assertDoesNotThrow(() -> mgr.set("key", new DistributedCacheObject("value")));
-        assertDoesNotThrow(() -> mgr.set("key", new DistributedCacheObject("value")));
-        assertDoesNotThrow(() -> mgr.remove("key", new DistributedCacheObject("value")));
-
-        assertNotNull(mgr.update("key", new DistributedCacheObject("value")));
+        val id = new PublisherIdentifier();
+        val object = DistributedCacheObject.<String>builder()
+            .value("value")
+            .publisherIdentifier(id)
+            .build();
+        
+        assertDoesNotThrow(() -> mgr.set("key", object, true));
+        assertDoesNotThrow(() -> mgr.set("key", object, true));
+        assertDoesNotThrow(() -> mgr.remove("key", object, true));
+        assertNotNull(mgr.update("key", object, true));
         mgr.close();
     }
 }

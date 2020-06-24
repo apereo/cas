@@ -6,6 +6,7 @@ import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceHazelcastDistributedCacheManager;
 import org.apereo.cas.services.publisher.DefaultCasRegisteredServiceStreamPublisher;
+import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 
@@ -39,7 +40,7 @@ public class CasServicesStreamingHazelcastConfiguration {
 
     @Bean
     @RefreshScope
-    public DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> registeredServiceDistributedCacheManager() {
+    public DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier> registeredServiceDistributedCacheManager() {
         val hz = casRegisteredServiceHazelcastInstance();
         val mapName = hz.getConfig().getMapConfigs().keySet().iterator().next();
         LOGGER.debug("Retrieving Hazelcast map [{}] for service replication", mapName);

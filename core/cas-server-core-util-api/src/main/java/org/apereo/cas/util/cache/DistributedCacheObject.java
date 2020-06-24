@@ -1,15 +1,19 @@
 package org.apereo.cas.util.cache;
 
+import org.apereo.cas.util.PublisherIdentifier;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.val;
 
 import java.io.Serializable;
-import java.time.Clock;
-import java.time.Instant;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * This is {@link DistributedCacheObject}.
@@ -19,21 +23,23 @@ import java.util.Map;
  */
 @ToString
 @Getter
-@RequiredArgsConstructor
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class DistributedCacheObject<V extends Serializable> implements Serializable {
-    private static final int MAP_SIZE = 8;
-
     private static final long serialVersionUID = -6776499291439952013L;
 
-    private final long timestamp;
+    @Builder.Default
+    private Map<String, String> properties = new TreeMap<>();
 
-    private final V value;
+    @Builder.Default
+    private long timestamp = System.currentTimeMillis();
 
-    private final Map<String, Object> properties = new LinkedHashMap<>(MAP_SIZE);
+    private V value;
 
-    public DistributedCacheObject(final V value) {
-        this(Instant.now(Clock.systemUTC()).toEpochMilli(), value);
-    }
+    private PublisherIdentifier publisherIdentifier;
 
     /**
      * Gets property.
