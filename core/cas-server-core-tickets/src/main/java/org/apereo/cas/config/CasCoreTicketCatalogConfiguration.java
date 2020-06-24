@@ -72,6 +72,7 @@ public class CasCoreTicketCatalogConfiguration extends BaseTicketCatalogConfigur
     }
 
     protected void buildAndRegisterTransientSessionTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
+        metadata.getProperties().setExcludeFromCascade(true);
         registerTicketDefinition(plan, metadata);
     }
 }
