@@ -51,6 +51,7 @@ import org.springframework.webflow.engine.WildcardTransitionCriteria;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.support.ActionExecutingViewFactory;
+import org.springframework.webflow.engine.support.ActionTransitionCriteria;
 import org.springframework.webflow.engine.support.BeanFactoryVariableValueFactory;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
@@ -91,7 +92,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     /**
      * The Login flow definition registry.
      */
-    protected final FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    protected final FlowDefinitionRegistry mainFlowDefinitionRegistry;
 
     /**
      * Application context.
@@ -112,13 +113,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     private String name = getClass().getSimpleName();
 
-    private static TransitionCriteria getTransitionCriteriaForExpression(final Expression criteriaOutcomeExpression) {
-        if (criteriaOutcomeExpression.toString().equals(WildcardTransitionCriteria.WILDCARD_EVENT_ID)) {
-            return WildcardTransitionCriteria.INSTANCE;
-        }
-        return new DefaultTransitionCriteria(criteriaOutcomeExpression);
-    }
-
     @Override
     public void initialize() {
         try {
@@ -135,17 +129,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public Flow getLoginFlow() {
-        if (this.loginFlowDefinitionRegistry == null) {
-            LOGGER.warn("Login flow registry is not configured and/or initialized correctly.");
-            return null;
-        }
-        val found = Arrays.asList(this.loginFlowDefinitionRegistry.getFlowDefinitionIds()).contains(FLOW_ID_LOGIN);
-        if (found) {
-            return (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
-        }
-        LOGGER.warn("Could not find flow definition [{}]. Available flow definition ids are [{}]",
-            FLOW_ID_LOGIN, this.loginFlowDefinitionRegistry.getFlowDefinitionIds());
-        return null;
+        return getFlow(FLOW_ID_LOGIN);
     }
 
     @Override
@@ -177,10 +161,24 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     @Override
-    public Transition createTransition(final Expression criteriaOutcomeExpression, final String targetState) {
+    public Transition createTransition(final Expression criteriaOutcomeExpression,
+                                       final String targetState,
+                                       final Action... actions) {
         val criteria = getTransitionCriteriaForExpression(criteriaOutcomeExpression);
         val resolver = new DefaultTargetStateResolver(targetState);
-        return new Transition(criteria, resolver);
+        val transition = new Transition(criteria, resolver);
+        if (actions != null && actions.length > 0) {
+            val transitionActionCriteria = Arrays.stream(actions)
+                .map(ActionTransitionCriteria::new)
+                .toArray(ActionTransitionCriteria[]::new);
+            transition.setExecutionCriteria(new TransitionCriteriaChain(transitionActionCriteria));
+        }
+        return transition;
+    }
+
+    @Override
+    public Transition createTransition(final String criteriaOutcome, final String targetState, final Action... actions) {
+        return createTransition(new LiteralExpression(criteriaOutcome), targetState, actions);
     }
 
     @Override
@@ -319,7 +317,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             return getTransitionableState(flow, id, SubflowState.class);
         }
 
-        val state = new SubflowState(flow, id, new BasicSubflowExpression(subflow, this.loginFlowDefinitionRegistry));
+        val state = new SubflowState(flow, id, new BasicSubflowExpression(subflow, this.mainFlowDefinitionRegistry));
         if (entryAction != null) {
             state.getEntryActionList().add(entryAction);
         }
@@ -334,16 +332,10 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public Flow buildFlow(final String location, final String id) {
         val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
-        builder.setParent(this.loginFlowDefinitionRegistry);
+        builder.setParent(this.mainFlowDefinitionRegistry);
         builder.addFlowLocation(location, id);
         val registry = builder.build();
         return (Flow) registry.getFlowDefinition(id);
-    }
-
-    /**
-     * Handle the initialization of the webflow.
-     */
-    protected void doInitialize() {
     }
 
     /**
@@ -426,10 +418,64 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param state           the state
      * @param criteriaOutcome the criteria outcome
      * @param targetState     the target state
+     * @param attributes      the attributes
      * @return the transition
      */
-    public Transition createTransitionForState(final TransitionableState state, final String criteriaOutcome, final String targetState) {
-        return createTransitionForState(state, criteriaOutcome, targetState, false);
+    public Transition createTransitionForState(final TransitionableState state,
+                                               final String criteriaOutcome,
+                                               final String targetState,
+                                               final Map<String, Object> attributes) {
+        return createTransitionForState(state, criteriaOutcome, targetState, false, attributes);
+    }
+
+    /**
+     * Create transition for state transition.
+     *
+     * @param state           the state
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @return the transition
+     */
+    public Transition createTransitionForState(final TransitionableState state,
+                                               final String criteriaOutcome,
+                                               final String targetState) {
+        return createTransitionForState(state, criteriaOutcome, targetState, Map.of());
+    }
+
+    /**
+     * Create transition for state transition.
+     *
+     * @param state           the state
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @param attributes      the attributes
+     * @param actions         the actions
+     * @return the transition
+     */
+    public Transition createTransitionForState(final TransitionableState state,
+                                               final String criteriaOutcome,
+                                               final String targetState,
+                                               final Map<String, Object> attributes,
+                                               final Action... actions) {
+        return createTransitionForState(state, criteriaOutcome,
+            targetState, false, attributes, actions);
+    }
+
+    /**
+     * Create transition for state transition.
+     *
+     * @param state           the state
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @param actions         the actions
+     * @return the transition
+     */
+    public Transition createTransitionForState(final TransitionableState state,
+                                               final String criteriaOutcome,
+                                               final String targetState,
+                                               final Action... actions) {
+        return createTransitionForState(state, criteriaOutcome,
+            targetState, false, Map.of(), actions);
     }
 
     /**
@@ -441,8 +487,44 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param targetState     the target state
      * @return the transition
      */
-    public Transition createTransitionForState(final Flow flow, final String stateId, final String criteriaOutcome, final String targetState) {
-        return createTransitionForState(getTransitionableState(flow, stateId), criteriaOutcome, targetState, false);
+    public Transition createTransitionForState(final Flow flow, final String stateId,
+                                               final String criteriaOutcome,
+                                               final String targetState) {
+        return createTransitionForState(getTransitionableState(flow, stateId),
+            criteriaOutcome, targetState, false, Map.of());
+    }
+
+    /**
+     * Create transition for state transition.
+     *
+     * @param state           the state
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @param removeExisting  the remove existing
+     * @param actions         the actions
+     * @param attributes      the attributes
+     * @return the transition
+     */
+    public Transition createTransitionForState(final TransitionableState state, final String criteriaOutcome,
+                                               final String targetState, final boolean removeExisting,
+                                               final Map<String, Object> attributes, final Action... actions) {
+        try {
+            if (removeExisting) {
+                val success = (Transition) state.getTransition(criteriaOutcome);
+                if (success != null) {
+                    state.getTransitionSet().remove(success);
+                }
+            }
+            val transition = createTransition(criteriaOutcome, targetState, actions);
+            attributes.forEach((key, value) -> transition.getAttributes().put(key, value));
+
+            state.getTransitionSet().add(transition);
+            LOGGER.trace("Added transition [{}] to the state [{}]", transition.getId(), state.getId());
+            return transition;
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return null;
     }
 
     /**
@@ -452,24 +534,29 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param criteriaOutcome the criteria outcome
      * @param targetState     the target state
      * @param removeExisting  the remove existing
+     * @param attributes      the attributes
      * @return the transition
      */
-    public Transition createTransitionForState(final TransitionableState state, final String criteriaOutcome, final String targetState, final boolean removeExisting) {
-        try {
-            if (removeExisting) {
-                val success = (Transition) state.getTransition(criteriaOutcome);
-                if (success != null) {
-                    state.getTransitionSet().remove(success);
-                }
-            }
-            val transition = createTransition(criteriaOutcome, targetState);
-            state.getTransitionSet().add(transition);
-            LOGGER.trace("Added transition [{}] to the state [{}]", transition.getId(), state.getId());
-            return transition;
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return null;
+    public Transition createTransitionForState(final TransitionableState state, final String criteriaOutcome,
+                                               final String targetState, final boolean removeExisting,
+                                               final Map<String, Object> attributes) {
+        return createTransitionForState(state, criteriaOutcome, targetState,
+            removeExisting, attributes, new Action[0]);
+    }
+
+    /**
+     * Create transition for state transition.
+     *
+     * @param state           the state
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @param removeExisting  the remove existing
+     * @return the transition
+     */
+    public Transition createTransitionForState(final TransitionableState state, final String criteriaOutcome,
+                                               final String targetState, final boolean removeExisting) {
+        return createTransitionForState(state, criteriaOutcome, targetState,
+            removeExisting, Map.of(), new Action[0]);
     }
 
     /**
@@ -618,36 +705,20 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         flow.addVariable(flowVar);
         return flowVar;
     }
-
-    /**
-     * Create state model bindings.
-     *
-     * @param properties the properties
-     * @return the binder configuration
-     */
+    
+    @Override
     public BinderConfiguration createStateBinderConfiguration(final List<String> properties) {
         val binder = new BinderConfiguration();
         properties.forEach(p -> binder.addBinding(new BinderConfiguration.Binding(p, null, true)));
         return binder;
     }
 
-    /**
-     * Create state model binding.
-     *
-     * @param state     the state
-     * @param modelName the model name
-     * @param modelType the model type
-     */
+    @Override
     public void createStateModelBinding(final TransitionableState state, final String modelName, final Class modelType) {
         state.getAttributes().put("model", createExpression(modelName, modelType));
     }
 
-    /**
-     * Gets state binder configuration.
-     *
-     * @param state the state
-     * @return the state binder configuration
-     */
+    @Override
     public BinderConfiguration getViewStateBinderConfiguration(final ViewState state) {
         val field = ReflectionUtils.findField(state.getViewFactory().getClass(), "binderConfiguration");
         ReflectionUtils.makeAccessible(field);
@@ -744,6 +815,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param clazz   the clazz
      * @return the state
      */
+    @Override
     public <T> T getState(final Flow flow, final String stateId, final Class<T> clazz) {
         if (containsFlowState(flow, stateId)) {
             val state = flow.getState(stateId);
@@ -759,6 +831,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param stateId the state id
      * @return the state
      */
+    @Override
     public TransitionableState getState(final Flow flow, final String stateId) {
         return getState(flow, stateId, TransitionableState.class);
     }
@@ -821,7 +894,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             .toArray(EvaluateAction[]::new);
         addActionsToActionStateExecutionListAt(flow, actionStateId, 0, evalActions);
     }
-    
+
     /**
      * Prepend actions to action state execution list.
      *
@@ -832,7 +905,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public void prependActionsToActionStateExecutionList(final Flow flow, final ActionState actionStateId, final EvaluateAction... actions) {
         addActionsToActionStateExecutionListAt(flow, actionStateId.getId(), 0, actions);
     }
-
 
     /**
      * Add actions to action state execution list at.
@@ -851,5 +923,43 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         currentActions.forEach(actionList::remove);
         Arrays.stream(actions).forEach(a -> currentActions.add(index, a));
         actionList.addAll(currentActions.toArray(Action[]::new));
+    }
+
+    private static TransitionCriteria getTransitionCriteriaForExpression(final Expression criteriaOutcomeExpression) {
+        if (criteriaOutcomeExpression.toString().equals(WildcardTransitionCriteria.WILDCARD_EVENT_ID)) {
+            return WildcardTransitionCriteria.INSTANCE;
+        }
+        return new DefaultTransitionCriteria(criteriaOutcomeExpression);
+    }
+
+    /**
+     * Gets flow.
+     *
+     * @param id the id
+     * @return the flow
+     */
+    @Override
+    public Flow getFlow(final String id) {
+        return getFlow(this.mainFlowDefinitionRegistry, id);
+    }
+
+    @Override
+    public Flow getFlow(final FlowDefinitionRegistry registry, final String id) {
+        if (registry == null) {
+            LOGGER.warn("Flow registry is not configured and/or initialized correctly.");
+            return null;
+        }
+        val found = Arrays.asList(registry.getFlowDefinitionIds()).contains(id);
+        if (found) {
+            return (Flow) registry.getFlowDefinition(id);
+        }
+        LOGGER.warn("Could not find flow definition [{}]. Available flow definition ids are [{}]",
+            id, registry.getFlowDefinitionIds());
+        return null;
+    }
+    /**
+     * Handle the initialization of the webflow.
+     */
+    protected void doInitialize() {
     }
 }
