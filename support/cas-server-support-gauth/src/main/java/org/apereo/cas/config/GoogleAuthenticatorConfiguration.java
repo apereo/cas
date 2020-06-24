@@ -36,6 +36,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 public class GoogleAuthenticatorConfiguration {
+    private static final int GAUTH_WEBFLOW_CONFIGURER_ORDER = 100;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -62,12 +63,14 @@ public class GoogleAuthenticatorConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer() {
-        return new GoogleAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
+        val cfg = new GoogleAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
             googleAuthenticatorFlowRegistry(),
             applicationContext,
             casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+        cfg.setOrder(GAUTH_WEBFLOW_CONFIGURER_ORDER);
+        return cfg;
     }
 
     @Bean
@@ -86,14 +89,17 @@ public class GoogleAuthenticatorConfiguration {
 
         @ConditionalOnMissingBean(name = "gauthMultifactorTrustWebflowConfigurer")
         @Bean
-        @DependsOn("defaultWebflowConfigurer")
+        @DependsOn({"defaultWebflowConfigurer", "googleAuthenticatorMultifactorWebflowConfigurer"})
         public CasWebflowConfigurer gauthMultifactorTrustWebflowConfigurer() {
-            return new GoogleAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
+            val cfg = new GoogleAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(),
                 casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(),
                 googleAuthenticatorFlowRegistry(),
-                applicationContext, casProperties,
+                applicationContext,
+                casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+            cfg.setOrder(GAUTH_WEBFLOW_CONFIGURER_ORDER + 1);
+            return cfg;
         }
 
         @Bean
