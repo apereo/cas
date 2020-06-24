@@ -6,7 +6,6 @@ import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -17,7 +16,6 @@ import org.springframework.messaging.handler.annotation.Payload;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class RegisteredServiceKafkaDistributedCacheListener {
     private final PublisherIdentifier publisherIdentifier;

@@ -488,6 +488,7 @@ jobs:
           - couchdb
           - couchbase
           - mail
+          - kafka
           - ignite
           - cassandra
           - influxdb
