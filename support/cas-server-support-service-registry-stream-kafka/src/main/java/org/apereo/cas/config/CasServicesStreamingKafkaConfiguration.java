@@ -21,6 +21,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -57,6 +58,7 @@ public class CasServicesStreamingKafkaConfiguration {
     private ObjectProvider<PublisherIdentifier> casRegisteredServiceStreamPublisherIdentifier;
 
     @Bean
+    @ConditionalOnMissingBean(name = "registeredServiceKafkaListenerContainerFactory")
     public ConcurrentKafkaListenerContainerFactory<String, DistributedCacheObject> registeredServiceKafkaListenerContainerFactory() {
         val kafka = casProperties.getServiceRegistry().getStream().getKafka();
         val factory = new KafkaObjectFactory<String, DistributedCacheObject>(kafka.getBootstrapAddress());
@@ -67,6 +69,7 @@ public class CasServicesStreamingKafkaConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "registeredServiceKafkaDistributedCacheListener")
     public RegisteredServiceKafkaDistributedCacheListener registeredServiceKafkaDistributedCacheListener() {
         return new RegisteredServiceKafkaDistributedCacheListener(
             casRegisteredServiceStreamPublisherIdentifier.getObject(),
@@ -74,6 +77,7 @@ public class CasServicesStreamingKafkaConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "registeredServiceDistributedKafkaAdmin")
     public KafkaAdmin registeredServiceDistributedKafkaAdmin() {
         val kafka = casProperties.getServiceRegistry().getStream().getKafka();
         val factory = new KafkaObjectFactory<String, DistributedCacheObject<RegisteredService>>(kafka.getBootstrapAddress());
@@ -109,7 +113,7 @@ public class CasServicesStreamingKafkaConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @ConditionalOnMissingBean(name = "registeredServiceDistributedCacheKafkaTopic")
     public NewTopic registeredServiceDistributedCacheKafkaTopic() {
         val topic = casProperties.getServiceRegistry().getStream().getKafka().getTopic();
         return TopicBuilder.name(topic.getName())

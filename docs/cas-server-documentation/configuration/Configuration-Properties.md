@@ -4499,11 +4499,22 @@ Replication modes may be configured per the following options:
 Control how CAS services definition files should be replicated across a CAS cluster backed by a distributed Hazelcast cache.
 To learn more about this topic, [please review this guide](../services/Configuring-Service-Replication.html).
 
-Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.service-registry.stream.hazelcast.config`.
+Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under 
+the configuration key `cas.service-registry.stream.hazelcast.config`.
 
 ```properties
 # cas.service-registry.stream.hazelcast.duration=PT1M
 ```
+
+## Service Registry Replication Kafka
+
+Control how CAS services definition files should be replicated across a CAS cluster backed by Apache Kafka.
+To learn more about this topic, [please review this guide](../services/Configuring-Service-Replication.html).
+
+Kafka common settings for this feature are available [here](Configuration-Properties-Common.html#apache-kafka-configuration) under 
+the configuration key `cas.service-registry.stream.kafka`. Kafka topic settings for this feature are 
+available [here](Configuration-Properties-Common.html#apache-kafka-configuration)
+under the configuration key `cas.service-registry.stream.kafka.topic`.
 
 ## Ticket Registry
 

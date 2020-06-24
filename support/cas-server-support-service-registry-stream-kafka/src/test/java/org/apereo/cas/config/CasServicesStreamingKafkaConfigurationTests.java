@@ -10,6 +10,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -40,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.service-registry.stream.kafka.bootstrap-address=localhost:9092",
     "cas.service-registry.stream.enabled=true"
 })
+@EnabledIfPortOpen(port = 9092)
 public class CasServicesStreamingKafkaConfigurationTests {
     @Autowired
     @Qualifier("registeredServiceDistributedCacheManager")

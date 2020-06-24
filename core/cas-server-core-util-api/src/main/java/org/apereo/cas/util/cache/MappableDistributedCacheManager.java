@@ -3,7 +3,6 @@ package org.apereo.cas.util.cache;
 import org.apereo.cas.util.PublisherIdentifier;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serializable;
@@ -18,7 +17,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class MappableDistributedCacheManager<K extends Serializable, V extends DistributedCacheObject>
     extends BaseDistributedCacheManager<K, V> {

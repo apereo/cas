@@ -505,6 +505,26 @@ The following options related to InfluxDb support in CAS apply equally to a numb
 # ${configurationKey}.consistency-level=ALL
 ```
 
+## Apache Kafka Configuration
+
+The following options related to Kafka support in CAS apply equally to a number of CAS components given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.bootstrap-address=localhost:9092
+```
+
+### Apache Kafka Topic Configuration
+
+The following options related to Kafka support in CAS apply equally to a number of CAS components given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.name=
+# ${configurationKey}.partitions=1
+# ${configurationKey}.replicas=1
+# ${configurationKey}.compression-type=gzip
+# ${configurationKey}.config.key=value
+```
+
 ## Hazelcast Configuration
 
 The following options related to Hazelcast support in CAS apply equally to a number of CAS components given the component's *configuration key*:

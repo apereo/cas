@@ -3,6 +3,7 @@ package org.apereo.cas.kafka;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +22,6 @@ public class KafkaObjectFactoryTests {
     public void verifyOperation() {
         val factory = new KafkaObjectFactory("localhost:9092");
         assertNotNull(factory.getKafkaAdmin());
-        assertNotNull(factory.getKafkaTemplate());
+        assertNotNull(factory.getKafkaTemplate(new StringSerializer(), new StringSerializer()));
     }
 }
