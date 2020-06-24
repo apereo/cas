@@ -17,6 +17,8 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
+import java.util.Map;
+
 /**
  * This is {@link PasswordManagementWebflowConfigurer}.
  *
@@ -129,7 +131,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             createViewState(pswdFlow, "passwordResetErrorView", CasWebflowConstants.VIEW_ID_PASSWORD_RESET_ERROR);
             createViewState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS, CasWebflowConstants.VIEW_ID_PASSWORD_UPDATE_SUCCESS);
             configurePasswordResetFlow(pswdFlow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
-            loginFlowDefinitionRegistry.registerFlowDefinition(pswdFlow);
+            mainFlowDefinitionRegistry.registerFlowDefinition(pswdFlow);
 
             val initializeLoginFormState = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
             val originalTargetState = initializeLoginFormState.getTransition(CasWebflowConstants.STATE_ID_SUCCESS).getTargetStateId();
@@ -191,10 +193,8 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         createStateModelBinding(viewState, FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
 
         viewState.getEntryActionList().add(this.initPasswordChangeAction);
-        val transition = createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_PASSWORD_CHANGE_ACTION);
-        transition.getAttributes().put("bind", Boolean.TRUE);
-        transition.getAttributes().put("validate", Boolean.TRUE);
-
+        createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
+            CasWebflowConstants.STATE_ID_PASSWORD_CHANGE_ACTION, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
         createStateDefaultTransition(viewState, id);
 
         val pswChangeAction = createActionState(flow, CasWebflowConstants.STATE_ID_PASSWORD_CHANGE_ACTION,

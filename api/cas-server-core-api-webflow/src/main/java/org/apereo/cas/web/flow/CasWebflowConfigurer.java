@@ -4,6 +4,7 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.SetAction;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.EndState;
@@ -15,6 +16,8 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.ViewFactory;
+
+import java.util.List;
 
 /**
  * This is {@link CasWebflowConfigurer}.
@@ -75,6 +78,16 @@ public interface CasWebflowConfigurer extends Ordered {
      *
      * @param criteriaOutcome the criteria outcome
      * @param targetState     the target state
+     * @param actions         the actions
+     * @return the transition
+     */
+    Transition createTransition(String criteriaOutcome, String targetState, Action... actions);
+
+    /**
+     * Create transition transition.
+     *
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
      * @return the transition
      */
     Transition createTransition(String criteriaOutcome, TransitionableState targetState);
@@ -84,9 +97,10 @@ public interface CasWebflowConfigurer extends Ordered {
      *
      * @param criteriaOutcomeExpression the criteria outcome expression
      * @param targetState               the target state
+     * @param actions                   the actions
      * @return the transition
      */
-    Transition createTransition(Expression criteriaOutcomeExpression, String targetState);
+    Transition createTransition(Expression criteriaOutcomeExpression, String targetState, Action... actions);
 
     /**
      * Create transition transition.
@@ -277,4 +291,66 @@ public interface CasWebflowConfigurer extends Ordered {
     default String getName() {
         return getClass().getSimpleName();
     }
+
+    /**
+     * Create state binder configuration binder configuration.
+     *
+     * @param properties the properties
+     * @return the binder configuration
+     */
+    BinderConfiguration createStateBinderConfiguration(List<String> properties);
+
+    /**
+     * Create state model binding.
+     *
+     * @param state     the state
+     * @param modelName the model name
+     * @param modelType the model type
+     */
+    void createStateModelBinding(TransitionableState state, String modelName, Class modelType);
+
+    /**
+     * Gets view state binder configuration.
+     *
+     * @param state the state
+     * @return the view state binder configuration
+     */
+    BinderConfiguration getViewStateBinderConfiguration(ViewState state);
+
+    /**
+     * Gets state.
+     *
+     * @param <T>     the type parameter
+     * @param flow    the flow
+     * @param stateId the state id
+     * @param clazz   the clazz
+     * @return the state
+     */
+    <T> T getState(Flow flow, String stateId, Class<T> clazz);
+
+    /**
+     * Gets state.
+     *
+     * @param flow    the flow
+     * @param stateId the state id
+     * @return the state
+     */
+    TransitionableState getState(Flow flow, String stateId);
+
+    /**
+     * Gets flow.
+     *
+     * @param id the id
+     * @return the flow
+     */
+    Flow getFlow(String id);
+
+    /**
+     * Gets flow.
+     *
+     * @param registry the registry
+     * @param id       the id
+     * @return the flow
+     */
+    Flow getFlow(FlowDefinitionRegistry registry, String id);
 }

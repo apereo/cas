@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * This is {@link OneTimeTokenCredential}.
  *
@@ -25,7 +23,6 @@ public class OneTimeTokenCredential extends AbstractCredential {
 
     private static final long serialVersionUID = -7570600701132111037L;
 
-    @NotNull
     private String token;
 
     @Override

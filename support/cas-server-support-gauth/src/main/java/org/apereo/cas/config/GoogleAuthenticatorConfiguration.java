@@ -64,7 +64,9 @@ public class GoogleAuthenticatorConfiguration {
     public CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer() {
         return new GoogleAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
-            googleAuthenticatorFlowRegistry(), applicationContext, casProperties,
+            googleAuthenticatorFlowRegistry(),
+            applicationContext,
+            casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
     }
 
@@ -73,7 +75,7 @@ public class GoogleAuthenticatorConfiguration {
     public CasWebflowExecutionPlanConfigurer googleCasWebflowExecutionPlanConfigurer() {
         return plan -> plan.registerWebflowConfigurer(googleAuthenticatorMultifactorWebflowConfigurer());
     }
-    
+
     /**
      * The google authenticator multifactor trust configuration.
      */
@@ -88,7 +90,8 @@ public class GoogleAuthenticatorConfiguration {
         public CasWebflowConfigurer gauthMultifactorTrustWebflowConfigurer() {
             return new GoogleAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(),
-                casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), googleAuthenticatorFlowRegistry(),
+                casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(),
+                googleAuthenticatorFlowRegistry(),
                 applicationContext, casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
         }

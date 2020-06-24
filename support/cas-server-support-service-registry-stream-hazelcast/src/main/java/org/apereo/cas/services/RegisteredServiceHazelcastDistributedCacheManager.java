@@ -5,7 +5,6 @@ import org.apereo.cas.util.cache.MappableDistributedCacheManager;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link RegisteredServiceHazelcastDistributedCacheManager}.
@@ -13,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class RegisteredServiceHazelcastDistributedCacheManager extends
     MappableDistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> {
 

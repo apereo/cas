@@ -18,6 +18,7 @@ import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -119,12 +120,9 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
             .collect(Collectors.toList());
         val binder = createStateBinderConfiguration(fields);
         val viewRegister = createViewState(flow, CasWebflowConstants.STATE_ID_REGISTER_DEVICE, "casMfaRegisterDeviceView", binder);
-        val transition = createTransitionForState(viewRegister, CasWebflowConstants.TRANSITION_ID_SUBMIT,
-            CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE);
-
         createStateModelBinding(viewRegister, CasWebflowConstants.VAR_ID_MFA_TRUST_RECORD, MultifactorAuthenticationTrustBean.class);
-        transition.getAttributes().put("bind", Boolean.TRUE);
-        transition.getAttributes().put("validate", Boolean.TRUE);
+        createTransitionForState(viewRegister, CasWebflowConstants.TRANSITION_ID_SUBMIT,
+            CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
     }
 
     private void validateFlowDefinitionConfiguration() {
