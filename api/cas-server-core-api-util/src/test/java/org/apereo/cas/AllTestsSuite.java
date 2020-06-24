@@ -1,7 +1,5 @@
 package org.apereo.cas;
 
-import org.apereo.cas.cache.DistributedCacheManagerTests;
-import org.apereo.cas.cache.DistributedCacheObjectTests;
 import org.apereo.cas.model.CapacityTests;
 import org.apereo.cas.util.serialization.StringSerializerTests;
 
@@ -17,9 +15,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     CapacityTests.class,
-    StringSerializerTests.class,
-    DistributedCacheManagerTests.class,
-    DistributedCacheObjectTests.class
+    StringSerializerTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {

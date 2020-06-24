@@ -1,5 +1,6 @@
-package org.apereo.cas;
+package org.apereo.cas.util;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 /**
- * This is {@link JmsQueueIdentifier}. Allows one to declare strings as Spring beans.
+ * This is {@link PublisherIdentifier}. Allows one to declare strings as Spring beans.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -21,8 +22,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
-public class JmsQueueIdentifier implements Serializable {
+public class PublisherIdentifier implements Serializable {
     private static final long serialVersionUID = -2216572507148074902L;
 
     private String id = UUID.randomUUID().toString();

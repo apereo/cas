@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.CasServicesRegistryStreamingEventListener;
 import org.apereo.cas.services.RegisteredService;
@@ -8,6 +7,7 @@ import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
 import org.apereo.cas.services.publisher.DefaultCasRegisteredServiceStreamPublisher;
 import org.apereo.cas.services.replication.DefaultRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
+import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 
@@ -35,32 +35,33 @@ public class CasServicesStreamingConfiguration {
 
     @Bean
     public CasServicesRegistryStreamingEventListener casServicesRegistryStreamingEventListener() {
-        return new CasServicesRegistryStreamingEventListener(casRegisteredServiceStreamPublisher());
+        return new CasServicesRegistryStreamingEventListener(casRegisteredServiceStreamPublisher(),
+            casRegisteredServiceStreamPublisherIdentifier());
     }
 
     @RefreshScope
     @Bean(destroyMethod = "destroy")
     public RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy() {
         val stream = casProperties.getServiceRegistry().getStream();
-        return new DefaultRegisteredServiceReplicationStrategy(registeredServiceDistributedCacheManager(), stream);
+        return new DefaultRegisteredServiceReplicationStrategy(registeredServiceDistributedCacheManager(), stream,
+            casRegisteredServiceStreamPublisherIdentifier());
     }
 
     @Bean
     @RefreshScope
     public CasRegisteredServiceStreamPublisher casRegisteredServiceStreamPublisher() {
-        return new DefaultCasRegisteredServiceStreamPublisher(registeredServiceDistributedCacheManager(),
-            casRegisteredServiceStreamPublisherIdentifier());
+        return new DefaultCasRegisteredServiceStreamPublisher(registeredServiceDistributedCacheManager());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "registeredServiceDistributedCacheManager")
-    public DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> registeredServiceDistributedCacheManager() {
+    public DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier> registeredServiceDistributedCacheManager() {
         return DistributedCacheManager.noOp();
     }
 
     @ConditionalOnMissingBean(name = "casRegisteredServiceStreamPublisherIdentifier")
     @Bean
-    public JmsQueueIdentifier casRegisteredServiceStreamPublisherIdentifier() {
-        return new JmsQueueIdentifier();
+    public PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier() {
+        return new PublisherIdentifier();
     }
 }

@@ -1,7 +1,10 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
+import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
+import org.apereo.cas.util.cache.DistributedCacheObject;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -30,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CasServicesStreamingHazelcastConfigurationTests {
     @Autowired
     @Qualifier("registeredServiceDistributedCacheManager")
-    private DistributedCacheManager registeredServiceDistributedCacheManager;
+    private DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier> registeredServiceDistributedCacheManager;
 
     @Autowired
     @Qualifier("casRegisteredServiceStreamPublisher")

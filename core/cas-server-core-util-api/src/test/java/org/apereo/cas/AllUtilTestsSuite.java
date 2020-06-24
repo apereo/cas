@@ -4,6 +4,8 @@ import org.apereo.cas.util.DigestUtilsTests;
 import org.apereo.cas.util.HttpRequestUtilsTests;
 import org.apereo.cas.util.HttpUtilsTests;
 import org.apereo.cas.util.LoggingUtilsTests;
+import org.apereo.cas.util.cache.DistributedCacheManagerTests;
+import org.apereo.cas.util.cache.DistributedCacheObjectTests;
 import org.apereo.cas.util.crypto.GlibcCryptPasswordEncoderTests;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBeanTests;
 import org.apereo.cas.util.function.FunctionUtilsTests;
@@ -39,7 +41,9 @@ import org.junit.runner.RunWith;
     DefaultCasBannerTests.class,
     GroovyShellScriptTests.class,
     FunctionUtilsTests.class,
+    DistributedCacheManagerTests.class,
     DigestUtilsTests.class,
+    DistributedCacheObjectTests.class,
     SerializationUtilsTests.class,
     SpringAwareMessageMessageInterpolatorTests.class,
     HttpUtilsTests.class,
