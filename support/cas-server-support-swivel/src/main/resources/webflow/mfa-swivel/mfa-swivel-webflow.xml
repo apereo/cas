@@ -4,33 +4,6 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
-    <var name="credential" class="org.apereo.cas.adaptors.swivel.SwivelTokenCredential"/>
-
-    <on-start>
-        <evaluate expression="initialFlowSetupAction"/>
-    </on-start>
-
-    <action-state id="initializeLoginForm">
-        <evaluate expression="initializeLoginAction"/>
-        <transition on="success" to="viewLoginForm"/>
-    </action-state>
-
-    <view-state id="viewLoginForm" view="casSwivelLoginView" model="credential">
-        <binder>
-            <binding property="token" required="true"/>
-        </binder>
-        <on-entry>
-            <set name="viewScope.principal" value="conversationScope.authentication.principal"/>
-        </on-entry>
-        <transition on="submit" bind="true" validate="true" to="realSubmit"/>
-    </view-state>
-
-    <action-state id="realSubmit">
-        <evaluate expression="swivelAuthenticationWebflowAction"/>
-        <transition on="success" to="success"/>
-        <transition on="error" to="initializeLoginForm"/>
-    </action-state>
-
     <end-state id="success"/>
 
 </flow>
