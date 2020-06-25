@@ -768,6 +768,11 @@ public interface CasWebflowConstants {
      */
     String ACTION_ID_VALIDATE_CAPTCHA = "validateCaptchaAction";
     /**
+     * Action id 'initializeLoginAction'.
+     */
+    String ACTION_ID_INIT_LOGIN_ACTION = "initializeLoginAction";
+
+    /**
      * Action id 'initializeCaptchaAction'.
      */
     String ACTION_ID_INIT_CAPTCHA = "initializeCaptchaAction";

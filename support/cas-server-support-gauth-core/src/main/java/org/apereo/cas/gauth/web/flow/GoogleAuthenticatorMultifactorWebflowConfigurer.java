@@ -50,7 +50,7 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
 
             val initLoginFormState = createActionState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM,
                 createEvaluateAction("prepareGoogleAuthenticatorLoginAction"),
-                createEvaluateAction("initializeLoginAction"));
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
             createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "accountRegistrationCheck");
             setStartState(flow, initLoginFormState);
             

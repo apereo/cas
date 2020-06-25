@@ -16,7 +16,8 @@ For the purposes of this guide, let's choose `mfa-custom` as our provider id.
 
 ## Webflow XML Configuration
 
-The flow configuration file needs to be placed inside a `src/main/resources/webflow/mfa-custom` directory, named as `mfa-custom.xml` whose outline is sampled below:
+The flow configuration file needs to be placed inside a `src/main/resources/webflow/mfa-custom` 
+directory, named as `mfa-custom.xml` whose outline is sampled below:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>

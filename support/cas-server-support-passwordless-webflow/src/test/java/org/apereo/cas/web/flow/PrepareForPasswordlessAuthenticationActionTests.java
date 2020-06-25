@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Webflow")
 public class PrepareForPasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
-    @Qualifier("initializeLoginAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
     private Action initializeLoginAction;
 
     @Test
