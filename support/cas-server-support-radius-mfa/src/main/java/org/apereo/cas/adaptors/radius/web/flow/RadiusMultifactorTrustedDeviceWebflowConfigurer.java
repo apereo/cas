@@ -12,19 +12,19 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * This is {@link RadiusMultifactorTrustWebflowConfigurer}.
+ * This is {@link RadiusMultifactorTrustedDeviceWebflowConfigurer}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class RadiusMultifactorTrustWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
+public class RadiusMultifactorTrustedDeviceWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
 
-    public RadiusMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                   final FlowDefinitionRegistry flowDefinitionRegistry,
-                                                   final ConfigurableApplicationContext applicationContext,
-                                                   final CasConfigurationProperties casProperties,
-                                                   final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
+    public RadiusMultifactorTrustedDeviceWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                                           final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                           final FlowDefinitionRegistry flowDefinitionRegistry,
+                                                           final ConfigurableApplicationContext applicationContext,
+                                                           final CasConfigurationProperties casProperties,
+                                                           final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
         super(flowBuilderServices, loginFlowDefinitionRegistry,
             applicationContext, casProperties, Optional.of(flowDefinitionRegistry),
             mfaFlowCustomizers);
