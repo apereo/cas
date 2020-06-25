@@ -12,19 +12,19 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * This is {@link YubiKeyMultifactorTrustWebflowConfigurer}.
+ * This is {@link YubiKeyMultifactorTrustedDeviceWebflowConfigurer}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class YubiKeyMultifactorTrustWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
+public class YubiKeyMultifactorTrustedDeviceWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
 
-    public YubiKeyMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                    final FlowDefinitionRegistry flowDefinitionRegistry,
-                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                    final ConfigurableApplicationContext applicationContext,
-                                                    final CasConfigurationProperties casProperties,
-                                                    final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
+    public YubiKeyMultifactorTrustedDeviceWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                                            final FlowDefinitionRegistry flowDefinitionRegistry,
+                                                            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                            final ConfigurableApplicationContext applicationContext,
+                                                            final CasConfigurationProperties casProperties,
+                                                            final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
         super(flowBuilderServices, loginFlowDefinitionRegistry,
             applicationContext, casProperties, Optional.of(flowDefinitionRegistry),
             mfaFlowCustomizers);

@@ -12,19 +12,19 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * This is {@link SwivelMultifactorTrustWebflowConfigurer}.
+ * This is {@link SwivelMultifactorTrustedDeviceWebflowConfigurer}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class SwivelMultifactorTrustWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
+public class SwivelMultifactorTrustedDeviceWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
 
-    public SwivelMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                   final FlowDefinitionRegistry flowDefinitionRegistry,
-                                                   final ConfigurableApplicationContext applicationContext,
-                                                   final CasConfigurationProperties casProperties,
-                                                   final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
+    public SwivelMultifactorTrustedDeviceWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                                           final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                           final FlowDefinitionRegistry flowDefinitionRegistry,
+                                                           final ConfigurableApplicationContext applicationContext,
+                                                           final CasConfigurationProperties casProperties,
+                                                           final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
         super(flowBuilderServices, loginFlowDefinitionRegistry,
             applicationContext, casProperties, Optional.of(flowDefinitionRegistry),
             mfaFlowCustomizers);

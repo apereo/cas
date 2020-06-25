@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.swivel.web.flow.SwivelAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.swivel.web.flow.SwivelAuthenticationWebflowEventResolver;
-import org.apereo.cas.adaptors.swivel.web.flow.SwivelMultifactorTrustWebflowConfigurer;
+import org.apereo.cas.adaptors.swivel.web.flow.SwivelMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.adaptors.swivel.web.flow.SwivelMultifactorWebflowConfigurer;
 import org.apereo.cas.adaptors.swivel.web.flow.rest.SwivelTuringImageGeneratorController;
 import org.apereo.cas.audit.AuditableExecution;
@@ -163,7 +163,7 @@ public class SwivelConfiguration {
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer swivelMultifactorTrustWebflowConfigurer() {
-            return new SwivelMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
+            return new SwivelMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(),
                 swivelAuthenticatorFlowRegistry(), applicationContext, casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));

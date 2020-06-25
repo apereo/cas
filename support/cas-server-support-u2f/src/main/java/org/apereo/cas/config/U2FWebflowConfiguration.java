@@ -6,7 +6,7 @@ import org.apereo.cas.adaptors.u2f.web.flow.U2FAccountCheckRegistrationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAccountSaveRegistrationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAuthenticationWebflowEventResolver;
-import org.apereo.cas.adaptors.u2f.web.flow.U2FMultifactorTrustWebflowConfigurer;
+import org.apereo.cas.adaptors.u2f.web.flow.U2FMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FMultifactorWebflowConfigurer;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartAuthenticationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartRegistrationAction;
@@ -206,7 +206,7 @@ public class U2FWebflowConfiguration {
         @Bean
         @DependsOn({"defaultWebflowConfigurer", "u2fMultifactorWebflowConfigurer"})
         public CasWebflowConfigurer u2fMultifactorTrustWebflowConfigurer() {
-            val cfg = new U2FMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
+            val cfg = new U2FMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(),
                 u2fFlowRegistry(),
                 applicationContext,

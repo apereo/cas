@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationTicketFactory;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator;
-import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorTrustWebflowConfigurer;
+import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorWebflowConfigurer;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleSendTokenAction;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -146,7 +146,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer mfaSimpleMultifactorTrustWebflowConfigurer() {
-            val cfg = new CasSimpleMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
+            val cfg = new CasSimpleMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(),
                 mfaSimpleAuthenticatorFlowRegistry(),
                 applicationContext, casProperties,

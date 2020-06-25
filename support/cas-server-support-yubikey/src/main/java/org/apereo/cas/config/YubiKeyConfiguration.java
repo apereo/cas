@@ -4,7 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.yubikey.YubikeyAccountCipherExecutor;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowEventResolver;
-import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorTrustWebflowConfigurer;
+import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -177,7 +177,7 @@ public class YubiKeyConfiguration {
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer yubiMultifactorTrustWebflowConfigurer() {
-            return new YubiKeyMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
+            return new YubiKeyMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices.getObject(),
                 yubikeyFlowRegistry(),
                 loginFlowDefinitionRegistry.getObject(),
                 applicationContext,

@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowEventResolver;
-import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorTrustWebflowConfigurer;
+import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -162,7 +162,7 @@ public class RadiusMultifactorConfiguration {
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer radiusMultifactorTrustConfigurer() {
-            return new RadiusMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
+            return new RadiusMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(),
                 radiusFlowRegistry(),
                 applicationContext,
