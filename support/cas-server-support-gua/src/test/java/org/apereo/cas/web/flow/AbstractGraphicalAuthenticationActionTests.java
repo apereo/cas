@@ -69,7 +69,7 @@ import org.springframework.webflow.execution.Action;
     properties ="cas.authn.gua.resource.location=classpath:image.jpg")
 public abstract class AbstractGraphicalAuthenticationActionTests {
     @Autowired
-    @Qualifier("initializeLoginAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
     protected Action initializeLoginAction;
 
     @Autowired

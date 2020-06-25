@@ -266,7 +266,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
     private static LinkedList<AbstractActionModel> createDuoInitializeLoginAction(final List<AbstractStateModel> states) {
         val actModel = new ActionStateModel(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         val actions = new LinkedList<AbstractActionModel>();
-        actions.add(new EvaluateModel("initializeLoginAction"));
+        actions.add(new EvaluateModel(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
         actModel.setActions(actions);
 
         val trans = new LinkedList<TransitionModel>();

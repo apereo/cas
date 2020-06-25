@@ -207,7 +207,7 @@ public class CasSupportActionsConfiguration {
             casProperties.getLogout());
     }
 
-    @ConditionalOnMissingBean(name = "initializeLoginAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
     @Bean
     @RefreshScope
     public Action initializeLoginAction() {

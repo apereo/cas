@@ -47,7 +47,7 @@ public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifacto
             flow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
 
             val initLoginFormState = createActionState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM,
-                createEvaluateAction("initializeLoginAction"));
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
             createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "sendSimpleToken");
             setStartState(flow, initLoginFormState);
 
