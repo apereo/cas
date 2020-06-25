@@ -264,6 +264,16 @@ public interface CasWebflowConfigurer extends Ordered {
     /**
      * Create view state view state.
      *
+     * @param flow        the flow
+     * @param id          the id
+     * @param viewFactory the view factory
+     * @return the view state
+     */
+    ViewState createViewState(Flow flow, String id, ViewFactory viewFactory);
+
+    /**
+     * Create view state view state.
+     *
      * @param flow   the flow
      * @param id     the id
      * @param viewId the view id

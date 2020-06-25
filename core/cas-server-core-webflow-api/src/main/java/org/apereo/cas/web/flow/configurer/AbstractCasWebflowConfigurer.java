@@ -244,9 +244,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         if (!redirect) {
             return createEndState(flow, id, viewId);
         }
-        val expression = createExpression(viewId, String.class);
-        val viewFactory = new ActionExecutingViewFactory(new ExternalRedirectAction(expression));
-        return createEndState(flow, id, viewFactory);
+        return createEndState(flow, id, createExternalRedirectViewFactory(viewId));
     }
 
     @Override
@@ -292,6 +290,20 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                 .createViewFactory(expression, this.flowBuilderServices.getExpressionParser(),
                     this.flowBuilderServices.getConversionService(), binder, this.flowBuilderServices.getValidator(),
                     this.flowBuilderServices.getValidationHintResolver());
+            return createViewState(flow, id, viewFactory);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return null;
+    }
+
+    @Override
+    public ViewState createViewState(final Flow flow, final String id, final ViewFactory viewFactory) {
+        try {
+            if (containsFlowState(flow, id)) {
+                LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
+                return getTransitionableState(flow, id, ViewState.class);
+            }
             val viewState = new ViewState(flow, id, viewFactory);
             LOGGER.trace("Added view state [{}]", viewState.getId());
             return viewState;
@@ -593,7 +605,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         flow.addVariable(flowVar);
         return flowVar;
     }
-    
+
     @Override
     public BinderConfiguration createStateBinderConfiguration(final List<String> properties) {
         val binder = new BinderConfiguration();
@@ -802,14 +814,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         actionList.addAll(currentActions.toArray(Action[]::new));
     }
 
-    private static TransitionCriteria getTransitionCriteriaForExpression(final Expression criteriaOutcomeExpression) {
-        if (criteriaOutcomeExpression.toString().equals(WildcardTransitionCriteria.WILDCARD_EVENT_ID)) {
-            return WildcardTransitionCriteria.INSTANCE;
-        }
-        return new DefaultTransitionCriteria(criteriaOutcomeExpression);
-    }
-
-
     @Override
     public Flow getFlow(final String id) {
         return getFlow(this.mainFlowDefinitionRegistry, id);
@@ -829,6 +833,25 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             id, registry.getFlowDefinitionIds());
         return null;
     }
+
+    /**
+     * Create external redirect view factory.
+     *
+     * @param expressionId the expression id
+     * @return the view factory
+     */
+    public ViewFactory createExternalRedirectViewFactory(final String expressionId) {
+        val expression = createExpression(expressionId, String.class);
+        return new ActionExecutingViewFactory(new ExternalRedirectAction(expression));
+    }
+
+    private static TransitionCriteria getTransitionCriteriaForExpression(final Expression criteriaOutcomeExpression) {
+        if (criteriaOutcomeExpression.toString().equals(WildcardTransitionCriteria.WILDCARD_EVENT_ID)) {
+            return WildcardTransitionCriteria.INSTANCE;
+        }
+        return new DefaultTransitionCriteria(criteriaOutcomeExpression);
+    }
+
     /**
      * Handle the initialization of the webflow.
      */
