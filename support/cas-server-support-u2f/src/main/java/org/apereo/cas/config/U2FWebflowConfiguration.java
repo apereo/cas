@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.u2f.web.flow.U2FAccountCheckRegistrationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAccountSaveRegistrationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAuthenticationWebflowEventResolver;
+import org.apereo.cas.adaptors.u2f.web.flow.U2FMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FMultifactorWebflowConfigurer;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartAuthenticationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartRegistrationAction;
@@ -16,6 +17,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -29,7 +31,9 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -50,6 +54,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("u2FWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class U2FWebflowConfiguration {
+    private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -105,8 +110,9 @@ public class U2FWebflowConfiguration {
     private ObjectProvider<U2F> u2fService;
 
     @Bean
+    @ConditionalOnMissingBean(name = "u2fFlowRegistry")
     public FlowDefinitionRegistry u2fFlowRegistry() {
-        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices.getObject());
+        val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices.getObject());
         builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
         builder.addFlowLocationPattern("/mfa-u2f/*-webflow.xml");
         return builder.build();
@@ -123,10 +129,12 @@ public class U2FWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer u2fMultifactorWebflowConfigurer() {
-        return new U2FMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
+        val cfg = new U2FMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), u2fFlowRegistry(),
             applicationContext, casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+        cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
+        return cfg;
     }
 
     @ConditionalOnMissingBean(name = "u2fStartAuthenticationAction")
@@ -184,5 +192,33 @@ public class U2FWebflowConfiguration {
     @ConditionalOnMissingBean(name = "u2fCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer u2fCasWebflowExecutionPlanConfigurer() {
         return plan -> plan.registerWebflowConfigurer(u2fMultifactorWebflowConfigurer());
+    }
+
+    /**
+     * The u2f authenticator multifactor trust configuration.
+     */
+    @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.u2f", name = "trusted-device-enabled", havingValue = "true", matchIfMissing = true)
+    @Configuration("u2fMultifactorTrustConfiguration")
+    public class U2FMultifactorTrustConfiguration {
+
+        @ConditionalOnMissingBean(name = "u2fMultifactorTrustWebflowConfigurer")
+        @Bean
+        @DependsOn({"defaultWebflowConfigurer", "u2fMultifactorWebflowConfigurer"})
+        public CasWebflowConfigurer u2fMultifactorTrustWebflowConfigurer() {
+            val cfg = new U2FMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
+                loginFlowDefinitionRegistry.getObject(),
+                u2fFlowRegistry(),
+                applicationContext,
+                casProperties,
+                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+            cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
+            return cfg;
+        }
+
+        @Bean
+        public CasWebflowExecutionPlanConfigurer u2fMultifactorTrustCasWebflowExecutionPlanConfigurer() {
+            return plan -> plan.registerWebflowConfigurer(u2fMultifactorTrustWebflowConfigurer());
+        }
     }
 }

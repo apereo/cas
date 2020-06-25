@@ -21,12 +21,11 @@ public class SwivelMultifactorTrustWebflowConfigurer extends AbstractMultifactor
 
     public SwivelMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                   final boolean enableDeviceRegistration,
                                                    final FlowDefinitionRegistry flowDefinitionRegistry,
                                                    final ConfigurableApplicationContext applicationContext,
                                                    final CasConfigurationProperties casProperties,
                                                    final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, enableDeviceRegistration,
+        super(flowBuilderServices, loginFlowDefinitionRegistry,
             applicationContext, casProperties, Optional.of(flowDefinitionRegistry),
             mfaFlowCustomizers);
     }

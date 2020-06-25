@@ -50,6 +50,8 @@ import java.util.Objects;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 public class CasSimpleMultifactorAuthenticationConfiguration {
+    private static final int WEBFLOW_CONFIGURER_ORDER = 100;
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -83,10 +85,12 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer mfaSimpleMultifactorWebflowConfigurer() {
-        return new CasSimpleMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
+        val cfg = new CasSimpleMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
             mfaSimpleAuthenticatorFlowRegistry(), applicationContext, casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+        cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
+        return cfg;
     }
 
     @Bean
@@ -142,14 +146,16 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer mfaSimpleMultifactorTrustWebflowConfigurer() {
-            return new CasSimpleMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
+            val cfg = new CasSimpleMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(),
-                casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(),
                 mfaSimpleAuthenticatorFlowRegistry(),
                 applicationContext, casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+            cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
+            return cfg;
         }
 
+        @ConditionalOnMissingBean(name = "casSimpleMultifactorTrustWebflowExecutionPlanConfigurer")
         @Bean
         public CasWebflowExecutionPlanConfigurer casSimpleMultifactorTrustWebflowExecutionPlanConfigurer() {
             return plan -> plan.registerWebflowConfigurer(mfaSimpleMultifactorTrustWebflowConfigurer());

@@ -155,10 +155,11 @@ public class AuthyConfiguration {
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer authyMultifactorTrustWebflowConfigurer() {
-            val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
             return new AuthyMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
-                loginFlowDefinitionRegistry.getObject(), deviceRegistrationEnabled,
-                authyAuthenticatorFlowRegistry(), applicationContext, casProperties,
+                loginFlowDefinitionRegistry.getObject(),
+                authyAuthenticatorFlowRegistry(),
+                applicationContext,
+                casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
         }
 

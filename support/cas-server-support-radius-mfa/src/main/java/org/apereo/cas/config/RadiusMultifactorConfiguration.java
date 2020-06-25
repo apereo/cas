@@ -162,10 +162,11 @@ public class RadiusMultifactorConfiguration {
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer radiusMultifactorTrustConfigurer() {
-            val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
             return new RadiusMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
-                loginFlowDefinitionRegistry.getObject(), deviceRegistrationEnabled,
-                radiusFlowRegistry(), applicationContext, casProperties,
+                loginFlowDefinitionRegistry.getObject(),
+                radiusFlowRegistry(),
+                applicationContext,
+                casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
         }
 
