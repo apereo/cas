@@ -516,7 +516,7 @@ jobs:
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate@v2
       - name: Run Tests
-        run: ./testcas.sh --with-coverage --category ${{ matrix.category }}
+        run: ./testcas.sh --info --with-coverage --category ${{ matrix.category }}
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:

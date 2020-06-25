@@ -54,6 +54,7 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class YubiKeyConfiguration {
+    private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -101,6 +102,7 @@ public class YubiKeyConfiguration {
     private ObjectProvider<CasCookieBuilder> warnCookieGenerator;
 
     @Bean
+    @ConditionalOnMissingBean(name = "yubikeyFlowRegistry")
     public FlowDefinitionRegistry yubikeyFlowRegistry() {
         val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices.getObject());
         builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
@@ -119,10 +121,12 @@ public class YubiKeyConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer yubikeyMultifactorWebflowConfigurer() {
-        return new YubiKeyMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
+        val cfg = new YubiKeyMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), yubikeyFlowRegistry(),
             applicationContext, casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+        cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
+        return cfg;
     }
 
     @Bean
@@ -177,15 +181,18 @@ public class YubiKeyConfiguration {
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer yubiMultifactorTrustWebflowConfigurer() {
-            return new YubiKeyMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices.getObject(),
+            val cfg = new YubiKeyMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices.getObject(),
                 yubikeyFlowRegistry(),
                 loginFlowDefinitionRegistry.getObject(),
                 applicationContext,
                 casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+            cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
+            return cfg;
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "yubiMultifactorCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer yubiMultifactorCasWebflowExecutionPlanConfigurer() {
             return plan -> plan.registerWebflowConfigurer(yubiMultifactorTrustWebflowConfigurer());
         }

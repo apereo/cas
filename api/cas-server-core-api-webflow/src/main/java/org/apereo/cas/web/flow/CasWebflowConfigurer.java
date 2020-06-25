@@ -4,11 +4,13 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.SetAction;
+import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionableState;
@@ -18,6 +20,7 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.ViewFactory;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link CasWebflowConfigurer}.
@@ -130,12 +133,41 @@ public interface CasWebflowConfigurer extends Ordered {
     /**
      * Create action state action state.
      *
+     * @param flow the flow
+     * @param name the name
+     * @return the action state
+     */
+    ActionState createActionState(Flow flow, String name);
+
+    /**
+     * Create action state action state.
+     *
+     * @param flow   the flow
+     * @param name   the name
+     * @param action the action
+     * @return the action state
+     */
+    ActionState createActionState(Flow flow, String name, String action);
+
+    /**
+     * Create action state action state.
+     *
      * @param flow    the flow
      * @param name    the name
      * @param actions the actions
      * @return the action state
      */
     ActionState createActionState(Flow flow, String name, Action... actions);
+
+    /**
+     * Create action state action state.
+     *
+     * @param flow   the flow
+     * @param name   the name
+     * @param action the action
+     * @return the action state
+     */
+    ActionState createActionState(Flow flow, String name, Action action);
 
     /**
      * Create decision state decision state.
@@ -149,8 +181,7 @@ public interface CasWebflowConfigurer extends Ordered {
      */
     DecisionState createDecisionState(Flow flow, String id, String testExpression,
                                       String thenStateId, String elseStateId);
-
-
+    
     /**
      * Sets start state.
      *
@@ -291,6 +322,187 @@ public interface CasWebflowConfigurer extends Ordered {
     default String getName() {
         return getClass().getSimpleName();
     }
+
+
+    /**
+     * Create state default transition.
+     *
+     * @param state       the state
+     * @param targetState the target state
+     */
+    void createStateDefaultTransition(TransitionableState state, String targetState);
+
+    /**
+     * Create state default transition.
+     *
+     * @param state       the state
+     * @param targetState the target state
+     */
+    void createStateDefaultTransition(TransitionableState state, StateDefinition targetState);
+
+    /**
+     * Create transition for state transition.
+     *
+     * @param state           the state
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @param attributes      the attributes
+     * @return the transition
+     */
+    Transition createTransitionForState(TransitionableState state,
+                                        String criteriaOutcome,
+                                        String targetState,
+                                        Map<String, Object> attributes);
+
+    /**
+     * Create transition for state transition.
+     *
+     * @param state           the state
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @return the transition
+     */
+    Transition createTransitionForState(TransitionableState state,
+                                        String criteriaOutcome,
+                                        String targetState);
+
+    /**
+     * Create transition for state transition.
+     *
+     * @param state           the state
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @param attributes      the attributes
+     * @param actions         the actions
+     * @return the transition
+     */
+    Transition createTransitionForState(TransitionableState state,
+                                        String criteriaOutcome,
+                                        String targetState,
+                                        Map<String, Object> attributes,
+                                        Action... actions);
+
+    /**
+     * Create transition for state transition.
+     *
+     * @param state           the state
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @param actions         the actions
+     * @return the transition
+     */
+    Transition createTransitionForState(TransitionableState state,
+                                        String criteriaOutcome,
+                                        String targetState,
+                                        Action... actions);
+
+    /**
+     * Create transition for state transition.
+     *
+     * @param flow            the flow
+     * @param stateId         the state id
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @return the transition
+     */
+    Transition createTransitionForState(Flow flow, String stateId,
+                                        String criteriaOutcome,
+                                        String targetState);
+
+    /**
+     * Create transition for state transition.
+     *
+     * @param state           the state
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @param removeExisting  the remove existing
+     * @param attributes      the attributes
+     * @param actions         the actions
+     * @return the transition
+     */
+    Transition createTransitionForState(TransitionableState state, String criteriaOutcome,
+                                        String targetState, boolean removeExisting,
+                                        Map<String, Object> attributes, Action... actions);
+
+    /**
+     * Create transition for state transition.
+     *
+     * @param state           the state
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @param removeExisting  the remove existing
+     * @param attributes      the attributes
+     * @return the transition
+     */
+    Transition createTransitionForState(TransitionableState state, String criteriaOutcome,
+                                        String targetState, boolean removeExisting,
+                                        Map<String, Object> attributes);
+
+    /**
+     * Create transition for state transition.
+     *
+     * @param state           the state
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @param removeExisting  the remove existing
+     * @return the transition
+     */
+    Transition createTransitionForState(TransitionableState state, String criteriaOutcome,
+                                        String targetState, boolean removeExisting);
+
+    /**
+     * Create expression expression.
+     *
+     * @param expression   the expression
+     * @param expectedType the expected type
+     * @return the expression
+     */
+    Expression createExpression(String expression, Class expectedType);
+
+    /**
+     * Create expression expression.
+     *
+     * @param expression the expression
+     * @return the expression
+     */
+    Expression createExpression(String expression);
+
+    /**
+     * Contains flow state boolean.
+     *
+     * @param flow    the flow
+     * @param stateId the state id
+     * @return the boolean
+     */
+    boolean containsFlowState(Flow flow, String stateId);
+
+    /**
+     * Contains subflow state boolean.
+     *
+     * @param flow    the flow
+     * @param stateId the state id
+     * @return the boolean
+     */
+    boolean containsSubflowState(Flow flow, String stateId);
+
+    /**
+     * Contains transition boolean.
+     *
+     * @param state      the state
+     * @param transition the transition
+     * @return the boolean
+     */
+    boolean containsTransition(TransitionableState state, String transition);
+
+    /**
+     * Create flow variable flow variable.
+     *
+     * @param flow the flow
+     * @param id   the id
+     * @param type the type
+     * @return the flow variable
+     */
+    FlowVariable createFlowVariable(Flow flow, String id, Class type);
 
     /**
      * Create state binder configuration binder configuration.
