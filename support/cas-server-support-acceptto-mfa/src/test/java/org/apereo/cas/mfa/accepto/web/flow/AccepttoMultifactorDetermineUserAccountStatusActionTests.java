@@ -45,7 +45,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Webflow")
 @SpringBootTest(classes = BaseAccepttoMultifactorAuthenticationTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.mfa.acceptto.registration-api-url=http://localhost:5013",
         "cas.authn.mfa.acceptto.application-id=thisisatestid",
         "cas.authn.mfa.acceptto.group-attribute=group",
         "cas.authn.mfa.acceptto.email-attribute=email",
@@ -58,11 +57,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AccepttoMultifactorDetermineUserAccountStatusActionTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Test
-    public void verifyEmpty() throws Exception {
+    public void verifyEmpty(@Autowired final CasConfigurationProperties casProperties) throws Exception {
         val context = prepareRequestContext();
 
         val keyGen = KeyPairGenerator.getInstance("RSA");
@@ -73,6 +69,7 @@ public class AccepttoMultifactorDetermineUserAccountStatusActionTests {
         val payload = MAPPER.writeValueAsString(Map.of());
         val jwt = EncodingUtils.signJwsRSASha512(priv, payload.getBytes(StandardCharsets.UTF_8), Map.of());
         val data = MAPPER.writeValueAsString(Map.of("content", new String(jwt, StandardCharsets.UTF_8)));
+
 
         try (val webServer = new MockWebServer(5013,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
@@ -88,13 +85,12 @@ public class AccepttoMultifactorDetermineUserAccountStatusActionTests {
             RequestContextHolder.setRequestContext(context);
             val result = action.doExecute(context);
             assertEquals(result.getId(), CasWebflowConstants.TRANSITION_ID_DENY);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 
+
     @Test
-    public void verifyOperationFail() throws Exception {
+    public void verifyOperationFail(@Autowired final CasConfigurationProperties casProperties) throws Exception {
         val context = prepareRequestContext();
 
         val keyGen = KeyPairGenerator.getInstance("RSA");
@@ -110,7 +106,10 @@ public class AccepttoMultifactorDetermineUserAccountStatusActionTests {
         val jwt = EncodingUtils.signJwsRSASha512(priv, payload.getBytes(StandardCharsets.UTF_8), Map.of());
         val data = MAPPER.writeValueAsString(Map.of("content", new String(jwt, StandardCharsets.UTF_8)));
 
-        try (val webServer = new MockWebServer(5013,
+        casProperties.getAuthn().getMfa()
+            .getAcceptto()
+            .setRegistrationApiUrl("http://localhost:5014");
+        try (val webServer = new MockWebServer(5014,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val action = new AccepttoMultifactorDetermineUserAccountStatusAction(casProperties, pub);
@@ -124,13 +123,11 @@ public class AccepttoMultifactorDetermineUserAccountStatusActionTests {
             RequestContextHolder.setRequestContext(context);
             val result = action.doExecute(context);
             assertEquals(result.getId(), CasWebflowConstants.TRANSITION_ID_DENY);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 
     @Test
-    public void verifyOperationApprove() throws Exception {
+    public void verifyOperationApprove(@Autowired final CasConfigurationProperties casProperties) throws Exception {
         val context = prepareRequestContext();
 
         val keyGen = KeyPairGenerator.getInstance("RSA");
@@ -147,7 +144,10 @@ public class AccepttoMultifactorDetermineUserAccountStatusActionTests {
         val jwt = EncodingUtils.signJwsRSASha512(priv, payload.getBytes(StandardCharsets.UTF_8), Map.of());
         val data = MAPPER.writeValueAsString(Map.of("content", new String(jwt, StandardCharsets.UTF_8)));
 
-        try (val webServer = new MockWebServer(5013,
+        casProperties.getAuthn().getMfa()
+            .getAcceptto()
+            .setRegistrationApiUrl("http://localhost:5015");
+        try (val webServer = new MockWebServer(5015,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val action = new AccepttoMultifactorDetermineUserAccountStatusAction(casProperties, pub);
@@ -161,14 +161,11 @@ public class AccepttoMultifactorDetermineUserAccountStatusActionTests {
             RequestContextHolder.setRequestContext(context);
             val result = action.doExecute(context);
             assertEquals(result.getId(), CasWebflowConstants.TRANSITION_ID_APPROVE);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 
-
     @Test
-    public void verifyOperationSuccess() throws Exception {
+    public void verifyOperationSuccess(@Autowired final CasConfigurationProperties casProperties) throws Exception {
         val context = prepareRequestContext();
 
         val keyGen = KeyPairGenerator.getInstance("RSA");
@@ -184,8 +181,11 @@ public class AccepttoMultifactorDetermineUserAccountStatusActionTests {
             "channel", UUID.randomUUID().toString()));
         val jwt = EncodingUtils.signJwsRSASha512(priv, payload.getBytes(StandardCharsets.UTF_8), Map.of());
         val data = MAPPER.writeValueAsString(Map.of("content", new String(jwt, StandardCharsets.UTF_8)));
-        
-        try (val webServer = new MockWebServer(5013,
+
+        casProperties.getAuthn().getMfa()
+            .getAcceptto()
+            .setRegistrationApiUrl("http://localhost:5017");
+        try (val webServer = new MockWebServer(5017,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val action = new AccepttoMultifactorDetermineUserAccountStatusAction(casProperties, pub);
@@ -199,13 +199,11 @@ public class AccepttoMultifactorDetermineUserAccountStatusActionTests {
             RequestContextHolder.setRequestContext(context);
             val result = action.doExecute(context);
             assertEquals(result.getId(), CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
-    
+
     @Test
-    public void verifyOperationRegister() throws Exception {
+    public void verifyOperationRegister(@Autowired final CasConfigurationProperties casProperties) throws Exception {
         val context = prepareRequestContext();
 
         val keyGen = KeyPairGenerator.getInstance("RSA");
@@ -223,7 +221,10 @@ public class AccepttoMultifactorDetermineUserAccountStatusActionTests {
 
         val data = MAPPER.writeValueAsString(Map.of("content", new String(jwt, StandardCharsets.UTF_8)));
 
-        try (val webServer = new MockWebServer(5013,
+        casProperties.getAuthn().getMfa()
+            .getAcceptto()
+            .setRegistrationApiUrl("http://localhost:5019");
+        try (val webServer = new MockWebServer(5019,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val action = new AccepttoMultifactorDetermineUserAccountStatusAction(casProperties, pub);
@@ -237,10 +238,7 @@ public class AccepttoMultifactorDetermineUserAccountStatusActionTests {
             RequestContextHolder.setRequestContext(context);
             val result = action.doExecute(context);
             assertEquals(result.getId(), CasWebflowConstants.TRANSITION_ID_REGISTER);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
-
     }
 
     private static MockRequestContext prepareRequestContext() {
