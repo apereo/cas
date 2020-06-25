@@ -300,6 +300,11 @@ public interface CasWebflowConstants {
     String STATE_ID_INIT_LOGIN_FORM = "initializeLoginForm";
 
     /**
+     * The state 'cancel'.
+     */
+    String STATE_ID_CANCEL= "cancel";
+
+    /**
      * The state 'viewLoginForm'.
      */
     String STATE_ID_VIEW_LOGIN_FORM = "viewLoginForm";
