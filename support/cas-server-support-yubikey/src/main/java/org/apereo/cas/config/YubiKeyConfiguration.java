@@ -177,11 +177,11 @@ public class YubiKeyConfiguration {
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer yubiMultifactorTrustWebflowConfigurer() {
-            val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
             return new YubiKeyMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
-                deviceRegistrationEnabled, yubikeyFlowRegistry(),
+                yubikeyFlowRegistry(),
                 loginFlowDefinitionRegistry.getObject(),
-                applicationContext, casProperties,
+                applicationContext,
+                casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
         }
 

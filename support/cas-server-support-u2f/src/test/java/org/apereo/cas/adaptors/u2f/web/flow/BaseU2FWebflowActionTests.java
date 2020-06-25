@@ -27,6 +27,9 @@ import org.apereo.cas.config.support.authentication.U2FAuthenticationComponentSe
 import org.apereo.cas.config.support.authentication.U2FAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.support.authentication.U2FAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
+import org.apereo.cas.trusted.config.MultifactorAuthnTrustWebflowConfiguration;
+import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -115,10 +118,17 @@ public abstract class BaseU2FWebflowActionTests {
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCoreConfiguration.class,
+
+
+        MultifactorAuthnTrustConfiguration.class,
+        MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
+        MultifactorAuthnTrustWebflowConfiguration.class,
+
         U2FConfiguration.class,
         U2FAuthenticationComponentSerializationConfiguration.class,
         U2FAuthenticationEventExecutionPlanConfiguration.class,
         U2FAuthenticationMultifactorProviderBypassConfiguration.class,
+        U2FWebflowConfiguration.U2FMultifactorTrustConfiguration.class,
         U2FWebflowConfiguration.class
     })
     public static class SharedTestConfiguration {

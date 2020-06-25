@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.yubikey;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;
 
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,16 +25,12 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
         "cas.authn.mfa.trusted.device-registration-enabled=true"
     })
 @Tag("Webflow")
+@Getter
 public class YubiKeyMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     @Qualifier("yubikeyFlowRegistry")
-    private FlowDefinitionRegistry yubikeyFlowRegistry;
-
-    @Override
-    protected FlowDefinitionRegistry getMultifactorFlowDefinitionRegistry() {
-        return this.yubikeyFlowRegistry;
-    }
-
+    private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;
+    
     @Override
     protected String getMultifactorEventId() {
         return YubiKeyMultifactorWebflowConfigurer.MFA_YUBIKEY_EVENT_ID;

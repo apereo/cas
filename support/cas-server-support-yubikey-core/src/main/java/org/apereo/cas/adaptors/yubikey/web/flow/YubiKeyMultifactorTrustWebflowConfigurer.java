@@ -20,13 +20,12 @@ import java.util.Optional;
 public class YubiKeyMultifactorTrustWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
 
     public YubiKeyMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                    final boolean deviceRegistrationEnabled,
                                                     final FlowDefinitionRegistry flowDefinitionRegistry,
                                                     final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                     final ConfigurableApplicationContext applicationContext,
                                                     final CasConfigurationProperties casProperties,
                                                     final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, deviceRegistrationEnabled,
+        super(flowBuilderServices, loginFlowDefinitionRegistry,
             applicationContext, casProperties, Optional.of(flowDefinitionRegistry),
             mfaFlowCustomizers);
     }

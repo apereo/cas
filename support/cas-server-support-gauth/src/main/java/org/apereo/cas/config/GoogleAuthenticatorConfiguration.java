@@ -36,7 +36,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 public class GoogleAuthenticatorConfiguration {
-    private static final int GAUTH_WEBFLOW_CONFIGURER_ORDER = 100;
+    private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -69,7 +69,7 @@ public class GoogleAuthenticatorConfiguration {
             applicationContext,
             casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
-        cfg.setOrder(GAUTH_WEBFLOW_CONFIGURER_ORDER);
+        cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
         return cfg;
     }
 
@@ -93,12 +93,11 @@ public class GoogleAuthenticatorConfiguration {
         public CasWebflowConfigurer gauthMultifactorTrustWebflowConfigurer() {
             val cfg = new GoogleAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(),
-                casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(),
                 googleAuthenticatorFlowRegistry(),
                 applicationContext,
                 casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
-            cfg.setOrder(GAUTH_WEBFLOW_CONFIGURER_ORDER + 1);
+            cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
             return cfg;
         }
 

@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.radius.web.flow;
 
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;
 
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,15 +30,11 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
         "cas.webflow.crypto.signing.key=oZeAR5pEXsolruu4OQYsQKxf-FCvFzSsKlsVaKmfIl6pNzoPm6zPW94NRS1af7vT-0bb3DpPBeksvBXjloEsiA"
     })
 @Tag("Radius")
+@Getter
 public class RadiusMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     @Qualifier("radiusFlowRegistry")
-    private FlowDefinitionRegistry radiusFlowRegistry;
-
-    @Override
-    protected FlowDefinitionRegistry getMultifactorFlowDefinitionRegistry() {
-        return this.radiusFlowRegistry;
-    }
+    private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;
 
     @Override
     protected String getMultifactorEventId() {

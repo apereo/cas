@@ -70,12 +70,12 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
 
     public DuoSecurityMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                   final boolean enableDeviceRegistration,
+
                                                    final ConfigurableApplicationContext applicationContext,
                                                    final CasConfigurationProperties casProperties,
                                                    final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
         super(flowBuilderServices, loginFlowDefinitionRegistry,
-            enableDeviceRegistration, applicationContext, casProperties, Optional.empty(),
+            applicationContext, casProperties, Optional.empty(),
             mfaFlowCustomizers);
     }
 

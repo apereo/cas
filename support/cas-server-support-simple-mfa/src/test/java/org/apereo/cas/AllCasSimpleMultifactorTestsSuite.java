@@ -1,5 +1,8 @@
-package org.apereo.cas.mfa.simple;
+package org.apereo.cas;
 
+import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationProviderTests;
+import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationTicketFactoryTests;
+import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationUniqueTicketIdGeneratorTests;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorWebflowConfigurerTests;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleSendTokenActionTests;
 

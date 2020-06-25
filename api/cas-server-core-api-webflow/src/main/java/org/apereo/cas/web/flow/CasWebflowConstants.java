@@ -61,6 +61,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_SUBMIT = "submit";
 
     /**
+     * The transition state 'resend'.
+     */
+    String TRANSITION_ID_RESEND = "resend";
+
+    /**
      * The transition state 'error'.
      */
     String TRANSITION_ID_ERROR = "error";
@@ -298,6 +303,11 @@ public interface CasWebflowConstants {
      * The state 'viewLoginForm'.
      */
     String STATE_ID_VIEW_LOGIN_FORM = "viewLoginForm";
+
+    /**
+     * The state 'unavailable'.
+     */
+    String STATE_ID_UNAVAILABLE = "unavailable";
 
     /**
      * The state 'serviceAuthorizationCheck'.
