@@ -370,6 +370,16 @@ public interface CasWebflowConstants {
     String STATE_ID_MFA_FAILURE = "mfaFailure";
 
     /**
+     * The state 'deny'.
+     */
+    String STATE_ID_DENY = "deny";
+
+    /**
+     * The state 'registerDevice'.
+     */
+    String STATE_ID_REGISTER_DEVICE = "registerDevice";
+
+    /**
      * The state 'serviceUnauthorizedCheck'.
      */
     String STATE_ID_SERVICE_UNAUTHZ_CHECK = "serviceUnauthorizedCheck";
@@ -537,7 +547,7 @@ public interface CasWebflowConstants {
     /**
      * The state id 'registerDeviceView'.
      */
-    String STATE_ID_REGISTER_DEVICE = "registerDeviceView";
+    String STATE_ID_REGISTER_DEVICE_VIEW = "registerDeviceView";
 
     /**
      * The state id 'spnego'.
