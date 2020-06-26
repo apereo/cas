@@ -132,7 +132,7 @@ while (( "$#" )); do
                 task+="testJMX "
                 ;;
             rest|restful|restapi)
-                task+="testRestful "
+                task+="testRestfulApi "
                 ;;
             webflow|swf)
                 task+="testWebflow "
