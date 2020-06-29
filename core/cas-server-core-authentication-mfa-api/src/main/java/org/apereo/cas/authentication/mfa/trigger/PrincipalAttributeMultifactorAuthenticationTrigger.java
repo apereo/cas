@@ -41,7 +41,9 @@ import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 @RequiredArgsConstructor
 public class PrincipalAttributeMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
+
     private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
+
     private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
@@ -114,7 +116,7 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
                                                                 final Collection<MultifactorAuthenticationProvider> providers) {
         val attributeNames = commaDelimitedListToSet(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers());
         return multifactorAuthenticationProviderResolver.resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
-            input -> providers.stream().anyMatch(provider -> input != null && provider.matches(input)));
+            (attributeValue, provider) -> attributeValue != null && provider.matches(attributeValue));
     }
 
     /**
@@ -134,6 +136,6 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
         LOGGER.trace("Found a single multifactor provider [{}] in the application context", provider);
         val attributeNames = commaDelimitedListToSet(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers());
         return multifactorAuthenticationProviderResolver.resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
-            input -> input != null && input.matches(globalPrincipalAttributeValueRegex));
+            (attributeValue, mfaProvider) -> attributeValue != null && attributeValue.matches(globalPrincipalAttributeValueRegex));
     }
 }
