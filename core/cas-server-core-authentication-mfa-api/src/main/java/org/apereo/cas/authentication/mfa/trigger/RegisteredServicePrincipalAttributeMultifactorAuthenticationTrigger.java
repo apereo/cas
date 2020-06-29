@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -66,7 +67,8 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         val providers = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService);
         val result = multifactorAuthenticationProviderResolver.resolveEventViaPrincipalAttribute(principal,
             org.springframework.util.StringUtils.commaDelimitedListToSet(policy.getPrincipalAttributeNameTrigger()),
-            registeredService, Optional.empty(), providers, Pattern.compile(policy.getPrincipalAttributeValueToMatch()).asPredicate());
+            registeredService, Optional.empty(), providers,
+            (attributeValue, mfaProvider) -> attributeValue != null && RegexUtils.matches(Pattern.compile(policy.getPrincipalAttributeValueToMatch()), attributeValue));
 
         if (result != null && !result.isEmpty()) {
             val id = CollectionUtils.firstElement(result);

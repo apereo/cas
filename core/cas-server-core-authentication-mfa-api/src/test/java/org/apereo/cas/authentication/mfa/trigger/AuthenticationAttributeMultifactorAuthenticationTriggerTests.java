@@ -34,7 +34,7 @@ public class AuthenticationAttributeMultifactorAuthenticationTriggerTests extend
         mfa.setGlobalAuthenticationAttributeNameTriggers("category");
         mfa.setGlobalAuthenticationAttributeValueRegex(".+object.*");
         val trigger = new AuthenticationAttributeMultifactorAuthenticationTrigger(props,
-            new DefaultMultifactorAuthenticationProviderResolver((providers, service, principal) -> providers.iterator().next()),
+            new DefaultMultifactorAuthenticationProviderResolver(),
             applicationContext);
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
@@ -52,7 +52,7 @@ public class AuthenticationAttributeMultifactorAuthenticationTriggerTests extend
         mfa.setGlobalAuthenticationAttributeNameTriggers("mfa-mode");
         mfa.setGlobalAuthenticationAttributeValueRegex(otherProvider.getId());
         val trigger = new AuthenticationAttributeMultifactorAuthenticationTrigger(props,
-            new DefaultMultifactorAuthenticationProviderResolver((providers, service, principal) -> providers.iterator().next()),
+            new DefaultMultifactorAuthenticationProviderResolver(),
             applicationContext);
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());

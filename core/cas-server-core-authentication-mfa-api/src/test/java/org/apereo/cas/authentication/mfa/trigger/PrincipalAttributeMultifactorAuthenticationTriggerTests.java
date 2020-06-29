@@ -24,7 +24,7 @@ public class PrincipalAttributeMultifactorAuthenticationTriggerTests extends Bas
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().setGlobalPrincipalAttributeNameTriggers("email");
         props.getAuthn().getMfa().setGlobalPrincipalAttributeValueRegex(".+@example.*");
-        val resolver = new DefaultMultifactorAuthenticationProviderResolver((providers, service, principal) -> providers.iterator().next());
+        val resolver = new DefaultMultifactorAuthenticationProviderResolver();
 
         val trigger = new PrincipalAttributeMultifactorAuthenticationTrigger(props, resolver, applicationContext);
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));

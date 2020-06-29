@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -94,7 +94,7 @@ public class MultifactorAuthenticationUtils {
                                                                  final RegisteredService service,
                                                                  final Optional<RequestContext> context,
                                                                  final MultifactorAuthenticationProvider provider,
-                                                                 final Predicate<String> predicate) {
+                                                                 final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
 
         if (attributeValue instanceof Collection) {
             LOGGER.debug("Attribute value [{}] is a multi-valued attribute", attributeValue);
@@ -103,7 +103,7 @@ public class MultifactorAuthenticationUtils {
             values.forEach(value -> {
                 val id = provider.getId();
                 try {
-                    if (predicate.test(value)) {
+                    if (predicate.test(value, provider)) {
                         val attributeMap = buildEventAttributeMap(principal, Optional.ofNullable(service), provider);
                         LOGGER.trace("Event attribute map for provider [{}] transition is [{}]", provider, attributeMap);
                         val event = validateEventIdForMatchingTransitionInContext(id, context, attributeMap);
@@ -164,12 +164,12 @@ public class MultifactorAuthenticationUtils {
                                                             final RegisteredService service,
                                                             final Optional<RequestContext> context,
                                                             final MultifactorAuthenticationProvider provider,
-                                                            final Predicate<String> predicate) {
+                                                            final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
         val processSingleValue = !(providedAttributeValue instanceof Collection) || CollectionUtils.toCollection(providedAttributeValue).size() == 1;
         if (processSingleValue) {
             val attributeValue = CollectionUtils.firstElement(providedAttributeValue).map(Object::toString).orElse(StringUtils.EMPTY);
             LOGGER.debug("Attribute value [{}] is a single-valued attribute", attributeValue);
-            if (predicate.test(attributeValue)) {
+            if (predicate.test(attributeValue, provider)) {
                 LOGGER.debug("Attribute value predicate [{}] has matched the [{}]", predicate, attributeValue);
                 return evaluateEventForProviderInContext(principal, service, context, provider);
             }
