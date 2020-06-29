@@ -540,6 +540,7 @@ subprojects {
         api libraries.springcloud
         api libraries.springboot
         api libraries.springsecurity
+        api libraries.springwebflow
         api libraries.javaxel
         api libraries.javax
 

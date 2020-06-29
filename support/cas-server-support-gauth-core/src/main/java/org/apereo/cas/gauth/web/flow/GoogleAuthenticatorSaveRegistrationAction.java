@@ -12,6 +12,8 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.http.HttpStatus;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -22,6 +24,11 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 public class GoogleAuthenticatorSaveRegistrationAction extends OneTimeTokenAccountSaveRegistrationAction {
+    /**
+     * Parameter name indicating token.
+     */
+    public static final String REQUEST_PARAMETER_TOKEN = "token";
+
     private final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator;
 
     public GoogleAuthenticatorSaveRegistrationAction(final OneTimeTokenCredentialRepository repository,
@@ -37,11 +44,23 @@ public class GoogleAuthenticatorSaveRegistrationAction extends OneTimeTokenAccou
             val token = requestContext.getRequestParameters().getRequiredInteger(REQUEST_PARAMETER_TOKEN);
             if (validator.isTokenAuthorizedFor(token, account)) {
                 LOGGER.debug("Successfully validated token [{}]", token);
-                return super.validate(account, requestContext);
+                return true;
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return false;
+    }
+
+    /**
+     * Gets error event.
+     *
+     * @param requestContext the request context
+     * @return the error event
+     */
+    protected Event getErrorEvent(final RequestContext requestContext) {
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        return error();
     }
 }

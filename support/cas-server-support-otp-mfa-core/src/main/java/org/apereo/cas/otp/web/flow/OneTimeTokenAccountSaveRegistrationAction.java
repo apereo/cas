@@ -9,7 +9,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.http.HttpStatus;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -28,11 +27,10 @@ public class OneTimeTokenAccountSaveRegistrationAction extends AbstractAction {
      * Parameter name indicating account name.
      */
     public static final String REQUEST_PARAMETER_ACCOUNT_NAME = "accountName";
-
     /**
-     *  Parameter name indicating token.
+     * Parameter name indicating a validation request event.
      */
-    public static final String REQUEST_PARAMETER_TOKEN = "token";
+    public static final String REQUEST_PARAMETER_VALIDATE = "validate";
 
     private final OneTimeTokenCredentialRepository repository;
 
@@ -68,22 +66,25 @@ public class OneTimeTokenAccountSaveRegistrationAction extends AbstractAction {
             if (!casProperties.getAuthn().getMfa().getGauth().isMultipleDeviceRegistrationEnabled()) {
                 if (repository.count(currentAcct.getUsername()) > 0) {
                     LOGGER.warn("Unable to register multiple devices for [{}]", currentAcct.getUsername());
-                    return error();
+                    return getErrorEvent(requestContext);
                 }
             }
-
             val account = buildOneTimeTokenAccount(requestContext);
-            if (validate(account, requestContext)) {
+            if (!validate(account, requestContext)) {
+                LOGGER.error("Unable to validate account");
+                return getErrorEvent(requestContext);
+            }
+
+            val validate = requestContext.getRequestParameters().getBoolean(REQUEST_PARAMETER_VALIDATE);
+            if (validate == null || !validate) {
                 LOGGER.trace("Storing account [{}]", account);
                 WebUtils.putOneTimeTokenAccount(requestContext, repository.save(account));
-                return success();
             }
+            return success();
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
-        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        return error();
+        return getErrorEvent(requestContext);
     }
 
     /**
@@ -94,6 +95,16 @@ public class OneTimeTokenAccountSaveRegistrationAction extends AbstractAction {
      * @return true/false
      */
     protected boolean validate(final OneTimeTokenAccount account, final RequestContext requestContext) {
-        return false;
+        return true;
+    }
+
+    /**
+     * Gets error event.
+     *
+     * @param requestContext the request context
+     * @return the error event
+     */
+    protected Event getErrorEvent(final RequestContext requestContext) {
+        return error();
     }
 }

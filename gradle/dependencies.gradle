@@ -3139,17 +3139,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-webmvc")
 
                 },
-                dependencies.create("org.springframework.webflow:spring-binding:$springWebflowVersion") {
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-beans")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-expression")
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-
-                },
                 dependencies.create("org.springframework:spring-context:$springVersion") {
 
                 },
@@ -3187,27 +3176,24 @@ ext.libraries = [
                     exclude(group: "org.mongodb", module: "mongo-java-driver")
                     exclude(group: "com.h2database", module: "h2")
                 },
-
                 dependencies.create("org.springframework:spring-jms:$springVersion") {
                     exclude(group: "org.springframework", module: "spring-messaging")
-
                 },
                 dependencies.create("org.springframework:spring-messaging:$springVersion") {
-
                 },
                 dependencies.create("org.springframework:spring-expression:$springVersion") {
-
                 },
                 dependencies.create("org.springframework:spring-jdbc:$springVersion") {
-
                 },
                 dependencies.create("org.springframework:spring-orm:$springVersion"),
                 dependencies.create("org.springframework:spring-tx:$springVersion") {
-
                 },
                 dependencies.create("org.springframework:spring-web:$springVersion") {
-
                 },
+                dependencies.create("org.springframework:spring-webmvc:$springVersion") {
+                }
+        ],
+        springwebflow : [
                 dependencies.create("org.springframework.webflow:spring-webflow:$springWebflowVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.springframework", module: "spring-context")
@@ -3216,13 +3202,18 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-expression")
                     exclude(group: "org.springframework", module: "spring-webmvc")
-
                 },
-                dependencies.create("org.springframework:spring-webmvc:$springVersion") {
-
+                dependencies.create("org.springframework.webflow:spring-binding:$springWebflowVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
-
         springsecurityconfig    : [
                 dependencies.create("org.springframework.security:spring-security-config:$springSecurityVersion") {
                     exclude(group: "aopalliance", module: "aopalliance")
