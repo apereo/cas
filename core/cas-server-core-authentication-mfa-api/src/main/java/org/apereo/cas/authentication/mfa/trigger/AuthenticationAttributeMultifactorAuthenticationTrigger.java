@@ -74,7 +74,7 @@ public class AuthenticationAttributeMultifactorAuthenticationTrigger implements 
             LOGGER.debug("Found a single multifactor provider [{}] in the application context", provider);
             val result = multifactorAuthenticationProviderResolver.resolveEventViaAuthenticationAttribute(
                 authentication, attributeNames, registeredService, Optional.empty(), providers,
-                input -> input != null && input.matches(globalAuthenticationAttributeValueRegex));
+                (attributeValue, mfaProvider) -> attributeValue != null && attributeValue.matches(globalAuthenticationAttributeValueRegex));
             if (result != null && !result.isEmpty()) {
                 return Optional.of(provider);
             }
@@ -82,7 +82,7 @@ public class AuthenticationAttributeMultifactorAuthenticationTrigger implements 
 
         val result = multifactorAuthenticationProviderResolver.resolveEventViaAuthenticationAttribute(authentication, attributeNames,
             registeredService, Optional.empty(), providers,
-            input -> providers.stream().anyMatch(provider -> input != null && provider.matches(input)));
+            (attributeValue, mfaProvider) -> attributeValue != null && mfaProvider.matches(attributeValue));
         if (result != null && !result.isEmpty()) {
             val id = CollectionUtils.firstElement(result);
             if (id.isEmpty()) {
