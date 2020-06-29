@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+jmeterVersion=5.3
 gradle="./gradlew "
 gradleBuild=""
 gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel "
@@ -38,23 +38,16 @@ if [ $retVal == 0 ]; then
     echo "Launched CAS with pid ${pid}. Waiting for CAS server to come online..."
     sleep 60
     
-    cd etc/loadtests/locust
-    echo -e "Current directory contains: \n\n`ls`"
+    mkdir -p /etc/cas/config/loadtests/jmeter/
+    cp etc/loadtests/jmeter/cas-users.csv /etc/cas/config/loadtests/jmeter/
+    echo "Copied users file" && cat /etc/cas/config/loadtests/jmeter/cas-users.csv
 
-    echo -e "Installing virtual environment..."
-    pip install virtualenv
-
-    echo -e "Configuring virtual environment for mylocustenv..."
-    virtualenv mylocustenv
-
-    echo -e "Installing requirements..."
-    pip install -r requirements.txt
-
-    echo -e "Installing locust..."
-    pip install locustio
-
-    echo -e "\nRunning locust...\n"
-    locust -f cas/casLocust.py --no-web --host=https://localhost:8443 --hatch-rate 3 --clients 5 --run-time 5m --exit-code-on-error 1
+    curl -LO https://downloads.apache.org/jmeter/binaries/apache-jmeter-${jmeterVersion}.zip
+    unzip apache-jmeter-${jmeterVersion}.zip
+    chmod +x apache-jmeter-${jmeterVersion}/bin/jmeter
+    apache-jmeter-${jmeterVersion}/bin/jmeter -n -t etc/loadtests/jmeter/CAS_CAS.jmx > results.log
+#    ~/Workspace/Portal/apache-jmeter/bin/jmeter -n -t etc/loadtests/jmeter/CAS_CAS.jmx > results.log
+    java ci/tests/perf/EvalJMeterTestResults.java ./results.log
 
     retVal=$?
 

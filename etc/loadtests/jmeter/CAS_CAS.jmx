@@ -15,13 +15,13 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="ThreadCount" elementType="Argument">
             <stringProp name="Argument.name">ThreadCount</stringProp>
-            <stringProp name="Argument.value">50</stringProp>
+            <stringProp name="Argument.value">10</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">Number of Threads</stringProp>
           </elementProp>
           <elementProp name="Duration" elementType="Argument">
             <stringProp name="Argument.name">Duration</stringProp>
-            <stringProp name="Argument.value">300</stringProp>
+            <stringProp name="Argument.value">120</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">in seconds</stringProp>
           </elementProp>
@@ -39,23 +39,13 @@
           </elementProp>
           <elementProp name="IdPHost" elementType="Argument">
             <stringProp name="Argument.name">IdPHost</stringProp>
-            <stringProp name="Argument.value">https://example.net:8443</stringProp>
+            <stringProp name="Argument.value">https://localhost:8443</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">The main URL of your CAS Instance</stringProp>
           </elementProp>
-          <elementProp name="IdPPort" elementType="Argument">
-            <stringProp name="Argument.name">IdPPort</stringProp>
-            <stringProp name="Argument.value">8443</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
-          <elementProp name="IdPContext" elementType="Argument">
-            <stringProp name="Argument.name">IdPContext</stringProp>
-            <stringProp name="Argument.value">idp</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
           <elementProp name="CasSP" elementType="Argument">
             <stringProp name="Argument.name">CasSP</stringProp>
-            <stringProp name="Argument.value">https://yahoo.com</stringProp>
+            <stringProp name="Argument.value">https://httpbin.org/get</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">Service Provider url</stringProp>
           </elementProp>
@@ -63,7 +53,7 @@
       </Arguments>
       <hashTree/>
       <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Get Users/Passwords" enabled="true">
-        <stringProp name="filename">/etc/loadtests/jmeter/cas-users.csv</stringProp>
+        <stringProp name="filename">/etc/cas/config/loadtests/jmeter/cas-users.csv</stringProp>
         <stringProp name="fileEncoding"></stringProp>
         <stringProp name="variableNames">User,Password</stringProp>
         <stringProp name="delimiter">,</stringProp>
