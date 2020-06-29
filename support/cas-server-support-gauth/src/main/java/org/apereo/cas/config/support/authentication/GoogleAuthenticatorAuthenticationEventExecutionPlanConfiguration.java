@@ -14,15 +14,19 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gauth.GoogleAuthenticatorAuthenticationHandler;
 import org.apereo.cas.gauth.GoogleAuthenticatorMultifactorAuthenticationProvider;
 import org.apereo.cas.gauth.GoogleAuthenticatorService;
+import org.apereo.cas.gauth.credential.GoogleAuthenticatorOneTimeTokenCredentialValidator;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredentialRepositoryEndpoint;
 import org.apereo.cas.gauth.credential.InMemoryGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.credential.JsonGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.credential.RestGoogleAuthenticatorTokenCredentialRepository;
+import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorPrepareLoginAction;
+import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorSaveRegistrationAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorValidateSelectedRegistrationAction;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccountCipherExecutor;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepositoryCleaner;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCheckRegistrationAction;
@@ -114,10 +118,19 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         return new GoogleAuthenticatorAuthenticationHandler(gauth.getName(),
             servicesManager.getObject(),
             googlePrincipalFactory(),
+            googleAuthenticatorOneTimeTokenCredentialValidator(),
+            gauth.getOrder());
+    }
+
+    @ConditionalOnMissingBean(name = "googleAuthenticatorOneTimeTokenCredentialValidator")
+    @Bean
+    @RefreshScope
+    public OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken>
+        googleAuthenticatorOneTimeTokenCredentialValidator() {
+        return new GoogleAuthenticatorOneTimeTokenCredentialValidator(
             googleAuthenticatorInstance(),
             oneTimeTokenAuthenticatorTokenRepository.getObject(),
-            googleAuthenticatorAccountRegistry.getObject(),
-            gauth.getOrder());
+            googleAuthenticatorAccountRegistry.getObject());
     }
 
     @Bean
@@ -178,8 +191,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
     @Bean
     @Autowired
-    public OneTimeTokenRepositoryCleaner googleAuthenticatorTokenRepositoryCleaner(@Qualifier("oneTimeTokenAuthenticatorTokenRepository")
-                                                                                   final OneTimeTokenRepository repository) {
+    public OneTimeTokenRepositoryCleaner googleAuthenticatorTokenRepositoryCleaner(@Qualifier("oneTimeTokenAuthenticatorTokenRepository") final OneTimeTokenRepository repository) {
         return new GoogleAuthenticatorOneTimeTokenRepositoryCleaner(repository);
     }
 
@@ -222,7 +234,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "googleSaveAccountRegistrationAction")
     public Action googleSaveAccountRegistrationAction() {
-        return new OneTimeTokenAccountSaveRegistrationAction(googleAuthenticatorAccountRegistry.getObject(), casProperties);
+        return new GoogleAuthenticatorSaveRegistrationAction(googleAuthenticatorAccountRegistry(),
+            casProperties, googleAuthenticatorOneTimeTokenCredentialValidator());
     }
 
     @Bean

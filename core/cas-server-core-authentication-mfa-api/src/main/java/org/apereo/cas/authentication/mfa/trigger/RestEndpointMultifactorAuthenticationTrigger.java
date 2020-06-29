@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 
@@ -26,6 +27,7 @@ import org.apache.http.HttpResponse;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
@@ -45,7 +47,9 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private final CasConfigurationProperties casProperties;
+
     private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
+
     private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
@@ -81,6 +85,19 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
     }
 
     /**
+     * The Rest endpoint entity passed along to the API.
+     */
+    @Getter
+    @RequiredArgsConstructor
+    @ToString
+    @EqualsAndHashCode
+    public static class RestEndpointEntity {
+        private final String principalId;
+
+        private final String serviceId;
+    }
+
+    /**
      * Call rest endpoint for multifactor.
      *
      * @param principal       the principal
@@ -93,7 +110,9 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
             val rest = casProperties.getAuthn().getMfa().getRest();
             val entity = new RestEndpointEntity(principal.getId(), resolvedService.getId());
             response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
-                rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), MAPPER.writeValueAsString(entity));
+                rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
+                CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE),
+                MAPPER.writeValueAsString(entity));
             val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
             if (status.is2xxSuccessful()) {
                 val content = response.getEntity().getContent();
@@ -105,18 +124,6 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
             HttpUtils.close(response);
         }
         return null;
-    }
-
-    /**
-     * The Rest endpoint entity passed along to the API.
-     */
-    @Getter
-    @RequiredArgsConstructor
-    @ToString
-    @EqualsAndHashCode
-    public static class RestEndpointEntity {
-        private final String principalId;
-        private final String serviceId;
     }
 
 }
