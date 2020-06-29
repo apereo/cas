@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.trigger.AuthenticationAttributeMultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.mfa.trigger.PrincipalAttributeMultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -61,6 +62,7 @@ public class DefaultMultifactorAuthenticationProviderResolverTests {
         val trigger = new AuthenticationAttributeMultifactorAuthenticationTrigger(casProperties, resolver, applicationContext);
         assertProviderResolutionFromManyProviders(trigger, applicationContext);
     }
+
 
     @Test
     public void verifyResolutionByAuthenticationAttribute() {
