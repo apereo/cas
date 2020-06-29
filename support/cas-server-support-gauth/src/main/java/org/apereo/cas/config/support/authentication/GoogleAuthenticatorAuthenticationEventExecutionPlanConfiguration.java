@@ -32,7 +32,6 @@ import org.apereo.cas.otp.repository.token.OneTimeTokenRepositoryCleaner;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCheckRegistrationAction;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountConfirmSelectionRegistrationAction;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCreateRegistrationAction;
-import org.apereo.cas.otp.web.flow.OneTimeTokenAccountSaveRegistrationAction;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -179,6 +178,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         return new OneTimeTokenAccountConfirmSelectionRegistrationAction(googleAuthenticatorAccountRegistry.getObject());
     }
 
+
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "googleAccountCreateRegistrationAction")
@@ -234,8 +234,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "googleSaveAccountRegistrationAction")
     public Action googleSaveAccountRegistrationAction() {
-        return new GoogleAuthenticatorSaveRegistrationAction(googleAuthenticatorAccountRegistry(),
-            casProperties, googleAuthenticatorOneTimeTokenCredentialValidator());
+        return new GoogleAuthenticatorSaveRegistrationAction(googleAuthenticatorAccountRegistry(), casProperties,
+            googleAuthenticatorOneTimeTokenCredentialValidator());
     }
 
     @Bean

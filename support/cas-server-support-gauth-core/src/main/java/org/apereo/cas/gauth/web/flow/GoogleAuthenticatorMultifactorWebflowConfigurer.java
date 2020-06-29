@@ -53,7 +53,7 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
             createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "accountRegistrationCheck");
             setStartState(flow, initLoginFormState);
-            
+
             val acctRegCheckState = createActionState(flow, "accountRegistrationCheck",
                 createEvaluateAction("googleAccountCheckRegistrationAction"));
             createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_REGISTER, "viewRegistration");
@@ -63,6 +63,7 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
             val acctRegSaveState = createActionState(flow, "saveRegistration",
                 createEvaluateAction("googleSaveAccountRegistrationAction"));
             createTransitionForState(acctRegSaveState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "accountRegistrationCheck");
+            createTransitionForState(acctRegSaveState, CasWebflowConstants.TRANSITION_ID_ERROR);
 
             val realSubmitState = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT,
                 createEvaluateAction("validateSelectedRegistrationAction"),
@@ -85,7 +86,7 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
                 Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
             createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_SELECT, "viewConfirmRegistration",
                 Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
-            
+
             val regViewState = createViewState(flow, "viewRegistration", "casGoogleAuthenticatorRegistrationView");
             regViewState.getEntryActionList().addAll(setPrincipalAction, createEvaluateAction("googleAccountCreateRegistrationAction"));
             createTransitionForState(regViewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "saveRegistration");

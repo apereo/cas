@@ -20,11 +20,17 @@
             <form method="post" id="fm1" class="fm-v clearfix" th:action="@{/login}">
                 <div class="mdc-dialog__container">
                     <div class="mdc-dialog__surface">
-                        <h1 class="mdc-dialog__title mt-lg-2" id="notif-dialog-title" th:utext="#{screen.authentication.gauth.confirm.title}">
+                        <h1 class="mdc-dialog__title mt-lg-2" id="notif-dialog-title"
+                            th:utext="#{screen.authentication.gauth.confirm.title}">
                             Confirm Account Registration
                         </h1>
                         <div class="mdc-dialog__content" id="notif-dialog-content">
                             <div class="mdc-typography--body1">
+                                <div class="banner banner-danger banner-dismissible"
+                                     style="display: none" id="errorPanel">
+                                    <p th:utext="#{screen.authentication.gauth.invalidtoken}">
+                                </div>
+
                                 <p th:utext="#{screen.authentication.gauth.confirm.desc}">Description</p>
 
                                 <input type="hidden" name="_eventId_submit" value="Confirm"/>
@@ -38,6 +44,10 @@
                                                    id="token" size="25" autocomplete="off"/>
                                             <label for="token" class="mdc-floating-label"
                                                    th:utext="#{cas.mfa.googleauth.label.token}">Token</label>
+                                        <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button" type="button">
+                                            <i class="mdi mdi-eye reveal-password-icon"></i>
+                                            <span class="sr-only">Toggle Token</span>
+                                        </button>
                                         </div>
                                         <br>
                                         <div class="mdc-text-field d-flex">
@@ -64,22 +74,28 @@
                 </div>
                 <div class="mdc-dialog__scrim"></div>
             </form>
-            
-            <script th:inline="javascript">
-                /*<![CDATA[*/
-                
-                $( "#fm1" ).submit(function( event ) {
-                    event.preventDefault();
+
+            <script type="text/javascript">
+                var btn = document.getElementById('registerButton');
+                btn.addEventListener('click', function (event) {
                     var endpoint = $('#fm1').attr('action');
-                    var posting = $.post(endpoint, $( "#fm1" ).serialize() )
-                        .done(function(data, status, jqxhr) {
-                            alert( "second success " + jqxhr.status );
+                    event.preventDefault();
+                    $('#errorPanel').hide();
+
+                    var formData = $("#fm1").serializeArray();
+                    formData.push({
+                        name: "validate",
+                        value: true
+                    });
+                    $.post(endpoint, formData)
+                        .done(function (data, status, jqxhr) {
+                            $('#errorPanel').hide();
+                            $("#fm1").submit();
                         })
-                        .fail(function(data, status, jqxhr) {
-                            alert( "error " + jqxhr.status);
+                        .fail(function (data, status, jqxhr) {
+                            $('#errorPanel').show("fast", "swing");
                         });
-                });
-                /*]]>*/
+                }, false);
             </script>
         </div>
         <!-- Confirmation Dialog -->

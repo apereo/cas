@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.springframework.binding.expression.Expression;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.action.EvaluateAction;
+import org.springframework.webflow.action.RenderAction;
 import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -112,6 +113,14 @@ public interface CasWebflowConfigurer extends Ordered {
      * @return the transition
      */
     Transition createTransition(String targetState);
+
+    /**
+     * Create render action.
+     *
+     * @param fragmentExpression the fragment expression
+     * @return the render action
+     */
+    RenderAction createRenderAction(String... fragmentExpression);
 
     /**
      * Create set action set action.
@@ -363,6 +372,16 @@ public interface CasWebflowConfigurer extends Ordered {
                                         String criteriaOutcome,
                                         String targetState,
                                         Map<String, Object> attributes);
+
+    /**
+     * Create transition for state transition.
+     *
+     * @param state           the state
+     * @param criteriaOutcome the criteria outcome
+     * @return the transition
+     */
+    Transition createTransitionForState(TransitionableState state,
+                                        String criteriaOutcome);
 
     /**
      * Create transition for state transition.

@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.spel.SpringELExpressionParser;
@@ -31,6 +32,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.ExternalRedirectAction;
+import org.springframework.webflow.action.RenderAction;
 import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
@@ -166,8 +168,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                                        final String targetState,
                                        final Action... actions) {
         val criteria = getTransitionCriteriaForExpression(criteriaOutcomeExpression);
-        val resolver = new DefaultTargetStateResolver(targetState);
-        val transition = new Transition(criteria, resolver);
+        val transition = new Transition(criteria, StringUtils.isNotBlank(targetState) ? new DefaultTargetStateResolver(targetState) : null);
         if (actions != null && actions.length > 0) {
             val transitionActionCriteria = Arrays.stream(actions)
                 .map(ActionTransitionCriteria::new)
@@ -186,6 +187,19 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public Transition createTransition(final String targetState) {
         val resolver = new DefaultTargetStateResolver(targetState);
         return new Transition(resolver);
+    }
+
+    @Override
+    public RenderAction createRenderAction(final String... fragmentExpression) {
+        val ctx = new FluentParserContext();
+        val expressionParser = this.flowBuilderServices.getExpressionParser();
+        val expressions = Arrays.stream(fragmentExpression)
+            .map(fg -> expressionParser.parseExpression(fg, ctx))
+            .toArray(Expression[]::new);
+
+        val newAction = new RenderAction(expressions);
+        LOGGER.trace("Created render action for expressions [{}]", Arrays.toString(fragmentExpression));
+        return newAction;
     }
 
     @Override
@@ -397,6 +411,11 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public void createStateDefaultTransition(final TransitionableState state, final StateDefinition targetState) {
         createStateDefaultTransition(state, targetState.getId());
+    }
+
+    @Override
+    public Transition createTransitionForState(final TransitionableState state, final String criteriaOutcome) {
+        return createTransitionForState(state, criteriaOutcome, StringUtils.EMPTY);
     }
 
     @Override
