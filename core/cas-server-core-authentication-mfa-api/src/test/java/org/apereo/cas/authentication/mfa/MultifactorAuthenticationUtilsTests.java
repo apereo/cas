@@ -60,7 +60,7 @@ public class MultifactorAuthenticationUtilsTests {
 
         val result = MultifactorAuthenticationUtils.resolveEventViaMultivaluedAttribute(MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
             List.of("mfa-value"), MultifactorAuthenticationTestUtils.getRegisteredService(),
-            Optional.of(context), provider, s -> RegexUtils.find("mfa-.+", s));
+            Optional.of(context), provider, (s, mfaProvider) -> RegexUtils.find("mfa-.+", s));
         assertNotNull(result);
         assertFalse(result.isEmpty());
     }
@@ -77,7 +77,7 @@ public class MultifactorAuthenticationUtilsTests {
 
         var result = MultifactorAuthenticationUtils.resolveEventViaMultivaluedAttribute(MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
             List.of("some-value"), MultifactorAuthenticationTestUtils.getRegisteredService(), Optional.of(context), provider,
-            s -> {
+            (s, mfaProvider) -> {
                 throw new RuntimeException("Bad Predicate");
             });
         assertNotNull(result);
@@ -85,7 +85,7 @@ public class MultifactorAuthenticationUtilsTests {
 
         result = MultifactorAuthenticationUtils.resolveEventViaMultivaluedAttribute(MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
             "some-value", MultifactorAuthenticationTestUtils.getRegisteredService(), Optional.of(context), provider,
-            s -> {
+            (s, mfaProvider) -> {
                 throw new RuntimeException("Bad Predicate");
             });
         assertNull(result);

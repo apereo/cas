@@ -19,7 +19,11 @@ public class TestMultifactorAuthenticationProvider extends AbstractMultifactorAu
     private static final long serialVersionUID = -9184556172646207560L;
 
     public TestMultifactorAuthenticationProvider() {
-        setId(ID);
+        this(ID);
+    }
+
+    public TestMultifactorAuthenticationProvider(final String id) {
+        setId(id);
     }
 
     public static TestMultifactorAuthenticationProvider registerProviderIntoApplicationContext(final ConfigurableApplicationContext applicationContext) {
