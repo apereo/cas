@@ -362,17 +362,6 @@ subprojects {
                                 password "${sonatypePassword}"
                             }
                         }
-                        maven {
-                            name = "GitHubPackages-Releases"
-                            url = uri("${githubPackagesRepositoryUrl}")
-                            mavenContent {
-                                releasesOnly()
-                            }
-                            credentials {
-                                username = "${githubPackagesUsername}"
-                                password = "${githubPackagesToken}"
-                            }
-                        }
                     }
                     if (rootProject.publishSnapshots) {
                         maven {
