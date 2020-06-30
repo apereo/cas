@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServicesManager;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -33,10 +34,11 @@ public class DefaultDomainAwareServicesManager extends AbstractServicesManager i
     private final RegisteredServiceDomainExtractor registeredServiceDomainExtractor;
 
     public DefaultDomainAwareServicesManager(final ServiceRegistry serviceRegistry,
-                                             final ApplicationEventPublisher eventPublisher,
-                                             final RegisteredServiceDomainExtractor registeredServiceDomainExtractor,
-                                             final Set<String> environments) {
-        super(serviceRegistry, eventPublisher, environments);
+            final ApplicationEventPublisher eventPublisher,
+            final RegisteredServiceDomainExtractor registeredServiceDomainExtractor,
+            final Set<String> environments,
+            final Cache<Long, RegisteredService> services) {
+        super(serviceRegistry, eventPublisher, environments, services);
         this.registeredServiceDomainExtractor = registeredServiceDomainExtractor;
     }
 

@@ -11,6 +11,7 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import org.apereo.cas.util.io.WatcherService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -99,7 +100,7 @@ public class SamlRegisteredServiceTests {
         service.setServiceId("^http://.+");
         service.setMetadataLocation(METADATA_LOCATION);
         val dao = new InMemoryServiceRegistry(appCtx, List.of(service), new ArrayList<>());
-        val impl = new DefaultServicesManager(dao, appCtx, new HashSet<>());
+        val impl = new DefaultServicesManager(dao, appCtx, new HashSet<>(), Caffeine.newBuilder().build());
         impl.load();
 
         val s = impl.findServiceBy(new WebApplicationServiceFactory()
