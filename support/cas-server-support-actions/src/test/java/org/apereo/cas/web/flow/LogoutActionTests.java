@@ -12,6 +12,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.logout.LogoutAction;
 import org.apereo.cas.web.support.WebUtils;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -61,7 +62,7 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
 
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
-        this.serviceManager = new DefaultServicesManager(new InMemoryServiceRegistry(appCtx), appCtx, new HashSet<>());
+        this.serviceManager = new DefaultServicesManager(new InMemoryServiceRegistry(appCtx), appCtx, new HashSet<>(), Caffeine.newBuilder().build());
         this.serviceManager.load();
     }
 

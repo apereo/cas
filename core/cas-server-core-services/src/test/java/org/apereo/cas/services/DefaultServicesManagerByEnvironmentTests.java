@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.util.CollectionUtils;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ public class DefaultServicesManagerByEnvironmentTests extends AbstractServicesMa
     @Override
     protected ServicesManager getServicesManagerInstance() {
         return new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class),
-            CollectionUtils.wrapSet("prod1", "qa1"));
+            CollectionUtils.wrapSet("prod1", "qa1"), Caffeine.newBuilder().build());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ public class ChainingServicesManagerTests extends AbstractServicesManagerTests {
     @Override
     protected ServicesManager getServicesManagerInstance() {
         val chain = new ChainingServicesManager();
-        val manager = new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class), new HashSet<>());
+        val manager = new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class), new HashSet<>(), Caffeine.newBuilder().build());
         chain.registerServiceManager(manager);
         return chain;
     }

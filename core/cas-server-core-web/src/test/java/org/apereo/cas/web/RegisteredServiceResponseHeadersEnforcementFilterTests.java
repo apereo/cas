@@ -13,6 +13,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilter;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Tag;
@@ -185,7 +186,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val servicesManager = new DefaultServicesManager(new InMemoryServiceRegistry(appCtx),
-            appCtx, new LinkedHashSet<>());
+            appCtx, new LinkedHashSet<>(), Caffeine.newBuilder().build());
         val argumentExtractor = new DefaultArgumentExtractor(new WebApplicationServiceFactory());
 
         val service = RegisteredServiceTestUtils.getRegisteredService("service-0");

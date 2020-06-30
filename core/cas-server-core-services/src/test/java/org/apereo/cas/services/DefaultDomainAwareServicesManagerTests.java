@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.services.domain.DefaultDomainAwareServicesManager;
 import org.apereo.cas.services.domain.DefaultRegisteredServiceDomainExtractor;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -25,9 +26,11 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
 
     @Override
     protected ServicesManager getServicesManagerInstance() {
-        defaultDomainAwareServicesManager = new DefaultDomainAwareServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class),
-            new DefaultRegisteredServiceDomainExtractor(),
-            new HashSet<>());
+        defaultDomainAwareServicesManager = new DefaultDomainAwareServicesManager(serviceRegistry, mock(
+                ApplicationEventPublisher.class),
+                new DefaultRegisteredServiceDomainExtractor(),
+                new HashSet<>(),
+                Caffeine.newBuilder().build());
         return defaultDomainAwareServicesManager;
     }
 
