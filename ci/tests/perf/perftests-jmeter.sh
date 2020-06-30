@@ -45,6 +45,8 @@ if [ $retVal == 0 ]; then
     curl -LO https://downloads.apache.org/jmeter/binaries/apache-jmeter-${jmeterVersion}.zip
     unzip apache-jmeter-${jmeterVersion}.zip
     chmod +x apache-jmeter-${jmeterVersion}/bin/jmeter
+
+    echo "Running JMeter tests..."
     apache-jmeter-${jmeterVersion}/bin/jmeter -n -t etc/loadtests/jmeter/CAS_CAS.jmx > results.log
 #    ~/Workspace/Portal/apache-jmeter/bin/jmeter -n -t etc/loadtests/jmeter/CAS_CAS.jmx > results.log
     java ci/tests/perf/EvalJMeterTestResults.java ./results.log
