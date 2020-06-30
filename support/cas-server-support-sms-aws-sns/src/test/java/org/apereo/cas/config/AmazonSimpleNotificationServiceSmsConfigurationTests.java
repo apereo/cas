@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.util.io.SmsSender;
+import org.apereo.cas.notifications.sms.SmsSender;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,9 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     AmazonSimpleNotificationServiceSmsConfiguration.class
 }, properties = {
-    "cas.smsProvider.sns.endpoint=http://127.0.0.1:8811",
-    "cas.smsProvider.sns.credentialAccessKey=test",
-    "cas.smsProvider.sns.credentialSecretKey=test"
+    "cas.sms-provider.sns.endpoint=http://127.0.0.1:8811",
+    "cas.sms-provider.sns.credential-access-key=test",
+    "cas.sms-provider.sns.credential-secret-key=test"
 })
 public class AmazonSimpleNotificationServiceSmsConfigurationTests {
 

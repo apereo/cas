@@ -2052,10 +2052,8 @@ ext.libraries = [
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "com.sun.mail", module: "javax.mail")
-
                 },
                 dependencies.create("net.minidev:json-smart:$jsonSmartVersion") {
-
                 }
         ],
         pac4jcouchdb            : [

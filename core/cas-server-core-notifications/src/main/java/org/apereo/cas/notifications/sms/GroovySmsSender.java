@@ -1,4 +1,4 @@
-package org.apereo.cas.util.io;
+package org.apereo.cas.notifications.sms;
 
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 

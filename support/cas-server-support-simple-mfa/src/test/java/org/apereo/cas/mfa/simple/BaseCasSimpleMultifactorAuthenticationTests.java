@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -81,6 +82,7 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
         CasRegisteredServicesTestConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCookieConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,

@@ -1,7 +1,7 @@
-package org.apereo.cas.util.io;
+package org.apereo.cas.notifications;
 
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CasCoreUtilConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class
 },

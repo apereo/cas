@@ -1,9 +1,9 @@
 package org.apereo.cas.support.sms;
 
 import org.apereo.cas.configuration.model.support.sms.TextMagicProperties;
+import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.io.SmsSender;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.textmagic.sdk.ApiClient;

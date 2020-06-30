@@ -12,6 +12,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -26,12 +27,12 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.impl.mock.MockTicketGrantingTicketCreatedEventProducer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.notifications.sms.SmsSender;
+import org.apereo.cas.sms.MockSmsSender;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.config.CasCoreEventsConfiguration;
 import org.apereo.cas.support.events.config.CasEventsInMemoryRepositoryConfiguration;
 import org.apereo.cas.support.geo.config.GoogleMapsGeoCodingConfiguration;
-import org.apereo.cas.util.MockSmsSender;
-import org.apereo.cas.util.io.SmsSender;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
@@ -134,6 +135,7 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
         CasCoreUtilConfiguration.class,
         CasCoreAuditConfiguration.class,
         CasEventsInMemoryRepositoryConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasCoreEventsConfiguration.class
     })
     public static class SharedTestConfiguration {
