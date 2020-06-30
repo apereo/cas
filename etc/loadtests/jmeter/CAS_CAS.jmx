@@ -15,13 +15,13 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="ThreadCount" elementType="Argument">
             <stringProp name="Argument.name">ThreadCount</stringProp>
-            <stringProp name="Argument.value">10</stringProp>
+            <stringProp name="Argument.value">15</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">Number of Threads</stringProp>
           </elementProp>
           <elementProp name="Duration" elementType="Argument">
             <stringProp name="Argument.name">Duration</stringProp>
-            <stringProp name="Argument.value">180</stringProp>
+            <stringProp name="Argument.value">300</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">in seconds</stringProp>
           </elementProp>
