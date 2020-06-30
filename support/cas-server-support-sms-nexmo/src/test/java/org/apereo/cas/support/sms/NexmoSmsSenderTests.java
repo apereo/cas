@@ -1,7 +1,7 @@
 package org.apereo.cas.support.sms;
 
 import org.apereo.cas.config.NexmoSmsConfiguration;
-import org.apereo.cas.util.io.SmsSender;
+import org.apereo.cas.notifications.sms.SmsSender;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

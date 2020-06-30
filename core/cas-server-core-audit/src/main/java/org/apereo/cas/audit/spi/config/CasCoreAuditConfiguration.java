@@ -236,7 +236,7 @@ public class CasCoreAuditConfiguration {
     @Bean
     public AuditPrincipalIdProvider auditPrincipalIdProvider() {
         val resolvers = applicationContext.getBeansOfType(AuditPrincipalIdProvider.class, false, true);
-        val providers = new ArrayList<AuditPrincipalIdProvider>(resolvers.values());
+        val providers = new ArrayList<>(resolvers.values());
         AnnotationAwareOrderComparator.sortIfNecessary(providers);
         return new ChainingAuditPrincipalIdProvider(providers);
     }

@@ -1,6 +1,6 @@
-package org.apereo.cas.util;
+package org.apereo.cas.sms;
 
-import org.apereo.cas.util.io.SmsSender;
+import org.apereo.cas.notifications.sms.SmsSender;
 
 /**
  * This is {@link MockSmsSender}.

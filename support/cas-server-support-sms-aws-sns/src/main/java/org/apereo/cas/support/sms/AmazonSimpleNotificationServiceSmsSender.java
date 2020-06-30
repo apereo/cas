@@ -1,8 +1,8 @@
 package org.apereo.cas.support.sms;
 
 import org.apereo.cas.configuration.model.support.sms.AmazonSnsProperties;
+import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.io.SmsSender;
 
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.model.MessageAttributeValue;

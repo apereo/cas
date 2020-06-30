@@ -1,8 +1,8 @@
 package org.apereo.cas.support.sms;
 
+import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.io.SmsSender;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

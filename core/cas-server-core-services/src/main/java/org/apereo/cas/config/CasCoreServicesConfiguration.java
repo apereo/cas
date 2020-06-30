@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdG
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.DefaultChainingServiceRegistry;
@@ -35,7 +36,6 @@ import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceYamlHttpMessageConverter;
-import org.apereo.cas.util.io.CommunicationsManager;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;

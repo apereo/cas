@@ -1,6 +1,7 @@
-package org.apereo.cas.util.io;
+package org.apereo.cas.sms;
 
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
@@ -33,11 +34,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CasCoreUtilConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class
 },
-    properties = "cas.smsProvider.rest.url=http://localhost:8132")
+    properties = "cas.sms-provider.rest.url=http://localhost:8132")
 @Tag("RestfulApi")
 public class RestfulSmsSenderTests {
     @Autowired

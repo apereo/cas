@@ -1,6 +1,6 @@
 description = "Apereo CAS Nexmo SMS Support"
 dependencies {
-
+    implementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")

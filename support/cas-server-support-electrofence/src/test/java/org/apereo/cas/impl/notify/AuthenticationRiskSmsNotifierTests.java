@@ -8,10 +8,13 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link AuthenticationRiskSmsNotifierTests}.
@@ -34,15 +37,16 @@ import java.util.List;
 public class AuthenticationRiskSmsNotifierTests extends BaseAuthenticationRequestRiskCalculatorTests {
     @Test
     public void verifyOperation() {
-        try {
-            authenticationRiskSmsNotifier.setRegisteredService(CoreAuthenticationTestUtils.getRegisteredService());
-            val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("phone", List.of("3487244312")));
-            val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
-            authenticationRiskSmsNotifier.setAuthentication(authentication);
-            authenticationRiskSmsNotifier.setAuthenticationRiskScore(new AuthenticationRiskScore(BigDecimal.ONE));
-            authenticationRiskSmsNotifier.publish();
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
-        }
+        authenticationRiskSmsNotifier.setRegisteredService(CoreAuthenticationTestUtils.getRegisteredService());
+        val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("phone", List.of("3487244312")));
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
+        authenticationRiskSmsNotifier.setAuthentication(authentication);
+        authenticationRiskSmsNotifier.setAuthenticationRiskScore(new AuthenticationRiskScore(BigDecimal.ONE));
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() {
+                authenticationRiskSmsNotifier.publish();
+            }
+        });
     }
 }

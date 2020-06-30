@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -48,6 +49,7 @@ import org.springframework.webflow.execution.Action;
 @SpringBootTest(classes = {
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class,
+    RefreshAutoConfiguration.class,
     PasswordManagementConfiguration.class,
     PasswordManagementWebflowConfiguration.class,
     CasCoreServicesConfiguration.class,
@@ -55,7 +57,6 @@ import org.springframework.webflow.execution.Action;
     CasCoreTicketsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
-    RefreshAutoConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -71,6 +72,7 @@ import org.springframework.webflow.execution.Action;
     CasCoreWebConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasCoreHttpConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasWebflowContextConfiguration.class
 }, properties = {
     "spring.mail.host=localhost",

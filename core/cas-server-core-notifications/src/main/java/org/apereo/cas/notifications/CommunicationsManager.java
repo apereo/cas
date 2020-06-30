@@ -1,7 +1,8 @@
-package org.apereo.cas.util.io;
+package org.apereo.cas.notifications;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
+import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
@@ -24,6 +25,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CommunicationsManager {
     private final SmsSender smsSender;
+
     private final JavaMailSender mailSender;
 
     public boolean isMailSenderDefined() {
@@ -137,11 +139,6 @@ public class CommunicationsManager {
         return this.smsSender.send(from, to, text);
     }
 
-    private static Optional<Object> getFirstAttributeByName(final Principal principal, final String attribute) {
-        val value = principal.getAttributes().get(attribute);
-        return CollectionUtils.firstElement(value);
-    }
-
     /**
      * Validate.
      *
@@ -155,5 +152,10 @@ public class CommunicationsManager {
             LOGGER.warn("CAS is unable to send sms messages given no settings are defined to account for sms providers, etc");
         }
         return isMailSenderDefined() || isSmsSenderDefined();
+    }
+
+    private static Optional<Object> getFirstAttributeByName(final Principal principal, final String attribute) {
+        val value = principal.getAttributes().get(attribute);
+        return CollectionUtils.firstElement(value);
     }
 }

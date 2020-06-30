@@ -1,7 +1,7 @@
 package org.apereo.cas.support.sms;
 
+import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.io.SmsSender;
 
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
