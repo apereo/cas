@@ -7,11 +7,11 @@ unzip ./groovy.zip -d $PWD/.groovy
 export PATH=$PWD/.groovy/groovy-${groovyVersion}/bin:$PATH
 groovy --version
 
+clear
 echo -e "***********************************************"
 echo -e "Build started at `date`"
 echo -e "***********************************************"
 
-clear
 
 echo -e "Checking for duplicate test configuration"
 groovy ./ci/groovy/CheckDuplicateTestConfiguration.groovy
