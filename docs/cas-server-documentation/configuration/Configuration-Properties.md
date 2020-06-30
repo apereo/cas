@@ -4477,6 +4477,18 @@ To learn more about this topic, [please review this guide](../services/JPA-Servi
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
 under the configuration key `cas.service-registry.jpa`.
 
+### Cache Service Registry
+
+Services cache duration specifies the fixed duration for an entry to be automatically removed from the cache after its creation or update.
+
+### Cache Size Service Registry
+
+Services cache size specifies the maximum number of entries the cache may contain.
+
+### Cach Capacity Service Registry
+
+Services cache capacity sets the minimum total size for the internal data structures.
+
 ## Service Registry Replication
 
 Control how CAS services definition files should be replicated across a CAS cluster.
