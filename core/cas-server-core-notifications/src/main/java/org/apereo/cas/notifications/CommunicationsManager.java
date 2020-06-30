@@ -2,6 +2,7 @@ package org.apereo.cas.notifications;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
+import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -28,12 +29,18 @@ public class CommunicationsManager {
 
     private final JavaMailSender mailSender;
 
+    private final NotificationSender notificationSender;
+
     public boolean isMailSenderDefined() {
         return this.mailSender != null;
     }
 
     public boolean isSmsSenderDefined() {
         return this.smsSender != null && this.smsSender.canSend();
+    }
+
+    public boolean isNotificationSenderDefined() {
+        return this.notificationSender != null && this.notificationSender.canSend();
     }
 
     /**
@@ -142,15 +149,19 @@ public class CommunicationsManager {
     /**
      * Validate.
      *
-     * @return true, if email or sms providers are defined for CAS.
+     * @return true, if email or sms providers, etc are defined for CAS.
      */
     public boolean validate() {
         if (!isMailSenderDefined()) {
-            LOGGER.warn("CAS is unable to send email given no settings are defined to account for email servers, etc");
+            LOGGER.info("CAS is unable to send email given no settings are defined to account for email servers, etc");
         }
         if (!isSmsSenderDefined()) {
-            LOGGER.warn("CAS is unable to send sms messages given no settings are defined to account for sms providers, etc");
+            LOGGER.info("CAS is unable to send sms messages given no settings are defined to account for sms providers, etc");
         }
+        if (!isNotificationSenderDefined()) {
+            LOGGER.info("CAS is unable to send notifications given no providers are defined to handle messages, etc");
+        }
+
         return isMailSenderDefined() || isSmsSenderDefined();
     }
 

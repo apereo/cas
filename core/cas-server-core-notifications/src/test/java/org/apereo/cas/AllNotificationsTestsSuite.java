@@ -1,6 +1,8 @@
 package org.apereo.cas;
 
+import org.apereo.cas.config.CasCoreNotificationsConfigurationTests;
 import org.apereo.cas.notifications.CommunicationsManagerTests;
+import org.apereo.cas.notifications.push.DefaultNotificationSenderTests;
 import org.apereo.cas.sms.GroovySmsSenderTests;
 import org.apereo.cas.sms.RestfulSmsSenderTests;
 
@@ -16,7 +18,9 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     CommunicationsManagerTests.class,
+    DefaultNotificationSenderTests.class,
     GroovySmsSenderTests.class,
+    CasCoreNotificationsConfigurationTests.class,
     RestfulSmsSenderTests.class
 })
 @RunWith(JUnitPlatform.class)
