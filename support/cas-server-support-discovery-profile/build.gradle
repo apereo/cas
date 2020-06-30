@@ -8,6 +8,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-notifications")
 
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-services")

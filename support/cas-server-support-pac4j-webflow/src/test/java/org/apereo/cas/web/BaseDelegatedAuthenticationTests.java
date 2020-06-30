@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -93,6 +94,7 @@ public abstract class BaseDelegatedAuthenticationTests {
         CasCoreAuthenticationMetadataConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCoreWebflowConfiguration.class,

@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -68,6 +69,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasPersonDirectoryConfiguration.class,
@@ -83,7 +85,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.couch-db.password-attribute=password",
         "cas.authn.couch-db.username=cas",
         "cas.authn.couch-db.password=password",
-        "cas.authn.pac4j.typedIdUsed=false"
+        "cas.authn.pac4j.typed-id-used=false"
     })
 @Tag("CouchDb")
 @EnabledIfPortOpen(port = 5984)

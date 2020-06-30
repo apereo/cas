@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -60,6 +61,7 @@ import static org.junit.jupiter.api.Assertions.*;
     JpaYubiKeyAccountRegistryTests.JpaYubiKeyAccountRegistryTestConfiguration.class,
     YubiKeyAuthenticationEventExecutionPlanConfiguration.class,
     CasHibernateJpaConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreHttpConfiguration.class,

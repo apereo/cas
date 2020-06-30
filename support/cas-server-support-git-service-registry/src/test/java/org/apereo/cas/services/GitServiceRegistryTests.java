@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.GitServiceRegistryConfiguration;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     GitServiceRegistryConfiguration.class,
     CasCoreServicesConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
     RefreshAutoConfiguration.class,

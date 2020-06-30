@@ -1,6 +1,7 @@
 package org.apereo.cas.jmx;
 
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -36,6 +37,7 @@ public abstract class BaseCasJmsTests {
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreHttpConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCoreUtilConfiguration.class

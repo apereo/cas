@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.redis.services;
 
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.RedisServiceRegistryConfiguration;
@@ -23,6 +24,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootTest(classes = {
     RedisServiceRegistryConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     RefreshAutoConfiguration.class
