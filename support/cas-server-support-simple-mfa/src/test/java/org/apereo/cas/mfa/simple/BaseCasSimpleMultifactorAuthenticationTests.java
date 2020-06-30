@@ -72,6 +72,7 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
         CasCoreLogoutConfiguration.class,
         CasWebflowContextConfiguration.class,
         CasCoreWebflowConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCoreHttpConfiguration.class,

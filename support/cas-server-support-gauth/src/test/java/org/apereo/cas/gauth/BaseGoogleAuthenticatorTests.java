@@ -6,6 +6,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
@@ -53,6 +54,7 @@ public abstract class BaseGoogleAuthenticatorTests {
         CasMultifactorAuthenticationWebflowConfiguration.class,
         OneTimeTokenAuthenticationConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,

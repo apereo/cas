@@ -4,11 +4,14 @@ dependencies {
 
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-monitor")
+    implementation project(":core:cas-server-core-notifications")
+
     implementation project(":support:cas-server-support-hazelcast-ticket-registry")
     implementation project(":support:cas-server-support-hazelcast-core")
     implementation project(":support:cas-server-support-hazelcast")
 
     testImplementation project(":support:cas-server-support-person-directory")
+    
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-tickets")

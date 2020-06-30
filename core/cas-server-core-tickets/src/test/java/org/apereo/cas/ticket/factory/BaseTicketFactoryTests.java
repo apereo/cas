@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
@@ -34,6 +35,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketComponentSerializationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })

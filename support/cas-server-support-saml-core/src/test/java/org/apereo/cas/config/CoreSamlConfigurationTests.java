@@ -89,6 +89,7 @@ public class CoreSamlConfigurationTests {
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCoreConfiguration.class
