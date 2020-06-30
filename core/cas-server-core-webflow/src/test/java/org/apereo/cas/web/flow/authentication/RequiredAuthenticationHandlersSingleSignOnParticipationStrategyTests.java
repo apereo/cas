@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
 import org.apereo.cas.web.support.WebUtils;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ public class RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTest
         val svc = CoreAuthenticationTestUtils.getRegisteredService("serviceid1");
         val dao = new InMemoryServiceRegistry(appCtx, List.of(svc), new ArrayList<>());
 
-        val defaultServicesManager = new DefaultServicesManager(dao, appCtx, new HashSet<>());
+        val defaultServicesManager = new DefaultServicesManager(dao, appCtx, new HashSet<>(), Caffeine.newBuilder().build());
         defaultServicesManager.load();
 
         val strategy = new RequiredAuthenticationHandlersSingleSignOnParticipationStrategy(defaultServicesManager,
@@ -83,7 +84,7 @@ public class RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTest
             List.of(svc), new ArrayList<>());
 
         val servicesManager = new DefaultServicesManager(dao,
-            appCtx, new HashSet<>());
+            appCtx, new HashSet<>(), Caffeine.newBuilder().build());
         servicesManager.load();
 
         val ticketRegistry = new DefaultTicketRegistry();
@@ -120,7 +121,7 @@ public class RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTest
             List.of(svc), new ArrayList<>());
 
         val servicesManager = new DefaultServicesManager(dao,
-            appCtx, new HashSet<>());
+            appCtx, new HashSet<>(), Caffeine.newBuilder().build());
         servicesManager.load();
 
         val ticketRegistry = new DefaultTicketRegistry();

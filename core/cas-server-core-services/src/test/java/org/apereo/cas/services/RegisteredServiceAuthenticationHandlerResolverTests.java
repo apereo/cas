@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolve
 import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.util.CollectionUtils;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -55,7 +56,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         appCtx.refresh();
         val dao = new InMemoryServiceRegistry(appCtx, list, new ArrayList<>());
 
-        this.defaultServicesManager = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
+        this.defaultServicesManager = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>(), Caffeine.newBuilder().build());
         this.defaultServicesManager.load();
 
         val handler1 = new AcceptUsersAuthenticationHandler("handler1");

@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.DefaultChainingServiceRegistry;
@@ -37,6 +38,8 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceYamlHttpMessageConverter;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
@@ -231,13 +234,25 @@ public class CasCoreServicesConfiguration {
         servicesManager().load();
     }
 
+    @RefreshScope
+    @Bean
+    @ConditionalOnMissingBean(name = "servicesManagerCache")
+    public Cache<Long, RegisteredService> servicesManagerCache() {
+        var duration = Beans.newDuration(casProperties.getServiceRegistry().getCache());
+        return Caffeine.newBuilder()
+                .initialCapacity(casProperties.getServiceRegistry().getCachCapacity())
+                .maximumSize(casProperties.getServiceRegistry().getCacheSize())
+                .expireAfterWrite(duration)
+                .build();
+    }
+
     @Bean
     @ConditionalOnMissingBean(name = "defaultServicesManagerExecutionPlanConfigurer")
     @ConditionalOnProperty(prefix = "cas.service-registry", name = "management-type", havingValue = "DEFAULT", matchIfMissing = true)
     public ServicesManagerExecutionPlanConfigurer defaultServicesManagerExecutionPlanConfigurer() {
         return () -> {
             val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
-            return new DefaultServicesManager(serviceRegistry(), applicationContext, activeProfiles);
+            return new DefaultServicesManager(serviceRegistry(), applicationContext, activeProfiles, servicesManagerCache());
         };
     }
 
@@ -249,7 +264,7 @@ public class CasCoreServicesConfiguration {
             val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
             return new DefaultDomainAwareServicesManager(serviceRegistry(), applicationContext,
                 new DefaultRegisteredServiceDomainExtractor(),
-                activeProfiles);
+                activeProfiles, servicesManagerCache());
         };
     }
 

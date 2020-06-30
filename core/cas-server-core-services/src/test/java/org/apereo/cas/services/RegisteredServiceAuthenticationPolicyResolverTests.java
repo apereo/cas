@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RegisteredServiceAuthenticationPolicyResolver;
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -84,7 +85,7 @@ public class RegisteredServiceAuthenticationPolicyResolverTests {
 
         val dao = new InMemoryServiceRegistry(appCtx, list, new ArrayList<>());
 
-        this.servicesManager = new DefaultServicesManager(dao, appCtx, new HashSet<>());
+        this.servicesManager = new DefaultServicesManager(dao, appCtx, new HashSet<>(), Caffeine.newBuilder().build());
         this.servicesManager.load();
     }
 
