@@ -372,19 +372,6 @@ subprojects {
                                 password "${sonatypePassword}"
                             }
                         }
-                        if (rootProject.githubPackagesUsername != null && rootProject.githubPackagesToken != null) {
-                            maven {
-                                name = "GitHubPackages-Releases"
-                                url = uri("${githubPackagesRepositoryUrl}")
-                                mavenContent {
-                                    releasesOnly()
-                                }
-                                credentials {
-                                    username = "${githubPackagesUsername}"
-                                    password = "${githubPackagesToken}"
-                                }
-                            }
-                        }
                     }
                     if (rootProject.publishSnapshots) {
                         maven {
