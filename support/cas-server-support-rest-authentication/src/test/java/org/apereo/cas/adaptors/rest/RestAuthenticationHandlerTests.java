@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -95,6 +96,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreLogoutConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreConfiguration.class
 },
     properties = "cas.authn.rest.uri=http://localhost:8081/authn")

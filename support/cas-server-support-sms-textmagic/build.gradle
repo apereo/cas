@@ -8,7 +8,6 @@ dependencies {
     implementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
-    implementation project(":core:cas-server-core-notifications")
 
     implementation libraries.textmagic
     
