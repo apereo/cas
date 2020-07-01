@@ -7,12 +7,11 @@ import random
 import re
 import urllib3
 from urllib.parse import parse_qs, urlparse, unquote
-from locust import HttpLocust, TaskSequence, seq_task, between
-from locust.exception import StopLocust
-
+from locust import HttpUser, between, SequentialTaskSet, task
+from locust.exception import InterruptTaskSet
 
 # IdP Host
-HOST = "https://axman000.local:8443"
+HOST = "https://localhost:8443"
 
 # Testing using locally generated cert, so turning off error messaging
 IGNORE_SSL = True
@@ -22,11 +21,31 @@ EXECUTION_PAT = re.compile(r'<input type="hidden" name="execution" value="([^"]+
 EVENTID_PAT = re.compile(r'<input type="hidden" name="_eventId" value="([^"]+)"')
 
 # Service Provider settings
-CAS_SP = "https://castest.edu/"
+CAS_SP = "https://httpbin.org/get"
+
+def load_creds():
+    """
+    Load test user credentials.
+    """
+    credpath = os.path.join(
+        os.path.dirname(__file__),
+        "credentials.csv")
+    creds = []
+    with open(credpath, "r") as f:
+        reader = csv.reader(f)        
+        for row in reader:
+            creds.append((row[0], row[1]))
+    return creds
 
 
-class CASTaskSet(TaskSequence):
-
+class CASLocust(HttpUser):
+    """
+    LOCUST startup
+    """
+    host = HOST
+    wait_time = between(2, 15)
+    creds = load_creds()
+    
     def on_start(self):
         """
         LOCUST startup process
@@ -35,7 +54,7 @@ class CASTaskSet(TaskSequence):
             urllib3.disable_warnings()
         print("CAS Start Locust Run!")
 
-    @seq_task(1)
+    @task(1)
     def login(self):
         """
         Main script used to log in via CAS protocol
@@ -52,16 +71,17 @@ class CASTaskSet(TaskSequence):
         found_exec = EXECUTION_PAT.search(content)
         if found_exec is None:
             print("CAS No Execution field found on login form!")
-            raise StopLocust()
+            print(content)
+            raise InterruptTaskSet()
         execution = found_exec.groups()[0]
 
         found_eventid = EVENTID_PAT.search(content)
         if found_eventid is None:
             print("CAS No Event Id field found on login form!")
-            raise StopLocust()
+            raise InterruptTaskSet()
         event_id = found_eventid.groups()[0]
 
-        creds = random.choice(self.locust.creds)
+        creds = random.choice(self.creds)
         cas_user = creds[0]
         cas_passwd = creds[1]
         data = {
@@ -87,7 +107,7 @@ class CASTaskSet(TaskSequence):
             cas_ticket = cas_parsed_url['ticket'][0]
         else:
             print("CAS No Ticket found in returned form!")
-            raise StopLocust()
+            raise InterruptTaskSet()
 
         print("CAS Validating service ticket ...")
         ticket_response = client.get("/cas/serviceValidate",
@@ -100,14 +120,14 @@ class CASTaskSet(TaskSequence):
 
         user_data = ticket_response.text
         if "<cas:authenticationSuccess>" in user_data:
-            print("CAS Succesful Run!")
+            print("CAS Successful Run!")
         else:
             print("CAS No Event Id field found on login form!")
-            raise StopLocust()
+            raise InterruptTaskSet()
 
         print("CAS Validating service ticket ...")
 
-    @seq_task(2)
+    @task(2)
     def logout(self):
         """
         CAS User logout
@@ -122,28 +142,3 @@ class CASTaskSet(TaskSequence):
         LOCUST end process
         """
         print("CAS End of Locust Run")
-
-
-def load_creds():
-    """
-    Load test user credentials.
-    """
-    credpath = os.path.join(
-        os.path.dirname(__file__),
-        "credentials.csv")
-    creds = []
-    with open(credpath, "r") as f:
-        reader = csv.reader(f)        
-        for row in reader:
-            creds.append((row[0], row[1]))
-    return creds
-
-
-class CASLocust(HttpLocust):
-    """
-    LOCUST startup
-    """
-    task_set = CASTaskSet
-    host = HOST
-    wait_time = between(2, 15)
-    creds = load_creds()

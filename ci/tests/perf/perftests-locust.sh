@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-gradle="./gradlew "
+gradle="gradle "
 gradleBuild=""
 gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel "
 webAppServerType="$1"
@@ -36,7 +36,7 @@ if [ $retVal == 0 ]; then
     exec $cmd &
     pid=$!
     echo "Launched CAS with pid ${pid}. Waiting for CAS server to come online..."
-    sleep 60
+    sleep 30
 
     cd etc/loadtests/locust
     echo -e "Current directory contains: \n\n`ls`"
@@ -51,10 +51,10 @@ if [ $retVal == 0 ]; then
     pip install -r requirements.txt
 
     echo -e "Installing locust..."
-    pip install locustio
+    pip install locust
 
     echo -e "\nRunning locust...\n"
-    locust -f cas/casLocust.py --no-web --host=https://localhost:8443 --hatch-rate 3 --clients 5 --run-time 5m --exit-code-on-error 1
+    locust -f cas/casLocust.py --headless --host=https://localhost:8443 --hatch-rate 3 --users 1 --run-time 1m --exit-code-on-error 1
 
     retVal=$?
 
