@@ -10,7 +10,6 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-webflow")
-    implementation project(":core:cas-server-core-notifications")
 
     implementation project(":support:cas-server-support-jpa-util")
     implementation project(":support:cas-server-support-jpa-hibernate")
@@ -18,6 +17,7 @@ dependencies {
     implementation project(":support:cas-server-support-u2f-core")
 
     testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-notifications")
 
     testImplementation project(path: ":support:cas-server-support-u2f", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")

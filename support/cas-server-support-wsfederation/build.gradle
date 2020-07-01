@@ -15,16 +15,16 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-util-api")
-    implementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-cookie-api")
-    
+
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")
-    
+
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-saml")
-    
+
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-logout")

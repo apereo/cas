@@ -11,12 +11,12 @@ dependencies {
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-web")
-    implementation project(":core:cas-server-core-notifications")
 
     implementation project(":support:cas-server-support-actions")
 
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")

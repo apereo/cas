@@ -8,6 +8,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -67,6 +68,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CoreSamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     AmazonS3SamlMetadataConfiguration.class,
@@ -75,8 +77,8 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = {
     "cas.authn.saml-idp.metadata.amazon-s3.idp-metadata-bucket-name=thebucket",
     "cas.authn.saml-idp.metadata.amazon-s3.endpoint=http://127.0.0.1:4572",
-    "cas.authn.saml-idp.metadata.amazon-s3.credentialAccessKey=test",
-    "cas.authn.saml-idp.metadata.amazon-s3.credentialSecretKey=test",
+    "cas.authn.saml-idp.metadata.amazon-s3.credential-access-key=test",
+    "cas.authn.saml-idp.metadata.amazon-s3.credential-secret-key=test",
     "cas.authn.saml-idp.metadata.amazon-s3.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
     "cas.authn.saml-idp.metadata.amazon-s3.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
 })

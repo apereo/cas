@@ -20,7 +20,6 @@ dependencies {
 
     implementation project(":core:cas-server-core-authentication-throttle")
     implementation project(":core:cas-server-core-web-api")
-    implementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")
@@ -38,10 +37,11 @@ dependencies {
     implementation libraries.pac4jcas
     implementation libraries.jose4j
     implementation libraries.nimbus
-    
+
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-authentication-mfa")

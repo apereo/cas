@@ -13,17 +13,16 @@ dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-web-api")
-    implementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-audit")
     implementation project(":core:cas-server-core-audit-api")
     implementation project(":support:cas-server-support-surrogate-authentication")
     implementation project(":support:cas-server-support-surrogate-api")
 
     testImplementation project(":support:cas-server-support-themes")
-    
+
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
-    
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")

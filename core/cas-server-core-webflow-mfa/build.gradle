@@ -14,7 +14,6 @@ dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-tickets-api")
-    implementation project(":core:cas-server-core-notifications")
     
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-ticket")
@@ -31,6 +30,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-cookie-api")
     testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-authentication")
