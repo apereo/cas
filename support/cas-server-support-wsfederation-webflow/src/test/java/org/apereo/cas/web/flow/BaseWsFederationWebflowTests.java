@@ -8,6 +8,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
@@ -60,6 +61,7 @@ public class BaseWsFederationWebflowTests {
         CasCookieConfiguration.class,
         CoreSamlConfiguration.class,
         CasCoreTicketsConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,

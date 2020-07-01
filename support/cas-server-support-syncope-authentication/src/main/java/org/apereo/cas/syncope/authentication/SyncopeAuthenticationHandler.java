@@ -10,7 +10,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,7 +25,6 @@ import org.apache.syncope.common.lib.to.RelationshipTO;
 import org.apache.syncope.common.lib.to.UserTO;
 
 import javax.security.auth.login.FailedLoginException;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +42,10 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    private final ObjectMapper objectMapper = new IgnoringJaxbModuleJacksonObjectMapper().findAndRegisterModules();
+    private final ObjectMapper objectMapper = new IgnoringJaxbModuleJacksonObjectMapper()
+        .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        .findAndRegisterModules();
 
     private final String syncopeUrl;
 
@@ -110,7 +114,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
                 .collect(Collectors.toList()));
         }
 
-        user.getPlainAttrs().forEach(a -> attributes.put("syncopeUserAttr" + a.getSchema(), (List) a.getValues()));
+         user.getPlainAttrs().forEach(a -> attributes.put("syncopeUserAttr" + a.getSchema(), (List) a.getValues()));
         return attributes;
     }
 
@@ -145,7 +149,8 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 LOGGER.debug("Received user object as [{}]", result);
-                return Optional.of(this.objectMapper.readValue(result, UserTO.class));
+                val userTO = this.objectMapper.readValue(result, UserTO.class);
+                return Optional.ofNullable(userTO);
             }
         } finally {
             HttpUtils.close(response);

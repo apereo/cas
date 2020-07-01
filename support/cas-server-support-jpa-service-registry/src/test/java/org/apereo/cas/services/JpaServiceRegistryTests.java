@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
@@ -23,6 +24,7 @@ import org.springframework.test.annotation.DirtiesContext;
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     JpaServiceRegistryConfiguration.class,
     CasHibernateJpaConfiguration.class,
     CasCoreServicesConfiguration.class
