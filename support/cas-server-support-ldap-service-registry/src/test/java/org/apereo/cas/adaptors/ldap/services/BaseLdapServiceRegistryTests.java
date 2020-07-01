@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.ldap.services;
 
 import org.apereo.cas.adaptors.ldap.services.config.LdapServiceRegistryConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     LdapServiceRegistryConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = {
     "cas.service-registry.ldap.ldap-url=ldap://localhost:10389",
