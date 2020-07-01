@@ -27,8 +27,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.apache.syncope.common.lib.to.MembershipTO;
-import org.apache.syncope.common.lib.to.RelationshipTO;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
@@ -41,7 +39,6 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -83,34 +80,17 @@ public class SyncopeAuthenticationHandlerTests {
     @Qualifier("syncopeAuthenticationHandler")
     private AuthenticationHandler syncopeAuthenticationHandler;
 
-    @SneakyThrows
-    private static MockWebServer startMockSever(final JsonNode user) {
-        val data = MAPPER.writeValueAsString(user);
-        val webServer = new MockWebServer(8095,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
-            MediaType.APPLICATION_JSON_VALUE);
-        webServer.start();
-        return webServer;
-    }
-    
     @Test
     @SuppressWarnings("JdkObsolete")
     public void verifyHandlerPasses() {
         val user = MAPPER.createObjectNode();
         user.put("username", "casuser");
-        user.setSecurityQuestion("SecurityQuestion");
-        user.setCreationDate(new Date());
-        user.setChangePwdDate(new Date());
-        user.getDynRoles().add("Role1");
-        user.getMemberships().add(new MembershipTO().setGroupName("GroupKey"));
-        user.getDynMemberships().add(new MembershipTO().setGroupName("GroupKey"));
-        user.getRelationships().add(new RelationshipTO().setType("Type"));
 
         @Cleanup("stop")
         val webserver = startMockSever(user);
         assertDoesNotThrow(() ->
             syncopeAuthenticationHandler.authenticate(
-                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("admin", "password")));
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "password")));
     }
 
     @Test
@@ -123,7 +103,7 @@ public class SyncopeAuthenticationHandlerTests {
 
         assertThrows(AccountPasswordMustChangeException.class,
             () -> syncopeAuthenticationHandler.authenticate(
-                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("admin", "password")));
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "password")));
     }
 
     @Test
@@ -136,11 +116,11 @@ public class SyncopeAuthenticationHandlerTests {
 
         assertThrows(AccountDisabledException.class,
             () -> syncopeAuthenticationHandler.authenticate(
-                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("admin", "password")));
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "password")));
     }
 
     @SneakyThrows
-    private static MockWebServer startMockSever(final UserTO user) {
+    private static MockWebServer startMockSever(final JsonNode user) {
         val data = MAPPER.writeValueAsString(user);
         val webServer = new MockWebServer(8095,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
