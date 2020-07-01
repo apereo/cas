@@ -15,6 +15,7 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
@@ -61,7 +62,8 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         val impl = samlServiceFactory.createService(request);
 
         val response = new SamlServiceResponseBuilder(
-            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>()))
+            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>(),
+                        Caffeine.newBuilder().build()))
             .build(impl, "ticketId", CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
@@ -83,7 +85,8 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "service");
         val impl = samlServiceFactory.createService(request);
         val response = new SamlServiceResponseBuilder(
-            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>()))
+            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>(),
+                        Caffeine.newBuilder().build()))
             .build(impl, null, CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
