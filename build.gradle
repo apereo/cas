@@ -69,6 +69,8 @@ ext {
 
     excludedFilesFromTestCoverage = [
         '**/**ConfigurationMetadata**',
+        '**/**NtlmAuthenticationHandler**',
+        '**/**CosmosDbServiceRegistry**',
         '**/**Application**',
         '**/**Application$**',
         '**/**Exception$**',
