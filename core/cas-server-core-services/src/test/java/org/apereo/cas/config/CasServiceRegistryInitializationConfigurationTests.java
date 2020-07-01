@@ -24,10 +24,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RegisteredService")
 @SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
-    RefreshAutoConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasServiceRegistryInitializationConfiguration.class
 }, properties = "cas.service-registry.init-from-json=true")
 public class CasServiceRegistryInitializationConfigurationTests {

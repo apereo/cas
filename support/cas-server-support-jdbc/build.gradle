@@ -18,6 +18,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":support:cas-server-support-jpa-hibernate")
     testImplementation project(":support:cas-server-support-person-directory")
     
