@@ -21,11 +21,11 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.MockWebServer;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.apache.syncope.common.lib.to.UserTO;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
@@ -70,14 +70,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @ResourceLock("Syncope")
 @Tag("Simple")
 public class SyncopeAuthenticationHandlerTests {
-    private static final ObjectMapper MAPPER = new IgnoringJaxbModuleJacksonObjectMapper().findAndRegisterModules();
+
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Autowired
     @Qualifier("syncopeAuthenticationHandler")
     private AuthenticationHandler syncopeAuthenticationHandler;
 
     @SneakyThrows
-    private static MockWebServer startMockSever(final UserTO user) {
+    private static MockWebServer startMockSever(final JsonNode user) {
         val data = MAPPER.writeValueAsString(user);
         val webServer = new MockWebServer(8095,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
@@ -88,8 +89,8 @@ public class SyncopeAuthenticationHandlerTests {
 
     @Test
     public void verifyHandlerPasses() {
-        val user = new UserTO();
-        user.setUsername("casuser");
+        val user = MAPPER.createObjectNode();
+        user.put("username", "casuser");
         @Cleanup("stop")
         val webserver = startMockSever(user);
         assertDoesNotThrow(() ->
@@ -98,9 +99,9 @@ public class SyncopeAuthenticationHandlerTests {
 
     @Test
     public void verifyHandlerMustChangePassword() {
-        val user = new UserTO();
-        user.setUsername("casuser");
-        user.setMustChangePassword(true);
+        val user = MAPPER.createObjectNode();
+        user.put("username", "casuser");
+        user.put("mustChangePassword", true);
         @Cleanup("stop")
         val webserver = startMockSever(user);
 
@@ -110,9 +111,9 @@ public class SyncopeAuthenticationHandlerTests {
 
     @Test
     public void verifyHandlerSuspended() {
-        val user = new UserTO();
-        user.setUsername("casuser");
-        user.setSuspended(true);
+        val user = MAPPER.createObjectNode();
+        user.put("username", "casuser");
+        user.put("suspended", true);
         @Cleanup("stop")
         val webserver = startMockSever(user);
 
