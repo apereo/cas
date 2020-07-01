@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
@@ -29,6 +30,7 @@ import org.springframework.context.event.EventListener;
     CouchbaseServiceRegistryTests.CouchbaseServiceRegistryTestConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreUtilConfiguration.class,
     CouchbaseServiceRegistryConfiguration.class
 },

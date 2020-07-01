@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -56,6 +57,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreWebConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CoreSamlConfiguration.class
     },
     properties = {
