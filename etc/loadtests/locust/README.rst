@@ -12,7 +12,7 @@ The Python version used to create these script = Python 3.7.7
 
 These are the example scripts available for your use.
 
-- casLocust.py - Uses and updated Locus version of 0.13.2
+- casLocust.py - Script file for testing CAS protocol.
 - samlLocust.py - Script file for testing SAML protocol.
 - allLocust.py - Script file combining the CAS and SAML protocol files to test against a CAS instance.
 
