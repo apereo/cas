@@ -114,7 +114,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
                 .collect(Collectors.toList()));
         }
 
-         user.getPlainAttrs().forEach(a -> attributes.put("syncopeUserAttr" + a.getSchema(), (List) a.getValues()));
+        user.getPlainAttrs().forEach(a -> attributes.put("syncopeUserAttr" + a.getSchema(), (List) a.getValues()));
         return attributes;
     }
 
