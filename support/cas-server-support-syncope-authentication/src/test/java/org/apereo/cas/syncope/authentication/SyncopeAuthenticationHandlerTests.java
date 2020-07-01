@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -62,6 +63,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
@@ -84,43 +86,46 @@ public class SyncopeAuthenticationHandlerTests {
     @SuppressWarnings("JdkObsolete")
     public void verifyHandlerPasses() {
         val user = new UserTO();
-        user.setUsername("casuser");
+        user.setUsername("admin");
         user.setSecurityQuestion("SecurityQuestion");
         user.setCreationDate(new Date());
         user.setChangePwdDate(new Date());
         user.getDynRoles().add("Role1");
-        user.getMemberships().add(new MembershipTO.Builder().group("GroupKey").build());
-        user.getDynMemberships().add(new MembershipTO.Builder().group("GroupKey").build());
-        user.getRelationships().add(new RelationshipTO.Builder().type("Type").build());
+        user.getMemberships().add(new MembershipTO().setGroupName("GroupKey"));
+        user.getDynMemberships().add(new MembershipTO().setGroupName("GroupKey"));
+        user.getRelationships().add(new RelationshipTO().setType("Type"));
 
         @Cleanup("stop")
         val webserver = startMockSever(user);
         assertDoesNotThrow(() ->
-            syncopeAuthenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser")));
+            syncopeAuthenticationHandler.authenticate(
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("admin", "password")));
     }
 
     @Test
     public void verifyHandlerMustChangePassword() {
         val user = new UserTO();
-        user.setUsername("casuser");
+        user.setUsername("admin");
         user.setMustChangePassword(true);
         @Cleanup("stop")
         val webserver = startMockSever(user);
 
         assertThrows(AccountPasswordMustChangeException.class,
-            () -> syncopeAuthenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser")));
+            () -> syncopeAuthenticationHandler.authenticate(
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("admin", "password")));
     }
 
     @Test
     public void verifyHandlerSuspended() {
         val user = new UserTO();
-        user.setUsername("casuser");
+        user.setUsername("admin");
         user.setSuspended(true);
         @Cleanup("stop")
         val webserver = startMockSever(user);
 
         assertThrows(AccountDisabledException.class,
-            () -> syncopeAuthenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser")));
+            () -> syncopeAuthenticationHandler.authenticate(
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("admin", "password")));
     }
 
     @SneakyThrows
