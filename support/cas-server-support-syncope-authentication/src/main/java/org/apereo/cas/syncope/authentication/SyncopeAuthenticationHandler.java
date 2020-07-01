@@ -98,23 +98,17 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
 
         var memberships = new ArrayList<>();
         user.get("memberships").forEach(m -> memberships.add(m.get("groupName").asText()));
-        if (memberships.isEmpty()) {
+        if (!memberships.isEmpty()) {
             attributes.put("syncopeUserMemberships", memberships);            
         }
 
         var dynMemberships = new ArrayList<>();
         user.get("dynMemberships").forEach(m -> dynMemberships.add(m.get("groupName").asText()));
-        if (dynMemberships.isEmpty()) {
+        if (!dynMemberships.isEmpty()) {
             attributes.put("syncopeUserDynMemberships", dynMemberships);            
         }
 
-        var relationships = new ArrayList<>();
-        user.get("dynMemberships").forEach(m -> relationships.add(m.get("groupName").asText()));
-        if (relationships.isEmpty()) {
-            attributes.put("syncopeUserDynMemberships", relationships);            
-        }
-
-        user.get("plainAttrs").forEach(r -> attributes.put(
+        user.get("relationships").forEach(r -> attributes.put(
                 "syncopeUserRelationships" + r.get("type").asText(),
                 List.of(r.get("otherEndName").asText())));
 
