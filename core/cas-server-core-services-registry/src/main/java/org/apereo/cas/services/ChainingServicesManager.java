@@ -48,8 +48,8 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
     }
 
     @Audit(action = "SAVE_SERVICE",
-        actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
-        resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
+            actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
+            resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         val manager = findServicesManager(registeredService);
@@ -57,8 +57,8 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
     }
 
     @Audit(action = "SAVE_SERVICE",
-        actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
-        resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
+            actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
+            resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
         val manager = findServicesManager(registeredService);
@@ -71,20 +71,20 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
     }
 
     @Audit(action = "DELETE_SERVICE",
-        actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
-        resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
+            actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
+            resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public RegisteredService delete(final long id) {
         return serviceManagers.stream()
-            .map(s -> s.delete(id))
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElse(null);
+                .map(s -> s.delete(id))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
     }
 
     @Audit(action = "DELETE_SERVICE",
-        actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
-        resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
+            actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
+            resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public RegisteredService delete(final RegisteredService svc) {
         val manager = findServicesManager(svc);
@@ -94,10 +94,10 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
     @Override
     public RegisteredService findServiceBy(final String serviceId) {
         return serviceManagers.stream()
-            .map(s -> s.findServiceBy(serviceId))
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElse(null);
+                .map(s -> s.findServiceBy(serviceId))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -105,12 +105,12 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
         val manager = findServicesManager(service);
         return manager.map(servicesManager -> servicesManager.findServiceBy(service)).orElse(null);
     }
-
+    
     @Override
     public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> clazz) {
         return serviceManagers.stream()
-            .flatMap(s -> s.findServiceBy(clazz).stream())
-            .collect(Collectors.toList());
+                .flatMap(s -> s.findServiceBy(clazz).stream())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -128,48 +128,78 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
     @Override
     public RegisteredService findServiceBy(final long id) {
         return serviceManagers.stream()
-            .map(s -> s.findServiceBy(id))
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElse(null);
+                .map(s -> s.findServiceBy(id))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public <T extends RegisteredService> T findServiceBy(final long id, final Class<T> clazz) {
+        val manager = findServicesManager(clazz);
+        return manager.map(servicesManager -> servicesManager.findServiceBy(id, clazz)).orElse(null);
+    }
+
+    @Override
+    public RegisteredService findServiceByName(final String name) {
+        return serviceManagers.stream()
+                .map(s -> s.findServiceByName(name))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public <T extends RegisteredService> T findServiceByName(final String name, final Class<T> clazz) {
+        val manager = findServicesManager(clazz);
+        return manager.map(servicesManager -> servicesManager.findServiceByName(name, clazz)).orElse(null);
+    }
+    
+    @Override
+    public RegisteredService findServiceByExactServiceId(final String serviceId) {
+        return serviceManagers.stream()
+                .map(s -> s.findServiceByExactServiceId(serviceId))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
     public Stream<String> getDomains() {
         return serviceManagers.stream()
-            .filter(mgr -> mgr instanceof DomainAwareServicesManager)
-            .map(DomainAwareServicesManager.class::cast)
-            .flatMap(DomainAwareServicesManager::getDomains);
+                .filter(mgr -> mgr instanceof DomainAwareServicesManager)
+                .map(DomainAwareServicesManager.class::cast)
+                .flatMap(DomainAwareServicesManager::getDomains);
     }
 
     @Override
     public Collection<RegisteredService> getAllServices() {
         return serviceManagers.stream()
-            .flatMap(s -> s.getAllServices().stream())
-            .collect(Collectors.toList());
+                .flatMap(s -> s.getAllServices().stream())
+                .collect(Collectors.toList());
     }
 
     @Override
     public Collection<RegisteredService> load() {
         return serviceManagers.stream()
-            .flatMap(s -> s.load().stream())
-            .collect(Collectors.toList());
+                .flatMap(s -> s.load().stream())
+                .collect(Collectors.toList());
     }
 
     @Override
     public Collection<RegisteredService> getServicesForDomain(final String domain) {
         return serviceManagers.stream()
-            .filter(mgr -> mgr instanceof DomainAwareServicesManager)
-            .map(DomainAwareServicesManager.class::cast)
-            .flatMap(d -> d.getServicesForDomain(domain).stream())
-            .collect(Collectors.toList());
+                .filter(mgr -> mgr instanceof DomainAwareServicesManager)
+                .map(DomainAwareServicesManager.class::cast)
+                .flatMap(d -> d.getServicesForDomain(domain).stream())
+                .collect(Collectors.toList());
     }
 
     @Override
-    public int count() {
+    public long count() {
         return serviceManagers.stream()
-            .mapToInt(ServicesManager::count)
-            .sum();
+                .mapToLong(ServicesManager::count)
+                .sum();
     }
 
     @Override
@@ -186,4 +216,5 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
     public boolean supports(final Class clazz) {
         return findServicesManager(clazz).isPresent();
     }
+
 }
