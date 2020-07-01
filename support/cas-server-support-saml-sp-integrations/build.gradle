@@ -5,7 +5,6 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-authentication-api")
-    implementation project(":core:cas-server-core-notifications")
     implementation project(":support:cas-server-support-saml-idp")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")
@@ -26,8 +25,9 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
 
     testImplementation project(":support:cas-server-support-person-directory")
-    
+
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core-validation-api")

@@ -14,7 +14,7 @@ dependencies {
     implementation project(":support:cas-server-support-aws")
 
     implementation libraries.awssns
-    
+
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-logout-api")

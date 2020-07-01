@@ -13,7 +13,6 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-audit")
-    implementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-services-registry")
 
     implementation project(":support:cas-server-support-pac4j-core")
@@ -22,6 +21,7 @@ dependencies {
 
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")

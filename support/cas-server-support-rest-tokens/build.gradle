@@ -11,7 +11,6 @@ dependencies {
     implementation project(":support:cas-server-support-rest-core")
 
     implementation project(":core:cas-server-core-rest")
-    implementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-configuration-api")
@@ -19,9 +18,9 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
 
     testImplementation libraries.nimbus
-    
+
     testImplementation project(":core:cas-server-core-services-authentication")
-    
+
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-logout")
@@ -30,6 +29,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web-api")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-configuration")
     

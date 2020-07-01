@@ -9,9 +9,9 @@ dependencies {
     implementation project(":core:cas-server-core-tickets")
     implementation project(":support:cas-server-support-aup-core")
     implementation project(":support:cas-server-support-jpa-util")
-    implementation project(":core:cas-server-core-notifications")
 
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-authentication-api")

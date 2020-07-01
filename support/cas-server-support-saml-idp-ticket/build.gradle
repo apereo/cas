@@ -13,14 +13,15 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-util-api")
-    implementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-saml-mdui-core")
     implementation project(":support:cas-server-support-saml-idp-core")
-    
+
     implementation libraries.casclient
     implementation libraries.shibutiljavasupport
+
+    testImplementation project(":core:cas-server-core-notifications")
 }

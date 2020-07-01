@@ -9,7 +9,6 @@ dependencies {
     implementation project(":support:cas-server-support-validation-core")
     
     implementation project(":core:cas-server-core-services")
-    implementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa")
@@ -23,12 +22,13 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
 
     compileOnly project(":core:cas-server-core-rest")
-    
+
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-configuration")
