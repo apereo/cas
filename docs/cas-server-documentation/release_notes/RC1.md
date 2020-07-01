@@ -143,9 +143,11 @@ Google Authenticator for multifactor authentication is now allowed to accept and
 
 - Attribute definitions mapped to an external Groovy script are corrected to handle caching in more resource-friendly ways.
 - The management of service definitions is now delegating search operations to the service registry rather than filtering matches internally while also utilizing a caching layer to improve performance as much as possible.
+- The authentication strategy backed by [Apache Syncope](../installation/Syncope-Authentication.html) is enhanced to not require a dependency on Apache Syncope modules, allowing the integration to work with all Apache Syncope versions.
 - The eligibility of passwordless accounts for multifactor & delegated authentication has switched to a `TriStateBoolean` type to allow for easier overrides and undefined states when examined against the global settings.
 - When working with Git integrations, username and email attributes used for commit operations are now resolved via local, global and system git configuration before falling back onto default CAS-controlled values.
 - Service management `findServiceBy()` operations are now delegated to the service registry directly with a modest cache layer in between to improve and preserve performance as much as possible.
+- [Locust performance tests](../high_availability/Performance-Testing-Locust.html) are now upgraded to use locust `1.1`.
 
 ## Library Upgrades
 
@@ -160,7 +162,9 @@ Google Authenticator for multifactor authentication is now allowed to accept and
 - Amazon SDK
 - Pac4j
 - Twillio
+- Locust
 - OpenSAML
+- Oshi
 - Couchbase Driver
 - MongoDb Driver
 - Nimbus OIDC
