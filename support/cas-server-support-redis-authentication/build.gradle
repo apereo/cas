@@ -26,7 +26,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
 
     testImplementation project(":core:cas-server-core-util")
-
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-web")
