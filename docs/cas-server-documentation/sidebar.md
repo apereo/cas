@@ -9,6 +9,7 @@ layout: null
     *   [Upgrade Guide](/$version/planning/Upgrade-Guide.html)
     *   [Release Policy](/cas/developer/Release-Policy.html)
     *   [Release Schedule](https://github.com/apereo/cas/milestones)
+    *   [Release Notes](/$version/release_notes/Overview.html)
     *   [Maintenance Policy](/cas/developer/Maintenance-Policy.html)
 
 * [Installation](#casinstallation)
