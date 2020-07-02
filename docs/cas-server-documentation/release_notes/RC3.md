@@ -1,7 +1,7 @@
 ---
 layout: default
 title: CAS - Release Notes
-category: Release Notes
+category: Planning
 ---
 
 # RC3 Release Notes
