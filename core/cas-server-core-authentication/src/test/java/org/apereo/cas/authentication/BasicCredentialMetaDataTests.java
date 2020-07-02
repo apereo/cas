@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class BasicCredentialMetaDataTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "basicCredentialMetaData.json");
