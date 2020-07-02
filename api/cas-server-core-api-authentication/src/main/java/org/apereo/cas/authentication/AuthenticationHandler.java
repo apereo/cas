@@ -93,4 +93,28 @@ public interface AuthenticationHandler extends Ordered {
     default int getOrder() {
         return Integer.MAX_VALUE;
     }
+
+    /**
+     * Disabled authentication handler.
+     *
+     * @return the authentication handler
+     */
+    static AuthenticationHandler disabled() {
+        return new AuthenticationHandler() {
+            @Override
+            public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws PreventedException {
+                throw new PreventedException("Authentication handler is disabled");
+            }
+
+            @Override
+            public boolean supports(final Credential credential) {
+                return false;
+            }
+
+            @Override
+            public boolean supports(final Class<? extends Credential> clazz) {
+                return false;
+            }
+        };
+    }
 }
