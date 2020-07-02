@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Tag("Simple")
+@Tag("RegisteredService")
 public class ServiceRegistryInitializerTests {
 
     private static RegisteredService newService() {
