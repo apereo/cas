@@ -12,4 +12,5 @@ dependencies {
     implementation libraries.bouncycastle
 
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-notifications", configuration: "tests")
 }
