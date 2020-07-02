@@ -14,7 +14,7 @@ if [ $retVal != 0 ]; then
 fi
 
 echo -e "Checking for missing utility class annotation"
-java ./ci/java/CheckMissingUtilityClassAnnotation.java .
+java ./ci/checks/CheckMissingUtilityClassAnnotation.java .
 retVal=$?
 if [ $retVal != 0 ]; then
     echo -e "Code analysis has found issues with utility classes."
@@ -22,7 +22,7 @@ if [ $retVal != 0 ]; then
 fi
 
 echo -e "Checking tests suite classes"
-java ./ci/java/CheckMissingTestsSuiteClassAnnotation.java .
+java ./ci/checks/CheckMissingTestsSuiteClassAnnotation.java .
 retVal=$?
 if [ $retVal != 0 ]; then
     echo -e "Code analysis has found issues with test suites."
@@ -38,7 +38,7 @@ if [ $retVal != 0 ]; then
 fi
 
 echo -e "Checking for duplicate configurations in Gradle build files"
-java ./ci/java/CheckDuplicateGradleConfiguration.java .
+java ./ci/checks/CheckDuplicateGradleConfiguration.java .
 retVal=$?
 if [ $retVal != 0 ]; then
     echo -e "Code analysis has found issues with Gradle configurations."
@@ -54,7 +54,7 @@ if [ $retVal != 0 ]; then
 fi
 
 echo -e "Checking for bean proxying in Spring configuration files"
-java ./ci/java/CheckSpringConfigurationBeanProxying.java .
+java ./ci/checks/CheckSpringConfigurationBeanProxying.java .
 retVal=$?
 if [ $retVal != 0 ]; then
     echo -e "Code analysis has found issues with bean proxying in Spring configuration files."

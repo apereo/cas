@@ -32,7 +32,9 @@ public class CheckMissingTestsSuiteClassAnnotation {
     protected static void checkPattern(final String arg) throws IOException {
         var failBuild = new AtomicBoolean(false);
         Files.walk(Paths.get(arg))
-            .filter(file -> Files.isRegularFile(file) && file.toFile().getName().endsWith("TestsSuite.java"))
+            .filter(file -> Files.isRegularFile(file)
+                && file.toFile().getPath().contains("src/test/java")
+                && file.toFile().getName().endsWith("TestsSuite.java"))
             .forEach(file -> {
                 var text = readFile(file);
                 if (!text.contains("@RunWith")) {
