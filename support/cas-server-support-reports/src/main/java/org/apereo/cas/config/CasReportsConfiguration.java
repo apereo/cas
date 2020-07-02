@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -16,6 +17,7 @@ import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.web.report.ExportRegisteredServicesEndpoint;
+import org.apereo.cas.web.report.RegisteredAuthnHandlersEndpoint;
 import org.apereo.cas.web.report.RegisteredServicesEndpoint;
 import org.apereo.cas.web.report.SingleSignOnSessionStatusEndpoint;
 import org.apereo.cas.web.report.SingleSignOnSessionsEndpoint;
@@ -86,6 +88,10 @@ public class CasReportsConfiguration {
     @Qualifier("principalFactory")
     private ObjectProvider<PrincipalFactory> principalFactory;
 
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
+
     @Bean
     @ConditionalOnAvailableEndpoint
     public SpringWebflowEndpoint springWebflowEndpoint() {
@@ -108,6 +114,12 @@ public class CasReportsConfiguration {
     @ConditionalOnAvailableEndpoint
     public ExportRegisteredServicesEndpoint exportRegisteredServicesEndpoint() {
         return new ExportRegisteredServicesEndpoint(casProperties, servicesManager.getObject());
+    }
+
+    @Bean
+    @ConditionalOnAvailableEndpoint
+    public RegisteredAuthnHandlersEndpoint registeredAuthnHandlersEndpoint() {
+        return new RegisteredAuthnHandlersEndpoint(casProperties, authenticationEventExecutionPlan.getObject());
     }
 
     @Bean

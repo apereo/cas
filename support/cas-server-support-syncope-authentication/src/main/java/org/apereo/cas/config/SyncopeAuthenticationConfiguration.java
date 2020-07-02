@@ -20,7 +20,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -35,7 +34,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("syncopeAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(name = "cas.authn.syncope.url")
 public class SyncopeAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

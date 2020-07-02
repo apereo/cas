@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.spi.MockAuditTrailManager;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -69,6 +70,10 @@ public abstract class AbstractCasEndpointTests {
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    protected AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
+    
     @TestConfiguration
     @Lazy(false)
     public static class AuditTestConfiguration implements AuditTrailExecutionPlanConfigurer {
