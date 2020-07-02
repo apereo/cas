@@ -30,4 +30,14 @@ public class AuthenticationHandlerTests {
         assertEquals(Integer.MAX_VALUE, input.getOrder());
     }
 
+    @Test
+    public void verifyDisabledOperation() {
+        val input = AuthenticationHandler.disabled();
+        
+        assertFalse(input.supports(mock(Credential.class)));
+        assertFalse(input.supports(Credential.class));
+        assertNotNull(input.getName());
+        assertThrows(PreventedException.class, () -> input.authenticate(mock(Credential.class)));
+    }
+
 }
