@@ -162,6 +162,8 @@ Google Authenticator for multifactor authentication is now allowed to accept and
 - Amazon SDK
 - Pac4j
 - Twillio
+- ActiveMQ
+- Swagger
 - Locust
 - OpenSAML
 - Oshi

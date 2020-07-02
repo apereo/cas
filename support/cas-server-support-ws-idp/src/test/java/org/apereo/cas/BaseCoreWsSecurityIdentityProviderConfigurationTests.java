@@ -54,7 +54,6 @@ public abstract class BaseCoreWsSecurityIdentityProviderConfigurationTests {
         CasCoreLogoutConfiguration.class,
         CasWebflowContextConfiguration.class,
         CasCoreWebflowConfiguration.class,
-        CasWebflowContextConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCoreHttpConfiguration.class,
