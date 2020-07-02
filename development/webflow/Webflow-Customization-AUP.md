@@ -215,6 +215,23 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
 
+### Couchbase
+
+CAS can be configured to use a Couchbase instance as the storage mechanism. Upon accepting the policy, the
+decision is kept inside a document with a `username` column and the AUP attribute name with the result of the decision.
+
+Support is enabled by including the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-aup-couchbase</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
+
 ### JDBC
 
 CAS can be configured to use a database as the storage mechanism. Upon accepting the policy, the adopter is expected to provide a table name where the 

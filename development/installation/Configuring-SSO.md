@@ -87,6 +87,11 @@ via CAS settings or on a per-service basis.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#global-sso-behavior).
 
+## Disable SSO Globally
+
+Participation in single signon sessions can be disabled globally via CAS properties. To see the relevant list of CAS 
+properties, please [review this guide](../configuration/Configuration-Properties.html#global-sso-behavior).
+
 ## Disable Service SSO Access
 
 Participation in existing single signon sessions can be disabled on a per applications. For example, 
@@ -105,6 +110,8 @@ the following service will be challenged to present credentials every time, ther
 }
 ```
 
+In general, SSO participation policies designed on a per-service basis should override the global behavior.
+
 ## SSO Participation Policies
 
 Additional policies can be assigned to each service definition to control participation of an application in an existing single sign-on session.
@@ -113,7 +120,8 @@ user may be asked for credentials. Such policies can be chained together and exe
 
 ### Authentication Date
 
-Honor the existing single sign-on session, if any, if the authentication date is at most `5` seconds old. Otherwise, challenge the user for credentials and ignore the existing session.
+Honor the existing single sign-on session, if any, if the authentication date is at most `5` seconds old. Otherwise, challenge 
+the user for credentials and ignore the existing session.
 
 ```json
 {
@@ -170,6 +178,19 @@ the ticket continues to actively issue service tickets, etc.
     }
 }
 ```
+
+## Custom 
+
+Participation in a single sign-on session can be customized and controlled using custom strategies registered with CAS per the below syntax:
+
+```java
+@Bean
+public SingleSignOnParticipationStrategyConfigurer customSsoConfigurer() {
+    return chain -> chain.addStrategy(...);
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
 
 # SSO Warning Session Cookie
 
