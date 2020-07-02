@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -25,7 +26,10 @@ public class CasAuthenticationEventExecutionPlanTestConfiguration {
 
     @Bean
     public AuthenticationEventExecutionPlanConfigurer casDefaultAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(new SimpleTestUsernamePasswordAuthenticationHandler(), defaultPrincipalResolver);
+        return plan -> {
+            val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
+            plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver);
+        };
     }
 
 }

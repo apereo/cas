@@ -40,6 +40,14 @@ prior to production rollouts.</p></div>
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#accept-users-authentication).
 
+### Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                  | Description
+|---------------------------|------------------------------------------------
+| `authenticationHandlers`  | A `GET` request presents the collection of registered authentication handlers. An individual authentication handler can be queried via `GET` by its name using a selector path (i.e. `authenticationHandlers/{name}`).
+
 ### Resolution Strategy
 
 Authentication handlers are typically defined globally and then executed and tried by the authentication engine. 
@@ -108,8 +116,7 @@ Each authentication handler in CAS can be named via CAS settings and if left und
 the handler component itself is used (i.e. `LdapAuthenticationHandler`). The name itself can be any arbitrary string and typically is used
 to identify and refer to the handler components in areas such as [required authentication for a service](../services/Configuring-Service-AuthN-Policy.html), etc.
 In the event that multiple authentication handlers *of the same type* are defined, it is **RECOMMENDED** that each be given a unique name so as to avoid conflicts.
-Authentication failures are typically collected in CAS by the name of each authentication handler. Leaving the name undefined will likely result in subsequent components
-in the authentication chain overriding previous results.
+Authentication failures are typically collected in CAS by the name of each authentication handler. Leaving the name undefined will likely result in subsequent components in the authentication chain overriding previous results.
 
 ## Authentication Policy
 
@@ -130,6 +137,14 @@ Typical use cases of authentication policies may include:
 3. Ensure that all authentication schemes in the chain are executed successfully, for the entire authentication event to be considered successful.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authentication-policy).
+
+### Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                  | Description
+|---------------------------|------------------------------------------------
+| `authenticationPolicies`  | A `GET` request presents the collection of registered authentication policies. An individual authentication policy can be queried via `GET` by its name using a selector path (i.e. `authenticationPolicies/{name}`).
 
 ## Principal Resolution
 
