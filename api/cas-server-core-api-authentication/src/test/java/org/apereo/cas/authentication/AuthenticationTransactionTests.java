@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
 /**
  * @since 5.3.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class AuthenticationTransactionTests {
     @Test
     public void verifyHasCredentialOfTypeSingle() {
