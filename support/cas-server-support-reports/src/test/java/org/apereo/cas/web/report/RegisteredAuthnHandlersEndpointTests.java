@@ -14,14 +14,14 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link RegisteredAuthnHandlersTests}.
+ * This is {@link RegisteredAuthnHandlersEndpointTests}.
  *
  * @author Francesco Chicchiriccò
  * @since 6.3.0
  */
 @TestPropertySource(properties = "management.endpoint.registeredAuthnHandlers.enabled=true")
 @Tag("Simple")
-public class RegisteredAuthnHandlersTests extends AbstractCasEndpointTests {
+public class RegisteredAuthnHandlersEndpointTests extends AbstractCasEndpointTests {
 
     @Autowired
     @Qualifier("registeredAuthnHandlersReportEndpoint")
