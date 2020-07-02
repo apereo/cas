@@ -470,21 +470,23 @@ jobs:
           - services
           - rest
           - mfa
+          - util
+          - authentication
+          - casconfig
+          - actuator
+          - webapp
+          - ldap
+          - x509
           - oauth
+          - wsfed
           - uma
           - oidc
           - saml
           - hazelcast
-          - x509
-          - ldap
-          - casconfig
-          - shell
-          - wsfed
-          - actuator
-          - mongo
           - jmx
+          - shell
+          - mongo
           - memcached
-          - util
           - sms
           - jdbc
           - mariadb
@@ -507,7 +509,6 @@ jobs:
           - zookeeper
           - jms
           - cosmosdb
-          - webapp
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

@@ -71,7 +71,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = "cas.authn.syncope.url=http://localhost:8095")
 @ResourceLock("Syncope")
-@Tag("Simple")
+@Tag("Authentication")
 public class SyncopeAuthenticationHandlerTests {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

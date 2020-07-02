@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class AcceptUsersAuthenticationHandlerTests {
     private static final String SCOTT = "scott";
     private static final String RUTGERS = "rutgers";

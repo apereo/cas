@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class Cas20ProxyHandlerTests {
 
     private Cas20ProxyHandler handler;

@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class DefaultCasWebflowAuthenticationExceptionHandlerTests {
     private CasWebflowExceptionHandler handler;
 

@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class JaasAuthenticationHandlerTests {
     private File fileName;
 
