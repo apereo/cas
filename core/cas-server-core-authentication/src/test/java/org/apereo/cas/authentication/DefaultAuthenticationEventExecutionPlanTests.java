@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class DefaultAuthenticationEventExecutionPlanTests {
     @Test
     public void verifyOperation() {

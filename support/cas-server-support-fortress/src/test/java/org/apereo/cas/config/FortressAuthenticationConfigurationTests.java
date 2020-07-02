@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-@Tag("Simple")
+@Tag("Authentication")
 public class FortressAuthenticationConfigurationTests {
     @Autowired
     @Qualifier("fortressAuthenticationHandler")
