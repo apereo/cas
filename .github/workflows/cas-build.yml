@@ -183,6 +183,18 @@ jobs:
   validate-codebase:
     runs-on: ubuntu-latest
     needs: [cache]
+    strategy:
+      fail-fast: false
+      matrix:
+        check:
+          - CheckDuplicateGradleConfiguration
+          - CheckDuplicateTestConfiguration
+          - CheckMissingClassInTestsSuite
+          - CheckMissingTestsSuiteClassAnnotation
+          - CheckMissingUtilityClassAnnotation
+          - CheckRedundantTestConfigurationInheritance
+          - CheckSpringConfigurationBeanProxying
+          - CheckSpringConfigurationFactories
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -199,8 +211,8 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Validate Codebase
         if: ${{ !contains(github.head_ref, 'renovate') }}
-        run: ./ci/analyze-codebase.sh
-
+        run: java ./ci/checks/${{ matrix.check }}.java .
+        
 ##########################################################################
 
   validate-javadocs:
