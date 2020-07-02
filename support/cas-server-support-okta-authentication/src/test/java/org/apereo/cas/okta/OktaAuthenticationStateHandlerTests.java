@@ -65,7 +65,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationPrincipalConfiguration.class
 },
     properties = "cas.authn.okta.organization-url=https://dev-159539.oktapreview.com")
-@Tag("Simple")
+@Tag("Authentication")
 public class OktaAuthenticationStateHandlerTests {
     @Autowired
     @Qualifier("oktaAuthenticationHandler")

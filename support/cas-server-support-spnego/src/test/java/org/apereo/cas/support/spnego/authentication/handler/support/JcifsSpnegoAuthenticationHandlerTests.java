@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  * @author Arnaud Lesueur
  * @since 4.2.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class JcifsSpnegoAuthenticationHandlerTests {
 
     private static final String USERNAME = "Username";

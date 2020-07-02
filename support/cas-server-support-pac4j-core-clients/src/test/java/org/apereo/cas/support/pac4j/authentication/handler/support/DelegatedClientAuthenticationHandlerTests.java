@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @author Jerome Leleu
  * @since 4.1.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class DelegatedClientAuthenticationHandlerTests {
 
     private static final String CALLBACK_URL = "http://localhost:8080/callback";

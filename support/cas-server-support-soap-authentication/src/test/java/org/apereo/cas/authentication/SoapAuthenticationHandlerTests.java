@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
     },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("Authentication")
 public class SoapAuthenticationHandlerTests {
     @Autowired
     @Qualifier("soapAuthenticationAuthenticationHandler")

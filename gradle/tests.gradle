@@ -18,6 +18,16 @@ if (hasTestsOfCategory(project, "WebApp")) {
     }
 }
 
+if (hasTestsOfCategory(project, "Authentication")) {
+    task testAuthentication(type: Test) {
+        enabled = shouldTest(project, "Authentication")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "Authentication"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "ActuatorEndpoint")) {
     task testActuatorEndpoint(type: Test) {
         enabled = shouldTest(project, "ActuatorEndpoint")

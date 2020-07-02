@@ -68,7 +68,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.azure-active-directory.clientId=12345678-bc3b-4e2d-a9bf-bf6c7ded8b7e",
         "cas.authn.azure-active-directory.loginUrl=https://login.microsoftonline.com/common/"
     })
-@Tag("Simple")
+@Tag("Authentication")
 public class AzureActiveDirectoryAuthenticationHandlerTests {
     @Autowired
     @Qualifier("microsoftAzureActiveDirectoryAuthenticationHandler")
