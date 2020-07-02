@@ -154,11 +154,11 @@ public class PrincipalAttributesProperties implements Serializable {
      * You will also need to ensure {@code grouper.client.properties}
      * is available on the classpath (i.e. {@code src/main/resources})
      * and it contains the following:
-     * <pre>
-     * grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
-     * grouperClient.webService.login = banderson
-     * grouperClient.webService.password = password
-     * </pre>
+     *
+     * {@code grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest}
+     * {@code grouperClient.webService.login = banderson}
+     * {@code grouperClient.webService.password = password}
+     *
      */
     private GrouperPrincipalAttributesProperties grouper = new GrouperPrincipalAttributesProperties();
 }

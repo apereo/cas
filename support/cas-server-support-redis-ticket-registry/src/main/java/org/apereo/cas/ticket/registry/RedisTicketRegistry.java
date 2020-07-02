@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,7 +77,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             this.client.delete(redisKey);
             return true;
         } catch (final Exception e) {
-            LOGGER.error("Ticket not found or is already removed. Failed deleting [{}]", ticketId, e);
+            LOGGER.error("Ticket not found or is already removed. Failed deleting [{}]", ticketId);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -90,7 +92,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             val timeout = getTimeout(ticket);
             this.client.boundValueOps(redisKey).set(encodeTicket, timeout, TimeUnit.SECONDS);
         } catch (final Exception e) {
-            LOGGER.error("Failed to add [{}]", ticket, e);
+            LOGGER.error("Failed to add [{}]", ticket);
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -109,7 +112,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
                 return null;
             }
         } catch (final Exception e) {
-            LOGGER.error("Failed fetching [{}] ", ticketId, e);
+            LOGGER.error("Failed fetching [{}]", ticketId);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -149,7 +153,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             this.client.boundValueOps(redisKey).set(encodeTicket, timeout, TimeUnit.SECONDS);
             return encodeTicket;
         } catch (final Exception e) {
-            LOGGER.error("Failed to update [{}]", ticket, e);
+            LOGGER.error("Failed to update [{}]", ticket);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -172,7 +177,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
                 try {
                     cursor.close();
                 } catch (final IOException e) {
-                    LOGGER.error("Could not close Redis connection", e);
+                    LoggingUtils.error(LOGGER, e);
                 }
             });
     }

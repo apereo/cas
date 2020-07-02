@@ -29,6 +29,11 @@ public class GoogleAuthenticatorRestHttpRequestCredentialFactory implements Rest
      */
     public static final String PARAMETER_NAME_GAUTH_OTP = "gauthotp";
 
+    /**
+     * Parameter name expected in the request body to contain the GAuth account id.
+     */
+    public static final String PARAMETER_NAME_GAUTH_ACCT = "gauthacct";
+
     @Override
     public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
         if (requestBody == null || requestBody.isEmpty()) {
@@ -36,10 +41,13 @@ public class GoogleAuthenticatorRestHttpRequestCredentialFactory implements Rest
             return new ArrayList<>(0);
         }
         val token = requestBody.getFirst(PARAMETER_NAME_GAUTH_OTP);
-        LOGGER.debug("Google authenticator token in the request body: [{}]", token);
+        val id = requestBody.getFirst(PARAMETER_NAME_GAUTH_ACCT);
+        LOGGER.debug("Google authenticator token [{}] in the request body via account [{}]", token, id);
         if (StringUtils.isBlank(token)) {
             return new ArrayList<>(0);
         }
-        return CollectionUtils.wrap(new GoogleAuthenticatorTokenCredential(token));
+        val creds = new GoogleAuthenticatorTokenCredential(token,
+            StringUtils.isNotBlank(id) ? Long.valueOf(id) : null);
+        return CollectionUtils.wrap(creds);
     }
 }

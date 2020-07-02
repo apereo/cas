@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.yubico.client.v2.ResponseStatus;
@@ -85,7 +86,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
             }
             throw new FailedLoginException("Authentication failed with status: " + status);
         } catch (final YubicoVerificationException | YubicoValidationFailure e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException("YubiKey validation failed: " + e.getMessage());
         }
     }

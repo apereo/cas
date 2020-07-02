@@ -195,7 +195,7 @@ u2f.getMessagePort = function(callback) {
         };
         chrome.runtime.sendMessage(u2f.EXTENSION_ID, msg, function() {
             if (!chrome.runtime.lastError) {
-                // We are on a whitelisted origin and can talk directly
+                // We are on a allowed origin and can talk directly
                 // with the extension.
                 u2f.getChromeRuntimePort_(callback);
             } else {

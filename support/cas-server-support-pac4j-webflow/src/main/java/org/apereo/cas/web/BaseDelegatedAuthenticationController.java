@@ -3,6 +3,7 @@ package org.apereo.cas.web;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.web.view.DynamicHtmlView;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -32,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Controller
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class BaseDelegatedAuthenticationController {
 

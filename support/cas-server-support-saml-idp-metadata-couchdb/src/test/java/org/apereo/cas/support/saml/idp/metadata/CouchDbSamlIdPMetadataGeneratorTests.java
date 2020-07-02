@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -56,12 +57,14 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreWebConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CoreSamlConfiguration.class
     },
     properties = {
         "cas.authn.saml-idp.metadata.couch-db.db-name=saml_generator",
         "cas.authn.saml-idp.metadata.couch-db.idp-metadata-enabled=true",
         "cas.authn.saml-idp.metadata.couch-db.username=cas",
+        "cas.authn.saml-idp.metadata.couch-db.caching=false",
         "cas.authn.saml-idp.metadata.couch-db.password=password"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -84,6 +87,7 @@ public class CouchDbSamlIdPMetadataGeneratorTests {
     @Qualifier("samlIdPMetadataCouchDbRepository")
     private SamlIdPMetadataCouchDbRepository couchDbRepository;
 
+    
     @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());

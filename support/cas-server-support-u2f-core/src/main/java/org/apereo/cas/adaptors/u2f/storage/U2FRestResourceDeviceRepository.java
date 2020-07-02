@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.u2f.storage;
 
 import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -53,7 +54,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
                     });
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -72,7 +73,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
                 restProperties.getBasicAuthPassword(),
                 writer.toString());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -86,7 +87,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
                 restProperties.getBasicAuthUsername(),
                 restProperties.getBasicAuthPassword());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

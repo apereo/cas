@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     CasHibernateJpaConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class
-}, properties = "cas.jdbc.showSql=true")
+}, properties = "cas.jdbc.show-sql=true")
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @Getter

@@ -16,8 +16,6 @@ import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
 import org.pac4j.oauth.profile.facebook.FacebookProfile;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -36,8 +34,7 @@ import static org.mockito.Mockito.*;
  * @author Jerome Leleu
  * @since 4.1.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
-@Tag("Simple")
+@Tag("Authentication")
 public class DelegatedClientAuthenticationHandlerTests {
 
     private static final String CALLBACK_URL = "http://localhost:8080/callback";

@@ -1,5 +1,6 @@
 package org.apereo.cas.util.scripting;
 
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 
@@ -19,27 +20,25 @@ import org.springframework.core.io.Resource;
 @Slf4j
 @Getter
 @ToString(of = "resource")
-public class WatchableGroovyScriptResource implements AutoCloseable, ExecutableCompiledGroovyScript {
-    private transient FileWatcherService watcherService;
-    private transient GroovyObject groovyScript;
+public class WatchableGroovyScriptResource implements ExecutableCompiledGroovyScript {
     private final transient Resource resource;
 
+    private transient FileWatcherService watcherService;
+
+    private transient GroovyObject groovyScript;
+
     @SneakyThrows
-    public WatchableGroovyScriptResource(final Resource script) {
+    public WatchableGroovyScriptResource(final Resource script, final boolean enableWatcher) {
         this.resource = script;
 
-        if (ResourceUtils.doesResourceExist(script)) {
+        if (ResourceUtils.doesResourceExist(script) && enableWatcher) {
             if (ResourceUtils.isFile(script)) {
                 this.watcherService = new FileWatcherService(script.getFile(), file -> {
                     try {
                         LOGGER.debug("Reloading script at [{}]", file);
                         compileScriptResource(script);
                     } catch (final Exception e) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.error(e.getMessage(), e);
-                        } else {
-                            LOGGER.error(e.getMessage());
-                        }
+                        LoggingUtils.error(LOGGER, e);
                     }
                 });
                 this.watcherService.start(script.getFilename());
@@ -48,9 +47,8 @@ public class WatchableGroovyScriptResource implements AutoCloseable, ExecutableC
         }
     }
 
-
-    private void compileScriptResource(final Resource script) {
-        this.groovyScript = ScriptingUtils.parseGroovyScript(script, true);
+    public WatchableGroovyScriptResource(final Resource script) {
+        this(script, true);
     }
 
     /**
@@ -126,7 +124,12 @@ public class WatchableGroovyScriptResource implements AutoCloseable, ExecutableC
     @Override
     public void close() {
         if (watcherService != null) {
+            LOGGER.trace("Shutting down watcher service for [{}}", this.resource);
             this.watcherService.close();
         }
+    }
+
+    private void compileScriptResource(final Resource script) {
+        this.groovyScript = ScriptingUtils.parseGroovyScript(script, true);
     }
 }

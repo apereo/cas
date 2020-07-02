@@ -43,7 +43,7 @@ public class RejectResultCodePasswordPolicyHandlingStrategy<AuthnResponse> exten
         val result = this.resultCodes.stream().filter(currentCodes::contains).findAny();
 
         if (result.isPresent()) {
-            LOGGER.debug("Unable to support authentication response [{}] with a blacklisted authentication result code [{}]", response, result.get());
+            LOGGER.debug("Unable to support authentication response [{}] with a blocked authentication result code [{}]", response, result.get());
             return false;
         }
         LOGGER.debug("Authentication response [{}] is supported by password policy handling strategy [{}]", response, getClass().getSimpleName());

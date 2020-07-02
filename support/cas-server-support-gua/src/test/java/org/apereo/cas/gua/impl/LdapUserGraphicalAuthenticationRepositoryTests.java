@@ -33,9 +33,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Ldap")
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = {
-        "cas.authn.gua.ldap.baseDn=dc=example,dc=org",
+        "cas.authn.gua.ldap.base-dn=dc=example,dc=org",
         "cas.authn.gua.ldap.ldap-url=ldap://localhost:10389",
-        "cas.authn.gua.ldap.searchFilter=cn={user}",
+        "cas.authn.gua.ldap.search-filter=cn={user}",
         "cas.authn.gua.ldap.imageAttribute=jpegPhoto",
         "cas.authn.gua.ldap.bindDn=cn=Directory Manager",
         "cas.authn.gua.ldap.bindCredential=password"
@@ -57,7 +57,7 @@ public class LdapUserGraphicalAuthenticationRepositoryTests {
         assertTrue(repo.getGraphics("bad-user").isEmpty());
         assertAll(new Executable() {
             @Override
-            public void execute() throws Exception {
+            public void execute() {
                 repo.destroy();
             }
         });

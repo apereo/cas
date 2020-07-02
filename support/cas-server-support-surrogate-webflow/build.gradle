@@ -19,10 +19,10 @@ dependencies {
     implementation project(":support:cas-server-support-surrogate-api")
 
     testImplementation project(":support:cas-server-support-themes")
-    
+
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
-    
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")

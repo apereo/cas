@@ -18,12 +18,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class DefaultUserAuthenticationResourceEntityResponseFactory implements UserAuthenticationResourceEntityResponseFactory {
 
-    private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
-
-    public DefaultUserAuthenticationResourceEntityResponseFactory() {
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    }
+    private final ObjectMapper mapper = new ObjectMapper()
+        .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        .findAndRegisterModules();
 
     @Override
     public ResponseEntity<String> build(final AuthenticationResult result, final HttpServletRequest request) throws Exception {

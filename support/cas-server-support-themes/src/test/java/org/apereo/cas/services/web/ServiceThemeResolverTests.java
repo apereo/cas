@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -45,6 +46,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     CasThemesConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
@@ -63,7 +65,7 @@ import static org.mockito.Mockito.*;
     MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
-    properties = "cas.theme.defaultThemeName=test")
+    properties = "cas.theme.default-theme-name=test")
 @Tag("Simple")
 public class ServiceThemeResolverTests {
     private static final String MOZILLA = "Mozilla";

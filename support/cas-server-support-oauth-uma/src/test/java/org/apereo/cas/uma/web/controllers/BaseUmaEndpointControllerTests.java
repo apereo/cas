@@ -118,7 +118,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     }
 
     private Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithScope(
-        final String scope, final SecurityInterceptor interceptor) throws Exception {
+        final String scope, final SecurityInterceptor interceptor) {
         val service = addRegisteredService();
         val pair = assertClientOK(service, false, scope);
         assertNotNull(pair.getKey());

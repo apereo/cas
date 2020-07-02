@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.yubikey.dao;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -134,7 +135,7 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 try {
                     cursor.close();
                 } catch (final IOException e) {
-                    LOGGER.error("Could not close Redis connection", e);
+                    LoggingUtils.error(LOGGER, e);
                 }
             });
     }

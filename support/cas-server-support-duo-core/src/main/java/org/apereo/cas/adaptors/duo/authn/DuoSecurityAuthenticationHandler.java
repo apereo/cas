@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationCredential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -63,11 +64,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
                 return createHandlerResult(credential, principal, new ArrayList<>(0));
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         throw new FailedLoginException("Duo authentication has failed");
     }
@@ -97,11 +94,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
                 + primaryCredentialsUsername + " does not match Duo response: " + duoVerifyResponse);
 
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException(e.getMessage());
         }
     }

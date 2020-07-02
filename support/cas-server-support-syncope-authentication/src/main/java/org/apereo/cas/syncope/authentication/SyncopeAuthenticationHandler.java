@@ -21,7 +21,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 
 import javax.security.auth.login.FailedLoginException;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,7 +58,9 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     private static Map<String, List<Object>> buildSyncopeUserAttributes(final JsonNode user) {
         val attributes = new HashMap<String, List<Object>>();
 
-        var roles = MAPPER.convertValue(user.get("roles"), ArrayList.class);
+        val roles = user.has("roles")
+            ? MAPPER.convertValue(user.get("roles"), ArrayList.class)
+            : new ArrayList<>(0);
         if (!roles.isEmpty()) {
             attributes.put("syncopeUserRoles", roles);
         }
@@ -68,13 +69,20 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
             attributes.put("syncopeUserSecurityQuestion", List.of(user.get("securityQuestion").asText()));
         }
 
-        attributes.put("syncopeUserStatus", List.of(user.get("status").asText()));
+        if (user.has("status")) {
+            attributes.put("syncopeUserStatus", List.of(user.get("status").asText()));
+        }
+        if (user.has("syncopeUserRealm")) {
+            attributes.put("syncopeUserRealm", List.of(user.get("realm").asText()));
+        }
 
-        attributes.put("syncopeUserRealm", List.of(user.get("realm").asText()));
+        if (user.has("syncopeUserCreator")) {
+            attributes.put("syncopeUserCreator", List.of(user.get("creator").asText()));
+        }
 
-        attributes.put("syncopeUserCreator", List.of(user.get("creator").asText()));
-
-        attributes.put("syncopeUserCreationDate", List.of(user.get("creationDate").asText()));
+        if (user.has("syncopeUserCreationDate")) {
+            attributes.put("syncopeUserCreationDate", List.of(user.get("creationDate").asText()));
+        }
 
         if (user.has("changePwdDate")) {
             attributes.put("syncopeUserChangePwdDate", List.of(user.get("changePwdDate").asText()));
@@ -84,35 +92,47 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
             attributes.put("syncopeUserLastLoginDate", List.of(user.get("lastLoginDate").asText()));
         }
 
-        var dynRoles = MAPPER.convertValue(user.get("dynRoles"), ArrayList.class);
+        val dynRoles = user.has("dynRoles")
+            ? MAPPER.convertValue(user.get("dynRoles"), ArrayList.class)
+            : new ArrayList<>(0);
         if (!dynRoles.isEmpty()) {
             attributes.put("syncopeUserDynRoles", dynRoles);
         }
 
-        var dynRealms = MAPPER.convertValue(user.get("dynRealms"), ArrayList.class);
+        val dynRealms = user.has("dynRealms")
+            ? MAPPER.convertValue(user.get("dynRealms"), ArrayList.class)
+            : new ArrayList<>(0);
         if (!dynRealms.isEmpty()) {
             attributes.put("syncopeUserDynRealms", dynRealms);
         }
 
-        var memberships = new ArrayList<>();
-        user.get("memberships").forEach(m -> memberships.add(m.get("groupName").asText()));
-        if (!memberships.isEmpty()) {
-            attributes.put("syncopeUserMemberships", memberships);            
+        if (user.has("memberships")) {
+            val memberships = new ArrayList<>();
+            user.get("memberships").forEach(m -> memberships.add(m.get("groupName").asText()));
+            if (!memberships.isEmpty()) {
+                attributes.put("syncopeUserMemberships", memberships);
+            }
         }
 
-        var dynMemberships = new ArrayList<>();
-        user.get("dynMemberships").forEach(m -> dynMemberships.add(m.get("groupName").asText()));
-        if (!dynMemberships.isEmpty()) {
-            attributes.put("syncopeUserDynMemberships", dynMemberships);            
+        if (user.has("dynMemberships")) {
+            val dynMemberships = new ArrayList<>();
+            user.get("dynMemberships").forEach(m -> dynMemberships.add(m.get("groupName").asText()));
+            if (!dynMemberships.isEmpty()) {
+                attributes.put("syncopeUserDynMemberships", dynMemberships);
+            }
         }
 
-        user.get("relationships").forEach(r -> attributes.put(
+        if (user.has("relationships")) {
+            user.get("relationships").forEach(r -> attributes.put(
                 "syncopeUserRelationships" + r.get("type").asText(),
                 List.of(r.get("otherEndName").asText())));
+        }
 
-        user.get("plainAttrs").forEach(a -> attributes.put(
+        if (user.has("plainAttrs")) {
+            user.get("plainAttrs").forEach(a -> attributes.put(
                 "syncopeUserAttr" + a.get("schema").asText(),
                 MAPPER.convertValue(a.get("values"), ArrayList.class)));
+        }
 
         return attributes;
     }
@@ -124,11 +144,11 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         val result = authenticateSyncopeUser(credential);
         if (result.isPresent()) {
             val user = result.get();
-            LOGGER.debug("Received user object as [{}]", user);            
-            if (user.get("suspended").asBoolean()) {
+            LOGGER.debug("Received user object as [{}]", user);
+            if (user.has("suspended") && user.get("suspended").asBoolean()) {
                 throw new AccountDisabledException("Could not authenticate forbidden account for " + credential.getUsername());
             }
-            if (user.get("mustChangePassword").asBoolean()) {
+            if (user.has("mustChangePassword") && user.get("mustChangePassword").asBoolean()) {
                 throw new AccountPasswordMustChangeException("Account password must change for " + credential.getUsername());
             }
             val principal = this.principalFactory.createPrincipal(user.get("username").asText(), buildSyncopeUserAttributes(user));

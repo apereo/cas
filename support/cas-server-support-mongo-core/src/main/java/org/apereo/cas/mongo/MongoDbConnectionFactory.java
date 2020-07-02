@@ -3,6 +3,7 @@ package org.apereo.cas.mongo;
 import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -266,7 +267,7 @@ public class MongoDbConnectionFactory {
                     val beanClassName = Objects.requireNonNull(candidate.getBeanClassName());
                     initialEntitySet.add(ClassUtils.forName(beanClassName, getClass().getClassLoader()));
                 } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    LoggingUtils.error(LOGGER, e);
                 }
             }
         }

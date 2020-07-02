@@ -10,6 +10,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -57,6 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
@@ -67,12 +69,13 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    RefreshAutoConfiguration.class},
+    RefreshAutoConfiguration.class
+},
     properties = {
-        "cas.ticket.registry.dynamoDb.endpoint=http://localhost:8000",
-        "cas.ticket.registry.dynamoDb.dropTablesOnStartup=true",
-        "cas.ticket.registry.dynamoDb.localInstance=true",
-        "cas.ticket.registry.dynamoDb.region=us-east-1"
+        "cas.ticket.registry.dynamo-db.endpoint=http://localhost:8000",
+        "cas.ticket.registry.dynamo-db.drop-tables-on-startup=true",
+        "cas.ticket.registry.dynamo-db.local-instance=true",
+        "cas.ticket.registry.dynamo-db.region=us-east-1"
     })
 @Tag("DynamoDb")
 public class DynamoDbTicketRegistryFacilitatorTests {

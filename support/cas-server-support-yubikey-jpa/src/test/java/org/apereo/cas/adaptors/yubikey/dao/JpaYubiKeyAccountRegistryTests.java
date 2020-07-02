@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -60,6 +61,7 @@ import static org.junit.jupiter.api.Assertions.*;
     JpaYubiKeyAccountRegistryTests.JpaYubiKeyAccountRegistryTestConfiguration.class,
     YubiKeyAuthenticationEventExecutionPlanConfiguration.class,
     CasHibernateJpaConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreHttpConfiguration.class,
@@ -85,10 +87,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = {
-    "cas.authn.mfa.yubikey.clientId=18423",
-    "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As=",
-    "cas.jdbc.showSql=true",
-    "cas.authn.mfa.yubikey.jpa.ddlAuto=create-drop"
+    "cas.authn.mfa.yubikey.client-id=18423",
+    "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As=",
+    "cas.jdbc.show-sql=true",
+    "cas.authn.mfa.yubikey.jpa.ddl-auto=create-drop"
 })
 @Tag("JDBC")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -98,7 +100,7 @@ public class JpaYubiKeyAccountRegistryTests {
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")
     private YubiKeyAccountRegistry yubiKeyAccountRegistry;
-    
+
     @Test
     public void verifyAccountNotRegistered() {
         assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("missing-user"));
@@ -118,6 +120,10 @@ public class JpaYubiKeyAccountRegistryTests {
         assertEquals(1, yubiKeyAccountRegistry.getAccounts().size());
         val account = yubiKeyAccountRegistry.getAccount("casuser");
         account.ifPresent(acct -> assertEquals(2, acct.getDeviceIdentifiers().size()));
+
+        yubiKeyAccountRegistry.delete("casuser");
+        assertTrue(yubiKeyAccountRegistry.getAccount("casuser").isEmpty());
+        yubiKeyAccountRegistry.deleteAll();
     }
 
     @TestConfiguration("JpaYubiKeyAccountRegistryTestConfiguration")

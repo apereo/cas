@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -40,6 +41,7 @@ import org.springframework.webflow.execution.Action;
  */
 @SpringBootTest(classes = {
     GraphicalUserAuthenticationConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
@@ -69,7 +71,7 @@ import org.springframework.webflow.execution.Action;
     properties ="cas.authn.gua.resource.location=classpath:image.jpg")
 public abstract class AbstractGraphicalAuthenticationActionTests {
     @Autowired
-    @Qualifier("initializeLoginAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
     protected Action initializeLoginAction;
 
     @Autowired

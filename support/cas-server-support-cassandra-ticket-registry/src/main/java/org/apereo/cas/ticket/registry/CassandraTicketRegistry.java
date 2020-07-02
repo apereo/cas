@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.datastax.oss.driver.api.core.DefaultConsistencyLevel;
 import com.datastax.oss.driver.api.core.cql.Statement;
@@ -45,7 +46,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
 
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
-        LOGGER.trace("Locating ticket  [{}]", ticketId);
+        LOGGER.trace("Locating ticket [{}]", ticketId);
         val encodedTicketId = encodeTicketId(ticketId);
         if (StringUtils.isBlank(encodedTicketId)) {
             LOGGER.debug("Ticket id [{}] could not be found", ticketId);
@@ -129,7 +130,8 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
             cassandraSessionFactory.getCqlTemplate().execute(delete);
             return true;
         } catch (final Exception e) {
-            LOGGER.error("Failed deleting [{}]: [{}]", ticketId, e);
+            LOGGER.error("Failed deleting [{}]", ticketId);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

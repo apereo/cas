@@ -47,16 +47,12 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
 
     @Override
     public void remove(final ZonedDateTime expirationDate) {
-        try {
-            val value = DateTimeUtils.dateOf(expirationDate);
-            LOGGER.trace("Removing expired records on or after [{}]", value);
-            val count = this.entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE :expirationDate >= r.expirationDate")
-                .setParameter("expirationDate", value)
-                .executeUpdate();
-            LOGGER.info("Found and removed [{}] records", count);
-        } catch (final NoResultException e) {
-            LOGGER.debug("No trusted authentication records could be found");
-        }
+        val value = DateTimeUtils.dateOf(expirationDate);
+        LOGGER.trace("Removing expired records on or after [{}]", value);
+        val count = this.entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE :expirationDate >= r.expirationDate")
+            .setParameter("expirationDate", value)
+            .executeUpdate();
+        LOGGER.info("Found and removed [{}] records", count);
     }
 
     @Override
@@ -83,32 +79,22 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
 
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> get(final ZonedDateTime onOrAfterDate) {
-        try {
-            remove();
-            val query = this.entityManager
-                .createQuery("SELECT r FROM " + ENTITY_NAME + " r WHERE r.recordDate >= :date", getEntityFactory().getType())
-                .setParameter("date", onOrAfterDate);
-            val results = query.getResultList();
-            return new HashSet<>(results);
-        } catch (final NoResultException e) {
-            LOGGER.debug("No trusted authentication records could be found for [{}]", onOrAfterDate);
-        }
-        return new HashSet<>(0);
+        remove();
+        val query = this.entityManager
+            .createQuery("SELECT r FROM " + ENTITY_NAME + " r WHERE r.recordDate >= :date", getEntityFactory().getType())
+            .setParameter("date", onOrAfterDate);
+        val results = query.getResultList();
+        return new HashSet<>(results);
     }
 
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal) {
-        try {
-            remove();
-            val query = this.entityManager
-                .createQuery("SELECT r FROM " + ENTITY_NAME + " r where r.principal = :principal", getEntityFactory().getType())
-                .setParameter("principal", principal);
-            val results = query.getResultList();
-            return new HashSet<>(results);
-        } catch (final NoResultException e) {
-            LOGGER.debug("No trusted authentication records could be found for [{}]", principal);
-        }
-        return new HashSet<>(0);
+        remove();
+        val query = this.entityManager
+            .createQuery("SELECT r FROM " + ENTITY_NAME + " r where r.principal = :principal", getEntityFactory().getType())
+            .setParameter("principal", principal);
+        val results = query.getResultList();
+        return new HashSet<>(results);
     }
 
     @Override

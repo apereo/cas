@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class CredentialCustomFieldsAttributeMetaDataPopulatorTests {
     private final CredentialCustomFieldsAttributeMetaDataPopulator populator =
         new CredentialCustomFieldsAttributeMetaDataPopulator();

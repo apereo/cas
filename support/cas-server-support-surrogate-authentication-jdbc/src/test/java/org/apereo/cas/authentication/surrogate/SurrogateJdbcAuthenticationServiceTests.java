@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -60,11 +61,12 @@ import javax.sql.DataSource;
     CasCoreUtilConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     SurrogateJdbcAuthenticationConfiguration.class
 }, properties = {
-    "cas.authn.surrogate.jdbc.surrogateSearchQuery=select count(*) from surrogate_accounts where username=? and surrogateAccount=?",
-    "cas.authn.surrogate.jdbc.surrogateAccountQuery=select * from surrogate_accounts where username=?",
-    "cas.authn.surrogate.jdbc.autoCommit=true"
+    "cas.authn.surrogate.jdbc.surrogate-search-query=select count(*) from surrogate_accounts where username=? and surrogateAccount=?",
+    "cas.authn.surrogate.jdbc.surrogate-account-query=select * from surrogate_accounts where username=?",
+    "cas.authn.surrogate.jdbc.auto-commit=true"
 })
 @Getter
 @Tag("JDBC")

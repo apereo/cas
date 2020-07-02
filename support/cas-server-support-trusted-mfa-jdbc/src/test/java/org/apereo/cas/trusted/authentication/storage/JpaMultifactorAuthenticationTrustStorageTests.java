@@ -42,10 +42,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("JDBC")
 @Getter
 @TestPropertySource(properties = {
-    "cas.jdbc.showSql=true",
-    "cas.authn.mfa.trusted.jpa.ddlAuto=create-drop",
+    "cas.jdbc.show-sql=true",
+    "cas.authn.mfa.trusted.jpa.ddl-auto=create-drop",
     "cas.authn.mfa.trusted.cleaner.schedule.enabled=false",
-    "cas.jdbc.physicalTableNames.JpaMultifactorAuthenticationTrustRecord=mfaauthntrustedrec"
+    "cas.jdbc.physical-table-names.JpaMultifactorAuthenticationTrustRecord=mfaauthntrustedrec"
 })
 public class JpaMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
     private static final String PRINCIPAL = "principal";
@@ -64,9 +64,13 @@ public class JpaMultifactorAuthenticationTrustStorageTests extends AbstractMulti
     @Test
     public void verifyExpireByKey() {
         var record = MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT);
-        getMfaTrustEngine().save(record);
+        record = getMfaTrustEngine().save(record);
+        assertNotNull(getMfaTrustEngine().get(record.getId()));
+        
         record = MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT);
-        getMfaTrustEngine().save(record);
+        record = getMfaTrustEngine().save(record);
+        assertNotNull(getMfaTrustEngine().get(record.getId()));
+
         val records = getMfaTrustEngine().get(PRINCIPAL);
         assertEquals(2, records.size());
 

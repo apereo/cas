@@ -319,10 +319,10 @@ public class SamlIdPObjectEncrypter {
      */
     protected BasicEncryptionConfiguration configureEncryptionSecurityConfiguration(final SamlRegisteredService service) {
         val config = DefaultSecurityConfigurationBootstrap.buildDefaultEncryptionConfiguration();
-        LOGGER.trace("Default encryption blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
+        LOGGER.trace("Default encryption blocked algorithms: [{}]", config.getBlacklistedAlgorithms());
         LOGGER.trace("Default encryption key algorithms: [{}]", config.getKeyTransportEncryptionAlgorithms());
         LOGGER.trace("Default encryption data algorithms: [{}]", config.getDataEncryptionAlgorithms());
-        LOGGER.trace("Default encryption whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
+        LOGGER.trace("Default encryption allowed algorithms: [{}]", config.getWhitelistedAlgorithms());
 
         val globalAlgorithms = samlIdPProperties.getAlgs();
 
@@ -340,24 +340,24 @@ public class SamlIdPObjectEncrypter {
             config.setKeyTransportEncryptionAlgorithms(overrideKeyEncryptionAlgorithms);
         }
 
-        val overrideBlackListedEncryptionAlgorithms = service.getEncryptionBlackListedAlgorithms().isEmpty()
-            ? globalAlgorithms.getOverrideBlackListedEncryptionAlgorithms()
+        val overrideBlockedEncryptionAlgorithms = service.getEncryptionBlackListedAlgorithms().isEmpty()
+            ? globalAlgorithms.getOverrideBlockedEncryptionAlgorithms()
             : service.getEncryptionBlackListedAlgorithms();
-        if (overrideBlackListedEncryptionAlgorithms != null && !overrideBlackListedEncryptionAlgorithms.isEmpty()) {
-            config.setBlacklistedAlgorithms(overrideBlackListedEncryptionAlgorithms);
+        if (overrideBlockedEncryptionAlgorithms != null && !overrideBlockedEncryptionAlgorithms.isEmpty()) {
+            config.setBlacklistedAlgorithms(overrideBlockedEncryptionAlgorithms);
         }
 
         val overrideWhiteListedAlgorithms = service.getEncryptionWhiteListedAlgorithms().isEmpty()
-            ? globalAlgorithms.getOverrideWhiteListedAlgorithms()
+            ? globalAlgorithms.getOverrideAllowedAlgorithms()
             : service.getEncryptionWhiteListedAlgorithms();
         if (overrideWhiteListedAlgorithms != null && !overrideWhiteListedAlgorithms.isEmpty()) {
             config.setWhitelistedAlgorithms(overrideWhiteListedAlgorithms);
         }
 
-        LOGGER.trace("Finalized encryption blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
+        LOGGER.trace("Finalized encryption blocked algorithms: [{}]", config.getBlacklistedAlgorithms());
         LOGGER.trace("Finalized encryption key algorithms: [{}]", config.getKeyTransportEncryptionAlgorithms());
         LOGGER.trace("Finalized encryption data algorithms: [{}]", config.getDataEncryptionAlgorithms());
-        LOGGER.trace("Finalized encryption whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
+        LOGGER.trace("Finalized encryption allowed algorithms: [{}]", config.getWhitelistedAlgorithms());
 
         if (StringUtils.isNotBlank(service.getWhiteListBlackListPrecedence())) {
             val precedence = WhitelistBlacklistConfiguration.Precedence.valueOf(service.getWhiteListBlackListPrecedence().trim().toUpperCase());

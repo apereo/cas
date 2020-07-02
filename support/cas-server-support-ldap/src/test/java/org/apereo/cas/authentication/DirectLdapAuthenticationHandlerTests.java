@@ -15,9 +15,9 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {
     "cas.authn.ldap[0].type=DIRECT",
     "cas.authn.ldap[0].ldap-url=ldap://localhost:10389",
-    "cas.authn.ldap[0].dnFormat=cn=%s,dc=example,dc=org",
-    "cas.authn.ldap[0].principalAttributeList=description,cn",
-    "cas.authn.ldap[0].enhanceWithEntryResolver=false"
+    "cas.authn.ldap[0].dn-format=cn=%s,dc=example,dc=org",
+    "cas.authn.ldap[0].principal-attribute-list=description,cn",
+    "cas.authn.ldap[0].enhance-with-entry-resolver=false"
     })
 @EnabledIfPortOpen(port = 10389)
 @Tag("Ldap")

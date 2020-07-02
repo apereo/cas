@@ -11,7 +11,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.Transition;
@@ -52,7 +51,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
 
     private final List<CasMultifactorWebflowCustomizer> multifactorAuthenticationFlowCustomizers = new ArrayList<>();
 
-    public AbstractCasMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+    protected AbstractCasMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                    final ConfigurableApplicationContext applicationContext,
                                                    final CasConfigurationProperties casProperties,
@@ -95,7 +94,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
                 val definition = registry.getFlowDefinition(flowId);
                 if (definition != null) {
                     LOGGER.trace("Registering flow definition [{}]", flowId);
-                    this.loginFlowDefinitionRegistry.registerFlowDefinition(definition);
+                    this.mainFlowDefinitionRegistry.registerFlowDefinition(definition);
                 }
             }
         });
@@ -165,7 +164,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
             });
             mfaFlow.getStartActionList().add(createSetAction("flowScope.".concat(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID), StringUtils.quote(providerId)));
 
-            val initStartState = (ActionState) mfaFlow.getStartState();
+            val initStartState = (TransitionableState) mfaFlow.getStartState();
             val transition = (Transition) initStartState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
             val targetStateId = transition.getTargetStateId();
             transition.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_MFA_CHECK_BYPASS));

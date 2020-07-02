@@ -48,7 +48,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     private String secretKeyAlgorithm = "AES";
     private byte[] encryptionSecretKey;
 
-    public BaseBinaryCipherExecutor(final String encryptionSecretKey, final String signingSecretKey,
+    protected BaseBinaryCipherExecutor(final String encryptionSecretKey, final String signingSecretKey,
                                     final int signingKeySize, final int encryptionKeySize,
                                     final String cipherName) {
         this.cipherName = cipherName;

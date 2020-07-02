@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
@@ -115,7 +116,8 @@ public class DelegatedClientIdentityProviderConfigurationFunction implements Fun
                         determineAutoRedirectPolicyForProvider(context, service, p);
                     });
                 } catch (final Exception e) {
-                    LOGGER.error("Cannot process client [{}]", client, e);
+                    LOGGER.error("Cannot process client [{}]", client);
+                    LoggingUtils.error(LOGGER, e);
                 }
             });
 

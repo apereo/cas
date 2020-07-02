@@ -2,6 +2,8 @@ package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicy;
+import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
@@ -24,6 +26,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DefaultProxyTicketFactoryTests extends BaseTicketFactoryTests {
     @Test
     public void verifyCustomExpirationPolicy() {
+        val svc = RegisteredServiceTestUtils.getRegisteredService("customExpirationPolicy", RegexRegisteredService.class);
+        svc.setProxyTicketExpirationPolicy(
+            new DefaultRegisteredServiceProxyTicketExpirationPolicy(50, "1984"));
+        servicesManager.save(svc);
+
         val tgt = new MockTicketGrantingTicket("casuser");
         val service = RegisteredServiceTestUtils.getService("customExpirationPolicy");
         val pgtFactory = (ProxyGrantingTicketFactory) this.ticketFactory.get(ProxyGrantingTicket.class);
@@ -37,6 +44,8 @@ public class DefaultProxyTicketFactoryTests extends BaseTicketFactoryTests {
 
     @Test
     public void verifyDefaultExpirationPolicy() {
+        val defaultSvc = RegisteredServiceTestUtils.getRegisteredService("defaultExpirationPolicy", RegexRegisteredService.class);
+        servicesManager.save(defaultSvc);
         val tgt = new MockTicketGrantingTicket("casuser");
         val service = RegisteredServiceTestUtils.getService("defaultExpirationPolicy");
         val pgtFactory = (ProxyGrantingTicketFactory) this.ticketFactory.get(ProxyGrantingTicket.class);

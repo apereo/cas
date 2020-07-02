@@ -61,6 +61,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_SUBMIT = "submit";
 
     /**
+     * The transition state 'resend'.
+     */
+    String TRANSITION_ID_RESEND = "resend";
+
+    /**
      * The transition state 'error'.
      */
     String TRANSITION_ID_ERROR = "error";
@@ -131,6 +136,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_REGISTER = "register";
 
     /**
+     * Transition id 'select'.
+     */
+    String TRANSITION_ID_SELECT = "select";
+
+    /**
      * The transition state 'success'.
      */
     String TRANSITION_ID_SUCCESS = "success";
@@ -194,6 +204,11 @@ public interface CasWebflowConstants {
      * The transition state 'successWithWarnings'.
      */
     String TRANSITION_ID_SUCCESS_WITH_WARNINGS = "successWithWarnings";
+
+    /**
+     * Transition id 'passwordUpdateSuccess'.
+     */
+    String TRANSITION_ID_PASSWORD_UPDATE_SUCCESS = "passwordUpdateSuccess";
 
     /**
      * Transition id 'resetPassword'.
@@ -285,9 +300,19 @@ public interface CasWebflowConstants {
     String STATE_ID_INIT_LOGIN_FORM = "initializeLoginForm";
 
     /**
+     * The state 'cancel'.
+     */
+    String STATE_ID_CANCEL= "cancel";
+
+    /**
      * The state 'viewLoginForm'.
      */
     String STATE_ID_VIEW_LOGIN_FORM = "viewLoginForm";
+
+    /**
+     * The state 'unavailable'.
+     */
+    String STATE_ID_UNAVAILABLE = "unavailable";
 
     /**
      * The state 'serviceAuthorizationCheck'.
@@ -348,6 +373,16 @@ public interface CasWebflowConstants {
      * The state 'mfaFailure'.
      */
     String STATE_ID_MFA_FAILURE = "mfaFailure";
+
+    /**
+     * The state 'deny'.
+     */
+    String STATE_ID_DENY = "deny";
+
+    /**
+     * The state 'registerDevice'.
+     */
+    String STATE_ID_REGISTER_DEVICE = "registerDevice";
 
     /**
      * The state 'serviceUnauthorizedCheck'.
@@ -517,7 +552,7 @@ public interface CasWebflowConstants {
     /**
      * The state id 'registerDeviceView'.
      */
-    String STATE_ID_REGISTER_DEVICE = "registerDeviceView";
+    String STATE_ID_REGISTER_DEVICE_VIEW = "registerDeviceView";
 
     /**
      * The state id 'spnego'.
@@ -732,6 +767,11 @@ public interface CasWebflowConstants {
      * Action id 'validateCaptchaAction'.
      */
     String ACTION_ID_VALIDATE_CAPTCHA = "validateCaptchaAction";
+    /**
+     * Action id 'initializeLoginAction'.
+     */
+    String ACTION_ID_INIT_LOGIN_ACTION = "initializeLoginAction";
+
     /**
      * Action id 'initializeCaptchaAction'.
      */

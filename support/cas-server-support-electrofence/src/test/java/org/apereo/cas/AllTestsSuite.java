@@ -7,6 +7,7 @@ import org.apereo.cas.impl.calcs.UserAgentAuthenticationRequestRiskCalculatorTes
 import org.apereo.cas.impl.notify.AuthenticationRiskEmailNotifierTests;
 import org.apereo.cas.impl.notify.AuthenticationRiskSmsNotifierTests;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowConfigurerTests;
+import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowEventResolverTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -25,6 +26,7 @@ import org.junit.runner.RunWith;
     UserAgentAuthenticationRequestRiskCalculatorTests.class,
     RiskAwareAuthenticationWebflowConfigurerTests.class,
     AuthenticationRiskEmailNotifierTests.class,
+    RiskAwareAuthenticationWebflowEventResolverTests.class,
     AuthenticationRiskSmsNotifierTests.class
 })
 @RunWith(JUnitPlatform.class)

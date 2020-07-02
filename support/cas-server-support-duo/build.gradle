@@ -14,21 +14,14 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
+
     implementation project(":support:cas-server-support-duo-core")
     implementation project(":support:cas-server-support-duo-core-mfa")
     implementation project(":support:cas-server-support-trusted-mfa-core")
 
-    
-    
-    
-    
     testImplementation project(":core:cas-server-core-configuration")
-    
-    
-    
-    
     testImplementation project(":core:cas-server-core-rest")
-    
+    testImplementation project(":core:cas-server-core-notifications")
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")
@@ -55,4 +48,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow-mfa", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-notifications", configuration: "tests")
 }

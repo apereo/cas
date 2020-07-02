@@ -25,9 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 },
     properties = {
-        "cas.authn.attributeRepository.stub.attributes.uid=uid",
-        "cas.authn.attributeRepository.stub.attributes.givenName=givenName",
-        "cas.authn.attributeRepository.stub.attributes.eppn=eppn"
+        "cas.authn.attribute-repository.stub.attributes.uid=uid",
+        "cas.authn.attribute-repository.stub.attributes.givenName=givenName",
+        "cas.authn.attribute-repository.stub.attributes.eppn=eppn"
     })
 @Tag("Simple")
 public class CachingAttributeRepositoryTests {

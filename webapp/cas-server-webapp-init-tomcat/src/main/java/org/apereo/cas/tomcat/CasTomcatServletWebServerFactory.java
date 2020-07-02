@@ -2,6 +2,7 @@ package org.apereo.cas.tomcat;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatClusteringProperties;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -111,11 +112,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
                             handler.setSSLCARevocationFile(apr.getSslCaRevocationFile().getCanonicalPath());
                         }
                     } catch (final Exception e) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.error(e.getMessage(), e);
-                        } else {
-                            LOGGER.error(e.getMessage());
-                        }
+                        LoggingUtils.error(LOGGER, e);
                     }
                 }
             });

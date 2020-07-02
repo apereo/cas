@@ -1,15 +1,20 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.CoreAttributesTestUtils;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
@@ -30,6 +35,10 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 @Tag("Simple")
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    CasCoreUtilConfiguration.class
+})
 public class ReturnMappedAttributeReleasePolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnMappedAttributeReleasePolicy.json");
@@ -154,7 +163,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyClasspathGroovy() throws Exception {
+    public void verifyClasspathGroovy() {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         allowedAttributes.put("attr1", "classpath:GroovyMappedAttribute.groovy");
         val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
@@ -170,5 +179,40 @@ public class ReturnMappedAttributeReleasePolicyTests {
         val attr1 = result.get("attr1");
         assertTrue(attr1.contains("DOMAIN\\" + CoreAttributesTestUtils.CONST_USERNAME));
         assertTrue(attr1.contains("testing"));
+    }
+
+    @Test
+    public void verifyInlinedGroovyWithCache() {
+        val allowed1 = ArrayListMultimap.<String, Object>create();
+        allowed1.put("attr1", "groovy { return 'v1' }");
+        val p1 = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowed1));
+
+        val service1 = CoreAttributesTestUtils.getRegisteredService();
+        when(service1.getAttributeReleasePolicy()).thenReturn(p1);
+
+        val attributes = new HashMap<String, List<Object>>();
+        attributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
+        val result1 = p1.getAttributes(
+            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes),
+            CoreAttributesTestUtils.getService(), service1);
+
+        assertTrue(result1.containsKey("attr1"));
+        assertTrue(result1.containsValue(List.of("v1")));
+
+        val manager = ApplicationContextProvider.getScriptResourceCacheManager().get();
+        val key = manager.getKeys().iterator().next();
+        assertEquals("v1", manager.get(key).execute(ArrayUtils.EMPTY_OBJECT_ARRAY, String.class));
+
+        val allowed2 = ArrayListMultimap.<String, Object>create();
+        allowed2.put("attr1", "groovy { return 'v2' }");
+        val p2 = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowed2));
+
+        val service2 = CoreAttributesTestUtils.getRegisteredService();
+        when(service2.getAttributeReleasePolicy()).thenReturn(p2);
+        val result2 = p2.getAttributes(
+            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes),
+            CoreAttributesTestUtils.getService(), service2);
+        assertTrue(result2.containsKey("attr1"));
+        assertTrue(result2.containsValue(List.of("v2")));
     }
 }

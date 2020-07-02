@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.DynamoDbServiceRegistryConfiguration;
@@ -22,13 +23,15 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     DynamoDbServiceRegistryConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
-    RefreshAutoConfiguration.class},
+    RefreshAutoConfiguration.class
+},
     properties = {
-        "cas.service-registry.dynamoDb.endpoint=http://localhost:8000",
-        "cas.service-registry.dynamoDb.dropTablesOnStartup=true",
-        "cas.service-registry.dynamoDb.localInstance=true",
-        "cas.service-registry.dynamoDb.region=us-east-1"
+        "cas.service-registry.dynamo-db.endpoint=http://localhost:8000",
+        "cas.service-registry.dynamo-db.drop-tables-on-startup=true",
+        "cas.service-registry.dynamo-db.local-instance=true",
+        "cas.service-registry.dynamo-db.region=us-east-1"
     })
 @Tag("DynamoDb")
 @EnabledIfPortOpen(port = 8000)

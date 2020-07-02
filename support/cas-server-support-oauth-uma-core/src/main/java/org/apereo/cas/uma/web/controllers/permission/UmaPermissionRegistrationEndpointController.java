@@ -4,6 +4,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -77,11 +78,7 @@ public class UmaPermissionRegistrationEndpointController extends BaseUmaEndpoint
             val model = buildResponseEntityErrorModel(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to generate permission ticket");
             return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return new ResponseEntity("Unable to complete the permission registration request.", HttpStatus.BAD_REQUEST);
     }

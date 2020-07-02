@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
@@ -32,7 +33,9 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 
+import java.io.Serializable;
 import java.security.GeneralSecurityException;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -86,7 +89,8 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
     @Override
     public boolean isSatisfiedBy(final Authentication authentication,
                                  final Set<AuthenticationHandler> authenticationHandlers,
-                                 final ConfigurableApplicationContext applicationContext) throws Exception {
+                                 final ConfigurableApplicationContext applicationContext,
+                                 final Optional<Serializable> assertion) throws Exception {
         val principal = authentication.getPrincipal();
         try {
             val entity = buildHttpEntity(principal);
@@ -104,11 +108,7 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
             val ex = handleResponseStatusCode(e.getStatusCode(), authentication.getPrincipal());
             throw new GeneralSecurityException(ex);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

@@ -1,7 +1,8 @@
 package org.apereo.cas.support.sms;
 
 import org.apereo.cas.configuration.model.support.sms.AmazonSnsProperties;
-import org.apereo.cas.util.io.SmsSender;
+import org.apereo.cas.notifications.sms.SmsSender;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.model.MessageAttributeValue;
@@ -45,11 +46,7 @@ public class AmazonSimpleNotificationServiceSmsSender implements SmsSender {
             LOGGER.debug("Submitted SMS publish request with resulting message id [{}]", result.getMessageId());
             return StringUtils.isNotBlank(result.getMessageId());
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

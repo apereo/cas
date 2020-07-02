@@ -13,7 +13,7 @@ dependencies {
     implementation project(":support:cas-server-support-pm-core")
 
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
-    
+
     implementation libraries.jose4j
 
     testImplementation project(":support:cas-server-support-person-directory")
@@ -23,6 +23,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core")

@@ -11,6 +11,8 @@ services:
     image: redis:5.0.8-alpine
     container_name: redis_server_slave_1
     command: redis-server --slaveof master 6379
+    ports:
+      - 6380:6379
     depends_on:
       - master
 
@@ -18,6 +20,8 @@ services:
     image: redis:5.0.8-alpine
     container_name: redis_server_slave_2
     command: redis-server --slaveof master 6379
+    ports:
+      - 6381:6379
     depends_on:
       - master
 

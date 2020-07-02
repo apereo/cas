@@ -20,10 +20,10 @@ import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticati
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.expiration.builder.TicketGrantingTicketExpirationPolicyBuilder;
-import org.apereo.cas.util.io.CommunicationsManager;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

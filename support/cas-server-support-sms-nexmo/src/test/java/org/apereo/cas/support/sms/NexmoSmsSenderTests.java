@@ -1,7 +1,7 @@
 package org.apereo.cas.support.sms;
 
 import org.apereo.cas.config.NexmoSmsConfiguration;
-import org.apereo.cas.util.io.SmsSender;
+import org.apereo.cas.notifications.sms.SmsSender;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.sms-provider.nexmo.api-secret=123456",
     "cas.sms-provider.nexmo.signature-secret=123456"
 })
-@Tag("Simple")
+@Tag("SMS")
 public class NexmoSmsSenderTests {
     @Autowired
     @Qualifier("smsSender")

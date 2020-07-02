@@ -10,6 +10,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
 import com.google.common.collect.ArrayListMultimap;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -48,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractServiceRegistryTests {
     public static final int LOAD_SIZE = 1;
     public static final String GET_PARAMETERS = "getParameters";

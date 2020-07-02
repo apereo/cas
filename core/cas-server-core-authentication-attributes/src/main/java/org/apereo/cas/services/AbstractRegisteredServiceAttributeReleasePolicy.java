@@ -11,6 +11,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,7 +40,7 @@ import java.util.TreeMap;
 @ToString
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy {
@@ -213,9 +214,12 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                                                         final Service service, final RegisteredService registeredService) {
         if (StringUtils.isNotBlank(getPrincipalIdAttribute())) {
             LOGGER.debug("Attempting to resolve the principal id for service [{}]", registeredService.getServiceId());
-            val id = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
-            LOGGER.debug("Releasing resolved principal id [{}] as attribute [{}]", id, getPrincipalIdAttribute());
-            attributesToRelease.put(getPrincipalIdAttribute(), CollectionUtils.wrapList(principal.getId()));
+            val usernameProvider = registeredService.getUsernameAttributeProvider();
+            if (usernameProvider != null) {
+                val id = usernameProvider.resolveUsername(principal, service, registeredService);
+                LOGGER.debug("Releasing resolved principal id [{}] as attribute [{}]", id, getPrincipalIdAttribute());
+                attributesToRelease.put(getPrincipalIdAttribute(), CollectionUtils.wrapList(principal.getId()));
+            }
         }
     }
 

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
     AopAutoConfiguration.class
 }, properties = {"cas.something=else", "cas.hello[0]=world"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("CasConfiguration")
 public class CasConfigurationPropertiesValidatorTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

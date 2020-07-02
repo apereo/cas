@@ -31,6 +31,20 @@ import static org.mockito.Mockito.*;
 public class MaxmindDatabaseGeoLocationServiceTests {
 
     @Test
+    public void verifyNoReader() {
+        val service = new MaxmindDatabaseGeoLocationService(null, null);
+        val response = service.locate("127.0.0.1");
+        assertNull(response);
+    }
+
+    @Test
+    public void verifyLocate() {
+        val service = new MaxmindDatabaseGeoLocationService(null, null);
+        val response = service.locate("abcedf");
+        assertNull(response);
+    }
+
+    @Test
     public void verifyOperation() throws Exception {
         val city = mock(DatabaseReader.class);
         val cityResponse = new CityResponse(new City(), new Continent(), new Country(),

@@ -23,6 +23,7 @@ dependencies {
     implementation libraries.yubicoapi
 
     testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-services")

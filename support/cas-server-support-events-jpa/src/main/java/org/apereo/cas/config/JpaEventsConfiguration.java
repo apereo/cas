@@ -70,7 +70,6 @@ public class JpaEventsConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean eventsEntityManagerFactory() {
-
         val factory = jpaBeanFactory.getObject();
         val ctx = new JpaConfigurationContext(
             jpaEventVendorAdapter(),

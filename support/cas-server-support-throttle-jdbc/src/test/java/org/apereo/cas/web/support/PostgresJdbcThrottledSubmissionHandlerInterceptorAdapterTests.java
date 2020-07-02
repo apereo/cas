@@ -22,7 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     CasHibernateJpaConfiguration.class,
     BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class
 }, properties = {
-    "cas.jdbc.showSql=true",
+    "cas.jdbc.show-sql=true",
 
     "cas.authn.throttle.usernameParameter=username",
     "cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
@@ -31,14 +31,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 
     "cas.authn.throttle.jdbc.user=postgres",
     "cas.authn.throttle.jdbc.password=password",
-    "cas.authn.throttle.jdbc.driverClass=org.postgresql.Driver",
+    "cas.authn.throttle.jdbc.driver-class=org.postgresql.Driver",
     "cas.authn.throttle.jdbc.url=jdbc:postgresql://localhost:5432/audit",
     "cas.authn.throttle.jdbc.dialect=org.hibernate.dialect.PostgreSQL95Dialect",
 
     "cas.audit.jdbc.asynchronous=false",
     "cas.audit.jdbc.user=postgres",
     "cas.audit.jdbc.password=password",
-    "cas.audit.jdbc.driverClass=org.postgresql.Driver",
+    "cas.audit.jdbc.driver-class=org.postgresql.Driver",
     "cas.audit.jdbc.url=jdbc:postgresql://localhost:5432/audit",
     "cas.audit.jdbc.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
 })

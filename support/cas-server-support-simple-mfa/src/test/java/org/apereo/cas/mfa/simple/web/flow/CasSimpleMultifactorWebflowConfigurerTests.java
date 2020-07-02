@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.BaseCasSimpleMultifactorAuthenticationTests;
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;
 
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,19 +21,15 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 @SpringBootTest(classes = BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.simple.trusted-device-enabled=true",
-        "cas.authn.mfa.trusted.deviceRegistrationEnabled=true"
+        "cas.authn.mfa.trusted.device-registration-enabled=true"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Webflow")
+@Getter
 public class CasSimpleMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     @Qualifier("mfaSimpleAuthenticatorFlowRegistry")
-    private FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry;
-
-    @Override
-    protected FlowDefinitionRegistry getMultifactorFlowDefinitionRegistry() {
-        return this.mfaSimpleAuthenticatorFlowRegistry;
-    }
+    private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;
 
     @Override
     protected String getMultifactorEventId() {

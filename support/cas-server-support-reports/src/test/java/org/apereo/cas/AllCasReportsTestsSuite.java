@@ -8,6 +8,7 @@ import org.apereo.cas.web.report.ExportRegisteredServicesEndpointTests;
 import org.apereo.cas.web.report.LoggingConfigurationEndpointTests;
 import org.apereo.cas.web.report.RegisteredAuthnHandlersEndpointTests;
 import org.apereo.cas.web.report.RegisteredServicesEndpointTests;
+import org.apereo.cas.web.report.SingleSignOnSessionStatusEndpointTests;
 import org.apereo.cas.web.report.SingleSignOnSessionsEndpointTests;
 import org.apereo.cas.web.report.SpringWebflowEndpointTests;
 import org.apereo.cas.web.report.StatisticsEndpointTests;
@@ -26,6 +27,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     AuditLogEndpointTests.class,
+    SingleSignOnSessionStatusEndpointTests.class,
     RegisteredServicesEndpointTests.class,
     RegisteredAuthnHandlersEndpointTests.class,
     StatusEndpointTests.class,

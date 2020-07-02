@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class MultifactorAuthenticationTrustStorageCleaner {
                 SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
                 this.storage.remove();
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                LoggingUtils.error(LOGGER, e);
             }
         }
     }

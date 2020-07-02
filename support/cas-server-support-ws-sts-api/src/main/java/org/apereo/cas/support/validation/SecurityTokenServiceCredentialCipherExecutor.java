@@ -25,11 +25,11 @@ public class SecurityTokenServiceCredentialCipherExecutor extends BaseStringCiph
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.authn.wsfedIdP.sts.crypto.encryption.key";
+        return "cas.authn.wsfed-idp.sts.crypto.encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.authn.wsfedIdP.sts.crypto.signing.key";
+        return "cas.authn.wsfed-idp.sts.crypto.signing.key";
     }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.audit.spi.resource;
 
 import org.apereo.cas.util.AopUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.Assertion;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,11 +54,7 @@ public class TicketValidationResourceResolver extends TicketAsFirstParameterReso
                 objectWriter.writeValue(writer, results);
                 auditResourceResults.add(writer.toString());
             } catch (final Exception e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.error(e.getMessage(), e);
-                } else {
-                    LOGGER.error(e.getMessage());
-                }
+                LoggingUtils.error(LOGGER, e);
             }
         }
         return auditResourceResults.toArray(ArrayUtils.EMPTY_STRING_ARRAY);

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.executor;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import com.google.common.base.Splitter;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -56,7 +58,7 @@ public class ClientFlowExecutionKey extends FlowExecutionKey {
             val decoded = CodecUtil.b64(tokens.get(1));
             return new ClientFlowExecutionKey(uuid, decoded);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw new BadlyFormattedFlowExecutionKeyException(key, KEY_FORMAT);
         }
     }

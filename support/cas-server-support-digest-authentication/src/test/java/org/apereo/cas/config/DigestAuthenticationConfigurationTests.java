@@ -52,11 +52,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketCatalogConfiguration.class,
     CasCookieConfiguration.class,
     CasCoreLogoutConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-@Tag("Simple")
+@Tag("Authentication")
 public class DigestAuthenticationConfigurationTests {
     @Autowired
     @Qualifier("digestAuthenticationAction")

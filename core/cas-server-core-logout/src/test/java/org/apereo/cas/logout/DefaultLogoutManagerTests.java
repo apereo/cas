@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class DefaultLogoutManagerTests {
     private static final String ID = "id";
     private static final String URL = "http://www.github.com";

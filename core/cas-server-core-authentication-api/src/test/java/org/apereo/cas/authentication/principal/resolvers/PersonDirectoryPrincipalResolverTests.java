@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.util.CollectionUtils;
 
-import com.google.common.collect.Maps;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -70,7 +68,7 @@ public class PersonDirectoryPrincipalResolverTests {
     public void verifyNullAttributes() {
         val resolver = new PersonDirectoryPrincipalResolver(true, CoreAuthenticationTestUtils.CONST_USERNAME);
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        val p = resolver.resolve(c, null);
+        val p = resolver.resolve(c, Optional.empty());
         assertNull(p);
     }
 
@@ -79,11 +77,10 @@ public class PersonDirectoryPrincipalResolverTests {
         val attributes = new ArrayList<Object>();
         attributes.add(null);
         val resolver = new PersonDirectoryPrincipalResolver(
-                new StubPersonAttributeDao(Map.of("a", attributes))
+            new StubPersonAttributeDao(Map.of("a", attributes))
         );
         val principal = resolver.resolve((Credential) () -> "a");
-
-        assertThat(principal.getAttributes()).containsExactly(Maps.immutableEntry("a", new ArrayList<>()));
+        assertTrue(principal.getAttributes().containsKey("a"));
     }
 
     @Test
@@ -91,7 +88,7 @@ public class PersonDirectoryPrincipalResolverTests {
         val resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository(),
             CoreAuthenticationTestUtils.CONST_USERNAME);
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        val p = resolver.resolve(c, null);
+        val p = resolver.resolve(c, Optional.empty());
         assertNotNull(p);
     }
 
@@ -99,7 +96,7 @@ public class PersonDirectoryPrincipalResolverTests {
     public void verifyAttributesWithPrincipal() {
         val resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository(), "cn");
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        val p = resolver.resolve(c, null);
+        val p = resolver.resolve(c, Optional.empty());
         assertNotNull(p);
         assertNotEquals(p.getId(), CoreAuthenticationTestUtils.CONST_USERNAME);
         assertTrue(p.getAttributes().containsKey("memberOf"));

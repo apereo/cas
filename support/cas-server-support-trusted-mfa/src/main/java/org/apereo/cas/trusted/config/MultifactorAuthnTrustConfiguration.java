@@ -85,7 +85,7 @@ public class MultifactorAuthnTrustConfiguration {
                 return null;
             });
 
-        val m = FunctionUtils.doIf(trusted.getJson().getLocation() != null,
+        return FunctionUtils.doIf(trusted.getJson().getLocation() != null,
             () -> {
                 LOGGER.debug("Storing trusted device records inside the JSON resource [{}]", trusted.getJson().getLocation());
                 return new JsonMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
@@ -96,7 +96,6 @@ public class MultifactorAuthnTrustConfiguration {
                 return new InMemoryMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
                     mfaTrustCipherExecutor(), storage, mfaTrustRecordKeyGenerator());
             }).get();
-        return m;
     }
 
     @ConditionalOnMissingBean(name = "transactionManagerMfaAuthnTrust")

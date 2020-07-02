@@ -12,10 +12,11 @@ dependencies {
     implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-validation-api")
-    
+
     implementation project(":support:cas-server-support-themes")
 
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-monitor")

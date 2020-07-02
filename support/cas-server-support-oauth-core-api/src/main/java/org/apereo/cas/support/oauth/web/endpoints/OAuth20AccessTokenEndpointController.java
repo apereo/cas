@@ -13,6 +13,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerat
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.google.common.base.Supplier;
 import lombok.SneakyThrows;
@@ -66,10 +67,10 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                 throw new IllegalArgumentException("Access token validation failed");
             }
         } catch (final OAuth20UnauthorizedScopeRequestException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_SCOPE);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
         }
 
@@ -90,10 +91,10 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             LOGGER.error("Check for device user code approval is too quick and is throttled. Requests must slow down");
             return OAuth20Utils.writeError(response, OAuth20Constants.SLOW_DOWN);
         } catch (final OAuth20UnauthorizedScopeRequestException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_SCOPE);
         } catch (final Exception e) {
-            LOGGER.error("Could not identify and extract access token request", e);
+            LoggingUtils.error(LOGGER, "Could not identify and extract access token request", e);
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_GRANT);
         }
     }

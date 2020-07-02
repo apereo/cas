@@ -24,6 +24,7 @@ import java.util.Objects;
 @Slf4j
 public class SamlRegisteredServiceMetadataHealthIndicator extends AbstractHealthIndicator {
     private final SamlRegisteredServiceMetadataResolutionPlan metadataResolutionPlan;
+
     private final ServicesManager servicesManager;
 
     /**
@@ -36,7 +37,7 @@ public class SamlRegisteredServiceMetadataHealthIndicator extends AbstractHealth
     protected void doHealthCheck(final Health.Builder builder) {
         val samlServices = servicesManager.findServiceBy(registeredService -> registeredService instanceof SamlRegisteredService);
         val availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();
-        LOGGER.debug("There are [{}] metadata resolver(s) available in the chain", availableResolvers.size());
+        LOGGER.trace("There are [{}] metadata resolver(s) available in the chain", availableResolvers.size());
 
         builder.up();
         builder.withDetail("name", getClass().getSimpleName());
@@ -53,7 +54,6 @@ public class SamlRegisteredServiceMetadataHealthIndicator extends AbstractHealth
                 val available = availableResolvers
                     .stream()
                     .filter(Objects::nonNull)
-                    .peek(r -> LOGGER.debug("Checking if metadata resolver [{}] is available for service [{}]", r.getName(), service.getName()))
                     .anyMatch(r -> r.isAvailable(service));
                 map.put("availability", BooleanUtils.toStringYesNo(available));
                 builder.withDetail(service.getName(), map);

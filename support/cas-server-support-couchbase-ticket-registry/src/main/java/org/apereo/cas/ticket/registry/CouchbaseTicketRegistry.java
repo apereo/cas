@@ -4,6 +4,7 @@ import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.couchbase.client.java.codec.JacksonJsonSerializer;
 import com.couchbase.client.java.codec.JsonTranscoder;
@@ -62,7 +63,8 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
                     .expiry(getTimeToLive(ticketToAdd))
                     .transcoder(JsonTranscoder.create(JacksonJsonSerializer.create(MAPPER))));
         } catch (final Exception e) {
-            LOGGER.error("Failed adding [{}]: [{}]", ticketToAdd, e);
+            LOGGER.error("Failed adding [{}]", ticketToAdd);
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -85,7 +87,8 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
             }
             return null;
         } catch (final Exception e) {
-            LOGGER.error("Failed fetching [{}]: [{}]", ticketId, e);
+            LOGGER.error("Failed fetching [{}]", ticketId);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -136,7 +139,8 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
         try {
             return couchbase.bucketRemoveFromDefaultCollection(ticketId) != null;
         } catch (final Exception e) {
-            LOGGER.error("Failed deleting [{}]: [{}]", ticketId, e);
+            LOGGER.error("Failed deleting [{}]", ticketId);
+            LoggingUtils.error(LOGGER, e);
             return false;
         }
     }

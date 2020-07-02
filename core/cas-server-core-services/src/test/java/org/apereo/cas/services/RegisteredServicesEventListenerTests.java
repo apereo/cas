@@ -1,12 +1,13 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.notifications.sms.SmsSender;
+import org.apereo.cas.sms.MockSmsSender;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
-import org.apereo.cas.util.MockSmsSender;
-import org.apereo.cas.util.io.CommunicationsManager;
-import org.apereo.cas.util.io.SmsSender;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
@@ -34,6 +35,7 @@ import org.springframework.context.annotation.Lazy;
     RefreshAutoConfiguration.class,
     RegisteredServicesEventListenerTests.RegisteredServicesEventListenerTestConfiguration.class,
     CasCoreServicesConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreUtilConfiguration.class,
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class

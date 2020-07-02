@@ -2,8 +2,8 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.support.sms.AmazonSimpleNotificationServiceSmsSender;
-import org.apereo.cas.util.io.SmsSender;
 
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.sns.AmazonSNSClient;

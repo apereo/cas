@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasServicesStreamingConfiguration.class
 }, properties = "cas.service-registry.stream.enabled=true")
-@Tag("Simple")
+@Tag("RegisteredService")
 public class CasServicesRegistryStreamingEventListenerTests {
     @Autowired
     @Qualifier("casServicesRegistryStreamingEventListener")

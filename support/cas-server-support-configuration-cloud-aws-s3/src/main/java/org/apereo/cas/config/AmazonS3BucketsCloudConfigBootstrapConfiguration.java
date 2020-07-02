@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.configuration.CasCoreConfigurationUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -60,11 +61,11 @@ public class AmazonS3BucketsCloudConfigBootstrapConfiguration implements Propert
                         properties.putAll(yamlProps);
                     }
                 } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    LoggingUtils.error(LOGGER, e);
                 }
             });
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new MapPropertySource(getClass().getSimpleName(), properties);
     }

@@ -161,7 +161,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
     public void verifyAddDelegate() {
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() throws Throwable {
+            public void execute() {
                 resolver.addDelegate(mock(CasWebflowEventResolver.class));
                 resolver.addDelegate(mock(CasWebflowEventResolver.class), 0);
             }

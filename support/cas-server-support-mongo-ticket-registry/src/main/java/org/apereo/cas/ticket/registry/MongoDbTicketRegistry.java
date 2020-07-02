@@ -7,6 +7,8 @@ import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.mongodb.client.MongoCollection;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.util.StreamUtils;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -69,7 +72,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             this.mongoTemplate.upsert(query, update, collectionName);
             LOGGER.debug("Updated ticket [{}]", ticket);
         } catch (final Exception e) {
-            LOGGER.error("Failed updating [{}]: [{}]", ticket, e);
+            LOGGER.error("Failed updating [{}]", ticket);
+            LoggingUtils.error(LOGGER, e);
         }
         return ticket;
     }
@@ -94,7 +98,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             this.mongoTemplate.insert(holder, collectionName);
             LOGGER.debug("Added ticket [{}]", ticket.getId());
         } catch (final Exception e) {
-            LOGGER.error(String.format("Failed adding %s", ticket), e);
+            LOGGER.error("Failed adding [{}]", ticket);
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -125,7 +130,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                 return null;
             }
         } catch (final Exception e) {
-            LOGGER.error(String.format("Failed fetching %s", ticketId), e);
+            LOGGER.error("Failed fetching [{}]", ticketId);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -152,7 +158,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Deleted ticket [{}] with result [{}]", ticketIdToDelete, res);
             return true;
         } catch (final Exception e) {
-            LOGGER.error("Failed deleting [{}]: [{}]", ticketId, e);
+            LOGGER.error("Failed deleting [{}]", ticketId);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -244,7 +251,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Located MongoDb collection instance [{}]", mapName);
             return inst;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -262,15 +269,15 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         if (ttl < 1) {
             return null;
         }
-
-        return new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ttl));
+        val exp = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ttl);
+        return DateTimeUtils.dateOf(Instant.ofEpochMilli(exp));
     }
 
     private String serializeTicketForMongoDocument(final Ticket ticket) {
         try {
             return ticketSerializationManager.serializeTicket(ticket);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

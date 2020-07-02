@@ -19,13 +19,8 @@ import org.springframework.context.ApplicationEvent;
 public abstract class AbstractCasEvent extends ApplicationEvent {
 
     private static final long serialVersionUID = 8059647975948452375L;
-
-    /**
-     * Instantiates a new Abstract cas sso event.
-     *
-     * @param source the source
-     */
-    public AbstractCasEvent(final Object source) {
+    
+    protected AbstractCasEvent(final Object source) {
         super(source);
     }
 }

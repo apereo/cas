@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.util.io.SmsSender;
+import org.apereo.cas.notifications.sms.SmsSender;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -22,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     TwilioSmsConfiguration.class
 }, properties = {
-   "cas.smsProvider.twilio.account-id=id",
-   "cas.smsProvider.twilio.token=token"
+   "cas.sms-provider.twilio.account-id=id",
+   "cas.sms-provider.twilio.token=token"
 })
-@Tag("Simple")
+@Tag("SMS")
 public class TwilioSmsConfigurationTests {
     @Autowired
     @Qualifier("smsSender")

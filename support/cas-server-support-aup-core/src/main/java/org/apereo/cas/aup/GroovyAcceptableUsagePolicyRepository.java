@@ -3,6 +3,7 @@ package org.apereo.cas.aup;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -51,7 +52,7 @@ public class GroovyAcceptableUsagePolicyRepository extends BaseAcceptableUsagePo
                 requestContext, credential, applicationContext, principal, LOGGER);
             return Optional.ofNullable(result);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
     }

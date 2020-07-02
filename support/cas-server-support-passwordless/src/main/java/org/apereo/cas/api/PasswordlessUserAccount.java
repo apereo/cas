@@ -1,6 +1,7 @@
 package org.apereo.cas.api;
 
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.util.model.TriStateBoolean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -52,10 +53,12 @@ public class PasswordlessUserAccount extends BasicIdentifiableCredential impleme
     private Map<String, List<String>> attributes = new LinkedHashMap<>();
 
     @JsonProperty("multifactorAuthenticationEligible")
-    private boolean multifactorAuthenticationEligible;
+    @Builder.Default
+    private TriStateBoolean multifactorAuthenticationEligible = TriStateBoolean.UNDEFINED;
 
     @JsonProperty("delegatedAuthenticationEligible")
-    private boolean delegatedAuthenticationEligible;
+    @Builder.Default
+    private TriStateBoolean delegatedAuthenticationEligible = TriStateBoolean.UNDEFINED;
 
     @JsonProperty("requestPassword")
     private boolean requestPassword;

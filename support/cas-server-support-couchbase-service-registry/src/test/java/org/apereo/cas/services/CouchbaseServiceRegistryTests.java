@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
@@ -29,12 +30,13 @@ import org.springframework.context.event.EventListener;
     CouchbaseServiceRegistryTests.CouchbaseServiceRegistryTestConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreUtilConfiguration.class,
     CouchbaseServiceRegistryConfiguration.class
 },
     properties = {
-        "cas.service-registry.couchbase.clusterPassword=password",
-        "cas.service-registry.couchbase.clusterUsername=admin",
+        "cas.service-registry.couchbase.cluster-password=password",
+        "cas.service-registry.couchbase.cluster-username=admin",
         "cas.service-registry.couchbase.bucket=testbucket"
     })
 @Tag("Couchbase")

@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,7 @@ import java.util.function.Predicate;
  * @since 5.2.0
  */
 @Slf4j
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegistry {
 
     /**
@@ -28,7 +29,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
      *
      * @param cipherExecutor the cipher executor
      */
-    public AbstractMapBasedTicketRegistry(final CipherExecutor cipherExecutor) {
+    protected AbstractMapBasedTicketRegistry(final CipherExecutor cipherExecutor) {
         setCipherExecutor(cipherExecutor);
     }
 

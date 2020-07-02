@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-@Tag("Simple")
+@Tag("Authentication")
 public class PolicyBasedAuthenticationManagerTests {
     private static final String HANDLER_A = "HandlerA";
 

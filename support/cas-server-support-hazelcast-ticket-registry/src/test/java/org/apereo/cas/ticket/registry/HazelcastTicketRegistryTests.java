@@ -18,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     HazelcastTicketRegistryConfiguration.class,
     HazelcastTicketRegistryTicketCatalogConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
-}, properties = "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalhostinstance")
+}, properties = "cas.ticket.registry.hazelcast.cluster.instance-name=testlocalhostinstance")
 @Tag("Hazelcast")
 public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {
 

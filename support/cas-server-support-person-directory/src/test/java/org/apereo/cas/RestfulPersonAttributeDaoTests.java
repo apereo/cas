@@ -31,8 +31,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = {
-    "cas.authn.attributeRepository.rest[0].method=GET",
-    "cas.authn.attributeRepository.rest[0].url=http://localhost:8085"
+    "cas.authn.attribute-repository.rest[0].method=GET",
+    "cas.authn.attribute-repository.rest[0].url=http://localhost:8085"
 })
 @Tag("RestfulApi")
 public class RestfulPersonAttributeDaoTests {
