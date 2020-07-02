@@ -48,4 +48,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow-mfa", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-notifications", configuration: "tests")
 }
