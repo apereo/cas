@@ -67,7 +67,7 @@ import static org.mockito.Mockito.*;
     CasCoreConfiguration.class
 },
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
-@Tag("Simple")
+@Tag("Authentication")
 public class SurrogateAuthenticationPostProcessorTests {
     @Autowired
     @Qualifier("surrogateAuthenticationPostProcessor")

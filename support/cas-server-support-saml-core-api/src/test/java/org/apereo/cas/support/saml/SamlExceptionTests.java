@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Simple")
+@Tag("SAML")
 public class SamlExceptionTests {
     @Test
     public void verifyArgs() {

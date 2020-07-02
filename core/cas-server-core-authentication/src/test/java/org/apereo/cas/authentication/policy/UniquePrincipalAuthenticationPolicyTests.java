@@ -54,7 +54,7 @@ import static org.mockito.Mockito.*;
     CasCoreServicesConfiguration.class
 })
 @DirtiesContext
-@Tag("Simple")
+@Tag("Authentication")
 public class UniquePrincipalAuthenticationPolicyTests {
     @Autowired
     @Qualifier("ticketRegistry")
