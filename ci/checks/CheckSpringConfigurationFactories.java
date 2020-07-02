@@ -44,7 +44,8 @@ public class CheckSpringConfigurationFactories {
         Files.walk(Paths.get(projectPath))
             .filter(Files::isRegularFile)
             .forEach(file -> {
-                if (file.toFile().getName().endsWith("Configuration.java") && readFile(file).contains("@Configuration")) {
+                if (file.toFile().getName().endsWith("Configuration.java")
+                    && readFile(file).contains("@Configuration")) {
                     print("Configuration class %s is missing from %s", file, springFactoriesFile);
                     pass.set(false);
                 }
