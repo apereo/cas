@@ -126,6 +126,7 @@ If you did create a new release branch as part of a new major/minor release:
 - [Update docs](https://github.com/apereo/cas/edit/gh-pages/Older-Versions.md/) and add the newly released version.
 - Update the project's [`README.md` page](https://github.com/apereo/cas/blob/master/README.md) to list the new version, if necessary.
 - Update [the build process](https://apereo.github.io/cas/developer/Build-Process.html) to include any needed information on how to build the new release.
+- Update [the release notes](https://github.com/apereo/cas/tree/master/docs/cas-server-documentation/release_notes) and remove all previous entries (Only necessary if a new branch was created for the release).
 
 ## Update Maintenance Policy
 
