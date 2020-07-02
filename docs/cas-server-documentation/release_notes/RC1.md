@@ -72,7 +72,8 @@ There were no compatibility issues discovered during the upgrade and the configu
 
 ### Test Coverage via CodeCov
 
-CAS test coverage across all modules in the codebase has now reached `82%` and continues to climb. Additional validation rules are also applied to fail all pull requests that fall below this threshold. This area will be closely monitored and improved
+CAS test coverage across all modules in the codebase has now reached `82%` and continues to climb. Additional validation rules are also applied 
+to fail all pull requests that fall below this threshold. This area will be closely monitored and improved
 as progress is made with the goal of hopefully reaching at least `85%` before the final GA release. Of course, this will not be a blocker for the final release.
 
 ### Redis Cluster Support
@@ -93,12 +94,18 @@ Redis support and configuration namespace are now capable of supporting connecti
 
 ### Multifactor Authentication Webflows
 
-Webflow definitions for multifactor authentication providers (i.e Google Authenticator, Authy, etc) are now constructed dynamically at runtime via webflow auto-configuration rather than static XML definitions. This allows for better flexibility as well as test coverage when it comes to customizations.
+Webflow definitions for multifactor authentication providers (i.e Google Authenticator, Authy, etc) are now constructed dynamically 
+at runtime via webflow auto-configuration rather than static XML definitions. This allows for better flexibility as well as test coverage when it comes to customizations.
 
 ### U2F Multifactor Authentication Trusted Devices
 
 Support for [Multifactor Authentication Trusted Device/Browser](../mfa/Multifactor-TrustedDevice-Authentication.html) is now extended 
 to also include [U2F](../mfa/FIDO-U2F-Authentication.html).
+
+### Authentication Actuator Endpoints
+
+A number of new [administrative actuator endpoints](../installation/Configuring-Authentication-Components.html) are presented 
+to report back on the registered authentication handlers and policies.
 
 ### Gradle Remote Build Cache
 
