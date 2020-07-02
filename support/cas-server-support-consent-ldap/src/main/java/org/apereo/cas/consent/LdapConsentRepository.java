@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.consent.ConsentProperties.Ldap
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
             LOGGER.trace("Mapping JSON value [{}] to consent object", json);
             return MAPPER.readValue(JsonValue.readHjson(json).toString(), ConsentDecision.class);
         } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -60,7 +61,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
             LOGGER.trace("Transformed consent object [{}] as JSON value [{}]", consent, json);
             return json;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -177,15 +178,17 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
     }
 
     @Override
-    public boolean storeConsentDecision(final ConsentDecision decision) {
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
         LOGGER.debug("Storing consent decision [{}]", decision);
         val entry = readConsentEntry(decision.getPrincipal());
         if (entry != null) {
             val newConsent = mergeDecision(entry.getAttribute(ldapProperties.getConsentAttributeName()), decision);
-            return executeModifyOperation(newConsent, entry);
+            if (executeModifyOperation(newConsent, entry)) {
+                return decision;
+            }
         }
         LOGGER.debug("Unable to read consent entry for [{}]. Consent decision is not stored", decision.getPrincipal());
-        return false;
+        return null;
     }
 
     @Override

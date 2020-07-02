@@ -72,10 +72,9 @@ public class U2FConfiguration {
     public U2FDeviceRepository u2fDeviceRepository() {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
 
-        final LoadingCache<String, String> requestStorage =
-            Caffeine.newBuilder()
-                .expireAfterWrite(u2f.getExpireDevices(), u2f.getExpireDevicesTimeUnit())
-                .build(key -> StringUtils.EMPTY);
+        final LoadingCache<String, String> requestStorage = Caffeine.newBuilder()
+            .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
+            .build(key -> StringUtils.EMPTY);
 
         if (u2f.getJson().getLocation() != null) {
             return new U2FJsonResourceDeviceRepository(requestStorage,

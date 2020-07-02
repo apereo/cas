@@ -3,6 +3,7 @@ package org.apereo.cas.gauth.web.flow;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;
 
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,18 +20,14 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
     properties = {
         "cas.authn.mfa.gauth.json.location=classpath:/repository.json",
         "cas.authn.mfa.gauth.trusted-device-enabled=true",
-        "cas.authn.mfa.trusted.deviceRegistrationEnabled=true"
+        "cas.authn.mfa.trusted.device-registration-enabled=true"
     })
 @Tag("Webflow")
+@Getter
 public class GoogleAuthenticatorMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     @Qualifier("googleAuthenticatorFlowRegistry")
-    private FlowDefinitionRegistry googleAuthenticatorFlowRegistry;
-
-    @Override
-    protected FlowDefinitionRegistry getMultifactorFlowDefinitionRegistry() {
-        return this.googleAuthenticatorFlowRegistry;
-    }
+    private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;
 
     @Override
     protected String getMultifactorEventId() {

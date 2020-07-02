@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -43,7 +44,8 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
         try {
             clientFromPool.replace(ticket.getId(), getTimeout(ticketToUpdate), ticket);
         } catch (final Exception e) {
-            LOGGER.error("Failed updating [{}]", ticket, e);
+            LOGGER.error("Failed updating [{}]", ticket);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             returnClientToPool(clientFromPool);
         }
@@ -58,7 +60,8 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
             LOGGER.trace("Adding ticket [{}]", ticket);
             clientFromPool.set(ticket.getId(), getTimeout(ticketToAdd), ticket);
         } catch (final Exception e) {
-            LOGGER.error("Failed adding [{}]", ticketToAdd, e);
+            LOGGER.error("Failed adding [{}]", ticketToAdd);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             returnClientToPool(clientFromPool);
         }
@@ -77,7 +80,8 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
         try {
             clientFromPool.delete(ticketId);
         } catch (final Exception e) {
-            LOGGER.error("Ticket not found or is already removed. Failed deleting [{}]", ticketId, e);
+            LOGGER.error("Ticket not found or is already removed. Failed deleting [{}]", ticketId);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             returnClientToPool(clientFromPool);
         }
@@ -98,7 +102,8 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
                 return null;
             }
         } catch (final Exception e) {
-            LOGGER.error("Failed fetching [{}] ", ticketId, e);
+            LOGGER.error("Failed fetching [{}] ", ticketId);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             returnClientToPool(clientFromPool);
         }
@@ -149,7 +154,7 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
                 this.connectionPool.returnObject(clientFromPool);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
     }
 }

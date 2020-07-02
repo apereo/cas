@@ -16,7 +16,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.io.File;
 import java.io.IOException;
 import java.time.Clock;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -49,11 +49,11 @@ public class TicketGrantingTicketExpirationPolicyTests {
     public void verifyTgtIsExpiredByHardTimeOut() {
         val creationTime = this.ticketGrantingTicket.getCreationTime();
 
-        this.expirationPolicy.setClock(Clock.fixed(creationTime.plusSeconds(HARD_TIMEOUT).minusNanos(1).toInstant(), ZoneId.of("UTC")));
+        this.expirationPolicy.setClock(Clock.fixed(creationTime.plusSeconds(HARD_TIMEOUT).minusNanos(1).toInstant(), ZoneOffset.UTC));
         ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
         assertFalse(ticketGrantingTicket.isExpired());
 
-        this.expirationPolicy.setClock(Clock.fixed(creationTime.plusSeconds(HARD_TIMEOUT).plusNanos(1).toInstant(), ZoneId.of("UTC")));
+        this.expirationPolicy.setClock(Clock.fixed(creationTime.plusSeconds(HARD_TIMEOUT).plusNanos(1).toInstant(), ZoneOffset.UTC));
         assertTrue(ticketGrantingTicket.isExpired());
     }
 
@@ -61,10 +61,10 @@ public class TicketGrantingTicketExpirationPolicyTests {
     public void verifyTgtIsExpiredBySlidingWindow() {
         ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
 
-        this.expirationPolicy.setClock(Clock.fixed(this.ticketGrantingTicket.getLastTimeUsed().plusSeconds(SLIDING_TIMEOUT).minusNanos(1).toInstant(), ZoneId.of("UTC")));
+        this.expirationPolicy.setClock(Clock.fixed(this.ticketGrantingTicket.getLastTimeUsed().plusSeconds(SLIDING_TIMEOUT).minusNanos(1).toInstant(), ZoneOffset.UTC));
         assertFalse(ticketGrantingTicket.isExpired());
 
-        this.expirationPolicy.setClock(Clock.fixed(this.ticketGrantingTicket.getLastTimeUsed().plusSeconds(SLIDING_TIMEOUT).plusNanos(1).toInstant(), ZoneId.of("UTC")));
+        this.expirationPolicy.setClock(Clock.fixed(this.ticketGrantingTicket.getLastTimeUsed().plusSeconds(SLIDING_TIMEOUT).plusNanos(1).toInstant(), ZoneOffset.UTC));
         assertTrue(ticketGrantingTicket.isExpired());
     }
 

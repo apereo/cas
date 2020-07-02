@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticat
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,7 +56,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
             val statusCode = response.getStatusLine().getStatusCode();
             return HttpStatus.valueOf(statusCode).is2xxSuccessful();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -73,7 +74,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
             val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
             return MAPPER.readValue(JsonValue.readHjson(result).toString(), List.class);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

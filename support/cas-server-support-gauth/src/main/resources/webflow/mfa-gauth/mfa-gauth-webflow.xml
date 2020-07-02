@@ -4,51 +4,6 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
-    <var name="credential" class="org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential" />
-    <on-start>
-        <evaluate expression="initialFlowSetupAction" />
-    </on-start>
-
-    <action-state id="initializeLoginForm">
-        <evaluate expression="initializeLoginAction" />
-        <transition on="success" to="accountRegistrationCheck"/>
-    </action-state>
-
-    <action-state id="accountRegistrationCheck">
-        <evaluate expression="googleAccountRegistrationAction" />
-        <transition on="register" to="viewRegistration"/>
-        <transition on="success" to="viewLoginForm"/>
-    </action-state>
-
-    <view-state id="viewRegistration" view="casGoogleAuthenticatorRegistrationView">
-        <on-entry>
-            <set name="viewScope.principal" value="conversationScope.authentication.principal" />
-        </on-entry>
-        <transition on="submit" to="saveRegistration"/>
-    </view-state>
-    
-    <action-state id="saveRegistration">
-        <evaluate expression="googleSaveAccountRegistrationAction" />
-        <transition on="success" to="viewLoginForm"/>
-    </action-state>
-    
-    <view-state id="viewLoginForm" view="casGoogleAuthenticatorLoginView" model="credential">
-        <binder>
-            <binding property="token" required="true"/>
-        </binder>
-        <on-entry>
-            <set name="viewScope.principal" value="conversationScope.authentication.principal" />
-        </on-entry>
-        <transition on="submit" bind="true" validate="true" to="realSubmit"/>
-
-    </view-state>
-
-    <action-state id="realSubmit">
-        <evaluate expression="oneTimeTokenAuthenticationWebflowAction" />
-        <transition on="success" to="success" />
-        <transition on="error" to="initializeLoginForm" />
-    </action-state>
-
     <end-state id="success" />
 
 </flow>

@@ -37,7 +37,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
     private String principalAttributeId;
     private boolean isTypedIdUsed;
 
-    public AbstractPac4jAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    protected AbstractPac4jAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                               final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
@@ -119,9 +119,9 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
                         id = firstAttribute.get().toString();
                         id = typePrincipalId(id, profile);
                     }
-                    LOGGER.debug("Delegated authentication indicates usage of client principal attribute [{}] for the identifier [{}]", principalAttribute, id);
+                    LOGGER.debug("Authentication indicates usage of client principal attribute [{}] for the identifier [{}]", principalAttribute, id);
                 } else {
-                    LOGGER.warn("Delegated authentication cannot find attribute [{}] to use as principal id", principalAttribute);
+                    LOGGER.warn("Authentication cannot find attribute [{}] to use as principal id", principalAttribute);
                 }
             } else {
                 LOGGER.warn("No custom principal attribute was provided by the client [{}]. Using the default id [{}]", client, id);
@@ -135,13 +135,13 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
                 }
             } else {
                 LOGGER.warn("CAS cannot use [{}] as the principal attribute id, since the profile attributes do not contain the attribute. "
-                    + "Either adjust the CAS configuration to use a different attribute, or contact the delegated authentication provider noted by [{}] "
+                    + "Either adjust the CAS configuration to use a different attribute, or contact the authentication provider noted by [{}] "
                     + "to release the expected attribute to CAS", principalAttributeId, profile.getAttributes());
             }
-            LOGGER.debug("Delegated authentication indicates usage of attribute [{}] for the identifier [{}]", principalAttributeId, id);
+            LOGGER.debug("Authentication indicates usage of attribute [{}] for the identifier [{}]", principalAttributeId, id);
         } else if (isTypedIdUsed) {
             id = profile.getTypedId();
-            LOGGER.debug("Delegated authentication indicates usage of typed profile id [{}]", id);
+            LOGGER.debug("Authentication indicates usage of typed profile id [{}]", id);
         }
         LOGGER.debug("Final principal id determined based on client [{}] and user profile [{}] is [{}]", profile, client, id);
         return id;

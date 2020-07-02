@@ -1,8 +1,8 @@
 package org.apereo.cas.support.sms;
 
 import org.apereo.cas.config.ClickatellSmsConfiguration;
+import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.MockWebServer;
-import org.apereo.cas.util.io.SmsSender;
 
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
@@ -30,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     ClickatellSmsConfiguration.class
 }, properties = {
-    "cas.smsProvider.clickatell.serverUrl=http://localhost:8099",
-    "cas.smsProvider.clickatell.token=DEMO_TOKEN"
+    "cas.sms-provider.clickatell.serverUrl=http://localhost:8099",
+    "cas.sms-provider.clickatell.token=DEMO_TOKEN"
 })
-@Tag("Simple")
+@Tag("SMS")
 public class ClickatellSmsSenderTests {
     @Autowired
     @Qualifier("smsSender")

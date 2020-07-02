@@ -7,6 +7,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-services-api")
+
     implementation project(":support:cas-server-support-git-core")
 
     implementation libraries.jgit
@@ -14,6 +15,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-oauth-core")
     testImplementation project(":support:cas-server-support-oauth-core-api")
     testImplementation project(":core:cas-server-core-authentication-api")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-logout-api")
@@ -31,4 +33,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-notifications", configuration: "tests")
 }

@@ -81,7 +81,7 @@ public class ResourceUtils {
                 return doesResourceExist(res);
             }
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
         return false;
     }
@@ -187,6 +187,7 @@ public class ResourceUtils {
      * @return the file
      */
     @SneakyThrows
+    @SuppressWarnings("JdkObsolete")
     public static Resource prepareClasspathResourceIfNeeded(final Resource resource,
                                                             final boolean isDirectory,
                                                             final String containsName) {

@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.DefaultChainingServiceRegistry;
@@ -36,7 +37,6 @@ import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceYamlHttpMessageConverter;
-import org.apereo.cas.util.io.CommunicationsManager;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -240,10 +240,10 @@ public class CasCoreServicesConfiguration {
     public Cache<Long, RegisteredService> servicesManagerCache() {
         var duration = Beans.newDuration(casProperties.getServiceRegistry().getCache());
         return Caffeine.newBuilder()
-                .initialCapacity(casProperties.getServiceRegistry().getCachCapacity())
-                .maximumSize(casProperties.getServiceRegistry().getCacheSize())
-                .expireAfterWrite(duration)
-                .build();
+            .initialCapacity(casProperties.getServiceRegistry().getCachCapacity())
+            .maximumSize(casProperties.getServiceRegistry().getCacheSize())
+            .expireAfterWrite(duration)
+            .build();
     }
 
     @Bean

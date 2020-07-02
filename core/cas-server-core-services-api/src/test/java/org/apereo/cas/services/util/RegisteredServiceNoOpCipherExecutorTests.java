@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Tag("Simple")
+@Tag("RegisteredService")
 public class RegisteredServiceNoOpCipherExecutorTests {
 
     @Test

@@ -46,8 +46,8 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap[0].ldap-url=ldap://localhost:10389",
     "cas.authn.pm.ldap[0].bindDn=cn=Directory Manager",
     "cas.authn.pm.ldap[0].bindCredential=password",
-    "cas.authn.pm.ldap[0].baseDn=ou=people,dc=example,dc=org",
-    "cas.authn.pm.ldap[0].searchFilter=cn={user}",
+    "cas.authn.pm.ldap[0].base-dn=ou=people,dc=example,dc=org",
+    "cas.authn.pm.ldap[0].search-filter=cn={user}",
     "cas.authn.pm.ldap[0].type=GENERIC",
     "cas.authn.pm.ldap[0].securityQuestionsAttributes.registeredAddress=roomNumber",
     "cas.authn.pm.ldap[0].securityQuestionsAttributes.postalCode=teletexTerminalIdentifier"

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.google.common.base.Predicates;
@@ -111,7 +112,7 @@ public class X509UPNExtractorUtils {
              val input = new ASN1InputStream(bInput)) {
             return ASN1Sequence.getInstance(input.readObject());
         } catch (final IOException e) {
-            LOGGER.error("An error has occurred while reading the subject alternative name value: {}", e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

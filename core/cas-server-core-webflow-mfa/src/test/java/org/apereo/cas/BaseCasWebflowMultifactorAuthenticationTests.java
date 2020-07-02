@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -56,6 +57,8 @@ import org.springframework.test.annotation.DirtiesContext;
  * @since 6.0.0
  */
 @SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    MailSenderAutoConfiguration.class,
     AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
     BaseCasWebflowMultifactorAuthenticationTests.TestAuthenticationConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
@@ -82,9 +85,8 @@ import org.springframework.test.annotation.DirtiesContext;
     CasCoreWebConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCookieConfiguration.class,
-    RefreshAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
     AopAutoConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,

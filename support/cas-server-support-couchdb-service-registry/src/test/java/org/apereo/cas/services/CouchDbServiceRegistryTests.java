@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
@@ -22,11 +23,13 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCouchDbCoreConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CouchDbServiceRegistryConfiguration.class
 },
     properties = {
         "cas.service-registry.couch-db.username=cas",
+        "cas.service-registry.couch-db.caching=false",
         "cas.service-registry.couch-db.password=password"
     })
 @Tag("CouchDb")

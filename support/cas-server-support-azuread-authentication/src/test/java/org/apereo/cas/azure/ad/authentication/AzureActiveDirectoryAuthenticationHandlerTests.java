@@ -10,6 +10,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -46,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreLogoutConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
@@ -66,7 +68,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.azure-active-directory.clientId=12345678-bc3b-4e2d-a9bf-bf6c7ded8b7e",
         "cas.authn.azure-active-directory.loginUrl=https://login.microsoftonline.com/common/"
     })
-@Tag("Simple")
+@Tag("Authentication")
 public class AzureActiveDirectoryAuthenticationHandlerTests {
     @Autowired
     @Qualifier("microsoftAzureActiveDirectoryAuthenticationHandler")

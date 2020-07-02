@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
@@ -65,11 +66,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
                     try {
                         return DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord()));
                     } catch (final Exception e) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.error(e.getMessage(), e);
-                        } else {
-                            LOGGER.error(e.getMessage());
-                        }
+                        LoggingUtils.error(LOGGER, e);
                     }
                     return null;
                 })
@@ -78,11 +75,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
         } catch (final NoResultException e) {
             LOGGER.debug("No device registration was found for [{}]", username);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }
@@ -111,11 +104,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
                 .setParameter("expdate", expirationDate)
                 .executeUpdate();
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -124,11 +113,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
         try {
             this.entityManager.createQuery(DELETE_QUERY).executeUpdate();
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
     }
 }

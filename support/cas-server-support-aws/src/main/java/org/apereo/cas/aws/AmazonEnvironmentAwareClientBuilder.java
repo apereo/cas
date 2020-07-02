@@ -1,5 +1,7 @@
 package org.apereo.cas.aws;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
@@ -73,11 +75,7 @@ public class AmazonEnvironmentAwareClientBuilder {
                 cfg.setLocalAddress(InetAddress.getByName(localAddress));
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         builder.withClientConfiguration(cfg);
 

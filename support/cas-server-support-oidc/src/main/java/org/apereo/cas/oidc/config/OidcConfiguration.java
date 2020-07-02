@@ -377,11 +377,10 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .findClient(CasClient.class)
             .orElseThrow()
             .getName();
-        val interceptor = new OidcSecurityInterceptor(oauthSecConfig.getObject(), name,
+
+        return new OidcSecurityInterceptor(oauthSecConfig.getObject(), name,
             oidcAuthorizationRequestSupport(),
             oauthDistributedSessionStore.getObject());
-
-        return interceptor;
     }
 
     @Bean

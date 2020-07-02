@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -33,7 +33,7 @@ import java.util.Optional;
 @Slf4j
 public class GenerateSamlIdPMetadataCommand {
     @Autowired
-    private ResourceLoader resourceLoader;
+    private ConfigurableApplicationContext applicationContext;
 
     /**
      * Generate saml2 idp metadata at the specified location.
@@ -88,7 +88,7 @@ public class GenerateSamlIdPMetadataCommand {
             val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
                 .samlIdPMetadataLocator(locator)
                 .samlIdPCertificateAndKeyWriter(writer)
-                .resourceLoader(resourceLoader)
+                .applicationContext(applicationContext)
                 .casProperties(props)
                 .metadataCipherExecutor(CipherExecutor.noOpOfStringToString())
                 .build();

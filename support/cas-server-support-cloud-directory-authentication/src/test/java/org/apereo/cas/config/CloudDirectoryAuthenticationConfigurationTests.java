@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CloudDirectoryAuthenticationConfiguration.class
 },
     properties = {

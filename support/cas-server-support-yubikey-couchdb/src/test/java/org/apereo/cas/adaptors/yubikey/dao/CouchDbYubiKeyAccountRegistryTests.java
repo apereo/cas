@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -62,6 +63,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     YubiKeyConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreHttpConfiguration.class,
@@ -89,6 +91,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
         "cas.authn.mfa.yubikey.clientId=18423",
         "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As=",
         "cas.authn.mfa.yubikey.couch-db.username=cas",
+        "cas.authn.mfa.yubikey.couch-db.caching=false",
         "cas.authn.mfa.yubikey.couch-db.password=password"
     })
 @Getter
@@ -115,6 +118,7 @@ public class CouchDbYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRe
     public void setUp() {
         couchDbInstance.createDatabaseIfNotExists(couchDbConnector.getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
+
     }
 
     @AfterEach

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author John Gasper
  * @since 4.2.0
  */
-@Tag("Simple")
+@Tag("WSFederation")
 public class WsFederationCredentialTests extends AbstractWsFederationTests {
     
     @Test

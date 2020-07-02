@@ -1,11 +1,16 @@
 package org.apereo.cas.gauth.credential;
 
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.val;
@@ -37,7 +42,11 @@ import static org.springframework.http.HttpStatus.OK;
 @Getter
 @Tag("MFA")
 public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
+        .findAndRegisterModules();
 
     @Autowired
     @Qualifier("googleAuthenticatorInstance")
@@ -58,7 +67,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    public void verifyDelete() throws Exception {
+    public void verifyDelete() {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8550");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
@@ -68,17 +77,31 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
             webServer.start();
             assertDoesNotThrow(new Executable() {
                 @Override
-                public void execute() throws Throwable {
+                public void execute() {
                     repo.delete("casuser");
                     repo.deleteAll();
                 }
             });
         }
     }
-
-
+    
     @Test
     public void verifyGet() throws Exception {
+        val props = new GoogleAuthenticatorMultifactorProperties();
+        props.getRest().setUrl("http://localhost:8552");
+        val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
+            props, CipherExecutor.noOpOfStringToString());
+        val account = repo.create(UUID.randomUUID().toString());
+        val entity = MAPPER.writeValueAsString(CollectionUtils.wrapList(account));
+        try (val webServer = new MockWebServer(8552,
+            new ByteArrayResource(entity.getBytes(UTF_8), "Results"), OK)) {
+            webServer.start();
+            assertFalse(repo.get(account.getUsername()).isEmpty());
+        }
+    }
+
+    @Test
+    public void verifyGetById() throws Exception {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8552");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
@@ -88,12 +111,27 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         try (val webServer = new MockWebServer(8552,
             new ByteArrayResource(entity.getBytes(UTF_8), "Results"), OK)) {
             webServer.start();
-            assertNotNull(repo.get(account.getUsername()));
+            assertNotNull(repo.get(account.getId()));
         }
     }
 
     @Test
-    public void verifyCount() throws Exception {
+    public void verifyGetByIdAndUser() throws Exception {
+        val props = new GoogleAuthenticatorMultifactorProperties();
+        props.getRest().setUrl("http://localhost:8552");
+        val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
+            props, CipherExecutor.noOpOfStringToString());
+        val account = repo.create(UUID.randomUUID().toString());
+        val entity = MAPPER.writeValueAsString(account);
+        try (val webServer = new MockWebServer(8552,
+            new ByteArrayResource(entity.getBytes(UTF_8), "Results"), OK)) {
+            webServer.start();
+            assertNotNull(repo.get(account.getUsername(), account.getId()));
+        }
+    }
+
+    @Test
+    public void verifyCount() {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8552");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
@@ -118,15 +156,22 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
             webServer.start();
             assertDoesNotThrow(new Executable() {
                 @Override
-                public void execute() throws Throwable {
-                    repo.save(account.getUsername(), account.getSecretKey(), 0, List.of());
+                public void execute() {
+                    val toSave = OneTimeTokenAccount.builder()
+                        .username(account.getUsername())
+                        .secretKey(account.getSecretKey())
+                        .validationCode(0)
+                        .scratchCodes(List.of())
+                        .name(UUID.randomUUID().toString())
+                        .build();
+                    repo.save(toSave);
                 }
             });
         }
     }
 
     @Test
-    public void verifySaveFail() throws Exception {
+    public void verifySaveFail() {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8554");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,

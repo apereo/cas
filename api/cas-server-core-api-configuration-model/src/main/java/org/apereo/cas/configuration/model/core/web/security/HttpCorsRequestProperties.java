@@ -70,7 +70,7 @@ public class HttpCorsRequestProperties implements Serializable {
     private long maxAge = 3_600;
 
     /**
-     * The Access-Control-Expose-Headers header lets a server whitelist headers that browsers are allowed to access.
+     * The Access-Control-Expose-Headers header lets a server accept headers that browsers are allowed to access.
      */
     private List<String> exposedHeaders = new ArrayList<>(0);
 

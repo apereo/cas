@@ -15,6 +15,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -38,7 +39,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.webflow.execution.Action;
@@ -51,7 +51,6 @@ import org.springframework.webflow.execution.Action;
  */
 @SpringBootTest(classes = {
     AopAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
@@ -82,24 +81,25 @@ import org.springframework.webflow.execution.Action;
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreValidationConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     X509AuthenticationWebflowConfiguration.class,
     X509AuthenticationConfiguration.class,
     X509CertificateExtractorConfiguration.class
 },
     properties = {
-        "cas.authn.attributeRepository.stub.attributes.uid=uid",
-        "cas.authn.attributeRepository.stub.attributes.eduPersonAffiliation=developer",
-        "cas.authn.attributeRepository.stub.attributes.groupMembership=adopters",
-        "cas.authn.attributeRepository.stub.attributes.certificateRevocationList=certificateRevocationList",
-        "cas.authn.x509.regExTrustedIssuerDnPattern=CN=\\\\w+,DC=jasig,DC=org",
-        "cas.authn.x509.principalType=SERIAL_NO_DN",
-        "cas.authn.policy.any.tryAll=true",
-        "cas.authn.x509.crlFetcher=ldap",
+        "cas.authn.attribute-repository.stub.attributes.uid=uid",
+        "cas.authn.attribute-repository.stub.attributes.eduPersonAffiliation=developer",
+        "cas.authn.attribute-repository.stub.attributes.groupMembership=adopters",
+        "cas.authn.attribute-repository.stub.attributes.certificateRevocationList=certificateRevocationList",
+        "cas.authn.x509.reg-ex-trusted-issuer-dn-pattern=CN=\\\\w+,DC=jasig,DC=org",
+        "cas.authn.x509.principal-type=SERIAL_NO_DN",
+        "cas.authn.policy.any.try-all=true",
+        "cas.authn.x509.crl-fetcher=ldap",
         "cas.authn.x509.ldap.ldap-url=ldap://localhost:1389",
-        "cas.authn.x509.ldap.baseDn=ou=people,dc=example,dc=org",
-        "cas.authn.x509.ldap.searchFilter=cn=X509",
-        "cas.authn.x509.ldap.bindDn=cn=Directory Manager,dc=example,dc=org",
-        "cas.authn.x509.ldap.bindCredential=Password"
+        "cas.authn.x509.ldap.base-dn=ou=people,dc=example,dc=org",
+        "cas.authn.x509.ldap.search-filter=cn=X509",
+        "cas.authn.x509.ldap.bind-dn=cn=Directory Manager,dc=example,dc=org",
+        "cas.authn.x509.ldap.bind-credential=Password"
     })
 public abstract class BaseCertificateCredentialActionTests {
     public static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);

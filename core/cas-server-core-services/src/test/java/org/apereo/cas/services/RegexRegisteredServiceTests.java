@@ -28,7 +28,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  * @author Marvin S. Addison
  * @since 3.4.0
  */
-@Tag("Simple")
+@Tag("RegisteredService")
 public class RegexRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "regexRegisteredService.json");

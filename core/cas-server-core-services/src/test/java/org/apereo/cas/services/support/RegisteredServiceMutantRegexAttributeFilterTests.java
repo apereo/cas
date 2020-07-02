@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Simple")
+@Tag("RegisteredService")
 public class RegisteredServiceMutantRegexAttributeFilterTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "RegisteredServiceMutantRegexAttributeFilterTests.json");
@@ -48,7 +48,7 @@ public class RegisteredServiceMutantRegexAttributeFilterTests {
     @BeforeEach
     public void initialize() {
         MockitoAnnotations.initMocks(this);
-        when(this.registeredService.getName()).thenReturn("sample test service");
+        when(this.registeredService.getName()).thenReturn("Sample test service1");
         when(this.registeredService.getServiceId()).thenReturn("https://www.apereo.org");
         this.filter = new RegisteredServiceMutantRegexAttributeFilter();
 

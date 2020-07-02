@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement;
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClientBuilder;
@@ -64,11 +65,7 @@ public class AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration impl
                 } while (nextToken != null);
             });
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         LOGGER.debug("Located [{}] settings(s)", props.size());
         return new PropertiesPropertySource(getClass().getSimpleName(), props);

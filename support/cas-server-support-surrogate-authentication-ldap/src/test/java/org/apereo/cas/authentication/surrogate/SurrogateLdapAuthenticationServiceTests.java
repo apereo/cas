@@ -10,6 +10,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -71,6 +72,7 @@ import org.springframework.core.io.ClassPathResource;
     CasCoreAuthenticationConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
@@ -81,13 +83,13 @@ import org.springframework.core.io.ClassPathResource;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 }, properties = {
     "cas.authn.surrogate.ldap.ldap-url=ldap://localhost:10389",
-    "cas.authn.surrogate.ldap.baseDn=ou=surrogates,dc=example,dc=org",
-    "cas.authn.surrogate.ldap.bindDn=cn=Directory Manager",
-    "cas.authn.surrogate.ldap.bindCredential=password",
-    "cas.authn.surrogate.ldap.searchFilter=cn={user}",
-    "cas.authn.surrogate.ldap.surrogateSearchFilter=employeeType={surrogate}",
-    "cas.authn.surrogate.ldap.memberAttributeName=mail",
-    "cas.authn.surrogate.ldap.memberAttributeValueRegex=\\\\w+@example.org"
+    "cas.authn.surrogate.ldap.base-dn=ou=surrogates,dc=example,dc=org",
+    "cas.authn.surrogate.ldap.bind-dn=cn=Directory Manager",
+    "cas.authn.surrogate.ldap.bind-credential=password",
+    "cas.authn.surrogate.ldap.search-filter=cn={user}",
+    "cas.authn.surrogate.ldap.surrogate-search-filter=employeeType={surrogate}",
+    "cas.authn.surrogate.ldap.member-attribute-name=mail",
+    "cas.authn.surrogate.ldap.member-attribute-value-regex=\\\\w+@example.org"
 })
 @Getter
 @EnabledIfPortOpen(port = 10389)

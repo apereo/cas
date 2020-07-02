@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @TestPropertySource(properties = "management.endpoint.exportRegisteredServices.enabled=true")
-@Tag("Simple")
+@Tag("ActuatorEndpoint")
 public class ExportRegisteredServicesEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("exportRegisteredServicesEndpoint")

@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -112,7 +113,7 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
             }
 
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw new InsufficientAuthenticationException("Unexpected LDAP error", e);
         }
         throw new BadCredentialsException("Could not authenticate provided credentials");

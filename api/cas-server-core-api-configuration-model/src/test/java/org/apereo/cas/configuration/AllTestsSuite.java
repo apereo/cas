@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration;
 
+import org.apereo.cas.configuration.support.JasyptEncryptionParametersTests;
 import org.apereo.cas.configuration.support.RelaxedPropertyNamesTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -15,6 +16,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     AdditionalMetadataVerificationTests.class,
+    JasyptEncryptionParametersTests.class,
     RelaxedPropertyNamesTests.class
 })
 @RunWith(JUnitPlatform.class)

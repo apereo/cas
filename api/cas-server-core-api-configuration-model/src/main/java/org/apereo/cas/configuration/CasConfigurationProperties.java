@@ -52,7 +52,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Clock;
+import java.time.Instant;
 
 /**
  * This is {@link CasConfigurationProperties}.
@@ -75,7 +76,7 @@ public class CasConfigurationProperties implements Serializable {
     /**
      * Timestamp that indicates the initialization time.
      */
-    private long initializationTime = new Date().getTime();
+    private long initializationTime = Instant.now(Clock.systemUTC()).toEpochMilli();
 
     /**
      * Logging functionality.

@@ -5,6 +5,7 @@ import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.resource.InvalidResourceSetException;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -76,7 +77,7 @@ public class UmaUpdateResourceSetRegistrationEndpointController extends BaseUmaE
         } catch (final InvalidResourceSetException e) {
             return new ResponseEntity(buildResponseEntityErrorModel(e), HttpStatus.BAD_REQUEST);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new ResponseEntity("Unable to complete the resource-set update request.", HttpStatus.BAD_REQUEST);
     }

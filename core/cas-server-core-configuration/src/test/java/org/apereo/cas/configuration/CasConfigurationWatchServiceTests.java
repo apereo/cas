@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class
 })
-@Tag("Simple")
+@Tag("CasConfiguration")
 public class CasConfigurationWatchServiceTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

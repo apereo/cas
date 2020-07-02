@@ -48,4 +48,18 @@ public class RemoteEndpointServiceAccessStrategyTests {
             throw new AssertionError(e.getMessage(), e);
         }
     }
+
+    @Test
+    public void verifyFails() {
+        val strategy = new RemoteEndpointServiceAccessStrategy();
+        strategy.setEndpointUrl("http://localhost:1234");
+        strategy.setAcceptableResponseCodes("600");
+        try (val webServer = new MockWebServer(8756,
+            new ByteArrayResource("OK".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+            assertFalse(strategy.doPrincipalAttributesAllowServiceAccess("casuser", CoreAuthenticationTestUtils.getAttributes()));
+        } catch (final Exception e) {
+            throw new AssertionError(e.getMessage(), e);
+        }
+    }
 }

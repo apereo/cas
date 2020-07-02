@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.nimbusds.jose.JOSEObjectType;
@@ -62,11 +63,7 @@ public class JwtBuilder {
             try {
                 return JWTClaimsSet.parse(jwt);
             } catch (final Exception ex) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.error(e.getMessage(), ex);
-                } else {
-                    LOGGER.error(ex.getMessage());
-                }
+                LoggingUtils.error(LOGGER, ex);
                 throw new IllegalArgumentException("Unable to parse JWT");
             }
         }

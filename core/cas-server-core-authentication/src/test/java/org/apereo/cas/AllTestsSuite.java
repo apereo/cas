@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AcceptUsersAuthenticationHandlerTests;
 import org.apereo.cas.authentication.BasicCredentialMetaDataTests;
 import org.apereo.cas.authentication.CacheCredentialsMetaDataPopulatorTests;
 import org.apereo.cas.authentication.CoreAuthenticationUtilsTests;
+import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlanTests;
 import org.apereo.cas.authentication.DefaultAuthenticationTests;
 import org.apereo.cas.authentication.DefaultPasswordEncoderTests;
 import org.apereo.cas.authentication.FileTrustStoreSslSocketFactoryTests;
@@ -14,6 +15,7 @@ import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalExceptionTest
 import org.apereo.cas.authentication.handler.ConvertCasePrincipalNameTransformerTests;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandlerSystemConfigurationTests;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandlerTests;
+import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandlersConfigurationTests;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordHandlerTests;
 import org.apereo.cas.authentication.metadata.CacheCredentialsCipherExecutorTests;
 import org.apereo.cas.authentication.policy.AllAuthenticationHandlersSucceededAuthenticationPolicyTests;
@@ -42,6 +44,8 @@ import org.junit.runner.RunWith;
     SimplePrincipalTests.class,
     ChainingPrincipalResolverTests.class,
     NullPrincipalTests.class,
+    DefaultAuthenticationEventExecutionPlanTests.class,
+    JaasAuthenticationHandlersConfigurationTests.class,
     PasswordEncoderUtilsTests.class,
     SimplePrincipalFactoryTests.class,
     RememberMeAuthenticationMetaDataPopulatorTests.class,

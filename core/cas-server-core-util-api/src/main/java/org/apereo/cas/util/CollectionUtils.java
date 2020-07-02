@@ -78,6 +78,7 @@ public class CollectionUtils {
      * @param obj the object to convert into a collection
      * @return The collection instance containing the object provided
      */
+    @SuppressWarnings("JdkObsolete")
     public static Set<Object> toCollection(final Object obj) {
         val c = new LinkedHashSet<Object>(MAP_SIZE);
         if (obj == null) {

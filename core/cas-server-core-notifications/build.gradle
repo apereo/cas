@@ -1,0 +1,20 @@
+description = "Apereo CAS Core Notifications"
+dependencies {
+    api project(":api:cas-server-core-api-authentication")
+    api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api-util")
+    api project(":api:cas-server-core-api-web")
+    
+    api project(":core:cas-server-core-util-api")
+
+    implementation libraries.jose4j
+    implementation libraries.nimbus
+    implementation libraries.bouncycastle
+    implementation libraries.semver
+    implementation libraries.oshi
+    implementation libraries.mail
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+}
+

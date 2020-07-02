@@ -20,6 +20,7 @@ import java.util.Date;
  * @since 5.3.0
  */
 @Tag("Simple")
+@SuppressWarnings("JdkObsolete")
 public class ScimV1PrincipalAttributeMapperTests {
     @Test
     public void verifyAction() throws Exception {

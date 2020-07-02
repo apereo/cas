@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
@@ -40,11 +41,18 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends A
     @Test
     public void verifyOperation() {
         val acct = registry.create(UUID.randomUUID().toString());
-        registry.save(acct.getUsername(), acct.getSecretKey(), acct.getValidationCode(), acct.getScratchCodes());
+        val toSave = OneTimeTokenAccount.builder()
+            .username(acct.getUsername())
+            .secretKey(acct.getSecretKey())
+            .validationCode(acct.getValidationCode())
+            .scratchCodes(acct.getScratchCodes())
+            .name(UUID.randomUUID().toString())
+            .build();
+        registry.save(toSave);
         assertNotNull(endpoint.get(acct.getUsername()));
         assertFalse(endpoint.load().isEmpty());
         endpoint.delete(acct.getUsername());
-        assertNull(endpoint.get(acct.getUsername()));
+        assertTrue(endpoint.get(acct.getUsername()).isEmpty());
         endpoint.deleteAll();
         assertTrue(endpoint.load().isEmpty());
     }

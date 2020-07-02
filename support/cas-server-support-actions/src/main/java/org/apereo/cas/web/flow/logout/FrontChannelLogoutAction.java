@@ -37,7 +37,6 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
                                       final RequestContext context) {
 
         val logoutRequests = WebUtils.getLogoutRequests(context);
-        val logoutUrls = new HashMap<SingleLogoutRequest, LogoutHttpMessage>();
 
         if (logoutRequests == null || logoutRequests.isEmpty()) {
             return getFinishLogoutEvent();
@@ -48,6 +47,7 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
             return getFinishLogoutEvent();
         }
 
+        val logoutUrls = new HashMap<SingleLogoutRequest, LogoutHttpMessage>();
         logoutRequests
             .stream()
             .filter(r -> r.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED)

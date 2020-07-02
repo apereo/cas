@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.services.RegisteredServicePublicKey;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.util.CollectionUtils;
@@ -48,9 +49,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.attribute-repository.stub.attributes.givenName=cas-given-name",
         "cas.authn.attribute-repository.stub.attributes.eppn=casuser",
         "cas.authn.attribute-repository.stub.attributes.mismatchedAttributeKey=someValue",
-
         "cas.server.scope=cas.org",
-
         "cas.person-directory.attribute-definition-store.json.location=classpath:/basic-attribute-definitions.json"
     })
 @Tag("Simple")
@@ -94,6 +93,8 @@ public class DefaultAttributeDefinitionStoreTests {
             .encrypted(true)
             .build();
         store.registerAttributeDefinition(defn);
+        assertTrue(store.locateAttributeDefinition("cn", DefaultAttributeDefinition.class).isPresent());
+        assertFalse(store.locateAttributeDefinition("unknown", DefaultAttributeDefinition.class).isPresent());
         val attrs = store.resolveAttributeValues(CoreAuthenticationTestUtils.getAttributes(), service);
         assertFalse(attrs.isEmpty());
         assertTrue(attrs.containsKey("cn"));
@@ -271,4 +272,29 @@ public class DefaultAttributeDefinitionStoreTests {
         assertFalse(store.getAttributeDefinitions().isEmpty());
         assertNotNull(store.locateAttributeDefinition("eduPersonPrincipalName"));
     }
+
+    @Test
+    public void verifyDefinitions() {
+        val defn1 = DefaultAttributeDefinition.builder()
+            .key("cn")
+            .encrypted(true)
+            .build();
+        val defn2 = DefaultAttributeDefinition.builder()
+            .key("cn")
+            .build();
+        assertEquals(0, defn1.compareTo(defn2));
+
+        val store = new DefaultAttributeDefinitionStore(defn1);
+        store.setScope("example.org");
+
+        val service = CoreAuthenticationTestUtils.getRegisteredService();
+        var results = store.resolveAttributeValues("cn", List.of("common-name"), service);
+        assertFalse(results.isEmpty());
+        assertTrue(results.get().getValue().isEmpty());
+
+        when(service.getPublicKey()).thenReturn(mock(RegisteredServicePublicKey.class));
+        results = store.resolveAttributeValues("cn", List.of("common-name"), service);
+        assertTrue(results.get().getValue().isEmpty());
+    }
+
 }

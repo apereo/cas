@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.web.support.InvalidCookieException;
+
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -17,5 +19,12 @@ public class InvalidTicketExceptionTests {
     public void verifyCodeNoThrowable() {
         val t = new InvalidTicketException("InvalidTicketId");
         assertEquals("INVALID_TICKET", t.getCode());
+    }
+
+    @Test
+    public void verifyCodeWithCause() {
+        val cause = new InvalidCookieException("forbidden");
+        val t = new InvalidTicketException(cause, "InvalidTicketId");
+        assertEquals(cause.getCode(), t.getCode());
     }
 }

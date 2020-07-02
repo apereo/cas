@@ -10,6 +10,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
@@ -27,6 +28,9 @@ import org.apereo.cas.config.support.authentication.U2FAuthenticationComponentSe
 import org.apereo.cas.config.support.authentication.U2FAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.support.authentication.U2FAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
+import org.apereo.cas.trusted.config.MultifactorAuthnTrustWebflowConfiguration;
+import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -76,6 +80,10 @@ public abstract class BaseU2FWebflowActionTests {
     protected Action u2fStartRegistrationAction;
 
     @Autowired
+    @Qualifier("u2fStartAuthenticationAction")
+    protected Action u2fStartAuthenticationAction;
+
+    @Autowired
     @Qualifier("u2fDeviceRepository")
     protected U2FDeviceRepository deviceRepository;
 
@@ -96,6 +104,7 @@ public abstract class BaseU2FWebflowActionTests {
         CasCoreWebflowConfiguration.class,
         CasWebflowContextConfiguration.class,
         CasCoreUtilConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCookieConfiguration.class,
@@ -111,10 +120,17 @@ public abstract class BaseU2FWebflowActionTests {
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCoreConfiguration.class,
+
+
+        MultifactorAuthnTrustConfiguration.class,
+        MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
+        MultifactorAuthnTrustWebflowConfiguration.class,
+
         U2FConfiguration.class,
         U2FAuthenticationComponentSerializationConfiguration.class,
         U2FAuthenticationEventExecutionPlanConfiguration.class,
         U2FAuthenticationMultifactorProviderBypassConfiguration.class,
+        U2FWebflowConfiguration.U2FMultifactorTrustConfiguration.class,
         U2FWebflowConfiguration.class
     })
     public static class SharedTestConfiguration {

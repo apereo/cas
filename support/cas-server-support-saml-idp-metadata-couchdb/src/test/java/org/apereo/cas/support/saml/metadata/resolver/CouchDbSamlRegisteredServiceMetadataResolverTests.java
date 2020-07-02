@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -94,6 +95,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlIdPMetadataConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -103,11 +105,13 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CoreSamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class},
+    CasCoreUtilConfiguration.class
+},
     properties = {
         "cas.authn.saml-idp.metadata.location=classpath:",
         "cas.authn.saml-idp.metadata.couch-db.db-name=saml_resolver",
         "cas.authn.saml-idp.metadata.couch-db.username=cas",
+        "cas.authn.saml-idp.metadata.couch-db.caching=false",
         "cas.authn.saml-idp.metadata.couch-db.password=password"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -119,12 +123,13 @@ public class CouchDbSamlRegisteredServiceMetadataResolverTests {
     private SamlRegisteredServiceMetadataResolver resolver;
 
     @Autowired
+    @Qualifier("samlMetadataCouchDbFactory")
+    private CouchDbConnectorFactory couchDbFactory;
+
+    @Autowired
     @Qualifier("samlMetadataDocumentCouchDbRepository")
     private SamlMetadataDocumentCouchDbRepository couchDbRepository;
 
-    @Autowired
-    @Qualifier("samlMetadataCouchDbFactory")
-    private CouchDbConnectorFactory couchDbFactory;
 
     @BeforeEach
     public void setUp() {

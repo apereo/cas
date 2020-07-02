@@ -11,8 +11,6 @@ dependencies {
     implementation libraries.pac4jcore
     implementation libraries.nimbus
     implementation libraries.bouncycastle
-    implementation libraries.mail
-
     implementation libraries.semver
     implementation libraries.oshi
 }

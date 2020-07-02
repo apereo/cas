@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +79,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         } catch (final NoResultException e) {
             LOGGER.debug("No record could be found for ticket [{}]", ticketId);
         } catch (final Exception e) {
-            LOGGER.error("Error getting ticket [{}] from registry.", ticketId, e);
+            LOGGER.error("Error getting ticket [{}] from registry.", ticketId);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

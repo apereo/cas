@@ -1,9 +1,11 @@
 package org.apereo.cas.util.cipher;
 
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,7 +29,7 @@ import java.security.Key;
  * @since 4.1
  */
 @Slf4j
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Setter
 @Getter
 public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Serializable, String> {
@@ -60,28 +62,28 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      * @param signingKeySize      the signing key size
      * @param encryptionKeySize   the encryption key size
      */
-    public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
+    protected BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                     final boolean encryptionEnabled, final boolean signingEnabled,
                                     final int signingKeySize, final int encryptionKeySize) {
         this(secretKeyEncryption, secretKeySigning, CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM,
             encryptionEnabled, signingEnabled, signingKeySize, encryptionKeySize);
     }
 
-    public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
+    protected BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                     final boolean encryptionEnabled,
                                     final int signingKeySize,
                                     final int encryptionKeySize) {
         this(secretKeyEncryption, secretKeySigning, encryptionEnabled, true, signingKeySize, encryptionKeySize);
     }
 
-    public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
+    protected BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                     final String contentEncryptionAlgorithmIdentifier,
                                     final int signingKeySize,
                                     final int encryptionKeySize) {
         this(secretKeyEncryption, secretKeySigning, contentEncryptionAlgorithmIdentifier, true, true, signingKeySize, encryptionKeySize);
     }
 
-    public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
+    protected BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                     final int signingKeySize,
                                     final int encryptionKeySize) {
         this(secretKeyEncryption, secretKeySigning, CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM,
@@ -89,7 +91,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     }
 
 
-    public BaseStringCipherExecutor(final String secretKeyEncryption,
+    protected BaseStringCipherExecutor(final String secretKeyEncryption,
                                     final String secretKeySigning,
                                     final String contentEncryptionAlgorithmIdentifier,
                                     final boolean encryptionEnabled,
@@ -162,11 +164,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                 configureEncryptionKeyFromPublicKeyResource(secretKeyToUse);
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             if (this.secretKeyEncryptionKey == null) {
                 LOGGER.trace("Creating encryption key instance based on provided secret key");

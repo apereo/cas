@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-
 @UtilityClass
 public class Beans {
 
@@ -75,21 +74,20 @@ public class Beans {
         return dao;
     }
 
-
     /**
      * New duration. If the provided length is duration,
      * it will be parsed accordingly, or if it's a numeric value
      * it will be pared as a duration assuming it's provided as seconds.
      *
-     * @param length the length in seconds.
+     * @param value the length in seconds.
      * @return the duration
      */
     @SneakyThrows
-    public static Duration newDuration(final String length) {
-        if (NumberUtils.isCreatable(length)) {
-            return Duration.ofSeconds(Long.parseLong(length));
+    public static Duration newDuration(final String value) {
+        if (NumberUtils.isCreatable(value)) {
+            return Duration.ofSeconds(Long.parseLong(value));
         }
-        return Duration.parse(length);
+        return Duration.parse(value);
     }
 
     @SneakyThrows

@@ -4,6 +4,7 @@ import org.apereo.cas.api.PrincipalProvisioner;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.unboundid.scim2.client.ScimService;
 import com.unboundid.scim2.common.types.UserResource;
@@ -60,7 +61,7 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
             }
             return createUserResource(p, credential);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

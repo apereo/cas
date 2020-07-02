@@ -14,7 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {
     "cas.audit.jdbc.user=postgres",
     "cas.audit.jdbc.password=password",
-    "cas.audit.jdbc.driverClass=org.postgresql.Driver",
+    "cas.audit.jdbc.driver-class=org.postgresql.Driver",
     "cas.audit.jdbc.url=jdbc:postgresql://localhost:5432/audit",
     "cas.audit.jdbc.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
 })

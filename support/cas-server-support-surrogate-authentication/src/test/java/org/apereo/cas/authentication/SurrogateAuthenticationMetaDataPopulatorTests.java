@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class SurrogateAuthenticationMetaDataPopulatorTests {
     @Test
     public void verifyAction() {

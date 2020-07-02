@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.util;
 
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.SneakyThrows;
@@ -18,7 +19,6 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -27,13 +27,8 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
 import java.security.KeyStore;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SignatureException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,9 +44,56 @@ import java.util.Arrays;
 @ShellComponent
 @Slf4j
 public class ValidateEndpointCommand {
+    /**
+     * Validate endpoint.
+     *
+     * @param url     the url
+     * @param proxy   the proxy
+     * @param timeout the timeout
+     * @return true/false
+     */
+    @ShellMethod(key = "validate-endpoint", value = "Test connections to an endpoint to verify connectivity, SSL, etc")
+    public boolean validateEndpoint(
+        @ShellOption(value = {"url", "--url"},
+            help = "Endpoint URL to test") final String url,
+        @ShellOption(value = {"proxy", "--proxy"},
+            help = "Proxy address to use when testing the endpoint url",
+            defaultValue = StringUtils.EMPTY) final String proxy,
+        @ShellOption(value = {"timeout", "--timeout"},
+            help = "Timeout to use in milliseconds when testing the url",
+            defaultValue = "5000") final int timeout) {
+
+        try {
+            LOGGER.info("Trying to connect to [{}]", url);
+            val conn = createConnection(url, proxy);
+
+            LOGGER.info("Setting connection timeout to [{}]", timeout);
+            conn.setConnectTimeout(timeout);
+
+            try (val reader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
+                 val in = new BufferedReader(reader)) {
+                in.readLine();
+
+                if (conn instanceof HttpURLConnection) {
+                    val code = ((HttpURLConnection) conn).getResponseCode();
+                    LOGGER.info("Response status code received: [{}]", code);
+                }
+                LOGGER.info("Successfully connected to url [{}]", url);
+                return true;
+            }
+        } catch (final Exception e) {
+            LOGGER.info("Could not connect to the host address [{}]", url);
+            LOGGER.info("The error is: [{}]", e.getMessage());
+            LOGGER.info("Here are the details:");
+            LOGGER.error(consolidateExceptionMessages(e));
+            testBadTlsConnection(url, proxy);
+        }
+        return false;
+    }
+
     private static X509TrustManager[] getSystemTrustManagers() {
         try {
-            var trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init((KeyStore) null);
             LOGGER.info("Detected Truststore: [{}]", trustManagerFactory.getProvider().getName());
             val trustManagers = trustManagerFactory.getTrustManagers();
@@ -114,7 +156,7 @@ public class ValidateEndpointCommand {
                 tlsConnectionReport(httpsConnection);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage());
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -125,7 +167,7 @@ public class ValidateEndpointCommand {
         try {
             certificates = httpsConnection.getServerCertificates();
         } catch (final SSLPeerUnverifiedException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw new RuntimeException(e);
         }
 
@@ -150,15 +192,14 @@ public class ValidateEndpointCommand {
         }
     }
 
-    private static String checkTrustedCertStatus(final X509Certificate certificate, final X509TrustManager[] trustManagers) {
-
+    private static String checkTrustedCertStatus(final X509Certificate certificate,
+                                                 final X509TrustManager[] trustManagers) {
         for (val trustManager : trustManagers) {
             for (val trustedCert : trustManager.getAcceptedIssuers()) {
                 try {
                     certificate.verify(trustedCert.getPublicKey());
                     return "Matches found: " + trustedCert.getIssuerDN().getName();
-                } catch (final CertificateException | NoSuchAlgorithmException
-                    | InvalidKeyException | NoSuchProviderException | SignatureException e) {
+                } catch (final Exception e) {
                     LOGGER.trace("[{}]: [{}]", trustedCert.getIssuerDN().getName(), e.getMessage());
                 }
             }
@@ -188,53 +229,6 @@ public class ValidateEndpointCommand {
 
         }}, null);
         return sslContext;
-    }
-
-    /**
-     * Validate endpoint.
-     *
-     * @param url     the url
-     * @param proxy   the proxy
-     * @param timeout the timeout
-     * @return true/false
-     */
-    @ShellMethod(key = "validate-endpoint", value = "Test connections to an endpoint to verify connectivity, SSL, etc")
-    public boolean validateEndpoint(
-        @ShellOption(value = {"url", "--url"},
-            help = "Endpoint URL to test") final String url,
-        @ShellOption(value = {"proxy", "--proxy"},
-            help = "Proxy address to use when testing the endpoint url",
-            defaultValue = StringUtils.EMPTY) final String proxy,
-        @ShellOption(value = {"timeout", "--timeout"},
-            help = "Timeout to use in milliseconds when testing the url",
-            defaultValue = "5000") final int timeout) {
-
-        try {
-            LOGGER.info("Trying to connect to [{}]", url);
-            val conn = createConnection(url, proxy);
-
-            LOGGER.info("Setting connection timeout to [{}]", timeout);
-            conn.setConnectTimeout(timeout);
-
-            try (val reader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
-                 val in = new BufferedReader(reader)) {
-                in.readLine();
-
-                if (conn instanceof HttpURLConnection) {
-                    val code = ((HttpURLConnection) conn).getResponseCode();
-                    LOGGER.info("Response status code received: [{}]", code);
-                }
-                LOGGER.info("Successfully connected to url [{}]", url);
-                return true;
-            }
-        } catch (final Exception e) {
-            LOGGER.info("Could not connect to the host address [{}]", url);
-            LOGGER.info("The error is: [{}]", e.getMessage());
-            LOGGER.info("Here are the details:");
-            LOGGER.error(consolidateExceptionMessages(e));
-            testBadTlsConnection(url, proxy);
-        }
-        return false;
     }
 }
 

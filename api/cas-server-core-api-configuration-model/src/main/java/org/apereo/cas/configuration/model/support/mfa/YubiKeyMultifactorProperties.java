@@ -56,9 +56,9 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
     private transient Resource jsonFile;
 
     /**
-     * Collection of allowed devices whitelisted per user.
+     * Collection of allowed devices allowed per user.
      * This is done using a key-value structure where the key is the user
-     * the value is the whitelisted collection of yubikey device ids.
+     * the value is the allowed collection of yubikey device ids.
      */
     private Map<String, String> allowedDevices = new LinkedHashMap<>(1);
 

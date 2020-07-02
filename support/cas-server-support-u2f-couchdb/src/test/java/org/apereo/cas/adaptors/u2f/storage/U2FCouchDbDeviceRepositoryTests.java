@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class},
     properties = {
         "cas.authn.mfa.u2f.couch-db.asynchronous=false",
+        "cas.authn.mfa.u2f.couch-db.caching=false",
         "cas.authn.mfa.u2f.couch-db.username=cas",
         "cas.authn.mfa.u2f.couch-db.password=password"
     })
@@ -57,6 +58,7 @@ public class U2FCouchDbDeviceRepositoryTests extends AbstractU2FDeviceRepository
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
+
     }
 
     @AfterEach

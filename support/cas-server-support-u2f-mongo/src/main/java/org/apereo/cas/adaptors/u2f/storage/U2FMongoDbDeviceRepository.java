@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
@@ -61,18 +62,14 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
                     try {
                         return DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord()));
                     } catch (final Exception e) {
-                        LOGGER.error(e.getMessage(), e);
+                        LoggingUtils.error(LOGGER, e);
                     }
                     return null;
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }
@@ -101,11 +98,7 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
             query.addCriteria(Criteria.where("createdDate").lte(expirationDate));
             this.mongoTemplate.remove(query, U2FDeviceRegistration.class, this.collectionName);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -116,11 +109,7 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
             query.addCriteria(Criteria.where("createdDate").exists(true));
             this.mongoTemplate.remove(query, U2FDeviceRegistration.class, this.collectionName);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
     }
 }

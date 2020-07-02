@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author David Rodriguez
  * @since 5.0.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class DefaultAuthenticationTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultAuthentication.json");

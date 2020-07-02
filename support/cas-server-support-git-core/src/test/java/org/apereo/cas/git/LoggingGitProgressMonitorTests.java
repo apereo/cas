@@ -20,7 +20,7 @@ public class LoggingGitProgressMonitorTests {
         val monitor = new LoggingGitProgressMonitor();
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() throws Throwable {
+            public void execute() {
                 monitor.onUpdate("taskName", 10);
                 monitor.onUpdate("taskName", 10, 100, 10);
                 monitor.onEndTask("taskName", 10, 100, 10);

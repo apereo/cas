@@ -9,6 +9,7 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -18,59 +19,79 @@ import java.util.Collection;
  * @since 6.0.0
  */
 @Slf4j
-public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorCredentialRepository {
-
-    /**
-     * CouchDb instance for tokens storage.
-     */
-    private final GoogleAuthenticatorAccountCouchDbRepository couchDb;
+public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
+    private final GoogleAuthenticatorAccountCouchDbRepository couchDbRepository;
 
     public CouchDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-                                                               final GoogleAuthenticatorAccountCouchDbRepository googleAuthenticatorAccountRepository,
+                                                               final GoogleAuthenticatorAccountCouchDbRepository couchDbRepository,
                                                                final CipherExecutor<String, String> tokenCredentialCipher) {
-        super(googleAuthenticator, tokenCredentialCipher);
-        this.couchDb = googleAuthenticatorAccountRepository;
+        super(tokenCredentialCipher, googleAuthenticator);
+        this.couchDbRepository = couchDbRepository;
     }
 
     @Override
-    public OneTimeTokenAccount get(final String username) {
-        val tokenAccount = couchDb.findOneByUsername(username);
-        if (tokenAccount == null) {
+    public OneTimeTokenAccount get(final String username, final long id) {
+        return this.couchDbRepository.findByIdAndUsername(id, username);
+    }
+
+    @Override
+    public OneTimeTokenAccount get(final long id) {
+        return this.couchDbRepository.findById(id);
+    }
+
+    @Override
+    public Collection<? extends OneTimeTokenAccount> get(final String username) {
+        val accounts = couchDbRepository.findByUsername(username);
+        if (accounts == null || accounts.isEmpty()) {
             LOGGER.debug("No record could be found for google authenticator id [{}]", username);
-            return null;
+            return new ArrayList<>(0);
         }
-        return decode(tokenAccount);
+        return decode(accounts);
     }
 
     @Override
     public Collection<? extends OneTimeTokenAccount> load() {
-        return couchDb.getAll();
+        return couchDbRepository.getAll();
+    }
+
+    @Override
+    public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
+        return update(account);
     }
 
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
-        val couchDbOneTimeTokenAccount = couchDb.findOneByUsername(account.getUsername());
-        if (couchDbOneTimeTokenAccount == null) {
-            val newAccount = new CouchDbGoogleAuthenticatorAccount(encode(account));
-            couchDb.add(newAccount);
+        val records = couchDbRepository.findByUsername(account.getUsername());
+        if (records == null || records.isEmpty()) {
+            val newAccount = CouchDbGoogleAuthenticatorAccount.from(encode(account));
+            couchDbRepository.add(newAccount);
             return newAccount;
         }
-        couchDb.update(couchDbOneTimeTokenAccount.update(encode(account)));
-        return couchDbOneTimeTokenAccount;
+        records.stream()
+            .filter(rec -> rec.getId() == account.getId())
+            .map(CouchDbGoogleAuthenticatorAccount.class::cast)
+            .findFirst()
+            .ifPresent(act -> couchDbRepository.update(CouchDbGoogleAuthenticatorAccount.from(account)));
+        return account;
     }
 
     @Override
     public void deleteAll() {
-        couchDb.getAll().forEach(couchDb::deleteTokenAccount);
+        couchDbRepository.getAll().forEach(couchDbRepository::deleteTokenAccount);
     }
 
     @Override
     public void delete(final String username) {
-        couchDb.findByUsername(username).forEach(couchDb::deleteTokenAccount);
+        couchDbRepository.findByUsername(username).forEach(couchDbRepository::deleteTokenAccount);
     }
 
     @Override
     public long count() {
-        return couchDb.count();
+        return couchDbRepository.count();
+    }
+
+    @Override
+    public long count(final String username) {
+        return couchDbRepository.count(username);
     }
 }

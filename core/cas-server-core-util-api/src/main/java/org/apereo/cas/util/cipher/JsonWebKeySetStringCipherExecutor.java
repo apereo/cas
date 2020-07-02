@@ -1,5 +1,6 @@
 package org.apereo.cas.util.cipher;
 
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 
 import lombok.Setter;
@@ -60,11 +61,7 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
                 val reloadedJson = FileUtils.readFileToString(jwksKeystore, StandardCharsets.UTF_8);
                 this.webKeySet = new JsonWebKeySet(reloadedJson);
             } catch (final Exception e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.error(e.getMessage(), e);
-                } else {
-                    LOGGER.error(e.getMessage());
-                }
+                LoggingUtils.error(LOGGER, e);
             }
         });
 

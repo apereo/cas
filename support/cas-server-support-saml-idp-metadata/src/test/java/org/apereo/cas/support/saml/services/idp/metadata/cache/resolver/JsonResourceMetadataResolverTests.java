@@ -55,7 +55,7 @@ public class JsonResourceMetadataResolverTests extends BaseSamlIdPServicesTests 
      * Make sure default file:/etc/cas/saml URI syntax is parsed correctly.
      */
     @Test
-    public void verifyResolverResolvesWithFileUri() throws Exception {
+    public void verifyResolverResolvesWithFileUri() {
         val props = new SamlIdPProperties();
         props.getMetadata().setLocation("file:/etc/cas/saml");
         val resolver = new JsonResourceMetadataResolver(props, openSamlConfigBean);

@@ -1,6 +1,8 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
@@ -29,63 +31,97 @@ import java.util.stream.Collectors;
 @Getter
 public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
     private static final String KEY_SEPARATOR = ":";
+
     private static final String CAS_PREFIX = RedisGoogleAuthenticatorTokenCredentialRepository.class.getSimpleName();
 
-    private final RedisTemplate template;
+    private final RedisTemplate<String, List<? extends OneTimeTokenAccount>> template;
 
     public RedisGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-                                                             final RedisTemplate template,
+                                                             final RedisTemplate<String, List<? extends OneTimeTokenAccount>> template,
                                                              final CipherExecutor<String, String> tokenCredentialCipher) {
         super(tokenCredentialCipher, googleAuthenticator);
         this.template = template;
     }
 
     @Override
-    public OneTimeTokenAccount get(final String username) {
+    public OneTimeTokenAccount get(final String username, final long id) {
         try {
-            val redisKey = getGoogleAuthenticatorRedisKey(username);
-            val ops = this.template.boundValueOps(redisKey);
-            val r = (OneTimeTokenAccount) ops.get();
-            if (r != null) {
-                return decode(r);
+            val keys = getGoogleAuthenticatorTokenKeys(username, String.valueOf(id));
+            if (keys != null && keys.size() == 1) {
+                val r = this.template.boundValueOps(keys.iterator().next()).get();
+                if (r != null && !r.isEmpty()) {
+                    return decode(r.get(0));
+                }
             }
+
         } catch (final NoResultException e) {
-            LOGGER.debug("No record could be found for google authenticator id [{}]", username);
+            LOGGER.debug("No record could be found for google authenticator id [{}]", id);
         }
         return null;
     }
 
     @Override
-    public Collection<? extends OneTimeTokenAccount> load() {
+    public OneTimeTokenAccount get(final long id) {
         try {
-            return getGoogleAuthenticatorTokenKeys()
+            val keys = getGoogleAuthenticatorTokenKeys("*", String.valueOf(id));
+            if (keys != null && keys.size() == 1) {
+                val r = this.template.boundValueOps(keys.iterator().next()).get();
+                if (r != null && !r.isEmpty()) {
+                    return decode(r.get(0));
+                }
+            }
+
+        } catch (final NoResultException e) {
+            LOGGER.debug("No record could be found for google authenticator id [{}]", id);
+        }
+        return null;
+    }
+
+    @Override
+    public Collection<? extends OneTimeTokenAccount> get(final String username) {
+        try {
+            val keys = getGoogleAuthenticatorTokenKeys(username, "*");
+            return keys
                 .stream()
-                .map(redisKey -> this.template.boundValueOps(redisKey).get())
+                .map(key -> this.template.boundValueOps(key).get())
                 .filter(Objects::nonNull)
-                .map(r -> (OneTimeTokenAccount) r)
                 .map(this::decode)
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
                 .collect(Collectors.toList());
-        } catch (final Exception e) {
-            LOGGER.error("No record could be found for google authenticator", e);
+        } catch (final NoResultException e) {
+            LOGGER.debug("No record could be found for google authenticator id [{}]", username);
         }
         return new ArrayList<>(0);
     }
 
     @Override
-    public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
-        val account = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
-        update(account);
+    public Collection<? extends OneTimeTokenAccount> load() {
+        try {
+            return (Collection) getGoogleAuthenticatorTokenKeys()
+                .stream()
+                .map(redisKey -> this.template.boundValueOps(redisKey).get())
+                .filter(Objects::nonNull)
+                .map(this::decode)
+                .collect(Collectors.toList());
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return new ArrayList<>(0);
+    }
+
+    @Override
+    public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
+        return update(account);
     }
 
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         val encodedAccount = encode(account);
-
-        val redisKey = getGoogleAuthenticatorRedisKey(account.getUsername());
+        val redisKey = getGoogleAuthenticatorRedisKey(account);
         LOGGER.trace("Saving [{}] using key [{}]", encodedAccount, redisKey);
         val ops = this.template.boundValueOps(redisKey);
-        ops.set(encodedAccount);
-
+        ops.set(CollectionUtils.wrapList(encodedAccount));
         return encodedAccount;
     }
 
@@ -97,19 +133,19 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
             this.template.delete(redisKey);
             LOGGER.trace("Deleted tokens");
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
     @Override
     public void delete(final String username) {
         try {
-            val redisKey = getGoogleAuthenticatorTokenKeys(username);
+            val redisKey = getGoogleAuthenticatorTokenKeys(username, "*");
             LOGGER.trace("Deleting tokens using key [{}]", redisKey);
             this.template.delete(redisKey);
             LOGGER.trace("Deleted tokens");
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -119,23 +155,34 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
             val keys = getGoogleAuthenticatorTokenKeys();
             return keys.size();
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
         return 0;
     }
 
-    private static String getGoogleAuthenticatorRedisKey(final String username) {
-        return CAS_PREFIX + KEY_SEPARATOR + username;
+    @Override
+    public long count(final String username) {
+        try {
+            val keys = getGoogleAuthenticatorTokenKeys(username, "*");
+            return keys.size();
+        } catch (final Exception e) {
+            LoggingUtils.warn(LOGGER, e);
+        }
+        return 0;
     }
 
-    private Set<String> getGoogleAuthenticatorTokenKeys(final String username) {
-        val key = CAS_PREFIX + KEY_SEPARATOR + username;
+    private static String getGoogleAuthenticatorRedisKey(final OneTimeTokenAccount account) {
+        return CAS_PREFIX + KEY_SEPARATOR + account.getUsername() + KEY_SEPARATOR + account.getId();
+    }
+
+    private Set<String> getGoogleAuthenticatorTokenKeys(final String username, final String id) {
+        val key = CAS_PREFIX + KEY_SEPARATOR + username + KEY_SEPARATOR + id;
         LOGGER.trace("Fetching Google Authenticator records based on key [{}]", key);
         return this.template.keys(key);
     }
 
     private Set<String> getGoogleAuthenticatorTokenKeys() {
-        val key = CAS_PREFIX + KEY_SEPARATOR + '*';
+        val key = CAS_PREFIX + KEY_SEPARATOR + "*:*";
         LOGGER.trace("Fetching Google Authenticator records based on key [{}]", key);
         return this.template.keys(key);
     }

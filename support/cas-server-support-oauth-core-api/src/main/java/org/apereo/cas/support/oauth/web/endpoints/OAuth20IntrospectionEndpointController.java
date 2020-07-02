@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -60,8 +61,7 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
         if (isAuthenticationFailure) {
             headers.add(HttpHeaders.WWW_AUTHENTICATE, "Basic");
         }
-        val result = (ResponseEntity<OAuth20IntrospectionAccessTokenResponse>) new ResponseEntity(value, headers, HttpStatus.UNAUTHORIZED);
-        return result;
+        return (ResponseEntity<OAuth20IntrospectionAccessTokenResponse>) new ResponseEntity(value, headers, HttpStatus.UNAUTHORIZED);
     }
 
     /**
@@ -74,8 +74,7 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
         val map = new LinkedMultiValueMap<String, String>(1);
         map.add(OAuth20Constants.ERROR, code);
         val value = OAuth20Utils.toJson(map);
-        val result = (ResponseEntity<OAuth20IntrospectionAccessTokenResponse>) new ResponseEntity(value, HttpStatus.BAD_REQUEST);
-        return result;
+        return (ResponseEntity<OAuth20IntrospectionAccessTokenResponse>) new ResponseEntity(value, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -145,7 +144,7 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
                 result = new ResponseEntity<>(introspect, HttpStatus.OK);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             result = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return result;

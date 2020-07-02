@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.pm.LdapPasswordManagementPrope
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -161,7 +162,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 .findFirst()
                 .orElse(null);
         } catch (final Exception e) {
-            LOGGER.error("Error finding phone: {}", e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -200,7 +201,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
             return results.stream().allMatch(result -> result);
         } catch (final Exception e) {
-            LOGGER.error("Error changing password: {}", e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

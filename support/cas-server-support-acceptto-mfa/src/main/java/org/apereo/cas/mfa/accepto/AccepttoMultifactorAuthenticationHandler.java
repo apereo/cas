@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.model.support.mfa.AccepttoMultifactorPropert
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -114,20 +115,12 @@ public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPost
                     LOGGER.warn("Unable to fetch a response from [{}]", url);
                 }
             } catch (final Exception e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.error(e.getMessage(), e);
-                } else {
-                    LOGGER.error(e.getMessage());
-                }
+                LoggingUtils.error(LOGGER, e);
             } finally {
                 HttpUtils.close(response);
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         throw new FailedLoginException("Acceptto authentication has failed");
     }

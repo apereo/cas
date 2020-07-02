@@ -8,6 +8,7 @@ import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -27,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 6.0.0
  */
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseUmaEndpointController {
     /**
      * Json object mapper instance.

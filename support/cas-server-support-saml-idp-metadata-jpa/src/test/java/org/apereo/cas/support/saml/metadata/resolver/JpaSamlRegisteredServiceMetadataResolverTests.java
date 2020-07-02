@@ -41,5 +41,7 @@ public class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMe
         assertTrue(resolver.supports(service));
         val resolvers = resolver.resolve(service);
         assertTrue(resolvers.size() == 1);
+
+        assertTrue(resolver.isAvailable(service));
     }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.cassandra;
 
 import org.apereo.cas.configuration.model.support.cassandra.authentication.BaseCassandraProperties;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.google.common.base.Splitter;
@@ -44,7 +45,7 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
             LOGGER.trace("Closing Cassandra session");
             session.close();
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 

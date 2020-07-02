@@ -32,6 +32,7 @@ import org.springframework.boot.test.context.SpringBootTest;
         "cas.audit.couch-db.db-name=throttle",
         "cas.audit.couch-db.asynchronous=false",
         "cas.audit.couch-db.username=cas",
+        "cas.audit.couch-db.caching=false",
         "cas.audit.couch-db.password=password",
         "cas.authn.throttle.username-parameter=username",
         "cas.authn.throttle.failure.range-seconds=5"
@@ -57,6 +58,7 @@ public class CouchDbThrottledSubmissionHandlerInterceptorAdapterTests extends
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
+
     }
 
     @AfterEach
