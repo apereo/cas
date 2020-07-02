@@ -14,38 +14,31 @@ import org.springframework.http.MediaType;
 import java.util.Collection;
 
 /**
- * This is {@link RegisteredAuthnHandlersEndpoint}.
+ * This is {@link RegisteredAuthenticationHandlersEndpoint}.
  *
  * @author Francesco Chicchiriccò
  * @since 6.3.0
  */
-@Endpoint(id = "registeredAuthnHandlers", enableByDefault = false)
-public class RegisteredAuthnHandlersEndpoint extends BaseCasActuatorEndpoint {
+@Endpoint(id = "authenticationHandlers", enableByDefault = false)
+public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEndpoint {
 
     private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
-    /**
-     * Instantiates a new mvc endpoint.
-     * Endpoints are by default sensitive.
-     *
-     * @param casProperties the cas properties
-     * @param authenticationEventExecutionPlan the authentication event execution plan
-     */
-    public RegisteredAuthnHandlersEndpoint(
-            final CasConfigurationProperties casProperties,
-            final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+    public RegisteredAuthenticationHandlersEndpoint(
+        final CasConfigurationProperties casProperties,
+        final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
 
         super(casProperties);
         this.authenticationEventExecutionPlan = authenticationEventExecutionPlan;
     }
 
     /**
-     * Handle and produce a list of authn handlers from uthentication event execution plan.
+     * Handle and produce a list of authn handlers from authentication event execution plan.
      *
      * @return the web async task
      */
     @ReadOperation(produces = {
-        ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE })
+        ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     public Collection<AuthenticationHandler> handle() {
         return this.authenticationEventExecutionPlan.getAuthenticationHandlers();
     }
@@ -57,10 +50,10 @@ public class RegisteredAuthnHandlersEndpoint extends BaseCasActuatorEndpoint {
      * @return the authentication handler
      */
     @ReadOperation(produces = {
-        ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE })
+        ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     public AuthenticationHandler fetchAuthnHandler(@Selector final String name) {
         return this.authenticationEventExecutionPlan.getAuthenticationHandlers().stream().
-                filter(authnHandler -> authnHandler.getName().equals(name)).
-                findFirst().orElse(null);
+            filter(authnHandler -> authnHandler.getName().equals(name)).
+            findFirst().orElse(null);
     }
 }

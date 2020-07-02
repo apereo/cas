@@ -72,7 +72,7 @@ There were no compatibility issues discovered during the upgrade and the configu
 
 ### Test Coverage via CodeCov
 
-CAS test coverage across all modules in the codebase has now reached `80%` and continues to climb. Additional validation rules are also applied to fail all pull requests that fall below this threshold. This area will be closely monitored and improved
+CAS test coverage across all modules in the codebase has now reached `82%` and continues to climb. Additional validation rules are also applied to fail all pull requests that fall below this threshold. This area will be closely monitored and improved
 as progress is made with the goal of hopefully reaching at least `85%` before the final GA release. Of course, this will not be a blocker for the final release.
 
 ### Redis Cluster Support

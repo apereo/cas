@@ -17,7 +17,8 @@ import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.web.report.ExportRegisteredServicesEndpoint;
-import org.apereo.cas.web.report.RegisteredAuthnHandlersEndpoint;
+import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpoint;
+import org.apereo.cas.web.report.RegisteredAuthenticationPoliciesEndpoint;
 import org.apereo.cas.web.report.RegisteredServicesEndpoint;
 import org.apereo.cas.web.report.SingleSignOnSessionStatusEndpoint;
 import org.apereo.cas.web.report.SingleSignOnSessionsEndpoint;
@@ -118,8 +119,14 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public RegisteredAuthnHandlersEndpoint registeredAuthnHandlersEndpoint() {
-        return new RegisteredAuthnHandlersEndpoint(casProperties, authenticationEventExecutionPlan.getObject());
+    public RegisteredAuthenticationHandlersEndpoint registeredAuthenticationHandlersEndpoint() {
+        return new RegisteredAuthenticationHandlersEndpoint(casProperties, authenticationEventExecutionPlan.getObject());
+    }
+
+    @Bean
+    @ConditionalOnAvailableEndpoint
+    public RegisteredAuthenticationPoliciesEndpoint registeredAuthenticationPoliciesEndpoint() {
+        return new RegisteredAuthenticationPoliciesEndpoint(casProperties, authenticationEventExecutionPlan.getObject());
     }
 
     @Bean

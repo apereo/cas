@@ -188,14 +188,19 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
-    public Collection<AuthenticationPolicy> getAuthenticationPolicies(final AuthenticationTransaction transaction) {
-        val handlerResolvers = getAuthenticationPolicyResolvers(transaction);
-        LOGGER.debug("Authentication policy resolvers for this transaction are [{}]", handlerResolvers);
-
+    public Collection<AuthenticationPolicy> getAuthenticationPolicies() {
         val list = new ArrayList<>(this.authenticationPolicies);
         AnnotationAwareOrderComparator.sort(list);
         LOGGER.trace("Candidate authentication policies for this transaction are [{}]", list);
+        return list;
+    }
 
+    @Override
+    public Collection<AuthenticationPolicy> getAuthenticationPolicies(final AuthenticationTransaction transaction) {
+        val handlerResolvers = getAuthenticationPolicyResolvers(transaction);
+        LOGGER.debug("Authentication policy resolvers for this transaction are [{}]", handlerResolvers);
+        
+        val list = getAuthenticationPolicies();
         val resolvedPolicies = handlerResolvers.stream()
             .filter(r -> r.supports(transaction))
             .map(r -> r.resolve(transaction))
