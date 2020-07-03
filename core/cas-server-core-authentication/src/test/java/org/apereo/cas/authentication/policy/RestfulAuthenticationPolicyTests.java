@@ -71,8 +71,8 @@ public class RestfulAuthenticationPolicyTests {
             webServer.start();
             val policy = new RestfulAuthenticationPolicy("http://localhost:" + port);
             assertThrowsWithRootCause(GeneralSecurityException.class, exceptionClass,
-                () -> assertTrue(policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
-                    new LinkedHashSet<>(), applicationContext, Optional.empty())));
+                () -> policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
+                    new LinkedHashSet<>(), applicationContext, Optional.empty()));
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }
