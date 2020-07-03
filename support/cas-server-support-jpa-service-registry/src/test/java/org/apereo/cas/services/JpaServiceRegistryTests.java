@@ -6,6 +6,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,14 +32,10 @@ import org.springframework.test.annotation.DirtiesContext;
 })
 @Tag("JDBC")
 @DirtiesContext
+@Getter
 public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     @Qualifier("jpaServiceRegistry")
-    protected ServiceRegistry serviceRegistry;
-
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return this.serviceRegistry;
-    }
+    protected ServiceRegistry newServiceRegistry;
 }

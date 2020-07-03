@@ -10,6 +10,7 @@ import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,13 +41,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @Tag("Cassandra")
 @EnabledIfPortOpen(port = 9042)
+@Getter
 public class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("cassandraServiceRegistry")
-    private ServiceRegistry dao;
-
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return this.dao;
-    }
+    private ServiceRegistry newServiceRegistry;
 }

@@ -18,6 +18,7 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 
+import lombok.Getter;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
@@ -73,17 +74,12 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAutoConfiguration
 @Tag("RestfulApi")
+@Getter
 public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
-
 
     @Autowired
     @Qualifier("restfulServiceRegistry")
-    private ServiceRegistry dao;
-
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return dao;
-    }
+    private ServiceRegistry newServiceRegistry;
 
     @TestConfiguration
     @Lazy(false)

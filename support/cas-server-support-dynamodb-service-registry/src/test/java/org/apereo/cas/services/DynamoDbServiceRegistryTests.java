@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.DynamoDbServiceRegistryConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -35,6 +36,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     })
 @Tag("DynamoDb")
 @EnabledIfPortOpen(port = 8000)
+@Getter
 public class DynamoDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
     static {
@@ -44,10 +46,5 @@ public class DynamoDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     @Qualifier("serviceRegistry")
-    private ServiceRegistry serviceRegistry;
-
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return this.serviceRegistry;
-    }
+    private ServiceRegistry newServiceRegistry;
 }

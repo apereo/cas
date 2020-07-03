@@ -85,11 +85,6 @@ public class EncodedTicket implements Ticket {
     }
 
     @Override
-    public String getPrefix() {
-        return this.prefix;
-    }
-
-    @Override
     @JsonIgnore
     public ZonedDateTime getCreationTime() {
         LOGGER.trace(getOpNotSupportedMessage("[Retrieving ticket creation time]"));

@@ -23,14 +23,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@SpringBootTest(classes =
-    {
-        U2FJpaConfiguration.class,
-        U2FConfiguration.class,
-        CasHibernateJpaConfiguration.class,
-        AopAutoConfiguration.class,
-        RefreshAutoConfiguration.class
-    },
+@SpringBootTest(classes = {
+    U2FJpaConfiguration.class,
+    U2FConfiguration.class,
+    CasHibernateJpaConfiguration.class,
+    AopAutoConfiguration.class,
+    RefreshAutoConfiguration.class
+},
     properties = "cas.jdbc.show-sql=true"
 )
 @EnableTransactionManagement(proxyTargetClass = true)

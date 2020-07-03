@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -23,10 +24,11 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 @Tag("FileSystem")
+@Getter
 public abstract class AbstractResourceBasedServiceRegistryTests extends AbstractServiceRegistryTests {
     public static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
-    protected ResourceBasedServiceRegistry dao;
+    protected ResourceBasedServiceRegistry newServiceRegistry;
 
     public static Stream<Class<? extends RegisteredService>> getParameters() {
         return AbstractServiceRegistryTests.getParameters();
@@ -44,30 +46,25 @@ public abstract class AbstractResourceBasedServiceRegistryTests extends Abstract
     public void verifyServiceWithInvalidFileName(final Class<? extends RegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
         r.setName("hell/o@world:*");
-        assertThrows(IllegalArgumentException.class, () -> this.dao.save(r));
+        assertThrows(IllegalArgumentException.class, () -> this.newServiceRegistry.save(r));
     }
 
     @Test
     public void verifyInvalidFileLoad() {
         val file = mock(File.class);
         when(file.canRead()).thenReturn(Boolean.FALSE);
-        assertTrue(dao.load(file).isEmpty());
+        assertTrue(newServiceRegistry.load(file).isEmpty());
 
         when(file.exists()).thenReturn(Boolean.FALSE);
-        assertTrue(dao.load(file).isEmpty());
+        assertTrue(newServiceRegistry.load(file).isEmpty());
 
         when(file.length()).thenReturn(0L);
-        assertTrue(dao.load(file).isEmpty());
+        assertTrue(newServiceRegistry.load(file).isEmpty());
 
         when(file.getName()).thenReturn(".ignore");
-        assertTrue(dao.load(file).isEmpty());
+        assertTrue(newServiceRegistry.load(file).isEmpty());
 
         when(file.getName()).thenReturn("file.ignore");
-        assertTrue(dao.load(file).isEmpty());
-    }
-
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return this.dao;
+        assertTrue(newServiceRegistry.load(file).isEmpty());
     }
 }

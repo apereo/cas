@@ -165,11 +165,6 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     @Override
-    public ExpirationPolicy getExpirationPolicy() {
-        return this.expirationPolicy;
-    }
-
-    @Override
     public String getPrefix() {
         return TicketGrantingTicket.PREFIX;
     }

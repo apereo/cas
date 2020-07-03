@@ -22,15 +22,15 @@ public class YamlServiceRegistryTests extends AbstractResourceBasedServiceRegist
 
     @Override
     @SneakyThrows
-    public ServiceRegistry getNewServiceRegistry() {
+    public ResourceBasedServiceRegistry getNewServiceRegistry() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
-        dao = new YamlServiceRegistry(RESOURCE,
+        newServiceRegistry = new YamlServiceRegistry(RESOURCE,
             WatcherService.noOp(),
             appCtx,
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
-        return dao;
+        return newServiceRegistry;
     }
 }

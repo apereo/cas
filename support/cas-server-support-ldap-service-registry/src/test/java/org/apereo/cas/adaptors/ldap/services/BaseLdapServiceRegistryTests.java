@@ -8,6 +8,7 @@ import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 
+import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,16 +43,12 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.service-registry.ldap.ldap-url=ldap://localhost:10389",
     "cas.service-registry.ldap.base-dn=dc=example,dc=org"
 })
+@Getter
 public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
-    @Qualifier("ldapServiceRegistry")
-    private ServiceRegistry dao;
-
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return this.dao;
-    }
+    @Qualifier("cassandraServiceRegistry")
+    private ServiceRegistry newServiceRegistry;
 
     public static Stream<Class<? extends RegisteredService>> getParameters() {
         return AbstractServiceRegistryTests.getParameters();

@@ -32,9 +32,11 @@ public abstract class AbstractU2FDeviceRepositoryTests {
     public void verifyDeviceSaved() {
         val deviceRepository = getDeviceRepository();
         registerDevices(deviceRepository);
-        val devices = deviceRepository.getRegisteredDevices(CASUSER);
+        var devices = deviceRepository.getRegisteredDevices(CASUSER);
         assertEquals(2, devices.size());
         deviceRepository.clean();
+        devices = deviceRepository.getRegisteredDevices();
+        assertFalse(devices.isEmpty());
     }
 
     @SneakyThrows

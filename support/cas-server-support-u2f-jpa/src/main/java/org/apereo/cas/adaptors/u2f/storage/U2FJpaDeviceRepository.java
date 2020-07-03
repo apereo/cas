@@ -51,6 +51,33 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
+    public Collection<? extends DeviceRegistration> getRegisteredDevices() {
+        try {
+            val expirationDate = LocalDate.now(ZoneId.systemDefault())
+                .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+            return this.entityManager.createQuery(SELECT_QUERY.concat("WHERE r.createdDate >= :expdate"), U2FJpaDeviceRegistration.class)
+                .setParameter("expdate", expirationDate)
+                .getResultList()
+                .stream()
+                .map(r -> {
+                    try {
+                        return DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord()));
+                    } catch (final Exception e) {
+                        LoggingUtils.error(LOGGER, e);
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        } catch (final NoResultException e) {
+            LOGGER.debug("No device registration was found");
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return new ArrayList<>(0);
+    }
+
+    @Override
     public Collection<? extends DeviceRegistration> getRegisteredDevices(final String username) {
         try {
             val expirationDate = LocalDate.now(ZoneId.systemDefault())
@@ -81,12 +108,12 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
-    public void registerDevice(final String username, final DeviceRegistration registration) {
+    public U2FDeviceRegistration registerDevice(final String username, final DeviceRegistration registration) {
         val jpa = new U2FJpaDeviceRegistration();
         jpa.setUsername(username);
         jpa.setRecord(getCipherExecutor().encode(registration.toJsonWithAttestationCert()));
         jpa.setCreatedDate(LocalDate.now(ZoneId.systemDefault()));
-        this.entityManager.merge(jpa);
+        return this.entityManager.merge(jpa);
     }
 
     @Override

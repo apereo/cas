@@ -50,24 +50,13 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
-    public Collection<? extends DeviceRegistration> getRegisteredDevices(final String username) {
+    public Collection<? extends DeviceRegistration> getRegisteredDevices() {
         try {
             val expirationDate = LocalDate.now(ZoneId.systemDefault())
                 .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             val query = new Query();
-            query.addCriteria(Criteria.where("username").is(username).and("createdDate").gte(expirationDate));
-            return this.mongoTemplate.find(query, U2FDeviceRegistration.class, this.collectionName)
-                .stream()
-                .map(r -> {
-                    try {
-                        return DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord()));
-                    } catch (final Exception e) {
-                        LoggingUtils.error(LOGGER, e);
-                    }
-                    return null;
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+            query.addCriteria(Criteria.where("createdDate").gte(expirationDate));
+            return queryDeviceRegistrations(query);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -75,12 +64,26 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
-    public void registerDevice(final String username, final DeviceRegistration registration) {
+    public Collection<? extends DeviceRegistration> getRegisteredDevices(final String username) {
+        try {
+            val expirationDate = LocalDate.now(ZoneId.systemDefault())
+                .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+            val query = new Query();
+            query.addCriteria(Criteria.where("username").is(username).and("createdDate").gte(expirationDate));
+            return queryDeviceRegistrations(query);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return new ArrayList<>(0);
+    }
+
+    @Override
+    public U2FDeviceRegistration registerDevice(final String username, final DeviceRegistration registration) {
         val record = new U2FDeviceRegistration();
         record.setUsername(username);
         record.setRecord(getCipherExecutor().encode(registration.toJsonWithAttestationCert()));
         record.setCreatedDate(LocalDate.now(ZoneId.systemDefault()));
-        this.mongoTemplate.save(record, this.collectionName);
+        return this.mongoTemplate.save(record, this.collectionName);
     }
 
     @Override
@@ -91,7 +94,8 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public void clean() {
         try {
-            val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+            val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime,
+                DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
 
             val query = new Query();
@@ -111,5 +115,20 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
+    }
+
+    private Collection<? extends DeviceRegistration> queryDeviceRegistrations(final Query query) {
+        return this.mongoTemplate.find(query, U2FDeviceRegistration.class, this.collectionName)
+            .stream()
+            .map(r -> {
+                try {
+                    return DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord()));
+                } catch (final Exception e) {
+                    LoggingUtils.error(LOGGER, e);
+                }
+                return null;
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 }
