@@ -20,7 +20,10 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +43,7 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
     private final CasConfigurationProperties casProperties;
     private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
     private final ApplicationContext applicationContext;
+    private final RestTemplate restTemplate;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -82,10 +86,11 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
      * @return return the rest response, typically the mfa id.
      */
     protected String callRestEndpointForMultifactor(final Principal principal, final Service resolvedService) {
-        val restTemplate = new RestTemplate();
         val restEndpoint = casProperties.getAuthn().getMfa().getRestEndpoint();
         val entity = new RestEndpointEntity(principal.getId(), resolvedService.getId());
-        val responseEntity = restTemplate.postForEntity(restEndpoint, entity, String.class);
+        val headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        val responseEntity = restTemplate.postForEntity(restEndpoint, new HttpEntity<>(entity, headers), String.class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             return responseEntity.getBody();
         }
