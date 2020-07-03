@@ -72,15 +72,15 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         if (user.has("status")) {
             attributes.put("syncopeUserStatus", List.of(user.get("status").asText()));
         }
-        if (user.has("syncopeUserRealm")) {
+        if (user.has("realm")) {
             attributes.put("syncopeUserRealm", List.of(user.get("realm").asText()));
         }
 
-        if (user.has("syncopeUserCreator")) {
+        if (user.has("creator")) {
             attributes.put("syncopeUserCreator", List.of(user.get("creator").asText()));
         }
 
-        if (user.has("syncopeUserCreationDate")) {
+        if (user.has("creationDate")) {
             attributes.put("syncopeUserCreationDate", List.of(user.get("creationDate").asText()));
         }
 

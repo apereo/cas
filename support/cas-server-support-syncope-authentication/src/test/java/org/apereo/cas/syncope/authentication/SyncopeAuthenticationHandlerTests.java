@@ -39,6 +39,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -85,6 +86,28 @@ public class SyncopeAuthenticationHandlerTests {
     public void verifyHandlerPasses() {
         val user = MAPPER.createObjectNode();
         user.put("username", "casuser");
+        user.putArray("roles").add("role1");
+        user.putArray("dynRoles").add("DynRole1");
+        user.putArray("dynRealms").add("Realm1");
+        user.putArray("memberships").add(MAPPER.createObjectNode()
+            .put("groupName", "G1"));
+        user.putArray("dynMemberships").add(MAPPER.createObjectNode().
+            put("groupName", "G1"));
+        user.putArray("relationships").add(MAPPER.createObjectNode()
+            .put("type", "T1").put("otherEndName", "Other1"));
+
+        val attrs = MAPPER.createObjectNode();
+        attrs.put("schema", "S1");
+        attrs.putArray("values").add("V1");
+        user.putArray("plainAttrs").add(attrs);
+
+        user.put("securityQuestion", "Q1");
+        user.put("status", "OK");
+        user.put("realm", "Master");
+        user.put("creator", "admin");
+        user.put("creationDate", new Date().toString());
+        user.put("changePwdDate", new Date().toString());
+        user.put("lastLoginDate", new Date().toString());
 
         @Cleanup("stop")
         val webserver = startMockSever(user);
