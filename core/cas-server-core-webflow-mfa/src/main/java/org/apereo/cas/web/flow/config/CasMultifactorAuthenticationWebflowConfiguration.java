@@ -57,6 +57,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -293,7 +294,13 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "restEndpointMultifactorAuthenticationTrigger")
     @RefreshScope
     public MultifactorAuthenticationTrigger restEndpointMultifactorAuthenticationTrigger() {
-        return new RestEndpointMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver(), applicationContext, restTemplateBuilder.getObject().build());
+        var templateBuilder = restTemplateBuilder.getIfAvailable();
+        if (templateBuilder == null) {
+            return new RestEndpointMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver(),
+                applicationContext, new RestTemplate());
+        }
+        return new RestEndpointMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver(),
+            applicationContext, templateBuilder.build());
     }
 
     @ConditionalOnMissingBean(name = "restEndpointAuthenticationPolicyWebflowEventResolver")
