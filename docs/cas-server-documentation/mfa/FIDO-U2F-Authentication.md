@@ -29,6 +29,15 @@ U2F device registration flows are baked into CAS automatically. A background *cl
 <div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep the cleaner running on one designated 
 CAS node only and turn it off on all others via CAS settings. Keeping the cleaner running on all nodes may likely lead to severe performance and locking issues.</p></div>
 
+### Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                  | Description
+|---------------------------|------------------------------------------------
+| `u2fDevices`  | A `GET` request presents the collection of registered devices. Registered devices for a single user can be queried via `GET` by using a selector path (i.e. `u2fDevices/{username}`).
+
+
 ### Default
 
 By default, a repository implementation is included that collects user device registrations and saves them into memory.
