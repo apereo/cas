@@ -17,7 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     InfinispanTicketRegistryConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
 })
-@Tag("Simple")
+@Tag("Infinispan")
 @Getter
 public class InfinispanTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
