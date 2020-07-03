@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.u2f.storage.U2FGroovyResourceDeviceRepositoryTest
 import org.apereo.cas.adaptors.u2f.storage.U2FInMemoryDeviceRepositoryTests;
 import org.apereo.cas.adaptors.u2f.storage.U2FJsonResourceDeviceRepositoryTests;
 import org.apereo.cas.adaptors.u2f.storage.U2FRestResourceDeviceRepositoryTests;
+import org.apereo.cas.adaptors.u2f.web.U2FRegisteredDevicesEndpointTests;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAccountCheckRegistrationActionTests;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAccountSaveRegistrationActionTests;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FMultifactorWebflowConfigurerTests;
@@ -26,6 +27,7 @@ import org.junit.runner.RunWith;
     U2FAccountSaveRegistrationActionTests.class,
     U2FAccountCheckRegistrationActionTests.class,
     U2FStartRegistrationActionTests.class,
+    U2FRegisteredDevicesEndpointTests.class,
     U2FMultifactorWebflowConfigurerTests.class,
     U2FStartAuthenticationActionTests.class,
     U2FRestResourceDeviceRepositoryTests.class,
