@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
-    @Qualifier("cassandraServiceRegistry")
+    @Qualifier("ldapServiceRegistry")
     private ServiceRegistry newServiceRegistry;
 
     public static Stream<Class<? extends RegisteredService>> getParameters() {

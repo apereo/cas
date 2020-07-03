@@ -172,6 +172,8 @@ Google Authenticator for multifactor authentication is now allowed to accept and
 - Twillio
 - ActiveMQ
 - Swagger
+- DropWizard
+- Apache Curator
 - Locust
 - OpenSAML
 - Oshi

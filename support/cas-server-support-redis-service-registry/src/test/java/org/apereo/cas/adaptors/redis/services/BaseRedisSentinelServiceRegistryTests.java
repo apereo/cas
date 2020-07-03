@@ -36,6 +36,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Getter
 public abstract class BaseRedisSentinelServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
-    @Qualifier("cassandraServiceRegistry")
+    @Qualifier("redisServiceRegistry")
     private ServiceRegistry newServiceRegistry;
 }
