@@ -14,7 +14,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.HttpResponse;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -35,7 +34,6 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor(force = true)
 @EqualsAndHashCode(callSuper = true)
