@@ -105,7 +105,7 @@ while (( "$#" )); do
                 task+="testSMS "
                 ;;
             uma)
-                task+="testUma "
+                task+="testUMA "
                 ;;
             filesystem|files|file|fsys)
                 task+="testFileSystem "
@@ -145,6 +145,12 @@ while (( "$#" )); do
                 ;;
             ignite)
                 task+="testIgnite "
+                ;;
+            infinispan)
+                task+="testInfinispan"
+                ;;
+            spnego)
+                task+="testSpnego"
                 ;;
             cosmosdb|cosmos)
                 task+="testCosmosDb "

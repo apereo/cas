@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Arnaud Lesueur
  * @since 3.1
  */
-@Tag("Simple")
+@Tag("Spnego")
 public class SpnegoCredentialsToPrincipalResolverTests {
     private SpnegoPrincipalResolver resolver;
 
