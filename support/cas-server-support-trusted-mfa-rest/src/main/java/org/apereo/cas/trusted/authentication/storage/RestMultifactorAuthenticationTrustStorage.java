@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.Serializable;
@@ -28,10 +29,14 @@ import java.util.stream.Stream;
  * @since 5.0.0
  */
 public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
+    private final RestTemplate restTemplate;
+
     public RestMultifactorAuthenticationTrustStorage(final TrustedDevicesMultifactorProperties properties,
                                                      final CipherExecutor<Serializable, String> cipherExecutor,
-                                                     final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy) {
+                                                     final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
+                                                     final RestTemplate restTemplate) {
         super(properties, cipherExecutor, keyGenerationStrategy);
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -62,29 +67,15 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     @Override
     public void remove(final ZonedDateTime expirationDate) {
         val entity = getHttpEntity(expirationDate);
-        val restTemplate = new RestTemplate();
         restTemplate.exchange(getEndpointUrl(null), HttpMethod.DELETE, entity, Object.class);
     }
 
     @Override
     public void remove(final String key) {
-        val restTemplate = new RestTemplate();
         restTemplate.delete(getEndpointUrl(key));
     }
 
-    @Override
-    protected MultifactorAuthenticationTrustRecord saveInternal(final MultifactorAuthenticationTrustRecord record) {
-        val entity = getHttpEntity(record);
-        val restTemplate = new RestTemplate();
-        val response = restTemplate.exchange(getEndpointUrl(null), HttpMethod.POST, entity, Object.class);
-        if (response.getStatusCode() == HttpStatus.OK) {
-            return record;
-        }
-        return null;
-    }
-
     private Set<MultifactorAuthenticationTrustRecord> getResults(final String url) {
-        val restTemplate = new RestTemplate();
         val entity = getHttpEntity(null);
         val responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, MultifactorAuthenticationTrustRecord[].class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
@@ -96,11 +87,23 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     private HttpEntity<Object> getHttpEntity(final Object body) {
         val rest = getTrustedDevicesMultifactorProperties().getRest();
-        return new HttpEntity<>(body, HttpUtils.createBasicAuthHeaders(rest.getBasicAuthUsername(), rest.getBasicAuthPassword()));
+        val headers = HttpUtils.createBasicAuthHeaders(rest.getBasicAuthUsername(), rest.getBasicAuthPassword());
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new HttpEntity<>(body, headers);
     }
 
     private String getEndpointUrl(final String path) {
         val endpoint = getTrustedDevicesMultifactorProperties().getRest().getUrl();
         return (!endpoint.endsWith("/") ? endpoint.concat("/") : endpoint).concat(StringUtils.defaultString(path));
+    }
+
+    @Override
+    protected MultifactorAuthenticationTrustRecord saveInternal(final MultifactorAuthenticationTrustRecord record) {
+        val entity = getHttpEntity(record);
+        val response = restTemplate.exchange(getEndpointUrl(null), HttpMethod.POST, entity, Object.class);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return record;
+        }
+        return null;
     }
 }

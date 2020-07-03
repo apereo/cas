@@ -27,6 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -159,7 +160,8 @@ public class RestMultifactorAuthenticationTrustStorageTests {
             val props = new CasConfigurationProperties();
             props.getAuthn().getMfa().getTrusted().getRest().setUrl("http://localhost:9311");
             val mfaEngine = new RestMultifactorAuthenticationTrustStorage(props.getAuthn().getMfa().getTrusted(),
-                mfaTrustCipherExecutor, new DefaultMultifactorAuthenticationTrustRecordKeyGenerator());
+                mfaTrustCipherExecutor, new DefaultMultifactorAuthenticationTrustRecordKeyGenerator(),
+                new RestTemplate());
             mfaEngine.save(r);
             val records = mfaEngine.get(r.getPrincipal());
             assertNotNull(records);
