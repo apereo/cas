@@ -483,6 +483,8 @@ jobs:
           - uma
           - oidc
           - saml
+          - infinispan
+          - spnego
           - hazelcast
           - jmx
           - shell
