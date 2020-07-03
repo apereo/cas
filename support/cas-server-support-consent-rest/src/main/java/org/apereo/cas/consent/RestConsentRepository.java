@@ -113,6 +113,7 @@ public class RestConsentRepository implements ConsentRepository {
         try {
             val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+            headers.put("principal", CollectionUtils.wrap(principal));
             val entity = new HttpEntity<Object>(headers);
             val deleteEndpoint = this.endpoint.concat('/' + Long.toString(decisionId));
             val result = restTemplate.exchange(deleteEndpoint, HttpMethod.DELETE, entity, Boolean.class);

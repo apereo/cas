@@ -118,13 +118,6 @@ public class IgniteTicketRegistryConfiguration {
 
         dataStorageConfiguration.setSystemRegionMaxSize(ignite.getDefaultRegionMaxSize());
         config.setDataStorageConfiguration(dataStorageConfiguration);
-
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("igniteConfiguration.cacheConfiguration=[{}]", (Object[]) config.getCacheConfiguration());
-            LOGGER.debug("igniteConfiguration.getDiscoverySpi=[{}]", config.getDiscoverySpi());
-            LOGGER.debug("igniteConfiguration.getSslContextFactory=[{}]", config.getSslContextFactory());
-        }
-
         return config;
     }
 
@@ -152,7 +145,7 @@ public class IgniteTicketRegistryConfiguration {
                 sslContextFactory.setTrustManagers(SslContextFactory.getDisabledTrustManager());
             } else {
                 sslContextFactory.setTrustStoreFilePath(properties.getTrustStoreFilePath());
-                sslContextFactory.setTrustStorePassword(properties.getKeyStorePassword().toCharArray());
+                sslContextFactory.setTrustStorePassword(properties.getTrustStorePassword().toCharArray());
             }
             if (org.apache.commons.lang3.StringUtils.isNotBlank(properties.getKeyAlgorithm())) {
                 sslContextFactory.setKeyAlgorithm(properties.getKeyAlgorithm());
