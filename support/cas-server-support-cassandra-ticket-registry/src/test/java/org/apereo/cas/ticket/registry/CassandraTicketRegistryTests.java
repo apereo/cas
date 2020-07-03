@@ -5,6 +5,7 @@ import org.apereo.cas.config.CassandraTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,13 +30,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 })
 @Tag("Cassandra")
 @EnabledIfPortOpen(port = 9042)
+@Getter
 public class CassandraTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
-
-    @Override
-    public TicketRegistry getNewTicketRegistry() {
-        return this.ticketRegistry;
-    }
+    private TicketRegistry newTicketRegistry;
 }

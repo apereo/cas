@@ -25,6 +25,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,19 +81,15 @@ import org.springframework.test.annotation.DirtiesContext;
 @EnableScheduling
 @DirtiesContext
 @EnabledIfPortOpen(port = 27017)
+@Getter
 public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
+    private TicketRegistry newTicketRegistry;
 
     @BeforeEach
     public void before() {
-        ticketRegistry.deleteAll();
-    }
-
-    @Override
-    public TicketRegistry getNewTicketRegistry() {
-        return this.ticketRegistry;
+        newTicketRegistry.deleteAll();
     }
 }

@@ -16,6 +16,7 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 
+import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
@@ -52,19 +53,15 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnabledIfPortOpen(port = 11211)
 @Tag("Memcached")
+@Getter
 public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry registry;
+    private TicketRegistry newTicketRegistry;
 
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Override
-    public TicketRegistry getNewTicketRegistry() {
-        return registry;
-    }
 
     @Override
     protected boolean isIterableRegistry() {
@@ -80,8 +77,8 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
             CollectionUtils.wrapList("openid"),
             "code-challenge", "plain", "clientId123456",
             new HashMap<>());
-        this.registry.addTicket(code);
-        val ticket = this.registry.getTicket(code.getId(), OAuth20Code.class);
+        this.newTicketRegistry.addTicket(code);
+        val ticket = this.newTicketRegistry.getTicket(code.getId(), OAuth20Code.class);
         assertNotNull(ticket);
     }
 
