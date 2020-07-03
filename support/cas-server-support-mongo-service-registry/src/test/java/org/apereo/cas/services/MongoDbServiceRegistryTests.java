@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -44,16 +45,12 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("MongoDb")
 @EnabledIfPortOpen(port = 27017)
+@Getter
 public class MongoDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     @Qualifier("mongoDbServiceRegistry")
-    private ServiceRegistry serviceRegistry;
-
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return this.serviceRegistry;
-    }
+    private ServiceRegistry newServiceRegistry;
 
     @Test
     public void verifySamlServiceAttributeNames() {

@@ -36,10 +36,32 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
     private final TimeUnit expirationTimeUnit;
 
     protected BaseResourceU2FDeviceRepository(final LoadingCache<String, String> requestStorage,
-                                           final long expirationTime, final TimeUnit expirationTimeUnit) {
+                                              final long expirationTime, final TimeUnit expirationTimeUnit) {
         super(requestStorage);
         this.expirationTime = expirationTime;
         this.expirationTimeUnit = expirationTimeUnit;
+    }
+
+    @Override
+    public Collection<? extends DeviceRegistration> getRegisteredDevices() {
+        try {
+            val devices = readDevicesFromResource();
+            if (!devices.isEmpty()) {
+                val devs = devices.get(MAP_KEY_DEVICES);
+                val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime,
+                    DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+                LOGGER.debug("Filtering devices for based on device expiration date [{}]", expirationDate);
+                val list = devs
+                    .stream()
+                    .filter(d -> d.getCreatedDate().isAfter(expirationDate))
+                    .collect(Collectors.toList());
+                LOGGER.debug("There are [{}] device(s) remaining in repository", list.size());
+                return mapDeviceRegistrations(list);
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return new ArrayList<>(0);
     }
 
     @Override
@@ -56,19 +78,8 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
                     .stream()
                     .filter(d -> d.getUsername().equals(username) && d.getCreatedDate().isAfter(expirationDate))
                     .collect(Collectors.toList());
-
                 LOGGER.debug("There are [{}] device(s) remaining in repository for [{}]", list.size(), username);
-                return list.stream()
-                    .map(r -> {
-                        try {
-                            return DeviceRegistration.fromJson(r.getRecord());
-                        } catch (final Exception e) {
-                            LoggingUtils.error(LOGGER, e);
-                        }
-                        return null;
-                    })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                return mapDeviceRegistrations(list);
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
@@ -77,7 +88,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
     }
 
     @Override
-    public void registerDevice(final String username, final DeviceRegistration registration) {
+    public U2FDeviceRegistration registerDevice(final String username, final DeviceRegistration registration) {
         try {
             val device = new U2FDeviceRegistration();
             device.setUsername(username);
@@ -95,10 +106,11 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
             list.add(device);
             LOGGER.debug("There are [{}] device(s) remaining in repository. Storing...", list.size());
             writeDevicesBackToResource(list);
-
+            return device;
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
+        return null;
     }
 
     @Override
@@ -126,6 +138,20 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
+    }
+
+    private static Collection<? extends DeviceRegistration> mapDeviceRegistrations(final List<U2FDeviceRegistration> list) {
+        return list.stream()
+            .map(r -> {
+                try {
+                    return DeviceRegistration.fromJson(r.getRecord());
+                } catch (final Exception e) {
+                    LoggingUtils.error(LOGGER, e);
+                }
+                return null;
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     /**

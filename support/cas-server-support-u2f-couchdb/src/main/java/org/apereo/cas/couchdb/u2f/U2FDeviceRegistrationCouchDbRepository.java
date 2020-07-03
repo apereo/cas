@@ -16,6 +16,7 @@ import java.util.List;
  * @author Timur Duehr
  * @since 6.0.0
  */
+@View(name = "all", map = "function(doc) { if(doc.record && doc.createdDate && doc.username) { emit(doc._id, doc) } }")
 public class U2FDeviceRegistrationCouchDbRepository extends CouchDbRepositorySupport<CouchDbU2FDeviceRegistration> {
     private final CouchDbInstance couchDbInstance;
 

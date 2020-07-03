@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CouchDbServiceRegistryConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,14 +35,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     })
 @Tag("CouchDb")
 @EnabledIfPortOpen(port = 5984)
+@Getter
 public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     @Qualifier("couchDbServiceRegistry")
-    private ServiceRegistry serviceRegistry;
-
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return this.serviceRegistry;
-    }
+    private ServiceRegistry newServiceRegistry;
 }

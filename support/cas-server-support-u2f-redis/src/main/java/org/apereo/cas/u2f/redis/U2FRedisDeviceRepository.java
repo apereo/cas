@@ -34,14 +34,14 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
      */
     public static final String CAS_U2F_PREFIX = U2FRedisDeviceRepository.class.getSimpleName() + ':';
 
-    private final transient RedisTemplate redisTemplate;
+    private final transient RedisTemplate<String, U2FDeviceRegistration> redisTemplate;
 
     private final long expirationTime;
 
     private final TimeUnit expirationTimeUnit;
 
     public U2FRedisDeviceRepository(final LoadingCache<String, String> requestStorage,
-                                    final RedisTemplate redisTemplate,
+                                    final RedisTemplate<String, U2FDeviceRegistration> redisTemplate,
                                     final long expirationTime,
                                     final TimeUnit expirationTimeUnit) {
         super(requestStorage);
@@ -50,16 +50,19 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
         this.redisTemplate = redisTemplate;
     }
 
-    private static String getPatternRedisKey() {
-        return CAS_U2F_PREFIX + '*';
-    }
-
-    private static String buildRedisKeyForRecord(final U2FDeviceRegistration record) {
-        return CAS_U2F_PREFIX + record.getUsername() + ':' + record.getId();
-    }
-
-    private static String buildRedisKeyForUser(final String username) {
-        return CAS_U2F_PREFIX + username + ":*";
+    @Override
+    public Collection<? extends DeviceRegistration> getRegisteredDevices() {
+        try {
+            val expirationDate = LocalDate.now(ZoneId.systemDefault())
+                .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+            val keys = (Set<String>) this.redisTemplate.keys(getPatternRedisKey());
+            if (keys != null) {
+                return queryDeviceRegistrations(expirationDate, keys);
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return new ArrayList<>(0);
     }
 
     @Override
@@ -69,26 +72,7 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
                 .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             val keys = (Set<String>) this.redisTemplate.keys(buildRedisKeyForUser(username));
             if (keys != null) {
-                return keys
-                    .stream()
-                    .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
-                    .filter(Objects::nonNull)
-                    .map(U2FDeviceRegistration.class::cast)
-                    .filter(audit -> audit.getCreatedDate().compareTo(expirationDate) >= 0)
-                    .map(r -> {
-                        try {
-                            val decoded = getCipherExecutor().decode(r.getRecord());
-                            if (StringUtils.isNotBlank(decoded)) {
-                                return DeviceRegistration.fromJson(decoded);
-                            }
-                            LOGGER.warn("Unable to to decode device registration for record id [{}]", r.getId());
-                        } catch (final Exception e) {
-                            LoggingUtils.error(LOGGER, e);
-                        }
-                        return null;
-                    })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                return queryDeviceRegistrations(expirationDate, keys);
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
@@ -97,13 +81,14 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
-    public void registerDevice(final String username, final DeviceRegistration registration) {
+    public U2FDeviceRegistration registerDevice(final String username, final DeviceRegistration registration) {
         val record = new U2FDeviceRegistration();
         record.setUsername(username);
         record.setRecord(getCipherExecutor().encode(registration.toJsonWithAttestationCert()));
         record.setCreatedDate(LocalDate.now(ZoneId.systemDefault()));
         val redisKey = buildRedisKeyForRecord(record);
         this.redisTemplate.boundValueOps(redisKey).set(record);
+        return this.redisTemplate.boundValueOps(redisKey).get();
     }
 
     @Override
@@ -133,6 +118,42 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public void removeAll() {
         this.redisTemplate.delete(getRedisKeys());
+    }
+
+    private static String getPatternRedisKey() {
+        return CAS_U2F_PREFIX + '*';
+    }
+
+    private static String buildRedisKeyForRecord(final U2FDeviceRegistration record) {
+        return CAS_U2F_PREFIX + record.getUsername() + ':' + record.getId();
+    }
+
+    private static String buildRedisKeyForUser(final String username) {
+        return CAS_U2F_PREFIX + username + ":*";
+    }
+
+    private Collection<? extends DeviceRegistration> queryDeviceRegistrations(final LocalDate expirationDate,
+                                                                              final Set<String> keys) {
+        return keys
+            .stream()
+            .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
+            .filter(Objects::nonNull)
+            .map(U2FDeviceRegistration.class::cast)
+            .filter(audit -> audit.getCreatedDate().compareTo(expirationDate) >= 0)
+            .map(r -> {
+                try {
+                    val decoded = getCipherExecutor().decode(r.getRecord());
+                    if (StringUtils.isNotBlank(decoded)) {
+                        return DeviceRegistration.fromJson(decoded);
+                    }
+                    LOGGER.warn("Unable to to decode device registration for record id [{}]", r.getId());
+                } catch (final Exception e) {
+                    LoggingUtils.error(LOGGER, e);
+                }
+                return null;
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     private Set<String> getRedisKeys() {

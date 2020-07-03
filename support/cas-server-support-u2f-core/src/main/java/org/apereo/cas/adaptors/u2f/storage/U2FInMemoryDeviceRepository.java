@@ -8,6 +8,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -32,6 +34,15 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
+    public Collection<? extends DeviceRegistration> getRegisteredDevices() {
+        return userStorage.asMap().values()
+            .stream()
+            .map(U2FInMemoryDeviceRepository::mapDeviceRegistrations)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
+    }
+
+    @Override
     @SneakyThrows
     public Collection<? extends DeviceRegistration> getRegisteredDevices(final String username) {
         val values = userStorage.get(username);
@@ -39,26 +50,20 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
             return new ArrayList<>(0);
         }
 
-        return values.values()
-            .stream()
-            .map(r -> {
-                try {
-                    return DeviceRegistration.fromJson(r);
-                } catch (final Exception e) {
-                    LoggingUtils.error(LOGGER, e);
-                }
-                return null;
-            })
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+        return mapDeviceRegistrations(values);
     }
 
     @Override
-    public void registerDevice(final String username, final DeviceRegistration registration) {
+    public U2FDeviceRegistration registerDevice(final String username, final DeviceRegistration registration) {
         val values = userStorage.get(username);
         if (values != null) {
             values.put(registration.getKeyHandle(), registration.toJsonWithAttestationCert());
         }
+        val record = new U2FDeviceRegistration();
+        record.setUsername(username);
+        record.setRecord(getCipherExecutor().encode(registration.toJsonWithAttestationCert()));
+        record.setCreatedDate(LocalDate.now(ZoneId.systemDefault()));
+        return record;
     }
 
     @Override
@@ -83,5 +88,20 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public void removeAll() {
         userStorage.invalidateAll();
+    }
+
+    private static Collection<? extends DeviceRegistration> mapDeviceRegistrations(final Map<String, String> values) {
+        return values.values()
+            .stream()
+            .map(r -> {
+                try {
+                    return DeviceRegistration.fromJson(r);
+                } catch (final Exception e) {
+                    LoggingUtils.error(LOGGER, e);
+                }
+                return null;
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 }

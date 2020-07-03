@@ -57,6 +57,21 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository implemen
     }
 
     @Override
+    public Collection<? extends DeviceRegistration> getRegisteredDevices() {
+        return couchDb.getAll().stream()
+            .map(r -> {
+                try {
+                    return DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord()));
+                } catch (final U2fBadInputException e) {
+                    LoggingUtils.error(LOGGER, e);
+                }
+                return null;
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+    }
+
+    @Override
     public Collection<DeviceRegistration> getRegisteredDevices(final String username) {
         return couchDb.findByUsername(username).stream()
             .map(r -> {
@@ -72,16 +87,18 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository implemen
     }
 
     @Override
-    public void registerDevice(final String username, final DeviceRegistration registration) {
+    public U2FDeviceRegistration registerDevice(final String username, final DeviceRegistration registration) {
         val record = new U2FDeviceRegistration();
         record.setUsername(username);
         record.setRecord(getCipherExecutor().encode(registration.toJsonWithAttestationCert()));
         record.setCreatedDate(LocalDate.now(ZoneId.systemDefault()));
+        val couchDbDevice = new CouchDbU2FDeviceRegistration(record);
         if (asynchronous) {
-            this.executorService.execute(() -> couchDb.add(new CouchDbU2FDeviceRegistration(record)));
+            this.executorService.execute(() -> couchDb.add(couchDbDevice));
         } else {
-            couchDb.add(new CouchDbU2FDeviceRegistration(record));
+            couchDb.add(couchDbDevice);
         }
+        return couchDbDevice;
     }
 
     @Override

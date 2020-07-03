@@ -21,12 +21,20 @@ public interface U2FDeviceRepository {
     Collection<? extends DeviceRegistration> getRegisteredDevices(String username);
 
     /**
+     * Gets registrations.
+     *
+     * @return the registrations
+     */
+    Collection<? extends DeviceRegistration> getRegisteredDevices();
+
+    /**
      * Add registration.
      *
      * @param username     the username
      * @param registration the registration
+     * @return u 2 f device registration
      */
-    void registerDevice(String username, DeviceRegistration registration);
+    U2FDeviceRegistration registerDevice(String username, DeviceRegistration registration);
 
     /**
      * Deliver authenticated device upon successful authentication events.

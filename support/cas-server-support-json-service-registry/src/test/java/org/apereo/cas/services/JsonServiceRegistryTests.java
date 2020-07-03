@@ -33,15 +33,15 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
     @SneakyThrows
     @Override
-    public ServiceRegistry getNewServiceRegistry() {
+    public ResourceBasedServiceRegistry getNewServiceRegistry() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
-        dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
+        newServiceRegistry = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
             appCtx,
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
-        return dao;
+        return newServiceRegistry;
     }
 
     @Test

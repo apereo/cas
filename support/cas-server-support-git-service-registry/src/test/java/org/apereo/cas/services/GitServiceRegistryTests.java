@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.GitServiceRegistryConfiguration;
 import org.apereo.cas.util.LoggingUtils;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -46,11 +47,12 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Slf4j
 @Tag("FileSystem")
+@Getter
 public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     @Qualifier("serviceRegistry")
-    private ServiceRegistry serviceRegistry;
+    private ServiceRegistry newServiceRegistry;
 
     @BeforeAll
     public static void setup() {
@@ -76,10 +78,5 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
         if (gitDir.exists()) {
             FileUtils.deleteDirectory(gitDir);
         }
-    }
-
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return this.serviceRegistry;
     }
 }
