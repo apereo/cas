@@ -97,7 +97,9 @@ public class U2FConfiguration {
             Caffeine.newBuilder()
                 .expireAfterWrite(u2f.getExpireDevices(), u2f.getExpireDevicesTimeUnit())
                 .build(key -> new HashMap<>(0));
-        return new U2FInMemoryDeviceRepository(userStorage, requestStorage);
+        val repo = new U2FInMemoryDeviceRepository(userStorage, requestStorage);
+        repo.setCipherExecutor(u2fRegistrationRecordCipherExecutor());
+        return repo;
     }
 
     @Bean

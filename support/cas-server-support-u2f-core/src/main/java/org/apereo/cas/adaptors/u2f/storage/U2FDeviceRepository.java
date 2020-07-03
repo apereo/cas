@@ -32,7 +32,7 @@ public interface U2FDeviceRepository {
      *
      * @param username     the username
      * @param registration the registration
-     * @return u 2 f device registration
+     * @return u2f device registration
      */
     U2FDeviceRegistration registerDevice(String username, DeviceRegistration registration);
 

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
@@ -53,12 +54,14 @@ public class MultifactorAuthnTrustWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaTrustedDeviceBypassEvaluator")
     @Bean
+    @RefreshScope
     public MultifactorAuthenticationTrustedDeviceBypassEvaluator mfaTrustedDeviceBypassEvaluator() {
         return new DefaultMultifactorAuthenticationTrustedDeviceBypassEvaluator(registeredServiceAccessStrategyEnforcer.getObject());
     }
     
     @ConditionalOnMissingBean(name = "mfaSetTrustAction")
     @Bean
+    @RefreshScope
     public Action mfaSetTrustAction() {
         return new MultifactorAuthenticationSetTrustAction(mfaTrustEngine.getObject(),
             deviceFingerprintStrategy.getObject(),
@@ -69,6 +72,7 @@ public class MultifactorAuthnTrustWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaVerifyTrustAction")
     @Bean
+    @RefreshScope
     public Action mfaVerifyTrustAction() {
         return new MultifactorAuthenticationVerifyTrustAction(mfaTrustEngine.getObject(),
             deviceFingerprintStrategy.getObject(),
@@ -79,6 +83,7 @@ public class MultifactorAuthnTrustWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaPrepareTrustDeviceViewAction")
     @Bean
+    @RefreshScope
     public Action mfaPrepareTrustDeviceViewAction() {
         return new MultifactorAuthenticationPrepareTrustDeviceViewAction(mfaTrustEngine.getObject(),
             deviceFingerprintStrategy.getObject(),

@@ -100,7 +100,8 @@ at runtime via webflow auto-configuration rather than static XML definitions. Th
 ### U2F Multifactor Authentication Trusted Devices
 
 Support for [Multifactor Authentication Trusted Device/Browser](../mfa/Multifactor-TrustedDevice-Authentication.html) is now extended 
-to also include [U2F](../mfa/FIDO-U2F-Authentication.html).
+to also include [U2F](../mfa/FIDO-U2F-Authentication.html). Furthermore, a number of new administrative actuator endpoints are 
+presented to report back on the registered devices
 
 ### Authentication Actuator Endpoints
 

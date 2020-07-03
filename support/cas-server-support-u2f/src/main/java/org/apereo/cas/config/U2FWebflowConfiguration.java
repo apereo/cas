@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
+import org.apereo.cas.adaptors.u2f.web.U2FRegisteredDevicesEndpoint;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAccountCheckRegistrationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAccountSaveRegistrationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAuthenticationWebflowAction;
@@ -31,6 +32,7 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -192,6 +194,12 @@ public class U2FWebflowConfiguration {
     @ConditionalOnMissingBean(name = "u2fCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer u2fCasWebflowExecutionPlanConfigurer() {
         return plan -> plan.registerWebflowConfigurer(u2fMultifactorWebflowConfigurer());
+    }
+
+    @Bean
+    @ConditionalOnAvailableEndpoint
+    public U2FRegisteredDevicesEndpoint u2fRegisteredDevicesEndpoint() {
+        return new U2FRegisteredDevicesEndpoint(casProperties, u2fDeviceRepository.getObject());
     }
 
     /**
