@@ -7,6 +7,7 @@ import org.apereo.cas.web.report.CasResolveAttributesReportEndpointTests;
 import org.apereo.cas.web.report.ExportRegisteredServicesEndpointTests;
 import org.apereo.cas.web.report.LoggingConfigurationEndpointTests;
 import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpointTests;
+import org.apereo.cas.web.report.RegisteredAuthenticationPoliciesEndpointTests;
 import org.apereo.cas.web.report.RegisteredServicesEndpointTests;
 import org.apereo.cas.web.report.SingleSignOnSessionStatusEndpointTests;
 import org.apereo.cas.web.report.SingleSignOnSessionsEndpointTests;
@@ -37,6 +38,7 @@ import org.junit.runner.RunWith;
     SpringWebflowEndpointTests.class,
     LoggingConfigurationEndpointTests.class,
     CasInfoEndpointContributorTests.class,
+    RegisteredAuthenticationPoliciesEndpointTests.class,
     CasResolveAttributesReportEndpointTests.class,
     CasReleaseAttributesReportEndpointTests.class,
     ExportRegisteredServicesEndpointTests.class
