@@ -60,12 +60,16 @@ public class U2FRegisteredDevicesEndpointTests extends AbstractCasEndpointTests 
         val id = UUID.randomUUID().toString();
         val cert = CertUtils.readCertificate(new ClassPathResource("cert.crt"));
         val r1 = new DeviceRegistration("keyhandle11", "publickey1", cert, 1);
-        val record = U2FDeviceRegistration.builder()
+        var record = U2FDeviceRegistration.builder()
             .record(deviceRepository.getCipherExecutor().encode(r1.toJsonWithAttestationCert()))
             .username(id)
             .build();
-        deviceRepository.registerDevice(record);
+        record = deviceRepository.registerDevice(record);
         assertFalse(endpoint.fetchAll().isEmpty());
         assertFalse(endpoint.fetchBy(id).isEmpty());
+
+        endpoint.delete(id, record.getId());
+        endpoint.delete(id);
+        assertTrue(endpoint.fetchAll().isEmpty());
     }
 }
