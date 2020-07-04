@@ -5,12 +5,14 @@ import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.http.MediaType;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -53,8 +55,8 @@ public class U2FRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      */
     @DeleteOperation
     public void delete(@Selector final String username) {
-        u2fDeviceRepository.getRegisteredDevices(username)
-            .forEach(u2fDeviceRepository::deleteRegisteredDevice);
+        val registeredDevices = new ArrayList<>(u2fDeviceRepository.getRegisteredDevices(username));
+        registeredDevices.forEach(u2fDeviceRepository::deleteRegisteredDevice);
     }
 
     /**
@@ -65,7 +67,8 @@ public class U2FRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      */
     @DeleteOperation
     public void delete(@Selector final String username, @Selector final Long id) {
-        u2fDeviceRepository.getRegisteredDevices(username)
+        val registeredDevices = new ArrayList<>(u2fDeviceRepository.getRegisteredDevices(username));
+        registeredDevices
             .stream()
             .filter(d -> d.getId() == id)
             .forEach(u2fDeviceRepository::deleteRegisteredDevice);
