@@ -35,8 +35,6 @@ public class MockWebServer implements AutoCloseable {
      */
     private Thread workerThread;
 
-    private Resource responseBody;
-
     public MockWebServer(final int port) {
         try {
             this.worker = new Worker(new ServerSocket(port), MediaType.APPLICATION_JSON_VALUE);

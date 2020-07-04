@@ -41,7 +41,7 @@ public class U2FDeviceRegistration implements Serializable, Cloneable {
     @Transient
     @Builder.Default
     @JsonProperty("id")
-    private long id = -1;
+    private long id = System.currentTimeMillis();
 
     @Column(nullable = false)
     @JsonProperty("username")

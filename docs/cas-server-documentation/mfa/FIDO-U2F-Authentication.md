@@ -85,6 +85,11 @@ Boolean write(final Object... args) {
 
 void removeAll(final Object... args) {
     def logger = args[0]
+}          
+
+def remove(Object[] args) {
+    def device = args[0]
+    def logger = args[1]
 }
 ```
 
@@ -154,6 +159,7 @@ The following parameters are passed:
 |------------------|-----------------|-----------------------------------------------------------------------
 | `GET`            | N/A             | Retrieve all registered devices.     | `200` status code Collection of registered devices as JSON in the body of the response.
 | `POST`           | Collection of registered devices as JSON | Store registered devices. | `200`.
-| `DELETE`           | N/A | Delete all device records | `200`.
+| `DELETE`         | N/A | Delete all device records | `200`.
+| `DELETE`         | `/${id}`  as a path variable | Delete all device records matching that identifier. | `200`.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-rest).

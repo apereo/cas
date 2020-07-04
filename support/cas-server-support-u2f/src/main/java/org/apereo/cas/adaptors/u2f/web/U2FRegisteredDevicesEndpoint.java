@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
@@ -43,5 +44,30 @@ public class U2FRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
             .stream()
             .map(u2fDeviceRepository::decode)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * Delete.
+     *
+     * @param username the username
+     */
+    @DeleteOperation
+    public void delete(@Selector final String username) {
+        u2fDeviceRepository.getRegisteredDevices(username)
+            .forEach(u2fDeviceRepository::deleteRegisteredDevice);
+    }
+
+    /**
+     * Delete.
+     *
+     * @param username the username
+     * @param id       the id
+     */
+    @DeleteOperation
+    public void delete(@Selector final String username, @Selector final Long id) {
+        u2fDeviceRepository.getRegisteredDevices(username)
+            .stream()
+            .filter(d -> d.getId() == id)
+            .forEach(u2fDeviceRepository::deleteRegisteredDevice);
     }
 }
