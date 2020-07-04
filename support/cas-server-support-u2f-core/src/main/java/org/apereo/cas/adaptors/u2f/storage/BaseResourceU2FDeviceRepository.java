@@ -115,6 +115,23 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
     }
 
     @Override
+    public void deleteRegisteredDevice(final U2FDeviceRegistration registration) {
+        try {
+            val devices = readDevicesFromResource();
+            if (!devices.isEmpty()) {
+                val list = new ArrayList<>(devices.get(MAP_KEY_DEVICES));
+                LOGGER.debug("Located [{}] devices in repository", list.size());
+                if (list.removeIf(d -> d.getId() == registration.getId() && d.getUsername().equals(registration.getUsername()))) {
+                    LOGGER.debug("There are [{}] device(s) remaining in repository. Storing...", list.size());
+                    writeDevicesBackToResource(list);
+                }
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+    }
+
+    @Override
     public void clean() {
         try {
             val devices = readDevicesFromResource();

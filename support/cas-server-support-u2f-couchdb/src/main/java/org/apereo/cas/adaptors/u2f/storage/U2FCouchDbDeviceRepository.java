@@ -108,6 +108,16 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository implemen
     }
 
     @Override
+    public void deleteRegisteredDevice(final U2FDeviceRegistration registration) {
+        val couchDbDevice = new CouchDbU2FDeviceRegistration(registration);
+        if (asynchronous) {
+            this.executorService.execute(() -> couchDb.deleteRecord(couchDbDevice));
+        } else {
+            couchDb.deleteRecord(couchDbDevice);
+        }
+    }
+
+    @Override
     public void destroy() {
         this.executorService.shutdown();
     }

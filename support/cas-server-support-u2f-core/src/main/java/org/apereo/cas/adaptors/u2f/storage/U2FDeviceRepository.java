@@ -47,6 +47,13 @@ public interface U2FDeviceRepository {
     U2FDeviceRegistration verifyRegisteredDevice(U2FDeviceRegistration registration);
 
     /**
+     * Delete registered device.
+     *
+     * @param registration the registration
+     */
+    void deleteRegisteredDevice(U2FDeviceRegistration registration);
+
+    /**
      * Is registered ?
      *
      * @param username the username

@@ -115,6 +115,18 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
         }
     }
 
+    @Override
+    public void deleteRegisteredDevice(final U2FDeviceRegistration record) {
+        try {
+            val query = new Query();
+            query.addCriteria(Criteria.where("username").is(record.getUsername())
+                .and("id").is(record.getId()));
+            this.mongoTemplate.remove(query, U2FDeviceRegistration.class, this.collectionName);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+    }
+
     private Collection<? extends U2FDeviceRegistration> queryDeviceRegistrations(final Query query) {
         return this.mongoTemplate.find(query, U2FDeviceRegistration.class,
             this.collectionName)
