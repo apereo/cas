@@ -60,9 +60,7 @@ public class U2FRedisConfiguration {
         final LoadingCache<String, String> requestStorage = Caffeine.newBuilder()
             .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
             .build(key -> StringUtils.EMPTY);
-        val repo = new U2FRedisDeviceRepository(requestStorage, u2fRedisTemplate(), u2f.getExpireDevices(),
-            u2f.getExpireDevicesTimeUnit());
-        repo.setCipherExecutor(u2fRegistrationRecordCipherExecutor.getObject());
-        return repo;
+        return new U2FRedisDeviceRepository(requestStorage, u2fRedisTemplate(), u2f.getExpireDevices(),
+            u2f.getExpireDevicesTimeUnit(), u2fRegistrationRecordCipherExecutor.getObject());
     }
 }

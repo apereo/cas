@@ -1,19 +1,15 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import com.yubico.u2f.data.DeviceRegistration;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -22,62 +18,54 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
 
-    private final LoadingCache<String, Map<String, String>> userStorage;
+    private final LoadingCache<String, List<U2FDeviceRegistration>> userStorage;
 
-    public U2FInMemoryDeviceRepository(final LoadingCache<String, Map<String, String>> userStorage,
-                                       final LoadingCache<String, String> requestStorage) {
-        super(requestStorage);
+    public U2FInMemoryDeviceRepository(final LoadingCache<String, List<U2FDeviceRegistration>> userStorage,
+                                       final LoadingCache<String, String> requestStorage,
+                                       final CipherExecutor<Serializable, String> cipherExecutor) {
+        super(requestStorage, cipherExecutor);
         this.userStorage = userStorage;
     }
 
     @Override
-    public Collection<? extends DeviceRegistration> getRegisteredDevices() {
-        return userStorage.asMap().values()
-            .stream()
-            .map(U2FInMemoryDeviceRepository::mapDeviceRegistrations)
-            .flatMap(Collection::stream)
-            .collect(Collectors.toList());
+    public Collection<? extends U2FDeviceRegistration> getRegisteredDevices() {
+        return userStorage.asMap().values().stream().flatMap(Collection::stream).collect(Collectors.toList());
     }
 
     @Override
     @SneakyThrows
-    public Collection<? extends DeviceRegistration> getRegisteredDevices(final String username) {
+    public Collection<? extends U2FDeviceRegistration> getRegisteredDevices(final String username) {
         val values = userStorage.get(username);
         if (values == null) {
             return new ArrayList<>(0);
         }
-
-        return mapDeviceRegistrations(values);
+        return values;
     }
 
     @Override
-    public U2FDeviceRegistration registerDevice(final String username, final DeviceRegistration registration) {
-        val values = userStorage.get(username);
+    public U2FDeviceRegistration registerDevice(final U2FDeviceRegistration registration) {
+        val values = userStorage.get(registration.getUsername());
         if (values != null) {
-            values.put(registration.getKeyHandle(), registration.toJsonWithAttestationCert());
+            values.add(registration);
         }
-        val record = new U2FDeviceRegistration();
-        record.setUsername(username);
-        record.setRecord(getCipherExecutor().encode(registration.toJsonWithAttestationCert()));
-        record.setCreatedDate(LocalDate.now(ZoneId.systemDefault()));
-        return record;
+        return registration;
     }
 
     @Override
-    public void authenticateDevice(final String username, final DeviceRegistration registration) {
-        val values = userStorage.get(username);
-        if (values != null) {
-            values.put(registration.getKeyHandle(), registration.toJsonWithAttestationCert());
+    public U2FDeviceRegistration verifyRegisteredDevice(final U2FDeviceRegistration registration) {
+        val values = userStorage.get(registration.getUsername());
+        if (values != null && values.isEmpty()) {
+            values.add(registration);
         }
+        return registration;
     }
 
     @Override
     public boolean isDeviceRegisteredFor(final String username) {
         val values = userStorage.get(username);
-        return values != null && !values.values().isEmpty();
+        return values != null && !values.isEmpty();
     }
 
     @Override
@@ -88,20 +76,5 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public void removeAll() {
         userStorage.invalidateAll();
-    }
-
-    private static Collection<? extends DeviceRegistration> mapDeviceRegistrations(final Map<String, String> values) {
-        return values.values()
-            .stream()
-            .map(r -> {
-                try {
-                    return DeviceRegistration.fromJson(r);
-                } catch (final Exception e) {
-                    LoggingUtils.error(LOGGER, e);
-                }
-                return null;
-            })
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
     }
 }

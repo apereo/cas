@@ -2,15 +2,16 @@ package org.apereo.cas.adaptors.u2f.storage;
 
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import com.yubico.u2f.data.DeviceRegistration;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -41,8 +42,9 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
                                       final MongoTemplate mongoTemplate,
                                       final long expirationTime,
                                       final TimeUnit expirationTimeUnit,
-                                      final String collectionName) {
-        super(requestStorage);
+                                      final String collectionName,
+                                      final CipherExecutor<Serializable, String> cipherExecutor) {
+        super(requestStorage, cipherExecutor);
         this.expirationTime = expirationTime;
         this.expirationTimeUnit = expirationTimeUnit;
         this.mongoTemplate = mongoTemplate;
@@ -50,7 +52,7 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
-    public Collection<? extends DeviceRegistration> getRegisteredDevices() {
+    public Collection<? extends U2FDeviceRegistration> getRegisteredDevices() {
         try {
             val expirationDate = LocalDate.now(ZoneId.systemDefault())
                 .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
@@ -64,7 +66,7 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
-    public Collection<? extends DeviceRegistration> getRegisteredDevices(final String username) {
+    public Collection<? extends U2FDeviceRegistration> getRegisteredDevices(final String username) {
         try {
             val expirationDate = LocalDate.now(ZoneId.systemDefault())
                 .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
@@ -78,12 +80,8 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
-    public U2FDeviceRegistration registerDevice(final String username, final DeviceRegistration registration) {
-        val record = new U2FDeviceRegistration();
-        record.setUsername(username);
-        record.setRecord(getCipherExecutor().encode(registration.toJsonWithAttestationCert()));
-        record.setCreatedDate(LocalDate.now(ZoneId.systemDefault()));
-        return this.mongoTemplate.save(record, this.collectionName);
+    public U2FDeviceRegistration registerDevice(final U2FDeviceRegistration registration) {
+        return this.mongoTemplate.save(registration, this.collectionName);
     }
 
     @Override
@@ -117,17 +115,10 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
         }
     }
 
-    private Collection<? extends DeviceRegistration> queryDeviceRegistrations(final Query query) {
-        return this.mongoTemplate.find(query, U2FDeviceRegistration.class, this.collectionName)
+    private Collection<? extends U2FDeviceRegistration> queryDeviceRegistrations(final Query query) {
+        return this.mongoTemplate.find(query, U2FDeviceRegistration.class,
+            this.collectionName)
             .stream()
-            .map(r -> {
-                try {
-                    return DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord()));
-                } catch (final Exception e) {
-                    LoggingUtils.error(LOGGER, e);
-                }
-                return null;
-            })
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }

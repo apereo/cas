@@ -63,6 +63,7 @@ public class CassandraServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "cassandraServiceRegistryExecutionPlanConfigurer")
+    @RefreshScope
     public ServiceRegistryExecutionPlanConfigurer cassandraServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(cassandraServiceRegistry());
     }

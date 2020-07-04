@@ -73,11 +73,10 @@ public class U2FCouchDbConfiguration {
             Caffeine.newBuilder()
                 .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
                 .build(key -> StringUtils.EMPTY);
-        val repo = new U2FCouchDbDeviceRepository(requestStorage, couchDbU2fDeviceRegistrationRepository,
+        return new U2FCouchDbDeviceRepository(requestStorage, couchDbU2fDeviceRegistrationRepository,
             u2f.getExpireRegistrations(),
             u2f.getExpireDevicesTimeUnit(),
-            couchDb.isAsynchronous());
-        repo.setCipherExecutor(this.u2fRegistrationRecordCipherExecutor);
-        return repo;
+            couchDb.isAsynchronous(),
+            u2fRegistrationRecordCipherExecutor);
     }
 }

@@ -4,9 +4,6 @@ import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration
 import org.apereo.cas.util.crypto.CertUtils
 import org.springframework.core.io.ClassPathResource
 
-import java.time.LocalDate
-import java.time.ZoneId
-
 def read(Object[] args) {
     def logger = args[0]
 
@@ -16,8 +13,16 @@ def read(Object[] args) {
     def reg2 = new DeviceRegistration("keyhandle22", "publickey1", cert, 1)
     devices.put(BaseResourceU2FDeviceRepository.MAP_KEY_DEVICES,
             [
-                    new U2FDeviceRegistration(2000, "casuser", reg2.toJsonWithAttestationCert(), LocalDate.now(ZoneId.systemDefault())),
-                    new U2FDeviceRegistration(1000, "casuser", reg1.toJsonWithAttestationCert(), LocalDate.now(ZoneId.systemDefault()))
+                    U2FDeviceRegistration.builder()
+                            .id(2000)
+                            .username("casuser")
+                            .record(reg2.toJsonWithAttestationCert())
+                            .build(),
+                    U2FDeviceRegistration.builder()
+                            .id(1000)
+                            .username("casuser")
+                            .record(reg1.toJsonWithAttestationCert())
+                            .build()
             ])
     return devices
 }

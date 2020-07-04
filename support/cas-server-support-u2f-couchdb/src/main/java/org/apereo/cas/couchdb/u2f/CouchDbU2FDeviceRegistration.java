@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,6 +18,7 @@ import java.time.LocalDate;
  */
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = true)
 public class CouchDbU2FDeviceRegistration extends U2FDeviceRegistration {
 
     private static final long serialVersionUID = -5891058831508619021L;

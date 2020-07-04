@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.u2f.web.flow;
 
+import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.util.crypto.CertUtils;
@@ -46,8 +47,11 @@ public class U2FStartAuthenticationActionTests extends BaseU2FWebflowActionTests
         
         val cert = CertUtils.readCertificate(new ClassPathResource("cert.crt"));
         val reg1 = new DeviceRegistration("keyhandle11", "publickey1", cert, 1);
-        deviceRepository.registerDevice(id, reg1);
-        
+        val record = U2FDeviceRegistration.builder()
+            .record(deviceRepository.getCipherExecutor().encode(reg1.toJsonWithAttestationCert()))
+            .username(id)
+            .build();
+        deviceRepository.registerDevice(record);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, u2fStartAuthenticationAction.execute(context).getId());
         assertNotNull(context.getFlowScope().get("u2fAuth"));
     }

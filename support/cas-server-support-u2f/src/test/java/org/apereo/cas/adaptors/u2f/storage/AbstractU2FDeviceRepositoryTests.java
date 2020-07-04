@@ -43,10 +43,20 @@ public abstract class AbstractU2FDeviceRepositoryTests {
     protected void registerDevices(final U2FDeviceRepository deviceRepository) {
         val cert = CertUtils.readCertificate(new ClassPathResource("cert.crt"));
         val r1 = new DeviceRegistration("keyhandle11", "publickey1", cert, 1);
+        val record1 = U2FDeviceRegistration.builder()
+            .record(deviceRepository.getCipherExecutor().encode(r1.toJsonWithAttestationCert()))
+            .username(CASUSER)
+            .build();
+
         val r2 = new DeviceRegistration("keyhandle22", "publickey1", cert, 2);
-        deviceRepository.registerDevice(CASUSER, r1);
-        deviceRepository.registerDevice(CASUSER, r2);
-        deviceRepository.authenticateDevice(CASUSER, r1);
+        val record2 = U2FDeviceRegistration.builder()
+            .record(deviceRepository.getCipherExecutor().encode(r2.toJsonWithAttestationCert()))
+            .username(CASUSER)
+            .build();
+
+        deviceRepository.registerDevice(record1);
+        deviceRepository.registerDevice(record2);
+        deviceRepository.verifyRegisteredDevice(record1);
         assertTrue(deviceRepository.isDeviceRegisteredFor(CASUSER));
     }
 

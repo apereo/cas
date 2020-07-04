@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -8,6 +9,7 @@ import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -24,8 +26,9 @@ public class U2FGroovyResourceDeviceRepository extends BaseResourceU2FDeviceRepo
 
     public U2FGroovyResourceDeviceRepository(final LoadingCache<String, String> requestStorage,
                                              final Resource groovyScript, final long expirationTime,
-                                             final TimeUnit expirationTimeUnit) {
-        super(requestStorage, expirationTime, expirationTimeUnit);
+                                             final TimeUnit expirationTimeUnit,
+                                             final CipherExecutor<Serializable, String> cipherExecutor) {
+        super(requestStorage, expirationTime, expirationTimeUnit, cipherExecutor);
         this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
     }
 
