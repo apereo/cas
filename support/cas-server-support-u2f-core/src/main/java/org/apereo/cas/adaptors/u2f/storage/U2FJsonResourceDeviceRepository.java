@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,8 +36,10 @@ public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     @SneakyThrows
     public U2FJsonResourceDeviceRepository(final LoadingCache<String, String> requestStorage,
                                            final Resource jsonResource,
-                                           final long expirationTime, final TimeUnit expirationTimeUnit) {
-        super(requestStorage, expirationTime, expirationTimeUnit);
+                                           final long expirationTime,
+                                           final TimeUnit expirationTimeUnit,
+                                           final CipherExecutor<Serializable, String> cipherExecutor) {
+        super(requestStorage, expirationTime, expirationTimeUnit, cipherExecutor);
         this.jsonResource = jsonResource;
         if (!ResourceUtils.doesResourceExist(this.jsonResource)) {
             if (this.jsonResource.getFile().createNewFile()) {

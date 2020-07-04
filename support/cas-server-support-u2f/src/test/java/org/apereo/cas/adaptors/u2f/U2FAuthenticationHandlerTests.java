@@ -28,8 +28,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@SpringBootTest(classes = BaseU2FWebflowActionTests.SharedTestConfiguration.class,
-    properties = "cas.authn.mfa.u2f.json.location=file:src/test/resources/u2f-accounts.json"
+@SpringBootTest(classes = {
+    BaseU2FWebflowActionTests.U2FTestConfiguration.class,
+    BaseU2FWebflowActionTests.SharedTestConfiguration.class
+},
+    properties = {
+        "cas.authn.mfa.u2f.crypto.enabled=false",
+        "cas.authn.mfa.u2f.json.location=file:src/test/resources/u2f-accounts.json"
+    }
 )
 @DirtiesContext
 @Tag("MFA")

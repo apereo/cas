@@ -4,14 +4,14 @@ import org.apereo.cas.adaptors.u2f.storage.BaseU2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import com.yubico.u2f.data.DeviceRegistration;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -43,15 +43,16 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     public U2FRedisDeviceRepository(final LoadingCache<String, String> requestStorage,
                                     final RedisTemplate<String, U2FDeviceRegistration> redisTemplate,
                                     final long expirationTime,
-                                    final TimeUnit expirationTimeUnit) {
-        super(requestStorage);
+                                    final TimeUnit expirationTimeUnit,
+                                    final CipherExecutor<Serializable, String> cipherExecutor) {
+        super(requestStorage, cipherExecutor);
         this.expirationTime = expirationTime;
         this.expirationTimeUnit = expirationTimeUnit;
         this.redisTemplate = redisTemplate;
     }
 
     @Override
-    public Collection<? extends DeviceRegistration> getRegisteredDevices() {
+    public Collection<? extends U2FDeviceRegistration> getRegisteredDevices() {
         try {
             val expirationDate = LocalDate.now(ZoneId.systemDefault())
                 .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
@@ -66,7 +67,7 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
-    public Collection<? extends DeviceRegistration> getRegisteredDevices(final String username) {
+    public Collection<? extends U2FDeviceRegistration> getRegisteredDevices(final String username) {
         try {
             val expirationDate = LocalDate.now(ZoneId.systemDefault())
                 .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
@@ -81,11 +82,7 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
-    public U2FDeviceRegistration registerDevice(final String username, final DeviceRegistration registration) {
-        val record = new U2FDeviceRegistration();
-        record.setUsername(username);
-        record.setRecord(getCipherExecutor().encode(registration.toJsonWithAttestationCert()));
-        record.setCreatedDate(LocalDate.now(ZoneId.systemDefault()));
+    public U2FDeviceRegistration registerDevice(final U2FDeviceRegistration record) {
         val redisKey = buildRedisKeyForRecord(record);
         this.redisTemplate.boundValueOps(redisKey).set(record);
         return this.redisTemplate.boundValueOps(redisKey).get();
@@ -132,27 +129,14 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
         return CAS_U2F_PREFIX + username + ":*";
     }
 
-    private Collection<? extends DeviceRegistration> queryDeviceRegistrations(final LocalDate expirationDate,
-                                                                              final Set<String> keys) {
+    private Collection<? extends U2FDeviceRegistration> queryDeviceRegistrations(final LocalDate expirationDate,
+                                                                                 final Set<String> keys) {
         return keys
             .stream()
             .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
             .filter(Objects::nonNull)
             .map(U2FDeviceRegistration.class::cast)
             .filter(audit -> audit.getCreatedDate().compareTo(expirationDate) >= 0)
-            .map(r -> {
-                try {
-                    val decoded = getCipherExecutor().decode(r.getRecord());
-                    if (StringUtils.isNotBlank(decoded)) {
-                        return DeviceRegistration.fromJson(decoded);
-                    }
-                    LOGGER.warn("Unable to to decode device registration for record id [{}]", r.getId());
-                } catch (final Exception e) {
-                    LoggingUtils.error(LOGGER, e);
-                }
-                return null;
-            })
-            .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 

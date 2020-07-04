@@ -31,7 +31,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
 import java.util.List;
 
 /**
@@ -48,7 +47,7 @@ public class U2FJpaConfiguration {
     @Autowired
     @Qualifier("jpaBeanFactory")
     private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -89,7 +88,6 @@ public class U2FJpaConfiguration {
 
     @Autowired
     @Bean
-    @ConditionalOnMissingBean(name = "transactionManagerU2f")
     public PlatformTransactionManager transactionManagerU2f(@Qualifier("u2fEntityManagerFactory") final EntityManagerFactory emf) {
         val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
@@ -98,17 +96,16 @@ public class U2FJpaConfiguration {
 
     @Bean
     @RefreshScope
-    public U2FDeviceRepository u2fDeviceRepository() {
+    public U2FDeviceRepository u2fDeviceRepository(@Qualifier("transactionManagerU2f") final PlatformTransactionManager mgr) {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
         final LoadingCache<String, String> requestStorage =
             Caffeine.newBuilder()
                 .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
                 .build(key -> StringUtils.EMPTY);
-        val repo = new U2FJpaDeviceRepository(requestStorage,
+        return new U2FJpaDeviceRepository(requestStorage,
             u2f.getExpireDevices(),
-            u2f.getExpireDevicesTimeUnit());
-        repo.setCipherExecutor(u2fRegistrationRecordCipherExecutor.getObject());
-        return repo;
+            u2f.getExpireDevicesTimeUnit(),
+            u2fRegistrationRecordCipherExecutor.getObject());
     }
 
 }

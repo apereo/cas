@@ -62,7 +62,8 @@ public class LdapServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "ldapServiceRegistryExecutionPlanConfigurer")
-    public ServiceRegistryExecutionPlanConfigurer ldaplServiceRegistryExecutionPlanConfigurer() {
+    @RefreshScope
+    public ServiceRegistryExecutionPlanConfigurer ldapServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(ldapServiceRegistry());
     }
 }

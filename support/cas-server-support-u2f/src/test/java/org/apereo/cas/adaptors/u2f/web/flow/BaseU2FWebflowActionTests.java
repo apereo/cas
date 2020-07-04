@@ -142,7 +142,7 @@ public abstract class BaseU2FWebflowActionTests {
         @Bean
         public U2F u2fService() throws Exception {
             val cert = CertUtils.readCertificate(new ClassPathResource("cert.crt"));
-            val r1 = new DeviceRegistration("keyhandle11", "publickey1", cert, 1);
+            val r1 = new DeviceRegistration("keyhandle11", "publickey1", cert, 20);
             val u2f = mock(U2F.class);
             when(u2f.startRegistration(any(), any())).thenAnswer(new Answer<Object>() {
                 @Override
@@ -151,6 +151,7 @@ public abstract class BaseU2FWebflowActionTests {
                 }
             });
             when(u2f.finishRegistration(any(), any())).thenReturn(r1);
+            when(u2f.finishSignature(any(), any(), any())).thenReturn(r1);
             return u2f;
         }
     }

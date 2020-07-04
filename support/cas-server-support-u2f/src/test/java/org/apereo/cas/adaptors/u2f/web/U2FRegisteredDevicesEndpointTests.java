@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.u2f.web;
 
+import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.config.U2FWebflowConfiguration;
@@ -59,7 +60,11 @@ public class U2FRegisteredDevicesEndpointTests extends AbstractCasEndpointTests 
         val id = UUID.randomUUID().toString();
         val cert = CertUtils.readCertificate(new ClassPathResource("cert.crt"));
         val r1 = new DeviceRegistration("keyhandle11", "publickey1", cert, 1);
-        deviceRepository.registerDevice(id, r1);
+        val record = U2FDeviceRegistration.builder()
+            .record(deviceRepository.getCipherExecutor().encode(r1.toJsonWithAttestationCert()))
+            .username(id)
+            .build();
+        deviceRepository.registerDevice(record);
         assertFalse(endpoint.fetchAll().isEmpty());
         assertFalse(endpoint.fetchBy(id).isEmpty());
     }

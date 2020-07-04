@@ -55,10 +55,9 @@ public class U2FMongoDbConfiguration {
             Caffeine.newBuilder()
                 .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
                 .build(key -> StringUtils.EMPTY);
-        val repo = new U2FMongoDbDeviceRepository(requestStorage, mongoTemplate, u2f.getExpireDevices(),
-            u2f.getExpireDevicesTimeUnit(), mongoProps.getCollection());
-        repo.setCipherExecutor(u2fRegistrationRecordCipherExecutor.getObject());
-        return repo;
+        return new U2FMongoDbDeviceRepository(requestStorage, mongoTemplate, u2f.getExpireDevices(),
+            u2f.getExpireDevicesTimeUnit(), mongoProps.getCollection(),
+            u2fRegistrationRecordCipherExecutor.getObject());
     }
 
 }

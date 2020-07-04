@@ -117,6 +117,7 @@ public class JpaServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "jpaServiceRegistryExecutionPlanConfigurer")
+    @RefreshScope
     public ServiceRegistryExecutionPlanConfigurer jpaServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(jpaServiceRegistry());
     }

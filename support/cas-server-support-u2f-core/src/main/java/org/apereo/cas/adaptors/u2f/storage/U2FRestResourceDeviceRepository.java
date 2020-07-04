@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.u2f.storage;
 import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -14,6 +15,7 @@ import lombok.val;
 import org.apache.http.HttpResponse;
 import org.springframework.http.HttpStatus;
 
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
@@ -36,9 +38,11 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     private final U2FMultifactorProperties.Rest restProperties;
 
     public U2FRestResourceDeviceRepository(final LoadingCache<String, String> requestStorage,
-                                           final long expirationTime, final TimeUnit expirationTimeUnit,
-                                           final U2FMultifactorProperties.Rest restProperties) {
-        super(requestStorage, expirationTime, expirationTimeUnit);
+                                           final long expirationTime,
+                                           final TimeUnit expirationTimeUnit,
+                                           final U2FMultifactorProperties.Rest restProperties,
+                                           final CipherExecutor<Serializable, String> cipherExecutor) {
+        super(requestStorage, expirationTime, expirationTimeUnit, cipherExecutor);
         this.restProperties = restProperties;
     }
 

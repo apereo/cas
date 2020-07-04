@@ -14,7 +14,9 @@ bin/
 **/.history
 *.orig
 .idea/
+*.class
 .DS_Store
+production/
 .idea
 overlays/
 pom.xml.versionsBackup

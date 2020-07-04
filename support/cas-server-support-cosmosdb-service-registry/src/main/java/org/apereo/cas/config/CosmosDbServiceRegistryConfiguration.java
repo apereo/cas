@@ -105,6 +105,7 @@ public class CosmosDbServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "cosmosDbServiceRegistryExecutionPlanConfigurer")
+    @RefreshScope
     public ServiceRegistryExecutionPlanConfigurer cosmosDbServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(cosmosDbServiceRegistry());
     }

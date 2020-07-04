@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.u2f.web.flow;
 
+import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -32,7 +33,11 @@ public class U2FAccountSaveRegistrationAction extends AbstractAction {
         val regReqJson = u2FDeviceRepository.getDeviceRegistrationRequest(registerResponse.getRequestId(), p.getId());
         val registerRequestData = RegisterRequestData.fromJson(regReqJson);
         val registration = u2f.finishRegistration(registerRequestData, registerResponse);
-        u2FDeviceRepository.registerDevice(p.getId(), registration);
+        val record = U2FDeviceRegistration.builder()
+            .record(u2FDeviceRepository.getCipherExecutor().encode(registration.toJsonWithAttestationCert()))
+            .username(p.getId())
+            .build();
+        u2FDeviceRepository.registerDevice(record);
         return success();
     }
 }

@@ -2,18 +2,19 @@ package org.apereo.cas.adaptors.u2f.storage;
 
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import com.yubico.u2f.data.DeviceRegistration;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @EnableTransactionManagement(proxyTargetClass = true)
-@Transactional(transactionManager = "transactionManagerU2f")
+@Transactional(transactionManager = "transactionManagerU2f", propagation = Propagation.REQUIRED)
 @Slf4j
 public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     private static final String DELETE_QUERY = "DELETE from U2FJpaDeviceRegistration r ";
@@ -44,14 +45,15 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     private transient EntityManager entityManager;
 
     public U2FJpaDeviceRepository(final LoadingCache<String, String> requestStorage,
-                                  final long expirationTime, final TimeUnit expirationTimeUnit) {
-        super(requestStorage);
+                                  final long expirationTime, final TimeUnit expirationTimeUnit,
+                                  final CipherExecutor<Serializable, String> cipherExecutor) {
+        super(requestStorage, cipherExecutor);
         this.expirationTime = expirationTime;
         this.expirationTimeUnit = expirationTimeUnit;
     }
 
     @Override
-    public Collection<? extends DeviceRegistration> getRegisteredDevices() {
+    public Collection<? extends U2FDeviceRegistration> getRegisteredDevices() {
         try {
             val expirationDate = LocalDate.now(ZoneId.systemDefault())
                 .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
@@ -59,14 +61,6 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
                 .setParameter("expdate", expirationDate)
                 .getResultList()
                 .stream()
-                .map(r -> {
-                    try {
-                        return DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord()));
-                    } catch (final Exception e) {
-                        LoggingUtils.error(LOGGER, e);
-                    }
-                    return null;
-                })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         } catch (final NoResultException e) {
@@ -78,25 +72,17 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
-    public Collection<? extends DeviceRegistration> getRegisteredDevices(final String username) {
+    public Collection<? extends U2FDeviceRegistration> getRegisteredDevices(final String username) {
         try {
             val expirationDate = LocalDate.now(ZoneId.systemDefault())
                 .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             return this.entityManager.createQuery(
-                SELECT_QUERY.concat("where r.username = :username and r.createdDate >= :expdate"),
+                SELECT_QUERY.concat("WHERE r.username = :username AND r.createdDate >= :expdate"),
                 U2FJpaDeviceRegistration.class)
                 .setParameter("username", username)
                 .setParameter("expdate", expirationDate)
                 .getResultList()
                 .stream()
-                .map(r -> {
-                    try {
-                        return DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord()));
-                    } catch (final Exception e) {
-                        LoggingUtils.error(LOGGER, e);
-                    }
-                    return null;
-                })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         } catch (final NoResultException e) {
@@ -108,11 +94,12 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
-    public U2FDeviceRegistration registerDevice(final String username, final DeviceRegistration registration) {
-        val jpa = new U2FJpaDeviceRegistration();
-        jpa.setUsername(username);
-        jpa.setRecord(getCipherExecutor().encode(registration.toJsonWithAttestationCert()));
-        jpa.setCreatedDate(LocalDate.now(ZoneId.systemDefault()));
+    public U2FDeviceRegistration registerDevice(final U2FDeviceRegistration registration) {
+        val jpa = U2FJpaDeviceRegistration.builder()
+            .username(registration.getUsername())
+            .record(registration.getRecord())
+            .id(registration.getId())
+            .build();
         return this.entityManager.merge(jpa);
     }
 
@@ -124,12 +111,11 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public void clean() {
         try {
-            val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+            val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(expirationTime, DateTimeUtils.toChronoUnit(expirationTimeUnit));
             LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
-            this.entityManager.createQuery(
-                DELETE_QUERY.concat("where r.createdDate <= :expdate"))
-                .setParameter("expdate", expirationDate)
-                .executeUpdate();
+            val query = entityManager.createQuery(DELETE_QUERY.concat("WHERE r.createdDate <= :expdate"))
+                .setParameter("expdate", expirationDate);
+            query.executeUpdate();
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
