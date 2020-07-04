@@ -89,7 +89,6 @@ public class U2FJpaConfiguration {
 
     @Autowired
     @Bean
-    @ConditionalOnMissingBean(name = "transactionManagerU2f")
     public PlatformTransactionManager transactionManagerU2f(@Qualifier("u2fEntityManagerFactory") final EntityManagerFactory emf) {
         val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
