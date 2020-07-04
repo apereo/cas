@@ -122,6 +122,18 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
+    public void deleteRegisteredDevice(final U2FDeviceRegistration registration) {
+        try {
+            val query = entityManager.createQuery(DELETE_QUERY.concat("WHERE r.username <= :username AND r.id=:id"))
+                .setParameter("username", registration.getUsername())
+                .setParameter("id", registration.getId());
+            query.executeUpdate();
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+    }
+
+    @Override
     public void removeAll() {
         try {
             this.entityManager.createQuery(DELETE_QUERY).executeUpdate();

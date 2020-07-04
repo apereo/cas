@@ -38,3 +38,8 @@ def removeAll(Object[] args) {
     def logger = args[0]
     true
 }
+
+def remove(Object[] args) {
+    def device = args[0]
+    def logger = args[1]
+}

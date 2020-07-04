@@ -49,6 +49,7 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
         val values = userStorage.get(registration.getUsername());
         if (values != null) {
             values.add(registration);
+            userStorage.put(registration.getUsername(), values);
         }
         return registration;
     }
@@ -58,6 +59,7 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
         val values = userStorage.get(registration.getUsername());
         if (values != null && values.isEmpty()) {
             values.add(registration);
+            userStorage.put(registration.getUsername(), values);
         }
         return registration;
     }
@@ -66,6 +68,15 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
     public boolean isDeviceRegisteredFor(final String username) {
         val values = userStorage.get(username);
         return values != null && !values.isEmpty();
+    }
+
+    @Override
+    public void deleteRegisteredDevice(final U2FDeviceRegistration registration) {
+        val values = userStorage.get(registration.getUsername());
+        if (values != null) {
+            values.removeIf(r -> r.getId() == registration.getId());
+            userStorage.put(registration.getUsername(), values);
+        }
     }
 
     @Override

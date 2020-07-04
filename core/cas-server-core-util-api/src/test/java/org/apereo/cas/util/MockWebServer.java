@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.ByteArrayResource;
@@ -34,9 +35,11 @@ public class MockWebServer implements AutoCloseable {
      */
     private Thread workerThread;
 
+    private Resource responseBody;
+
     public MockWebServer(final int port) {
         try {
-            this.worker = new Worker(new ServerSocket(port), null, MediaType.APPLICATION_JSON_VALUE);
+            this.worker = new Worker(new ServerSocket(port), MediaType.APPLICATION_JSON_VALUE);
         } catch (final IOException e) {
             throw new IllegalArgumentException("Cannot create Web server", e);
         }
@@ -52,7 +55,7 @@ public class MockWebServer implements AutoCloseable {
 
     public MockWebServer(final int port, final Resource resource, final String contentType) {
         try {
-            this.worker = new Worker(new ServerSocket(port), resource, contentType);
+            this.worker = new Worker(new ServerSocket(port), resource, contentType, HttpStatus.OK);
         } catch (final IOException e) {
             throw new IllegalArgumentException("Cannot create Web server", e);
         }
@@ -60,7 +63,8 @@ public class MockWebServer implements AutoCloseable {
 
     public MockWebServer(final int port, final String data) {
         try {
-            this.worker = new Worker(new ServerSocket(port), new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8)), MediaType.APPLICATION_JSON_VALUE);
+            this.worker = new Worker(new ServerSocket(port), MediaType.APPLICATION_JSON_VALUE);
+            responseBody(data);
         } catch (final IOException e) {
             throw new IllegalArgumentException("Cannot create Web server", e);
         }
@@ -72,6 +76,10 @@ public class MockWebServer implements AutoCloseable {
         } catch (final IOException e) {
             throw new IllegalArgumentException("Cannot create Web server", e);
         }
+    }
+
+    public void responseBody(final String data) {
+        this.worker.setResource(new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8)));
     }
 
     /**
@@ -128,18 +136,19 @@ public class MockWebServer implements AutoCloseable {
 
         private final ServerSocket serverSocket;
 
-        private final Resource resource;
-
         private final String contentType;
 
         private final Function<Socket, Object> functionToExecute;
 
         private final HttpStatus status;
 
+        @Setter
+        private Resource resource;
+
         private boolean running;
 
-        Worker(final ServerSocket sock, final Resource resource, final String contentType) {
-            this(sock, resource, contentType, HttpStatus.OK);
+        Worker(final ServerSocket sock, final String contentType) {
+            this(sock, null, contentType, HttpStatus.OK);
         }
 
         Worker(final ServerSocket sock, final Resource resource, final HttpStatus status) {

@@ -46,6 +46,13 @@ public class U2FGroovyResourceDeviceRepository extends BaseResourceU2FDeviceRepo
     }
 
     @Override
+    public void deleteRegisteredDevice(final U2FDeviceRegistration registration) {
+        val args = new Object[]{registration, LOGGER};
+        this.watchableScript.execute("remove", Void.class, args);
+        LOGGER.debug("Removed device record [{}] from repository", registration);
+    }
+
+    @Override
     public void removeAll() {
         val args = new Object[]{LOGGER};
         this.watchableScript.execute("removeAll", Void.class, args);

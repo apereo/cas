@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.springframework.http.HttpStatus;
 
@@ -76,6 +77,21 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
                 restProperties.getBasicAuthUsername(),
                 restProperties.getBasicAuthPassword(),
                 writer.toString());
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    @Override
+    public void deleteRegisteredDevice(final U2FDeviceRegistration registration) {
+        HttpResponse response = null;
+        try {
+            val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/") + registration.getId();
+            response = HttpUtils.executeDelete(url,
+                restProperties.getBasicAuthUsername(),
+                restProperties.getBasicAuthPassword());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {
