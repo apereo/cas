@@ -31,6 +31,25 @@ public class CheckEnforceLombokAnnotations {
         }
     }
 
+    private static void checkForGetterSetter(final AtomicBoolean failBuild,
+                                             final Path file,
+                                             final String text,
+                                             final String type,
+                                             final String variable) {
+        var capitalized = variable.substring(0, 1).toUpperCase() + variable.substring(1);
+        var patternAccess = Pattern.compile("(public|private|protected)\\s+"
+            + type
+            + "\\s+(get|set)" + capitalized
+            + "\\(\\)\\s*\\{\\s*return (this\\.)*"
+            + variable + ";\\s*\\}", Pattern.DOTALL);
+
+        var accessMatcher = patternAccess.matcher(text);
+        if (accessMatcher.find()) {
+            print("%s should convert the getter/setter for variable [%s] to use Lombok's @Getter/@Setter", file, variable);
+            failBuild.set(true);
+        }
+    }
+
     protected static void checkPattern(final String arg) throws IOException {
         var failBuild = new AtomicBoolean(false);
         var pattern = Pattern.compile("(private|protected)\\s+final\\s(\\w+<*\\w*>*)\\s+(\\w+);");
@@ -39,26 +58,12 @@ public class CheckEnforceLombokAnnotations {
             .filter(file -> Files.isRegularFile(file)
                 && file.toFile().getPath().matches(".*\\.java"))
             .forEach(file -> {
-                //System.out.println("Processing file " + file.toFile().getName());
                 var text = readFile(file);
                 var matcher = pattern.matcher(text);
                 while (matcher.find()) {
                     var type = matcher.group(2);
                     var variable = matcher.group(3);
-                    var capitalized = variable.substring(0, 1).toUpperCase() + variable.substring(1);
-                    var patternAccess = Pattern.compile("(public|private|protected)\\s+"
-                        + type
-                        + "\\s+(get|set)" + capitalized
-                        + "\\(\\)\\s*\\{\\s*return (this\\.)*"
-                        + variable + ";\\s*\\}", Pattern.DOTALL);
-
-                    //System.out.println(patternAccess.pattern());
-
-                    var accessMatcher = patternAccess.matcher(text);
-                    if (accessMatcher.find()) {
-                        print("%s should convert the getter/setter for variable [%s] to use Lombok's @Getter/@Setter", file, variable);
-                        failBuild.set(true);
-                    }
+                    checkForGetterSetter(failBuild, file, text, type, variable);
                 }
             });
 

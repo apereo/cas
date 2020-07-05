@@ -6,6 +6,7 @@ import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -26,20 +27,16 @@ import java.util.ArrayList;
  * @since 4.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredServiceMapper {
 
     private final LdapServiceRegistryProperties ldap;
 
     private final StringSerializer<RegisteredService> jsonSerializer = new RegisteredServiceJsonSerializer();
 
-    public DefaultLdapRegisteredServiceMapper(final LdapServiceRegistryProperties ldapProperties) {
-        ldap = ldapProperties;
-    }
-
     @Override
     @SneakyThrows
     public LdapEntry mapFromRegisteredService(final String dn, final RegisteredService svc) {
-
         if (svc.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             svc.setId(System.currentTimeMillis());
         }
