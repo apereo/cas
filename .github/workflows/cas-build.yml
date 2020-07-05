@@ -196,6 +196,7 @@ jobs:
           - CheckSpringConfigurationBeanProxying
           - CheckSpringConfigurationFactories
           - CheckMissingTestTagAnnotation
+          - CheckEnforceLombokAnnotations
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

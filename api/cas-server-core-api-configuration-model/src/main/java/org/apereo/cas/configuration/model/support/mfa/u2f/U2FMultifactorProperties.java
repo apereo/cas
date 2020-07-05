@@ -1,13 +1,8 @@
-package org.apereo.cas.configuration.model.support.mfa;
+package org.apereo.cas.configuration.model.support.mfa.u2f;
 
-import org.apereo.cas.configuration.model.RestEndpointProperties;
-import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.model.support.couchdb.BaseAsynchronousCouchDbProperties;
-import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorProviderProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
-import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -40,7 +35,8 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
     /**
      * Store device registration records inside a JDBC resource.
      */
-    private Jpa jpa = new Jpa();
+    @NestedConfigurationProperty
+    private U2FJpaMultifactorProperties jpa = new U2FJpaMultifactorProperties();
 
     /**
      * Expire and forget device registration requests after this period.
@@ -65,27 +61,38 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
     /**
      * Store device registration records inside a MongoDb resource.
      */
-    private MongoDb mongo = new MongoDb();
+    @NestedConfigurationProperty
+    private U2FMongoDbMultifactorProperties mongo = new U2FMongoDbMultifactorProperties();
 
     /**
      * Store device registration records inside a redis resource.
      */
-    private Redis redis = new Redis();
+    @NestedConfigurationProperty
+    private U2FRedisMultifactorProperties redis = new U2FRedisMultifactorProperties();
+
+    /**
+     * Store device registration records inside a dynamodb database resource.
+     */
+    @NestedConfigurationProperty
+    private U2FDynamoDbMultifactorProperties dynamoDb = new U2FDynamoDbMultifactorProperties();
 
     /**
      * Store device registration records inside a static JSON resource.
      */
-    private Json json = new Json();
+    @NestedConfigurationProperty
+    private U2FJsonMultifactorProperties json = new U2FJsonMultifactorProperties();
 
     /**
      * Store device registration records via a Groovy script.
      */
-    private Groovy groovy = new Groovy();
+    @NestedConfigurationProperty
+    private U2FGroovyMultifactorProperties groovy = new U2FGroovyMultifactorProperties();
 
     /**
      * Store device registration records via REST APIs.
      */
-    private Rest rest = new Rest();
+    @NestedConfigurationProperty
+    private U2FRestfulMultifactorProperties rest = new U2FRestfulMultifactorProperties();
 
     /**
      * Indicates whether this provider should support trusted devices.
@@ -95,7 +102,8 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
     /**
      * Store device registration records via CouchDb.
      */
-    private CouchDb couchDb = new CouchDb();
+    @NestedConfigurationProperty
+    private U2FCouchDbMultifactorProperties couchDb = new U2FCouchDbMultifactorProperties();
 
     /**
      * Clean up expired records via a background cleaner process.
@@ -115,68 +123,4 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
         setId(DEFAULT_IDENTIFIER);
     }
 
-    @RequiresModule(name = "cas-server-support-u2f-couchdb")
-    public static class CouchDb extends BaseAsynchronousCouchDbProperties {
-
-        private static final long serialVersionUID = 2751957521987245445L;
-
-        public CouchDb() {
-            setDbName("u2f_multifactor");
-        }
-    }
-
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Jpa extends AbstractJpaProperties {
-
-        private static final long serialVersionUID = -4334840263678287815L;
-    }
-
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class MongoDb extends SingleCollectionMongoDbProperties {
-
-        private static final long serialVersionUID = -7963843335569634144L;
-
-        public MongoDb() {
-            setCollection("CasMongoDbU2FRepository");
-        }
-    }
-
-    @RequiresModule(name = "cas-server-support-u2f")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Json extends SpringResourceProperties {
-
-        private static final long serialVersionUID = -6883660787308509919L;
-    }
-
-    @RequiresModule(name = "cas-server-support-u2f")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Rest extends RestEndpointProperties {
-
-        private static final long serialVersionUID = -8102345678378393382L;
-    }
-
-    @RequiresModule(name = "cas-server-support-u2f")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Groovy extends SpringResourceProperties {
-
-        private static final long serialVersionUID = 8079027843747126083L;
-    }
-
-    @RequiresModule(name = "cas-server-support-u2f-redis")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Redis extends BaseRedisProperties {
-        private static final long serialVersionUID = -1261683393319585262L;
-    }
 }

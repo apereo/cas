@@ -80,7 +80,7 @@ as progress is made with the goal of hopefully reaching at least `85%` before th
 
 Redis support and configuration namespace are now capable of supporting connections to Redis clusters.
 
-### DynamoDb Events
+### DynamoDb Storage for CAS Events
 
 [CAS Events](../installation/Configuring-Authentication-Events.html) can now be stored in DynamoDb instances.
 
@@ -101,12 +101,16 @@ at runtime via webflow auto-configuration rather than static XML definitions. Th
 
 Support for [Multifactor Authentication Trusted Device/Browser](../mfa/Multifactor-TrustedDevice-Authentication.html) is now extended 
 to also include [U2F](../mfa/FIDO-U2F-Authentication.html). Furthermore, a number of new administrative actuator endpoints are 
-presented to report back on the registered devices
+presented to report back on the registered devices or delete/deregister devices.
 
 ### Authentication Actuator Endpoints
 
 A number of new [administrative actuator endpoints](../installation/Configuring-Authentication-Components.html) are presented 
 to report back on the registered authentication handlers and policies.
+
+### DynamoDb Storage for U2F Multifactor Authentication
+
+[U2F Multifactor Authentication](../mfa/FIDO-U2F-Authentication.html) devices can now be stored in DynamoDb instances.
 
 ### Gradle Remote Build Cache
 
