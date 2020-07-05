@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.x509.authentication.handler.support.X509Credentia
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -35,6 +36,7 @@ import java.util.concurrent.TimeUnit;
  * @since 3.4.7
  */
 @Slf4j
+@Getter
 public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker implements InitializingBean, DisposableBean {
 
     private static final int DEFAULT_REFRESH_INTERVAL = 3600;
@@ -184,17 +186,6 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
      */
     private void addCrls(final Collection<X509CRL> results) {
         results.forEach(entry -> addCRL(entry.getIssuerX500Principal(), entry));
-    }
-
-    /**
-     * @return Returns the CRL fetcher component.
-     */
-    protected CRLFetcher getFetcher() {
-        return this.fetcher;
-    }
-
-    protected Collection<Resource> getResources() {
-        return this.resources;
     }
 
     @Override
