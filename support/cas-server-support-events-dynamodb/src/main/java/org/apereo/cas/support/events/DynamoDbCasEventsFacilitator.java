@@ -1,6 +1,7 @@
 package org.apereo.cas.support.events;
 
 import org.apereo.cas.configuration.model.core.events.DynamoDbEventsProperties;
+import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.util.LoggingUtils;
 
@@ -22,7 +23,6 @@ import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -101,7 +101,7 @@ public class DynamoDbCasEventsFacilitator {
     public Set<CasEvent> getAll() {
         return getRecordsByKeys(List.of());
     }
-    
+
     /**
      * Delete all.
      */
@@ -116,7 +116,7 @@ public class DynamoDbCasEventsFacilitator {
      * @return the events for principal
      */
     public Collection<? extends CasEvent> getEventsForPrincipal(final String id) {
-        val query = DynamoDbQuery.builder()
+        val query = DynamoDbQueryBuilder.builder()
             .key(ColumnNames.PRINCIPAL.getColumnName())
             .attributeValue(List.of(new AttributeValue(id)))
             .operator(ComparisonOperator.EQ)
@@ -135,12 +135,12 @@ public class DynamoDbCasEventsFacilitator {
     public Collection<? extends CasEvent> getEventsForPrincipal(final String id, final ZonedDateTime dateTime) {
         val query =
             List.of(
-                DynamoDbQuery.builder()
+                DynamoDbQueryBuilder.builder()
                     .key(ColumnNames.PRINCIPAL.getColumnName())
                     .attributeValue(List.of(new AttributeValue(id)))
                     .operator(ComparisonOperator.EQ)
                     .build(),
-                DynamoDbQuery.builder()
+                DynamoDbQueryBuilder.builder()
                     .key(ColumnNames.CREATION_TIME.getColumnName())
                     .attributeValue(List.of(new AttributeValue(dateTime.toString())))
                     .operator(ComparisonOperator.GE)
@@ -157,12 +157,12 @@ public class DynamoDbCasEventsFacilitator {
      */
     public Collection<? extends CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
         val query = List.of(
-            DynamoDbQuery.builder()
+            DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.TYPE.getColumnName())
                 .attributeValue(List.of(new AttributeValue(type)))
                 .operator(ComparisonOperator.EQ)
                 .build(),
-            DynamoDbQuery.builder()
+            DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.CREATION_TIME.getColumnName())
                 .attributeValue(List.of(new AttributeValue(dateTime.toString())))
                 .operator(ComparisonOperator.GE)
@@ -177,14 +177,14 @@ public class DynamoDbCasEventsFacilitator {
      * @return the events of type
      */
     public Collection<? extends CasEvent> getEventsOfType(final String type) {
-        val query = DynamoDbQuery.builder()
+        val query = DynamoDbQueryBuilder.builder()
             .key(ColumnNames.TYPE.getColumnName())
             .attributeValue(List.of(new AttributeValue(type)))
             .operator(ComparisonOperator.EQ)
             .build();
         return getRecordsByKeys(query);
     }
-    
+
     /**
      * Gets events of type for principal.
      *
@@ -196,17 +196,17 @@ public class DynamoDbCasEventsFacilitator {
     public Collection<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal,
                                                                       final ZonedDateTime dateTime) {
         val query = List.of(
-            DynamoDbQuery.builder()
+            DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.TYPE.getColumnName())
                 .attributeValue(List.of(new AttributeValue(type)))
                 .operator(ComparisonOperator.EQ)
                 .build(),
-            DynamoDbQuery.builder()
+            DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.PRINCIPAL.getColumnName())
                 .attributeValue(List.of(new AttributeValue(principal)))
                 .operator(ComparisonOperator.EQ)
                 .build(),
-            DynamoDbQuery.builder()
+            DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.CREATION_TIME.getColumnName())
                 .attributeValue(List.of(new AttributeValue(dateTime.toString())))
                 .operator(ComparisonOperator.GE)
@@ -224,19 +224,19 @@ public class DynamoDbCasEventsFacilitator {
     public Collection<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
         val query =
             List.of(
-                DynamoDbQuery.builder()
+                DynamoDbQueryBuilder.builder()
                     .key(ColumnNames.PRINCIPAL.getColumnName())
                     .attributeValue(List.of(new AttributeValue(principal)))
                     .operator(ComparisonOperator.EQ)
                     .build(),
-                DynamoDbQuery.builder()
+                DynamoDbQueryBuilder.builder()
                     .key(ColumnNames.TYPE.getColumnName())
                     .attributeValue(List.of(new AttributeValue(type)))
                     .operator(ComparisonOperator.EQ)
                     .build());
         return getRecordsByKeys(query);
     }
-    
+
     /**
      * Build table attribute values map.
      *
@@ -262,12 +262,12 @@ public class DynamoDbCasEventsFacilitator {
     }
 
     @SneakyThrows
-    private Set<CasEvent> getRecordsByKeys(final DynamoDbQuery... queries) {
+    private Set<CasEvent> getRecordsByKeys(final DynamoDbQueryBuilder... queries) {
         return getRecordsByKeys(Arrays.stream(queries).collect(Collectors.toList()));
     }
 
     @SneakyThrows
-    private Set<CasEvent> getRecordsByKeys(final List<DynamoDbQuery> queries) {
+    private Set<CasEvent> getRecordsByKeys(final List<DynamoDbQueryBuilder> queries) {
         try {
             val scanRequest = new ScanRequest(dynamoDbProperties.getTableName());
             queries.forEach(query -> {
@@ -332,15 +332,5 @@ public class DynamoDbCasEventsFacilitator {
         ColumnNames(final String columnName) {
             this.columnName = columnName;
         }
-    }
-
-    @Getter
-    @Builder
-    private static class DynamoDbQuery {
-        private final String key;
-
-        private final List<AttributeValue> attributeValue;
-
-        private final ComparisonOperator operator;
     }
 }

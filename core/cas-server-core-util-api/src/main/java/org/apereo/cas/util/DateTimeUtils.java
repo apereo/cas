@@ -125,6 +125,16 @@ public class DateTimeUtils {
     }
 
     /**
+     * Local date time local date.
+     *
+     * @param time the time
+     * @return the local date
+     */
+    public static LocalDate localDateTime(final long time) {
+        return LocalDate.ofInstant(Instant.ofEpochMilli(time), ZoneOffset.UTC);
+    }
+
+    /**
      * Parse the given value as a zoned datetime.
      *
      * @param value the value

@@ -42,7 +42,7 @@ public interface U2FDeviceRepository {
      * Deliver authenticated device upon successful authentication events.
      *
      * @param registration the registration
-     * @return u 2 f device registration
+     * @return u2f device registration
      */
     U2FDeviceRegistration verifyRegisteredDevice(U2FDeviceRegistration registration);
 
