@@ -66,15 +66,6 @@ public class RevokedCertificateException extends GeneralSecurityException {
         this(DateTimeUtils.zonedDateTimeOf(entry.getRevocationDate()), entry.getSerialNumber(), getReasonFromX509Entry(entry));
     }
 
-    /**
-     * Gets the revocation date.
-     *
-     * @return Returns the revocationDate.
-     */
-    public ZonedDateTime getRevocationDate() {
-        return Optional.ofNullable(this.revocationDate).map(ZonedDateTime::from).orElse(null);
-    }
-
     @Override
     public String getMessage() {
         if (this.reason != null) {

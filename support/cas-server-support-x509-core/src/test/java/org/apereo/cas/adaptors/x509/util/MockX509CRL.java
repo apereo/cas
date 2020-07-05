@@ -100,12 +100,7 @@ public class MockX509CRL extends X509CRL {
     public byte[] getTBSCertList() {
         return null;
     }
-
-    @Override
-    public Date getThisUpdate() {
-        return this.thisUpdate;
-    }
-
+    
     @Override
     public int getVersion() {
         return 0;
@@ -113,7 +108,6 @@ public class MockX509CRL extends X509CRL {
 
     @Override
     public void verify(final PublicKey key) {
-
     }
 
     @Override

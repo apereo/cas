@@ -46,6 +46,7 @@ public abstract class RootCasException extends RuntimeException {
         this.args.addAll(args);
     }
 
+
     /**
      * @return Returns the code. If there is a chained exception it recursively
      * calls {@code getCode()} on the cause of the chained exception rather than the returning
