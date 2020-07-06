@@ -40,7 +40,7 @@ public class DefaultNotificationSenderTests {
     public static class DefaultNotificationSenderTestConfiguration implements NotificationSenderExecutionPlanConfigurer {
         @Override
         public NotificationSender configureNotificationSender() {
-            return new MockNotificationSender();
+            return NotificationSender.noOp();
         }
     }
 
