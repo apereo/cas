@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa.u2f;
 
 import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
-import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;

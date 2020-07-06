@@ -33,8 +33,9 @@ public interface NotificationSender extends Ordered {
      *
      * @param principal   the principal
      * @param messageData the message data
+     * @return true/false
      */
-    void notify(Principal principal, Map<String, String> messageData);
+    boolean notify(Principal principal, Map<String, String> messageData);
 
     /**
      * No op notification sender.
@@ -42,7 +43,6 @@ public interface NotificationSender extends Ordered {
      * @return the notification sender
      */
     static NotificationSender noOp() {
-        return (principal, messageData) -> {
-        };
+        return (principal, messageData) -> true;
     }
 }

@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -41,6 +42,18 @@ public class CommunicationsManager {
 
     public boolean isNotificationSenderDefined() {
         return this.notificationSender != null && this.notificationSender.canSend();
+    }
+
+    /**
+     * Notify.
+     *
+     * @param principal the principal
+     * @param title     the title
+     * @param body      the body
+     * @return true/false
+     */
+    public boolean notify(final Principal principal, final String title, final String body) {
+        return this.notificationSender.notify(principal, Map.of("title", title, "message", body));
     }
 
     /**

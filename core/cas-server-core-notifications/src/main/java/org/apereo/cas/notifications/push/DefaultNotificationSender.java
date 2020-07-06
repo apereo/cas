@@ -23,7 +23,15 @@ public class DefaultNotificationSender implements NotificationSender {
     }
 
     @Override
-    public void notify(final Principal principal, final Map<String, String> messageData) {
-        notificationSenders.forEach(sender -> sender.notify(principal, messageData));
+    public boolean notify(final Principal principal, final Map<String, String> messageData) {
+        return notificationSenders
+            .stream()
+            .anyMatch(sender -> {
+                if (sender.canSend()) {
+                    sender.notify(principal, messageData);
+                    return true;
+                }
+                return false;
+            });
     }
 }
