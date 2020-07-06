@@ -1,6 +1,10 @@
 package org.apereo.cas.notifications.push;
 
+import org.apereo.cas.authentication.principal.Principal;
+
 import org.springframework.core.Ordered;
+
+import java.util.Map;
 
 /**
  * This is {@link NotificationSender}.
@@ -8,6 +12,7 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
+@FunctionalInterface
 public interface NotificationSender extends Ordered {
     @Override
     default int getOrder() {
@@ -23,4 +28,21 @@ public interface NotificationSender extends Ordered {
         return true;
     }
 
+    /**
+     * Notify.
+     *
+     * @param principal   the principal
+     * @param messageData the message data
+     */
+    void notify(Principal principal, Map<String, String> messageData);
+
+    /**
+     * No op notification sender.
+     *
+     * @return the notification sender
+     */
+    static NotificationSender noOp() {
+        return (principal, messageData) -> {
+        };
+    }
 }

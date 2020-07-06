@@ -31,6 +31,7 @@ import org.apereo.cas.configuration.model.support.consent.ConsentProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
 import org.apereo.cas.configuration.model.support.custom.CasCustomProperties;
+import org.apereo.cas.configuration.model.support.firebase.GoogleFirebaseCloudMessagingProperties;
 import org.apereo.cas.configuration.model.support.geo.googlemaps.GoogleMapsProperties;
 import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
@@ -215,6 +216,12 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private GoogleAnalyticsProperties googleAnalytics = new GoogleAnalyticsProperties();
+
+    /**
+     * Google Firebase Cloud Messaging functionality.
+     */
+    @NestedConfigurationProperty
+    private GoogleFirebaseCloudMessagingProperties googleFirebaseMessaging = new GoogleFirebaseCloudMessagingProperties();
 
     /**
      * Google reCAPTCHA settings.

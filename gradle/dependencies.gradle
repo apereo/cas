@@ -22,6 +22,18 @@ ext.libraries = [
                     transitive = false
                 }
         ],
+        firebaseadmin : [
+                dependencies.create("com.google.api-client:google-api-client:$googleApiClientVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                },
+                dependencies.create("com.google.firebase:firebase-admin:$firebaseAdminVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                }
+        ],
         javaxel : [
                 dependencies.create("javax.el:javax.el-api:$javaxElVersion") {
                 },

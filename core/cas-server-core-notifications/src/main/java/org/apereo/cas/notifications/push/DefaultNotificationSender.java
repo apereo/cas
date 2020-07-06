@@ -1,8 +1,11 @@
 package org.apereo.cas.notifications.push;
 
+import org.apereo.cas.authentication.principal.Principal;
+
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link DefaultNotificationSender}.
@@ -17,5 +20,10 @@ public class DefaultNotificationSender implements NotificationSender {
     @Override
     public boolean canSend() {
         return notificationSenders.stream().anyMatch(NotificationSender::canSend);
+    }
+
+    @Override
+    public void notify(final Principal principal, final Map<String, String> messageData) {
+        notificationSenders.forEach(sender -> sender.notify(principal, messageData));
     }
 }
