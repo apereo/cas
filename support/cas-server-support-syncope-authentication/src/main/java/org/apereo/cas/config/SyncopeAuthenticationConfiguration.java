@@ -65,7 +65,6 @@ public class SyncopeAuthenticationConfiguration {
         h.setPasswordPolicyConfiguration(syncopePasswordPolicyConfiguration());
         h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(syncope.getCredentialCriteria()));
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(syncope.getPrincipalTransformation()));
-
         return h;
     }
 
@@ -75,7 +74,7 @@ public class SyncopeAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer syncopeAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             val syncope = casProperties.getAuthn().getSyncope();
-            if (!syncope.isUndefined()) {
+            if (syncope.isUndefined()) {
                 plan.registerAuthenticationHandlerWithPrincipalResolver(syncopeAuthenticationHandler(), defaultPrincipalResolver.getObject());
             }
         };
