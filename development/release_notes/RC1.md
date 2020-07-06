@@ -80,7 +80,7 @@ as progress is made with the goal of hopefully reaching at least `85%` before th
 
 Redis support and configuration namespace are now capable of supporting connections to Redis clusters.
 
-### DynamoDb Events
+### DynamoDb Storage for CAS Events
 
 [CAS Events](../installation/Configuring-Authentication-Events.html) can now be stored in DynamoDb instances.
 
@@ -100,12 +100,17 @@ at runtime via webflow auto-configuration rather than static XML definitions. Th
 ### U2F Multifactor Authentication Trusted Devices
 
 Support for [Multifactor Authentication Trusted Device/Browser](../mfa/Multifactor-TrustedDevice-Authentication.html) is now extended 
-to also include [U2F](../mfa/FIDO-U2F-Authentication.html).
+to also include [U2F](../mfa/FIDO-U2F-Authentication.html). Furthermore, a number of new administrative actuator endpoints are 
+presented to report back on the registered devices or delete/deregister devices.
 
 ### Authentication Actuator Endpoints
 
 A number of new [administrative actuator endpoints](../installation/Configuring-Authentication-Components.html) are presented 
 to report back on the registered authentication handlers and policies.
+
+### DynamoDb Storage for U2F Multifactor Authentication
+
+[U2F Multifactor Authentication](../mfa/FIDO-U2F-Authentication.html) devices can now be stored in DynamoDb instances.
 
 ### Gradle Remote Build Cache
 
@@ -126,6 +131,11 @@ added to [GitHub Actions](https://github.com/apereo/cas/actions). At this point,
 other test categories for SAML2 and OAuth will be gradually added once a CAS runtime context (i.e. WAR Overlay) can 
 be dynamically constructed on-demand with a module selection menu. The goal is to ensure the JMeter test artifacts 
 and scripts are maintainable and manageable from one CAS release to the next.
+
+### Google Firebase Cloud Messaging
+
+Preliminary support is available for notification based on [Google Firebase Cloud Messaging](../notifications/Notifications-Configuration.html). The very first consumer
+of this feature is the [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) module.
 
 ### Service Registry Replication via Apache Kafka
 
@@ -150,7 +160,7 @@ Google Authenticator for multifactor authentication is now allowed to accept and
 
 - Attribute definitions mapped to an external Groovy script are corrected to handle caching in more resource-friendly ways.
 - The management of service definitions is now delegating search operations to the service registry rather than filtering matches internally while also utilizing a caching layer to improve performance as much as possible.
-- The authentication strategy backed by [Apache Syncope](../installation/Syncope-Authentication.html) is enhanced to not require a dependency on Apache Syncope modules, allowing the integration to work with all Apache Syncope versions. Additional improvements are put into to ensure the configurable can comply with reload requests and the likes of `@RefreshScope`.
+- The authentication strategy backed by [Apache Syncope](../installation/Syncope-Authentication.html) is enhanced to not require a dependency on Apache Syncope modules, allowing the integration to work with all Apache Syncope versions. Additional improvements are put in to ensure the configuration can comply with reload requests and the likes of `@RefreshScope`.
 - The eligibility of passwordless accounts for multifactor & delegated authentication has switched to a `TriStateBoolean` type to allow for easier overrides and undefined states when examined against the global settings.
 - When working with Git integrations, username and email attributes used for commit operations are now resolved via local, global and system git configuration before falling back onto default CAS-controlled values.
 - Service management `findServiceBy()` operations are now delegated to the service registry directly with a modest cache layer in between to improve and preserve performance as much as possible.
@@ -171,6 +181,8 @@ Google Authenticator for multifactor authentication is now allowed to accept and
 - Twillio
 - ActiveMQ
 - Swagger
+- DropWizard
+- Apache Curator
 - Locust
 - OpenSAML
 - Oshi

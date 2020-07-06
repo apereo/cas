@@ -1852,6 +1852,17 @@ Send text messaging using Amazon SNS.
 AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
 under the configuration key `cas.sms-provider.sns`.
 
+## Google Cloud Firebase Messaging
+
+To learn more about this topic, [please review this guide](../notifications/Notifications-Configuration.html).
+
+```properties
+# cas.google-firebase-messaging.service-account-key.location=/path/to/account-key.json",
+# cas.google-firebase-messaging.database-url=https://cassso-123456.firebaseio.com",
+# cas.google-firebase-messaging.registration-token-attribute-name=registrationToken
+# cas.google-firebase-messaging.scopes=https://www.googleapis.com/auth/firebase.messaging
+```
+
 ## GeoTracking
 
 To learn more about this topic, [please review this guide](../installation/GeoTracking-Authentication-Requests.html).
@@ -3097,15 +3108,26 @@ under the configuration key `cas.authn.mfa.u2f`.
 
 ### FIDO U2F Cleaner
 
-Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.authn.mfa.u2f.cleaner`.
+Scheduler settings for this feature are 
+available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.authn.mfa.u2f.cleaner`.
 
 ### FIDO U2F CouchDb
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.mfa.u2f`.
+Common configuration settings for this feature are 
+available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.mfa.u2f`.
 
 ### FIDO U2F MongoDb
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.u2f`.
+Common configuration settings for this feature are 
+available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.u2f`.
+
+### FIDO U2F DynamoDb
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
+under the configuration key `cas.authn.mfa.u2f`.
+
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.authn.mfa.u2f.dynamo-db`.
 
 ### FIDO U2F Redis
 

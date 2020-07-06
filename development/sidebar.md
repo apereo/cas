@@ -242,6 +242,7 @@ layout: null
 * [Notifications](#casnotifications)
     *   [Sending Email](/$version/notifications/Sending-Email-Configuration.html)
     *   [Sending Text Messages](/$version/notifications/SMS-Messaging-Configuration.html)
+    *   [Sending Notifications](/$version/notifications/Notifications-Configuration.html)
     
 * [Integration](#appintegration)
     *   [SAML2 Service Providers](/$version/integration/Configuring-SAML-SP-Integrations.html)
