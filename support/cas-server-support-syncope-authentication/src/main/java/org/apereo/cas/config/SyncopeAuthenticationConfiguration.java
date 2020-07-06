@@ -14,8 +14,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.syncope.authentication.SyncopeAuthenticationHandler;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -61,12 +59,8 @@ public class SyncopeAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler syncopeAuthenticationHandler() {
         val syncope = casProperties.getAuthn().getSyncope();
-        if (StringUtils.isBlank(syncope.getUrl())) {
-            throw new BeanCreationException("Syncope URL must be defined");
-        }
         val h = new SyncopeAuthenticationHandler(syncope.getName(), servicesManager.getObject(),
             syncopePrincipalFactory(), syncope.getUrl(), syncope.getDomain());
-
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(syncope.getPasswordEncoder(), applicationContext));
         h.setPasswordPolicyConfiguration(syncopePasswordPolicyConfiguration());
         h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(syncope.getCredentialCriteria()));
@@ -79,7 +73,12 @@ public class SyncopeAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer syncopeAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(syncopeAuthenticationHandler(), defaultPrincipalResolver.getObject());
+        return plan -> {
+            val syncope = casProperties.getAuthn().getSyncope();
+            if (!syncope.isUndefined()) {
+                plan.registerAuthenticationHandlerWithPrincipalResolver(syncopeAuthenticationHandler(), defaultPrincipalResolver.getObject());
+            }
+        };
     }
 
     @ConditionalOnMissingBean(name = "syncopePasswordPolicyConfiguration")

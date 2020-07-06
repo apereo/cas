@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.syncope;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.CasConfigurationPropertiesCategory;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -22,7 +23,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class SyncopeAuthenticationProperties implements Serializable {
+public class SyncopeAuthenticationProperties implements Serializable, CasConfigurationPropertiesCategory {
 
     private static final long serialVersionUID = -2446926316502297496L;
 

@@ -11,7 +11,7 @@ import com.google.firebase.messaging.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jooq.lambda.Unchecked;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 
@@ -27,17 +27,19 @@ public class GoogleFirebaseCloudMessagingNotificationSender implements Notificat
     private final GoogleFirebaseCloudMessagingProperties properties;
 
     @Override
-    public void notify(final Principal principal, final Map<String, String> messageData) {
+    public boolean notify(final Principal principal, final Map<String, String> messageData) {
         try {
-            CollectionUtils.firstElement(principal.getAttributes().get(properties.getRegistrationTokenAttributeName()))
-                .ifPresent(Unchecked.consumer(token -> {
-                    val message = Message.builder().putAllData(messageData)
-                        .setToken(token.toString())
-                        .build();
-                    FirebaseMessaging.getInstance().send(message);
-                }));
+            val attrValue = CollectionUtils.firstElement(principal.getAttributes()
+                .get(properties.getRegistrationTokenAttributeName()));
+            if (attrValue.isPresent()) {
+                val message = Message.builder().putAllData(messageData)
+                    .setToken(attrValue.get().toString())
+                    .build();
+                return StringUtils.isNotBlank(FirebaseMessaging.getInstance().send(message));
+            }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
+        return false;
     }
 }

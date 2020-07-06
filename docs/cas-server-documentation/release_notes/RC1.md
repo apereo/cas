@@ -132,6 +132,11 @@ other test categories for SAML2 and OAuth will be gradually added once a CAS run
 be dynamically constructed on-demand with a module selection menu. The goal is to ensure the JMeter test artifacts 
 and scripts are maintainable and manageable from one CAS release to the next.
 
+### Google Firebase Cloud Messaging
+
+Preliminary support is available for notification based on [Google Firebase Cloud Messaging](../notifications/Notifications-Configuration.html). The very first consumer
+of this feature is the [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) module.
+
 ### Service Registry Replication via Apache Kafka
 
 In the event that CAS service definitions are not managed globally via a centralized store, definitions need to be kept in 

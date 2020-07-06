@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.BaseCasSimpleMultifactorAuthenticationTests;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
+import org.apereo.cas.notifications.push.NotificationSender;
+import org.apereo.cas.notifications.push.NotificationSenderExecutionPlanConfigurer;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.sms.MockSmsSender;
@@ -115,10 +117,15 @@ public class CasSimpleSendTokenActionTests {
 
     @TestConfiguration
     @Lazy(false)
-    public static class CasSimpleMultifactorTestConfiguration {
+    public static class CasSimpleMultifactorTestConfiguration implements NotificationSenderExecutionPlanConfigurer {
         @Bean
         public SmsSender smsSender() {
             return new MockSmsSender();
+        }
+
+        @Override
+        public NotificationSender configureNotificationSender() {
+            return NotificationSender.noOp();
         }
     }
 }

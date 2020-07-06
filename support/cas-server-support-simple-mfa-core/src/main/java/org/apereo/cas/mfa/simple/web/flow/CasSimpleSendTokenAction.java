@@ -61,7 +61,17 @@ public class CasSimpleSendTokenAction extends AbstractAction {
                                       final Ticket token) {
         if (communicationsManager.isMailSenderDefined()) {
             val mailProperties = properties.getMail();
-            return communicationsManager.email(principal, mailProperties.getAttributeName(), mailProperties, mailProperties.getFormattedBody(token.getId()));
+            return communicationsManager.email(principal, mailProperties.getAttributeName(),
+                mailProperties, mailProperties.getFormattedBody(token.getId()));
+        }
+        return false;
+    }
+
+    private static boolean isNotificationSent(final CommunicationsManager communicationsManager,
+                                              final Principal principal,
+                                              final Ticket token) {
+        if (communicationsManager.isNotificationSenderDefined()) {
+            return communicationsManager.notify(principal, "Apereo CAS Token", String.format("Token: %s", token.getId()));
         }
         return false;
     }
@@ -76,8 +86,9 @@ public class CasSimpleSendTokenAction extends AbstractAction {
 
         val smsSent = isSmsSent(communicationsManager, properties, principal, token);
         val emailSent = isMailSent(communicationsManager, properties, principal, token);
+        val notificationSent = isNotificationSent(communicationsManager, principal, token);
 
-        if (smsSent || emailSent) {
+        if (smsSent || emailSent || notificationSent) {
             ticketRegistry.addTicket(token);
             LOGGER.debug("Successfully submitted token via SMS and/or email to [{}]", principal.getId());
 
@@ -88,7 +99,7 @@ public class CasSimpleSendTokenAction extends AbstractAction {
                 .build();
             requestContext.getMessageContext().addMessage(resolver);
 
-            val attributes = new LocalAttributeMap("token", token.getId());
+            val attributes = new LocalAttributeMap<Object>("token", token.getId());
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS, attributes);
         }
         LOGGER.error("Both email and SMS communication strategies failed to submit token [{}] to user", token);
