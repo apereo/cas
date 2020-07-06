@@ -138,7 +138,6 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
      * The simple multifactor trust configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.simple", name = "trusted-device-enabled", havingValue = "true", matchIfMissing = true)
     @Configuration("casSimpleMultifactorTrustConfiguration")
     public class CasSimpleMultifactorTrustConfiguration {
 

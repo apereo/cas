@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.support.syncope;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
-import org.apereo.cas.configuration.support.CasConfigurationPropertiesCategory;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -23,7 +23,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class SyncopeAuthenticationProperties implements Serializable, CasConfigurationPropertiesCategory {
+public class SyncopeAuthenticationProperties implements Serializable, CasFeatureModule {
 
     private static final long serialVersionUID = -2446926316502297496L;
 
@@ -35,6 +35,7 @@ public class SyncopeAuthenticationProperties implements Serializable, CasConfigu
     /**
      * Syncope domain used for authentication, etc.
      */
+    @RequiredProperty
     private String domain = "Master";
 
     /**
