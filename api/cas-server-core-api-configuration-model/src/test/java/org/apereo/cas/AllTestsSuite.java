@@ -1,5 +1,7 @@
-package org.apereo.cas.configuration;
+package org.apereo.cas;
 
+import org.apereo.cas.configuration.AdditionalMetadataVerificationTests;
+import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationPropertiesTests;
 import org.apereo.cas.configuration.support.JasyptEncryptionParametersTests;
 import org.apereo.cas.configuration.support.RelaxedPropertyNamesTests;
 
@@ -17,6 +19,7 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     AdditionalMetadataVerificationTests.class,
     JasyptEncryptionParametersTests.class,
+    SyncopeAuthenticationPropertiesTests.class,
     RelaxedPropertyNamesTests.class
 })
 @RunWith(JUnitPlatform.class)
