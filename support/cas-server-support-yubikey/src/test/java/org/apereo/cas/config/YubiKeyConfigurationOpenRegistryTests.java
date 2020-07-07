@@ -21,9 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("MFA")
-@TestPropertySource(properties = {
-    "cas.authn.mfa.yubikey.json-file=",
-})
+@TestPropertySource(properties = "cas.authn.mfa.yubikey.json-file=")
 public class YubiKeyConfigurationOpenRegistryTests extends BaseYubiKeyTests {
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")

@@ -36,49 +36,14 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
     private static final long serialVersionUID = -2059445756475980894L;
 
     private final int order = Ordered.HIGHEST_PRECEDENCE;
-    private final transient ServiceFactory webApplicationServiceFactory;
-    private final String idpServerPrefix;
-    private final transient ServicesManager servicesManager;
-    private final transient AuditableExecution registeredServiceAccessStrategyEnforcer;
-    
-    /**
-     * Gets entity id as parameter.
-     *
-     * @param service the service
-     * @return the entity id as parameter
-     */
-    protected static Optional<String> getEntityIdAsParameter(final Service service) {
-        try {
-            val builder = new URIBuilder(service.getId());
-            val param = builder.getQueryParams()
-                .stream()
-                .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
-                .findFirst();
 
-            if (param.isPresent()) {
-                LOGGER.debug("Found entity Id in service id [{}]", param.get().getValue());
-                return Optional.of(param.get().getValue());
-            }
-            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
-            if (request != null && StringUtils.isNotBlank(request.getQueryString())) {
-                val query = request.getQueryString().split("&");
-                val paramRequest = Arrays.stream(query)
-                    .map(p -> {
-                        var params = Splitter.on("=").splitToList(p);
-                        return Pair.of(params.get(0), params.get(1));
-                    })
-                    .filter(p -> p.getKey().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
-                    .map(Pair::getValue)
-                    .map(EncodingUtils::urlDecode)
-                    .findFirst();
-                LOGGER.debug("Found entity id as part of request url [{}]", paramRequest);
-                return paramRequest;
-            }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return Optional.empty();
-    }
+    private final transient ServiceFactory webApplicationServiceFactory;
+
+    private final String idpServerPrefix;
+
+    private final transient ServicesManager servicesManager;
+
+    private final transient AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     /**
      * Method attempts to resolve the service from the entityId parameter.  If present, an attempt is made
@@ -116,5 +81,44 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
             .registeredService(registeredService)
             .build();
         return !registeredServiceAccessStrategyEnforcer.execute(audit).isExecutionFailure();
+    }
+
+    /**
+     * Gets entity id as parameter.
+     *
+     * @param service the service
+     * @return the entity id as parameter
+     */
+    protected static Optional<String> getEntityIdAsParameter(final Service service) {
+        try {
+            val builder = new URIBuilder(service.getId());
+            val param = builder.getQueryParams()
+                .stream()
+                .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
+                .findFirst();
+
+            if (param.isPresent()) {
+                LOGGER.debug("Found entity Id in service id [{}]", param.get().getValue());
+                return Optional.of(param.get().getValue());
+            }
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
+            if (request != null && StringUtils.isNotBlank(request.getQueryString())) {
+                val query = request.getQueryString().split("&");
+                val paramRequest = Arrays.stream(query)
+                    .map(p -> {
+                        var params = Splitter.on("=").splitToList(p);
+                        return Pair.of(params.get(0), params.get(1));
+                    })
+                    .filter(p -> p.getKey().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
+                    .map(Pair::getValue)
+                    .map(EncodingUtils::urlDecode)
+                    .findFirst();
+                LOGGER.debug("Found entity id as part of request url [{}]", paramRequest);
+                return paramRequest;
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return Optional.empty();
     }
 }
