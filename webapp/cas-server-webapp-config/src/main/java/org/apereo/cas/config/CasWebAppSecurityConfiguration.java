@@ -17,6 +17,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -50,6 +51,7 @@ public class CasWebAppSecurityConfiguration implements WebMvcConfigurer {
 
     @Bean
     @ConditionalOnMissingBean(name = "casWebSecurityConfigurerAdapter")
+    @Order(1000)
     public WebSecurityConfigurerAdapter casWebSecurityConfigurerAdapter() {
         return new CasWebSecurityConfigurerAdapter(casProperties,
             securityProperties.getObject(),
@@ -60,6 +62,7 @@ public class CasWebAppSecurityConfiguration implements WebMvcConfigurer {
     @ConditionalOnProperty(name = "cas.monitor.endpoints.jdbc.query")
     @Bean
     @ConditionalOnMissingBean(name = "casWebSecurityConfigurerJdbcAdapter")
+    @Order(1001)
     public CasWebSecurityJdbcConfigurerAdapter casWebSecurityConfigurerJdbcAdapter() {
         return new CasWebSecurityJdbcConfigurerAdapter(casProperties, applicationContext);
     }

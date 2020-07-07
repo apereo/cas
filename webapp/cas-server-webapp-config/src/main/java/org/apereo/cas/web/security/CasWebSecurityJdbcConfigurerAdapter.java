@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
@@ -22,7 +21,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  */
 @RequiredArgsConstructor
 @Slf4j
-@Order(101)
 public class CasWebSecurityJdbcConfigurerAdapter extends WebSecurityConfigurerAdapter {
     private final CasConfigurationProperties casProperties;
 
