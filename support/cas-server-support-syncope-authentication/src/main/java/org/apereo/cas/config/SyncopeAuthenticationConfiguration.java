@@ -74,7 +74,7 @@ public class SyncopeAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer syncopeAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             val syncope = casProperties.getAuthn().getSyncope();
-            if (syncope.isUndefined()) {
+            if (syncope.isDefined()) {
                 plan.registerAuthenticationHandlerWithPrincipalResolver(syncopeAuthenticationHandler(), defaultPrincipalResolver.getObject());
             }
         };
