@@ -165,7 +165,8 @@ Google Authenticator for multifactor authentication is now allowed to accept and
 - When working with Git integrations, username and email attributes used for commit operations are now resolved via local, global and system git configuration before falling back onto default CAS-controlled values.
 - Service management `findServiceBy()` operations are now delegated to the service registry directly with a modest cache layer in between to improve and preserve performance as much as possible.
 - [Locust performance tests](../high_availability/Performance-Testing-Locust.html) are now upgraded to use locust `1.1`.
-
+- Generation of id tokens or user-info payloads for OAuth or OpenID Connect is now hardenized to prevent the `none` algorithm if undefined in discovery settings.
+ 
 ## Library Upgrades
 
 - ErrorProne Compiler

@@ -57,7 +57,6 @@ import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolver;
 import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapter;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilder;
-import org.apereo.cas.oidc.web.OidcSecurityInterceptor;
 import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointController;
 import org.apereo.cas.oidc.web.controllers.discovery.OidcWellKnownEndpointController;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientConfigurationEndpointController;
@@ -138,6 +137,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -145,7 +145,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -336,6 +339,13 @@ public class OidcConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(oauthInterceptor()).addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
     }
 
+    @ConditionalOnClass(WebSecurityConfigurerAdapter.class)
+    @Bean
+    @Order(2)
+    public WebSecurityConfigurerAdapter oidcWebSecurityConfigurerAdapter() {
+        return new OidcWebSecurityConfigurerAdapter();
+    }
+
     @Bean
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
         return new OidcConsentApprovalViewResolver(casProperties);
@@ -490,7 +500,6 @@ public class OidcConfiguration implements WebMvcConfigurer {
         return new OidcClientConfigurationEndpointController(context);
     }
 
-
     @RefreshScope
     @Bean
     public OidcJwksEndpointController oidcJwksController() {
@@ -501,17 +510,17 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @RefreshScope
     @Bean
     @Autowired
-    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcWebFingerDiscoveryService")
-                                                                   final OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService) {
+    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcWebFingerDiscoveryService") final OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService) {
         val context = buildConfigurationContext();
         return new OidcWellKnownEndpointController(context, oidcWebFingerDiscoveryService);
     }
 
     @RefreshScope
     @Bean
-    public OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService(@Qualifier("oidcServerDiscoverySettingsFactory")
-                                                                        final OidcServerDiscoverySettings discoverySettings) {
-        return new OidcWebFingerDiscoveryService(oidcWebFingerUserInfoRepository(), discoverySettings);
+    @SneakyThrows
+    public OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService() {
+        return new OidcWebFingerDiscoveryService(oidcWebFingerUserInfoRepository(),
+            oidcServerDiscoverySettingsFactory().getObject());
     }
 
     @Bean
@@ -603,13 +612,16 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcTokenSigningAndEncryptionService")
+    @SneakyThrows
     public OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
         val oidc = casProperties.getAuthn().getOidc();
         return new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
-            oidc.getIssuer());
+            oidc.getIssuer(),
+            oidcServerDiscoverySettingsFactory().getObject());
     }
 
+    @SneakyThrows
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcUserProfileSigningAndEncryptionService")
@@ -617,7 +629,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
         val oidc = casProperties.getAuthn().getOidc();
         return new OidcUserProfileSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
-            oidc.getIssuer());
+            oidc.getIssuer(),
+            oidcServerDiscoverySettingsFactory().getObject());
     }
 
     @Bean
@@ -859,5 +872,18 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService())
             .accessTokenJwtBuilder(accessTokenJwtBuilder.getObject())
             .build();
+    }
+
+    @Order(2)
+    private static class OidcWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+        @Override
+        protected void configure(final HttpSecurity http) throws Exception {
+            http.authorizeRequests()
+                .antMatchers(OidcConstants.BASE_OIDC_URL + "/**")
+                .permitAll()
+                .and()
+                .csrf()
+                .disable();
+        }
     }
 }
