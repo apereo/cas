@@ -163,7 +163,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
             registry.setCipherExecutor(cipher);
             return registry;
         }
-        if (yubi.getAllowedDevices() != null) {
+        if (yubi.getAllowedDevices() != null && !yubi.getAllowedDevices().isEmpty()) {
             LOGGER.debug("Using statically-defined devices for [{}] as the YubiKey account registry",
                 yubi.getAllowedDevices().keySet());
             val map = CollectionUtils.asMultiValueMap(yubi.getAllowedDevices());

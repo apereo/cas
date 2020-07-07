@@ -26,6 +26,7 @@ import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Abstract class, provides resources to run wsfed tests.
@@ -68,6 +69,12 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
     protected ServicesManager servicesManager;
 
     public static WsFederationCredential getCredential() {
+        val attributes = new HashMap<>(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
+        attributes.put("upn", List.of("cas@example.org"));
+        return getCredential(attributes);
+    }
+
+    public static WsFederationCredential getCredential(final Map<String, List<Object>> attributes) {
         val standardCred = new WsFederationCredential();
         standardCred.setNotBefore(ZonedDateTime.now(ZoneOffset.UTC));
         standardCred.setNotOnOrAfter(ZonedDateTime.now(ZoneOffset.UTC).plusHours(1));
@@ -77,10 +84,6 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
         standardCred.setRetrievedOn(ZonedDateTime.now(ZoneOffset.UTC));
         standardCred.setId("_6257b2bf-7361-4081-ae1f-ec58d4310f61");
         standardCred.setRetrievedOn(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(1));
-
-        val attributes = new HashMap<>(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
-        attributes.put("upn", List.of("cas@example.org"));
-
         standardCred.setAttributes(attributes);
         return standardCred;
     }
