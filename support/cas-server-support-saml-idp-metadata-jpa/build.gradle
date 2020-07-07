@@ -22,6 +22,8 @@ dependencies {
 
     implementation libraries.shibutiljavasupport
 
+    testImplementation libraries.springsecurityconfig
+
     testImplementation project(":support:cas-server-support-person-directory")
 
     testImplementation project(":core:cas-server-core-cookie")

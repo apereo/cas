@@ -6,6 +6,8 @@ dependencies {
     implementation libraries.pac4jcore
     implementation libraries.jose4j
     implementation libraries.nimbus
+
+    testImplementation libraries.springsecurityconfig
     
     implementation project(":support:cas-server-support-oauth-core")
     implementation project(":support:cas-server-support-oauth-core-api")
