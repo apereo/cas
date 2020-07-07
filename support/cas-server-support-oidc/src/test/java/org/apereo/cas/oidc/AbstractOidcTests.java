@@ -39,7 +39,6 @@ import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.oidc.config.OidcThrottleConfiguration;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
-import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponseTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
@@ -86,11 +85,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -110,48 +113,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = {
-    OidcConfiguration.class,
-    OidcThrottleConfiguration.class,
-    OidcComponentSerializationConfiguration.class,
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreWebflowConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasWebflowContextConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
-    CasRegisteredServicesTestConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCookieConfiguration.class,
-    CasThemesConfiguration.class,
-    CasThymeleafConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreAuthenticationHandlersConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
-    CasCoreAuthenticationPolicyConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
-    CasOAuth20Configuration.class,
-    CasOAuth20EndpointsConfiguration.class,
-    OidcClientRegistrationResponseTests.class,
-    CasThrottlingConfiguration.class,
-    CasOAuth20ThrottleConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
-    CasCoreMultifactorAuthenticationConfiguration.class,
-    CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
-},
+@SpringBootTest(classes = AbstractOidcTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.oidc.issuer=https://sso.example.org/cas/oidc",
         "cas.authn.oidc.jwks.jwks-file=classpath:keystore.jwks"
@@ -399,5 +361,53 @@ public abstract class AbstractOidcTests {
     @BeforeEach
     public void initialize() {
         servicesManager.save(getOidcRegisteredService());
+    }
+    
+    @ImportAutoConfiguration({
+        RefreshAutoConfiguration.class,
+        SecurityAutoConfiguration.class,
+        WebMvcAutoConfiguration.class
+    })
+    @SpringBootConfiguration
+    @Import({
+        OidcConfiguration.class,
+        OidcThrottleConfiguration.class,
+        OidcComponentSerializationConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreWebflowConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasWebflowContextConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class,
+        CasRegisteredServicesTestConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCookieConfiguration.class,
+        CasThemesConfiguration.class,
+        CasThymeleafConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasOAuth20Configuration.class,
+        CasOAuth20EndpointsConfiguration.class,
+        CasThrottlingConfiguration.class,
+        CasOAuth20ThrottleConfiguration.class,
+        CasMultifactorAuthenticationWebflowConfiguration.class,
+        CasCoreMultifactorAuthenticationConfiguration.class,
+        CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
+    })
+    public static class SharedTestConfiguration {
     }
 }

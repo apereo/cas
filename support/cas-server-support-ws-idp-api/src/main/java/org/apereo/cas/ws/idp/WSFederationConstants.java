@@ -115,13 +115,19 @@ public interface WSFederationConstants {
     String WAUTH = "wauth";
 
     /**
+     * Base endpoint.
+     */
+    String BASE_ENDPOINT_IDP = "/ws/idp";
+
+    /**
      * Endpoint where authn requests may be submitted.
      */
-    String ENDPOINT_FEDERATION_REQUEST = "/ws/idp/federation";
+    String ENDPOINT_FEDERATION_REQUEST = BASE_ENDPOINT_IDP + "/federation";
+
     /**
      * Internal callback endpoint that issues tokens.
      */
-    String ENDPOINT_FEDERATION_REQUEST_CALLBACK = "/ws/idp/federationcallback";
+    String ENDPOINT_FEDERATION_REQUEST_CALLBACK = BASE_ENDPOINT_IDP + "/federationcallback";
 
     /**
      * The STS parent endpoint.
@@ -137,6 +143,7 @@ public interface WSFederationConstants {
      * The constant WSIGNOUT10.
      */
     String WSIGNOUT10 = "wsignout1.0";
+
     /**
      * The constant WSIGNOUT_CLEANUP10.
      */
@@ -150,7 +157,7 @@ public interface WSFederationConstants {
     /**
      * Metadata endpoint.
      */
-    String ENDPOINT_FEDERATION_METADATA = "/ws/idp/metadata";
+    String ENDPOINT_FEDERATION_METADATA = BASE_ENDPOINT_IDP + "metadata";
 
     /**
      * Gets claim in cas namespace.

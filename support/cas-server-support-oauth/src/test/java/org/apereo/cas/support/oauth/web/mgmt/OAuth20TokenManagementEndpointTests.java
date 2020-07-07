@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuth")
 public class OAuth20TokenManagementEndpointTests extends AbstractOAuth20Tests {
     @Autowired
-    @Qualifier("oAuth20TokenManagementEndpoint")
+    @Qualifier("oauth20TokenManagementEndpoint")
     private OAuth20TokenManagementEndpoint tokenManagementEndpoint;
 
     @Test

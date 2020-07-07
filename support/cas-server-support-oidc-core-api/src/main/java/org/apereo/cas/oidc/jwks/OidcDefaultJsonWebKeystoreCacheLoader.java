@@ -107,13 +107,21 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
     @Override
     public Optional<PublicJsonWebKey> load(final String issuer) {
         val jwks = buildJsonWebKeySet();
-        if (jwks.isEmpty() || jwks.get().getJsonWebKeys().isEmpty()) {
+        if (jwks.isEmpty()) {
+            LOGGER.warn("JSON web keystore retrieved is empty for issuer [{}]", issuer);
             return Optional.empty();
         }
-        val key = getJsonSigningWebKeyFromJwks(jwks.get());
+        val keySet = jwks.get();
+        if (keySet.getJsonWebKeys().isEmpty()) {
+            LOGGER.warn("JSON web keystore retrieved [{}] contains no JSON web keys", keySet);
+            return Optional.empty();
+        }
+        val key = getJsonSigningWebKeyFromJwks(keySet);
         if (key == null) {
+            LOGGER.warn("Unable to locate public key from [{}]", keySet);
             return Optional.empty();
         }
+        LOGGER.warn("Found public JSON web key as [{}]", key);
         return Optional.of(key);
     }
 }
