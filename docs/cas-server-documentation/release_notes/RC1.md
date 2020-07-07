@@ -178,9 +178,11 @@ Google Authenticator for multifactor authentication is now allowed to accept and
 - Nimbus
 - Swagger
 - Amazon SDK
+- Apache Tomcat
 - Pac4j
 - Twillio
 - ActiveMQ
+- BouncyCastle
 - Swagger
 - DropWizard
 - Apache Curator
