@@ -31,6 +31,8 @@ import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -129,5 +131,28 @@ public class JpaTicketRegistryCleanerTests {
 
         assertEquals(0, ticketRegistry.sessionCount());
         assertEquals(0, ticketRegistry.serviceTicketCount());
+    }
+
+    @Test
+    public void verifyTransientTicketCleaning() {
+        val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
+        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(), TicketGrantingTicket.class);
+        ticketRegistry.addTicket(tgt);
+        
+        val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
+        val transientTicket = transientFactory.create(RegisteredServiceTestUtils.getService());
+        ticketRegistry.addTicket(transientTicket);
+
+        ticketRegistry.updateTicket(tgt);
+
+        transientTicket.markTicketExpired();
+        tgt.markTicketExpired();
+
+        ticketRegistry.updateTicket(transientTicket);
+        ticketRegistry.updateTicket(tgt);
+
+        assertEquals(2, ticketRegistry.getTickets().size());
+        assertEquals(2, ticketRegistryCleaner.clean());
+        assertTrue(ticketRegistry.getTickets().isEmpty());
     }
 }
