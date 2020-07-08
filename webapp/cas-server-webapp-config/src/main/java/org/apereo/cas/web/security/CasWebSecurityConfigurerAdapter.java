@@ -7,6 +7,7 @@ import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.web.security.authentication.MonitorEndpointLdapAuthenticationProvider;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -21,6 +22,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 
@@ -32,9 +34,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RequiredArgsConstructor
 @Slf4j
 @Order(1000)
+@RequiredArgsConstructor
 public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter implements DisposableBean {
     /**
      * Endpoint url used for admin-level form-login of endpoints.
@@ -63,6 +65,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         requests.requestMatchers(endpoint).permitAll();
     }
 
+    @SneakyThrows
     private void configureEndpointAccessToDenyAll(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
                                                   final EndpointRequest.EndpointRequestMatcher endpoint) {
         requests.requestMatchers(endpoint).denyAll();
@@ -89,28 +92,34 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     private void configureEndpointAccessAuthenticated(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
                                                       final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
-        requests.requestMatchers(endpoint)
+        val result = requests.requestMatchers(endpoint)
             .authenticated()
             .and()
-            .httpBasic();
+            .httpBasic()
+            .and();
+        configureEndpointAccessByFormLogin(result);
     }
 
     private void configureEndpointAccessByRole(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
                                                final ActuatorEndpointProperties properties,
                                                final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
-        requests.requestMatchers(endpoint)
+        val result = requests.requestMatchers(endpoint)
             .hasAnyRole(properties.getRequiredRoles().toArray(ArrayUtils.EMPTY_STRING_ARRAY))
             .and()
-            .httpBasic();
+            .httpBasic()
+            .and();
+        configureEndpointAccessByFormLogin(result);
     }
 
     private void configureEndpointAccessByAuthority(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
                                                     final ActuatorEndpointProperties properties,
                                                     final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
-        requests.requestMatchers(endpoint)
+        val result = requests.requestMatchers(endpoint)
             .hasAnyAuthority(properties.getRequiredAuthorities().toArray(ArrayUtils.EMPTY_STRING_ARRAY))
             .and()
-            .httpBasic();
+            .httpBasic()
+            .and();
+        configureEndpointAccessByFormLogin(result);
     }
 
     private boolean isLdapAuthorizationActive() {
@@ -141,6 +150,12 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         if (!auth.isConfigured()) {
             super.configure(auth);
         }
+    }
+
+    @Override
+    public void configure(final WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/oauth2.0/**", "/oidc/**",
+            "/idp/profile/SAML1/**", "/idp/profile/SAML2/**", "/ws/idp/**");
     }
 
     @Override
@@ -243,17 +258,14 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
     /**
      * Configure endpoint access by form login.
      *
-     * @param requests the requests
+     * @param http the http
      * @throws Exception the exception
      */
-    protected void configureEndpointAccessByFormLogin(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests)
-        throws Exception {
-        val formLogin = requests.and().formLogin();
-
+    protected void configureEndpointAccessByFormLogin(final HttpSecurity http) throws Exception {
         if (casProperties.getMonitor().getEndpoints().isFormLoginEnabled()) {
-            formLogin.loginPage(ENDPOINT_URL_ADMIN_FORM_LOGIN).permitAll();
+            http.formLogin().loginPage(ENDPOINT_URL_ADMIN_FORM_LOGIN).permitAll();
         } else {
-            formLogin.disable();
+            http.formLogin().disable();
         }
     }
 
@@ -275,15 +287,12 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         switch (access) {
             case AUTHORITY:
                 configureEndpointAccessByAuthority(requests, properties, endpoint);
-                configureEndpointAccessByFormLogin(requests);
                 break;
             case ROLE:
                 configureEndpointAccessByRole(requests, properties, endpoint);
-                configureEndpointAccessByFormLogin(requests);
                 break;
             case AUTHENTICATED:
                 configureEndpointAccessAuthenticated(requests, endpoint);
-                configureEndpointAccessByFormLogin(requests);
                 break;
             case IP_ADDRESS:
                 configureEndpointAccessByIpAddress(requests, properties, endpoint);

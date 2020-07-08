@@ -345,12 +345,12 @@ public class OidcConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(oauthInterceptor()).addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
     }
 
-    @ConditionalOnClass(WebSecurityConfigurerAdapter.class)
-    @Bean
-    @Order(2)
-    public WebSecurityConfigurerAdapter oidcWebSecurityConfigurerAdapter() {
-        return new OidcWebSecurityConfigurerAdapter();
-    }
+//    @ConditionalOnClass(WebSecurityConfigurerAdapter.class)
+//    @Bean
+//    @Order(2)
+//    public WebSecurityConfigurerAdapter oidcWebSecurityConfigurerAdapter() {
+//        return new OidcWebSecurityConfigurerAdapter();
+//    }
 
     @Bean
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
@@ -881,16 +881,16 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .build();
     }
 
-    @Order(2)
-    private static class OidcWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-        @Override
-        protected void configure(final HttpSecurity http) throws Exception {
-            http.authorizeRequests()
-                .antMatchers(OidcConstants.BASE_OIDC_URL + "/**")
-                .permitAll()
-                .and()
-                .csrf()
-                .disable();
-        }
-    }
+//    @Order(2)
+//    private static class OidcWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+//        @Override
+//        protected void configure(final HttpSecurity http) throws Exception {
+//            http.authorizeRequests()
+//                .antMatchers(OidcConstants.BASE_OIDC_URL + "/**")
+//                .permitAll()
+//                .and()
+//                .csrf()
+//                .disable();
+//        }
+//    }
 }
