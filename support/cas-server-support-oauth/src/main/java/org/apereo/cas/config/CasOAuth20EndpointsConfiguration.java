@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20CallbackAuthorizeEndpointController;
@@ -19,15 +18,11 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
  * This this {@link CasOAuth20EndpointsConfiguration}.
@@ -127,7 +122,6 @@ public class CasOAuth20EndpointsConfiguration {
      * of endpoints.
      *
      * @return the web security configurer adapter
-     */
     @ConditionalOnClass(WebSecurityConfigurerAdapter.class)
     @Bean
     public WebSecurityConfigurerAdapter oauth20WebSecurityConfigurerAdapter() {
@@ -136,14 +130,11 @@ public class CasOAuth20EndpointsConfiguration {
 
     @Order(3)
     private static class OAuth20WebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-        @Override
-        protected void configure(final HttpSecurity http) throws Exception {
-            http.authorizeRequests()
-                .antMatchers(OAuth20Constants.BASE_OAUTH20_URL + "/**")
-                .permitAll()
-                .and()
-                .csrf()
-                .disable();
+        protected OAuth20WebSecurityConfigurerAdapter() {
+            super(false);
         }
+
+
     }
+    */
 }

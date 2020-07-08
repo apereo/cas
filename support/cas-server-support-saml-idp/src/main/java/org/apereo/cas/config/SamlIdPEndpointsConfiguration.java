@@ -45,7 +45,6 @@ import org.opensaml.saml.saml2.core.Response;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -54,10 +53,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
  * This is {@link SamlIdPEndpointsConfiguration}.
@@ -356,22 +352,22 @@ public class SamlIdPEndpointsConfiguration {
      *
      * @return the web security configurer adapter
      */
-    @ConditionalOnClass(WebSecurityConfigurerAdapter.class)
-    @Bean
-    public WebSecurityConfigurerAdapter samlIdPWebSecurityConfigurerAdapter() {
-        return new SamlIdPWebSecurityConfigurerAdapter();
-    }
+//    @ConditionalOnClass(WebSecurityConfigurerAdapter.class)
+//    @Bean
+//    public WebSecurityConfigurerAdapter samlIdPWebSecurityConfigurerAdapter() {
+//        return new SamlIdPWebSecurityConfigurerAdapter();
+//    }
 
-    @Order(1)
-    private static class SamlIdPWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-        @Override
-        protected void configure(final HttpSecurity http) throws Exception {
-            http.authorizeRequests()
-                .antMatchers(SamlIdPConstants.BASE_ENDPOINT_SAML1 + "/*", SamlIdPConstants.BASE_ENDPOINT_SAML2 + "/*")
-                .permitAll()
-                .and()
-                .csrf()
-                .disable();
-        }
-    }
+//    @Order(1)
+//    private static class SamlIdPWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+//        @Override
+//        protected void configure(final HttpSecurity http) throws Exception {
+//            http.authorizeRequests()
+//                .antMatchers(SamlIdPConstants.BASE_ENDPOINT_SAML1 + "/*", SamlIdPConstants.BASE_ENDPOINT_SAML2 + "/*")
+//                .permitAll()
+//                .and()
+//                .csrf()
+//                .disable();
+//        }
+//    }
 }
