@@ -7,7 +7,6 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
@@ -141,7 +140,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
     }
 
     @Override
-    public TicketFactory get(final Class<? extends Ticket> clazz) {
-        return this;
+    public Class<? extends Ticket> getTicketType() {
+        return ProxyGrantingTicket.class;
     }
 }

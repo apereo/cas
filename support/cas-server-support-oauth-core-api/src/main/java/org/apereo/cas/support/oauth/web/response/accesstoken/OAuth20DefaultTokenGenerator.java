@@ -18,6 +18,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceToken;
 import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
+import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenFactory;
 import org.apereo.cas.util.LoggingUtils;
@@ -53,6 +54,11 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      * The device token factory.
      */
     protected final OAuth20DeviceTokenFactory deviceTokenFactory;
+
+    /**
+     * The device user code factory.
+     */
+    protected final OAuth20DeviceUserCodeFactory deviceUserCodeFactory;
 
     /**
      * The refresh token factory.
@@ -179,7 +185,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         val deviceToken = deviceTokenFactory.createDeviceCode(holder.getService());
         LOGGER.debug("Created device code token [{}]", deviceToken.getId());
 
-        val deviceUserCode = deviceTokenFactory.createDeviceUserCode(deviceToken);
+        val deviceUserCode = deviceUserCodeFactory.createDeviceUserCode(deviceToken);
         LOGGER.debug("Created device user code token [{}]", deviceUserCode.getId());
 
         addTicketToRegistry(deviceToken);

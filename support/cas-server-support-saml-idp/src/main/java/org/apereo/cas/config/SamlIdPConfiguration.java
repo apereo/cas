@@ -44,6 +44,7 @@ import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPProfileSingleLogou
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceMessageHandler;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.artifact.DefaultSamlArtifactTicketFactory;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketExpirationPolicyBuilder;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
@@ -193,6 +194,13 @@ public class SamlIdPConfiguration {
         return new DefaultSamlArtifactTicketFactory(samlArtifactTicketExpirationPolicy(),
             openSamlConfigBean.getObject(),
             samlIdPServiceFactory.getObject());
+    }
+
+    @ConditionalOnMissingBean(name = "samlArtifactTicketFactoryConfigurer")
+    @Bean
+    @RefreshScope
+    public TicketFactoryExecutionPlanConfigurer samlArtifactTicketFactoryConfigurer() {
+        return this::samlArtifactTicketFactory;
     }
 
     @ConditionalOnMissingBean(name = "samlArtifactTicketExpirationPolicy")
@@ -370,6 +378,13 @@ public class SamlIdPConfiguration {
         return new DefaultSamlAttributeQueryTicketFactory(samlAttributeQueryTicketExpirationPolicy(),
             samlIdPServiceFactory.getObject(),
             openSamlConfigBean.getObject());
+    }
+
+    @ConditionalOnMissingBean(name = "samlAttributeQueryTicketFactoryConfigurer")
+    @Bean
+    @RefreshScope
+    public TicketFactoryExecutionPlanConfigurer samlAttributeQueryTicketFactoryConfigurer() {
+        return this::samlAttributeQueryTicketFactory;
     }
 
     @ConditionalOnMissingBean(name = "samlAttributeQueryTicketExpirationPolicy")

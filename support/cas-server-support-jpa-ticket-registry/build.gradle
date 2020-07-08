@@ -14,6 +14,8 @@ dependencies {
 
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
+    testImplementation libraries.springsecurityconfig
+    
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-oauth-services")
     testImplementation project(":support:cas-server-support-saml-idp-core")

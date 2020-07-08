@@ -46,10 +46,14 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.mockito.Mockito.*;
@@ -60,37 +64,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    AopAutoConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreAuthenticationPolicyConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationHandlersConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketComponentSerializationConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCookieConfiguration.class,
-    CasCoreConfiguration.class,
-    CasAuthenticationEventExecutionPlanTestConfiguration.class,
-    CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
-    CasOAuth20ComponentSerializationConfiguration.class,
-    CasOAuth20Configuration.class,
-    CasOAuth20EndpointsConfiguration.class,
-    CasOAuth20ServicesConfiguration.class,
-    CasOAuth20TicketSerializationConfiguration.class
-})
+@SpringBootTest(classes = BaseOAuth20AuthenticatorTests.SharedTestConfiguration.class)
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseOAuth20AuthenticatorTests {
@@ -115,8 +89,11 @@ public abstract class BaseOAuth20AuthenticatorTests {
     protected PrincipalResolver defaultPrincipalResolver;
 
     protected OAuthRegisteredService service;
+
     protected OAuthRegisteredService serviceJwtAccessToken;
+
     protected OAuthRegisteredService serviceWithoutSecret;
+
     protected OAuthRegisteredService serviceWithoutSecret2;
 
     @Autowired
@@ -125,33 +102,6 @@ public abstract class BaseOAuth20AuthenticatorTests {
 
     @Autowired
     protected CasConfigurationProperties casProperties;
-
-    protected static OAuth20AccessToken getAccessToken() {
-        val tgt = new MockTicketGrantingTicket("casuser");
-        val service = RegisteredServiceTestUtils.getService();
-
-        val accessToken = mock(OAuth20AccessToken.class);
-        when(accessToken.getId()).thenReturn("ABCD");
-        when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
-        when(accessToken.getAuthentication()).thenReturn(tgt.getAuthentication());
-        when(accessToken.getService()).thenReturn(service);
-        when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
-
-        return accessToken;
-    }
-
-    protected static OAuth20RefreshToken getRefreshToken(final OAuthRegisteredService service) {
-        val tgt = new MockTicketGrantingTicket("casuser");
-
-        val refreshToken = mock(OAuth20RefreshToken.class);
-        when(refreshToken.getId()).thenReturn("ABCD");
-        when(refreshToken.getTicketGrantingTicket()).thenReturn(tgt);
-        when(refreshToken.getAuthentication()).thenReturn(tgt.getAuthentication());
-        when(refreshToken.getClientId()).thenReturn(service.getClientId());
-        when(refreshToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
-
-        return refreshToken;
-    }
 
     @BeforeEach
     public void initialize() {
@@ -183,5 +133,70 @@ public abstract class BaseOAuth20AuthenticatorTests {
         serviceJwtAccessToken.setJwtAccessToken(true);
 
         servicesManager.save(service, serviceWithoutSecret, serviceWithoutSecret2, serviceJwtAccessToken);
+    }
+
+    @ImportAutoConfiguration({
+        RefreshAutoConfiguration.class,
+        SecurityAutoConfiguration.class,
+        AopAutoConfiguration.class
+    })
+    @SpringBootConfiguration
+    @Import({
+        CasCoreHttpConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketComponentSerializationConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasCookieConfiguration.class,
+        CasCoreConfiguration.class,
+        CasAuthenticationEventExecutionPlanTestConfiguration.class,
+        CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
+        CasOAuth20ComponentSerializationConfiguration.class,
+        CasOAuth20Configuration.class,
+        CasOAuth20EndpointsConfiguration.class,
+        CasOAuth20ServicesConfiguration.class,
+        CasOAuth20TicketSerializationConfiguration.class
+    })
+    public static class SharedTestConfiguration {
+    }
+
+    protected static OAuth20AccessToken getAccessToken() {
+        val tgt = new MockTicketGrantingTicket("casuser");
+        val service = RegisteredServiceTestUtils.getService();
+
+        val accessToken = mock(OAuth20AccessToken.class);
+        when(accessToken.getId()).thenReturn("ABCD");
+        when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
+        when(accessToken.getAuthentication()).thenReturn(tgt.getAuthentication());
+        when(accessToken.getService()).thenReturn(service);
+        when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
+
+        return accessToken;
+    }
+
+    protected static OAuth20RefreshToken getRefreshToken(final OAuthRegisteredService service) {
+        val tgt = new MockTicketGrantingTicket("casuser");
+
+        val refreshToken = mock(OAuth20RefreshToken.class);
+        when(refreshToken.getId()).thenReturn("ABCD");
+        when(refreshToken.getTicketGrantingTicket()).thenReturn(tgt);
+        when(refreshToken.getAuthentication()).thenReturn(tgt.getAuthentication());
+        when(refreshToken.getClientId()).thenReturn(service.getClientId());
+        when(refreshToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
+
+        return refreshToken;
     }
 }

@@ -98,6 +98,7 @@ import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
+import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.JwtBuilder;
@@ -296,6 +297,10 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Qualifier("defaultDeviceTokenFactory")
     private ObjectProvider<OAuth20DeviceTokenFactory> defaultDeviceTokenFactory;
 
+    @Autowired
+    @Qualifier("defaultDeviceUserCodeFactory")
+    private ObjectProvider<OAuth20DeviceUserCodeFactory> defaultDeviceUserCodeFactory;
+    
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
@@ -844,6 +849,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .ticketRegistry(ticketRegistry.getObject())
             .accessTokenFactory(defaultAccessTokenFactory.getObject())
             .deviceTokenFactory(defaultDeviceTokenFactory.getObject())
+            .deviceUserCodeFactory(defaultDeviceUserCodeFactory.getObject())
             .clientRegistrationRequestSerializer(clientRegistrationRequestSerializer())
             .clientIdGenerator(new DefaultRandomStringGenerator())
             .clientSecretGenerator(new DefaultRandomStringGenerator())

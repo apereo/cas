@@ -1,6 +1,8 @@
-package org.apereo.cas.ticket;
+package org.apereo.cas.mfa.simple;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.AbstractTicket;
+import org.apereo.cas.ticket.ExpirationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -22,12 +24,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is {@link TransientSessionTicketImpl}, issued when a delegated authentication
- * request comes in that needs to be handed off to an identity provider. This ticket represents the state
- * of the CAS server at that moment.
+ * This is {@link CasSimpleMultifactorAuthenticationTicketImpl}.
  *
  * @author Misagh Moayyed
- * @since 5.3.0
+ * @since 6.3.0
  */
 @ToString(callSuper = true)
 @Getter
@@ -37,11 +37,11 @@ import java.util.Map;
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @Entity
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Table(name = "TRANSIENTSESSIONTICKET")
+@Table(name = "CASSIMPLEMFATICKET")
 @DiscriminatorColumn(name = "TYPE")
-@DiscriminatorValue(TransientSessionTicket.PREFIX)
-public class TransientSessionTicketImpl extends AbstractTicket implements TransientSessionTicket {
-    private static final long serialVersionUID = 7839186396717950243L;
+@DiscriminatorValue(CasSimpleMultifactorAuthenticationTicket.PREFIX)
+public class CasSimpleMultifactorAuthenticationTicketImpl extends AbstractTicket implements CasSimpleMultifactorAuthenticationTicket {
+    private static final long serialVersionUID = -6580305495605099699L;
 
     /**
      * The Service.
@@ -57,7 +57,7 @@ public class TransientSessionTicketImpl extends AbstractTicket implements Transi
     @Column(name = "PROPERTIES", length = Integer.MAX_VALUE, nullable = false)
     private HashMap<String, Object> properties = new HashMap<>(0);
 
-    public TransientSessionTicketImpl(final String id, final ExpirationPolicy expirationPolicy,
+    public CasSimpleMultifactorAuthenticationTicketImpl(final String id, final ExpirationPolicy expirationPolicy,
                                       final Service service, final Map<String, Serializable> properties) {
         super(id, expirationPolicy);
         this.service = service;
@@ -68,36 +68,4 @@ public class TransientSessionTicketImpl extends AbstractTicket implements Transi
     public String getPrefix() {
         return PREFIX;
     }
-
-    @Override
-    public void put(final String name, final Serializable value) {
-        this.properties.put(name, value);
-    }
-
-    @Override
-    public void putAll(final Map<String, Serializable> props) {
-        this.properties.putAll(props);
-    }
-
-    @Override
-    public boolean contains(final String name) {
-        return this.properties.containsKey(name);
-    }
-
-    @Override
-    public <T extends Serializable> T get(final String name, final Class<T> clazz) {
-        if (contains(name)) {
-            return clazz.cast(this.properties.get(name));
-        }
-        return null;
-    }
-
-    @Override
-    public <T extends Serializable> T get(final String name, final Class<T> clazz, final T defaultValue) {
-        if (contains(name)) {
-            return clazz.cast(this.properties.getOrDefault(name, defaultValue));
-        }
-        return defaultValue;
-    }
 }
-
