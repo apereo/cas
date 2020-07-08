@@ -70,11 +70,11 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
             val service = (OidcRegisteredService) svc;
 
             if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getUserInfoEncryptedResponseAlg())
-                && !discoverySettings.getUserInfoEncryptionEncodingValuesSupported().contains(AlgorithmIdentifiers.NONE)) {
+                && !discoverySettings.getUserInfoEncryptionAlgValuesSupported().contains(AlgorithmIdentifiers.NONE)) {
                 LOGGER.error("Service [{}] has defined 'none' for user-info encryption algorithm, "
                         + "yet CAS is configured to support the following encryption algorithms: [{}]. "
                         + "This is quite likely due to misconfiguration of the CAS server or the service definition",
-                    svc.getServiceId(), discoverySettings.getUserInfoEncryptionEncodingValuesSupported());
+                    svc.getServiceId(), discoverySettings.getUserInfoEncryptionAlgValuesSupported());
                 throw new IllegalArgumentException("Unable to use 'none' as user-info encryption algorithm");
             }
             return StringUtils.isNotBlank(service.getUserInfoEncryptedResponseAlg())

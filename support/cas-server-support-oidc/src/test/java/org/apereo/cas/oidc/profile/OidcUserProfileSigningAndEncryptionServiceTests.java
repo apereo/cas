@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
+@TestPropertySource(properties = "cas.authn.oidc.user-info-encryption-alg-values-supported=none,RSA1_5")
 public class OidcUserProfileSigningAndEncryptionServiceTests extends AbstractOidcTests {
 
     @Test
