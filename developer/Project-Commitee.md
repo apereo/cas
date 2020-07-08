@@ -16,13 +16,13 @@ The current members of the PMC are:
 - [Travis Schmidt](https://github.com/tsschmidt)
 - [Jérôme Leleu](https://github.com/leleuj)
 - [Hal Deadman](https://github.com/hdeadman)
-- [Timur Duehr](https://github.com/tduehr)
 - [Misagh Moayyed](https://github.com/mmoayyed) [Chairman]
 - [Ian Dolphin](https://www.apereo.org/content/leadership) [Executive Director, Apereo Foundation]
 
 Emeritus members are:
 
 - [Daniel Frett](https://github.com/frett)
+- [Timur Duehr](https://github.com/tduehr)
 - [Scott Battaglia](https://github.com/battags)
 - [Jeff Sittler](https://github.com/mindblender)
 - [Andrew Petro](https://github.com/apetro)
