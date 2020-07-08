@@ -405,7 +405,7 @@ jobs:
       - name: Validate Spring Boot Admin Server
         if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-bootadmin-webapp.sh
-        
+
 
 ##########################################################################
 
