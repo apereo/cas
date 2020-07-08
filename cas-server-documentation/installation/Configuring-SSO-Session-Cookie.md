@@ -12,7 +12,7 @@ The cookie value is linked to the active ticket-granting ticket, the remote IP a
 as well as the user agent that submitted the request. The final cookie value is then encrypted and signed.
 
 The secret keys are defined in the `cas.properties` file. These keys **MUST** be regenerated per your specific environment. Each key
-is a JSON Web Token with a defined length per the algorithm used for encryption and signing.
+is a JSON Web Key with a defined length per the algorithm used for encryption and signing.
 
 
 ## Configuration
@@ -37,12 +37,6 @@ The generation of the ticket-granting cookie is controlled via:
 
 # The path to which the SSO cookie will be scoped
 # tgc.path=/cas
-
-# Decides whether SSO Warning cookie should be created only under secure connections.
-# warn.cookie.secure=true
-
-# The expiration value of the SSO Warning cookie
-# warn.cookie.maxAge=-1
 ```
 
 The cookie has the following properties:
