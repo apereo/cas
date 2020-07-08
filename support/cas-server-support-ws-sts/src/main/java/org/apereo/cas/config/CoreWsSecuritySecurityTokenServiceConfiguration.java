@@ -112,7 +112,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         bean.setEnabled(true);
         bean.setName("cxfServletSecurityTokenService");
         bean.setServlet(new CXFServlet());
-        bean.setUrlMappings(CollectionUtils.wrap(WSFederationConstants.ENDPOINT_STS.concat("*")));
+        bean.setUrlMappings(CollectionUtils.wrap(WSFederationConstants.BASE_ENDPOINT_STS.concat("*")));
         bean.setAsyncSupported(true);
         return bean;
     }

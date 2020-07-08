@@ -40,7 +40,7 @@ public class TicketStatusResource {
      * @param id ticket id
      * @return {@link ResponseEntity} representing RESTful response
      */
-    @GetMapping(value = "/v1/tickets/{id:.+}")
+    @GetMapping(value = RestProtocolConstants.ENDPOINT_TICKETS + "/{id:.+}")
     public ResponseEntity<String> getTicketStatus(@PathVariable("id") final String id) {
         try {
             val ticket = this.centralAuthenticationService.getTicket(id);

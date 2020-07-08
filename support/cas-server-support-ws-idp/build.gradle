@@ -8,8 +8,6 @@ dependencies {
     implementation libraries.wss4j
     implementation libraries.casclient
 
-    compileOnly libraries.springsecurityconfig
-
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
@@ -30,8 +28,6 @@ dependencies {
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-ws-sts")
     implementation project(":support:cas-server-support-ws-idp-api")
-
-    testImplementation libraries.springsecurityconfig
 
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout-api")

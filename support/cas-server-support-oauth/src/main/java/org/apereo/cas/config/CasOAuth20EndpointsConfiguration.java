@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20CallbackAuthorizeEndpointController;
@@ -13,7 +14,9 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointCont
 import org.apereo.cas.support.oauth.web.mgmt.OAuth20TokenManagementEndpoint;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.web.ProtocolEndpointConfigurer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,6 +26,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 /**
  * This this {@link CasOAuth20EndpointsConfiguration}.
@@ -116,25 +121,8 @@ public class CasOAuth20EndpointsConfiguration {
             ticketRegistry.getObject(), accessTokenJwtBuilder.getObject());
     }
 
-    /**
-     * Disable Spring Security configuration for endpoints
-     * allowing CAS' own security configuration to handle protection
-     * of endpoints.
-     *
-     * @return the web security configurer adapter
-    @ConditionalOnClass(WebSecurityConfigurerAdapter.class)
     @Bean
-    public WebSecurityConfigurerAdapter oauth20WebSecurityConfigurerAdapter() {
-        return new OAuth20WebSecurityConfigurerAdapter();
+    public ProtocolEndpointConfigurer oauth20ProtocolEndpointConfigurer() {
+        return () -> List.of(StringUtils.prependIfMissing(OAuth20Constants.BASE_OAUTH20_URL, "/"));
     }
-
-    @Order(3)
-    private static class OAuth20WebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-        protected OAuth20WebSecurityConfigurerAdapter() {
-            super(false);
-        }
-
-
-    }
-    */
 }

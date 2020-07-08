@@ -38,10 +38,6 @@ dependencies {
     implementation libraries.jose4j
     implementation libraries.nimbus
 
-    compileOnly libraries.springsecurityconfig
-
-    testImplementation libraries.springsecurityconfig
-
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core")

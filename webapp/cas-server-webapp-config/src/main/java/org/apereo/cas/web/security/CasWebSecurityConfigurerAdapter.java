@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.web.security.authentication.MonitorEndpointLdapAuthenticationProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,8 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -59,6 +62,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
             monitorEndpointLdapAuthenticationProvider.destroy();
         }
     }
+
 
     private void configureEndpointAccessPermitAll(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
                                                   final EndpointRequest.EndpointRequestMatcher endpoint) {
@@ -131,6 +135,24 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
             || StringUtils.isNotBlank(ldap.getLdapAuthz().getGroupAttribute()));
     }
 
+    /**
+     * Disable Spring Security configuration for protocol endpoints
+     * allowing CAS' own security configuration to handle protection
+     * of endpoints where necessary.
+     * @param web web security
+     */
+    @Override
+    public void configure(final WebSecurity web) {
+        val beans = getApplicationContext().getBeansOfType(ProtocolEndpointConfigurer.class, false, true).values();
+        val patterns = beans.stream()
+            .map(ProtocolEndpointConfigurer::getBaseEndpoints)
+            .flatMap(List::stream)
+            .map(endpoint -> StringUtils.prependIfMissing(endpoint, "/").concat("/**"))
+            .toArray(String[]::new);
+        LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from web security", Arrays.toString(patterns));
+        web.debug(LOGGER.isDebugEnabled()).ignoring().antMatchers(patterns);
+    }
+
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         val jaas = casProperties.getMonitor().getEndpoints().getJaas();
@@ -150,12 +172,6 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         if (!auth.isConfigured()) {
             super.configure(auth);
         }
-    }
-
-    @Override
-    public void configure(final WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/oauth2.0/**", "/oidc/**",
-            "/idp/profile/SAML1/**", "/idp/profile/SAML2/**", "/ws/idp/**");
     }
 
     @Override
