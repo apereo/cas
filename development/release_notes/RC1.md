@@ -6,6 +6,11 @@ category: Planning
 
 # RC1 Release Notes
 
+We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set 
+you up for unpleasant surprises. A `GA` is simply [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS 
+releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks, statistics or completion of features. To gain 
+confidence in a particular release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.
+
 ## Apereo Membership
 
 If you benefit from Apereo CAS as free and open-source software, we invite you to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership) and financially support the project at a capacity that best suits your deployment. Note that all development activity is performed *almost exclusively* on a voluntary basis with no expectations, commitments or strings attached. Having the financial means to better sustain engineering activities will allow the developer community to allocate *dedicated and committed* time for long-term support, maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner. Funding will ensure support for the software you rely on and you gain an advantage and say in the way Apereo, and the CAS project at that, runs and operates. If you consider your CAS deployment to be a critical part of the identity and access management ecosystem, this is a viable option to consider.
@@ -15,13 +20,6 @@ If you benefit from Apereo CAS as free and open-source software, we invite you t
 - Start your CAS deployment today. Try out features and [share feedback](/cas/Mailing-Lists.html).
 - Better yet, [contribute patches](/cas/developer/Contributor-Guidelines.html).
 - Suggest and apply documentation improvements.
-
-### Shake Well Before Use
-
-We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set you up for unpleasant surprises. A `GA` is simply [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks, statistics or completion of features. To gain confidence in a particular release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.
-
-In order to start experimenting with release candidates, at any given time, you should be able to 
-append `-SNAPSHOT` to the CAS version in order to take advantage of snapshot builds as changes are made and published.
 
 ## Resources
 
@@ -165,7 +163,8 @@ Google Authenticator for multifactor authentication is now allowed to accept and
 - When working with Git integrations, username and email attributes used for commit operations are now resolved via local, global and system git configuration before falling back onto default CAS-controlled values.
 - Service management `findServiceBy()` operations are now delegated to the service registry directly with a modest cache layer in between to improve and preserve performance as much as possible.
 - [Locust performance tests](../high_availability/Performance-Testing-Locust.html) are now upgraded to use locust `1.1`.
-
+- Generation of id tokens or user-info payloads for OAuth or OpenID Connect are now hardenized to prevent the `none` algorithm if undefined in discovery settings.
+ 
 ## Library Upgrades
 
 - ErrorProne Compiler
@@ -177,9 +176,11 @@ Google Authenticator for multifactor authentication is now allowed to accept and
 - Nimbus
 - Swagger
 - Amazon SDK
+- Apache Tomcat
 - Pac4j
 - Twillio
 - ActiveMQ
+- BouncyCastle
 - Swagger
 - DropWizard
 - Apache Curator
