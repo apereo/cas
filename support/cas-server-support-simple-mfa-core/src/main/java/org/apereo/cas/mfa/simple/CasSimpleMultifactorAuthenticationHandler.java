@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +43,7 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
         val uid = authentication.getPrincipal().getId();
 
         LOGGER.debug("Received principal id [{}]. Attempting to locate token in registry...", uid);
-        val acct = this.centralAuthenticationService.getTicket(tokenCredential.getId(), TransientSessionTicket.class);
+        val acct = this.centralAuthenticationService.getTicket(tokenCredential.getId(), CasSimpleMultifactorAuthenticationTicket.class);
 
         if (acct == null) {
             LOGGER.warn("Authorization of token [{}] has failed. Token is not found in registry", tokenCredential.getId());
@@ -78,7 +77,7 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
      *
      * @param acct the acct
      */
-    protected void deleteToken(final TransientSessionTicket acct) {
+    protected void deleteToken(final CasSimpleMultifactorAuthenticationTicket acct) {
         this.centralAuthenticationService.deleteTicket(acct.getId());
     }
 
