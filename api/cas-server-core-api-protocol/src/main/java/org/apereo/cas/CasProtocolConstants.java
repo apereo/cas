@@ -177,4 +177,8 @@ public interface CasProtocolConstants {
      */
     String ENDPOINT_SERVICE_VALIDATE_V3 = "/p3/serviceValidate";
 
+    /**
+     * Constant representing proxy endpoint.
+     */
+    String ENDPOINT_PROXY = "/proxy";
 }

@@ -132,12 +132,12 @@ public interface WSFederationConstants {
     /**
      * The STS parent endpoint.
      */
-    String ENDPOINT_STS = "/ws/sts/";
+    String BASE_ENDPOINT_STS = "/ws/sts/";
 
     /**
      * The location of WSDL service.
      */
-    String ENDPOINT_STS_REALM_WSDL = ENDPOINT_STS + "%s/STSServiceTransportUT?wsdl";
+    String ENDPOINT_STS_REALM_WSDL = BASE_ENDPOINT_STS + "%s/STSServiceTransportUT?wsdl";
 
     /**
      * The constant WSIGNOUT10.

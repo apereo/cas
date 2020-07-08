@@ -16,6 +16,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.authentication.WSFederationAuthenticationServiceSelectionStrategy;
@@ -29,6 +30,7 @@ import org.apereo.cas.ws.idp.web.WSFederationValidateRequestController;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,7 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.Ordered;
 
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * This is {@link CoreWsSecurityIdentityProviderConfiguration}.
@@ -167,18 +170,12 @@ public class CoreWsSecurityIdentityProviderConfiguration {
         };
     }
 
-    /**
-     * Disable Spring Security configuration for endpoints
-     * allowing CAS' own security configuration to handle protection
-     * of endpoints.
-     *
-     * @return the web security configurer adapter
-     */
-//    @ConditionalOnClass(WebSecurityConfigurerAdapter.class)
-//    @Bean
-//    public WebSecurityConfigurerAdapter wsFederationWebSecurityConfigurerAdapter() {
-//        return new SamlIdPWebSecurityConfigurerAdapter();
-//    }
+    @Bean
+    public ProtocolEndpointConfigurer wsFederationProtocolEndpointConfigurer() {
+        return () -> List.of(
+            StringUtils.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_IDP, "/"),
+            StringUtils.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_STS, "/"));
+    }
 
     private WSFederationRequestConfigurationContext.WSFederationRequestConfigurationContextBuilder getConfigurationContext() {
         return WSFederationRequestConfigurationContext.builder()
@@ -195,14 +192,4 @@ public class CoreWsSecurityIdentityProviderConfiguration {
             .ticketRegistrySupport(ticketRegistrySupport.getObject())
             .callbackService(wsFederationCallbackService());
     }
-
-//    @Order(4)
-//    private static class SamlIdPWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-//        @Override
-//        protected void configure(final HttpSecurity http) throws Exception {
-//            http.authorizeRequests()
-//                .antMatchers(WSFederationConstants.BASE_ENDPOINT_IDP + "/*")
-//                .permitAll();
-//        }
-//    }
 }

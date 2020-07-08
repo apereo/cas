@@ -108,6 +108,7 @@ import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.validation.CasProtocolViewFactory;
+import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -139,7 +140,6 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -147,10 +147,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -161,6 +158,7 @@ import org.springframework.webflow.execution.Action;
 
 import java.time.Duration;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -345,13 +343,11 @@ public class OidcConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(oauthInterceptor()).addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
     }
 
-//    @ConditionalOnClass(WebSecurityConfigurerAdapter.class)
-//    @Bean
-//    @Order(2)
-//    public WebSecurityConfigurerAdapter oidcWebSecurityConfigurerAdapter() {
-//        return new OidcWebSecurityConfigurerAdapter();
-//    }
-
+    @Bean
+    public ProtocolEndpointConfigurer oidcProtocolEndpointConfigurer() {
+        return () -> List.of(StringUtils.prependIfMissing(OidcConstants.BASE_OIDC_URL, "/"));
+    }
+    
     @Bean
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
         return new OidcConsentApprovalViewResolver(casProperties);
@@ -880,17 +876,4 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .accessTokenJwtBuilder(accessTokenJwtBuilder.getObject())
             .build();
     }
-
-//    @Order(2)
-//    private static class OidcWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-//        @Override
-//        protected void configure(final HttpSecurity http) throws Exception {
-//            http.authorizeRequests()
-//                .antMatchers(OidcConstants.BASE_OIDC_URL + "/**")
-//                .permitAll()
-//                .and()
-//                .csrf()
-//                .disable();
-//        }
-//    }
 }

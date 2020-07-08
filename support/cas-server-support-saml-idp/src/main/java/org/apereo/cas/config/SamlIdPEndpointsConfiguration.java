@@ -33,10 +33,12 @@ import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
@@ -54,6 +56,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
+
+import java.util.List;
 
 /**
  * This is {@link SamlIdPEndpointsConfiguration}.
@@ -345,29 +349,9 @@ public class SamlIdPEndpointsConfiguration {
             .callbackService(samlIdPCallbackService());
     }
 
-    /**
-     * Disable Spring Security configuration for endpoints
-     * allowing CAS' own security configuration to handle protection
-     * of endpoints.
-     *
-     * @return the web security configurer adapter
-     */
-//    @ConditionalOnClass(WebSecurityConfigurerAdapter.class)
-//    @Bean
-//    public WebSecurityConfigurerAdapter samlIdPWebSecurityConfigurerAdapter() {
-//        return new SamlIdPWebSecurityConfigurerAdapter();
-//    }
-
-//    @Order(1)
-//    private static class SamlIdPWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-//        @Override
-//        protected void configure(final HttpSecurity http) throws Exception {
-//            http.authorizeRequests()
-//                .antMatchers(SamlIdPConstants.BASE_ENDPOINT_SAML1 + "/*", SamlIdPConstants.BASE_ENDPOINT_SAML2 + "/*")
-//                .permitAll()
-//                .and()
-//                .csrf()
-//                .disable();
-//        }
-//    }
+    @Bean
+    public ProtocolEndpointConfigurer samlIdPProtocolEndpointConfigurer() {
+        return () -> List.of(StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML1, "/"),
+            StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML2, "/"));
+    }
 }

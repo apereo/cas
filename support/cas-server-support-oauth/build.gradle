@@ -1,7 +1,5 @@
 description = "Apereo CAS Server OAuth Provider Support"
 dependencies {
-    compileOnly libraries.springsecurityconfig
-
     implementation libraries.casclient
     implementation libraries.pac4jcore
     implementation libraries.nimbus
@@ -32,8 +30,6 @@ dependencies {
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-throttle")
     implementation project(":support:cas-server-support-pac4j-api")
-
-    testImplementation libraries.springsecurityconfig
 
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")

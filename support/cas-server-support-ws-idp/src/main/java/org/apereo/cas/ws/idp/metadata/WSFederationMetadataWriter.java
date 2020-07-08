@@ -64,7 +64,7 @@ public class WSFederationMetadataWriter {
             writer.writeNamespace("wsa", WS_ADDRESSING_NS);
             writer.writeNamespace("auth", WS_FEDERATION_NS);
             writer.writeNamespace("xsi", SCHEMA_INSTANCE_NS);
-            val stsUrl = config.getServer().getPrefix().concat(WSFederationConstants.ENDPOINT_STS).concat(wsfedIdp.getIdp().getRealmName());
+            val stsUrl = config.getServer().getPrefix().concat(WSFederationConstants.BASE_ENDPOINT_STS).concat(wsfedIdp.getIdp().getRealmName());
             writeFederationMetadata(writer, idpEntityId, stsUrl, crypto);
             writer.writeEndElement();
             writer.writeEndDocument();
