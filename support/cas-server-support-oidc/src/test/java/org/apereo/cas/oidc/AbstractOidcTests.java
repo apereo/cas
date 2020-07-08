@@ -62,6 +62,7 @@ import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
+import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -158,6 +159,10 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("defaultDeviceTokenFactory")
     protected OAuth20DeviceTokenFactory deviceTokenFactory;
+
+    @Autowired
+    @Qualifier("defaultDeviceUserCodeFactory")
+    protected OAuth20DeviceUserCodeFactory deviceUserCodeFactory;
 
     @Autowired
     @Qualifier("oidcUserProfileDataCreator")
