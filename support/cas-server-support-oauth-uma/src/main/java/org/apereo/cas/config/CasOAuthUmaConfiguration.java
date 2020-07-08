@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
+import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
@@ -222,6 +223,13 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(name = "defaultUmaPermissionTicketFactory")
     public UmaPermissionTicketFactory defaultUmaPermissionTicketFactory() {
         return new DefaultUmaPermissionTicketFactory(umaPermissionTicketIdGenerator(), umaPermissionTicketExpirationPolicy());
+    }
+
+    @ConditionalOnMissingBean(name = "defaultUmaPermissionTicketFactoryConfigurer")
+    @Bean
+    @RefreshScope
+    public TicketFactoryExecutionPlanConfigurer defaultUmaPermissionTicketFactoryConfigurer() {
+        return this::defaultUmaPermissionTicketFactory;
     }
 
     @Bean

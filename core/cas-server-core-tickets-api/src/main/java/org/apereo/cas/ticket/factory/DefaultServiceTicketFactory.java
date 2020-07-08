@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
@@ -33,10 +32,15 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     private final ExpirationPolicyBuilder<ServiceTicket> serviceTicketExpirationPolicy;
+
     private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
+
     private final boolean trackMostRecentSession;
+
     private final CipherExecutor<String, String> cipherExecutor;
+
     private final UniqueTicketIdGenerator defaultServiceTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+
     private final ServicesManager servicesManager;
 
     @Override
@@ -52,6 +56,25 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
         val encodedId = this.cipherExecutor.encode(ticketId);
         LOGGER.debug("Encoded service ticket id [{}]", encodedId);
         return produceTicket(ticketGrantingTicket, service, credentialProvided, encodedId, clazz);
+    }
+
+    @Override
+    public Class<? extends Ticket> getTicketType() {
+        return ServiceTicket.class;
+    }
+
+    private ExpirationPolicy determineExpirationPolicyForService(final Service service) {
+        val registeredService = servicesManager.findServiceBy(service);
+        if (registeredService != null && registeredService.getServiceTicketExpirationPolicy() != null) {
+            val policy = registeredService.getServiceTicketExpirationPolicy();
+            val count = policy.getNumberOfUses();
+            val ttl = policy.getTimeToLive();
+            if (count > 0 && StringUtils.isNotBlank(ttl)) {
+                return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(
+                    count, Beans.newDuration(ttl).getSeconds());
+            }
+        }
+        return this.serviceTicketExpirationPolicy.buildTicketExpirationPolicy();
     }
 
     /**
@@ -87,20 +110,6 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
         return (T) result;
     }
 
-    private ExpirationPolicy determineExpirationPolicyForService(final Service service) {
-        val registeredService = servicesManager.findServiceBy(service);
-        if (registeredService != null && registeredService.getServiceTicketExpirationPolicy() != null) {
-            val policy = registeredService.getServiceTicketExpirationPolicy();
-            val count = policy.getNumberOfUses();
-            val ttl = policy.getTimeToLive();
-            if (count > 0 && StringUtils.isNotBlank(ttl)) {
-                return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(
-                    count, Beans.newDuration(ttl).getSeconds());
-            }
-        }
-        return this.serviceTicketExpirationPolicy.buildTicketExpirationPolicy();
-    }
-
     /**
      * Produce ticket identifier.
      *
@@ -123,10 +132,5 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
         }
 
         return serviceTicketUniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX);
-    }
-
-    @Override
-    public TicketFactory get(final Class<? extends Ticket> clazz) {
-        return this;
     }
 }

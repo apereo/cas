@@ -242,7 +242,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             .mapToInt(defn -> {
                 try {
                     val sql = String.format("DELETE FROM %s s WHERE s.ticketGrantingTicket.id = :id", getTicketEntityName(defn));
-                    LOGGER.trace("Creating query [{}]", sql);
+                    LOGGER.trace("Creating delete query [{}] for ticket id [{}]", sql, ticketId);
                     val query = entityManager.createQuery(sql);
                     query.setParameter("id", ticketId);
                     return query.executeUpdate();
@@ -257,6 +257,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         val sql = String.format("DELETE FROM %s t WHERE t.id = :id", getTicketEntityName(tgt));
         val query = entityManager.createQuery(sql);
         query.setParameter("id", ticketId);
+        LOGGER.trace("Creating delete query [{}] for ticket id [{}]", sql, ticketId);
         totalCount += query.executeUpdate();
         return totalCount;
     }

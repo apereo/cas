@@ -3,9 +3,9 @@ package org.apereo.cas.mfa.simple.web.flow;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.CasSimpleMultifactorProperties;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationConstants;
+import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationTicketFactory;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -37,7 +37,7 @@ public class CasSimpleSendTokenAction extends AbstractAction {
 
     private final CommunicationsManager communicationsManager;
 
-    private final TransientSessionTicketFactory ticketFactory;
+    private final CasSimpleMultifactorAuthenticationTicketFactory ticketFactory;
 
     private final CasSimpleMultifactorProperties properties;
 

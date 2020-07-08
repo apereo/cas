@@ -18,6 +18,7 @@ import org.apereo.cas.support.x509.X509TokenDelegationHandler;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicketFactory;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
+import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -423,6 +424,13 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     public SecurityTokenTicketFactory securityTokenTicketFactory() {
         return new DefaultSecurityTokenTicketFactory(securityTokenTicketIdGenerator(), grantingTicketExpirationPolicy.getObject());
+    }
+
+    @ConditionalOnMissingBean(name = "securityTokenTicketFactoryConfigurer")
+    @Bean
+    @RefreshScope
+    public TicketFactoryExecutionPlanConfigurer securityTokenTicketFactoryConfigurer() {
+        return this::securityTokenTicketFactory;
     }
 
     @ConditionalOnMissingBean(name = "securityTokenTicketIdGenerator")
