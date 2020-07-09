@@ -1,11 +1,45 @@
 package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.SurrogateAuthenticationAuditConfiguration;
+import org.apereo.cas.config.SurrogateAuthenticationConfiguration;
+import org.apereo.cas.config.SurrogateAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.config.CasThemesConfiguration;
+import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Import;
 
 import java.util.Optional;
 
@@ -40,5 +74,44 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
         assertTrue(surrogateService.canAuthenticateAs(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(BANDERSON), service));
         assertFalse(surrogateService.canAuthenticateAs("XXXX", CoreAuthenticationTestUtils.getPrincipal(CASUSER), service));
         assertFalse(surrogateService.canAuthenticateAs(CASUSER, CoreAuthenticationTestUtils.getPrincipal(BANDERSON), service));
+    }
+    
+    @ImportAutoConfiguration({
+        RefreshAutoConfiguration.class,
+        MailSenderAutoConfiguration.class,
+        SecurityAutoConfiguration.class,
+        AopAutoConfiguration.class
+    })
+    @SpringBootConfiguration
+    @Import({
+        SurrogateAuthenticationConfiguration.class,
+        SurrogateAuthenticationAuditConfiguration.class,
+        SurrogateAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreWebflowConfiguration.class,
+        CasWebflowContextConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCookieConfiguration.class,
+        CasThemesConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketsConfiguration.class
+    })
+    public static class SharedTestConfiguration {
     }
 }

@@ -54,12 +54,12 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class,
     AmazonCognitoAuthenticationConfiguration.class
 }, properties = {
-    "cas.authn.cognito.userPoolId=us-west-2_igeBNHRsb",
+    "cas.authn.cognito.user-pool-id=us-west-2_igeBNHRsb",
     "cas.authn.cognito.region=us-west-2",
-    "cas.authn.cognito.clientExecutionTimeout=30000",
-    "cas.authn.cognito.credentialAccessKey=test",
-    "cas.authn.cognito.credentialSecretKey=test",
-    "cas.authn.cognito.clientId=4o5qr8egumc72iv6qibm8foeh6"
+    "cas.authn.cognito.client-execution-timeout=30000",
+    "cas.authn.cognito.credential-access-key=test",
+    "cas.authn.cognito.credential-secret-key=test",
+    "cas.authn.cognito.client-id=4o5qr8egumc72iv6qibm8foeh6"
 })
 @Tag("AmazonWebServices")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
