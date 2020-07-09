@@ -67,5 +67,4 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilderTests extends A
         assertNotNull(ticketRegistry.getTicket(code, OAuth20Code.class));
         assertTrue(oauthAuthorizationCodeResponseBuilder.supports(context));
     }
-
 }
