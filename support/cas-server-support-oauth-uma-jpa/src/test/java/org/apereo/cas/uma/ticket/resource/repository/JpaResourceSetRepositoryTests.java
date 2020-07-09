@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.authn.uma.resource-set.jpa.url=jdbc:hsqldb:mem:cas-uma-resourceset",
     "cas.jdbc.show-sql=true",
-    "cas.authn.uma.resource-set.jpa.ddlAuto=create-drop"
+    "cas.authn.uma.resource-set.jpa.ddl-auto=create-drop"
 })
 public class JpaResourceSetRepositoryTests extends BaseUmaEndpointControllerTests {
 

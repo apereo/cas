@@ -21,9 +21,9 @@ dependencies {
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-webflow")
-    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-themes")
 
     testImplementation project(path: ":support:cas-server-support-surrogate-authentication", configuration: "tests")

@@ -15,7 +15,7 @@ import org.springframework.test.context.TestPropertySource;
 @Tag("MySQL")
 @TestPropertySource(properties = {
     "cas.jdbc.show-sql=true",
-    "cas.consent.jpa.ddlAuto=create-drop",
+    "cas.consent.jpa.ddl-auto=create-drop",
     "cas.consent.jpa.user=root",
     "cas.consent.jpa.password=password",
     "cas.consent.jpa.driver-class=com.mysql.cj.jdbc.Driver",
