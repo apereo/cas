@@ -207,6 +207,10 @@ public abstract class AbstractOAuth20Tests {
     protected OAuth20AccessTokenEndpointController accessTokenController;
 
     @Autowired
+    @Qualifier("oauthAuthorizationCodeResponseBuilder")
+    protected OAuth20AuthorizationResponseBuilder oauthAuthorizationCodeResponseBuilder;
+
+    @Autowired
     @Qualifier("accessTokenResponseGenerator")
     protected OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator;
 
