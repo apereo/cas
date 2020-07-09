@@ -56,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreLogoutConfiguration.class
 })
-@Tag("Simple")
+@Tag("Tickets")
 public class DefaultTicketCatalogTests {
     @Autowired
     @Qualifier("ticketCatalog")

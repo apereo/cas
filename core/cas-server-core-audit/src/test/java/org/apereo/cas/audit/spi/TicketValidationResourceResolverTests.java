@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Simple")
+@Tag("Tickets")
 public class TicketValidationResourceResolverTests {
     private final TicketValidationResourceResolver r = new TicketValidationResourceResolver();
 

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Tag("Simple")
+@Tag("Tickets")
 public class HostNameBasedUniqueTicketIdGeneratorTests {
 
     @Test

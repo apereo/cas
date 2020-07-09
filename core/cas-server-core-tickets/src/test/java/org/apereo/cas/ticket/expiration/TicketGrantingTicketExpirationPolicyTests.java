@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.4.10
  */
 @DirtiesContext
-@Tag("Simple")
+@Tag("Tickets")
 public class TicketGrantingTicketExpirationPolicyTests {
 
     private static final long HARD_TIMEOUT = 200;

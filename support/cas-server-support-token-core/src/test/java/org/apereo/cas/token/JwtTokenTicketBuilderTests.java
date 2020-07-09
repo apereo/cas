@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Tag("Simple")
+@Tag("Tickets")
 public class JwtTokenTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test

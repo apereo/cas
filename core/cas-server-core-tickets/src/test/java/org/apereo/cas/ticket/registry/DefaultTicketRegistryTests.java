@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class)
-@Tag("Simple")
+@Tag("Tickets")
 public class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Override
