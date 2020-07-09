@@ -16,6 +16,8 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20RefreshTokenGrantType
 import org.apereo.cas.support.oauth.validator.token.OAuth20RevocationRequestValidatorTests;
 import org.apereo.cas.support.oauth.web.OAuth20RefreshTokenTests;
 import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenGrantRequestAuditResourceResolverTests;
+import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenResponseAuditResourceResolverTests;
+import org.apereo.cas.support.oauth.web.audit.OAuth20CodeResponseAuditResourceResolverTests;
 import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourceResolverTests;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointControllerTests;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointControllerTests;
@@ -94,6 +96,8 @@ import org.junit.runner.RunWith;
     OAuth20UserProfileDataAuditResourceResolverTests.class,
     OAuth20DefaultAccessTokenResponseGeneratorTests.class,
     OAuth20RefreshTokenTests.class,
+    OAuth20AccessTokenResponseAuditResourceResolverTests.class,
+    OAuth20CodeResponseAuditResourceResolverTests.class,
     OAuth20AuthorizationCodeAuthorizationResponseBuilderTests.class,
     OAuth20RegisteredServiceCipherExecutorTests.class,
     OAuth20TokenAuthorizationResponseBuilderTests.class
