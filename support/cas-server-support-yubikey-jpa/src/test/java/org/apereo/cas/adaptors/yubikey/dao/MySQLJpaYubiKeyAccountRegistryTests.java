@@ -15,7 +15,7 @@ import org.springframework.test.context.TestPropertySource;
 @Tag("MySQL")
 @TestPropertySource(properties = {
     "cas.jdbc.show-sql=true",
-    "cas.authn.mfa.yubikey.jpa.ddlAuto=create-drop",
+    "cas.authn.mfa.yubikey.jpa.ddl-auto=create-drop",
     "cas.authn.mfa.yubikey.jpa.user=root",
     "cas.authn.mfa.yubikey.jpa.password=password",
     "cas.authn.mfa.yubikey.jpa.driver-class=com.mysql.cj.jdbc.Driver",

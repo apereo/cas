@@ -29,6 +29,9 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
 
     testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-trusted-mfa")
+
+    testImplementation project(path: ":support:cas-server-support-yubikey", configuration: "tests")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

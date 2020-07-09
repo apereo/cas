@@ -12,7 +12,7 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.0.0
  */
 @TestPropertySource(properties = {
-    "cas.authn.mfa.gauth.jpa.ddlAuto=create-drop",
+    "cas.authn.mfa.gauth.jpa.ddl-auto=create-drop",
     "cas.authn.mfa.gauth.jpa.user=root",
     "cas.authn.mfa.gauth.jpa.password=password",
     "cas.authn.mfa.gauth.jpa.driver-class=com.mysql.cj.jdbc.Driver",
