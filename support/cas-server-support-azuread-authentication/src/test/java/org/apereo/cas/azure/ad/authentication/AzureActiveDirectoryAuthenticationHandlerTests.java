@@ -65,8 +65,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationPrincipalConfiguration.class
 },
     properties = {
-        "cas.authn.azure-active-directory.clientId=12345678-bc3b-4e2d-a9bf-bf6c7ded8b7e",
-        "cas.authn.azure-active-directory.loginUrl=https://login.microsoftonline.com/common/"
+        "cas.authn.azure-active-directory.client-id=12345678-bc3b-4e2d-a9bf-bf6c7ded8b7e",
+        "cas.authn.azure-active-directory.login-url=https://login.microsoftonline.com/common/"
     })
 @Tag("Authentication")
 public class AzureActiveDirectoryAuthenticationHandlerTests {

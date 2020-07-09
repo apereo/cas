@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.jdbc[0].driver-class=org.postgresql.Driver",
     "cas.authn.attribute-repository.jdbc[0].url=jdbc:postgresql://localhost:5432/postgres",
     "cas.authn.attribute-repository.jdbc[0].dialect=org.hibernate.dialect.PostgreSQL95Dialect",
-    "cas.authn.attribute-repository.jdbc[0].ddlAuto=create-drop"
+    "cas.authn.attribute-repository.jdbc[0].ddl-auto=create-drop"
 })
 @EnabledIfPortOpen(port = 5432)
 @Tag("Postgres")
