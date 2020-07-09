@@ -158,10 +158,12 @@ Google Authenticator for multifactor authentication is now allowed to accept and
 
 - Attribute definitions mapped to an external Groovy script are corrected to handle caching in more resource-friendly ways.
 - The management of service definitions is now delegating search operations to the service registry rather than filtering matches internally while also utilizing a caching layer to improve performance as much as possible.
+- Generation of OAuth/OIDC `code` tokens is now properly audited. Additionally, the `who` flag for OAuth/OIDC functionality is restored back to the active principal id.
 - The authentication strategy backed by [Apache Syncope](../installation/Syncope-Authentication.html) is enhanced to not require a dependency on Apache Syncope modules, allowing the integration to work with all Apache Syncope versions. Additional improvements are put in to ensure the configuration can comply with reload requests and the likes of `@RefreshScope`.
 - The eligibility of passwordless accounts for multifactor & delegated authentication has switched to a `TriStateBoolean` type to allow for easier overrides and undefined states when examined against the global settings.
 - When working with Git integrations, username and email attributes used for commit operations are now resolved via local, global and system git configuration before falling back onto default CAS-controlled values.
 - Service management `findServiceBy()` operations are now delegated to the service registry directly with a modest cache layer in between to improve and preserve performance as much as possible.
+- Test improvements to reduce the number of duplicate configuration classes required to bootstrap the runtime context.
 - [Locust performance tests](../high_availability/Performance-Testing-Locust.html) are now upgraded to use locust `1.1`.
 - Generation of id tokens or user-info payloads for OAuth or OpenID Connect are now hardenized to prevent the `none` algorithm if undefined in discovery settings.
  

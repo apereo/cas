@@ -45,8 +45,9 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20RefreshTokenGrantType
 import org.apereo.cas.support.oauth.validator.token.OAuth20RevocationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
-import org.apereo.cas.support.oauth.web.audit.AccessTokenResponseAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenGrantRequestAuditResourceResolver;
+import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenResponseAuditResourceResolver;
+import org.apereo.cas.support.oauth.web.audit.OAuth20CodeResponseAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
@@ -779,7 +780,13 @@ public class CasOAuth20Configuration {
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
                     AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
             plan.registerAuditResourceResolver("OAUTH2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER",
-                new AccessTokenResponseAuditResourceResolver());
+                new OAuth20AccessTokenResponseAuditResourceResolver());
+
+            plan.registerAuditActionResolver("OAUTH2_CODE_RESPONSE_ACTION_RESOLVER",
+                new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
+                    AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
+            plan.registerAuditResourceResolver("OAUTH2_CODE_RESPONSE_RESOURCE_RESOLVER",
+                new OAuth20CodeResponseAuditResourceResolver());
         };
     }
 

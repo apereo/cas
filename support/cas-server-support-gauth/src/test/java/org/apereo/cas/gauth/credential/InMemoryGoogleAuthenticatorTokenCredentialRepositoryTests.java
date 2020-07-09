@@ -10,7 +10,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-
 /**
  * This is {@link InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests}.
  *
