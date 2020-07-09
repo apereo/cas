@@ -91,7 +91,7 @@ public class DefaultLogoutManagerTests {
 
         singleLogoutServiceMessageHandler = new DefaultSingleLogoutServiceMessageHandler(client,
             new DefaultSingleLogoutMessageCreator(), servicesManager,
-            new DefaultSingleLogoutServiceLogoutUrlBuilder(validator), true,
+            new DefaultSingleLogoutServiceLogoutUrlBuilder(servicesManager, validator), true,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
         
         this.simpleWebApplicationServiceImpl = getService(URL);

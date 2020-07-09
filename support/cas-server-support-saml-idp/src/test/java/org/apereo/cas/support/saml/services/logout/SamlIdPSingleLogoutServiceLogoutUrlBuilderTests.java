@@ -22,8 +22,7 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilderTests extends BaseSamlIdP
     @Test
     public void verifyOperation() {
         val builder = new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager,
-            defaultSamlRegisteredServiceCachingMetadataResolver,
-            urlValidator);
+            defaultSamlRegisteredServiceCachingMetadataResolver);
         val results = builder.determineLogoutUrl(SamlIdPTestUtils.getSamlRegisteredService(),
             RegisteredServiceTestUtils.getService("https://sp.testshib.org/shibboleth-sp"));
         assertFalse(results.isEmpty());

@@ -31,7 +31,8 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        val result = oidcLogoutEndpointController.handleRequestInternal(StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, request, response);
+        val result = oidcLogoutEndpointController.handleRequestInternal(StringUtils.EMPTY, StringUtils.EMPTY,
+            StringUtils.EMPTY, request, response);
         assertTrue(result instanceof RedirectView);
 
         val redirectView = (RedirectView) result;
@@ -44,7 +45,8 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        val result = oidcLogoutEndpointController.handleRequestInternal(StringUtils.EMPTY, "abcd1234", StringUtils.EMPTY, request, response);
+        val result = oidcLogoutEndpointController.handleRequestInternal(StringUtils.EMPTY, "abcd1234",
+            StringUtils.EMPTY, request, response);
         assertTrue(result instanceof RedirectView);
 
         val redirectView = (RedirectView) result;
@@ -61,12 +63,13 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
         val oidcRegisteredService = getOidcRegisteredService(true, false);
         val idToken = oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims);
 
-        val result = oidcLogoutEndpointController.handleRequestInternal(StringUtils.EMPTY, StringUtils.EMPTY, idToken, request, response);
+        val result = oidcLogoutEndpointController.handleRequestInternal(StringUtils.EMPTY, StringUtils.EMPTY,
+            idToken, request, response);
         assertTrue(result instanceof RedirectView);
 
         val redirectView = (RedirectView) result;
         val redirectUrl = redirectView.getUrl();
-        assertEquals("https://cas.example.org:8443/cas/logout?service=https%3A%2F%2Foauth.example.org%2Flogout", redirectUrl);
+        assertEquals("https://cas.example.org:8443/cas/logout?service=https%3A%2F%2Foauth.example.org%2Flogout&client_id=clientid", redirectUrl);
     }
 
     @Test
@@ -78,12 +81,14 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
         val oidcRegisteredService = getOidcRegisteredService(true, false);
         val idToken = oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims);
 
-        val result = oidcLogoutEndpointController.handleRequestInternal(StringUtils.EMPTY, "abcd1234", idToken, request, response);
+        val result = oidcLogoutEndpointController.handleRequestInternal(StringUtils.EMPTY, "abcd1234",
+            idToken, request, response);
         assertTrue(result instanceof RedirectView);
 
         val redirectView = (RedirectView) result;
         val redirectUrl = redirectView.getUrl();
-        assertEquals("https://cas.example.org:8443/cas/logout?service=https%3A%2F%2Foauth.example.org%2Flogout%3Fstate%3Dabcd1234&state=abcd1234", redirectUrl);
+        assertEquals("https://cas.example.org:8443/cas/logout?service=https%3A%2F%2Foauth.example.org%2Flogout%3Fstate%3Dabcd1234&state=abcd1234&client_id=clientid",
+            redirectUrl);
     }
 
     @Test
@@ -100,7 +105,7 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
 
         val redirectView = (RedirectView) result;
         val redirectUrl = redirectView.getUrl();
-        assertEquals("https://cas.example.org:8443/cas/logout?service=https%3A%2F%2Flogout%3Fstate%3Dabcd1234&state=abcd1234", redirectUrl);
+        assertEquals("https://cas.example.org:8443/cas/logout?service=https%3A%2F%2Flogout%3Fstate%3Dabcd1234&state=abcd1234&client_id=clientid", redirectUrl);
     }
 
     @Test
@@ -117,6 +122,7 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
 
         val redirectView = (RedirectView) result;
         val redirectUrl = redirectView.getUrl();
-        assertEquals("https://cas.example.org:8443/cas/logout?service=https%3A%2F%2Foauth.example.org%2Flogout%3Fstate%3Dabcd1234&state=abcd1234", redirectUrl);
+        assertEquals("https://cas.example.org:8443/cas/logout?service=https%3A%2F%2Foauth.example.org%2Flogout%3Fstate%3Dabcd1234&state=abcd1234&client_id=clientid",
+            redirectUrl);
     }
 }

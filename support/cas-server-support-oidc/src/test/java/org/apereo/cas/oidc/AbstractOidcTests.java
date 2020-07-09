@@ -33,6 +33,7 @@ import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.config.OidcComponentSerializationConfiguration;
 import org.apereo.cas.oidc.config.OidcConfiguration;
@@ -125,6 +126,10 @@ import static org.mockito.Mockito.*;
 public abstract class AbstractOidcTests {
 
     protected static final String TGT_ID = "TGT-0";
+
+    @Autowired
+    @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+    protected SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;

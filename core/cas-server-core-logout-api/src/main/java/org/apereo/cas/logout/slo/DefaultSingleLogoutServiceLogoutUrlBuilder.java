@@ -2,18 +2,20 @@ package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.UrlValidator;
 
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -24,13 +26,20 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
-public class DefaultSingleLogoutServiceLogoutUrlBuilder implements SingleLogoutServiceLogoutUrlBuilder {
+public class DefaultSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogoutServiceLogoutUrlBuilder {
     private final UrlValidator urlValidator;
+
+    public DefaultSingleLogoutServiceLogoutUrlBuilder(final ServicesManager servicesManager,
+                                                      final UrlValidator urlValidator) {
+        super(servicesManager);
+        this.urlValidator = urlValidator;
+    }
 
     @Override
     @SneakyThrows
-    public Collection<SingleLogoutUrl> determineLogoutUrl(final RegisteredService registeredService, final WebApplicationService singleLogoutService) {
+    public Collection<SingleLogoutUrl> determineLogoutUrl(final RegisteredService registeredService,
+                                                          final WebApplicationService singleLogoutService,
+                                                          final Optional<HttpServletRequest> httpRequest) {
         val serviceLogoutUrl = registeredService.getLogoutUrl();
         if (serviceLogoutUrl != null) {
             LOGGER.debug("Logout request will be sent to [{}] for service [{}]", serviceLogoutUrl, singleLogoutService);

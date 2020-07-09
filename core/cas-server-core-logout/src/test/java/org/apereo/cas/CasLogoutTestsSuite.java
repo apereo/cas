@@ -1,4 +1,10 @@
-package org.apereo.cas.logout;
+package org.apereo.cas;
+
+import org.apereo.cas.logout.ChainingSingleLogoutServiceLogoutUrlBuilderTests;
+import org.apereo.cas.logout.DefaultLogoutManagerTests;
+import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilderTests;
+import org.apereo.cas.logout.LogoutHttpMessageTests;
+import org.apereo.cas.logout.SamlCompliantLogoutMessageCreatorTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -12,6 +18,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     DefaultLogoutManagerTests.class,
+    ChainingSingleLogoutServiceLogoutUrlBuilderTests.class,
     DefaultSingleLogoutServiceLogoutUrlBuilderTests.class,
     LogoutHttpMessageTests.class,
     SamlCompliantLogoutMessageCreatorTests.class
