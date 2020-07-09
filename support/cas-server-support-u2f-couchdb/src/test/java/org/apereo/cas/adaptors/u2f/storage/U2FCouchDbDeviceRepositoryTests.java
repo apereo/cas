@@ -32,7 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCouchDbCoreConfiguration.class,
     AopAutoConfiguration.class,
     U2FConfiguration.class,
-    RefreshAutoConfiguration.class},
+    RefreshAutoConfiguration.class
+},
     properties = {
         "cas.authn.mfa.u2f.couch-db.asynchronous=false",
         "cas.authn.mfa.u2f.couch-db.caching=false",

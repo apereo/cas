@@ -7,7 +7,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenExpirationPolicyBuilder;
 
 import lombok.val;
@@ -42,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests {
 
     private static final String STATE = "%123=";
+
     private static final String NONCE = "%123=";
 
     @Test
@@ -74,10 +74,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
             fail("Expected access token");
         }
 
-        final OAuth20AccessToken oAuth20AccessToken = generatedToken
-            .getAccessToken()
-            .get();
-
+        val oAuth20AccessToken = generatedToken.getAccessToken().get();
         val tokenExpirationPolicyBuilder = new OAuth20AccessTokenExpirationPolicyBuilder(casProperties);
         val tokenAuthorizationResponseBuilder = new OAuth20TokenAuthorizationResponseBuilder(oauthTokenGenerator,
             tokenExpirationPolicyBuilder,

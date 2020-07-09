@@ -59,11 +59,11 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
 
     private final Map<String, Service> proxyGrantingTickets = new HashMap<>();
 
+    private final Set<String> descendantTickets = new LinkedHashSet<>();
+
     private int usageCount;
 
     private boolean expired;
-
-    private final Set<String> descendantTickets = new LinkedHashSet<>();
 
     @Setter
     private ExpirationPolicy expirationPolicy = new TicketGrantingTicketExpirationPolicy(100, 100);
@@ -80,20 +80,24 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
             principalAttributes, authnAttributes);
     }
 
-    public MockTicketGrantingTicket(final String principalId, final Credential c, final Map<String, List<Object>> principalAttributes,
+    public MockTicketGrantingTicket(final String principalId, final Credential credential,
+                                    final Map<String, List<Object>> principalAttributes,
                                     final Map<String, List<Object>> authnAttributes) {
-        id = ID_GENERATOR.getNewTicketId("TGT");
-        val metaData = new BasicCredentialMetaData(c);
-        val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(principalId, principalAttributes);
-        authentication = new DefaultAuthenticationBuilder(principal)
-            .addCredential(metaData)
+        this(new DefaultAuthenticationBuilder(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(principalId, principalAttributes))
+            .addCredential(new BasicCredentialMetaData(credential))
             .setAttributes(authnAttributes)
             .addAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS,
                 List.of(SimpleTestUsernamePasswordAuthenticationHandler.class.getSimpleName()))
             .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
-                new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData))
-            .build();
+                new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(),
+                    new BasicCredentialMetaData(credential)))
+            .build());
+    }
+
+    public MockTicketGrantingTicket(final Authentication authentication) {
+        id = ID_GENERATOR.getNewTicketId("TGT");
         created = ZonedDateTime.now(ZoneOffset.UTC);
+        this.authentication = authentication;
     }
 
     public MockTicketGrantingTicket(final String principal) {
