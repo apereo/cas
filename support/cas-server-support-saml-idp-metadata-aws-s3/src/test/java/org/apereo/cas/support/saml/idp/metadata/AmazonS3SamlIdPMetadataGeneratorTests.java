@@ -27,9 +27,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @SpringBootTest(classes = {
-    BaseSamlIdPMetadataTests.SharedTestConfiguration.class,
     AmazonS3SamlMetadataConfiguration.class,
-    AmazonS3SamlIdPMetadataConfiguration.class
+    AmazonS3SamlIdPMetadataConfiguration.class,
+    BaseSamlIdPMetadataTests.SharedTestConfiguration.class
 }, properties = {
     "cas.authn.saml-idp.metadata.amazon-s3.idp-metadata-bucket-name=thebucket",
     "cas.authn.saml-idp.metadata.amazon-s3.endpoint=http://127.0.0.1:4572",
