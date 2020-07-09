@@ -9,12 +9,12 @@ import org.springframework.web.servlet.ModelAndView;
 import static org.apache.commons.lang3.builder.ToStringStyle.NO_CLASS_NAME_STYLE;
 
 /**
- * The {@link AccessTokenResponseAuditResourceResolver} for audit advice.
+ * The {@link OAuth20CodeResponseAuditResourceResolver} for audit advice.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-public class AccessTokenResponseAuditResourceResolver extends ReturnValueAsStringResourceResolver {
+public class OAuth20CodeResponseAuditResourceResolver extends ReturnValueAsStringResourceResolver {
 
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.TicketState;
@@ -94,8 +95,8 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
             }
             return expiredAccessTokenResponseEntity;
         }
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(accessTokenTicket.getAuthentication());
         updateAccessTokenUsage(accessTokenTicket);
-
         val map = getOAuthConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket, context);
         return getOAuthConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket, response);
     }

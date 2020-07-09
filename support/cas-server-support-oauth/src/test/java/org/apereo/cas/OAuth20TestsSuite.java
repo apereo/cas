@@ -29,6 +29,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultAcces
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultTokenGeneratorTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20JwtAccessTokenEncoderTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutorTests;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilderTests;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilderTests;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilderTests;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRendererFlatTests;
@@ -93,6 +94,7 @@ import org.junit.runner.RunWith;
     OAuth20UserProfileDataAuditResourceResolverTests.class,
     OAuth20DefaultAccessTokenResponseGeneratorTests.class,
     OAuth20RefreshTokenTests.class,
+    OAuth20AuthorizationCodeAuthorizationResponseBuilderTests.class,
     OAuth20RegisteredServiceCipherExecutorTests.class,
     OAuth20TokenAuthorizationResponseBuilderTests.class
 })

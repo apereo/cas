@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.util.CommonHelper;
 import org.springframework.web.servlet.ModelAndView;
@@ -37,6 +38,9 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
 
     private final ServicesManager servicesManager;
 
+    @Audit(action = "OAUTH2_CODE_RESPONSE",
+        actionResolverName = "OAUTH2_CODE_RESPONSE_ACTION_RESOLVER",
+        resourceResolverName = "OAUTH2_CODE_RESPONSE_RESOURCE_RESOLVER")
     @Override
     public ModelAndView build(final JEEContext context, final String clientId,
                               final AccessTokenRequestDataHolder holder) {
@@ -47,7 +51,6 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
             holder.getClientId(), holder.getClaims());
         LOGGER.debug("Generated OAuth code: [{}]", code);
         this.ticketRegistry.addTicket(code);
-
         return buildCallbackViewViaRedirectUri(context, clientId, authentication, code);
     }
 
