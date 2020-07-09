@@ -43,7 +43,7 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
      * @param response              the response
      * @return the response entity
      */
-    @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.LOGOUT_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.LOGOUT_URL)
     @SneakyThrows
     public View handleRequestInternal(@RequestParam(value = "post_logout_redirect_uri", required = false) final String postLogoutRedirectUrl,
                                       @RequestParam(value = "state", required = false) final String state,
