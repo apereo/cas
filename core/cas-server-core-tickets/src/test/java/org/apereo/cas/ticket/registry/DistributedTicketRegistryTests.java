@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.1
  */
 @Setter
-@Tag("Simple")
+@Tag("Tickets")
 public class DistributedTicketRegistryTests {
 
     private static final String TGT_NAME = "TGT";

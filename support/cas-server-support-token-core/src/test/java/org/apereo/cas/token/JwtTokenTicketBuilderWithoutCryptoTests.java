@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.token.crypto.encryptionEnabled=false",
     "cas.authn.token.crypto.signingEnabled=false"
 })
-@Tag("Simple")
+@Tag("Tickets")
 public class JwtTokenTicketBuilderWithoutCryptoTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test

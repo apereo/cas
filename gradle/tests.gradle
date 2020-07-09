@@ -8,6 +8,16 @@ if (hasTestsOfCategory(project, "Kafka")) {
     }
 }
 
+if (hasTestsOfCategory(project, "Tickets")) {
+    task testTickets(type: Test) {
+        enabled = shouldTest(project, "Tickets")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "Tickets"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "Infinispan")) {
     task testInfinispan(type: Test) {
         enabled = shouldTest(project, "Infinispan")

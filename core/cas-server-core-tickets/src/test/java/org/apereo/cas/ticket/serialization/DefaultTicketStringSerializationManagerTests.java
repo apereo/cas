@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
     CasCoreNotificationsConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-@Tag("Simple")
+@Tag("Tickets")
 public class DefaultTicketStringSerializationManagerTests {
     @Autowired
     @Qualifier("ticketSerializationManager")
