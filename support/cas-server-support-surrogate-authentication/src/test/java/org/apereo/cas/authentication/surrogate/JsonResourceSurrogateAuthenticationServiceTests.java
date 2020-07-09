@@ -14,7 +14,7 @@ import org.springframework.core.io.ClassPathResource;
  * @since 5.3.0
  */
 @Getter
-@Tag("Simple")
+@Tag("FileSystem")
 public class JsonResourceSurrogateAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
 
     private SurrogateAuthenticationService service;

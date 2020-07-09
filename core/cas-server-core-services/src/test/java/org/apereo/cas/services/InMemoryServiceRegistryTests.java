@@ -10,7 +10,7 @@ import org.springframework.context.support.StaticApplicationContext;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Tag("Simple")
+@Tag("RegisteredService")
 public class InMemoryServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Override
