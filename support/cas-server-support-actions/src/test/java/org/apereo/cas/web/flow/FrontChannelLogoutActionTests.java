@@ -57,7 +57,7 @@ public class FrontChannelLogoutActionTests {
 
         val handler = new DefaultSingleLogoutServiceMessageHandler(new SimpleHttpClientFactoryBean().getObject(),
             new DefaultSingleLogoutMessageCreator(), servicesManager,
-            new DefaultSingleLogoutServiceLogoutUrlBuilder(validator), false,
+            new DefaultSingleLogoutServiceLogoutUrlBuilder(servicesManager, validator), false,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
 
         this.logoutExecutionPlan = new DefaultLogoutExecutionPlan();

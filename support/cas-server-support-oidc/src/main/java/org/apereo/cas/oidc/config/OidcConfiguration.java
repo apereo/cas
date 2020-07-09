@@ -15,6 +15,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilderConfigurer;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
@@ -45,6 +46,7 @@ import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionService;
 import org.apereo.cas.oidc.profile.OidcUserProfileViewRenderer;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
 import org.apereo.cas.oidc.slo.OidcSingleLogoutMessageCreator;
+import org.apereo.cas.oidc.slo.OidcSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.oidc.slo.OidcSingleLogoutServiceMessageHandler;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
@@ -607,8 +609,16 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @ConditionalOnMissingBean(name = "oidcRegisteredServiceUIAction")
     @Bean
+    @RefreshScope
     public Action oidcRegisteredServiceUIAction() {
         return new OidcRegisteredServiceUIAction(this.servicesManager.getObject(), oauth20AuthenticationServiceSelectionStrategy.getObject());
+    }
+
+    @ConditionalOnMissingBean(name = "oidcSingleLogoutServiceLogoutUrlBuilderConfigurer")
+    @Bean
+    @RefreshScope
+    public SingleLogoutServiceLogoutUrlBuilderConfigurer oidcSingleLogoutServiceLogoutUrlBuilderConfigurer() {
+        return () -> new OidcSingleLogoutServiceLogoutUrlBuilder(servicesManager.getObject());
     }
 
     @Bean

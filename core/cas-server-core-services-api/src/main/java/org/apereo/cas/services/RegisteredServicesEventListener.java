@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
@@ -38,6 +39,17 @@ public class RegisteredServicesEventListener {
         servicesManager.load();
     }
 
+    /**
+     * Handle environment change event.
+     *
+     * @param event the event
+     */
+    @EventListener
+    @Async
+    public void handleEnvironmentChangeEvent(final EnvironmentChangeEvent event) {
+        servicesManager.load();
+    }
+    
     /**
      * Handle registered service expired event.
      *

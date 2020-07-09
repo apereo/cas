@@ -48,21 +48,22 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @Override
-    public Collection<SingleLogoutRequest> handle(final WebApplicationService singleLogoutService, final String ticketId,
+    public Collection<SingleLogoutRequest> handle(final WebApplicationService singleLogoutService,
+                                                  final String ticketId,
                                                   final TicketGrantingTicket ticketGrantingTicket) {
         if (singleLogoutService.isLoggedOutAlready()) {
             LOGGER.debug("Service [{}] is already logged out.", singleLogoutService);
             return new ArrayList<>(0);
         }
-        val selectedService = (WebApplicationService) this.authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService);
+        val selectedService = (WebApplicationService) authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService);
 
         LOGGER.trace("Processing logout request for service [{}]...", selectedService);
-        val registeredService = this.servicesManager.findServiceBy(selectedService);
+        val registeredService = servicesManager.findServiceBy(selectedService);
 
         LOGGER.debug("Service [{}] supports single logout and is found in the registry as [{}]. Proceeding...",
             selectedService.getId(), registeredService.getName());
 
-        val logoutUrls = this.singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, selectedService);
+        val logoutUrls = singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, selectedService);
         LOGGER.debug("Prepared logout url [{}] for service [{}]", logoutUrls, selectedService);
         if (logoutUrls == null || logoutUrls.isEmpty()) {
             LOGGER.debug("Service [{}] does not support logout operations given no logout url could be determined.", selectedService);
@@ -75,7 +76,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
 
     @Override
     public boolean supports(final WebApplicationService singleLogoutService) {
-        val selectedService = (WebApplicationService) this.authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService);
+        val selectedService = (WebApplicationService) authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService);
         val registeredService = this.servicesManager.findServiceBy(selectedService);
 
         if (registeredService != null
