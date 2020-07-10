@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +42,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     private final ServiceRegistry serviceRegistry;
 
-    private final transient ApplicationEventPublisher eventPublisher;
+    private final transient ConfigurableApplicationContext applicationContext;
 
     private final Set<String> environments;
 
@@ -338,8 +338,8 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     private void publishEvent(final ApplicationEvent event) {
-        if (this.eventPublisher != null) {
-            this.eventPublisher.publishEvent(event);
+        if (applicationContext != null) {
+            applicationContext.publishEvent(event);
         }
     }
 

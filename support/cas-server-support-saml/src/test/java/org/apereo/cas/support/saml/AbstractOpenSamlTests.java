@@ -51,7 +51,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -72,7 +72,7 @@ public abstract class AbstractOpenSamlTests {
         + "AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
 
     @Autowired
-    protected ApplicationContext applicationContext;
+    protected ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")

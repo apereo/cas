@@ -56,8 +56,11 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         appCtx.refresh();
         val dao = new InMemoryServiceRegistry(appCtx, list, new ArrayList<>());
 
-        this.defaultServicesManager = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>(), Caffeine.newBuilder().build());
-        this.defaultServicesManager.load();
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
+        defaultServicesManager = new DefaultServicesManager(dao, applicationContext, new HashSet<>(), Caffeine.newBuilder().build());
+        defaultServicesManager.load();
 
         val handler1 = new AcceptUsersAuthenticationHandler("handler1");
         val handler2 = new AcceptUsersAuthenticationHandler("handler2");

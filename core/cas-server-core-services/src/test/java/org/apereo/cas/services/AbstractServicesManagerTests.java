@@ -43,14 +43,16 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
 
     @BeforeEach
     public void initialize() {
-        this.serviceRegistry = getServiceRegistryInstance();
+        serviceRegistry = getServiceRegistryInstance();
         this.servicesManager = getServicesManagerInstance();
         this.servicesManager.load();
     }
 
     protected ServicesManager getServicesManagerInstance() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         return new DefaultServicesManager(serviceRegistry,
-            mock(ApplicationEventPublisher.class),
+            applicationContext,
             new HashSet<>(),
                 Caffeine.newBuilder().recordStats().expireAfterWrite(Duration.ofSeconds(5)).build());
     }
@@ -82,9 +84,9 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         service.setName(TEST);
         service.setServiceId(TEST);
         assertFalse(isServiceInCache(null, 2100));
-        this.serviceRegistry.save(service);
-        assertNotNull(this.serviceRegistry.findServiceById(2100));
-        assertNotNull(this.servicesManager.findServiceBy(2100));
+        serviceRegistry.save(service);
+        assertNotNull(serviceRegistry.findServiceById(2100));
+        assertNotNull(servicesManager.findServiceBy(2100));
         assertTrue(isServiceInCache(null, 2100));
     }
 
