@@ -5,15 +5,15 @@ import org.apereo.cas.services.domain.DefaultRegisteredServiceDomainExtractor;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.NoArgsConstructor;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Travis Schmidt
@@ -23,16 +23,6 @@ import static org.mockito.Mockito.*;
 @Tag("RegisteredService")
 public class DefaultDomainAwareServicesManagerTests extends AbstractServicesManagerTests<DefaultDomainAwareServicesManager> {
     private DefaultDomainAwareServicesManager defaultDomainAwareServicesManager;
-
-    @Override
-    protected ServicesManager getServicesManagerInstance() {
-        defaultDomainAwareServicesManager = new DefaultDomainAwareServicesManager(serviceRegistry, mock(
-                ApplicationEventPublisher.class),
-                new DefaultRegisteredServiceDomainExtractor(),
-                new HashSet<>(),
-                Caffeine.newBuilder().build());
-        return defaultDomainAwareServicesManager;
-    }
 
     @Test
     public void verifyDeleteEmptyDomains() {
@@ -47,9 +37,19 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
         r.setName("domainService2");
         r.setServiceId("https://www.example.com/two");
         servicesManager.save(r);
-
         servicesManager.deleteAll();
-
         assertTrue(this.defaultDomainAwareServicesManager.getDomains().collect(Collectors.toList()).isEmpty());
+    }
+
+    @Override
+    protected ServicesManager getServicesManagerInstance() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        defaultDomainAwareServicesManager = new DefaultDomainAwareServicesManager(serviceRegistry,
+            applicationContext,
+            new DefaultRegisteredServiceDomainExtractor(),
+            new HashSet<>(),
+            Caffeine.newBuilder().build());
+        return defaultDomainAwareServicesManager;
     }
 }

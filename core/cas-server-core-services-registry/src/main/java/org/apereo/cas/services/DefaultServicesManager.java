@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Comparator;
 import java.util.Set;
@@ -16,10 +16,10 @@ import java.util.stream.Stream;
 public class DefaultServicesManager extends AbstractServicesManager {
 
     public DefaultServicesManager(final ServiceRegistry serviceRegistry,
-            final ApplicationEventPublisher eventPublisher,
+            final ConfigurableApplicationContext applicationContext,
             final Set<String> environments,
             final Cache<Long, RegisteredService> services) {
-        super(serviceRegistry, eventPublisher, environments, services);
+        super(serviceRegistry, applicationContext, environments, services);
     }
 
     @Override
