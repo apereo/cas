@@ -118,7 +118,6 @@ public class OAuth20Utils {
             .orElse(null);
     }
 
-
     /**
      * Gets attributes.
      *
