@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -62,8 +61,8 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         val impl = samlServiceFactory.createService(request);
 
         val response = new SamlServiceResponseBuilder(
-            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>(),
-                        Caffeine.newBuilder().build()))
+            new DefaultServicesManager(mock(ServiceRegistry.class), applicationContext, new HashSet<>(),
+                Caffeine.newBuilder().build()))
             .build(impl, "ticketId", CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
@@ -85,8 +84,8 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "service");
         val impl = samlServiceFactory.createService(request);
         val response = new SamlServiceResponseBuilder(
-            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>(),
-                        Caffeine.newBuilder().build()))
+            new DefaultServicesManager(mock(ServiceRegistry.class), applicationContext, new HashSet<>(),
+                Caffeine.newBuilder().build()))
             .build(impl, null, CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
