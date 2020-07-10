@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  */
 @NoArgsConstructor
 @Tag("RegisteredService")
-public class DefaultDomainAwareServicesManagerTests extends AbstractServicesManagerTests {
+public class DefaultDomainAwareServicesManagerTests extends AbstractServicesManagerTests<DefaultDomainAwareServicesManager> {
     private DefaultDomainAwareServicesManager defaultDomainAwareServicesManager;
 
     @Override
