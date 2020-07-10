@@ -50,11 +50,13 @@ public class SpnegoCredential implements Credential {
     /**
      * The SPNEGO Init Token.
      */
+    @ToString.Exclude
     private byte[] initToken;
 
     /**
      * The SPNEGO Next Token.
      */
+    @ToString.Exclude
     private byte[] nextToken;
 
     /**
