@@ -47,9 +47,9 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         Security.addProvider(new BouncyCastleProvider());
     }
     
-    private Key signingKey;
+    protected Key signingKey;
 
-    private Map<String, Object> customHeaders = new LinkedHashMap<>(MAP_SIZE);
+    protected Map<String, Object> customHeaders = new LinkedHashMap<>(MAP_SIZE);
     
     /**
      * Extract private key from resource private key.
