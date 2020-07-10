@@ -2,9 +2,6 @@ package org.apereo.cas.oidc.slo;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.slo.BaseSingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.logout.slo.SingleLogoutUrl;
-import org.apereo.cas.services.OidcRegisteredService;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -14,8 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Optional;
 
 /**
