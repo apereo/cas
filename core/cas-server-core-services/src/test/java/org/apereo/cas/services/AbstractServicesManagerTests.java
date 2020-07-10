@@ -49,8 +49,10 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     protected ServicesManager getServicesManagerInstance() {
-        return new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class), new HashSet<>(), 
-                Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(5)).build());
+        return new DefaultServicesManager(serviceRegistry,
+            mock(ApplicationEventPublisher.class),
+            new HashSet<>(),
+                Caffeine.newBuilder().recordStats().expireAfterWrite(Duration.ofSeconds(5)).build());
     }
 
     protected ServiceRegistry getServiceRegistryInstance() {
@@ -145,7 +147,8 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     protected boolean isServiceInCache(final String serviceId, final long id) {
-        return servicesManager.getAllServices().stream().filter(r -> serviceId != null
-                ? r.getServiceId().equals(serviceId) : r.getId() == id).findFirst().isPresent();
+        return servicesManager.getAllServices()
+            .stream()
+            .anyMatch(r -> serviceId != null ? r.getServiceId().equals(serviceId) : r.getId() == id);
     }
 }
