@@ -4376,9 +4376,13 @@ See [this guide](../services/Service-Management.html) to learn more.
 # cas.service-registry.init-from-json=false
 
 # cas.service-registry.management-type=DEFAULT|DOMAIN
+# cas.service-registry.cache=PT5M
+# cas.service-registry.cache-size=1000
+# cas.service-registry.cache-capacity=1000
 ```
 
-Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.service-registry`.
+Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under
+ the configuration key `cas.service-registry`.
 
 ### Service Registry Notifications
 

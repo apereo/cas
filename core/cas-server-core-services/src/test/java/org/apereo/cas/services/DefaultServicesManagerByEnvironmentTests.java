@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("RegisteredService")
-public class DefaultServicesManagerByEnvironmentTests extends AbstractServicesManagerTests {
+public class DefaultServicesManagerByEnvironmentTests extends AbstractServicesManagerTests<DefaultServicesManager> {
     @Override
     protected ServicesManager getServicesManagerInstance() {
         return new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class),
