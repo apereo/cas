@@ -40,17 +40,23 @@ public class OAuth20ProtocolTicketCatalogConfiguration extends BaseTicketCatalog
     public void configureTicketCatalog(final TicketCatalog plan) {
         LOGGER.trace("Registering core OAuth protocol ticket definitions...");
 
-        buildAndRegisterOAuthCodeDefinition(plan, buildTicketDefinition(plan, OAuth20Code.PREFIX, OAuth20DefaultCode.class, Ordered.HIGHEST_PRECEDENCE));
-        buildAndRegisterAccessTokenDefinition(plan, buildTicketDefinition(plan, OAuth20AccessToken.PREFIX, OAuth20DefaultAccessToken.class, Ordered.HIGHEST_PRECEDENCE));
-        buildAndRegisterRefreshTokenDefinition(plan, buildTicketDefinition(plan, OAuth20RefreshToken.PREFIX, OAuth20DefaultRefreshToken.class, Ordered.HIGHEST_PRECEDENCE));
-        buildAndRegisterDeviceTokenDefinition(plan, buildTicketDefinition(plan, OAuth20DeviceToken.PREFIX, OAuth20DefaultDeviceToken.class));
-        buildAndRegisterDeviceUserCodeDefinition(plan, buildTicketDefinition(plan, OAuth20DeviceUserCode.PREFIX, OAuth20DefaultDeviceUserCode.class));
+        buildAndRegisterOAuthCodeDefinition(plan,
+            buildTicketDefinition(plan, OAuth20Code.PREFIX, OAuth20DefaultCode.class, Ordered.HIGHEST_PRECEDENCE));
+        buildAndRegisterAccessTokenDefinition(plan,
+            buildTicketDefinition(plan, OAuth20AccessToken.PREFIX, OAuth20DefaultAccessToken.class, Ordered.HIGHEST_PRECEDENCE));
+        buildAndRegisterRefreshTokenDefinition(plan,
+            buildTicketDefinition(plan, OAuth20RefreshToken.PREFIX, OAuth20DefaultRefreshToken.class, Ordered.HIGHEST_PRECEDENCE));
+        buildAndRegisterDeviceTokenDefinition(plan,
+            buildTicketDefinition(plan, OAuth20DeviceToken.PREFIX, OAuth20DefaultDeviceToken.class));
+        buildAndRegisterDeviceUserCodeDefinition(plan,
+            buildTicketDefinition(plan, OAuth20DeviceUserCode.PREFIX, OAuth20DefaultDeviceUserCode.class));
     }
 
     private void buildAndRegisterDeviceTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setStorageName("oauthDeviceTokensCache");
         val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getDeviceToken().getMaxTimeToLiveInSeconds()).getSeconds();
         metadata.getProperties().setStorageTimeout(timeout);
+        metadata.getProperties().setExcludeFromCascade(true);
         registerTicketDefinition(plan, metadata);
     }
 
@@ -58,6 +64,7 @@ public class OAuth20ProtocolTicketCatalogConfiguration extends BaseTicketCatalog
         metadata.getProperties().setStorageName("oauthDeviceUserCodesCache");
         val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getDeviceUserCode().getMaxTimeToLiveInSeconds()).getSeconds();
         metadata.getProperties().setStorageTimeout(timeout);
+        metadata.getProperties().setExcludeFromCascade(true);
         registerTicketDefinition(plan, metadata);
     }
 
