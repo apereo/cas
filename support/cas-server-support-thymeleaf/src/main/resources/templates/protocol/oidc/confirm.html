@@ -19,7 +19,7 @@
             <strong th:utext="#{screen.oidc.confirm.dynamic(${dynamicTime})}" />
         </div>
         <div th:unless="${#sets.isEmpty(scopes)}">
-            <h3 class="border-bottom bg-primary p-2">Scopes</h3>
+            <h3 class="border-bottom bg-primary p-2" th:text="#{screen.oidc.confirm.scopes}" />
             <p th:text="#{screen.oidc.confirm.asksinfo}"/>
 
             <div th:each="scope : ${scopes}">
@@ -30,7 +30,7 @@
         </div>
 
         <div th:unless="${#sets.isEmpty(userInfoClaims)}" class="my-2">
-            <h3 class="border-bottom bg-primary p-2">Claims</h3>
+            <h3 class="border-bottom bg-primary p-2" th:text="#{screen.oidc.confirm.claims}"/>
             <p th:utext="#{screen.oidc.confirm.asksinfo}"/>
 
             <div th:each="claim : ${userInfoClaims}">
