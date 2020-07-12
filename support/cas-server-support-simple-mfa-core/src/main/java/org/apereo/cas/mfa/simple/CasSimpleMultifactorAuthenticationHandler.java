@@ -43,12 +43,7 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
         val uid = authentication.getPrincipal().getId();
 
         LOGGER.debug("Received principal id [{}]. Attempting to locate token in registry...", uid);
-        val acct = this.centralAuthenticationService.getTicket(tokenCredential.getId(), CasSimpleMultifactorAuthenticationTicket.class);
-
-        if (acct == null) {
-            LOGGER.warn("Authorization of token [{}] has failed. Token is not found in registry", tokenCredential.getId());
-            throw new FailedLoginException("Failed to authenticate code " + tokenCredential.getId());
-        }
+        val acct = centralAuthenticationService.getTicket(tokenCredential.getId(), CasSimpleMultifactorAuthenticationTicket.class);
         val properties = acct.getProperties();
         if (!properties.containsKey(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL)) {
             LOGGER.warn("Unable to locate principal for token [{}]", tokenCredential.getId());
