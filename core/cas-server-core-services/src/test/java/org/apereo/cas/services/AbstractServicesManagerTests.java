@@ -4,7 +4,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.support.StaticApplicationContext;
 
 import java.time.Duration;
@@ -15,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link AbstractServicesManagerTests}.
@@ -54,7 +52,9 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         return new DefaultServicesManager(serviceRegistry,
             applicationContext,
             new HashSet<>(),
-                Caffeine.newBuilder().recordStats().expireAfterWrite(Duration.ofSeconds(5)).build());
+                Caffeine.newBuilder()
+                    .expireAfterWrite(Duration.ofSeconds(2))
+                    .build());
     }
 
     protected ServiceRegistry getServiceRegistryInstance() {

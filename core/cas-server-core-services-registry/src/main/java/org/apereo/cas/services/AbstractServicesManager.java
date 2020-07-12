@@ -251,12 +251,13 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public Collection<RegisteredService> getAllServices() {
-        return getAllServicesStream().
-            filter(this::validateAndFilterServiceByEnvironment).
-            filter(getRegisteredServicesFilteringPredicate()).
-            sorted().
-            peek(RegisteredService::initialize).
-            collect(Collectors.toList());
+        return this.services.asMap().values()
+            .stream()
+            .filter(this::validateAndFilterServiceByEnvironment)
+            .filter(getRegisteredServicesFilteringPredicate())
+            .sorted()
+            .peek(RegisteredService::initialize)
+            .collect(Collectors.toList());
     }
 
     @Override
