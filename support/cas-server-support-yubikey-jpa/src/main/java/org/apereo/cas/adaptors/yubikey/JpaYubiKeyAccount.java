@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.yubikey;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Entity;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 @Entity
 @Setter
 @Table(name = "YubiKeyAccount")
+@SuperBuilder
 public class JpaYubiKeyAccount extends YubiKeyAccount {
     private static final long serialVersionUID = 8996204730235225057L;
 

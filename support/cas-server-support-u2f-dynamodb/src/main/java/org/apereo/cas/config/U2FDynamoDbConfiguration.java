@@ -34,7 +34,6 @@ public class U2FDynamoDbConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-
     @Autowired
     @Qualifier("u2fRegistrationRecordCipherExecutor")
     private ObjectProvider<CipherExecutor> u2fRegistrationRecordCipherExecutor;

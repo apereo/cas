@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.yubikey.dao;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.List;
  */
 @Document
 @NoArgsConstructor
+@SuperBuilder
 public class MongoDbYubiKeyAccount extends YubiKeyAccount {
     private static final long serialVersionUID = 1505204109111619367L;
 

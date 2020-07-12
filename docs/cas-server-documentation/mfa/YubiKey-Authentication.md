@@ -108,6 +108,20 @@ Support is enabled by including the following dependencies in the WAR overlay:
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#yubikey).
 
+### DynamoDb
+
+Support is enabled by including the following dependencies in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-yubikey-dynamodb</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#yubikey).
+
 ### MongoDb
 
 Support is enabled by including the following dependencies in the WAR overlay:
