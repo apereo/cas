@@ -130,7 +130,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      */
     protected String produceTicketIdentifier() {
         val pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
-        if (this.cipherExecutor == null) {
+        if (cipherExecutor == null || !cipherExecutor.isEnabled()) {
             return pgtId;
         }
         LOGGER.debug("Attempting to encode proxy-granting ticket [{}]", pgtId);

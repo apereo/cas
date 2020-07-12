@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.yubikey;
 
-import org.apereo.cas.authentication.metadata.CacheCredentialsCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;

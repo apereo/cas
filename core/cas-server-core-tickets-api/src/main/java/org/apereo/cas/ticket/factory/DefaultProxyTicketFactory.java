@@ -108,7 +108,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
         }
 
         val ticketId = generator.getNewTicketId(ProxyTicket.PROXY_TICKET_PREFIX);
-        if (this.cipherExecutor == null) {
+        if (cipherExecutor == null || !cipherExecutor.isEnabled()) {
             return ticketId;
         }
         LOGGER.trace("Attempting to encode proxy ticket [{}]", ticketId);
