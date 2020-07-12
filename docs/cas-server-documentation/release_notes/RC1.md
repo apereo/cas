@@ -154,6 +154,10 @@ Google Authenticator for multifactor authentication is now allowed to accept and
 | ------------- | ------------- |
 | ![image](https://user-images.githubusercontent.com/1205228/85271898-ad0fb700-b490-11ea-9f69-60ae4aa59bd2.png) | ![image](https://user-images.githubusercontent.com/1205228/85271811-8a7d9e00-b490-11ea-9d49-5689f7f539f2.png) |
 
+### DynamoDb Storage for YubiKey Devices
+
+[YubiKey Devices](../mfa/YubiKey-Authentication.html) can now be stored in DynamoDb instances.
+
 ## Other Stuff
 
 - Attribute definitions mapped to an external Groovy script are corrected to handle caching in more resource-friendly ways.

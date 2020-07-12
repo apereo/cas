@@ -1,18 +1,15 @@
-package org.apereo.cas.configuration.model.support.mfa;
+package org.apereo.cas.configuration.model.support.mfa.yubikey;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.model.support.couchdb.BaseCouchDbProperties;
-import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
-import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorProviderProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
 import java.util.ArrayList;
@@ -75,22 +72,32 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
     /**
      * Keep device registration records inside a CouchDb resource.
      */
-    private CouchDb couchDb = new CouchDb();
+    @NestedConfigurationProperty
+    private YubiKeyCouchDbMultifactorProperties couchDb = new YubiKeyCouchDbMultifactorProperties();
 
     /**
      * Keep device registration records inside a JDBC resource.
      */
-    private Jpa jpa = new Jpa();
+    @NestedConfigurationProperty
+    private YubiKeyJpaMultifactorProperties jpa = new YubiKeyJpaMultifactorProperties();
 
     /**
      * Keep device registration records inside a MongoDb resource.
      */
-    private MongoDb mongo = new MongoDb();
+    @NestedConfigurationProperty
+    private YubiKeyMongoDbMultifactorProperties mongo = new YubiKeyMongoDbMultifactorProperties();
 
     /**
      * Keep device registration records inside a redis resource.
      */
-    private Redis redis = new Redis();
+    @NestedConfigurationProperty
+    private YubiKeyRedisMultifactorProperties redis = new YubiKeyRedisMultifactorProperties();
+
+    /**
+     * Keep device registration records inside a dynamo db resource.
+     */
+    @NestedConfigurationProperty
+    private YubiKeyDynamoDbMultifactorProperties dynamoDb = new YubiKeyDynamoDbMultifactorProperties();
 
     /**
      * Crypto settings that sign/encrypt the yubikey registration records.
@@ -103,46 +110,4 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }
 
-    @RequiresModule(name = "cas-server-support-yubikey-couchdb")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class CouchDb extends BaseCouchDbProperties {
-
-        private static final long serialVersionUID = 3757390989294642185L;
-
-        public CouchDb() {
-            this.setDbName("yubikey");
-        }
-    }
-
-    @RequiresModule(name = "cas-server-support-yubikey-jpa")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Jpa extends AbstractJpaProperties {
-
-        private static final long serialVersionUID = -4420099402220880361L;
-    }
-
-    @RequiresModule(name = "cas-server-support-yubikey-mongo")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class MongoDb extends SingleCollectionMongoDbProperties {
-
-        private static final long serialVersionUID = 6876845341227039713L;
-
-        public MongoDb() {
-            setCollection("MongoDbYubiKeyRepository");
-        }
-    }
-
-    @RequiresModule(name = "cas-server-support-yubikey-redis")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Redis extends BaseRedisProperties {
-        private static final long serialVersionUID = -1261683393319585262L;
-    }
 }

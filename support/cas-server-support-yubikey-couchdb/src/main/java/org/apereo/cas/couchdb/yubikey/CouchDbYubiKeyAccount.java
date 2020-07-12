@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,6 +20,7 @@ import java.util.Collection;
  */
 @Getter
 @Setter
+@SuperBuilder
 public class CouchDbYubiKeyAccount extends YubiKeyAccount {
     private static final long serialVersionUID = 2323614397554244567L;
 
@@ -41,9 +43,5 @@ public class CouchDbYubiKeyAccount extends YubiKeyAccount {
 
     public CouchDbYubiKeyAccount(final Collection<String> publicId, final String username) {
         this(null, null, -1, new ArrayList<>(publicId), username);
-    }
-
-    public CouchDbYubiKeyAccount(final YubiKeyAccount account) {
-        this(null, null, account.getId(), account.getDeviceIdentifiers(), account.getUsername());
     }
 }

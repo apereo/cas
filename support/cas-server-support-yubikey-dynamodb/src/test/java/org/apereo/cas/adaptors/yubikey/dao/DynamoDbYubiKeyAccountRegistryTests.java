@@ -2,11 +2,13 @@ package org.apereo.cas.adaptors.yubikey.dao;
 
 import org.apereo.cas.adaptors.yubikey.BaseYubiKeyTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
-import org.apereo.cas.config.MongoDbYubiKeyConfiguration;
+import org.apereo.cas.config.DynamoDbYubiKeyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,37 +19,56 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link MongoDbYubiKeyAccountRegistryTests}.
+ * This is {@link DynamoDbYubiKeyAccountRegistryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("MongoDb")
+@Tag("DynamoDb")
 @SpringBootTest(classes = {
-    MongoDbYubiKeyConfiguration.class,
+    DynamoDbYubiKeyConfiguration.class,
     BaseYubiKeyTests.SharedTestConfiguration.class
 },
     properties = {
-        "cas.authn.mfa.yubikey.mongo.database-name=mfa-trusted",
-        "cas.authn.mfa.yubikey.mongo.host=localhost",
-        "cas.authn.mfa.yubikey.mongo.port=27017",
-        "cas.authn.mfa.yubikey.mongo.drop-collection=true",
-        "cas.authn.mfa.yubikey.mongo.user-id=root",
-        "cas.authn.mfa.yubikey.mongo.password=secret",
-        "cas.authn.mfa.yubikey.mongo.authentication-database-name=admin",
+        "cas.authn.mfa.yubikey.dynamo-db.endpoint=http://localhost:8000",
+        "cas.authn.mfa.yubikey.dynamo-db.drop-tables-on-startup=true",
+        "cas.authn.mfa.yubikey.dynamo-db.local-instance=true",
+        "cas.authn.mfa.yubikey.dynamo-db.region=us-east-1",
+        "cas.authn.mfa.yubikey.dynamo-db.asynchronous=false",
         "cas.authn.mfa.yubikey.client-id=18423",
         "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As="
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnabledIfPortOpen(port = 27017)
-public class MongoDbYubiKeyAccountRegistryTests {
+@EnabledIfPortOpen(port = 8000)
+public class DynamoDbYubiKeyAccountRegistryTests {
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
 
     private static final String BAD_TOKEN = "123456";
 
+    static {
+        System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");
+        System.setProperty("aws.secretKey", "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");
+    }
+
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")
     private YubiKeyAccountRegistry yubiKeyAccountRegistry;
+
+    @Autowired
+    @Qualifier("yubikeyAccountCipherExecutor")
+    private CipherExecutor yubikeyAccountCipherExecutor;
+
+    @BeforeEach
+    public void beforeEach() {
+        yubiKeyAccountRegistry.deleteAll();
+    }
+
+    @Test
+    public void verifyCipher() {
+        val pubKey = yubiKeyAccountRegistry.getAccountValidator().getTokenPublicId(OTP);
+        val encoded = yubikeyAccountCipherExecutor.encode(pubKey);
+        assertEquals(pubKey, yubikeyAccountCipherExecutor.decode(encoded));
+    }
 
     @Test
     public void verifyAccountNotRegistered() {
