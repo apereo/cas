@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.model.support.pac4j.oauth.Pac4jOAuth20Client
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
 
+import com.nimbusds.jose.JWSAlgorithm;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
@@ -42,11 +43,19 @@ public class DefaultDelegatedClientFactoryTests {
         val props = new Pac4jDelegatedAuthenticationProperties();
         configureIdentifiableClient(props.getBitbucket());
         configureIdentifiableClient(props.getDropbox());
+
         configureIdentifiableClient(props.getFacebook());
+        props.getFacebook().setFields("field1,field2");
+        props.getFacebook().setScope("scope1");
         configureIdentifiableClient(props.getFoursquare());
         configureIdentifiableClient(props.getGithub());
+
         configureIdentifiableClient(props.getGoogle());
+        props.getGoogle().setScope("EMAIL_AND_PROFILE");
+
         configureIdentifiableClient(props.getLinkedIn());
+        props.getLinkedIn().setScope("scope1");
+
         configureIdentifiableClient(props.getOrcid());
         configureIdentifiableClient(props.getPaypal());
         configureIdentifiableClient(props.getTwitter());
@@ -54,6 +63,7 @@ public class DefaultDelegatedClientFactoryTests {
         configureIdentifiableClient(props.getWordpress());
         configureIdentifiableClient(props.getYahoo());
         configureIdentifiableClient(props.getHiOrgServer());
+        props.getHiOrgServer().setScope("scope1");
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
@@ -99,6 +109,7 @@ public class DefaultDelegatedClientFactoryTests {
         val props = new Pac4jDelegatedAuthenticationProperties();
         val saml = new Pac4jSamlClientProperties();
         saml.setKeystorePath(new File(FileUtils.getTempDirectoryPath(), "keystore.jks").getCanonicalPath());
+        saml.setKeystoreAlias("alias1");
         saml.setKeystorePassword("1234567890");
         saml.setPrivateKeyPassword("1234567890");
         saml.setIdentityProviderMetadataPath("classpath:idp-metadata.xml");
@@ -106,6 +117,19 @@ public class DefaultDelegatedClientFactoryTests {
         saml.setServiceProviderEntityId("test-entityid");
         saml.setForceKeystoreGeneration(true);
         saml.setMessageStoreFactory(HttpSessionStoreFactory.class.getName());
+        saml.setPrincipalIdAttribute("givenName");
+        saml.setAssertionConsumerServiceIndex(1);
+        saml.setAuthnContextClassRef(List.of("classRef1"));
+        saml.setNameIdPolicyFormat("transient");
+        saml.setBlockedSignatureSigningAlgorithms(List.of("sha-1"));
+        saml.setSignatureAlgorithms(List.of("sha-256"));
+        saml.setSignatureReferenceDigestMethods(List.of("sha-256"));
+        saml.getRequestedAttributes().add(
+            new Pac4jSamlClientProperties.ServiceProviderRequestedAttribute()
+                .setName("requestedAttribute")
+                .setFriendlyName("friendlyRequestedName"));
+        saml.getMappedAttributes().add(
+            new Pac4jSamlClientProperties.ServiceProviderMappedAttribute().setName("attr1").setMappedTo("givenName"));
         props.getSaml().add(saml);
 
         val casSettings = new CasConfigurationProperties();
@@ -152,6 +176,11 @@ public class DefaultDelegatedClientFactoryTests {
 
         val oidc1 = new Pac4jOidcClientProperties();
         configureIdentifiableClient(oidc1.getGeneric());
+        oidc1.getGeneric().setResponseMode("query");
+        oidc1.getGeneric().setScope("scope1");
+        oidc1.getGeneric().setResponseType("none");
+        oidc1.getGeneric().setTokenExpirationAdvance("PT5S");
+        oidc1.getGeneric().setPreferredJwsAlgorithm(JWSAlgorithm.RS256.getName());
         oidc1.getGeneric().setDiscoveryUri("https://dev-425954.oktapreview.com/.well-known/openid-configuration");
         props.getOidc().add(oidc1);
 

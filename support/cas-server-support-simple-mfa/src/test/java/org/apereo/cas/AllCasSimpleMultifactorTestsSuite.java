@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationHandlerTests;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationProviderTests;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationTicketFactoryTests;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationUniqueTicketIdGeneratorTests;
@@ -20,6 +21,7 @@ import org.junit.runner.RunWith;
     CasSimpleMultifactorAuthenticationProviderTests.class,
     CasSimpleMultifactorAuthenticationUniqueTicketIdGeneratorTests.class,
     CasSimpleSendTokenActionTests.class,
+    CasSimpleMultifactorAuthenticationHandlerTests.class,
     CasSimpleMultifactorAuthenticationTicketFactoryTests.class,
     CasSimpleMultifactorWebflowConfigurerTests.class
 })
