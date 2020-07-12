@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
@@ -30,6 +31,7 @@ public class JpaYubiKeyAccount extends YubiKeyAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
+    @Builder.Default
     private long id = -1;
 
     public JpaYubiKeyAccount() {
