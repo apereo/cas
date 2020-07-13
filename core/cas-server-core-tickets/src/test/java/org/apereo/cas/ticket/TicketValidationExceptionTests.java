@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Tickets")
 public class TicketValidationExceptionTests {
     @Test
+    @SuppressWarnings("DeadException")
     public void verifyOperation() {
         assertDoesNotThrow(new Executable() {
             @Override
