@@ -23,15 +23,12 @@ dependencies {
     implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-webflow-api")
 
-    testImplementation project(":core:cas-server-core-configuration")
-
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-cookie")
-    testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-trusted-mfa")
