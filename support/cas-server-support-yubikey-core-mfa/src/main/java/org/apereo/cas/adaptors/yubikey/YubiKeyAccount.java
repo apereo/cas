@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 
 import javax.persistence.Column;
@@ -33,6 +35,7 @@ import java.util.ArrayList;
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"id", "username"})
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+@SuperBuilder
 public class YubiKeyAccount implements Serializable {
     /**
      * username field.
@@ -49,17 +52,18 @@ public class YubiKeyAccount implements Serializable {
     @Id
     @JsonProperty
     @Transient
-    private long id = -1;
+    @Builder.Default
+    private long id = System.currentTimeMillis();
 
     @Lob
     @Column(name = "deviceIdentifiers", length = Integer.MAX_VALUE)
     @JsonProperty
+    @Builder.Default
     private ArrayList<String> deviceIdentifiers = new ArrayList<>(0);
 
     @Column(nullable = false)
     @JsonProperty
     private String username;
-
 
     /**
      * Register device.

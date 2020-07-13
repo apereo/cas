@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.consent.ConsentProperties.Ldap
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -34,7 +36,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class LdapConsentRepository implements ConsentRepository {
+public class LdapConsentRepository implements ConsentRepository, DisposableBean {
     private static final long serialVersionUID = 8561763114482490L;
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
@@ -48,7 +50,7 @@ public class LdapConsentRepository implements ConsentRepository {
             LOGGER.trace("Mapping JSON value [{}] to consent object", json);
             return MAPPER.readValue(JsonValue.readHjson(json).toString(), ConsentDecision.class);
         } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -59,7 +61,7 @@ public class LdapConsentRepository implements ConsentRepository {
             LOGGER.trace("Transformed consent object [{}] as JSON value [{}]", consent, json);
             return json;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -176,15 +178,17 @@ public class LdapConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public boolean storeConsentDecision(final ConsentDecision decision) {
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
         LOGGER.debug("Storing consent decision [{}]", decision);
         val entry = readConsentEntry(decision.getPrincipal());
         if (entry != null) {
             val newConsent = mergeDecision(entry.getAttribute(ldapProperties.getConsentAttributeName()), decision);
-            return executeModifyOperation(newConsent, entry);
+            if (executeModifyOperation(newConsent, entry)) {
+                return decision;
+            }
         }
         LOGGER.debug("Unable to read consent entry for [{}]. Consent decision is not stored", decision.getPrincipal());
-        return false;
+        return null;
     }
 
     @Override
@@ -258,5 +262,10 @@ public class LdapConsentRepository implements ConsentRepository {
         }
         LOGGER.debug("Unable to read consent entries from LDAP via filter [{}]", filter);
         return new HashSet<>(0);
+    }
+
+    @Override
+    public void destroy() {
+        connectionFactory.close();
     }
 }

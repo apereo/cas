@@ -138,6 +138,7 @@ public class ElectronicFenceWebflowConfiguration {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "riskAwareCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer riskAwareCasWebflowExecutionPlanConfigurer() {
         return plan -> plan.registerWebflowConfigurer(riskAwareAuthenticationWebflowConfigurer());

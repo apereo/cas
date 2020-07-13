@@ -10,12 +10,16 @@ import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.temporal.ChronoUnit;
@@ -35,17 +39,22 @@ import static org.mockito.Mockito.*;
     CasCoreAuditConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreHttpConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    MailSenderAutoConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
+    CasCoreUtilConfiguration.class
 })
 @DirtiesContext
+@Tag("Simple")
 public class DefaultConsentEngineTests {
     @Autowired
     @Qualifier("consentEngine")
     private ConsentEngine consentEngine;
+
+    @BeforeAll
+    public static void beforeAll() {
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr("127.0.0.1");
+        request.setLocalAddr("127.0.0.1");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+    }
 
     @Test
     public void verifyConsentIsAlwaysRequired() {

@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +30,8 @@ public class MultifactorAuthenticationTrustStorageCleaner {
     /**
      * Clean up expired records.
      */
-    @Scheduled(initialDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.startDelay:PT10S}",
-        fixedDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.repeatInterval:PT60S}")
+    @Scheduled(initialDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.start-delay:PT10S}",
+        fixedDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.repeat-interval:PT60S}")
     public void clean() {
         if (!trustedProperties.getCleaner().getSchedule().isEnabled()) {
             LOGGER.debug("[{}] is disabled; expired trusted authentication records will not be removed automatically", getClass().getName());
@@ -40,7 +41,7 @@ public class MultifactorAuthenticationTrustStorageCleaner {
                 SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
                 this.storage.remove();
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                LoggingUtils.error(LOGGER, e);
             }
         }
     }

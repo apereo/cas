@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.u2f;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.u2f.U2FMultifactorProperties;
 
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;

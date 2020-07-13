@@ -1,4 +1,7 @@
 description = "Apereo CAS AUP LDAP Support"
+ext {
+    maxParallelForksForTests = 1
+}
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-ticket")
@@ -26,7 +29,7 @@ dependencies {
     
     testImplementation project(path: ":support:cas-server-support-aup-webflow", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-aup-core", configuration: "tests")
-    testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-ldap-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

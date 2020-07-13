@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
@@ -57,7 +58,7 @@ public class AmazonSecretsManagerCloudConfigBootstrapConfiguration implements Pr
                     });
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         LOGGER.debug("Located [{}] secret(s)", props.size());
         return new PropertiesPropertySource(getClass().getSimpleName(), props);

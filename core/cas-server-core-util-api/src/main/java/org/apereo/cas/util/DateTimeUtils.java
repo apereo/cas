@@ -25,9 +25,9 @@ import java.util.concurrent.TimeUnit;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
+@SuppressWarnings("JdkObsolete")
 @UtilityClass
 public class DateTimeUtils {
-
 
     /**
      * Parse the given value as a local datetime.
@@ -125,6 +125,16 @@ public class DateTimeUtils {
     }
 
     /**
+     * Local date time local date.
+     *
+     * @param time the time
+     * @return the local date
+     */
+    public static LocalDate localDateTime(final long time) {
+        return LocalDate.ofInstant(Instant.ofEpochMilli(time), ZoneOffset.UTC);
+    }
+
+    /**
      * Parse the given value as a zoned datetime.
      *
      * @param value the value
@@ -155,7 +165,7 @@ public class DateTimeUtils {
      * @return the zoned date time
      */
     public static ZonedDateTime zonedDateTimeOf(final Instant time) {
-        return time != null ? ZonedDateTime.from(time.atZone(ZoneOffset.UTC)) : null;
+        return time != null ? time.atZone(ZoneOffset.UTC) : null;
     }
 
     /**
@@ -265,6 +275,7 @@ public class DateTimeUtils {
      * @param time Time object to be converted.
      * @return Date representing time
      */
+
     public static Date dateOf(final Instant time) {
         return Date.from(time);
     }

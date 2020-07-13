@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
@@ -9,13 +10,14 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Handles test cases for {@link JsonServiceRegistry}.
@@ -24,16 +26,36 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @Tag("FileSystem")
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    CasCoreUtilConfiguration.class
+})
 public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
     @SneakyThrows
     @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
-            mock(ApplicationEventPublisher.class),
+    public ResourceBasedServiceRegistry getNewServiceRegistry() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        newServiceRegistry = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
+            appCtx,
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
-        return dao;
+        return newServiceRegistry;
+    }
+
+    @Test
+    @SneakyThrows
+    public void verifyRegistry() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val registry = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
+            appCtx,
+            new NoOpRegisteredServiceReplicationStrategy(),
+            new DefaultRegisteredServiceResourceNamingStrategy(),
+            new ArrayList<>());
+        assertNotNull(registry.getName());
+        assertNotNull(registry.getExtensions());
     }
 
     @Test

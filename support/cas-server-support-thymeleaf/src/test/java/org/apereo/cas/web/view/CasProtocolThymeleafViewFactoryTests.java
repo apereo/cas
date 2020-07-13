@@ -1,6 +1,7 @@
 package org.apereo.cas.web.view;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     ThymeleafAutoConfiguration.class
 })
+@Tag("Simple")
 public class CasProtocolThymeleafViewFactoryTests {
 
     @Autowired

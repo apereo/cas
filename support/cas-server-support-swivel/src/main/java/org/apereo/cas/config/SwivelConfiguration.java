@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.swivel.web.flow.SwivelAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.swivel.web.flow.SwivelAuthenticationWebflowEventResolver;
-import org.apereo.cas.adaptors.swivel.web.flow.SwivelMultifactorTrustWebflowConfigurer;
+import org.apereo.cas.adaptors.swivel.web.flow.SwivelMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.adaptors.swivel.web.flow.SwivelMultifactorWebflowConfigurer;
 import org.apereo.cas.adaptors.swivel.web.flow.rest.SwivelTuringImageGeneratorController;
 import org.apereo.cas.audit.AuditableExecution;
@@ -49,6 +49,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("swivelConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SwivelConfiguration {
+    private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -107,14 +108,17 @@ public class SwivelConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer swivelMultifactorWebflowConfigurer() {
-        return new SwivelMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
+        val cfg = new SwivelMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
             swivelAuthenticatorFlowRegistry(), applicationContext, casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+        cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
+        return cfg;
     }
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "swivelAuthenticationWebflowEventResolver")
     public CasWebflowEventResolver swivelAuthenticationWebflowEventResolver() {
         val context = CasWebflowEventResolutionConfigurationContext.builder()
             .authenticationSystemSupport(authenticationSystemSupport.getObject())
@@ -145,6 +149,7 @@ public class SwivelConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "swivelAuthenticationWebflowAction")
     public Action swivelAuthenticationWebflowAction() {
         return new SwivelAuthenticationWebflowAction(swivelAuthenticationWebflowEventResolver());
     }
@@ -153,7 +158,7 @@ public class SwivelConfiguration {
      * The swivel multifactor trust configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.swivel", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.swivel", name = "trusted-device-enabled", havingValue = "true", matchIfMissing = true)
     @Configuration("swivelMultifactorTrustConfiguration")
     public class SwivelMultifactorTrustConfiguration {
 
@@ -161,11 +166,12 @@ public class SwivelConfiguration {
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer swivelMultifactorTrustWebflowConfigurer() {
-            return new SwivelMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
+            val cfg = new SwivelMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(),
-                casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(),
                 swivelAuthenticatorFlowRegistry(), applicationContext, casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+            cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
+            return cfg;
         }
 
         @Bean

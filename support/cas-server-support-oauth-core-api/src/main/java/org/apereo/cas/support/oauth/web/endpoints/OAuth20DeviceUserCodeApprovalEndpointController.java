@@ -58,7 +58,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
         if (StringUtils.isBlank(userCode)) {
             return codeNotfound;
         }
-        val codeId = getOAuthConfigurationContext().getDeviceTokenFactory().generateDeviceUserCode(userCode);
+        val codeId = getOAuthConfigurationContext().getDeviceUserCodeFactory().generateDeviceUserCode(userCode);
         val deviceUserCode = getOAuthConfigurationContext().getTicketRegistry().getTicket(codeId, OAuth20DeviceUserCode.class);
         if (deviceUserCode == null) {
             return codeNotfound;

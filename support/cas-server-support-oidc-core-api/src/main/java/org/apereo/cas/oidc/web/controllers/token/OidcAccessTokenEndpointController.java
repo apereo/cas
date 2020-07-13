@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.controllers.token;
 
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
@@ -20,8 +21,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpointController {
 
-    public OidcAccessTokenEndpointController(final OAuth20ConfigurationContext oauthConfigurationContext) {
-        super(oauthConfigurationContext);
+    public OidcAccessTokenEndpointController(final OAuth20ConfigurationContext oauthConfigurationContext,
+                                             final AuditableExecution accessTokenGrantAuditableRequestExtractor) {
+        super(oauthConfigurationContext, accessTokenGrantAuditableRequestExtractor);
     }
 
     @PostMapping(value = {'/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,

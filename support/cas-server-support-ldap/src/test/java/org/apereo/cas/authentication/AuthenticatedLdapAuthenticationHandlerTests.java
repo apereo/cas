@@ -5,6 +5,7 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.UncheckedException;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
@@ -22,14 +23,15 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = {
     "cas.authn.ldap[0].type=AUTHENTICATED",
-    "cas.authn.ldap[0].ldapUrl=ldap://localhost:10389",
-    "cas.authn.ldap[0].baseDn=dc=example,dc=org",
-    "cas.authn.ldap[0].searchFilter=cn={user}",
-    "cas.authn.ldap[0].bindDn=cn=Directory Manager",
-    "cas.authn.ldap[0].bindCredential=password",
-    "cas.authn.ldap[0].principalAttributeList=description,cn"
+    "cas.authn.ldap[0].ldap-url=ldap://localhost:10389",
+    "cas.authn.ldap[0].base-dn=dc=example,dc=org",
+    "cas.authn.ldap[0].search-filter=cn={user}",
+    "cas.authn.ldap[0].bind-dn=cn=Directory Manager",
+    "cas.authn.ldap[0].bind-credential=password",
+    "cas.authn.ldap[0].principal-attribute-list=description,cn"
     })
 @EnabledIfPortOpen(port = 10389)
+@Tag("Ldap")
 public class AuthenticatedLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticateNotFound() {

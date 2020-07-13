@@ -27,7 +27,8 @@ public class ProxyingPrincipalResolver implements PrincipalResolver {
     private final PrincipalFactory principalFactory;
 
     @Override
-    public Principal resolve(final Credential credential, final Optional<Principal> currentPrincipal, final Optional<AuthenticationHandler> handler) {
+    public Principal resolve(final Credential credential, final Optional<Principal> currentPrincipal,
+                             final Optional<AuthenticationHandler> handler) {
         return this.principalFactory.createPrincipal(credential.getId());
     }
 

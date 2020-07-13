@@ -8,6 +8,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
+import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -33,9 +34,9 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseAcceptableUsagePolicyRepositoryTests.SharedTestConfiguration.class
 })
 @TestPropertySource(properties = {
-    "cas.acceptableUsagePolicy.couchDb.asynchronous=false",
-    "cas.acceptableUsagePolicy.couchDb.username=cas",
-    "cas.acceptableUsagePolicy.couchdb.password=password"
+    "cas.acceptable-usage-policy.couch-db.asynchronous=false",
+    "cas.acceptable-usage-policy.couch-db.username=cas",
+    "cas.acceptable-usage-policy.couch-db.password=password"
 })
 @Tag("CouchDb")
 @Getter
@@ -65,10 +66,21 @@ public class CouchDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
         aupCouchDbFactory.getCouchDbInstance().deleteDatabase(aupCouchDbFactory.getCouchDbConnector().getDatabaseName());
     }
 
+    @Override
+    public boolean hasLiveUpdates() {
+        return true;
+    }
+
     @Test
     public void verifyOperation() {
         assertNotNull(acceptableUsagePolicyRepository);
-        verifyRepositoryAction("casuser",
-            CollectionUtils.wrap("aupAccepted", List.of("false"), "email", List.of("CASuser@example.org")));
+        val attributes = CollectionUtils.<String, List<Object>>wrap("aupAccepted", List.of("false"),
+            "email", List.of("CASuser@example.org"));
+        verifyRepositoryAction("casuser", attributes);
+
+        val c = getCredential("casuser");
+        val context = getRequestContext("casuser", attributes, c);
+        acceptableUsagePolicyRepository.submit(context, c);
+        assertTrue(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
     }
 }

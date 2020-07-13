@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.executor;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -57,7 +59,7 @@ public class EncryptedTranscoder implements Transcoder {
 
             writeObjectToOutputStream(o, out);
         } catch (final NotSerializableException e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
         return encrypt(outBuffer);
     }
@@ -68,7 +70,7 @@ public class EncryptedTranscoder implements Transcoder {
             try {
                 object = Advised.class.cast(o).getTargetSource().getTarget();
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                LoggingUtils.error(LOGGER, e);
             }
             if (object == null) {
                 LOGGER.error("Could not determine object [{}] from proxy",
@@ -86,7 +88,7 @@ public class EncryptedTranscoder implements Transcoder {
         try {
             return cipherBean.encrypt(outBuffer.toByteArray());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw new IOException("Encryption error", e);
         }
     }
@@ -94,13 +96,13 @@ public class EncryptedTranscoder implements Transcoder {
     @Override
     public Object decode(final byte[] encoded) throws IOException {
         val data = decrypt(encoded);
-        val inBuffer = new ByteArrayInputStream(data);
-        try (val in = this.compression
-            ? new ObjectInputStream(new GZIPInputStream(inBuffer))
-            : new ObjectInputStream(inBuffer)) {
+        try (val inBuffer = new ByteArrayInputStream(data);
+             val in = this.compression
+                 ? new ObjectInputStream(new GZIPInputStream(inBuffer))
+                 : new ObjectInputStream(inBuffer)) {
             return in.readObject();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw new IOException("Deserialization error", e);
         }
     }
@@ -109,7 +111,7 @@ public class EncryptedTranscoder implements Transcoder {
         try {
             return cipherBean.decrypt(encoded);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw new IOException("Decryption error", e);
         }
     }

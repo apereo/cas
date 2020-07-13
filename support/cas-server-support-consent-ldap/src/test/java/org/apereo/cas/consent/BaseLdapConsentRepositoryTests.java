@@ -144,7 +144,7 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     @SneakyThrows
     public void verifyConsentDecisionIsStored() {
         val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
-        assertTrue(this.repository.storeConsentDecision(decision));
+        assertNotNull(this.repository.storeConsentDecision(decision));
         val r = getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
         assertTrue(r.getEntryCount() > 0);
         val d = MAPPER.readValue(r.getSearchEntry(USER_DN).getAttributeValue(ATTR_NAME), ConsentDecision.class);

@@ -16,6 +16,7 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 
+import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.HashMap;
 
@@ -44,26 +46,22 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "cas.ticket.registry.memcached.servers=localhost:11211",
-        "cas.ticket.registry.memcached.failureMode=Redistribute",
-        "cas.ticket.registry.memcached.locatorType=ARRAY_MOD",
-        "cas.ticket.registry.memcached.hashAlgorithm=FNV1A_64_HASH",
-        "cas.ticket.registry.memcached.kryoRegistrationRequired=true"
+        "cas.ticket.registry.memcached.failure-mode=Redistribute",
+        "cas.ticket.registry.memcached.locator-type=ARRAY_MOD",
+        "cas.ticket.registry.memcached.hash-algorithm=FNV1A_64_HASH",
+        "cas.ticket.registry.memcached.kryo-registration-required=true"
     })
 @EnabledIfPortOpen(port = 11211)
 @Tag("Memcached")
+@Getter
 public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry registry;
+    private TicketRegistry newTicketRegistry;
 
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Override
-    public TicketRegistry getNewTicketRegistry() {
-        return registry;
-    }
 
     @Override
     protected boolean isIterableRegistry() {
@@ -79,12 +77,13 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
             CollectionUtils.wrapList("openid"),
             "code-challenge", "plain", "clientId123456",
             new HashMap<>());
-        this.registry.addTicket(code);
-        val ticket = this.registry.getTicket(code.getId(), OAuth20Code.class);
+        this.newTicketRegistry.addTicket(code);
+        val ticket = this.newTicketRegistry.getTicket(code.getId(), OAuth20Code.class);
         assertNotNull(ticket);
     }
 
     @TestConfiguration("MemcachedTicketRegistryTestConfiguration")
+    @Lazy(false)
     public static class MemcachedTicketRegistryTestConfiguration implements ComponentSerializationPlanConfigurer {
         @Override
         public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {

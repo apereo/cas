@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.jwks;
 
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 
 import lombok.SneakyThrows;
@@ -80,7 +81,7 @@ public class OidcJsonWebKeyStoreUtils {
             return Optional.of(jsonWebKeySet);
 
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
 
         return Optional.empty();

@@ -11,6 +11,7 @@ import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Tag("Simple")
 public class Cas10ResponseViewTests {
 
     private Map<String, Object> model;

@@ -33,10 +33,12 @@ import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
@@ -54,6 +56,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
+
+import java.util.List;
 
 /**
  * This is {@link SamlIdPEndpointsConfiguration}.
@@ -154,8 +158,8 @@ public class SamlIdPEndpointsConfiguration {
         return new SamlIdPObjectSignatureValidator(
             algs.getOverrideSignatureReferenceDigestMethods(),
             algs.getOverrideSignatureAlgorithms(),
-            algs.getOverrideBlackListedSignatureSigningAlgorithms(),
-            algs.getOverrideWhiteListedSignatureSigningAlgorithms(),
+            algs.getOverrideBlockedSignatureSigningAlgorithms(),
+            algs.getOverrideAllowedSignatureSigningAlgorithms(),
             casSamlIdPMetadataResolver.getObject(),
             casProperties
         );
@@ -168,8 +172,8 @@ public class SamlIdPEndpointsConfiguration {
         return new SamlObjectSignatureValidator(
             algs.getOverrideSignatureReferenceDigestMethods(),
             algs.getOverrideSignatureAlgorithms(),
-            algs.getOverrideBlackListedSignatureSigningAlgorithms(),
-            algs.getOverrideWhiteListedSignatureSigningAlgorithms(),
+            algs.getOverrideBlockedSignatureSigningAlgorithms(),
+            algs.getOverrideAllowedSignatureSigningAlgorithms(),
             casProperties
         );
     }
@@ -292,7 +296,7 @@ public class SamlIdPEndpointsConfiguration {
         return new SamlIdPSaml1ArtifactResolutionProfileHandlerController(context);
     }
 
-    @ConditionalOnProperty(prefix = "cas.authn.samlIdp", name = "attributeQueryProfileEnabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "cas.authn.saml-idp", name = "attribute-query-profile-enabled", havingValue = "true")
     @Bean
     @RefreshScope
     public SamlIdPSaml2AttributeQueryProfileHandlerController saml2AttributeQueryProfileHandlerController() {
@@ -343,5 +347,11 @@ public class SamlIdPEndpointsConfiguration {
             .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getObject())
             .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory.getObject())
             .callbackService(samlIdPCallbackService());
+    }
+
+    @Bean
+    public ProtocolEndpointConfigurer samlIdPProtocolEndpointConfigurer() {
+        return () -> List.of(StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML1, "/"),
+            StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML2, "/"));
     }
 }

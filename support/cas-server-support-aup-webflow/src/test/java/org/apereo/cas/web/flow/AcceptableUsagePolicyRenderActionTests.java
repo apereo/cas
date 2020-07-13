@@ -41,7 +41,6 @@ public class AcceptableUsagePolicyRenderActionTests extends BaseAcceptableUsageP
     @Qualifier("acceptableUsagePolicyRenderAction")
     private Action acceptableUsagePolicyRenderAction;
 
-    @Override
     @Test
     @SneakyThrows
     public void verifyAction() {

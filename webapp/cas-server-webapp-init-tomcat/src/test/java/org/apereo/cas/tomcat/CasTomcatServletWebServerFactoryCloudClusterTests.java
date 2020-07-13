@@ -1,6 +1,5 @@
 package org.apereo.cas.tomcat;
 
-import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.config.CasEmbeddedContainerTomcatConfiguration;
 import org.apereo.cas.config.CasEmbeddedContainerTomcatFiltersConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -9,6 +8,7 @@ import lombok.val;
 import org.apache.catalina.ha.tcp.SimpleTcpCluster;
 import org.apache.catalina.tribes.group.GroupChannel;
 import org.apache.catalina.tribes.membership.cloud.CloudMembershipService;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -35,10 +35,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         "server.port=8183",
         "server.ssl.enabled=false",
         "cas.server.tomcat.clustering.enabled=true",
-        "cas.server.tomcat.clustering.clusteringType=CLOUD"
+        "cas.server.tomcat.clustering.clustering-type=CLOUD"
     },
     webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
+@Tag("WebApp")
 public class CasTomcatServletWebServerFactoryCloudClusterTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
@@ -51,9 +52,6 @@ public class CasTomcatServletWebServerFactoryCloudClusterTests {
     @Qualifier("casTomcatEmbeddedServletContainerCustomizer")
     private ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer;
 
-    static {
-        System.setProperty(CasEmbeddedContainerUtils.EMBEDDED_CONTAINER_CONFIG_ACTIVE, "true");
-    }
 
     @Test
     public void verifyOperation() {

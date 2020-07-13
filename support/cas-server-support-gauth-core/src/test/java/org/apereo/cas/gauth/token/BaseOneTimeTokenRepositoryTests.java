@@ -8,13 +8,13 @@ import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
-
-import javax.annotation.PostConstruct;
+import org.springframework.context.annotation.Lazy;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -107,13 +107,14 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.getObject().count(), "Repository is not empty");
     }
 
-    @TestConfiguration
-    public static class BaseTestConfiguration {
+    @TestConfiguration("BaseOneTimeTokenRepositoryTestConfiguration")
+    @Lazy(false)
+    public static class BaseOneTimeTokenRepositoryTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;
 
-        @PostConstruct
-        public void init() {
+        @Override
+        public void afterPropertiesSet() {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }

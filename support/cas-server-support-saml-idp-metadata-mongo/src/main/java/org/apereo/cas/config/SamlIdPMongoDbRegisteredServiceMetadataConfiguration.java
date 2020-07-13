@@ -13,9 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
+import javax.net.ssl.SSLContext;
 
 /**
  * This is {@link SamlIdPMongoDbIdPMetadataConfiguration}.
@@ -34,7 +37,12 @@ public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
     @Qualifier("shibboleth.OpenSAMLConfig")
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
+    @Autowired
+    @Qualifier("sslContext")
+    private ObjectProvider<SSLContext> sslContext;
+    
     @Bean
+    @RefreshScope
     public SamlRegisteredServiceMetadataResolver mongoDbSamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new MongoDbSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject(), mongoDbSamlMetadataResolverTemplate());
@@ -42,15 +50,17 @@ public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "mongoDbSamlMetadataResolverTemplate")
     @Bean
+    @RefreshScope
     public MongoTemplate mongoDbSamlMetadataResolverTemplate() {
         val mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
-        val factory = new MongoDbConnectionFactory();
+        val factory = new MongoDbConnectionFactory(sslContext.getObject());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
-        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "mongoDbSamlRegisteredServiceMetadataResolutionPlanConfigurer")
     public SamlRegisteredServiceMetadataResolutionPlanConfigurer mongoDbSamlRegisteredServiceMetadataResolutionPlanConfigurer() {
         return plan -> plan.registerMetadataResolver(mongoDbSamlRegisteredServiceMetadataResolver());

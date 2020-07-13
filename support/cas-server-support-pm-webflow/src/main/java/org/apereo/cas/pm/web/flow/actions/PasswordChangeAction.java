@@ -6,6 +6,8 @@ import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
+import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -30,31 +32,33 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class PasswordChangeAction extends AbstractAction {
 
-    /**
-     * Password Update Success event.
-     */
-    public static final String PASSWORD_UPDATE_SUCCESS = "passwordUpdateSuccess";
-
     private static final String PASSWORD_VALIDATION_FAILURE_CODE = "pm.validationFailure";
+
     private static final String DEFAULT_MESSAGE = "Could not update the account password";
 
     private final PasswordManagementService passwordManagementService;
+
     private final PasswordValidationService passwordValidationService;
+
+    private Event getErrorEvent(final RequestContext ctx, final String code, final String message, final Object... params) {
+        ctx.getMessageContext().addMessage(new MessageBuilder().error().code(code).defaultText(message).args(params).build());
+        return error();
+    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         try {
-            val c = Objects.requireNonNull(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class));
-            val bean = getPasswordChangeRequest(requestContext, c);
+            val creds = Objects.requireNonNull(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class));
+            val bean = getPasswordChangeRequest(requestContext, creds);
 
-            LOGGER.debug("Attempting to validate the password change bean for username [{}]", c.getUsername());
-            if (!passwordValidationService.isValid(c, bean)) {
+            LOGGER.debug("Attempting to validate the password change bean for username [{}]", creds.getUsername());
+            if (!passwordValidationService.isValid(creds, bean)) {
                 LOGGER.error("Failed to validate the provided password");
                 return getErrorEvent(requestContext, PASSWORD_VALIDATION_FAILURE_CODE, DEFAULT_MESSAGE);
             }
-            if (passwordManagementService.change(c, bean)) {
-                WebUtils.putCredential(requestContext, new UsernamePasswordCredential(c.getUsername(), bean.getPassword()));
-                return new EventFactorySupport().event(this, PASSWORD_UPDATE_SUCCESS);
+            if (passwordManagementService.change(creds, bean)) {
+                WebUtils.putCredential(requestContext, new UsernamePasswordCredential(creds.getUsername(), bean.getPassword()));
+                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PASSWORD_UPDATE_SUCCESS);
             }
         } catch (final InvalidPasswordException e) {
             return getErrorEvent(requestContext,
@@ -62,7 +66,7 @@ public class PasswordChangeAction extends AbstractAction {
                 StringUtils.defaultIfBlank(e.getValidationMessage(), DEFAULT_MESSAGE),
                 e.getParams());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return getErrorEvent(requestContext, "pm.updateFailure", DEFAULT_MESSAGE);
     }
@@ -78,10 +82,5 @@ public class PasswordChangeAction extends AbstractAction {
         val bean = requestContext.getFlowScope().get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
         bean.setUsername(c.getUsername());
         return bean;
-    }
-
-    private Event getErrorEvent(final RequestContext ctx, final String code, final String message, final Object... params) {
-        ctx.getMessageContext().addMessage(new MessageBuilder().error().code(code).defaultText(message).args(params).build());
-        return error();
     }
 }

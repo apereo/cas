@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.NonNull;
 import lombok.Setter;
@@ -41,7 +42,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
      */
     protected @NonNull ProfileCreator<C> profileCreator = AuthenticatorProfileCreator.INSTANCE;
 
-    public AbstractWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
+    protected AbstractWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
 
@@ -85,7 +86,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
             val clientCredential = new ClientCredential(credentials, authenticator.getClass().getSimpleName());
             return createResult(clientCredential, profile, null);
         } catch (final Exception e) {
-            LOGGER.error("Failed to validate credentials", e);
+            LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException("Failed to validate credentials: " + e.getMessage());
         }
     }

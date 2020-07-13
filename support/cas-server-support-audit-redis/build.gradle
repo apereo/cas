@@ -6,7 +6,7 @@ dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-audit")
 
-    implementation libraries.springbootredis
+    implementation libraries.redis
     
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-audit-api")

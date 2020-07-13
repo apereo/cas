@@ -26,8 +26,9 @@ import org.springframework.boot.test.context.SpringBootTest;
     BaseConsentRepositoryTests.SharedTestConfiguration.class
 },
     properties = {
-        "cas.consent.couchDb.username=cas",
-        "cas.consent.couchdb.password=password"
+        "cas.consent.couch-db.username=cas",
+        "cas.consent.couch-db.password=password",
+        "cas.consent.couch-db.caching=false"
     })
 @Tag("CouchDb")
 @Getter
@@ -50,6 +51,7 @@ public class CouchDbConsentRepositoryTests extends BaseConsentRepositoryTests {
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
+
     }
 
     @AfterEach

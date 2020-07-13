@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
@@ -13,6 +14,9 @@ import org.springframework.http.MediaType;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Simple")
 public class JsonWebKeySetStringCipherExecutorTests {
     @Test
     @SneakyThrows
@@ -37,6 +42,10 @@ public class JsonWebKeySetStringCipherExecutorTests {
             webServer.start();
             val token = cipher.encode("Misagh");
             assertEquals("Misagh", cipher.decode(token));
+            Files.setLastModifiedTime(keystoreFile.toPath(), FileTime.from(Instant.now()));
+            Thread.sleep(5_000);
+            cipher.destroy();
         }
+
     }
 }

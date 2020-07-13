@@ -143,7 +143,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "multifactorAuthenticationProviderResolver")
     public MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver() {
-        return new DefaultMultifactorAuthenticationProviderResolver(multifactorAuthenticationProviderSelector());
+        return new DefaultMultifactorAuthenticationProviderResolver();
     }
 
     @ConditionalOnMissingBean(name = "adaptiveAuthenticationPolicyWebflowEventResolver")
@@ -445,11 +445,13 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "multifactorProviderSelectedAction")
     public Action multifactorProviderSelectedAction() {
         return new MultifactorProviderSelectedAction();
     }
 
+    @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "prepareMultifactorProviderSelectionAction")
     public Action prepareMultifactorProviderSelectionAction() {

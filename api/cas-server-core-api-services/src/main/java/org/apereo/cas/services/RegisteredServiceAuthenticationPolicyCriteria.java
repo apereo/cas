@@ -13,6 +13,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@FunctionalInterface
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceAuthenticationPolicyCriteria extends Serializable {
 

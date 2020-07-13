@@ -1,6 +1,7 @@
 package org.apereo.cas.web.report;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,12 +14,15 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated since 6.2.0
  */
 @TestPropertySource(properties = {
     "management.endpoint.status.enabled=true",
     "management.endpoint.health.enabled=true",
     "management.endpoint.health.show-details=always"
 })
+@Tag("ActuatorEndpoint")
+@Deprecated(since ="6.2.0")
 public class StatusEndpointWithHealthTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("statusEndpoint")

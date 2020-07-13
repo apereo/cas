@@ -47,7 +47,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("OIDC")
-@TestPropertySource(properties = "cas.authn.oauth.accessToken.crypto.encryption-enabled=false")
+@TestPropertySource(properties = "cas.authn.oauth.access-token.crypto.encryption-enabled=false")
 public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
 
     private static final String OIDC_CLAIM_EMAIL = "email";
@@ -61,7 +61,8 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         profile.setClientName("OIDC");
         profile.setId("casuser");
 
-        request.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        request.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         val response = new MockHttpServletResponse();
 
@@ -111,7 +112,8 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         val profile = new CommonProfile();
         profile.setClientName("OIDC");
         profile.setId("casuser");
-        request.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        request.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         val response = new MockHttpServletResponse();
 
@@ -152,7 +154,8 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         val profile = new CommonProfile();
         profile.setClientName("OIDC");
         profile.setId("casuser");
-        request.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        request.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         val response = new MockHttpServletResponse();
 

@@ -62,7 +62,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
     *
     * @param request the request
     * @param response the response
-    * @return the boolean
+    * @return true/false
     */
     protected boolean clientNeedAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
         val clientId = OAuth20Utils.getClientIdAndClientSecret(new JEEContext(request, response, sessionStore)).getLeft();
@@ -82,7 +82,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      *
      * @param request  the request
      * @param response the response
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isRevokeTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val requestPath = request.getRequestURI();
@@ -94,7 +94,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      *
      * @param request  the request
      * @param response the response
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isAccessTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val requestPath = request.getRequestURI();
@@ -107,7 +107,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      *
      * @param request  the request
      * @param response the response
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isDeviceTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val requestPath = request.getRequestURI();
@@ -158,7 +158,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      *
      * @param request  the request
      * @param response the response
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isAuthorizationRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val requestPath = request.getRequestURI();
@@ -170,7 +170,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      *
      * @param requestPath the request path
      * @param patternUrl  the pattern
-     * @return the boolean
+     * @return true/false
      */
     protected boolean doesUriMatchPattern(final String requestPath, final String patternUrl) {
         val pattern = Pattern.compile('/' + patternUrl + "(/)*$");

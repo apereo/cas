@@ -16,6 +16,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -206,7 +207,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             getOAuthConfigurationContext().getServicesManager().save(registeredService);
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             val map = new HashMap<String, String>();
             map.put("error", "invalid_client_metadata");
             map.put("error_description", StringUtils.defaultString(e.getMessage(), "None"));

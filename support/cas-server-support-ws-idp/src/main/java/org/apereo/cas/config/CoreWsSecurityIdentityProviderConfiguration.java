@@ -16,6 +16,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.authentication.WSFederationAuthenticationServiceSelectionStrategy;
@@ -29,6 +30,7 @@ import org.apereo.cas.ws.idp.web.WSFederationValidateRequestController;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,7 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.Ordered;
 
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * This is {@link CoreWsSecurityIdentityProviderConfiguration}.
@@ -145,6 +148,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceSelectionStrategyConfigurer")
     public AuthenticationServiceSelectionStrategyConfigurer wsFederationAuthenticationServiceSelectionStrategyConfigurer() {
         return plan -> plan.registerStrategy(wsFederationAuthenticationServiceSelectionStrategy());
     }
@@ -164,6 +168,13 @@ public class CoreWsSecurityIdentityProviderConfiguration {
             LOGGER.debug("Saving callback service [{}] into the registry", service);
             plan.registerServiceRegistry(new WSFederationServiceRegistry(applicationContext, service));
         };
+    }
+
+    @Bean
+    public ProtocolEndpointConfigurer wsFederationProtocolEndpointConfigurer() {
+        return () -> List.of(
+            StringUtils.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_IDP, "/"),
+            StringUtils.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_STS, "/"));
     }
 
     private WSFederationRequestConfigurationContext.WSFederationRequestConfigurationContextBuilder getConfigurationContext() {

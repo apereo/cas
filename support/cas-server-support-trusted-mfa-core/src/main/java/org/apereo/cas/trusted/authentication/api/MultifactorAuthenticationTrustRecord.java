@@ -95,7 +95,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     /**
      * Is record expired?
      *
-     * @return the boolean
+     * @return true/false
      */
     @JsonIgnore
     public boolean isExpired() {

@@ -62,14 +62,15 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
     }
 
     @Override
-    default void afterConcurrentHandlingStarted(final HttpServletRequest httpServletRequest,
-                                                final HttpServletResponse httpServletResponse, final Object o) throws Exception {
+    default void afterConcurrentHandlingStarted(final HttpServletRequest request,
+                                                final HttpServletResponse response,
+                                                final Object handler) throws Exception {
     }
 
     @Override
-    default void afterCompletion(final HttpServletRequest httpServletRequest,
-                                 final HttpServletResponse httpServletResponse,
-                                 final Object o,
+    default void afterCompletion(final HttpServletRequest request,
+                                 final HttpServletResponse response,
+                                 final Object handler,
                                  final Exception e) throws Exception {
     }
 

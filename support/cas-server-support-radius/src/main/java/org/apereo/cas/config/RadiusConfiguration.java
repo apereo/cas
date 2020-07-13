@@ -62,7 +62,7 @@ import java.util.stream.Collectors;
 @Configuration("radiusConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnProperty(name = "cas.authn.radius.client.inetAddress")
+@ConditionalOnProperty(name = "cas.authn.radius.client.inet-address")
 public class RadiusConfiguration {
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")

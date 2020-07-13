@@ -11,10 +11,7 @@ import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationP
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.HashMap;
@@ -29,14 +26,15 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@SpringBootTest(classes = AopAutoConfiguration.class)
 @Tag("MFA")
 public class DefaultChainingMultifactorAuthenticationBypassProviderTests {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
+
 
     @Test
     public void verifyOperation() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val request = new MockHttpServletRequest();
         request.addHeader("headerbypass", "true");
         val props = new MultifactorAuthenticationProviderBypassProperties();

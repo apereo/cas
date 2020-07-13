@@ -190,7 +190,7 @@ class GroovyMultifactorPolicy extends DefaultRegisteredServiceMultifactorPolicy 
 }
 ```
 
-The configuration of this component qualifies to use the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax. Refer to the CAS API documentation to learn more about operations and expected behaviors.
+The configuration of this component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax. Refer to the CAS API documentation to learn more about operations and expected behaviors.
 
 ## Global Principal Attribute
 

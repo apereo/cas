@@ -22,6 +22,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public abstract class BaseAmazonWebServicesProperties implements Serializable {
     private static final long serialVersionUID = 6426637051495147084L;
+
     /**
      * Authenticate and bind into the instance via a credentials properties file.
      */
@@ -158,6 +159,4 @@ public abstract class BaseAmazonWebServicesProperties implements Serializable {
      * Local address.
      */
     private String localAddress;
-
-
 }

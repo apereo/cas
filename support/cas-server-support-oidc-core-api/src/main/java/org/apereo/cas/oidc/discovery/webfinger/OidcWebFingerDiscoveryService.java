@@ -42,14 +42,21 @@ public class OidcWebFingerDiscoveryService {
     );
 
     private static final int PATTERN_GROUP_INDEX_SCHEME = 2;
+
     private static final int PATTERN_GROUP_INDEX_USERINFO = 6;
+
     private static final int PATTERN_GROUP_INDEX_HOST = 8;
+
     private static final int PATTERN_GROUP_INDEX_PORT = 10;
+
     private static final int PATTERN_GROUP_INDEX_PATH = 11;
+
     private static final int PATTERN_GROUP_INDEX_QUERY = 13;
+
     private static final int PATTERN_GROUP_INDEX_FRAGMENT = 15;
 
     private final OidcWebFingerUserInfoRepository userInfoRepository;
+
     private final OidcServerDiscoverySettings discovery;
 
     /**
@@ -147,7 +154,7 @@ public class OidcWebFingerDiscoveryService {
         val currentBuilder = builder.build();
 
         if (StringUtils.isBlank(currentBuilder.getScheme())) {
-            if (!StringUtils.isBlank(currentBuilder.getUserInfo()) && StringUtils.isBlank(currentBuilder.getPath())
+            if (StringUtils.isNotBlank(currentBuilder.getUserInfo()) && StringUtils.isBlank(currentBuilder.getPath())
                 && StringUtils.isBlank(currentBuilder.getQuery()) && currentBuilder.getPort() < 0) {
                 builder.scheme("acct");
             } else {

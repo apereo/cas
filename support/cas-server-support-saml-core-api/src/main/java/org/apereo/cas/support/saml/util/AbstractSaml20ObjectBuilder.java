@@ -52,7 +52,7 @@ import java.util.Map;
 public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder {
     private static final long serialVersionUID = -4325127376598205277L;
 
-    public AbstractSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {
+    protected AbstractSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {
         super(configBean);
     }
 
@@ -448,10 +448,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         }
 
         val decodedBytes = EncodingUtils.decodeBase64(encodedRequestXmlString);
-        if (decodedBytes == null) {
-            return null;
-        }
-
         return inflateAuthnRequest(decodedBytes);
     }
 

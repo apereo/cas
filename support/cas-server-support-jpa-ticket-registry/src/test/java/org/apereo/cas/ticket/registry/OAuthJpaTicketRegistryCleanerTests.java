@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -19,6 +20,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasOAuth20Configuration;
+import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
@@ -30,6 +32,10 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
+import org.apereo.cas.ticket.device.OAuth20DeviceToken;
+import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
+import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
+import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import lombok.val;
@@ -39,9 +45,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,39 +66,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author charlibot
  * @since 6.1.0
  */
-@SpringBootTest(classes = {
-    JpaTicketRegistryTicketCatalogConfiguration.class,
-    JpaTicketRegistryConfiguration.class,
-    CasHibernateJpaConfiguration.class,
-    CasOAuth20Configuration.class,
-    CasCoreTicketsSchedulingConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    RefreshAutoConfiguration.class,
-    AopAutoConfiguration.class,
-    CasCookieConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreAuthenticationPolicyConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationHandlersConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreWebConfiguration.class,
-    OAuth20ProtocolTicketCatalogConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class
-})
+@SpringBootTest(classes = OAuthJpaTicketRegistryCleanerTests.SharedTestConfiguration.class)
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
 @ResourceLock("oauth-jpa-tickets")
-@Tag("OAuth")
+@Tag("JDBC")
 public class OAuthJpaTicketRegistryCleanerTests {
     @Autowired
     @Qualifier("defaultTicketFactory")
@@ -136,5 +117,73 @@ public class OAuthJpaTicketRegistryCleanerTests {
 
         assertEquals(0, ticketRegistry.sessionCount());
         assertNull(ticketRegistry.getTicket(at.getId()));
+    }
+
+    @Test
+    public void verifyDeviceCodeAndUserCleaning() {
+        val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
+        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(), TicketGrantingTicket.class);
+        ticketRegistry.addTicket(tgt);
+
+        val deviceCodeFactory = (OAuth20DeviceTokenFactory) ticketFactory.get(OAuth20DeviceToken.class);
+        val deviceCode = deviceCodeFactory.createDeviceCode(RegisteredServiceTestUtils.getService());
+        ticketRegistry.addTicket(deviceCode);
+
+        val deviceUserCodeFactory = (OAuth20DeviceUserCodeFactory) ticketFactory.get(OAuth20DeviceUserCode.class);
+        val deviceUserCode = deviceUserCodeFactory.createDeviceUserCode(deviceCode);
+        ticketRegistry.addTicket(deviceUserCode);
+
+        ticketRegistry.updateTicket(tgt);
+
+        deviceCode.markTicketExpired();
+        deviceUserCode.markTicketExpired();
+        tgt.markTicketExpired();
+
+        ticketRegistry.updateTicket(deviceCode);
+        ticketRegistry.updateTicket(deviceUserCode);
+        ticketRegistry.updateTicket(tgt);
+
+        assertEquals(3, ticketRegistry.getTickets().size());
+        assertEquals(3, ticketRegistryCleaner.clean());
+        assertTrue(ticketRegistry.getTickets().isEmpty());
+    }
+
+    @ImportAutoConfiguration({
+        RefreshAutoConfiguration.class,
+        SecurityAutoConfiguration.class,
+        AopAutoConfiguration.class
+    })
+    @SpringBootConfiguration
+    @Import({
+        JpaTicketRegistryTicketCatalogConfiguration.class,
+        JpaTicketRegistryConfiguration.class,
+        CasHibernateJpaConfiguration.class,
+        CasOAuth20Configuration.class,
+        CasOAuth20EndpointsConfiguration.class,
+        CasCoreTicketsSchedulingConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+        CasCookieConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreWebConfiguration.class,
+        OAuth20ProtocolTicketCatalogConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class
+    })
+    public static class SharedTestConfiguration {
     }
 }

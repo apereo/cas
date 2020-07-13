@@ -45,6 +45,7 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             var account = this.mongoTemplate.findOne(query, MongoDbYubiKeyAccount.class, this.collectionName);
             if (account == null) {
                 account = new MongoDbYubiKeyAccount();
+                account.setId(System.currentTimeMillis());
                 account.setUsername(uid);
                 account.registerDevice(yubikeyPublicId);
                 this.mongoTemplate.save(account, this.collectionName);

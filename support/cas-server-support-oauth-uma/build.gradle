@@ -6,7 +6,7 @@ dependencies {
     implementation libraries.pac4jcore
     implementation libraries.jose4j
     implementation libraries.nimbus
-    
+
     implementation project(":support:cas-server-support-oauth-core")
     implementation project(":support:cas-server-support-oauth-core-api")
     implementation project(":support:cas-server-support-oauth-services")

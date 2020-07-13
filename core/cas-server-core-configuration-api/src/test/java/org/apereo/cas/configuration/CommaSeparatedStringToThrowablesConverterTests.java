@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -11,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("CasConfiguration")
 public class CommaSeparatedStringToThrowablesConverterTests {
     @Test
     public void verifyConverters() {

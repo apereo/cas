@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
@@ -49,10 +49,6 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private transient EntityManager entityManager;
-
-    private static long countToLong(final Object result) {
-        return ((Number) result).longValue();
-    }
 
     @Override
     public void addTicket(final Ticket ticket) {
@@ -83,7 +79,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         } catch (final NoResultException e) {
             LOGGER.debug("No record could be found for ticket [{}]", ticketId);
         } catch (final Exception e) {
-            LOGGER.error("Error getting ticket [{}] from registry.", ticketId, e);
+            LOGGER.error("Error getting ticket [{}] from registry.", ticketId);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -228,6 +225,10 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         return totalCount != 0;
     }
 
+    private static long countToLong(final Object result) {
+        return ((Number) result).longValue();
+    }
+
     /**
      * Delete ticket granting tickets.
      *
@@ -241,7 +242,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             .mapToInt(defn -> {
                 try {
                     val sql = String.format("DELETE FROM %s s WHERE s.ticketGrantingTicket.id = :id", getTicketEntityName(defn));
-                    LOGGER.trace("Creating query [{}]", sql);
+                    LOGGER.trace("Creating delete query [{}] for ticket id [{}]", sql, ticketId);
                     val query = entityManager.createQuery(sql);
                     query.setParameter("id", ticketId);
                     return query.executeUpdate();
@@ -256,6 +257,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         val sql = String.format("DELETE FROM %s t WHERE t.id = :id", getTicketEntityName(tgt));
         val query = entityManager.createQuery(sql);
         query.setParameter("id", ticketId);
+        LOGGER.trace("Creating delete query [{}] for ticket id [{}]", sql, ticketId);
         totalCount += query.executeUpdate();
         return totalCount;
     }

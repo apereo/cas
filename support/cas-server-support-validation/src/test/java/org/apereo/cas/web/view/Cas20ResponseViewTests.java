@@ -21,6 +21,7 @@ import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -55,6 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasThymeleafConfiguration.class,
     CasValidationConfiguration.class
 })
+@Tag("Simple")
 public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
     @Autowired
     @Qualifier("serviceValidationViewFactory")

@@ -3,6 +3,7 @@ package org.apereo.cas.tomcat;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProxyProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -204,7 +205,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
             LOGGER.debug("Configuring embedded tomcat container for HTTP2 protocol support");
             connector.addUpgradeProtocol(new Http2Protocol());
 
-            http.getAttributes().forEach(connector::setAttribute);
+            http.getAttributes().forEach(connector::setProperty);
             tomcat.addAdditionalTomcatConnectors(connector);
         }
     }
@@ -232,7 +233,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
                 }
                 connector.addUpgradeProtocol(new Http2Protocol());
 
-                proxy.getAttributes().forEach(connector::setAttribute);
+                proxy.getAttributes().forEach(connector::setProperty);
                 LOGGER.info("Configured connector listening on port [{}]", tomcat.getPort());
             });
         } else {
@@ -269,9 +270,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
                 LOGGER.debug("Set AJP redirect port to [{}]", ajp.getRedirectPort());
                 ajpConnector.setRedirectPort(ajp.getRedirectPort());
             }
-
-            ajp.getAttributes().forEach(ajpConnector::setAttribute);
-
+            ajp.getAttributes().forEach(ajpConnector::setProperty);
             tomcat.addAdditionalTomcatConnectors(ajpConnector);
         }
     }
@@ -306,7 +305,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
                             parse(buffer);
                         }
                     } catch (final Exception e) {
-                        LOGGER.error(e.getMessage(), e);
+                        LoggingUtils.error(LOGGER, e);
                     }
                 }
             };

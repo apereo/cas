@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.config.CasCoreBootstrapStandaloneConfigurati
 import org.apereo.cas.configuration.config.CasCoreBootstrapStandaloneLocatorConfiguration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreBootstrapStandaloneConfiguration.class
 },
     properties = {"spring.cloud.config.enabled=false", "spring.application.name=CAS"})
+@Tag("CasConfiguration")
 public class DefaultCasConfigurationPropertiesSourceLocatorTests {
     static {
         System.setProperty("spring.application.name", "cas");

@@ -48,7 +48,6 @@ public class CouchDbTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "ticketRegistryCouchDbRepository")
     public TicketRepository ticketRegistryCouchDbRepository() {
         val couchDbProperties = casProperties.getTicket().getRegistry().getCouchDb();
-
         val ticketRepository = new TicketRepository(ticketRegistryCouchDbFactory().getCouchDbConnector(), couchDbProperties.isCreateIfNotExists());
         ticketRepository.initStandardDesignDocument();
         return ticketRepository;
@@ -60,7 +59,7 @@ public class CouchDbTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry() {
         val couchDb = casProperties.getTicket().getRegistry().getCouchDb();
         val c = new CouchDbTicketRegistry(ticketRegistryCouchDbRepository(), couchDb.getRetries());
-        c.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(couchDb.getCrypto(), "couchdb"));
+        c.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(couchDb.getCrypto(), "couch-db"));
         return c;
     }
 

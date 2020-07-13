@@ -49,7 +49,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     private PasswordPolicyContext passwordPolicyConfiguration;
 
-    public AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    protected AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                                          final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }

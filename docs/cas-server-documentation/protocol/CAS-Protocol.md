@@ -26,7 +26,7 @@ The following specification versions are recognized and implemented by Apereo CA
 
 ### 3.0.3
 
-The current CAS protocol specification is `3.0.3`. The actual protocol specification is available at [here](CAS-Protocol-Specification.html), which is hereby implemented by the Apereo CAS Server as the official reference implementation. It's mainly a capture of the most common enhancements built on top of the CAS protocol revision `2.0`. Among all features, the most noticeable update between versions `2.0` and `3.0` is the ability to return the authentication/user attributes through the new `/p3/serviceValidate` endpoint.
+The current CAS protocol specification is `3.0.3`. The actual protocol specification [is available here](CAS-Protocol-Specification.html), which is hereby implemented by the Apereo CAS Server as the official reference implementation. It's mainly a capture of the most common enhancements built on top of the CAS protocol revision `2.0`. Among other features, the most noticeable update between versions `2.0` and `3.0` is the ability to return the authentication/user attributes through the new `/p3/serviceValidate` endpoint.
 
 ### 2.0
 

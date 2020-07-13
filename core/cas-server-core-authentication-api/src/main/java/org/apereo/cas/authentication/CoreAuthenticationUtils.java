@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
-import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -277,7 +276,7 @@ public class CoreAuthenticationUtils {
     public static AuthenticationPasswordPolicyHandlingStrategy newPasswordPolicyHandlingStrategy(final PasswordPolicyProperties properties,
                                                                                                  final ApplicationContext applicationContext) {
         if (properties.getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
-            LOGGER.debug("Created password policy handling strategy based on blacklisted authentication result codes");
+            LOGGER.debug("Created password policy handling strategy based on blocked authentication result codes");
             return new RejectResultCodePasswordPolicyHandlingStrategy<>();
         }
 
@@ -347,11 +346,6 @@ public class CoreAuthenticationUtils {
         if (policyProps.getNotPrevented().isEnabled()) {
             LOGGER.trace("Activating authentication policy [{}]", NotPreventedAuthenticationPolicy.class.getSimpleName());
             return CollectionUtils.wrapList(new NotPreventedAuthenticationPolicy());
-        }
-
-        if (policyProps.getUniquePrincipal().isEnabled()) {
-            LOGGER.trace("Activating authentication policy [{}]", UniquePrincipalAuthenticationPolicy.class.getSimpleName());
-            return CollectionUtils.wrapList(new UniquePrincipalAuthenticationPolicy());
         }
 
         if (!policyProps.getGroovy().isEmpty()) {

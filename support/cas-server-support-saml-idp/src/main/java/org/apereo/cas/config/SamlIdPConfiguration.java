@@ -11,6 +11,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilderConfigurer;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -44,6 +45,7 @@ import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPProfileSingleLogou
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceMessageHandler;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.artifact.DefaultSamlArtifactTicketFactory;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketExpirationPolicyBuilder;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
@@ -52,7 +54,6 @@ import org.apereo.cas.ticket.query.SamlAttributeQueryTicketExpirationPolicyBuild
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.val;
@@ -128,10 +129,6 @@ public class SamlIdPConfiguration {
     private ObjectProvider<ServiceFactory> samlIdPServiceFactory;
 
     @Autowired
-    @Qualifier("urlValidator")
-    private ObjectProvider<UrlValidator> urlValidator;
-
-    @Autowired
     @Qualifier("samlIdPMetadataLocator")
     private ObjectProvider<SamlIdPMetadataLocator> samlIdPMetadataLocator;
 
@@ -147,16 +144,21 @@ public class SamlIdPConfiguration {
     @Qualifier("attributeDefinitionStore")
     private ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore;
 
-    @ConditionalOnMissingBean(name = "samlSingleLogoutServiceLogoutUrlBuilder")
+    @Autowired
+    @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+    private ObjectProvider<SingleLogoutServiceLogoutUrlBuilder> singleLogoutServiceLogoutUrlBuilder;
+
+    @ConditionalOnMissingBean(name = "samlSingleLogoutServiceLogoutUrlBuilderConfigurer")
     @Bean
-    public SingleLogoutServiceLogoutUrlBuilder samlSingleLogoutServiceLogoutUrlBuilder() {
-        return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager.getObject(),
-            defaultSamlRegisteredServiceCachingMetadataResolver.getObject(),
-            urlValidator.getObject());
+    @RefreshScope
+    public SingleLogoutServiceLogoutUrlBuilderConfigurer samlSingleLogoutServiceLogoutUrlBuilderConfigurer() {
+        return () -> new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager.getObject(),
+            defaultSamlRegisteredServiceCachingMetadataResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlLogoutBuilder")
     @Bean
+    @RefreshScope
     public SingleLogoutMessageCreator samlLogoutBuilder() {
         return new SamlIdPProfileSingleLogoutMessageCreator(
             openSamlConfigBean.getObject(),
@@ -172,7 +174,7 @@ public class SamlIdPConfiguration {
         return new SamlIdPSingleLogoutServiceMessageHandler(httpClient.getObject(),
             samlLogoutBuilder(),
             servicesManager.getObject(),
-            samlSingleLogoutServiceLogoutUrlBuilder(),
+            singleLogoutServiceLogoutUrlBuilder.getObject(),
             casProperties.getSlo().isAsynchronous(),
             authenticationServiceSelectionPlan.getObject(),
             defaultSamlRegisteredServiceCachingMetadataResolver.getObject(),
@@ -193,6 +195,13 @@ public class SamlIdPConfiguration {
         return new DefaultSamlArtifactTicketFactory(samlArtifactTicketExpirationPolicy(),
             openSamlConfigBean.getObject(),
             samlIdPServiceFactory.getObject());
+    }
+
+    @ConditionalOnMissingBean(name = "samlArtifactTicketFactoryConfigurer")
+    @Bean
+    @RefreshScope
+    public TicketFactoryExecutionPlanConfigurer samlArtifactTicketFactoryConfigurer() {
+        return this::samlArtifactTicketFactory;
     }
 
     @ConditionalOnMissingBean(name = "samlArtifactTicketExpirationPolicy")
@@ -370,6 +379,13 @@ public class SamlIdPConfiguration {
         return new DefaultSamlAttributeQueryTicketFactory(samlAttributeQueryTicketExpirationPolicy(),
             samlIdPServiceFactory.getObject(),
             openSamlConfigBean.getObject());
+    }
+
+    @ConditionalOnMissingBean(name = "samlAttributeQueryTicketFactoryConfigurer")
+    @Bean
+    @RefreshScope
+    public TicketFactoryExecutionPlanConfigurer samlAttributeQueryTicketFactoryConfigurer() {
+        return this::samlAttributeQueryTicketFactory;
     }
 
     @ConditionalOnMissingBean(name = "samlAttributeQueryTicketExpirationPolicy")

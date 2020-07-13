@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
+import org.apereo.cas.integration.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ClientIdAwareProfileManager;
@@ -45,18 +45,11 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20RefreshTokenGrantType
 import org.apereo.cas.support.oauth.validator.token.OAuth20RevocationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
-import org.apereo.cas.support.oauth.web.audit.AccessTokenResponseAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenGrantRequestAuditResourceResolver;
+import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenResponseAuditResourceResolver;
+import org.apereo.cas.support.oauth.web.audit.OAuth20CodeResponseAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourceResolver;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20CallbackAuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointController;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20RevocationEndpointController;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
-import org.apereo.cas.support.oauth.web.mgmt.OAuth20TokenManagementEndpoint;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.OAuth20DefaultCasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultTokenGenerator;
@@ -85,6 +78,7 @@ import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRende
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenExpirationPolicyBuilder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
@@ -94,8 +88,10 @@ import org.apereo.cas.ticket.code.OAuth20CodeExpirationPolicyBuilder;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.device.OAuth20DefaultDeviceTokenFactory;
+import org.apereo.cas.ticket.device.OAuth20DefaultDeviceUserCodeFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceTokenExpirationPolicyBuilder;
 import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
+import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.OAuth20DefaultRefreshTokenFactory;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenExpirationPolicyBuilder;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenFactory;
@@ -107,6 +103,7 @@ import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -130,13 +127,14 @@ import org.pac4j.http.client.direct.HeaderClient;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.io.ResourceLoader;
 
@@ -403,6 +401,13 @@ public class CasOAuth20Configuration {
             servicesManager.getObject());
     }
 
+    @ConditionalOnMissingBean(name = "defaultAccessTokenFactoryConfigurer")
+    @Bean
+    @RefreshScope
+    public TicketFactoryExecutionPlanConfigurer defaultAccessTokenFactoryConfigurer() {
+        return this::defaultAccessTokenFactory;
+    }
+
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "defaultDeviceTokenFactory")
@@ -410,6 +415,29 @@ public class CasOAuth20Configuration {
         return new OAuth20DefaultDeviceTokenFactory(deviceTokenIdGenerator(), deviceTokenExpirationPolicy(),
             casProperties.getAuthn().getOauth().getDeviceUserCode().getUserCodeLength(),
             servicesManager.getObject());
+    }
+
+    @ConditionalOnMissingBean(name = "defaultDeviceTokenFactoryConfigurer")
+    @Bean
+    @RefreshScope
+    public TicketFactoryExecutionPlanConfigurer defaultDeviceTokenFactoryConfigurer() {
+        return this::defaultDeviceTokenFactory;
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "defaultDeviceUserCodeFactory")
+    public OAuth20DeviceUserCodeFactory defaultDeviceUserCodeFactory() {
+        return new OAuth20DefaultDeviceUserCodeFactory(deviceTokenIdGenerator(), deviceTokenExpirationPolicy(),
+            casProperties.getAuthn().getOauth().getDeviceUserCode().getUserCodeLength(),
+            servicesManager.getObject());
+    }
+
+    @ConditionalOnMissingBean(name = "defaultDeviceUserCodeFactoryConfigurer")
+    @Bean
+    @RefreshScope
+    public TicketFactoryExecutionPlanConfigurer defaultDeviceUserCodeFactoryConfigurer() {
+        return this::defaultDeviceUserCodeFactory;
     }
 
     @Bean
@@ -454,20 +482,17 @@ public class CasOAuth20Configuration {
             oAuthCodeExpirationPolicy(), servicesManager.getObject());
     }
 
+    @ConditionalOnMissingBean(name = "defaultOAuthCodeFactoryConfigurer")
+    @Bean
+    @RefreshScope
+    public TicketFactoryExecutionPlanConfigurer defaultOAuthCodeFactoryConfigurer() {
+        return this::defaultOAuthCodeFactory;
+    }
+
     @ConditionalOnMissingBean(name = "profileScopeToAttributesFilter")
     @Bean
     public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter() {
         return new DefaultOAuth20ProfileScopeToAttributesFilter();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "callbackAuthorizeController")
-    @RefreshScope
-    public OAuth20CallbackAuthorizeEndpointController callbackAuthorizeController() {
-        val context = buildConfigurationContext()
-            .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor())
-            .build();
-        return new OAuth20CallbackAuthorizeEndpointController(context);
     }
 
     @ConditionalOnMissingBean(name = "oauthTokenGenerator")
@@ -476,14 +501,15 @@ public class CasOAuth20Configuration {
     public OAuth20TokenGenerator oauthTokenGenerator() {
         return new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory(),
             defaultDeviceTokenFactory(),
+            defaultDeviceUserCodeFactory(),
             defaultRefreshTokenFactory(),
-            ticketRegistry.getObject(),
+            centralAuthenticationService.getObject(),
             casProperties);
     }
 
     @Bean
     public Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors() {
-        val context = buildConfigurationContext().build();
+        val context = oauth20ConfigurationContext();
         val pkceExt = new AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(context);
         val authzCodeExt = new AccessTokenAuthorizationCodeGrantRequestExtractor(context);
         val refreshTokenExt = new AccessTokenRefreshTokenGrantRequestExtractor(context);
@@ -495,37 +521,11 @@ public class CasOAuth20Configuration {
 
     @ConditionalOnMissingBean(name = "accessTokenGrantAuditableRequestExtractor")
     @Bean
+    @RefreshScope
     public AuditableExecution accessTokenGrantAuditableRequestExtractor() {
         return new AccessTokenGrantAuditableRequestExtractor(accessTokenGrantRequestExtractors());
     }
 
-    @ConditionalOnMissingBean(name = "introspectionEndpointController")
-    @Bean
-    public OAuth20IntrospectionEndpointController introspectionEndpointController() {
-        val context = buildConfigurationContext()
-            .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor())
-            .build();
-        return new OAuth20IntrospectionEndpointController(context);
-    }
-
-    @ConditionalOnMissingBean(name = "accessTokenController")
-    @Bean
-    public OAuth20AccessTokenEndpointController accessTokenController() {
-        val context = buildConfigurationContext()
-            .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor())
-            .build();
-        return new OAuth20AccessTokenEndpointController(context);
-    }
-
-
-    @ConditionalOnMissingBean(name = "deviceUserCodeApprovalEndpointController")
-    @Bean
-    public OAuth20DeviceUserCodeApprovalEndpointController deviceUserCodeApprovalEndpointController() {
-        val context = buildConfigurationContext()
-            .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor())
-            .build();
-        return new OAuth20DeviceUserCodeApprovalEndpointController(context);
-    }
 
     @ConditionalOnMissingBean(name = "oauthUserProfileViewRenderer")
     @Bean
@@ -542,23 +542,6 @@ public class CasOAuth20Configuration {
             profileScopeToAttributesFilter());
     }
 
-    @ConditionalOnMissingBean(name = "profileController")
-    @Bean
-    public OAuth20UserProfileEndpointController profileController() {
-        val context = buildConfigurationContext()
-            .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor())
-            .build();
-        return new OAuth20UserProfileEndpointController(context);
-    }
-
-    @ConditionalOnMissingBean(name = "oauthRevocationController")
-    @Bean
-    public OAuth20RevocationEndpointController oauthRevocationController() {
-        val context = buildConfigurationContext()
-            .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor())
-            .build();
-        return new OAuth20RevocationEndpointController(context);
-    }
 
     @ConditionalOnMissingBean(name = "oauthAuthorizationResponseBuilders")
     @Bean
@@ -583,19 +566,17 @@ public class CasOAuth20Configuration {
 
     @Bean
     @ConditionalOnMissingBean(name = "oauth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator")
+    @RefreshScope
     public OAuth20TokenRequestValidator oauth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator() {
-        val context = buildConfigurationContext()
-            .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor())
-            .build();
+        val context = oauth20ConfigurationContext();
         return new OAuth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator(context);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "oauthAuthorizationCodeGrantTypeTokenRequestValidator")
+    @RefreshScope
     public OAuth20TokenRequestValidator oauthAuthorizationCodeGrantTypeTokenRequestValidator() {
-        val context = buildConfigurationContext()
-            .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor())
-            .build();
+        val context = oauth20ConfigurationContext();
         return new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(context);
     }
 
@@ -619,20 +600,15 @@ public class CasOAuth20Configuration {
     @ConditionalOnMissingBean(name = "oauthRefreshTokenGrantTypeTokenRequestValidator")
     @RefreshScope
     public OAuth20TokenRequestValidator oauthRefreshTokenGrantTypeTokenRequestValidator() {
-        val context = buildConfigurationContext()
-            .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor())
-            .build();
+        val context = oauth20ConfigurationContext();
         return new OAuth20RefreshTokenGrantTypeTokenRequestValidator(context);
     }
-
 
     @Bean
     @ConditionalOnMissingBean(name = "oauthPasswordGrantTypeTokenRequestValidator")
     @RefreshScope
     public OAuth20TokenRequestValidator oauthPasswordGrantTypeTokenRequestValidator() {
-        val context = buildConfigurationContext()
-            .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor())
-            .build();
+        val context = oauth20ConfigurationContext();
         return new OAuth20PasswordGrantTypeTokenRequestValidator(context);
     }
 
@@ -640,9 +616,7 @@ public class CasOAuth20Configuration {
     @ConditionalOnMissingBean(name = "oauthClientCredentialsGrantTypeTokenRequestValidator")
     @RefreshScope
     public OAuth20TokenRequestValidator oauthClientCredentialsGrantTypeTokenRequestValidator() {
-        val context = buildConfigurationContext()
-            .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor())
-            .build();
+        val context = oauth20ConfigurationContext();
         return new OAuth20ClientCredentialsGrantTypeTokenRequestValidator(context);
     }
 
@@ -735,15 +709,6 @@ public class CasOAuth20Configuration {
             defaultOAuthCodeFactory(), servicesManager.getObject());
     }
 
-    @ConditionalOnMissingBean(name = "authorizeController")
-    @Bean
-    @RefreshScope
-    public OAuth20AuthorizeEndpointController authorizeController() {
-        val context = buildConfigurationContext()
-            .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor())
-            .build();
-        return new OAuth20AuthorizeEndpointController(context);
-    }
 
     @ConditionalOnMissingBean(name = "oauthPrincipalFactory")
     @Bean
@@ -758,6 +723,13 @@ public class CasOAuth20Configuration {
     public OAuth20RefreshTokenFactory defaultRefreshTokenFactory() {
         return new OAuth20DefaultRefreshTokenFactory(refreshTokenIdGenerator(),
             refreshTokenExpirationPolicy(), servicesManager.getObject());
+    }
+
+    @ConditionalOnMissingBean(name = "defaultRefreshTokenFactoryConfigurer")
+    @Bean
+    @RefreshScope
+    public TicketFactoryExecutionPlanConfigurer defaultRefreshTokenFactoryConfigurer() {
+        return this::defaultRefreshTokenFactory;
     }
 
     @Bean
@@ -808,14 +780,14 @@ public class CasOAuth20Configuration {
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
                     AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
             plan.registerAuditResourceResolver("OAUTH2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER",
-                new AccessTokenResponseAuditResourceResolver());
-        };
-    }
+                new OAuth20AccessTokenResponseAuditResourceResolver());
 
-    @Bean
-    @ConditionalOnAvailableEndpoint
-    public OAuth20TokenManagementEndpoint oAuth20TokenManagementEndpoint() {
-        return new OAuth20TokenManagementEndpoint(casProperties, ticketRegistry.getObject(), accessTokenJwtBuilder());
+            plan.registerAuditActionResolver("OAUTH2_CODE_RESPONSE_ACTION_RESOLVER",
+                new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
+                    AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
+            plan.registerAuditResourceResolver("OAUTH2_CODE_RESPONSE_RESOURCE_RESOLVER",
+                new OAuth20CodeResponseAuditResourceResolver());
+        };
     }
 
     @Bean
@@ -848,7 +820,10 @@ public class CasOAuth20Configuration {
     public SessionStore<JEEContext> oauthDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getOauth().isReplicateSessions();
         if (replicate) {
-            return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(), casProperties);
+            val cookie = casProperties.getSessionReplication().getCookie();
+            val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
+            return new DistributedJEESessionStore(centralAuthenticationService.getObject(),
+                ticketFactory.getObject(), cookieGenerator);
         }
         return new JEESessionStore();
     }
@@ -878,7 +853,9 @@ public class CasOAuth20Configuration {
         return CipherExecutor.noOp();
     }
 
-    private OAuth20ConfigurationContext.OAuth20ConfigurationContextBuilder buildConfigurationContext() {
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public OAuth20ConfigurationContext oauth20ConfigurationContext() {
         return OAuth20ConfigurationContext.builder()
             .registeredServiceCipherExecutor(oauthRegisteredServiceCipherExecutor())
             .sessionStore(oauthDistributedSessionStore())
@@ -886,6 +863,7 @@ public class CasOAuth20Configuration {
             .ticketRegistry(ticketRegistry.getObject())
             .accessTokenFactory(defaultAccessTokenFactory())
             .deviceTokenFactory(defaultDeviceTokenFactory())
+            .deviceUserCodeFactory(defaultDeviceUserCodeFactory())
             .principalFactory(oauthPrincipalFactory())
             .webApplicationServiceServiceFactory(webApplicationServiceFactory.getObject())
             .casProperties(casProperties)
@@ -907,6 +885,7 @@ public class CasOAuth20Configuration {
             .consentApprovalViewResolver(consentApprovalViewResolver())
             .authenticationBuilder(oauthCasAuthenticationBuilder())
             .oauthAuthorizationResponseBuilders(oauthAuthorizationResponseBuilders())
-            .oauthRequestValidators(oauthAuthorizationRequestValidators());
+            .oauthRequestValidators(oauthAuthorizationRequestValidators())
+            .build();
     }
 }

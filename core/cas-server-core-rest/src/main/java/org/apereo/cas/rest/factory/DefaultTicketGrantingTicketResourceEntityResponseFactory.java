@@ -58,6 +58,7 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
         actionResolverName = "REST_API_TICKET_GRANTING_TICKET_ACTION_RESOLVER",
         resourceResolverName = "REST_API_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Override
+    @SuppressWarnings("JdkObsolete")
     public ResponseEntity<String> build(final TicketGrantingTicket ticketGrantingTicket, final HttpServletRequest request) throws Exception {
         val ticketReference = new URI(request.getRequestURL().toString() + '/' + ticketGrantingTicket.getId());
         val headers = new HttpHeaders();

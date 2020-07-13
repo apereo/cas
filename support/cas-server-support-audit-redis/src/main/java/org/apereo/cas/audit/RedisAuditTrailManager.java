@@ -2,6 +2,7 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -44,11 +45,12 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
             val redisKey = getAuditRedisKey(audit);
             this.redisTemplate.boundValueOps(redisKey).set(audit);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
     @Override
+    @SuppressWarnings("JdkObsolete")
     public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
         try {
             val dt = DateTimeUtils.dateOf(localDate);
@@ -61,7 +63,7 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
                 .filter(audit -> audit.getWhenActionWasPerformed().compareTo(dt) >= 0)
                 .collect(Collectors.toSet());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new HashSet<>(0);
     }
@@ -71,6 +73,7 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
         getAuditRedisKeys().forEach(this.redisTemplate::delete);
     }
 
+    @SuppressWarnings("JdkObsolete")
     private static String getAuditRedisKey(final AuditActionContext context) {
         return CAS_AUDIT_CONTEXT_PREFIX + context.getWhenActionWasPerformed().getTime();
     }

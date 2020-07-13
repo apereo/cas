@@ -2,12 +2,14 @@ package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
+import org.apereo.cas.configuration.model.support.aup.InMemoryAcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,6 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Getter
+@Tag("Simple")
 public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
 
     @Autowired
@@ -58,14 +61,14 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
     @Test
     public void verifyActionDefaultGlobal() {
         val properties = new AcceptableUsagePolicyProperties();
-        properties.getInMemory().setScope(AcceptableUsagePolicyProperties.InMemory.Scope.GLOBAL);
+        properties.getInMemory().setScope(InMemoryAcceptableUsagePolicyProperties.Scope.GLOBAL);
         verifyAction(properties);
     }
 
     @Test
     public void verifyActionDefaultAuthentication() {
         val properties = new AcceptableUsagePolicyProperties();
-        properties.getInMemory().setScope(AcceptableUsagePolicyProperties.InMemory.Scope.AUTHENTICATION);
+        properties.getInMemory().setScope(InMemoryAcceptableUsagePolicyProperties.Scope.AUTHENTICATION);
         verifyAction(properties);
     }
 

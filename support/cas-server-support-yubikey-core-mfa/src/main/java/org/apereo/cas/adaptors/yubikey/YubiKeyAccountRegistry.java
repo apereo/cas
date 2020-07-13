@@ -31,7 +31,7 @@ public interface YubiKeyAccountRegistry {
      * Is yubi key registered for boolean.
      *
      * @param uid the uid
-     * @return the boolean
+     * @return true/false
      */
     boolean isYubiKeyRegisteredFor(String uid);
 
@@ -40,7 +40,7 @@ public interface YubiKeyAccountRegistry {
      *
      * @param uid   the uid
      * @param token the yubikey token
-     * @return the boolean
+     * @return true/false
      */
     boolean registerAccountFor(String uid, String token);
 

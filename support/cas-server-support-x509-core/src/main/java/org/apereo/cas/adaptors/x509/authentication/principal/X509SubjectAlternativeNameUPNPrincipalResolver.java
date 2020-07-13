@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -44,7 +45,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
             val upnString = X509UPNExtractorUtils.extractUPNString(certificate);
             return StringUtils.isNotBlank(upnString) ? upnString : getAlternatePrincipal(certificate);
         } catch (final CertificateParsingException e) {
-            LOGGER.error("Error is encountered while trying to retrieve subject alternative names collection from certificate", e);
+            LoggingUtils.error(LOGGER, e);
             return getAlternatePrincipal(certificate);
         }
     }

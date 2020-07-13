@@ -25,6 +25,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceToken;
 import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
+import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -82,8 +83,6 @@ public class OAuth20ConfigurationContext {
 
     private final ExpirationPolicyBuilder<OAuth20DeviceToken> deviceTokenExpirationPolicy;
 
-    private AuditableExecution accessTokenGrantAuditableRequestExtractor;
-
     private final OAuth20CodeFactory oAuthCodeFactory;
 
     private final ConsentApprovalViewResolver consentApprovalViewResolver;
@@ -99,6 +98,8 @@ public class OAuth20ConfigurationContext {
     private final Config oauthConfig;
 
     private final OAuth20DeviceTokenFactory deviceTokenFactory;
+
+    private final OAuth20DeviceUserCodeFactory deviceUserCodeFactory;
 
     private final OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver;
 

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.handler.support.jaas;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import com.google.common.base.Splitter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -63,7 +65,7 @@ public class AccountsPreDefinedLoginModule implements LoginModule {
         try {
             callbackHandler.handle(new Callback[]{nameCallback, passwordCallback});
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException(e.getMessage());
         }
 

@@ -1,5 +1,7 @@
 package org.apereo.cas.aws;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -92,7 +94,7 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
                 val f = credentialPropertiesFile.getFile();
                 chain.add(new PropertiesFileCredentialsProvider(f.getCanonicalPath()));
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                LoggingUtils.error(LOGGER, e);
             }
         }
         if (StringUtils.isNotBlank(profilePath) && StringUtils.isNotBlank(profileName)) {
@@ -142,7 +144,7 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
         try {
             func.apply(null);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
     }
 

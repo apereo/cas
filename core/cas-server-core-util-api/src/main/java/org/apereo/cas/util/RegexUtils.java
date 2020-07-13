@@ -109,7 +109,7 @@ public class RegexUtils {
      * @param pattern       the pattern
      * @param value         the value
      * @param completeMatch the complete match
-     * @return the boolean
+     * @return true/false
      */
     public static boolean matches(final Pattern pattern, final String value, final boolean completeMatch) {
         val matcher = pattern.matcher(value);
@@ -137,7 +137,7 @@ public class RegexUtils {
      *
      * @param pattern the pattern
      * @param string  the string
-     * @return the boolean
+     * @return true/false
      */
     public static boolean find(final String pattern, final String string) {
         return createPattern(pattern, Pattern.CASE_INSENSITIVE).matcher(string).find();

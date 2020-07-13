@@ -44,7 +44,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("casAcceptableUsagePolicyWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.acceptableUsagePolicy", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "cas.acceptable-usage-policy", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasAcceptableUsagePolicyWebflowConfiguration {
 
     @Autowired

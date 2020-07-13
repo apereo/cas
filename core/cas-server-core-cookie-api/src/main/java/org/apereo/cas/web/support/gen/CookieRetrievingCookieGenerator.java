@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support.gen;
 
 import org.apereo.cas.authentication.RememberMeCredential;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.cookie.CookieValueManager;
@@ -17,7 +18,6 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
@@ -65,7 +65,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
      * Is remember me authentication ?
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static Boolean isRememberMeAuthentication(final RequestContext requestContext) {
         if (isRememberMeProvidedInRequest(requestContext)) {
@@ -164,7 +164,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                 .map(ck -> this.casCookieValueManager.obtainCookieValue(ck, request))
                 .orElse(null);
         } catch (final Exception e) {
-            LOGGER.debug(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
         return null;
     }

@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.config.EhcacheTicketRegistryConfiguration;
 import org.apereo.cas.config.EhcacheTicketRegistryTicketCatalogConfiguration;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
 import net.sf.ehcache.distribution.CacheReplicator;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 
 import static org.mockito.Mockito.*;
 
@@ -27,25 +29,18 @@ import static org.mockito.Mockito.*;
     EhcacheTicketRegistryConfiguration.class,
     EhcacheTicketRegistryTicketCatalogConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
-}, properties = {
-    "cas.ticket.registry.ehcache.shared=true",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
+}, properties = "cas.ticket.registry.ehcache.shared=true")
 @Tag("Ehcache")
 @Deprecated(since = "6.2.0")
+@Getter
 public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
-
-    @Override
-    public TicketRegistry getNewTicketRegistry() {
-        return ticketRegistry;
-    }
+    private TicketRegistry newTicketRegistry;
 
     @TestConfiguration("EhcacheTicketRegistryTestConfiguration")
+    @Lazy(false)
     public static class EhcacheTicketRegistryTestConfiguration {
         @Bean
         @SneakyThrows

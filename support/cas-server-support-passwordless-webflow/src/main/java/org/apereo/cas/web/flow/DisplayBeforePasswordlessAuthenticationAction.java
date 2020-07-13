@@ -4,8 +4,8 @@ import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
+import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;

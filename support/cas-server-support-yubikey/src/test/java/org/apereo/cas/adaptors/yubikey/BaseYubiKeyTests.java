@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -19,6 +20,8 @@ import org.apereo.cas.config.YubiKeyConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.authentication.YubiKeyAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.support.authentication.YubiKeyAuthenticationMultifactorProviderBypassConfiguration;
+import org.apereo.cas.config.support.authentication.YubiKeyComponentSerializationConfiguration;
+import org.apereo.cas.config.support.authentication.YubiKeyRestConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
@@ -46,11 +49,9 @@ import org.springframework.context.annotation.Import;
  */
 @SpringBootTest(classes = BaseYubiKeyTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.mfa.yubikey.clientId=18423",
-        "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As=",
-        "cas.authn.mfa.yubikey.jsonFile=file:/tmp/yubikey.json",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
+        "cas.authn.mfa.yubikey.client-id=18423",
+        "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As=",
+        "cas.authn.mfa.yubikey.json-file=file:/tmp/yubikey.json"
     })
 @Tag("MFA")
 public abstract class BaseYubiKeyTests {
@@ -68,6 +69,8 @@ public abstract class BaseYubiKeyTests {
         JsonYubiKeyAccountRegistryTests.JsonYubiKeyAccountRegistryTestConfiguration.class,
         YubiKeyAuthenticationEventExecutionPlanConfiguration.class,
         YubiKeyAuthenticationMultifactorProviderBypassConfiguration.class,
+        YubiKeyComponentSerializationConfiguration.class,
+        YubiKeyRestConfiguration.class,
         YubiKeyConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasWebflowContextConfiguration.class,
@@ -86,6 +89,7 @@ public abstract class BaseYubiKeyTests {
         CasPersonDirectoryTestConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCookieConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,

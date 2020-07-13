@@ -13,6 +13,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * This is {@link RestMultifactorAuthenticationTrustConfiguration}.
@@ -39,6 +40,7 @@ public class RestMultifactorAuthenticationTrustConfiguration {
     @Bean
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
         return new RestMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
-            mfaTrustCipherExecutor.getObject(), keyGenerationStrategy.getObject());
+            mfaTrustCipherExecutor.getObject(), keyGenerationStrategy.getObject(),
+            new RestTemplate());
     }
 }

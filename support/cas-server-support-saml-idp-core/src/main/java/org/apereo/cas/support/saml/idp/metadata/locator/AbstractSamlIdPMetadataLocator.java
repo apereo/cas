@@ -2,14 +2,18 @@ package org.apereo.cas.support.saml.idp.metadata.locator;
 
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 
@@ -26,7 +30,8 @@ import java.util.Optional;
  */
 @Getter
 @Setter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataLocator {
 
     private static final String CACHE_KEY_METADATA = "CasSamlIdentityProviderMetadata";
@@ -39,16 +44,32 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     private Cache<String, SamlIdPMetadataDocument> metadataCache;
 
     private static Resource getResource(final String data) {
+        if (StringUtils.isBlank(data)) {
+            LOGGER.warn("Cannot determine resource based on blank/empty data");
+            return ResourceUtils.EMPTY_RESOURCE;
+        }
         return new InputStreamResource(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    private static String buildCacheKey(final Optional<SamlRegisteredService> registeredService) {
+        if (registeredService.isEmpty()) {
+            LOGGER.trace("No registered service provided; using default cache key for metadata");
+            return CACHE_KEY_METADATA;
+        }
+        val samlRegisteredService = registeredService.get();
+        val key = CACHE_KEY_METADATA + '_' + samlRegisteredService.getId() + '_' + samlRegisteredService.getName();
+        LOGGER.trace("Using {} as cache key for metadata for service definition", key);
+        return key;
     }
 
     @Override
     public Resource resolveSigningCertificate(final Optional<SamlRegisteredService> registeredService) {
         val metadataDocument = fetch(registeredService);
         if (metadataDocument != null && metadataDocument.isValid()) {
+            LOGGER.trace("Fetching signing certificate resource for metadata document [{}]", metadataDocument.getId());
             return getResource(metadataDocument.getSigningCertificateDecoded());
         }
-        return null;
+        return ResourceUtils.EMPTY_RESOURCE;
     }
 
     @Override
@@ -56,27 +77,30 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
         val metadataDocument = fetch(registeredService);
         if (metadataDocument != null && metadataDocument.isValid()) {
             val data = metadataDocument.getSigningKey();
+            LOGGER.trace("Fetching signing key resource for metadata document [{}]", metadataDocument.getId());
             return getResource(metadataCipherExecutor.decode(data));
         }
-        return null;
+        return ResourceUtils.EMPTY_RESOURCE;
     }
 
     @Override
     public Resource resolveMetadata(final Optional<SamlRegisteredService> registeredService) {
         val metadataDocument = fetch(registeredService);
         if (metadataDocument != null && metadataDocument.isValid()) {
+            LOGGER.trace("Fetching metadata resource for metadata document [{}]", metadataDocument.getId());
             return getResource(metadataDocument.getMetadataDecoded());
         }
-        return null;
+        return ResourceUtils.EMPTY_RESOURCE;
     }
 
     @Override
     public Resource getEncryptionCertificate(final Optional<SamlRegisteredService> registeredService) {
         val metadataDocument = fetch(registeredService);
         if (metadataDocument != null && metadataDocument.isValid()) {
+            LOGGER.trace("Fetching encryption certificate resource for metadata document [{}]", metadataDocument.getId());
             return getResource(metadataDocument.getEncryptionCertificateDecoded());
         }
-        return null;
+        return ResourceUtils.EMPTY_RESOURCE;
     }
 
     @Override
@@ -84,9 +108,10 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
         val metadataDocument = fetch(registeredService);
         if (metadataDocument != null && metadataDocument.isValid()) {
             val data = metadataDocument.getEncryptionKey();
+            LOGGER.trace("Fetching encryption key resource for metadata document [{}]", metadataDocument.getId());
             return getResource(metadataCipherExecutor.decode(data));
         }
-        return null;
+        return ResourceUtils.EMPTY_RESOURCE;
     }
 
     @Override
@@ -103,12 +128,15 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
         val key = buildCacheKey(registeredService);
 
         if (map.containsKey(key)) {
+            LOGGER.trace("Found SAML IdP metadata document from cache key [{}]", key);
             return map.get(key);
         }
         val metadataDocument = fetchInternal(registeredService);
         if (metadataDocument != null && metadataDocument.isValid()) {
+            LOGGER.trace("Fetched and cached SAML IdP metadata document [{}] under key [{}]", metadataDocument, key);
             map.put(key, metadataDocument);
         }
+        LOGGER.trace("SAML IdP metadata document [{}] is considered invalid", metadataDocument);
         return metadataDocument;
     }
 
@@ -128,13 +156,5 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
                 .expireAfterAccess(Duration.ofHours(1))
                 .build();
         }
-    }
-
-    private static String buildCacheKey(final Optional<SamlRegisteredService> registeredService) {
-        if (registeredService.isEmpty()) {
-            return CACHE_KEY_METADATA;
-        }
-        val samlRegisteredService = registeredService.get();
-        return CACHE_KEY_METADATA + '_' + samlRegisteredService.getId() + '_' + samlRegisteredService.getName();
     }
 }

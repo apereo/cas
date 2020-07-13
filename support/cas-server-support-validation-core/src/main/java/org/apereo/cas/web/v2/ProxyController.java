@@ -68,7 +68,7 @@ public class ProxyController extends AbstractDelegateController {
     }
 
     @Override
-    @GetMapping(path = "/proxy")
+    @GetMapping(path = CasProtocolConstants.ENDPOINT_PROXY)
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
         val proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET);
         val targetService = getTargetService(request);

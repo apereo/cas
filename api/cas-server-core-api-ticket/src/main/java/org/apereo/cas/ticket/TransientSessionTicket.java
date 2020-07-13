@@ -64,7 +64,7 @@ public interface TransientSessionTicket extends Ticket {
      * Contains property boolean.
      *
      * @param name the name
-     * @return the boolean
+     * @return true/false
      */
     boolean contains(String name);
 

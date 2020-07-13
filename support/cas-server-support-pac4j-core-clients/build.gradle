@@ -12,14 +12,14 @@ dependencies {
     
     api project(":api:cas-server-core-api")
     
-    implementation libraries.pac4j
+    implementation libraries.pac4joidcoauth
     implementation libraries.pac4jsaml
     implementation libraries.pac4jcore
     implementation libraries.pac4jcas
     implementation libraries.nimbus
     implementation libraries.opensaml
     implementation libraries.dropwizard
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
     
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-authentication")

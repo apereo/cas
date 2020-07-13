@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -54,7 +55,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
                 return new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
             }
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
         return null;
     }
@@ -121,7 +122,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
             LOGGER.trace("CAS assertion to use for building ECP SAML response is [{}]", casAssertion);
             buildSamlResponse(response, request, authenticationContext, casAssertion, binding);
         } catch (final AuthenticationException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             val error = e.getHandlerErrors().values()
                 .stream()
                 .map(Throwable::getMessage)
@@ -129,7 +130,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
                 .collect(Collectors.joining(","));
             buildEcpFaultResponse(response, request, Pair.of(authnRequest, error), soapContext);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             buildEcpFaultResponse(response, request, Pair.of(authnRequest, e.getMessage()), soapContext);
         }
     }

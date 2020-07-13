@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.config.AmazonCognitoAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
@@ -22,6 +23,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,18 +48,20 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasCoreUtilConfiguration.class,
     AmazonCognitoAuthenticationConfiguration.class
 }, properties = {
-    "cas.authn.cognito.userPoolId=us-west-2_igeBNHRsb",
+    "cas.authn.cognito.user-pool-id=us-west-2_igeBNHRsb",
     "cas.authn.cognito.region=us-west-2",
-    "cas.authn.cognito.clientExecutionTimeout=30000",
-    "cas.authn.cognito.credentialAccessKey=test",
-    "cas.authn.cognito.credentialSecretKey=test",
-    "cas.authn.cognito.clientId=4o5qr8egumc72iv6qibm8foeh6"
+    "cas.authn.cognito.client-execution-timeout=30000",
+    "cas.authn.cognito.credential-access-key=test",
+    "cas.authn.cognito.credential-secret-key=test",
+    "cas.authn.cognito.client-id=4o5qr8egumc72iv6qibm8foeh6"
 })
+@Tag("AmazonWebServices")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AmazonCognitoAuthenticationAuthenticationHandlerTests {
     @Autowired
@@ -153,6 +157,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandlerTests {
     }
 
     @Test
+    @SuppressWarnings("JdkObsolete")
     public void verifyOK() throws Exception {
         val jwtProcessor = getConfigurableJWTProcessor("casuser");
 

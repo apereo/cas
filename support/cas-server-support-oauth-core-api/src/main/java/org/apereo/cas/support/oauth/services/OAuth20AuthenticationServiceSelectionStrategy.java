@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +49,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
                 .filter(p -> p.getName().equals(OAuth20Constants.CLIENT_ID))
                 .findFirst();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage());
+            LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
     }
@@ -61,7 +62,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
                 .filter(p -> p.getName().equals(OAuth20Constants.REDIRECT_URI))
                 .findFirst();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage());
+            LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
     }
@@ -75,7 +76,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
                     .equals(OAuth20Constants.GRANT_TYPE))
                 .findFirst();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage());
+            LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
     }

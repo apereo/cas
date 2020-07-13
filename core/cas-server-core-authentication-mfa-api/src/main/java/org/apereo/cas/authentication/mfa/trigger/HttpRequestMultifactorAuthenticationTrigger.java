@@ -46,8 +46,8 @@ public class HttpRequestMultifactorAuthenticationTrigger implements MultifactorA
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest, final Service service) {
-        if (service == null || authentication == null) {
-            LOGGER.debug("No service or authentication is available to determine event for principal");
+        if (authentication == null) {
+            LOGGER.debug("No authentication is available to determine event for principal");
             return Optional.empty();
         }
 
@@ -78,6 +78,7 @@ public class HttpRequestMultifactorAuthenticationTrigger implements MultifactorA
      * @param request the request
      * @return the list
      */
+    @SuppressWarnings("JdkObsolete")
     protected List<String> resolveEventFromHttpRequest(final HttpServletRequest request) {
         val mfaRequestHeader = casProperties.getAuthn().getMfa().getRequestHeader();
         val headers = request.getHeaders(mfaRequestHeader);

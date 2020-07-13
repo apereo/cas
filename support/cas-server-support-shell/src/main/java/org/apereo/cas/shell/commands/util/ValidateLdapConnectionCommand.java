@@ -1,5 +1,7 @@
 package org.apereo.cas.shell.commands.util;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
@@ -39,7 +41,7 @@ public class ValidateLdapConnectionCommand {
      * @param searchFilter   the search filter
      * @param userPassword   the user password
      * @param userAttributes the user attributes
-     * @return the boolean
+     * @return true/false
      */
     @ShellMethod(key = "validate-ldap", value = "Test connections to an LDAP server to verify connectivity, SSL, etc")
     public static boolean validateLdap(
@@ -62,11 +64,12 @@ public class ValidateLdapConnectionCommand {
         try {
             return connect(url, bindDn, bindCredential, baseDn, searchFilter, userAttributes, userPassword);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
 
+    @SuppressWarnings("JdkObsolete")
     private static boolean connect(final String ldapUrl,
                                    final String bindDn,
                                    final String bindCredential,

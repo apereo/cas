@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -13,7 +14,7 @@ import lombok.RequiredArgsConstructor;
  * @since 6.1.0
  * @author Dmitriy Kopylenko
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseTicketDefinitionBuilderSupportConfiguration extends CasCoreTicketCatalogConfiguration {
 
     private final CasConfigurationProperties casProperties;

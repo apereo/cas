@@ -4,7 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.yubikey.YubikeyAccountCipherExecutor;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowEventResolver;
-import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorTrustWebflowConfigurer;
+import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -54,6 +54,7 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class YubiKeyConfiguration {
+    private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -101,6 +102,7 @@ public class YubiKeyConfiguration {
     private ObjectProvider<CasCookieBuilder> warnCookieGenerator;
 
     @Bean
+    @ConditionalOnMissingBean(name = "yubikeyFlowRegistry")
     public FlowDefinitionRegistry yubikeyFlowRegistry() {
         val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices.getObject());
         builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
@@ -119,10 +121,12 @@ public class YubiKeyConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer yubikeyMultifactorWebflowConfigurer() {
-        return new YubiKeyMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
+        val cfg = new YubiKeyMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), yubikeyFlowRegistry(),
             applicationContext, casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+        cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
+        return cfg;
     }
 
     @Bean
@@ -169,7 +173,7 @@ public class YubiKeyConfiguration {
      * The Yubikey multifactor trust configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.yubikey", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.yubikey", name = "trusted-device-enabled", havingValue = "true", matchIfMissing = true)
     @Configuration("yubiMultifactorTrustConfiguration")
     public class YubiKeyMultifactorTrustConfiguration {
 
@@ -177,15 +181,18 @@ public class YubiKeyConfiguration {
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer yubiMultifactorTrustWebflowConfigurer() {
-            val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-            return new YubiKeyMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
-                deviceRegistrationEnabled, yubikeyFlowRegistry(),
+            val cfg = new YubiKeyMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices.getObject(),
+                yubikeyFlowRegistry(),
                 loginFlowDefinitionRegistry.getObject(),
-                applicationContext, casProperties,
+                applicationContext,
+                casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+            cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
+            return cfg;
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "yubiMultifactorCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer yubiMultifactorCasWebflowExecutionPlanConfigurer() {
             return plan -> plan.registerWebflowConfigurer(yubiMultifactorTrustWebflowConfigurer());
         }

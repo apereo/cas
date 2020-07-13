@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     RedisServerTicketRegistryTests.class,
-    SentinelServerTicketRegistryTests.class
+    RedisSentinelServerTicketRegistryTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllRedisTicketRegistryTestsSuite {

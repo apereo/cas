@@ -121,7 +121,7 @@ public class CoreAuthenticationTestUtils {
 
     public static Principal getPrincipal(final String name) {
         val backingMap = getAttributeRepository().getBackingMap();
-        return getPrincipal(name, (Map) backingMap);
+        return getPrincipal(name, backingMap);
     }
 
     public static Principal getPrincipal(final String name, final Map<String, List<Object>> attributes) {

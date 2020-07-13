@@ -5,12 +5,11 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import org.apereo.cas.util.io.WatcherService;
 
 import lombok.SneakyThrows;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.ArrayList;
-
-import static org.mockito.Mockito.*;
 
 /**
  * Test cases for {@link YamlServiceRegistry}.
@@ -23,13 +22,15 @@ public class YamlServiceRegistryTests extends AbstractResourceBasedServiceRegist
 
     @Override
     @SneakyThrows
-    public ServiceRegistry getNewServiceRegistry() {
-        dao = new YamlServiceRegistry(RESOURCE,
+    public ResourceBasedServiceRegistry getNewServiceRegistry() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        newServiceRegistry = new YamlServiceRegistry(RESOURCE,
             WatcherService.noOp(),
-            mock(ApplicationEventPublisher.class),
+            appCtx,
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
-        return dao;
+        return newServiceRegistry;
     }
 }

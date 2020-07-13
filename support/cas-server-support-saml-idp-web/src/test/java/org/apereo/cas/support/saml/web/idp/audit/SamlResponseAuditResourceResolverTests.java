@@ -13,8 +13,6 @@ import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Fault;
 import org.opensaml.soap.soap11.FaultActor;
 import org.opensaml.soap.soap11.FaultString;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -25,7 +23,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
 @Tag("SAML")
 public class SamlResponseAuditResourceResolverTests {
     @Test

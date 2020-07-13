@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.u2f;
 
+import org.apereo.cas.adaptors.u2f.storage.MariaDbU2FJpaDeviceRepositoryTests;
 import org.apereo.cas.adaptors.u2f.storage.MySQLU2FJpaDeviceRepositoryTests;
 import org.apereo.cas.adaptors.u2f.storage.U2FJpaDeviceRepositoryTests;
 
@@ -16,6 +17,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     MySQLU2FJpaDeviceRepositoryTests.class,
+    MariaDbU2FJpaDeviceRepositoryTests.class,
     U2FJpaDeviceRepositoryTests.class
 })
 @RunWith(JUnitPlatform.class)

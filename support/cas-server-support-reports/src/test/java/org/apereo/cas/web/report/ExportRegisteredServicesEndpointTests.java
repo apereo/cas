@@ -3,6 +3,7 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,11 +19,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@TestPropertySource(properties = {
-    "management.endpoint.exportRegisteredServices.enabled=true",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
+@TestPropertySource(properties = "management.endpoint.exportRegisteredServices.enabled=true")
+@Tag("ActuatorEndpoint")
 public class ExportRegisteredServicesEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("exportRegisteredServicesEndpoint")

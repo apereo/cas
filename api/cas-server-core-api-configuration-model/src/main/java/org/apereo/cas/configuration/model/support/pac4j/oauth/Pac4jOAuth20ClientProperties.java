@@ -44,6 +44,11 @@ public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientPropert
     private String profileUrl;
 
     /**
+     * The scope requested from the identity provider.
+     */
+    private String scope;
+
+    /**
      * Profile path portion of the profile endpoint of the provider.
      */
     private String profilePath;
@@ -54,6 +59,11 @@ public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientPropert
     private String profileVerb = "POST";
 
     /**
+     * Response type determines the authentication flow on the Authentication Server.
+     */
+    private String responseType = "code";
+
+    /**
      * Profile attributes to request and collect in form of key-value pairs.
      */
     private Map<String, String> profileAttrs = new LinkedHashMap<>(1);
@@ -62,4 +72,8 @@ public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientPropert
      * Custom parameters in form of key-value pairs sent along in authZ requests, etc.
      */
     private Map<String, String> customParams = new LinkedHashMap<>(1);
+
+    public Pac4jOAuth20ClientProperties() {
+        setCallbackUrlType(CallbackUrlTypes.PATH_PARAMETER);
+    }
 }

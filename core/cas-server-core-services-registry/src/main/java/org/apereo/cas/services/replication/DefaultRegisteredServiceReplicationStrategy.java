@@ -3,8 +3,8 @@ package org.apereo.cas.services.replication;
 import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.support.events.service.BaseCasRegisteredServiceEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
+import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 
@@ -25,16 +25,14 @@ import java.util.function.Predicate;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultRegisteredServiceReplicationStrategy implements RegisteredServiceReplicationStrategy, DisposableBean {
-    private final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> distributedCacheManager;
+    private final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier> distributedCacheManager;
+
     private final StreamingServiceRegistryProperties properties;
 
-    /**
-     * Destroy the watch service thread.
-     *
-     * @throws Exception the exception
-     */
+    private final PublisherIdentifier publisherIdentifier;
+
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         if (this.distributedCacheManager != null) {
             this.distributedCacheManager.close();
         }
@@ -65,16 +63,14 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
                 LOGGER.debug("Service found in the cache [{}] is marked as a deleted service. CAS will update the service registry "
                     + "of this CAS node to remove the local service, if found", value);
                 serviceRegistry.delete(value);
-                this.distributedCacheManager.remove(value, item);
+                this.distributedCacheManager.remove(value, item, true);
                 return service;
             }
 
             if (service == null) {
                 LOGGER.debug("Service is in not found in the local service registry for this CAS node. CAS will use the cache entry [{}] instead "
                     + "and will update the service registry of this CAS node with the cache entry for future look-ups", value);
-                if (properties.getReplicationMode() == StreamingServiceRegistryProperties.ReplicationModes.ACTIVE_ACTIVE) {
-                    serviceRegistry.save(value);
-                }
+                saveRegisteredServiceIfNecessary(serviceRegistry, value);
                 return value;
             }
             LOGGER.debug("Service definition cache entry [{}] carries the timestamp [{}]", value, item.getTimestamp());
@@ -85,17 +81,18 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
             LOGGER.debug("Service definition found in the cache [{}] is more recent than its counterpart on this CAS node. CAS will "
                 + "use the cache entry and update the service registry of this CAS node with the cache entry for future look-ups", value);
 
-            if (properties.getReplicationMode() == StreamingServiceRegistryProperties.ReplicationModes.ACTIVE_ACTIVE) {
-                serviceRegistry.save(value);
-            }
+            saveRegisteredServiceIfNecessary(serviceRegistry, value);
 
             return value;
         }
         LOGGER.debug("Requested service definition is not found in the replication cache");
         if (service != null) {
             LOGGER.debug("Attempting to update replication cache with service [{}]", service);
-            val item = new DistributedCacheObject<RegisteredService>(service);
-            this.distributedCacheManager.set(service, item);
+            val item = DistributedCacheObject.<RegisteredService>builder()
+                .value(service)
+                .publisherIdentifier(publisherIdentifier)
+                .build();
+            this.distributedCacheManager.set(service, item, true);
         }
         return service;
     }
@@ -103,17 +100,18 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
     @Override
     public List<RegisteredService> updateLoadedRegisteredServicesFromCache(final List<RegisteredService> services,
                                                                            final ServiceRegistry serviceRegistry) {
-        val cachedServices = this.distributedCacheManager.getAll();
+        val cachedServices = distributedCacheManager.getAll();
 
         for (val entry : cachedServices) {
             val cachedService = entry.getValue();
-            LOGGER.debug("Found cached service definition [{}] in the replication cache [{}]", cachedService, distributedCacheManager.getName());
+            LOGGER.debug("Found cached service definition [{}] in the replication cache [{}]",
+                cachedService, distributedCacheManager.getName());
 
             if (isRegisteredServiceMarkedAsDeletedInCache(entry)) {
                 LOGGER.debug("Service found in the cache [{}] is marked as a deleted service. CAS will update the service registry "
                     + "of this CAS node to remove the local service, if found.", cachedService);
                 serviceRegistry.delete(cachedService);
-                this.distributedCacheManager.remove(cachedService, entry);
+                distributedCacheManager.remove(cachedService, entry, true);
                 continue;
             }
 
@@ -121,6 +119,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
                 .filter(s -> s.getId() == cachedService.getId())
                 .findFirst()
                 .orElse(null);
+
             if (matchingService != null) {
                 updateServiceRegistryWithMatchingService(services, cachedService, matchingService, serviceRegistry);
             } else {
@@ -128,6 +127,20 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
             }
         }
         return services;
+    }
+
+    private static boolean isRegisteredServiceMarkedAsDeletedInCache(final DistributedCacheObject<RegisteredService> item) {
+        if (item.containsProperty("event")) {
+            val event = item.getProperty("event", String.class);
+            return event.equalsIgnoreCase(CasRegisteredServiceDeletedEvent.class.getSimpleName());
+        }
+        return false;
+    }
+
+    private void saveRegisteredServiceIfNecessary(final ServiceRegistry serviceRegistry, final RegisteredService value) {
+        if (properties.getReplicationMode() == StreamingServiceRegistryProperties.ReplicationModes.ACTIVE_ACTIVE) {
+            serviceRegistry.save(value);
+        }
     }
 
     private void updateServiceRegistryWithNoMatchingService(final List<RegisteredService> services, final RegisteredService cachedService,
@@ -149,19 +162,10 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
         }
     }
 
-    private void updateServiceRegistryWithRegisteredService(final List<RegisteredService> services, final RegisteredService cachedService,
+    private void updateServiceRegistryWithRegisteredService(final List<RegisteredService> services,
+                                                            final RegisteredService cachedService,
                                                             final ServiceRegistry serviceRegistry) {
-        if (properties.getReplicationMode() == StreamingServiceRegistryProperties.ReplicationModes.ACTIVE_ACTIVE) {
-            serviceRegistry.save(cachedService);
-        }
+        saveRegisteredServiceIfNecessary(serviceRegistry, cachedService);
         services.add(cachedService);
-    }
-
-    private static boolean isRegisteredServiceMarkedAsDeletedInCache(final DistributedCacheObject<RegisteredService> item) {
-        if (item.containsProperty("event")) {
-            val event = item.getProperty("event", BaseCasRegisteredServiceEvent.class);
-            return event instanceof CasRegisteredServiceDeletedEvent;
-        }
-        return false;
     }
 }

@@ -7,6 +7,7 @@ import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurati
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -64,7 +65,7 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerController extends Abst
             config.getResponseBuilder().build(artifactMsg, request, response, casAssertion,
                 service, facade, SAMLConstants.SAML2_ARTIFACT_BINDING_URI, ctx);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             request.setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR,
                 "Unable to build SOAP response: " + StringUtils.defaultString(e.getMessage()));
             config.getSamlFaultResponseBuilder().build(artifactMsg, request, response,

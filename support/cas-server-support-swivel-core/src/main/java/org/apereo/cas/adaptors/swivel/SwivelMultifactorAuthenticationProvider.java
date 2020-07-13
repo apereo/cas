@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.swivel;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -48,7 +49,7 @@ public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactor
     /**
      * Can ping provider?
      *
-     * @return the boolean
+     * @return true/false
      */
     public boolean canPing() {
         try {
@@ -57,7 +58,7 @@ public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactor
             connection.connect();
             return connection.getResponseCode() == HttpStatus.SC_OK;
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
         return false;
     }

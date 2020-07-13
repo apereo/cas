@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.cassandra.services;
 
+import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CassandraServiceRegistryConfiguration;
@@ -8,6 +10,7 @@ import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,21 +28,22 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootTest(classes = {
     CassandraServiceRegistryConfiguration.class,
     CasCoreServicesConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreHttpConfiguration.class,
     RefreshAutoConfiguration.class
 },
-    properties = "cas.serviceRegistry.cassandra.keyspace=cas")
+    properties = {
+        "cas.service-registry.cassandra.local-dc=datacenter1",
+        "cas.service-registry.cassandra.keyspace=cas"
+    })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @Tag("Cassandra")
 @EnabledIfPortOpen(port = 9042)
+@Getter
 public class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("cassandraServiceRegistry")
-    private ServiceRegistry dao;
-
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return this.dao;
-    }
+    private ServiceRegistry newServiceRegistry;
 }

@@ -6,10 +6,11 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServicesManager;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,11 +34,32 @@ public class DefaultDomainAwareServicesManager extends AbstractServicesManager i
     private final RegisteredServiceDomainExtractor registeredServiceDomainExtractor;
 
     public DefaultDomainAwareServicesManager(final ServiceRegistry serviceRegistry,
-                                             final ApplicationEventPublisher eventPublisher,
+                                             final ConfigurableApplicationContext applicationContext,
                                              final RegisteredServiceDomainExtractor registeredServiceDomainExtractor,
-                                             final Set<String> environments) {
-        super(serviceRegistry, eventPublisher, environments);
+                                             final Set<String> environments,
+                                             final Cache<Long, RegisteredService> services) {
+        super(serviceRegistry, applicationContext, environments, services);
         this.registeredServiceDomainExtractor = registeredServiceDomainExtractor;
+    }
+
+    @Override
+    public Stream<String> getDomains() {
+        return this.domains.keySet().stream().sorted();
+    }
+
+    @Override
+    public Collection<RegisteredService> getServicesForDomain(final String domain) {
+        return this.domains.containsKey(domain) ? this.domains.get(domain) : new ArrayList<>(0);
+    }
+
+    private void addToDomain(final RegisteredService r, final Map<String, TreeSet<RegisteredService>> map) {
+        val domain = registeredServiceDomainExtractor.extract(r.getServiceId());
+        val services = map.containsKey(domain)
+            ? map.get(domain)
+            : new TreeSet<RegisteredService>();
+        LOGGER.debug("Added service [{}] mapped to domain definition [{}]", r, domain);
+        services.add(r);
+        map.put(domain, services);
     }
 
     @Override
@@ -77,25 +99,5 @@ public class DefaultDomainAwareServicesManager extends AbstractServicesManager i
         getAllServices().forEach(r -> addToDomain(r, localDomains));
         this.domains.clear();
         this.domains.putAll(localDomains);
-    }
-
-    @Override
-    public Stream<String> getDomains() {
-        return this.domains.keySet().stream().sorted();
-    }
-
-    @Override
-    public Collection<RegisteredService> getServicesForDomain(final String domain) {
-        return this.domains.containsKey(domain) ? this.domains.get(domain) : new ArrayList<>(0);
-    }
-
-    private void addToDomain(final RegisteredService r, final Map<String, TreeSet<RegisteredService>> map) {
-        val domain = registeredServiceDomainExtractor.extract(r.getServiceId());
-        val services = map.containsKey(domain)
-            ? map.get(domain)
-            : new TreeSet<RegisteredService>();
-        LOGGER.debug("Added service [{}] mapped to domain definition [{}]", r, domain);
-        services.add(r);
-        map.put(domain, services);
     }
 }

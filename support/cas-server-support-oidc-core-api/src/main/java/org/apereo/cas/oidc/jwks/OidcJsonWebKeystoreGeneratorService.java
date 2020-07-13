@@ -8,6 +8,7 @@ import org.springframework.core.io.Resource;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@FunctionalInterface
 public interface OidcJsonWebKeystoreGeneratorService {
 
     /**

@@ -32,11 +32,11 @@ import java.util.Objects;
  * prevent a client spoofing SSL information by sending fake headers. </b>
  * In httpd.conf add the following:
  *
- * <pre>
+ * &lt;pre&gt;
  * &lt;IfModule ssl_module&gt;
  *   RequestHeader set SSL_CLIENT_CERT "%{SSL_CLIENT_CERT}s"
  * &lt;/IfModule&gt;
- * </pre>
+ * &lt;/pre&gt;
  *
  * @author Apache Tomcat (copied and modified)
  * @author Hal Deadman

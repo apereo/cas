@@ -3,7 +3,6 @@ package org.apereo.cas.services;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.google.common.base.Predicates;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -305,7 +304,7 @@ public interface RegisteredServiceProperty extends Serializable {
          */
         @JsonIgnore
         public boolean isAssignedTo(final RegisteredService service) {
-            return isAssignedTo(service, Predicates.alwaysTrue());
+            return isAssignedTo(service, s -> true);
         }
 
         /**

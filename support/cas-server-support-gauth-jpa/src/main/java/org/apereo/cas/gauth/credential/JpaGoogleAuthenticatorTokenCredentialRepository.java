@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,20 +41,34 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     }
 
     @Override
-    public OneTimeTokenAccount get(final String username) {
+    public OneTimeTokenAccount get(final long id) {
+        return this.entityManager.find(JpaGoogleAuthenticatorAccount.class, id);
+    }
+
+    @Override
+    public OneTimeTokenAccount get(final String username, final long id) {
         try {
-            val r = this.entityManager.createQuery("SELECT r FROM "
-                + ENTITY_NAME + " r where r.username = :username", JpaGoogleAuthenticatorAccount.class)
+            return this.entityManager.createQuery("SELECT r FROM "
+                + ENTITY_NAME + " r WHERE r.id=:id AND r.username = :username", JpaGoogleAuthenticatorAccount.class)
                 .setParameter("username", username)
+                .setParameter("id", id)
                 .getSingleResult();
-            this.entityManager.detach(r);
-            return decode(r);
-        } catch (final NoResultException e) {
-            LOGGER.debug("No record could be found for google authenticator id [{}]", username);
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
         }
         return null;
+    }
+
+    @Override
+    public Collection<? extends OneTimeTokenAccount> get(final String username) {
+        try {
+            val accounts = fetchAccounts(username);
+            accounts.forEach(entityManager::detach);
+            return decode(accounts);
+        } catch (final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
+        }
+        return new ArrayList<>(0);
     }
 
     @Override
@@ -75,27 +88,26 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
         return new ArrayList<>(0);
     }
 
+
     @Override
-    public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
-        val r = new JpaGoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
-        update(r);
+    public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
+        val ac = JpaGoogleAuthenticatorAccount.from(account);
+        val encoded = encode(ac);
+        return this.entityManager.merge(encoded);
     }
 
     @Override
     @SneakyThrows
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
-        val ac = get(account.getUsername());
+        val ac = this.entityManager.find(JpaGoogleAuthenticatorAccount.class, account.getId());
         if (ac != null) {
             ac.setValidationCode(account.getValidationCode());
             ac.setScratchCodes(account.getScratchCodes());
             ac.setSecretKey(account.getSecretKey());
             val encoded = encode(ac);
-            this.entityManager.merge(encoded);
-            return encoded;
+            return this.entityManager.merge(encoded);
         }
-        val encoded = encode(account);
-        this.entityManager.merge(encoded);
-        return encoded;
+        return null;
     }
 
     @Override
@@ -106,10 +118,9 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
 
     @Override
     public void delete(final String username) {
-        val count = this.entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE r.username= :username")
-            .setParameter("username", username)
-            .executeUpdate();
-        LOGGER.debug("Deleted [{}] record(s)", count);
+        val acct = fetchAccounts(username);
+        acct.forEach(entityManager::remove);
+        LOGGER.debug("Deleted account record for [{}]", username);
     }
 
     @Override
@@ -117,5 +128,22 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
         val count = (Number) this.entityManager.createQuery("SELECT COUNT(r.username) FROM " + ENTITY_NAME + " r").getSingleResult();
         LOGGER.debug("Counted [{}] record(s)", count);
         return count.longValue();
+    }
+
+    @Override
+    public long count(final String username) {
+        val count = (Number) this.entityManager.createQuery(
+            "SELECT COUNT(r.username) FROM " + ENTITY_NAME + " r WHERE r.username=:username")
+            .setParameter("username", username)
+            .getSingleResult();
+        LOGGER.debug("Counted [{}] record(s) for [{}]", count, username);
+        return count.longValue();
+    }
+
+    private List<JpaGoogleAuthenticatorAccount> fetchAccounts(final String username) {
+        return this.entityManager.createQuery("SELECT r FROM "
+            + ENTITY_NAME + " r WHERE r.username = :username", JpaGoogleAuthenticatorAccount.class)
+            .setParameter("username", username)
+            .getResultList();
     }
 }

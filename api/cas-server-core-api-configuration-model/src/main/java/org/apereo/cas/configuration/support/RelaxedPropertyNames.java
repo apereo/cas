@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.support;
 
+import lombok.Getter;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Iterator;
@@ -13,6 +15,7 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Getter
 public class RelaxedPropertyNames implements Iterable<String> {
 
     private static final Pattern CAMEL_CASE_PATTERN = Pattern.compile("([^A-Z-])([A-Z])");
@@ -35,17 +38,13 @@ public class RelaxedPropertyNames implements Iterable<String> {
      * @return the relaxed names
      */
     public static RelaxedPropertyNames forCamelCase(final String name) {
-        final var result = new StringBuilder();
-        for (final var c : name.toCharArray()) {
+        val result = new StringBuilder();
+        for (var c : name.toCharArray()) {
             result.append(Character.isUpperCase(c) && result.length() > 0
                 && result.charAt(result.length() - 1) != '-'
                 ? "-" + Character.toLowerCase(c) : c);
         }
         return new RelaxedPropertyNames(result.toString());
-    }
-
-    public Set<String> getValues() {
-        return values;
     }
 
     @Override
@@ -57,8 +56,8 @@ public class RelaxedPropertyNames implements Iterable<String> {
         if (values.contains(name)) {
             return;
         }
-        for (final var variation : Variation.values()) {
-            for (final var manipulation : Manipulation.values()) {
+        for (val variation : Variation.values()) {
+            for (val manipulation : Manipulation.values()) {
                 var result = name;
                 result = manipulation.apply(result);
                 result = variation.apply(result);
@@ -71,7 +70,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
     /**
      * Name variations.
      */
-    enum Variation {
+    private enum Variation {
 
         NONE {
             @Override
@@ -149,10 +148,9 @@ public class RelaxedPropertyNames implements Iterable<String> {
                     return value;
                 }
                 matcher = matcher.reset();
-                final var result = new StringBuffer();
+                var result = new StringBuilder();
                 while (matcher.find()) {
-                    matcher.appendReplacement(result, matcher.group(1) + '_'
-                        + StringUtils.uncapitalize(matcher.group(2)));
+                    matcher.appendReplacement(result, matcher.group(1) + '_' + StringUtils.uncapitalize(matcher.group(2)));
                 }
                 matcher.appendTail(result);
                 return result.toString();
@@ -171,10 +169,9 @@ public class RelaxedPropertyNames implements Iterable<String> {
                     return value;
                 }
                 matcher = matcher.reset();
-                final var result = new StringBuffer();
+                var result = new StringBuilder();
                 while (matcher.find()) {
-                    matcher.appendReplacement(result, matcher.group(1) + '-'
-                        + StringUtils.uncapitalize(matcher.group(2)));
+                    matcher.appendReplacement(result, matcher.group(1) + '-' + StringUtils.uncapitalize(matcher.group(2)));
                 }
                 matcher.appendTail(result);
                 return result.toString();
@@ -187,7 +184,6 @@ public class RelaxedPropertyNames implements Iterable<String> {
             public String apply(final String value) {
                 return separatedToCamelCase(value, false);
             }
-
         },
 
         CASE_INSENSITIVE_SEPARATED_TO_CAMELCASE {
@@ -195,21 +191,22 @@ public class RelaxedPropertyNames implements Iterable<String> {
             public String apply(final String value) {
                 return separatedToCamelCase(value, true);
             }
-
         };
 
         private static final char[] SUFFIXES = new char[]{'_', '-', '.'};
+
+        public abstract String apply(String value);
 
         private static String separatedToCamelCase(final String value, final boolean caseInsensitive) {
             if (value.isEmpty()) {
                 return value;
             }
-            final var builder = new StringBuilder();
+            var builder = new StringBuilder();
             for (final var field : SEPARATED_TO_CAMEL_CASE_PATTERN.split(value)) {
                 final var fieldCased = caseInsensitive ? field.toLowerCase() : field;
                 builder.append(builder.length() == 0 ? field : StringUtils.capitalize(fieldCased));
             }
-            final var lastChar = value.charAt(value.length() - 1);
+            var lastChar = value.charAt(value.length() - 1);
             for (final var suffix : SUFFIXES) {
                 if (lastChar == suffix) {
                     builder.append(suffix);
@@ -218,9 +215,6 @@ public class RelaxedPropertyNames implements Iterable<String> {
             }
             return builder.toString();
         }
-
-        public abstract String apply(String value);
-
     }
 
 }

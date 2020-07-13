@@ -59,7 +59,7 @@ public class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTest
                 .build();
         val creator = new OidcSingleLogoutMessageCreator(context);
         val handler = new OidcSingleLogoutServiceMessageHandler(mock(HttpClient.class),
-                creator, servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(mock(UrlValidator.class)),
+                creator, servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(servicesManager, mock(UrlValidator.class)),
                 true, mock(AuthenticationServiceSelectionPlan.class), casProperties.getAuthn().getOidc().getIssuer());
 
         val singleLogoutUrl = new SingleLogoutUrl(LOGOUT_URL, type);

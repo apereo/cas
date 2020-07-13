@@ -22,18 +22,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @TestPropertySource(properties = {
-    "cas.authn.attributeRepository.jdbc[0].attributes.uid=uid",
-    "cas.authn.attributeRepository.jdbc[0].attributes.locations=locations",
-    "cas.authn.attributeRepository.jdbc[0].singleRow=true",
-    "cas.authn.attributeRepository.jdbc[0].requireAllAttributes=true",
-    "cas.authn.attributeRepository.jdbc[0].sql=SELECT * FROM table_users WHERE {0}",
-    "cas.authn.attributeRepository.jdbc[0].username=uid",
-    "cas.authn.attributeRepository.jdbc[0].user=postgres",
-    "cas.authn.attributeRepository.jdbc[0].password=password",
-    "cas.authn.attributeRepository.jdbc[0].driverClass=org.postgresql.Driver",
-    "cas.authn.attributeRepository.jdbc[0].url=jdbc:postgresql://localhost:5432/postgres",
-    "cas.authn.attributeRepository.jdbc[0].dialect=org.hibernate.dialect.PostgreSQL95Dialect",
-    "cas.authn.attributeRepository.jdbc[0].ddlAuto=create-drop"
+    "cas.authn.attribute-repository.jdbc[0].attributes.uid=uid",
+    "cas.authn.attribute-repository.jdbc[0].attributes.locations=locations",
+    "cas.authn.attribute-repository.jdbc[0].singleRow=true",
+    "cas.authn.attribute-repository.jdbc[0].requireAllAttributes=true",
+    "cas.authn.attribute-repository.jdbc[0].sql=SELECT * FROM table_users WHERE {0}",
+    "cas.authn.attribute-repository.jdbc[0].username=uid",
+    "cas.authn.attribute-repository.jdbc[0].user=postgres",
+    "cas.authn.attribute-repository.jdbc[0].password=password",
+    "cas.authn.attribute-repository.jdbc[0].driver-class=org.postgresql.Driver",
+    "cas.authn.attribute-repository.jdbc[0].url=jdbc:postgresql://localhost:5432/postgres",
+    "cas.authn.attribute-repository.jdbc[0].dialect=org.hibernate.dialect.PostgreSQL95Dialect",
+    "cas.authn.attribute-repository.jdbc[0].ddl-auto=create-drop"
 })
 @EnabledIfPortOpen(port = 5432)
 @Tag("Postgres")

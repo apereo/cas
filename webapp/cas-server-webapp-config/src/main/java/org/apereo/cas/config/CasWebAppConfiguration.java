@@ -27,7 +27,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Optional;
@@ -86,26 +85,6 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    protected UrlFilenameViewController passThroughController() {
-        return new UrlFilenameViewController();
-    }
-
-    @Bean
-    protected Controller rootController() {
-        return new ParameterizableViewController() {
-            @Override
-            protected ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                                         final HttpServletResponse response) {
-                val queryString = request.getQueryString();
-                val url = request.getContextPath() + "/login"
-                    + Optional.ofNullable(queryString).map(string -> '?' + string).orElse(StringUtils.EMPTY);
-                return new ModelAndView(new RedirectView(response.encodeURL(url)));
-            }
-
-        };
-    }
-
-    @Bean
     public SimpleUrlHandlerMapping handlerMapping() {
         val mapping = new SimpleUrlHandlerMapping();
 
@@ -124,5 +103,25 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor.getObject())
             .addPathPatterns("/**");
+    }
+
+    @Bean
+    protected UrlFilenameViewController passThroughController() {
+        return new UrlFilenameViewController();
+    }
+
+    @Bean
+    protected Controller rootController() {
+        return new ParameterizableViewController() {
+            @Override
+            protected ModelAndView handleRequestInternal(final HttpServletRequest request,
+                                                         final HttpServletResponse response) {
+                val queryString = request.getQueryString();
+                val url = request.getContextPath() + "/login"
+                    + Optional.ofNullable(queryString).map(string -> '?' + string).orElse(StringUtils.EMPTY);
+                return new ModelAndView(new RedirectView(response.encodeURL(url)));
+            }
+
+        };
     }
 }

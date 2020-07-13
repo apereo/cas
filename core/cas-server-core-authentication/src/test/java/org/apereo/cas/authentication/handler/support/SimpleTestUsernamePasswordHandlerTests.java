@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCreden
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.FailedLoginException;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Tag("Authentication")
 public class SimpleTestUsernamePasswordHandlerTests {
 
     private SimpleTestUsernamePasswordAuthenticationHandler authenticationHandler;

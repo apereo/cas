@@ -9,7 +9,6 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.token.JwtBuilder;
@@ -89,11 +88,6 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
             scopes, clientId, requestClaims);
     }
 
-    @Override
-    public TicketFactory get(final Class<? extends Ticket> clazz) {
-        return this;
-    }
-
     private ExpirationPolicy determineExpirationPolicyForService(final OAuthRegisteredService registeredService) {
         if (registeredService != null && registeredService.getAccessTokenExpirationPolicy() != null) {
             val policy = registeredService.getAccessTokenExpirationPolicy();
@@ -106,5 +100,10 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
             }
         }
         return this.expirationPolicy.buildTicketExpirationPolicy();
+    }
+
+    @Override
+    public Class<? extends Ticket> getTicketType() {
+        return OAuth20AccessToken.class;
     }
 }

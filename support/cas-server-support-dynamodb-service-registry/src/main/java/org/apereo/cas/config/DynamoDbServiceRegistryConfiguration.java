@@ -57,6 +57,7 @@ public class DynamoDbServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbServiceRegistryExecutionPlanConfigurer")
+    @RefreshScope
     public ServiceRegistryExecutionPlanConfigurer dynamoDbServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(dynamoDbServiceRegistry());
     }

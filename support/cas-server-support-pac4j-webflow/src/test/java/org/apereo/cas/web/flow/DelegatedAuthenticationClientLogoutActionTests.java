@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 
@@ -27,8 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes =
-    BaseDelegatedAuthenticationTests.SharedTestConfiguration.class
-)
+    BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Webflow")
 public class DelegatedAuthenticationClientLogoutActionTests {
     @Autowired
@@ -44,7 +44,8 @@ public class DelegatedAuthenticationClientLogoutActionTests {
         val profile = new CommonProfile();
         profile.setId("casuser");
         profile.setClientName("CasClient");
-        request.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        request.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
         val result = delegatedAuthenticationClientLogoutAction.execute(context);
         assertNull(result);
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());

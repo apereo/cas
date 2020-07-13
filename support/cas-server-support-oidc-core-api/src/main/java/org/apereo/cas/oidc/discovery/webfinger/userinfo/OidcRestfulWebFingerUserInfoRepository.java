@@ -1,9 +1,10 @@
 package org.apereo.cas.oidc.discovery.webfinger.userinfo;
 
-import org.apereo.cas.configuration.support.RestEndpointProperties;
+import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerUserInfoRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -62,7 +63,7 @@ public class OidcRestfulWebFingerUserInfoRepository implements OidcWebFingerUser
                 return MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

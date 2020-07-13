@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import com.yubico.client.v2.ResponseStatus;
 import com.yubico.client.v2.YubicoClient;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +37,7 @@ public class DefaultYubiKeyAccountValidator implements YubiKeyAccountValidator {
                 LOGGER.error("Invalid YubiKey token: [{}]", token);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

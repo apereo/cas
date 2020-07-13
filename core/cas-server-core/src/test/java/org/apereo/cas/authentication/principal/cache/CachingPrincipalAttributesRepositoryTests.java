@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -16,6 +17,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.File;
@@ -34,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CachingPrincipalAttributesRepositoryTests.CachingPrincipalAttributeRepositoryTestConfiguration.class
 })
 @DirtiesContext
+@Tag("Simple")
 public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPrincipalAttributesRepositoryTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "cachingPrincipalAttributesRepository.json");
@@ -64,7 +67,8 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
         assertEquals(repositoryWritten, repositoryRead);
     }
 
-    @TestConfiguration
+    @TestConfiguration("CachingPrincipalAttributeRepositoryTestConfiguration")
+    @Lazy(false)
     public static class CachingPrincipalAttributeRepositoryTestConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "principalAttributesRepositoryCache")

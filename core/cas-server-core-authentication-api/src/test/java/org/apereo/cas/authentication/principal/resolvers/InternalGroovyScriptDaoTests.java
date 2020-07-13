@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Groovy")
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
-    properties = "cas.authn.attributeRepository.groovy[0].location=classpath:GroovyAttributeDao.groovy")
+    properties = "cas.authn.attribute-repository.groovy[0].location=classpath:GroovyAttributeDao.groovy")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class InternalGroovyScriptDaoTests {
     @Autowired

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Response;
@@ -40,6 +41,7 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
+import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -634,6 +636,17 @@ public class WebUtils {
     /**
      * Gets http servlet request geo location.
      *
+     * @param context the context
+     * @return the http servlet request geo location
+     */
+    public static GeoLocationRequest getHttpServletRequestGeoLocationFromRequestContext(final RequestContext context) {
+        val servletRequest = getHttpServletRequestFromExternalWebflowContext(context);
+        return getHttpServletRequestGeoLocation(servletRequest);
+    }
+
+    /**
+     * Gets http servlet request geo location.
+     *
      * @param servletRequest the servlet request
      * @return the http servlet request geo location
      */
@@ -666,6 +679,17 @@ public class WebUtils {
         flowScope.put("recaptchaInvisible", googleRecaptcha.isInvisible());
         flowScope.put("recaptchaPosition", googleRecaptcha.getPosition());
         flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase());
+    }
+
+    /**
+     * Gets recaptcha site key.
+     *
+     * @param context the context
+     * @return the recaptcha site key
+     */
+    public static String getRecaptchaSiteKey(final RequestContext context) {
+        val flowScope = context.getFlowScope();
+        return flowScope.get("recaptchaSiteKey", String.class);
     }
 
     /**
@@ -722,7 +746,7 @@ public class WebUtils {
      * Is remember me authentication enabled ?.
      *
      * @param context the context
-     * @return the boolean
+     * @return true/false
      */
     public static Boolean isRememberMeAuthenticationEnabled(final RequestContext context) {
         return context.getFlowScope().getBoolean("rememberMeAuthenticationEnabled", Boolean.FALSE);
@@ -929,7 +953,7 @@ public class WebUtils {
      * Has passwordless authentication account.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean hasPasswordlessAuthenticationAccount(final RequestContext requestContext) {
         return requestContext.getFlowScope().contains("passwordlessAccount");
@@ -949,7 +973,7 @@ public class WebUtils {
      * Has request surrogate authentication request.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean hasRequestSurrogateAuthenticationRequest(final RequestContext requestContext) {
         return requestContext.getFlowScope().getBoolean("requestSurrogateAccount", Boolean.FALSE);
@@ -998,7 +1022,7 @@ public class WebUtils {
      * Put graphical user authentication enabled.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isGraphicalUserAuthenticationEnabled(final RequestContext requestContext) {
         return BooleanUtils.isTrue(requestContext.getFlowScope().get("guaEnabled", Boolean.class));
@@ -1018,7 +1042,7 @@ public class WebUtils {
      * Contains graphical user authentication username.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean containsGraphicalUserAuthenticationUsername(final RequestContext requestContext) {
         return requestContext.getFlowScope().contains("guaUsername");
@@ -1038,7 +1062,7 @@ public class WebUtils {
      * Contains graphical user authentication image boolean.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean containsGraphicalUserAuthenticationImage(final RequestContext requestContext) {
         return requestContext.getFlowScope().contains("guaUserImage");
@@ -1072,6 +1096,16 @@ public class WebUtils {
      */
     public static void putAvailableAuthenticationHandleNames(final RequestContext context, final Collection<String> availableHandlers) {
         context.getFlowScope().put("availableAuthenticationHandlerNames", availableHandlers);
+    }
+
+    /**
+     * Gets available authentication handle names.
+     *
+     * @param context the context
+     * @return the available authentication handle names
+     */
+    public static Collection<String> getAvailableAuthenticationHandleNames(final RequestContext context) {
+        return context.getFlowScope().get("availableAuthenticationHandlerNames", Collection.class);
     }
 
     /**
@@ -1140,6 +1174,16 @@ public class WebUtils {
     }
 
     /**
+     * Is existing single sign on session available boolean.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static Boolean isExistingSingleSignOnSessionAvailable(final MockRequestContext context) {
+        return context.getFlowScope().get("existingSingleSignOnSessionAvailable", Boolean.class);
+    }
+
+    /**
      * Put existing single sign on session principal.
      *
      * @param context the context
@@ -1163,7 +1207,7 @@ public class WebUtils {
      * Is cas login form viewable.
      *
      * @param context the context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isCasLoginFormViewable(final RequestContext context) {
         return context.getFlowScope().getBoolean("casLoginFormViewable", Boolean.TRUE);
@@ -1185,6 +1229,7 @@ public class WebUtils {
      * @param request the request
      * @return the http request full url
      */
+    @SuppressWarnings("JdkObsolete")
     public static String getHttpRequestFullUrl(final HttpServletRequest request) {
         val requestURL = request.getRequestURL();
         val queryString = request.getQueryString();
@@ -1249,7 +1294,9 @@ public class WebUtils {
      *
      * @param context the context
      * @return the open id local user id
+     * @deprecated Since 6.2.0
      */
+    @Deprecated(since = "6.2.0")
     public static String getOpenIdLocalUserId(final RequestContext context) {
         return context.getFlowScope().get("openIdLocalId", String.class);
     }
@@ -1266,10 +1313,84 @@ public class WebUtils {
 
     /**
      * Get the mfa provider id from flow scope.
+     *
      * @param context request context
      * @return provider id
      */
     public static String getMultifactorAuthenticationProviderById(final RequestContext context) {
         return context.getFlowScope().get(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, String.class);
+    }
+
+    /**
+     * Put selectable multifactor authentication providers.
+     *
+     * @param requestContext the request context
+     * @param mfaProviders   the mfa providers
+     */
+    public static void putSelectableMultifactorAuthenticationProviders(final RequestContext requestContext, final List<String> mfaProviders) {
+        requestContext.getViewScope().put("mfaSelectableProviders", mfaProviders);
+    }
+
+    /**
+     * Gets selectable multifactor authentication providers.
+     *
+     * @param requestContext the request context
+     * @return the selectable multifactor authentication providers
+     */
+    public static List<String> getSelectableMultifactorAuthenticationProviders(final RequestContext requestContext) {
+        return requestContext.getViewScope().get("mfaSelectableProviders", List.class);
+    }
+
+    /**
+     * Put one time token account.
+     *
+     * @param requestContext the request context
+     * @param account        the account
+     */
+    public static void putOneTimeTokenAccount(final RequestContext requestContext, final OneTimeTokenAccount account) {
+        requestContext.getFlowScope().put("registeredDevice", account);
+    }
+
+    /**
+     * Put one time token accounts.
+     *
+     * @param requestContext the request context
+     * @param accounts       the accounts
+     */
+    public static void putOneTimeTokenAccounts(final RequestContext requestContext, final Collection accounts) {
+        requestContext.getFlowScope().put("registeredDevices", accounts);
+    }
+
+    /**
+     * Gets one time token account.
+     *
+     * @param <T>            the type parameter
+     * @param requestContext the request context
+     * @param clazz          the clazz
+     * @return the one time token account
+     */
+    public static <T extends OneTimeTokenAccount> T getOneTimeTokenAccount(final RequestContext requestContext, final Class<T> clazz) {
+        return requestContext.getFlowScope().get("registeredDevice", clazz);
+    }
+
+    /**
+     * Put google authenticator multiple device registration enabled.
+     *
+     * @param requestContext the request context
+     * @param enabled        the enabled
+     */
+    public static void putGoogleAuthenticatorMultipleDeviceRegistrationEnabled(final RequestContext requestContext,
+                                                                               final boolean enabled) {
+        requestContext.getFlowScope().put("multipleDeviceRegistrationEnabled", enabled);
+    }
+
+    /**
+     * Is google authenticator multiple device registration enabled?
+     *
+     * @param requestContext the request context
+     * @return true/false
+     */
+    public static Boolean isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("multipleDeviceRegistrationEnabled", Boolean.class);
     }
 }

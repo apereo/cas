@@ -36,8 +36,10 @@ public class RankedMultifactorAuthenticationProviderSelectorTests extends BaseCa
         val dummy2 = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         dummy2.setOrder(5);
 
+        val service = RegisteredServiceTestUtils.getRegisteredService();
+        servicesManager.save(service);
         val provider = multifactorAuthenticationProviderSelector.resolve(CollectionUtils.wrapList(dummy1, dummy2),
-            RegisteredServiceTestUtils.getRegisteredService(), RegisteredServiceTestUtils.getPrincipal());
+            service, RegisteredServiceTestUtils.getPrincipal());
         assertNotNull(provider);
         assertEquals(dummy1.getId(), provider.getId());
         assertEquals(dummy1.getOrder(), provider.getOrder());

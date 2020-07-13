@@ -12,7 +12,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import java.time.ZoneOffset;
+import java.time.Duration;
 import java.time.ZonedDateTime;
 
 /**
@@ -44,7 +44,8 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
     private long timeInBetweenUsesInSeconds;
 
     @JsonCreator
-    public ThrottledUseAndTimeoutExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds, @JsonProperty("timeToIdle") final long timeInBetweenUsesInSeconds) {
+    public ThrottledUseAndTimeoutExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds,
+                                                  @JsonProperty("timeToIdle") final long timeInBetweenUsesInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
         this.timeInBetweenUsesInSeconds = timeInBetweenUsesInSeconds;
     }
@@ -53,15 +54,13 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
     public boolean isExpired(final TicketState ticketState) {
         LOGGER.trace("Checking validity of ticket [{}]", ticketState);
         val lastTimeUsed = ticketState.getLastTimeUsed();
-        val currentTime = ZonedDateTime.now(ZoneOffset.UTC);
+        val currentTime = ZonedDateTime.now(getClock());
 
         LOGGER.trace("Current time is [{}]. Ticket last used time is [{}]", currentTime, lastTimeUsed);
 
-        val currentTimeSeconds = currentTime.toEpochSecond();
-        val lastTimeUsedInSeconds = lastTimeUsed.toEpochSecond();
+        val margin = Duration.between(lastTimeUsed, currentTime).toSeconds();
 
-        val margin = currentTimeSeconds - lastTimeUsedInSeconds;
-        LOGGER.trace("Current time in seconds is [{}]. Ticket last used time in seconds is [{}]", currentTimeSeconds, lastTimeUsedInSeconds);
+        LOGGER.trace("The duration in seconds between current time and last used time is [{}]", margin);
 
         if (ticketState.getCountOfUses() == 0 && margin < this.timeToKillInSeconds) {
             LOGGER.debug("Valid [{}]: Usage count is zero and number of seconds since ticket usage time [{}] is less than [{}]",

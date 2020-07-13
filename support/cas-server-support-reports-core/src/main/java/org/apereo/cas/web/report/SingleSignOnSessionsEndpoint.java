@@ -6,9 +6,9 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ISOStandardDateFormat;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -109,7 +109,6 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @return the sso sessions
      */
     @ReadOperation
-    @SuppressFBWarnings("PSC_SUBOPTIMAL_COLLECTION_SIZING")
     public Map<String, Object> getSsoSessions(final String type) {
         val sessionsMap = new HashMap<String, Object>();
         val option = SsoSessionReportOptions.valueOf(type);
@@ -160,7 +159,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
             sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
             sessionsMap.put(TICKET_GRANTING_TICKET, ticketGrantingTicket);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             sessionsMap.put(STATUS, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             sessionsMap.put(TICKET_GRANTING_TICKET, ticketGrantingTicket);
             sessionsMap.put("message", e.getMessage());
@@ -201,7 +200,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
                 try {
                     this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
                 } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    LoggingUtils.error(LOGGER, e);
                     failedTickets.put(ticketGrantingTicket, e.getMessage());
                 }
             });

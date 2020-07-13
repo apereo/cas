@@ -5,6 +5,7 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
@@ -23,25 +24,26 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @TestPropertySource(properties = {
     "cas.authn.ldap[0].type=AUTHENTICATED",
-    "cas.authn.ldap[0].bindDn=Administrator@cas.example.org",
-    "cas.authn.ldap[0].bindCredential=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_ADMIN_PASSWORD,
-    "cas.authn.ldap[0].ldapUrl=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_LDAP_URL,
+    "cas.authn.ldap[0].bind-dn=Administrator@cas.example.org",
+    "cas.authn.ldap[0].bind-credential=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_ADMIN_PASSWORD,
+    "cas.authn.ldap[0].ldap-url=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_LDAP_URL,
     "cas.authn.ldap[0].useStartTls=true",
-    "cas.authn.ldap[0].subtreeSearch=true",
-    "cas.authn.ldap[0].baseDn=dc=cas,dc=example,dc=org",
-    "cas.authn.ldap[0].followReferrals=false",
-    "cas.authn.ldap[0].principalAttributeList=sAMAccountName,cn",
-    "cas.authn.ldap[0].enhanceWithEntryResolver=true",
-    "cas.authn.ldap[0].searchFilter=(sAMAccountName={user})",
-    "cas.authn.ldap[0].minPoolSize=0",
-    "cas.authn.ldap[0].trustStore=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_TRUST_STORE,
-    "cas.authn.ldap[0].trustStoreType=JKS",
-    "cas.authn.ldap[0].trustStorePassword=changeit",
-    "cas.authn.ldap[0].hostnameVerifier=DEFAULT",
-    "cas.authn.ldap[0].passwordPolicy.type=AD",
-    "cas.authn.ldap[0].passwordPolicy.enabled=true"
+    "cas.authn.ldap[0].subtree-search=true",
+    "cas.authn.ldap[0].base-dn=dc=cas,dc=example,dc=org",
+    "cas.authn.ldap[0].follow-referrals=false",
+    "cas.authn.ldap[0].principal-attribute-list=sAMAccountName,cn",
+    "cas.authn.ldap[0].enhance-with-entry-resolver=true",
+    "cas.authn.ldap[0].search-filter=(sAMAccountName={user})",
+    "cas.authn.ldap[0].min-pool-size=0",
+    "cas.authn.ldap[0].trust-store=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_TRUST_STORE,
+    "cas.authn.ldap[0].trust-store-type=JKS",
+    "cas.authn.ldap[0].trust-store-password=changeit",
+    "cas.authn.ldap[0].hostname-verifier=DEFAULT",
+    "cas.authn.ldap[0].password-policy.type=AD",
+    "cas.authn.ldap[0].password-policy.enabled=true"
 })
 @EnabledIfPortOpen(port = 10390)
+@Tag("Ldap")
 public class ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
 
     @Override

@@ -32,7 +32,7 @@ public class JsonConsentRepository extends BaseConsentRepository {
     }
 
     @Override
-    public boolean storeConsentDecision(final ConsentDecision decision) {
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
         val result = super.storeConsentDecision(decision);
         writeAccountToJsonResource();
         return result;

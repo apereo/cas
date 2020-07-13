@@ -8,6 +8,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -63,25 +64,18 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
 
     @Override
     public String resolveThemeName(final HttpServletRequest request) {
-        if (this.servicesManager == null) {
-            return rememberThemeName(request);
-        }
-
         val userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
-
-        if (StringUtils.isBlank(userAgent)) {
-            return rememberThemeName(request);
+        if (StringUtils.isNotBlank(userAgent)) {
+            overrides.entrySet()
+                .stream()
+                .filter(entry -> entry.getKey().matcher(userAgent).matches())
+                .findFirst()
+                .ifPresent(entry -> {
+                    request.setAttribute("isMobile", Boolean.TRUE.toString());
+                    request.setAttribute("browserType", entry.getValue());
+                });
         }
-
-        overrides.entrySet()
-            .stream()
-            .filter(entry -> entry.getKey().matcher(userAgent).matches())
-            .findFirst()
-            .ifPresent(entry -> {
-                request.setAttribute("isMobile", Boolean.TRUE.toString());
-                request.setAttribute("browserType", entry.getValue());
-            });
-
+        
         val context = RequestContextHolder.getRequestContext();
         val serviceContext = WebUtils.getService(context);
         val service = this.authenticationRequestServiceSelectionStrategies.resolveService(serviceContext);
@@ -148,7 +142,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             }
             LOGGER.warn("Custom theme [{}] for service [{}] cannot be located. Falling back to default theme...", rService.getTheme(), rService);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

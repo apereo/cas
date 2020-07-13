@@ -2,6 +2,7 @@ package org.apereo.cas.gauth.token;
 
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,8 +10,8 @@ import lombok.val;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.persistence.NoResultException;
+import java.time.Duration;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link GoogleAuthenticatorRedisTokenRepository}.
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRepository {
     private static final String KEY_SEPARATOR = ":";
+
     private static final String CAS_PREFIX = GoogleAuthenticatorRedisTokenRepository.class.getSimpleName();
 
     private final RedisTemplate<String, GoogleAuthenticatorToken> template;
@@ -35,7 +37,7 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
         LOGGER.trace("Saving token [{}] using key [{}]", token, redisKey);
         val ops = this.template.boundValueOps(redisKey);
         ops.set(gauthToken);
-        ops.expire(this.expireTokensInSeconds, TimeUnit.SECONDS);
+        ops.expire(Duration.ofSeconds(this.expireTokensInSeconds));
         LOGGER.trace("Saved token [{}]", token);
     }
 
@@ -60,12 +62,8 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
             this.template.delete(redisKey);
             LOGGER.trace("Deleted tokens");
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
-    }
-
-    @Override
-    protected void cleanInternal() {
     }
 
     @Override
@@ -76,7 +74,7 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
             this.template.delete(redisKey);
             LOGGER.trace("Deleted token [{}]", redisKey);
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -89,10 +87,10 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
                 this.template.delete(redisKey);
                 LOGGER.trace("Deleted tokens [{}]", redisKey);
             } catch (final Exception e) {
-                LOGGER.warn(e.getMessage(), e);
+                LoggingUtils.warn(LOGGER, e);
             }
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -104,7 +102,7 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
             this.template.delete(redisKey);
             LOGGER.trace("Deleted tokens [{}]", redisKey);
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -114,7 +112,7 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
             val keys = getGoogleAuthenticatorTokenKeys(uid);
             return keys.size();
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
         return 0;
     }
@@ -125,7 +123,7 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
             val keys = getGoogleAuthenticatorTokenKeys();
             return keys.size();
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
         return 0;
     }
@@ -161,9 +159,14 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
         LOGGER.trace("Fetching Google Authenticator records based on key [{}] for [{}]", key, username);
         return this.template.keys(key);
     }
+
     private Set<String> getGoogleAuthenticatorTokenKeys(final Integer otp) {
         val key = getGoogleAuthenticatorTokenRedisKey(otp);
         LOGGER.trace("Fetching Google Authenticator records based on key [{}] for [{}]", key, otp);
         return this.template.keys(key);
+    }
+
+    @Override
+    protected void cleanInternal() {
     }
 }

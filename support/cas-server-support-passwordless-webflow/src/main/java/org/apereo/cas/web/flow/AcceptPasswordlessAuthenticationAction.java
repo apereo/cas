@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.actions.AbstractAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -64,7 +65,7 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
                 return finalEvent;
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             val attributes = new LocalAttributeMap<>();
             attributes.put("error", e);
             val account = passwordlessUserAccountStore.findUser(principal.getUsername());

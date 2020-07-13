@@ -8,7 +8,6 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -68,11 +67,6 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
         return rt;
     }
 
-    @Override
-    public TicketFactory get(final Class<? extends Ticket> clazz) {
-        return this;
-    }
-
     private ExpirationPolicy determineExpirationPolicyForService(final String clientId) {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
         if (registeredService != null && registeredService.getRefreshTokenExpirationPolicy() != null) {
@@ -83,5 +77,10 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
             }
         }
         return this.expirationPolicy.buildTicketExpirationPolicy();
+    }
+
+    @Override
+    public Class<? extends Ticket> getTicketType() {
+        return OAuth20RefreshToken.class;
     }
 }

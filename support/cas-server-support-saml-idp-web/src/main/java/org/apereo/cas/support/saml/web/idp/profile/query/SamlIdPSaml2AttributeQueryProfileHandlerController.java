@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandler
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -78,7 +79,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
             config.getResponseBuilder().build(query, request, response, casAssertion,
                 service, facade, SAMLConstants.SAML2_SOAP11_BINDING_URI, ctx);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             request.setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR,
                 "Unable to build SOAP response: " + StringUtils.defaultString(e.getMessage()));
             config.getSamlFaultResponseBuilder().build(query, request, response,

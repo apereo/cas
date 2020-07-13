@@ -3,6 +3,7 @@ package org.apereo.cas.web.support;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.util.DateTimeUtils;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -33,7 +34,7 @@ import java.util.List;
 @Slf4j
 @ToString
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter
     implements ThrottledSubmissionHandlerInterceptor, InitializingBean {
     /**
@@ -109,7 +110,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * Should response be recorded as failure boolean.
      *
      * @param response the response
-     * @return the boolean
+     * @return true/false
      */
     protected boolean shouldResponseBeRecordedAsFailure(final HttpServletResponse response) {
         val status = response.getStatus();
@@ -134,8 +135,9 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * Compute rate in submissions/sec between last two authn failures and compare with threshold.
      *
      * @param failures the failures
-     * @return the boolean
+     * @return true/false
      */
+    @SuppressWarnings("JdkObsolete")
     protected boolean calculateFailureThresholdRateAndCompare(final List<Date> failures) {
         if (failures.size() < 2) {
             return false;

@@ -18,20 +18,4 @@ public interface OAuth20DeviceTokenFactory extends TicketFactory {
      * @return the device token
      */
     OAuth20DeviceToken createDeviceCode(Service service);
-
-    /**
-     * Create device user code device user code.
-     *
-     * @param deviceCode the device code
-     * @return the device user code
-     */
-    OAuth20DeviceUserCode createDeviceUserCode(OAuth20DeviceToken deviceCode);
-
-    /**
-     * Generate device user code string.
-     *
-     * @param providedCode the provided code
-     * @return the string
-     */
-    String generateDeviceUserCode(String providedCode);
 }

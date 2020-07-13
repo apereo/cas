@@ -56,6 +56,8 @@ public class JpaEventsConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "dataSourceEvent")
+    @RefreshScope
     public DataSource dataSourceEvent() {
         return JpaBeans.newDataSource(casProperties.getEvents().getJpa());
     }
@@ -68,7 +70,6 @@ public class JpaEventsConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean eventsEntityManagerFactory() {
-
         val factory = jpaBeanFactory.getObject();
         val ctx = new JpaConfigurationContext(
             jpaEventVendorAdapter(),

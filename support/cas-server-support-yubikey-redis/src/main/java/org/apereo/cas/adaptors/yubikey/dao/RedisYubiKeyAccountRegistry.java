@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.yubikey.dao;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
@@ -115,7 +117,10 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public void deleteAll() {
-        this.redisTemplate.delete(getPatternYubiKeyDevices());
+        val keys = (Set<String>) this.redisTemplate.keys(getPatternYubiKeyDevices());
+        if (keys != null) {
+            this.redisTemplate.delete(keys);
+        }
     }
 
     private Stream<String> getYubiKeyDevicesStream() {
@@ -130,7 +135,7 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 try {
                     cursor.close();
                 } catch (final IOException e) {
-                    LOGGER.error("Could not close Redis connection", e);
+                    LoggingUtils.error(LOGGER, e);
                 }
             });
     }

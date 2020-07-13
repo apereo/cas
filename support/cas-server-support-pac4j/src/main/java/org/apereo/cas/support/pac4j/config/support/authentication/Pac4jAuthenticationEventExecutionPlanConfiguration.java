@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.config.support.authentication;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.audit.DelegatedAuthenticationAuditResourceResolver;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -13,17 +14,19 @@ import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProf
 import org.apereo.cas.authentication.principal.provision.GroovyDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
+import org.apereo.cas.integration.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.DefaultDelegatedClientFactory;
 import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
+import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactoryCustomizer;
 import org.apereo.cas.support.pac4j.authentication.RestfulDelegatedClientFactory;
 import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandler;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -40,8 +43,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
 
@@ -60,6 +65,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
@@ -76,8 +84,8 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     private ObjectProvider<TicketFactory> ticketFactory;
 
     @Autowired
-    @Qualifier("ticketRegistry")
-    private ObjectProvider<TicketRegistry> ticketRegistry;
+    @Qualifier("centralAuthenticationService")
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactory")
@@ -87,17 +95,30 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         if (StringUtils.isNotBlank(rest.getUrl())) {
             return new RestfulDelegatedClientFactory(casProperties);
         }
-        return new DefaultDelegatedClientFactory(casProperties);
+        val customizers = applicationContext.getBeansOfType(DelegatedClientFactoryCustomizer.class,
+            false, true).values();
+        AnnotationAwareOrderComparator.sortIfNecessary(customizers);
+        return new DefaultDelegatedClientFactory(casProperties, customizers);
     }
 
     @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionStore")
     @Bean
+    @RefreshScope
     public SessionStore<JEEContext> delegatedClientDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getPac4j().isReplicateSessions();
         if (replicate) {
-            return new DistributedJ2ESessionStore(ticketRegistry.getObject(), ticketFactory.getObject(), casProperties);
+            return new DistributedJEESessionStore(centralAuthenticationService.getObject(),
+                ticketFactory.getObject(), delegatedClientDistributedSessionCookieGenerator());
         }
         return new JEESessionStore();
+    }
+
+    @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionCookieGenerator")
+    @Bean
+    @RefreshScope
+    public CasCookieBuilder delegatedClientDistributedSessionCookieGenerator() {
+        val cookie = casProperties.getSessionReplication().getCookie();
+        return CookieUtils.buildCookieRetrievingGenerator(cookie);
     }
 
     @RefreshScope
@@ -168,6 +189,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "pac4jAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer pac4jAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             if (!builtClients().findAllClients().isEmpty()) {
@@ -188,6 +210,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "delegatedAuthenticationAuditTrailRecordResolutionPlanConfigurer")
+    @RefreshScope
     public AuditTrailRecordResolutionPlanConfigurer delegatedAuthenticationAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
             plan.registerAuditActionResolver("DELEGATED_CLIENT_ACTION_RESOLVER", authenticationActionResolver.getObject());
@@ -196,6 +219,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "delegatedAuthenticationLogoutExecutionPlanConfigurer")
     public LogoutExecutionPlanConfigurer delegatedAuthenticationLogoutExecutionPlanConfigurer() {
         return plan -> {

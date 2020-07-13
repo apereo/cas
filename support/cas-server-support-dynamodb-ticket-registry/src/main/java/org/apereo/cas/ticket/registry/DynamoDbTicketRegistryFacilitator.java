@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistr
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
@@ -56,7 +57,7 @@ public class DynamoDbTicketRegistryFacilitator {
         try (val is = new ByteArrayInputStream(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining())) {
             return SerializationUtils.deserialize(is);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -66,7 +67,7 @@ public class DynamoDbTicketRegistryFacilitator {
      *
      * @param ticketId        the ticket id
      * @param encodedTicketId the encoded ticket id
-     * @return the boolean
+     * @return true/false
      */
     public boolean delete(final String ticketId, final String encodedTicketId) {
         val metadata = this.ticketCatalog.find(ticketId);

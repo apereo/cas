@@ -1,18 +1,149 @@
-def testCategories = [
-    "Cassandra", "CosmosDb", "Couchbase", "CouchDb",
-    "Ehcache", "FileSystem", "Ignite", "InfluxDb",
-    "Ldap", "Mail", "MariaDb", "Memcached", "JDBC",
-    "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
-    "Radius", "AmazonWebServices", "RestfulApi", "Groovy",
-    "OAuth", "OIDC", "SAML", "UMA", "Oracle", "JMS",
-    "ZooKeeper", "Webflow", "DynamoDb", "MFA", "Kafka"
-] as String[]
-
 if (hasTestsOfCategory(project, "Kafka")) {
     task testKafka(type: Test) {
         enabled = shouldTest(project, "Kafka")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "Kafka"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "Tickets")) {
+    task testTickets(type: Test) {
+        enabled = shouldTest(project, "Tickets")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "Tickets"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "Infinispan")) {
+    task testInfinispan(type: Test) {
+        enabled = shouldTest(project, "Infinispan")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "Infinispan"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "Spnego")) {
+    task testSpnego(type: Test) {
+        enabled = shouldTest(project, "Spnego")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "Spnego"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "WebApp")) {
+    task testWebApp(type: Test) {
+        enabled = shouldTest(project, "WebApp")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "WebApp"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "Authentication")) {
+    task testAuthentication(type: Test) {
+        enabled = shouldTest(project, "Authentication")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "Authentication"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "ActuatorEndpoint")) {
+    task testActuatorEndpoint(type: Test) {
+        enabled = shouldTest(project, "ActuatorEndpoint")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "ActuatorEndpoint"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "RegisteredService")) {
+    task testRegisteredService(type: Test) {
+        enabled = shouldTest(project, "RegisteredService")
+//        finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "RegisteredService"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "Utility")) {
+    task testUtility(type: Test) {
+        enabled = shouldTest(project, "Utility")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "Utility"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "WSFederation")) {
+    task testWSFederation(type: Test) {
+        enabled = shouldTest(project, "WSFederation")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "WSFederation"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "SMS")) {
+    task testSMS(type: Test) {
+        enabled = shouldTest(project, "SMS")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "SMS"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "CasConfiguration")) {
+    task testCasConfiguration(type: Test) {
+        enabled = shouldTest(project, "CasConfiguration")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "CasConfiguration"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "Hazelcast")) {
+    task testHazelcast(type: Test) {
+        enabled = shouldTest(project, "Hazelcast")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "Hazelcast"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "JMX")) {
+    task testJMX(type: Test) {
+        enabled = shouldTest(project, "JMX")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "JMX"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "Simple")) {
+    task testSimple(type: Test) {
+        enabled = shouldTest(project, "Simple")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "Simple"
         }
     }
 }
@@ -20,8 +151,29 @@ if (hasTestsOfCategory(project, "Kafka")) {
 if (hasTestsOfCategory(project, "MFA")) {
     task testMFA(type: Test) {
         enabled = shouldTest(project, "MFA")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "MFA"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "X509")) {
+    task testX509(type: Test) {
+        enabled = shouldTest(project, "X509")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "X509"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "SHELL")) {
+    task testSHELL(type: Test) {
+        enabled = shouldTest(project, "SHELL")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "SHELL"
         }
     }
 }
@@ -29,6 +181,7 @@ if (hasTestsOfCategory(project, "MFA")) {
 if (hasTestsOfCategory(project, "Cassandra")) {
     task testCassandra(type: Test) {
         enabled = shouldTest(project, "Cassandra")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "Cassandra"
         }
@@ -38,6 +191,7 @@ if (hasTestsOfCategory(project, "Cassandra")) {
 if (hasTestsOfCategory(project, "Webflow")) {
     task testWebflow(type: Test) {
         enabled = shouldTest(project, "Webflow")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "Webflow"
         }
@@ -47,6 +201,7 @@ if (hasTestsOfCategory(project, "Webflow")) {
 if (hasTestsOfCategory(project, "CosmosDb")) {
     task testCosmosDb(type: Test) {
         enabled = shouldTest(project, "CosmosDb")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "CosmosDb"
         }
@@ -56,6 +211,7 @@ if (hasTestsOfCategory(project, "CosmosDb")) {
 if (hasTestsOfCategory(project, "ZooKeeper")) {
     task testZooKeeper(type: Test) {
         enabled = shouldTest(project, "ZooKeeper")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "ZooKeeper"
         }
@@ -65,6 +221,7 @@ if (hasTestsOfCategory(project, "ZooKeeper")) {
 if (hasTestsOfCategory(project, "JMS")) {
     task testJMS(type: Test) {
         enabled = shouldTest(project, "JMS")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "JMS"
         }
@@ -72,8 +229,9 @@ if (hasTestsOfCategory(project, "JMS")) {
 }
 
 if (hasTestsOfCategory(project, "AmazonWebServices")) {
-    task testAWS(type: Test) {
+    task testAmazonWebServices(type: Test) {
         enabled = shouldTest(project, "AmazonWebServices")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "AmazonWebServices"
         }
@@ -83,6 +241,7 @@ if (hasTestsOfCategory(project, "AmazonWebServices")) {
 if (hasTestsOfCategory(project, "Radius")) {
     task testRadius(type: Test) {
         enabled = shouldTest(project, "Radius")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "Radius"
         }
@@ -92,6 +251,7 @@ if (hasTestsOfCategory(project, "Radius")) {
 if (hasTestsOfCategory(project, "Couchbase")) {
     task testCouchbase(type: Test) {
         enabled = shouldTest(project, "Couchbase")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "Couchbase"
         }
@@ -101,6 +261,7 @@ if (hasTestsOfCategory(project, "Couchbase")) {
 if (hasTestsOfCategory(project, "CouchDb")) {
     task testCouchDb(type: Test) {
         enabled = shouldTest(project, "CouchDb")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "CouchDb"
         }
@@ -110,6 +271,7 @@ if (hasTestsOfCategory(project, "CouchDb")) {
 if (hasTestsOfCategory(project, "MySQL")) {
     task testMySQL(type: Test) {
         enabled = shouldTest(project, "MySQL")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "MySQL"
         }
@@ -119,6 +281,7 @@ if (hasTestsOfCategory(project, "MySQL")) {
 if (hasTestsOfCategory(project, "Postgres")) {
     task testPostgres(type: Test) {
         enabled = shouldTest(project, "Postgres")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "Postgres"
         }
@@ -128,6 +291,7 @@ if (hasTestsOfCategory(project, "Postgres")) {
 if (hasTestsOfCategory(project, "MsSqlServer")) {
     task testMsSqlServer(type: Test) {
         enabled = shouldTest(project, "MsSqlServer")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "MsSqlServer"
         }
@@ -137,6 +301,7 @@ if (hasTestsOfCategory(project, "MsSqlServer")) {
 if (hasTestsOfCategory(project, "MariaDb")) {
     task testMariaDb(type: Test) {
         enabled = shouldTest(project, "MariaDb")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "MariaDb"
         }
@@ -146,6 +311,7 @@ if (hasTestsOfCategory(project, "MariaDb")) {
 if (hasTestsOfCategory(project, "DynamoDb")) {
     task testDynamoDb(type: Test) {
         enabled = shouldTest(project, "DynamoDb")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "DynamoDb"
         }
@@ -155,6 +321,7 @@ if (hasTestsOfCategory(project, "DynamoDb")) {
 if (hasTestsOfCategory(project, "Ehcache")) {
     task testEhcache(type: Test) {
         enabled = shouldTest(project, "Ehcache")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "Ehcache"
         }
@@ -164,6 +331,7 @@ if (hasTestsOfCategory(project, "Ehcache")) {
 if (hasTestsOfCategory(project, "FileSystem")) {
     task testFileSystem(type: Test) {
         enabled = shouldTest(project, "FileSystem")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "FileSystem"
         }
@@ -173,21 +341,17 @@ if (hasTestsOfCategory(project, "FileSystem")) {
 if (hasTestsOfCategory(project, "Ignite")) {
     task testIgnite(type: Test) {
         enabled = shouldTest(project, "Ignite")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "Ignite"
         }
-        def list = []
-        list.add("--add-exports")
-        list.add("java.base/jdk.internal.misc=ALL-UNNAMED")
-        list.add("--add-exports")
-        list.add("java.base/sun.nio.ch=ALL-UNNAMED")
-        jvmArgs = list
     }
 }
 
 if (hasTestsOfCategory(project, "InfluxDb")) {
     task testInfluxDb(type: Test) {
         enabled = shouldTest(project, "InfluxDb")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "InfluxDb"
         }
@@ -197,6 +361,7 @@ if (hasTestsOfCategory(project, "InfluxDb")) {
 if (hasTestsOfCategory(project, "Oracle")) {
     task testOracle(type: Test) {
         enabled = shouldTest(project, "Oracle")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "Oracle"
         }
@@ -206,6 +371,7 @@ if (hasTestsOfCategory(project, "Oracle")) {
 if (hasTestsOfCategory(project, "Ldap")) {
     task testLdap(type: Test) {
         enabled = shouldTest(project, "Ldap")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "Ldap"
         }
@@ -215,6 +381,7 @@ if (hasTestsOfCategory(project, "Ldap")) {
 if (hasTestsOfCategory(project, "Groovy")) {
     task testGroovy(type: Test) {
         enabled = shouldTest(project, "Groovy")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "Groovy"
         }
@@ -225,6 +392,7 @@ if (hasTestsOfCategory(project, "Groovy")) {
 if (hasTestsOfCategory(project, "Mail")) {
     task testMail(type: Test) {
         enabled = shouldTest(project, "Mail")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "Mail"
         }
@@ -232,8 +400,9 @@ if (hasTestsOfCategory(project, "Mail")) {
 }
 
 if (hasTestsOfCategory(project, "RestfulApi")) {
-    task testRestful(type: Test) {
+    task testRestfulApi(type: Test) {
         enabled = shouldTest(project, "RestfulApi")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "RestfulApi"
         }
@@ -243,6 +412,7 @@ if (hasTestsOfCategory(project, "RestfulApi")) {
 if (hasTestsOfCategory(project, "Memcached")) {
     task testMemcached(type: Test) {
         enabled = shouldTest(project, "Memcached")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "Memcached"
         }
@@ -252,6 +422,7 @@ if (hasTestsOfCategory(project, "Memcached")) {
 if (hasTestsOfCategory(project, "MongoDb")) {
     task testMongoDb(type: Test) {
         enabled = shouldTest(project, "MongoDb")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "MongoDb"
         }
@@ -261,6 +432,7 @@ if (hasTestsOfCategory(project, "MongoDb")) {
 if (hasTestsOfCategory(project, "Redis")) {
     task testRedis(type: Test) {
         enabled = shouldTest(project, "Redis")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "Redis"
         }
@@ -270,6 +442,7 @@ if (hasTestsOfCategory(project, "Redis")) {
 if (hasTestsOfCategory(project, "OAuth")) {
     task testOAuth(type: Test) {
         enabled = shouldTest(project, "OAuth")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "OAuth"
         }
@@ -277,8 +450,9 @@ if (hasTestsOfCategory(project, "OAuth")) {
 }
 
 if (hasTestsOfCategory(project, "UMA")) {
-    task testUma(type: Test) {
+    task testUMA(type: Test) {
         enabled = shouldTest(project, "UMA")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "UMA"
         }
@@ -288,6 +462,7 @@ if (hasTestsOfCategory(project, "UMA")) {
 if (hasTestsOfCategory(project, "OIDC")) {
     task testOIDC(type: Test) {
         enabled = shouldTest(project, "OIDC")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "OIDC"
         }
@@ -297,6 +472,7 @@ if (hasTestsOfCategory(project, "OIDC")) {
 if (hasTestsOfCategory(project, "SAML")) {
     task testSAML(type: Test) {
         enabled = shouldTest(project, "SAML")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "SAML"
         }
@@ -306,6 +482,7 @@ if (hasTestsOfCategory(project, "SAML")) {
 if (hasTestsOfCategory(project, "JDBC")) {
     task testJDBC(type: Test) {
         enabled = shouldTest(project, "JDBC")
+        //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "JDBC"
         }
@@ -313,27 +490,47 @@ if (hasTestsOfCategory(project, "JDBC")) {
 }
 
 test {
-    useJUnitPlatform {
-        excludeTags testCategories
+    enabled = false
+    onlyIf = {
+        false
     }
-    enabled = rootProject.testCategoryType != null && rootProject.testCategoryType.toLowerCase().contains("simple") && !Boolean.getBoolean("skipTests")
 }
 
 tasks.withType(Test) {
     scanForTestClasses = false
     ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
-
+    forkEvery = 1000
     doFirst {
-        maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 4)
+        maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 2)
         if (maxParallelForks != 2) {
             logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
         }
     }
     systemProperty("spring.main.banner-mode", "off")
+//    systemProperty("spring.main.lazy-initialization", "true")
     systemProperty("CI", System.getProperty("CI"))
 
     failFast = true
-    jvmArgs.addAll(["-Xms512m", "-Xmx4g"])
+
+    def list = []
+    list.add("--add-modules")
+    list.add("java.se")
+    list.add("--add-exports")
+    list.add("java.base/jdk.internal.ref=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.lang=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.nio=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/sun.nio.ch=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.management/sun.management=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
+    list.add("-Xms512m")
+    list.add("-Xmx4g")
+    jvmArgs = list
+
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
     testLogging {
         events = ["FAILED", "STANDARD_OUT"]
@@ -341,6 +538,19 @@ tasks.withType(Test) {
         showStandardStreams = Boolean.getBoolean("showStandardStreams")
         showExceptions = true
         showCauses = true
+        beforeSuite { desc ->
+            if (!desc.parent) {
+                println "Started running test suite [${desc.displayName}] @ ${new java.util.Date()} "
+            }
+        }
+        afterSuite { desc, result ->
+            if (!desc.parent) {
+                println """
+Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.util.Date()} 
+(${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)
+"""
+            }
+        }
     }
     if (!Boolean.getBoolean("skipTestRetry")) {
         retry {
@@ -349,10 +559,18 @@ tasks.withType(Test) {
             failOnPassedAfterRetry = false
         }
     }
+    jacoco {
+        dumpOnExit = true
+        excludes = rootProject.excludedFilesFromTestCoverage
+    }
 }
 
 def shouldTest(Project project, String category) {
-    !Boolean.getBoolean("skipTests") && rootProject.testCategoryType != null && rootProject.testCategoryType.toLowerCase().contains(category.toLowerCase()) && hasTestsOfCategory(project, category)
+    def foundTest = gradle.startParameter.taskNames.any {task -> task.toLowerCase().contains(category.toLowerCase())}
+    if (!foundTest) {
+        logger.debug "No tests with category ${category} found for ${project.name}"
+    }
+    return !Boolean.getBoolean("skipTests") && foundTest  && hasTestsOfCategory(project, category)
 }
 
 def hasTestsOfCategory(Project project, String category) {

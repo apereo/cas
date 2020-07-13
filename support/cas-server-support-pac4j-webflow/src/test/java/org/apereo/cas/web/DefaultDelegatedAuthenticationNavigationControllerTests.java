@@ -4,6 +4,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.view.DynamicHtmlView;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
+@Tag("Simple")
 public class DefaultDelegatedAuthenticationNavigationControllerTests {
 
     @Autowired

@@ -9,8 +9,10 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -30,7 +32,7 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLogoutServiceMessageHandler {
     private final HttpClient httpClient;
@@ -46,21 +48,22 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @Override
-    public Collection<SingleLogoutRequest> handle(final WebApplicationService singleLogoutService, final String ticketId,
+    public Collection<SingleLogoutRequest> handle(final WebApplicationService singleLogoutService,
+                                                  final String ticketId,
                                                   final TicketGrantingTicket ticketGrantingTicket) {
         if (singleLogoutService.isLoggedOutAlready()) {
             LOGGER.debug("Service [{}] is already logged out.", singleLogoutService);
             return new ArrayList<>(0);
         }
-        val selectedService = (WebApplicationService) this.authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService);
+        val selectedService = (WebApplicationService) authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService);
 
         LOGGER.trace("Processing logout request for service [{}]...", selectedService);
-        val registeredService = this.servicesManager.findServiceBy(selectedService);
+        val registeredService = servicesManager.findServiceBy(selectedService);
 
         LOGGER.debug("Service [{}] supports single logout and is found in the registry as [{}]. Proceeding...",
             selectedService.getId(), registeredService.getName());
 
-        val logoutUrls = this.singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, selectedService);
+        val logoutUrls = singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, selectedService);
         LOGGER.debug("Prepared logout url [{}] for service [{}]", logoutUrls, selectedService);
         if (logoutUrls == null || logoutUrls.isEmpty()) {
             LOGGER.debug("Service [{}] does not support logout operations given no logout url could be determined.", selectedService);
@@ -73,7 +76,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
 
     @Override
     public boolean supports(final WebApplicationService singleLogoutService) {
-        val selectedService = (WebApplicationService) this.authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService);
+        val selectedService = (WebApplicationService) authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService);
         val registeredService = this.servicesManager.findServiceBy(selectedService);
 
         if (registeredService != null
@@ -91,7 +94,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
             val logoutRequest = createSingleLogoutMessage(request);
             return sendSingleLogoutMessage(request, logoutRequest);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -106,7 +109,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
      *
      * @param singleLogoutService the single logout service
      * @param registeredService   the registered service
-     * @return the boolean
+     * @return true/false
      */
     protected boolean supportsInternal(final WebApplicationService singleLogoutService, final RegisteredService registeredService) {
         return true;
@@ -198,7 +201,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
      * @param msg           the msg
      * @param request       the request
      * @param logoutMessage the logout message
-     * @return the boolean
+     * @return true/false
      */
     protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg, final SingleLogoutRequest request, final SingleLogoutMessage logoutMessage) {
         return this.httpClient.sendMessageToEndPoint(msg);

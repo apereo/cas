@@ -2,6 +2,8 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -33,7 +35,6 @@ public class AcceptableUsagePolicyVerifyActionTests extends BaseAcceptableUsageP
     @Qualifier("acceptableUsagePolicyVerifyAction")
     private Action acceptableUsagePolicyVerifyAction;
 
-    @Override
     @Test
     public void verifyAction() throws Exception {
         val context = new MockRequestContext();
@@ -43,5 +44,21 @@ public class AcceptableUsagePolicyVerifyActionTests extends BaseAcceptableUsageP
         WebUtils.putTicketGrantingTicketInScopes(context, new MockTicketGrantingTicket("casuser"));
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT, acceptableUsagePolicyVerifyAction.execute(context).getId());
+    }
+
+    @Test
+    public void verifyActionWithService() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        WebUtils.putTicketGrantingTicketInScopes(context, new MockTicketGrantingTicket("casuser"));
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService();
+        val policy = new DefaultRegisteredServiceAcceptableUsagePolicy();
+        policy.setEnabled(false);
+        registeredService.setAcceptableUsagePolicy(policy);
+        WebUtils.putRegisteredService(context, registeredService);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED, acceptableUsagePolicyVerifyAction.execute(context).getId());
     }
 }

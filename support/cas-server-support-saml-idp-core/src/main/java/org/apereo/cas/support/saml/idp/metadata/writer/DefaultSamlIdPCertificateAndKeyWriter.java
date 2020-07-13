@@ -69,6 +69,7 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
         return generator.generateKeyPair();
     }
 
+    @SuppressWarnings("JdkObsolete")
     private X509Certificate generateCertificate(final KeyPair keypair) throws Exception {
         val dn = new X500Name("CN=" + hostname);
         val notBefore = new GregorianCalendar();

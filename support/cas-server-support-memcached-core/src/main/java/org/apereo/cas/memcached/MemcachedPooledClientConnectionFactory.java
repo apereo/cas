@@ -1,6 +1,7 @@
 package org.apereo.cas.memcached;
 
 import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -80,7 +81,7 @@ public class MemcachedPooledClientConnectionFactory extends BasePooledObjectFact
             p.getObject().shutdown();
             p.invalidate();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
     }
 

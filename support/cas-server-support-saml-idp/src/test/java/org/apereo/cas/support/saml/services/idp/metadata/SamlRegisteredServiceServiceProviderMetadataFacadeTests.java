@@ -31,7 +31,8 @@ public class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends Bas
     public void verifyResolver() {
         val service = getSamlRegisteredServiceForTestShib();
         val authnRequest = getAuthnRequestFor(service);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, authnRequest).get();
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+            service, authnRequest).get();
         assertNotNull(adaptor);
         assertNull(adaptor.getValidUntil());
         assertNull(adaptor.getOrganization());

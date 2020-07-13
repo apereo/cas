@@ -6,6 +6,7 @@ import org.apereo.cas.util.MockWebServer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Tag("Simple")
 public class RemoteEndpointServiceAccessStrategyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "remoteEndpointServiceAccessStrategy.json");
@@ -42,6 +44,20 @@ public class RemoteEndpointServiceAccessStrategyTests {
             new ByteArrayResource("OK".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertTrue(strategy.doPrincipalAttributesAllowServiceAccess("casuser", CoreAuthenticationTestUtils.getAttributes()));
+        } catch (final Exception e) {
+            throw new AssertionError(e.getMessage(), e);
+        }
+    }
+
+    @Test
+    public void verifyFails() {
+        val strategy = new RemoteEndpointServiceAccessStrategy();
+        strategy.setEndpointUrl("http://localhost:1234");
+        strategy.setAcceptableResponseCodes("600");
+        try (val webServer = new MockWebServer(8756,
+            new ByteArrayResource("OK".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+            assertFalse(strategy.doPrincipalAttributesAllowServiceAccess("casuser", CoreAuthenticationTestUtils.getAttributes()));
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }

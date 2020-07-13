@@ -32,11 +32,11 @@ public class RestfulSamlIdPMetadataCipherExecutor extends BaseStringCipherExecut
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.authn.samlIdp.metadata.rest.crypto.encryption.key";
+        return "cas.authn.saml-idp.metadata.rest.crypto.encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.authn.samlIdp.metadata.rest.crypto.signing.key";
+        return "cas.authn.saml-idp.metadata.rest.crypto.signing.key";
     }
 }

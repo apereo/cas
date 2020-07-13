@@ -4,6 +4,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
 import org.aspectj.lang.JoinPoint;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,6 +16,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Tag("Simple")
 public class ServiceResourceResolverTests {
     @Test
     public void verifyOperation() {

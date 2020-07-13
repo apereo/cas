@@ -129,7 +129,7 @@ public class CasCoreAuditConfiguration {
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("CAS Client Info Logging Filter");
         bean.setAsyncSupported(true);
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
 
         val initParams = new HashMap<String, String>();
         if (StringUtils.isNotBlank(audit.getAlternateClientAddrHeaderName())) {
@@ -236,7 +236,7 @@ public class CasCoreAuditConfiguration {
     @Bean
     public AuditPrincipalIdProvider auditPrincipalIdProvider() {
         val resolvers = applicationContext.getBeansOfType(AuditPrincipalIdProvider.class, false, true);
-        val providers = new ArrayList<AuditPrincipalIdProvider>(resolvers.values());
+        val providers = new ArrayList<>(resolvers.values());
         AnnotationAwareOrderComparator.sortIfNecessary(providers);
         return new ChainingAuditPrincipalIdProvider(providers);
     }

@@ -32,7 +32,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
-    testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-ldap-core", configuration: "tests")
     
     testImplementation libraries.springboottomcat
 }

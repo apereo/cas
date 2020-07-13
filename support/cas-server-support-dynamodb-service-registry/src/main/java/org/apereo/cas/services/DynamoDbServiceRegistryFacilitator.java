@@ -3,13 +3,12 @@ package org.apereo.cas.services;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
-import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
 import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
@@ -26,7 +25,6 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -65,7 +63,7 @@ public class DynamoDbServiceRegistryFacilitator {
      * Delete boolean.
      *
      * @param service the service
-     * @return the boolean
+     * @return true/false
      */
     public boolean delete(final RegisteredService service) {
         val del = new DeleteItemRequest().withTableName(dynamoDbProperties.getTableName())
@@ -113,33 +111,6 @@ public class DynamoDbServiceRegistryFacilitator {
      * @param id the id
      * @return the registered service
      */
-    public RegisteredService get(final String id) {
-        if (NumberUtils.isCreatable(id)) {
-            return get(Long.parseLong(id));
-        }
-
-        val scanRequest = new ScanRequest(dynamoDbProperties.getTableName());
-        val cond = new Condition();
-        cond.setComparisonOperator(ComparisonOperator.EQ);
-        cond.setAttributeValueList(List.of(new AttributeValue(id)));
-        scanRequest.addScanFilterEntry(ColumnNames.SERVICE_ID.getColumnName(), cond);
-        LOGGER.debug("Submitting request [{}] to get service for id [{}]", scanRequest, id);
-        val items = amazonDynamoDBClient.scan(scanRequest).getItems();
-        if (items.isEmpty()) {
-            LOGGER.debug("No service definition could be found for [{}]", id);
-            return null;
-        }
-        val service = deserializeServiceFromBinaryBlob(items.get(0));
-        LOGGER.debug("Located service [{}]", service);
-        return service;
-    }
-
-    /**
-     * Get registered service.
-     *
-     * @param id the id
-     * @return the registered service
-     */
     public RegisteredService get(final long id) {
         val keys = new HashMap<String, AttributeValue>();
         keys.put(ColumnNames.ID.getColumnName(), new AttributeValue(String.valueOf(id)));
@@ -153,7 +124,7 @@ public class DynamoDbServiceRegistryFacilitator {
         try (val is = new ByteArrayInputStream(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining())) {
             return this.jsonSerializer.from(is);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -169,7 +140,7 @@ public class DynamoDbServiceRegistryFacilitator {
                 return service;
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

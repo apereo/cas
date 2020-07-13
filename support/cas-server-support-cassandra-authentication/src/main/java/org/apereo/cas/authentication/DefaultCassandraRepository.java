@@ -4,9 +4,9 @@ import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
 import org.apereo.cas.util.CollectionUtils;
 
-import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.Session;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.BoundStatement;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -25,19 +25,16 @@ import java.util.Map;
 @Slf4j
 public class DefaultCassandraRepository implements CassandraRepository {
 
-    private final Session session;
+    private final CqlSession session;
+
     private final PreparedStatement selectUserQuery;
 
-    public DefaultCassandraRepository(final CassandraAuthenticationProperties cassandraProperties, final CassandraSessionFactory cassandraSessionFactory) {
-        val query = String.format(cassandraProperties.getQuery(), cassandraProperties.getTableName(), cassandraProperties.getUsernameAttribute());
+    public DefaultCassandraRepository(final CassandraAuthenticationProperties cassandraProperties,
+                                      final CassandraSessionFactory cassandraSessionFactory) {
+        val query = String.format(cassandraProperties.getQuery(), cassandraProperties.getTableName(),
+            cassandraProperties.getUsernameAttribute());
         this.session = cassandraSessionFactory.getSession();
-        this.selectUserQuery = session.prepare(query);
-    }
-
-    private static BoundStatement bind(final PreparedStatement statement, final Object... params) {
-        val boundStatement = statement.bind(params);
-        LOGGER.debug("CQL: [{}] with parameters [{}]", statement.getQueryString(), StringUtils.join(params, ", "));
-        return boundStatement;
+        this.selectUserQuery = this.session.prepare(query);
     }
 
     @Override
@@ -47,9 +44,15 @@ public class DefaultCassandraRepository implements CassandraRepository {
         if (row != null) {
             row.getColumnDefinitions().forEach(c -> {
                 LOGGER.debug("Located attribute column [{}]", c.getName());
-                attributes.put(c.getName(), CollectionUtils.toCollection(row.getObject(c.getName()), ArrayList.class));
+                attributes.put(c.getName().asInternal(), CollectionUtils.toCollection(row.getObject(c.getName()), ArrayList.class));
             });
         }
         return attributes;
+    }
+
+    private static BoundStatement bind(final PreparedStatement statement, final Object... params) {
+        val boundStatement = statement.bind(params);
+        LOGGER.debug("CQL: [{}] with parameters [{}]", statement.getQuery(), StringUtils.join(params, ", "));
+        return boundStatement;
     }
 }

@@ -1,23 +1,18 @@
-# Steps to enable this build are:
-#
-# Generate the OAUTH-TOKEN at https://github.com/settings/applications
-# Install travis: gem install travis
-# Login to travis: travis login
-# Encrypt the token: travis encrypt VAR_NAME=VAR_VALUE -r apereo/cas --add env.global
-# Encrypted settings include GPG_PSW, SONATYPE_USER, GPG_PASSPHRASE, SONATYPE_PWD, GH_TOKEN, COVERITY_SCAN_TOKEN
-
 language: java
 os: linux
-dist: trusty
+dist: bionic
 services:
   - docker
 branches:
   only:
     - master
 before_cache:
-  - rm -rf $HOME/.gradle/caches/7.0.*/
-  - rm -rf $HOME/.gradle/caches/6.3.*/
-  - rm -rf $HOME/.gradle/caches/6.2.*/
+  - rm -rf $HOME/.gradle/caches/9.*/
+  - rm -rf $HOME/.gradle/caches/8.*/
+  - rm -rf $HOME/.gradle/caches/7.*/
+  - rm -rf $HOME/.gradle/caches/6.*/
+  - rm -rf $HOME/.gradle/caches/5.*/
+  - rm -rf $HOME/.gradle/caches/4.*/
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
   - find ~/.gradle/caches/ -name "*.lock" -type f -delete
 cache:
@@ -29,239 +24,17 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 git:
-  depth: 2
-notifications:
-  slack:
-    secure: "gNFUOGd0isowSwPfQ9VqGQWhWRDAjzX9tfH0xGe2gyg1kiOhq3Odb8fdcUg9f3DhAbiMxGDu08IgmDbeEyncB42Zdqk/DFvD3F958WaVy0O9TF2iAzO+ftBG0+slFHPDZ8qAy97+mV/be7KBkLYP+BydYTVfO84NvpLNiylmOVU="
+  depth: 1
 env:
   global:
-    - JAVA_OPTS="-Xms512m -Xmx4048m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
-    - GRADLE_OPTS="-Xms512m -Xmx2024m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
+    - JAVA_OPTS="-Xms512m -Xmx6048m -Xss64m -XX:ReservedCodeCacheSize=512m -Xverify:none -server -XX:+UseG1GC"
+    - GRADLE_OPTS="-Xms512m -Xmx6048m -Xss64m -XX:ReservedCodeCacheSize=512m -Xverify:none -server -XX:+UseG1GC"
     - SPRING_MAIN_BANNER-MODE="off"
-    - DEPENDENCY_BOT_BRANCH=^renovate
     - TERM=xterm
-    - secure: "ScUSTo0if5m7ddnwUA7EaYucc6yzEUrKLk0DzCvkMfjn2h5taUFSKHx+S0hd2EzJofv+Em4eI5qncSK5LTxgD7HhHR1e3iZp+SqJenhhOnbuciZfg4QA+tUGw3XUdmREac5cz2l0qhi1q4vsnnZARj2d4vvf2HWuNtEOBu/ZAKI="
-    - secure: "iWPPLKSS3zBs2adqLPkMiHfCj2hSLyD5BoV3oodhR7Ne83Kpn1khRcEWFoHF3Ed11eSU+glNdPSzUpc8TzwTZGx5B3RU2Qp36hZFyjuzNWJARmoVPYMiEg3FFBQrUR75w+Tbtn6zPkiAk6nl0K5ewmY0/xixVdnTLXL5HjpE2rc="
-    - secure: "f3mDIZ8m6NYJXI8KvWD/sZRSeCCyIyfgPRy3Q6o9u9WyHZuYaJf95Ia0eJQ3gxUDS1TKL31Vk08dhFKrfIcKgifFPa2uQ2uyJkvGxlarMTQ+tpqsZYp4zAJgKc9r4xdZasvF2k4xqr+pl9AFjlpXB4jDD59XPXt3DcRABOYA9sM="
-    - secure: "o+KTglDoN49U9YawUsInKZ/83xxyeSB+WexfztRR+2dfCr049VXlJyurcE2/FygkentOY5DJU2UAnyZOEjyWoHth0q4MQOjIn0BE53yBFojxvcQPufgIR1Bc/BNaNeU2xRunNf8Rha/E/Dlwg5WdQT60Z0mdyDm7jHwodKxh7d4="
 jdk:
   - openjdk11
-before_install:
-  - unset _JAVA_OPTIONS
-  - ./ci/init-travis-build.sh
-install: true
+install:
+  - echo "Travis CI is disabled"
 script:
-  - ./ci/script.sh
-after_script:
-  - ./ci/stop.sh
-stages:
-  - initialize
-  - build
-  - validate
-  - publish
-  - test
-  - finalize
-jobs:
-  include:
-    - stage: initialize
-      script: ./ci/download-dependencies.sh
-      name: "Initialize Build System"
-      ############################################
-    - stage: build
-      script: ./ci/build.sh
-      name: "Build CAS"
-      ############################################
-    - stage: publish
-      if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-      script: ./ci/publish-snapshots-release.sh
-      name: "Publish SNAPSHOT Artifacts"
-    - stage: publish
-      script: ./ci/push-docs-ghpages.sh
-      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-      name: "Publish Documentation"
-      ############################################
-    - stage: validate
-      script: ./ci/html-proofer-docs.sh
-      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request) and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-      name: "Validate Documentation"
-    - stage: validate
-      script: ./ci/analyze-sonarqube.sh
-      if: type != pull_request
-      name: "Validate Code Quality via SonarCloud"
-    - stage: validate
-      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
-      script: ./ci/analyze-style.sh
-      name: "Validate Style via Checkstyle"
-    - stage: validate
-      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
-      script: ./ci/analyze-codebase.sh
-      name: "Validate Codebase via Groovy, etc"
-    - stage: validate
-      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
-      script: ./ci/build-javadocs.sh
-      name: "Validate Javadocs"
-    - stage: validate
-      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
-      script: ./ci/build-config-metadata.sh
-      name: "Validate Spring Configuration Metadata"
-    - stage: validate
-      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
-      script: ./ci/analyze-config-proxying.sh
-      name: "Validate Spring Configuration Proxying"
-    - stage: validate
-      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
-      script: ./ci/check-config-factories.sh
-      name: "Validate Spring Configuration Factories"
-    - stage: validate
-      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
-      script: ./ci/tests/shell/validate-shell.sh
-      name: "Validate CAS Command-line Shell"
-    - stage: validate
-      script: ./ci/tests/webapp/validate-embedded-webapp.sh tomcat
-      name: "Validate Web Application Server via Embedded Apache Tomcat"
-    - stage: validate
-      script: ./ci/tests/webapp/validate-external-webapp.sh tomcat
-      name: "Validate Web Application Server via External Apache Tomcat"
-    - stage: validate
-      script: ./ci/tests/webapp/validate-embedded-webapp.sh jetty
-      name: "Validate Web Application Server via Embedded Jetty"
-    - stage: validate
-      script: ./ci/tests/webapp/validate-embedded-webapp.sh undertow
-      name: "Validate Web Application Server via Embedded Undertow"
-    - stage: validate
-      script: ./ci/tests/webapp/validate-configserver-webapp.sh
-      name: "Validate Spring Cloud Configuration Server"
-    - stage: validate
-      script: ./ci/tests/webapp/validate-eurekaserver-webapp.sh
-      name: "Validate Eureka Discovery Server"
-    - stage: validate
-      script: ./ci/tests/webapp/validate-bootadmin-webapp.sh
-      name: "Validate Spring Boot Admin Server"
-    - stage: validate
-      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
-      script: ./ci/tests/validate-tests.sh
-      name: "Validate Tests & Test Suites"
-    - stage: validate
-      script: ./ci/validate-dependency-licenses.sh
-      name: "Validate Dependency Licenses"
-      ############################################
-    - stage: test
-      script: ./ci/tests/run-tests-simple.sh
-      name: "Simple Unit Tests"
-    - stage: test
-      script: ./ci/tests/groovy/run-tests-groovy.sh
-      name: "Groovy Tests"
-    - stage: test
-      script: ./ci/tests/filesystem/run-tests-filesystem.sh
-      name: "FileSystem Tests"
-    - stage: test
-      script: ./ci/tests/jdbc/run-tests-jdbc.sh
-      name: "JDBC Tests"
-    - stage: test
-      script: ./ci/tests/webflow/run-tests-webflow.sh
-      name: "Spring Webflow Tests"
-    - stage: test
-      script: ./ci/tests/restful/run-tests-restful.sh
-      name: "RESTful Tests"
-    - stage: test
-      script: ./ci/tests/mfa/run-tests-mfa.sh
-      name: "Multifactor Authentication Tests"
-    - stage: test
-      script: ./ci/tests/oauth/run-tests-oauth.sh
-      name: "OAuth Tests"
-    - stage: test
-      script: ./ci/tests/oauth/run-tests-uma.sh
-      name: "OAuth UMA Tests"
-    - stage: test
-      script: ./ci/tests/oidc/run-tests-oidc.sh
-      name: "OpenID Connect Tests"
-    - stage: test
-      script: ./ci/tests/saml/run-tests-saml.sh
-      name: "SAML Tests"
-    - stage: test
-      script: ./ci/tests/ldap/run-tests-ldap.sh
-      name: "LDAP Tests"
-    - stage: test
-      script: ./ci/tests/amazon/run-tests-aws.sh
-      name: "AWS Tests"
-    - stage: test
-      script: ./ci/tests/mongodb/run-tests-mongodb.sh
-      name: "MongoDb Tests"
-    - stage: test
-      script: ./ci/tests/redis/run-tests-redis.sh
-      name: "Redis Tests"
-    - stage: test
-      script: ./ci/tests/radius/run-tests-radius.sh
-      name: "Radius Tests"
-    - stage: test
-      script: ./ci/tests/mysql/run-tests-mysql.sh
-      name: "MySQL Tests"
-    - stage: test
-      script: ./ci/tests/mssqlserver/run-tests-mssqlserver.sh
-      name: "MSSQL Server Tests"
-    - stage: test
-      script: ./ci/tests/postgres/run-tests-postgres.sh
-      name: "PostgreSQL Tests"
-    - stage: test
-      script: ./ci/tests/mariadb/run-tests-mariadb.sh
-      name: "MariaDb Tests"
-    - stage: test
-      script: ./ci/tests/oracle/run-tests-oracle.sh
-      name: "Oracle Tests"
-    - stage: test
-      script: ./ci/tests/cassandra/run-tests-cassandra.sh
-      name: "Apache Cassandra Tests"
-    - stage: test
-      script: ./ci/tests/couchbase/run-tests-couchbase.sh
-      name: "Couchbase Tests"
-    - stage: test
-      script: ./ci/tests/dynamodb/run-tests-dynamodb.sh
-      name: "DynamoDb Tests"
-    - stage: test
-      script: ./ci/tests/memcached/run-tests-memcached.sh
-      name: "Memcached Tests"
-    - stage: test
-      script: ./ci/tests/ehcache/run-tests-ehcache.sh
-      name: "Ehcache Tests"
-    - stage: test
-      script: ./ci/tests/ignite/run-tests-ignite.sh
-      name: "Apache Ignite Tests"
-    - stage: test
-      script: ./ci/tests/influxdb/run-tests-influxdb.sh
-      name: "InfluxDb Tests"
-    - stage: test
-      script: ./ci/tests/mail/run-tests-mail.sh
-      name: "Mail Tests"
-    - stage: test
-      script: ./ci/tests/couchdb/run-tests-couchdb.sh
-      name: "Apache CouchDb Tests"
-    - stage: test
-      script: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
-      name: "Azure CosmosDb Tests"
-    - stage: test
-      script: ./ci/tests/activemq/run-tests-activemq.sh
-      name: "Apache ActiveMQ Tests"
-    - stage: test
-      script: ./ci/tests/zookeeper/run-tests-zookeeper.sh
-      name: "Apache ZooKeeper Tests"
-      ############################################
-    - stage: finalize
-      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
-      script: ./ci/analyze-dependencies.sh
-      name: "Dependency Security Analysis"
-    - stage: finalize
-      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-      script: ./ci/report-dependency-updates.sh
-      name: "Dependency Update Report"
-    - stage: finalize
-      if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-      script: ./ci/update-dependencies.sh
-      name: "Renovate Dependency Updates"
-    - stage: finalize
-      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
-      script: ./ci/analyze-bugs-main.sh
-      name: "Spotbugs Main Analysis"
-    - stage: finalize
-      if: NOT (head_branch =~ env(DEPENDENCY_BOT_BRANCH) and type = pull_request)
-      script: ./ci/analyze-bugs-tests.sh
-      name: "Spotbugs Tests Analysis"
+  - echo "Travis CI is disabled"
+

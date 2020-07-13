@@ -5,6 +5,7 @@ import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.SamlIdPConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
+import org.apereo.cas.config.SamlIdPTicketSerializationConfiguration;
 import org.apereo.cas.config.SamlIdPWebflowConfiguration;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.FileSystemResource;
 
 /**
@@ -27,6 +29,7 @@ import org.springframework.core.io.FileSystemResource;
     BaseSamlIdPWebflowTests.SamlIdPMetadataTestConfiguration.class,
     CoreSamlConfiguration.class,
     SamlIdPConfiguration.class,
+    SamlIdPTicketSerializationConfiguration.class,
     SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
     SamlIdPMetadataConfiguration.class,
     SamlIdPEndpointsConfiguration.class,
@@ -37,6 +40,7 @@ import org.springframework.core.io.FileSystemResource;
 public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests {
 
     @TestConfiguration
+    @Lazy(false)
     public static class SamlIdPMetadataTestConfiguration {
         @SneakyThrows
         @Bean

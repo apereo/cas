@@ -43,9 +43,9 @@ After enabling OAuth support, the following endpoints will be available:
 | `/oauth2.0/authorize`     | Authorize the user and start the CAS authentication flow.                   | `GET`
 | `/oauth2.0/accessToken`,`/oauth2.0/token`      | Get an access token in plain-text or JSON              | `POST`
 | `/oauth2.0/profile`       | Get the authenticated user profile in JSON via `access_token` parameter.    | `GET`
-| `/oauth2.0/introspect`    | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662).  | `POST`
+| `/oauth2.0/introspect`    | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662). This endpoint expects HTTP basic authentication with OAuth2 service `client_id` and `client_secret` associated as username and password.  | `POST`
 | `/oauth2.0/device`        | Approve device user codes via the [device flow protocol](https://tools.ietf.org/html/draft-denniss-oauth-device-flow). | `POST`
-| `/oauth2.0/revoke`            | [Revoke](https://tools.ietf.org/html/rfc7009) access or refresh tokens.
+| `/oauth2.0/revoke`            | [Revoke](https://tools.ietf.org/html/rfc7009) access or refresh tokens. This endpoint expects HTTP basic authentication with OAuth2 service `client_id` and `client_secret` associated as username and password.
 
 ## Response/Grant Types
 

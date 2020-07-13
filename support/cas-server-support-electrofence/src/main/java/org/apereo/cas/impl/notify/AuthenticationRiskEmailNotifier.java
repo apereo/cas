@@ -1,7 +1,7 @@
 package org.apereo.cas.impl.notify;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.io.CommunicationsManager;
+import org.apereo.cas.notifications.CommunicationsManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

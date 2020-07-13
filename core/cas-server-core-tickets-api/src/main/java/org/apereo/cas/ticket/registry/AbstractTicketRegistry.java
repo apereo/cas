@@ -9,6 +9,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
 import com.google.common.io.ByteSource;
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
@@ -21,6 +22,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -33,7 +35,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
@@ -69,7 +71,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     @Override
     public long sessionCount() {
-        try (val tgtStream = getTickets().stream().filter(TicketGrantingTicket.class::isInstance)) {
+        try (val tgtStream = getTicketsStream().filter(TicketGrantingTicket.class::isInstance)) {
             return tgtStream.count();
         } catch (final Exception t) {
             LOGGER.trace("sessionCount() operation is not implemented by the ticket registry instance [{}]. "
@@ -78,6 +80,18 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         }
     }
 
+    @Override
+    public long countSessionsFor(final String principalId) {
+        val ticketPredicate = (Predicate<Ticket>) t -> {
+            if (t instanceof TicketGrantingTicket) {
+                val ticket = TicketGrantingTicket.class.cast(t);
+                return ticket.getAuthentication().getPrincipal().getId().equalsIgnoreCase(principalId);
+            }
+            return false;
+        };
+        return getTickets(ticketPredicate).count();
+    }
+    
     @Override
     public long serviceTicketCount() {
         try (val stStream = getTicketsStream().filter(ServiceTicket.class::isInstance)) {
@@ -227,7 +241,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         LOGGER.debug("Encoding ticket [{}]", ticket);
         val encodedTicketObject = SerializationUtils.serializeAndEncodeObject(this.cipherExecutor, ticket);
         val encodedTicketId = encodeTicketId(ticket.getId());
-        val encodedTicket = new EncodedTicket(encodedTicketId, ByteSource.wrap(encodedTicketObject).read());
+        val encodedTicket = new EncodedTicket(encodedTicketId,
+            ByteSource.wrap(encodedTicketObject).read(), ticket.getPrefix());
         LOGGER.debug("Created encoded ticket [{}]", encodedTicket);
         return encodedTicket;
     }

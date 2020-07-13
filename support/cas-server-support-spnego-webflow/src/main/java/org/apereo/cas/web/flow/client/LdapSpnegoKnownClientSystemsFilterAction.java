@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchResponse;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.util.regex.Pattern;
 
@@ -19,7 +20,7 @@ import java.util.regex.Pattern;
  * @since 4.1
  */
 @Slf4j
-public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
+public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction implements DisposableBean {
 
     /**
      * The must-have attribute name.
@@ -128,5 +129,10 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      */
     protected boolean verifySpnegoAttributeValue(final LdapAttribute attribute) {
         return attribute != null && StringUtils.isNotBlank(attribute.getStringValue());
+    }
+
+    @Override
+    public void destroy() {
+        this.searchOperation.getConnectionFactory().close();
     }
 }

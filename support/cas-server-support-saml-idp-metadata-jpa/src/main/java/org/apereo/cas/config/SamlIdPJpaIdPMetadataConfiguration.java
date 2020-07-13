@@ -52,7 +52,7 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 @Slf4j
-@ConditionalOnProperty(prefix = "cas.authn.samlIdp.metadata.jpa", name = "idpMetadataEnabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.jpa", name = "idp-metadata-enabled", havingValue = "true")
 public class SamlIdPJpaIdPMetadataConfiguration {
 
     @Autowired
@@ -77,12 +77,14 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "dataSourceSamlMetadataIdP")
     public DataSource dataSourceSamlMetadataIdP() {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
         return JpaBeans.newDataSource(idp.getJpa());
     }
 
     @Bean
+    @RefreshScope
     public List<String> jpaSamlMetadataIdPPackagesToScan() {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
         val type = new JpaSamlIdPMetadataDocumentFactory(idp.getJpa().getDialect()).getType();
@@ -136,7 +138,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
         val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
             .samlIdPMetadataLocator(samlIdPMetadataLocator())
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
-            .resourceLoader(applicationContext)
+            .applicationContext(applicationContext)
             .casProperties(casProperties)
             .metadataCipherExecutor(jpaSamlIdPMetadataCipherExecutor())
             .build();

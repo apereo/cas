@@ -12,10 +12,10 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.0.0
  */
 @TestPropertySource(properties = {
-    "cas.authn.mfa.gauth.jpa.ddlAuto=create-drop",
+    "cas.authn.mfa.gauth.jpa.ddl-auto=create-drop",
     "cas.authn.mfa.gauth.jpa.user=root",
     "cas.authn.mfa.gauth.jpa.password=password",
-    "cas.authn.mfa.gauth.jpa.driverClass=com.mysql.cj.jdbc.Driver",
+    "cas.authn.mfa.gauth.jpa.driver-class=com.mysql.cj.jdbc.Driver",
     "cas.authn.mfa.gauth.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "cas.authn.mfa.gauth.jpa.dialect=org.hibernate.dialect.MySQL57InnoDBDialect"
 })

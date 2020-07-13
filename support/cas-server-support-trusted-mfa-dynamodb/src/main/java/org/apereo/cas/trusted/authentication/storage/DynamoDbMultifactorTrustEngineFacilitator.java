@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbMultifactorTr
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
@@ -27,6 +28,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,6 +46,7 @@ import java.util.Set;
 @Slf4j
 @Getter
 @RequiredArgsConstructor
+@SuppressWarnings("JdkObsolete")
 public class DynamoDbMultifactorTrustEngineFacilitator {
     private final DynamoDbMultifactorTrustProperties dynamoDbProperties;
 
@@ -118,14 +121,14 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
                 record.setPrincipal(item.get(ColumnNames.PRINCIPAL.getColumnName()).getS());
                 record.setRecordKey(item.get(ColumnNames.RECORD_KEY.getColumnName()).getS());
                 val time = Long.parseLong(item.get(ColumnNames.RECORD_DATE.getColumnName()).getS());
-                record.setRecordDate(DateTimeUtils.zonedDateTimeOf(new Date(time)));
+                record.setRecordDate(DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(time)));
                 val expTime = Long.parseLong(item.get(ColumnNames.EXPIRATION_DATE.getColumnName()).getS());
                 record.setExpirationDate(new Date(expTime));
 
                 results.add(record);
             });
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return results;
     }

@@ -1,6 +1,8 @@
 package org.apereo.cas.util.spring;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -102,7 +104,24 @@ public class ApplicationContextProvider implements ApplicationContextAware {
         return Optional.empty();
     }
 
+    /**
+     * Gets configurable application context.
+     *
+     * @return the configurable application context
+     */
     public static ConfigurableApplicationContext getConfigurableApplicationContext() {
         return (ConfigurableApplicationContext) CONTEXT;
+    }
+
+    /**
+     * Gets script resource cache manager.
+     *
+     * @return the script resource cache manager
+     */
+    public static Optional<ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript>> getScriptResourceCacheManager() {
+        if (CONTEXT != null) {
+            return Optional.of(CONTEXT.getBean("scriptResourceCacheManager", ScriptResourceCacheManager.class));
+        }
+        return Optional.empty();
     }
 }

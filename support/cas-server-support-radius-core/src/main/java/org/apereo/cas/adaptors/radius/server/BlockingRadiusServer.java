@@ -38,6 +38,6 @@ public class BlockingRadiusServer extends AbstractRadiusServer {
 
     @Override
     protected RadiusResponse authenticateRequest(final RadiusClient client, final AccessRequest accessRequest) throws Exception {
-        return client.authenticate(accessRequest, getRadiusAuthenticator(), getRadiusServerConfigurationContext().getRetries());
+        return client.authenticate(accessRequest, getRadiusAuthenticator(), getConfigurationContext().getRetries());
     }
 }

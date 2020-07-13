@@ -77,13 +77,12 @@ public class CouchDbConnectorFactory {
             .maxCacheEntries(couchDbProperties.getMaxCacheEntries())
             .connectionTimeout(couchDbProperties.getConnectionTimeout())
             .socketTimeout(couchDbProperties.getSocketTimeout())
-            .enableSSL(couchDbProperties.isEnableSSL())
-            .relaxedSSLSettings(couchDbProperties.isRelaxedSSLSettings())
+            .enableSSL(couchDbProperties.isEnableSsl())
+            .relaxedSSLSettings(couchDbProperties.isRelaxedSslSettings())
             .caching(couchDbProperties.isCaching())
             .maxObjectSizeBytes(couchDbProperties.getMaxObjectSizeBytes())
             .useExpectContinue(couchDbProperties.isUseExpectContinue())
             .cleanupIdleConnections(couchDbProperties.isCleanupIdleConnections());
-
 
         if (StringUtils.isNotBlank(couchDbProperties.getProxyHost())) {
             builder.proxy(couchDbProperties.getProxyHost());

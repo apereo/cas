@@ -6,11 +6,12 @@ import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.ArrayList;
@@ -33,13 +34,13 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
 
     private final RedisTemplate<String, RegisteredService> template;
 
-    public RedisServiceRegistry(final ApplicationEventPublisher eventPublisher,
+    public RedisServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                 final RedisTemplate<String, RegisteredService> template,
                                 final Collection<ServiceRegistryListener> serviceRegistryListeners) {
-        super(eventPublisher, serviceRegistryListeners);
+        super(applicationContext, serviceRegistryListeners);
         this.template = template;
     }
-
+                          
     @Override
     public RegisteredService save(final RegisteredService rs) {
         try {
@@ -50,7 +51,7 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
             LOGGER.trace("Saved registered service [{}]", rs);
             publishEvent(new CasRegisteredServiceSavedEvent(this, rs));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return rs;
     }
@@ -65,7 +66,7 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
             publishEvent(new CasRegisteredServiceDeletedEvent(this, registeredService));
             return true;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -75,7 +76,7 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
         try {
             return getRegisteredServiceKeys().size();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return 0;
     }
@@ -94,7 +95,7 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
             list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
             return list;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }
@@ -107,7 +108,7 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
             LOGGER.trace("Locating service by identifier [{}] using key [{}]", id, redisKey);
             return ops.get();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         LOGGER.trace("Registered service by identifier [{}] cannot be found", id);
         return null;

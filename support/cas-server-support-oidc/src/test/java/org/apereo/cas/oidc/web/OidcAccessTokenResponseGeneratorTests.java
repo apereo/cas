@@ -72,7 +72,7 @@ public class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
             .registeredService(getOidcRegisteredService())
             .responseType(OAuth20ResponseTypes.DEVICE_CODE)
             .deviceCode(devCode.getId())
-            .userCode(deviceTokenFactory.createDeviceUserCode(devCode).getId())
+            .userCode(deviceUserCodeFactory.createDeviceUserCode(devCode).getId())
             .build();
 
         val result = OAuth20AccessTokenResponseResult.builder()

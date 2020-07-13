@@ -16,7 +16,6 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -37,14 +36,6 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
 
     private final CasConfigurationProperties casProperties;
 
-    private static boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
-        val generatedToken = result.getGeneratedToken();
-        return OAuth20ResponseTypes.DEVICE_CODE == result.getResponseType()
-            && generatedToken.getDeviceCode().isPresent()
-            && generatedToken.getUserCode().isPresent()
-            && generatedToken.getAccessToken().isEmpty();
-    }
-
     @Audit(action = "OAUTH2_ACCESS_TOKEN_RESPONSE",
         actionResolverName = "OAUTH2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER",
         resourceResolverName = "OAUTH2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER")
@@ -57,6 +48,14 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         }
 
         return generateResponseForAccessToken(request, response, result);
+    }
+
+    private static boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
+        val generatedToken = result.getGeneratedToken();
+        return OAuth20ResponseTypes.DEVICE_CODE == result.getResponseType()
+            && generatedToken.getDeviceCode().isPresent()
+            && generatedToken.getUserCode().isPresent()
+            && generatedToken.getAccessToken().isEmpty();
     }
 
     /**

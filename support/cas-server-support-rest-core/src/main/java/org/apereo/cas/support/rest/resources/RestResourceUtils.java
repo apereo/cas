@@ -2,6 +2,7 @@ package org.apereo.cas.support.rest.resources;
 
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -68,7 +69,7 @@ public class RestResourceUtils {
 
             return new ResponseEntity<>(MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
         } catch (final JsonProcessingException exception) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -79,7 +80,7 @@ public class RestResourceUtils {
                                                 final Throwable ex) {
         val authnMsg = StringUtils.defaultIfBlank(ex.getMessage(), "Authentication Failure: " + authnhandlerErrors.getMessage());
         val authnBundleMsg = getTranslatedMessageForExceptionClass(ex.getClass().getSimpleName(), request, applicationContext);
-        return String.format("%s:%s:%s", ex.getClass().getSimpleName(), authnMsg, authnBundleMsg);
+        return String.format("%s:%s", authnMsg, authnBundleMsg);
     }
 
     private String getTranslatedMessageForExceptionClass(final String className,

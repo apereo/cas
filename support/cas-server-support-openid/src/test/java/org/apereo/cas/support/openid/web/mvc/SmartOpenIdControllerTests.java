@@ -3,6 +3,7 @@ package org.apereo.cas.support.openid.web.mvc;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,9 +22,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @deprecated 6.2
  */
 @Deprecated(since = "6.2.0")
+@Tag("Simple")
 public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
 
     private static final String OPENID_MODE_PARAM = "openid.mode";
+
     private final MockHttpServletRequest request = new MockHttpServletRequest();
     private final HttpServletResponse response = new MockHttpServletResponse();
 

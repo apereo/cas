@@ -18,6 +18,7 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 
+import lombok.Getter;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
@@ -28,7 +29,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,8 +39,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static org.mockito.Mockito.*;
-
 /**
  * This is {@link RestfulServiceRegistryTests}.
  *
@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    RestfulServiceRegistryTests.RestServicesTestConfiguration.class,
+    RestfulServiceRegistryTests.RestfulServiceRegistryTestConfiguration.class,
     CasCoreServicesConfiguration.class,
     RestServiceRegistryConfiguration.class,
     CasCoreUtilConfiguration.class,
@@ -67,31 +67,31 @@ import static org.mockito.Mockito.*;
 },
     properties = {
         "server.port=9303",
-        "cas.serviceRegistry.rest.url=http://localhost:9303",
-        "cas.serviceRegistry.initFromJson=false"
+        "cas.service-registry.rest.url=http://localhost:9303",
+        "cas.service-registry.init-from-json=false"
     },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAutoConfiguration
 @Tag("RestfulApi")
+@Getter
 public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     @Qualifier("restfulServiceRegistry")
-    private ServiceRegistry dao;
-
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return dao;
-    }
+    private ServiceRegistry newServiceRegistry;
 
     @TestConfiguration
-    public static class RestServicesTestConfiguration {
+    @Lazy(false)
+    public static class RestfulServiceRegistryTestConfiguration {
+
+        @Autowired
+        private ConfigurableApplicationContext applicationContext;
 
         @RestController("servicesController")
         @RequestMapping("/")
-        public static class ServicesController {
-            private final InMemoryServiceRegistry serviceRegistry = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
+        public class ServicesController {
+            private final InMemoryServiceRegistry serviceRegistry = new InMemoryServiceRegistry(applicationContext);
 
             @DeleteMapping
             public Integer findByServiceId(@RequestBody final RegisteredService service) {

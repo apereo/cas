@@ -27,9 +27,12 @@ import lombok.val;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Mock ticket-granting ticket.
@@ -39,6 +42,7 @@ import java.util.Map;
  */
 @Getter
 @EqualsAndHashCode(of = "id")
+@SuppressWarnings("JdkObsolete")
 public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketState {
 
     public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
@@ -55,6 +59,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
 
     private final Map<String, Service> proxyGrantingTickets = new HashMap<>();
 
+    private final Set<String> descendantTickets = new LinkedHashSet<>();
+
     private int usageCount;
 
     private boolean expired;
@@ -62,37 +68,46 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     @Setter
     private ExpirationPolicy expirationPolicy = new TicketGrantingTicketExpirationPolicy(100, 100);
 
-    public MockTicketGrantingTicket(final String principalId, final Credential c, final Map<String, List<Object>> attributes) {
-        this(principalId, c, attributes, Map.of());
+    public MockTicketGrantingTicket(final String principalId, final Credential c,
+                                    final Map<String, List<Object>> principalAttributes) {
+        this(principalId, c, principalAttributes, Map.of());
     }
 
-    public MockTicketGrantingTicket(final String principalId, final Map<String, List<Object>> attributes,
+    public MockTicketGrantingTicket(final String principalId, final Map<String, List<Object>> principalAttributes,
                                     final Map<String, List<Object>> authnAttributes) {
-        this(principalId, CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"),
-            attributes, authnAttributes);
+        this(principalId,
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"),
+            principalAttributes, authnAttributes);
     }
-    public MockTicketGrantingTicket(final String principalId, final Credential c, final Map<String, List<Object>> attributes,
+
+    public MockTicketGrantingTicket(final String principalId, final Credential credential,
+                                    final Map<String, List<Object>> principalAttributes,
                                     final Map<String, List<Object>> authnAttributes) {
-        id = ID_GENERATOR.getNewTicketId("TGT");
-        val metaData = new BasicCredentialMetaData(c);
-        val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(principalId, attributes);
-        authentication = new DefaultAuthenticationBuilder(principal)
-            .addCredential(metaData)
+        this(new DefaultAuthenticationBuilder(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(principalId, principalAttributes))
+            .addCredential(new BasicCredentialMetaData(credential))
             .setAttributes(authnAttributes)
             .addAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS,
                 List.of(SimpleTestUsernamePasswordAuthenticationHandler.class.getSimpleName()))
             .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
-                new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData))
-            .build();
+                new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(),
+                    new BasicCredentialMetaData(credential)))
+            .build());
+    }
+
+    public MockTicketGrantingTicket(final Authentication authentication) {
+        id = ID_GENERATOR.getNewTicketId("TGT");
         created = ZonedDateTime.now(ZoneOffset.UTC);
+        this.authentication = authentication;
     }
 
     public MockTicketGrantingTicket(final String principal) {
         this(principal, new HashMap<>());
     }
 
-    public MockTicketGrantingTicket(final String principal, final Map attributes) {
-        this(principal, CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"), attributes);
+    public MockTicketGrantingTicket(final String principal, final Map principalAttributes) {
+        this(principal,
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"),
+            principalAttributes);
     }
 
     public ServiceTicket grantServiceTicket(final Service service) {
@@ -107,6 +122,11 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
         val st = new MockServiceTicket(id, service, this, expirationPolicy);
         this.services.put(id, service);
         return st;
+    }
+
+    @Override
+    public Collection<String> getDescendantTickets() {
+        return this.descendantTickets;
     }
 
     @Override
@@ -149,11 +169,6 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     @Override
-    public ExpirationPolicy getExpirationPolicy() {
-        return this.expirationPolicy;
-    }
-
-    @Override
     public String getPrefix() {
         return TicketGrantingTicket.PREFIX;
     }
@@ -177,6 +192,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     public void update() {
         usageCount++;
     }
+
 
     @Override
     public int compareTo(final Ticket o) {

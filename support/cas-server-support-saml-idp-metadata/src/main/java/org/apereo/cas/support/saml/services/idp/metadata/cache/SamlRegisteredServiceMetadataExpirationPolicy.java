@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import com.github.benmanes.caffeine.cache.Expiry;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -12,8 +13,6 @@ import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-
-import javax.annotation.Nonnull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,7 +31,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
     }
 
     @Override
-    public long expireAfterCreate(@Nonnull final SamlRegisteredServiceCacheKey cacheKey,
+    public long expireAfterCreate(@NonNull final SamlRegisteredServiceCacheKey cacheKey,
                                   final MetadataResolver chainingMetadataResolver,
                                   final long currentTime) {
         val service = cacheKey.getRegisteredService();
@@ -51,16 +50,16 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
 
 
     @Override
-    public long expireAfterUpdate(@Nonnull final SamlRegisteredServiceCacheKey cacheKey,
-                                  @Nonnull final MetadataResolver chainingMetadataResolver,
+    public long expireAfterUpdate(@NonNull final SamlRegisteredServiceCacheKey cacheKey,
+                                  @NonNull final MetadataResolver chainingMetadataResolver,
                                   final long currentTime, final long currentDuration) {
         LOGGER.trace("Cache expiration duration after updates is set to [{}]", currentDuration);
         return currentDuration;
     }
 
     @Override
-    public long expireAfterRead(@Nonnull final SamlRegisteredServiceCacheKey cacheKey,
-                                @Nonnull final MetadataResolver chainingMetadataResolver,
+    public long expireAfterRead(@NonNull final SamlRegisteredServiceCacheKey cacheKey,
+                                @NonNull final MetadataResolver chainingMetadataResolver,
                                 final long currentTime, final long currentDuration) {
         LOGGER.trace("Cache expiration duration after reads is set to [{}]", currentDuration);
         return currentDuration;
@@ -75,6 +74,10 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
      */
     protected long getCacheDurationForServiceProvider(final SamlRegisteredService service, final MetadataResolver chainingMetadataResolver) {
         try {
+            if (StringUtils.isBlank(service.getServiceId())) {
+                LOGGER.error("Unable to determine duration for SAML service [{}] with no entity id", service);
+                return -1;
+            }
             val set = new CriteriaSet();
             set.add(new EntityIdCriterion(service.getServiceId()));
             set.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));

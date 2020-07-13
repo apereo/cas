@@ -1,5 +1,8 @@
 description = "Apereo CAS U2F Support"
 dependencies {
+    api project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api")
+
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-webflow")
@@ -8,17 +11,18 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":support:cas-server-support-u2f-core")
     implementation project(":support:cas-server-support-trusted-mfa-core")
-    
-    api project(":api:cas-server-core-api-webflow")
-    api project(":api:cas-server-core-api")
+
+    compileOnly project(":core:cas-server-core-rest")
+    compileOnly project(":support:cas-server-support-trusted-mfa")
 
     implementation libraries.yubicoapi
     implementation libraries.u2flibserver
-    
+
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-mfa")
@@ -29,14 +33,19 @@ dependencies {
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-logging")
+    testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":support:cas-server-support-trusted-mfa")
+    testImplementation project(":support:cas-server-support-reports")
 
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-audit-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow-mfa-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow-mfa", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
 }

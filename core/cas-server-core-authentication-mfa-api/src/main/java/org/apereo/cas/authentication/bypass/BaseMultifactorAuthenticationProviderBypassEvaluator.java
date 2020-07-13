@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -27,11 +28,13 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator implements MultifactorAuthenticationProviderBypassEvaluator {
     private static final long serialVersionUID = 2372899636154131393L;
+
     private final String providerId;
+
     private final String id = this.getClass().getSimpleName();
 
     @Override
@@ -89,7 +92,7 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
      * @param registeredService the registered service
      * @param provider          the provider
      * @param request           the request
-     * @return the boolean
+     * @return true/false
      */
     protected abstract boolean shouldMultifactorAuthenticationProviderExecuteInternal(Authentication authentication,
                                                                                       RegisteredService registeredService,

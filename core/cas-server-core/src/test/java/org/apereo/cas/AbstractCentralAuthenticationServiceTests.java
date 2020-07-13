@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -70,7 +71,9 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     @TestConfiguration("CasTestConfiguration")
+    @Lazy(false)
     public static class CasTestConfiguration implements InitializingBean {
+
 
         @Autowired
         protected ApplicationContext applicationContext;

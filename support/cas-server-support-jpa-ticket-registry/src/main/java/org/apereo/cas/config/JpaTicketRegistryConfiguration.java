@@ -101,6 +101,7 @@ public class JpaTicketRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "dataSourceTicket")
+    @RefreshScope
     public DataSource dataSourceTicket() {
         return JpaBeans.newDataSource(casProperties.getTicket().getRegistry().getJpa());
     }

@@ -30,12 +30,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.8
  */
 @TestPropertySource(properties = {
-    "cas.acceptableUsagePolicy.jdbc.tableName=users_table",
-    "cas.acceptableUsagePolicy.aupAttributeName=aupAccepted",
-    "cas.acceptableUsagePolicy.jdbc.aupColumn=aup",
-    "cas.acceptableUsagePolicy.jdbc.principalIdColumn=mail",
-    "cas.acceptableUsagePolicy.jdbc.principalIdAttribute=email",
-    "cas.acceptableUsagePolicy.jdbc.sqlUpdateAUP=UPDATE %s SET %s=true WHERE lower(%s)=lower(?)"
+    "cas.acceptable-usage-policy.jdbc.tableName=users_table",
+    "cas.acceptable-usage-policy.aupAttributeName=aupAccepted",
+    "cas.acceptable-usage-policy.jdbc.aupColumn=aup",
+    "cas.acceptable-usage-policy.jdbc.principalIdColumn=mail",
+    "cas.acceptable-usage-policy.jdbc.principalIdAttribute=email",
+    "cas.acceptable-usage-policy.jdbc.sqlUpdate=UPDATE %s SET %s=true WHERE lower(%s)=lower(?)"
 })
 @Tag("JDBC")
 public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {

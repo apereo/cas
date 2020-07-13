@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -68,6 +69,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasPersonDirectoryConfiguration.class,
@@ -77,13 +79,13 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 },
     properties = {
-        "cas.authn.couchDb.dbName=authentication",
-        "cas.authn.couchDb.attributes=loc,state",
-        "cas.authn.couchDb.usernameAttribute=username",
-        "cas.authn.couchDb.passwordAttribute=password",
-        "cas.authn.couchDb.username=cas",
-        "cas.authn.couchdb.password=password",
-        "cas.authn.pac4j.typedIdUsed=false"
+        "cas.authn.couch-db.db-name=authentication",
+        "cas.authn.couch-db.attributes=loc,state",
+        "cas.authn.couch-db.username-attribute=username",
+        "cas.authn.couch-db.password-attribute=password",
+        "cas.authn.couch-db.username=cas",
+        "cas.authn.couch-db.password=password",
+        "cas.authn.pac4j.typed-id-used=false"
     })
 @Tag("CouchDb")
 @EnabledIfPortOpen(port = 5984)

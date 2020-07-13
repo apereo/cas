@@ -1,7 +1,7 @@
 package org.apereo.cas.util.crypto;
 
 import lombok.Getter;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -9,6 +9,7 @@ import org.bouncycastle.util.io.pem.PemReader;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
+import javax.crypto.Cipher;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
@@ -25,10 +26,37 @@ import java.security.spec.X509EncodedKeySpec;
 @Slf4j
 @ToString(callSuper = true)
 @Getter
-@Setter
+@RequiredArgsConstructor
 public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
-    private Resource resource;
-    private String algorithm;
+    private final Resource resource;
+
+    private final String algorithm;
+
+    /**
+     * Initialize cipher based on service public key.
+     *
+     * @return the false if no public key is found
+     * or if cipher cannot be initialized, etc.
+     */
+    public Cipher toCipher() {
+        try {
+            val publicKey = getObject();
+            if (publicKey != null) {
+                val cipher = Cipher.getInstance(this.algorithm);
+                cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+                LOGGER.trace("Initialized cipher in encrypt-mode via the public key algorithm [{}]", this.algorithm);
+                return cipher;
+            }
+        } catch (final Exception e) {
+            LOGGER.warn("Cipher could not be initialized. Error [{}]", e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public Class getObjectType() {
+        return PublicKey.class;
+    }
 
     @Override
     protected PublicKey createInstance() throws Exception {
@@ -74,10 +102,5 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
             val factory = KeyFactory.getInstance(this.algorithm);
             return factory.generatePublic(pubSpec);
         }
-    }
-
-    @Override
-    public Class getObjectType() {
-        return PublicKey.class;
     }
 }

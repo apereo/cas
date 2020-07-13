@@ -52,7 +52,7 @@ public class SamlSPUtils {
     public static SamlRegisteredService newSamlServiceProviderService(final AbstractSamlSPProperties sp,
                                                                       final SamlRegisteredServiceCachingMetadataResolver resolver) {
         if (StringUtils.isBlank(sp.getMetadata())) {
-            LOGGER.debug("Skipped registration of [{}] since no metadata location is found", sp.getName());
+            LOGGER.debug("Skipped registration of [{}] since no metadata location is defined", sp.getName());
             return null;
         }
 
@@ -144,6 +144,7 @@ public class SamlSPUtils {
      * @param servicesManager the services manager
      */
     public static void saveService(final RegisteredService service, final ServicesManager servicesManager) {
+        LOGGER.debug("Attempting to save service definition [{}]", service);
         servicesManager.load();
 
         if (servicesManager.findServiceBy(registeredService -> registeredService instanceof SamlRegisteredService

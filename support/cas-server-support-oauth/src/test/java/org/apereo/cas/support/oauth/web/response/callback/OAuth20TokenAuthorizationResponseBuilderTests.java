@@ -7,7 +7,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests {
 
     private static final String STATE = "%123=";
+
     private static final String NONCE = "%123=";
 
     @Test
@@ -73,10 +73,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
             fail("Expected access token");
         }
 
-        final OAuth20AccessToken oAuth20AccessToken = generatedToken
-            .getAccessToken()
-            .get();
-
+        val oAuth20AccessToken = generatedToken.getAccessToken().get();
         val tokenAuthorizationResponseBuilder = new OAuth20TokenAuthorizationResponseBuilder(oauthTokenGenerator,
             servicesManager,
             accessTokenJwtBuilder,
@@ -112,18 +109,19 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
             "Expected unchanged " + paramName + "  param");
     }
 
-    private Map<String, List<String>> splitQuery(final String fragment) {
+    private static Map<String, List<String>> splitQuery(final String fragment) {
         if (StringUtils.isBlank(fragment)) {
             return new HashMap<>(0);
         }
         return Arrays
             .stream(fragment.split("&"))
             .map(OAuth20TokenAuthorizationResponseBuilderTests::splitQueryParameter)
-            .collect(Collectors.groupingBy(AbstractMap.SimpleImmutableEntry::getKey, LinkedHashMap::new, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+            .collect(Collectors.groupingBy(AbstractMap.SimpleImmutableEntry::getKey,
+                LinkedHashMap::new, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
     }
 
     private static AbstractMap.SimpleImmutableEntry<String, String> splitQueryParameter(final String it) {
-        val idx = it.indexOf("=");
+        val idx = it.indexOf('=');
         val key = idx > 0 ? it.substring(0, idx) : it;
         val value = idx > 0 && it.length() > idx + 1 ? it.substring(idx + 1) : null;
         return new AbstractMap.SimpleImmutableEntry<>(key, value);

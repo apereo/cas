@@ -131,7 +131,7 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
 
             this.awsLogsClient = builder.build();
         } catch (final SdkClientException e) {
-            LOGGER.error(e.getLocalizedMessage(), e);
+            org.apereo.cas.util.LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -275,7 +275,7 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
             } catch (final InvalidSequenceTokenException iste) {
                 sequenceTokenCache = iste.getExpectedSequenceToken();
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                org.apereo.cas.util.LoggingUtils.error(LOGGER, e);
             }
             logEvents.clear();
         } while (drained >= AWS_DRAIN_LIMIT);
@@ -313,7 +313,6 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
             }
         }
 
-        //TODO - Here is where the issue is occurring.
         var logSequenceToken = StringUtils.EMPTY;
         var createLogStream = true;
         LOGGER.debug("Attempting to locate the log stream [{}] for group [{}]", logStreamName, logGroupName);
@@ -351,7 +350,7 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
                 try {
                     flush();
                 } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    org.apereo.cas.util.LoggingUtils.error(LOGGER, e);
                 }
                 if (!shutdown && queue.size() < AWS_DRAIN_LIMIT) {
                     try {
@@ -359,7 +358,7 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
                             monitor.wait(flushPeriodMillis);
                         }
                     } catch (final InterruptedException e) {
-                        LOGGER.error(e.getMessage(), e);
+                        org.apereo.cas.util.LoggingUtils.error(LOGGER, e);
                         Thread.currentThread().interrupt();
                     }
                 }
@@ -384,7 +383,7 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
                 deliveryThread.join(SHUTDOWN_TIMEOUT_MILLIS);
             } catch (final InterruptedException e) {
                 deliveryThread.interrupt();
-                LOGGER.error(e.getMessage(), e);
+                org.apereo.cas.util.LoggingUtils.error(LOGGER, e);
             }
         }
         if (!queue.isEmpty()) {

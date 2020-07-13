@@ -28,17 +28,7 @@ public class ServiceValidationViewFactory {
      * The Registered views.
      */
     private final Map<String, Pair<View, View>> registeredViews = new HashMap<>(0);
-
-    /**
-     * Register view.
-     *
-     * @param type the type
-     * @param view the view
-     */
-    public void registerView(final ServiceValidationViewTypes type, final Pair<View, View> view) {
-        registerView(type.getType(), view);
-    }
-
+    
     /**
      * Register view.
      *
@@ -63,41 +53,11 @@ public class ServiceValidationViewFactory {
     /**
      * Register view.
      *
-     * @param ownerClass the owner class
-     * @param view       the view
-     */
-    public void registerView(final Class ownerClass, final View view) {
-        registerView(ownerClass.getSimpleName(), Pair.of(view, view));
-    }
-
-    /**
-     * Register view.
-     *
      * @param type the type
      * @param view the view
      */
     public void registerView(final String type, final Pair<View, View> view) {
         registeredViews.put(type, view);
-    }
-
-    /**
-     * Register view.
-     *
-     * @param type the type
-     * @param view the view
-     */
-    public void registerView(final String type, final View view) {
-        registeredViews.put(type, Pair.of(view, view));
-    }
-
-    /**
-     * Gets view.
-     *
-     * @param type the type
-     * @return the view
-     */
-    public Pair<View, View> getView(final ServiceValidationViewTypes type) {
-        return getView(type.getType());
     }
 
     /**
@@ -180,26 +140,6 @@ public class ServiceValidationViewFactory {
      */
     public View getFailureView(final Class type) {
         return getView(type.getSimpleName()).getValue();
-    }
-
-    /**
-     * Contains view .
-     *
-     * @param type the type
-     * @return the boolean
-     */
-    public boolean containsView(final ServiceValidationViewTypes type) {
-        return containsView(type.getType());
-    }
-
-    /**
-     * Contains view .
-     *
-     * @param type the type
-     * @return the boolean
-     */
-    public boolean containsView(final String type) {
-        return registeredViews.containsKey(type);
     }
 
     /**

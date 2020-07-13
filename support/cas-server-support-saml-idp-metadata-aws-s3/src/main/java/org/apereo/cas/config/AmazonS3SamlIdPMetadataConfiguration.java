@@ -21,9 +21,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ResourceLoader;
 
 import java.util.Optional;
 
@@ -35,11 +36,11 @@ import java.util.Optional;
  */
 @Configuration("amazonS3SamlIdPMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.authn.samlIdp.metadata.amazonS3", name = "idpMetadataBucketName")
+@ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.amazon-s3", name = "idp-metadata-bucket-name")
 @Slf4j
 public class AmazonS3SamlIdPMetadataConfiguration {
     @Autowired
-    private ResourceLoader resourceLoader;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -53,6 +54,7 @@ public class AmazonS3SamlIdPMetadataConfiguration {
     private ObjectProvider<AmazonS3> amazonS3Client;
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "amazonS3SamlIdPMetadataCipherExecutor")
     public CipherExecutor amazonS3SamlIdPMetadataCipherExecutor() {
         val idp = casProperties.getAuthn().getSamlIdp();
@@ -70,12 +72,13 @@ public class AmazonS3SamlIdPMetadataConfiguration {
 
     @Bean
     @SneakyThrows
+    @RefreshScope
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();
         val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
             .samlIdPMetadataLocator(samlIdPMetadataLocator())
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
-            .resourceLoader(resourceLoader)
+            .applicationContext(applicationContext)
             .casProperties(casProperties)
             .metadataCipherExecutor(amazonS3SamlIdPMetadataCipherExecutor())
             .build();
@@ -88,6 +91,7 @@ public class AmazonS3SamlIdPMetadataConfiguration {
 
     @Bean
     @SneakyThrows
+    @RefreshScope
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new AmazonS3SamlIdPMetadataLocator(amazonS3SamlIdPMetadataCipherExecutor(),

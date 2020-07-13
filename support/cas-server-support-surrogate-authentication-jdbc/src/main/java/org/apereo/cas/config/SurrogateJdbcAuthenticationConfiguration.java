@@ -10,10 +10,12 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 
@@ -38,12 +40,14 @@ public class SurrogateJdbcAuthenticationConfiguration {
     public SurrogateAuthenticationService surrogateAuthenticationService() {
         val su = casProperties.getAuthn().getSurrogate();
         return new SurrogateJdbcAuthenticationService(su.getJdbc().getSurrogateSearchQuery(),
-            surrogateAuthenticationJdbcDataSource(),
+            new JdbcTemplate(surrogateAuthenticationJdbcDataSource()),
             su.getJdbc().getSurrogateAccountQuery(),
             servicesManager.getObject());
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "surrogateAuthenticationJdbcDataSource")
+    @RefreshScope
     public DataSource surrogateAuthenticationJdbcDataSource() {
         val su = casProperties.getAuthn().getSurrogate();
         return JpaBeans.newDataSource(su.getJdbc());
