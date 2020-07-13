@@ -32,8 +32,8 @@ public class DynamoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         if (accountValidator.isValid(uid, token)) {
             val yubikeyPublicId = getCipherExecutor().encode(accountValidator.getTokenPublicId(token));
 
-            val results = getAccount(uid);
-            val account = results.isEmpty() ? new YubiKeyAccount() : results.get();
+            val results = dynamoDbFacilitator.getAccounts(uid);
+            val account = results.isEmpty() ? new YubiKeyAccount() : results.get(0);
             account.registerDevice(yubikeyPublicId);
             account.setUsername(uid);
             if (results.isEmpty()) {

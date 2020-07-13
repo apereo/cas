@@ -153,10 +153,7 @@ public class YubiKeyDynamoDbFacilitator {
     public boolean update(final YubiKeyAccount registration) {
         val attributeValue = new AttributeValue().withSS(registration.getDeviceIdentifiers());
         val updateRequest = new UpdateItemRequest(dynamoDbProperties.getTableName(),
-            Map.of(
-//                ColumnNames.ID.getColumnName(), new AttributeValue().withN(String.valueOf(registration.getId()))//,
-                ColumnNames.USERNAME.getColumnName(), new AttributeValue().withS(String.valueOf(registration.getUsername()))
-            ),
+            Map.of(ColumnNames.USERNAME.getColumnName(), new AttributeValue().withS(String.valueOf(registration.getUsername()))),
             Map.of(ColumnNames.DEVICE_IDENTIFIERS.getColumnName(), new AttributeValueUpdate(attributeValue, AttributeAction.PUT)));
         LOGGER.debug("Submitting put request [{}] for record [{}]", updateRequest, registration);
         val putItemResult = amazonDynamoDBClient.updateItem(updateRequest);
