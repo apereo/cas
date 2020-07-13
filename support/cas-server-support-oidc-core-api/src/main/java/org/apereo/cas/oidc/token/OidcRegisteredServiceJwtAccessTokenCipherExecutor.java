@@ -132,10 +132,12 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
 
             @Override
             protected byte[] sign(final byte[] value) {
-                val jwks = defaultJsonWebKeystoreCache.get(
-                        OidcRegisteredServiceJwtAccessTokenCipherExecutor.this.issuer);
-                if (jwks.isPresent()) {
-                    return EncodingUtils.signJws(this.signingKey, value, jwks.get().getAlgorithm(), this.customHeaders);
+                if (EncodingUtils.isJsonWebKey(signingKey)) {
+                    val jwks = defaultJsonWebKeystoreCache.get(
+                            OidcRegisteredServiceJwtAccessTokenCipherExecutor.this.issuer);
+                    if (jwks.isPresent()) {
+                        return signWith(value, jwks.get().getAlgorithm());
+                    }
                 }
                 return super.sign(value);
             }

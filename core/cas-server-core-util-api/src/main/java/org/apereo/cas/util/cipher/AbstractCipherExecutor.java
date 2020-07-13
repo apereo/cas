@@ -14,6 +14,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.RsaKeyUtil;
 
@@ -47,9 +48,9 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         Security.addProvider(new BouncyCastleProvider());
     }
     
-    protected Key signingKey;
+    private Key signingKey;
 
-    protected Map<String, Object> customHeaders = new LinkedHashMap<>(MAP_SIZE);
+    private Map<String, Object> customHeaders = new LinkedHashMap<>(MAP_SIZE);
     
     /**
      * Extract private key from resource private key.
@@ -93,11 +94,15 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         if (this.signingKey == null) {
             return value;
         }
-        if ("RSA".equalsIgnoreCase(this.signingKey.getAlgorithm())) {
-            return EncodingUtils.signJwsRSASha512(this.signingKey, value, this.customHeaders);
-        }
-        return EncodingUtils.signJwsHMACSha512(this.signingKey, value, this.customHeaders);
+        return signWith(
+                value,
+                "RSA".equalsIgnoreCase(this.signingKey.getAlgorithm())
+                ? AlgorithmIdentifiers.RSA_USING_SHA512
+                : AlgorithmIdentifiers.HMAC_SHA512);
+    }
 
+    protected byte[] signWith(final byte[] value, final String algHeaderValue) {
+        return EncodingUtils.signJws(this.signingKey, value, algHeaderValue, this.customHeaders);
     }
 
     /**
