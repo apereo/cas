@@ -26,5 +26,5 @@ The following Swagger endpoints may be used to analyze and test the APIs:
 
 | Description                 | URL              
 |-----------------------------|-------------------------------------------------
-| Swagger API Specification   | `https://sso.example.org/cas/v2/api-docs`       
+| Swagger API Specification   | `https://sso.example.org/cas/v3/api-docs`       
 | Swagger UI                  | `https://sso.example.org/cas/swagger-ui.html`       
