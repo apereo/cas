@@ -2996,7 +2996,8 @@ To learn more about this topic, [please review this guide](../mfa/YubiKey-Authen
 # cas.authn.mfa.yubikey.order=
 ```
 
-Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.yubikey`.
+Multifactor authentication bypass settings for this provider are 
+available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.yubikey`.
 
 #### YubiKey JSON Device Store
 
@@ -3030,6 +3031,10 @@ Configuration settings for this feature are available [here](Configuration-Prope
 ### YubiKey MongoDb Device Store
 
 Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
+
+### YubiKey DynamoDb Device Store
+
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
 
 ### YubiKey Redis Device Store
 
@@ -4376,9 +4381,13 @@ See [this guide](../services/Service-Management.html) to learn more.
 # cas.service-registry.init-from-json=false
 
 # cas.service-registry.management-type=DEFAULT|DOMAIN
+# cas.service-registry.cache=PT5M
+# cas.service-registry.cache-size=1000
+# cas.service-registry.cache-capacity=1000
 ```
 
-Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.service-registry`.
+Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under
+ the configuration key `cas.service-registry`.
 
 ### Service Registry Notifications
 
