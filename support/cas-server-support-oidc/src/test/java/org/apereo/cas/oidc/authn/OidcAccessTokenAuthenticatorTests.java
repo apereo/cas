@@ -27,7 +27,7 @@ public class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         val token = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(), getClaims());
         val auth = new OidcAccessTokenAuthenticator(ticketRegistry, oidcTokenSigningAndEncryptionService,
-            servicesManager, accessTokenJwtBuilder);
+            servicesManager, oidcAccessTokenJwtBuilder);
         val at = getAccessToken(token, "clientid");
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
