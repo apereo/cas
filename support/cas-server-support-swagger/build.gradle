@@ -1,7 +1,7 @@
 description = "Apereo CAS Swagger API Support"
 
 dependencies {
-    implementation libraries.swagger
+    api libraries.swagger
     implementation libraries.springdoc
 
     implementation project(":core:cas-server-core-util-api")
