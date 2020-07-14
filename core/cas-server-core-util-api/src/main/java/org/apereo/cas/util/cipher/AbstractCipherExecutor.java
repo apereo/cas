@@ -101,6 +101,13 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
                 : AlgorithmIdentifiers.HMAC_SHA512);
     }
 
+    /**
+     * Sign value with given parameters.
+     *
+     * @param value          the value
+     * @param algHeaderValue the alg header value
+     * @return the byte [ ]
+     */
     protected byte[] signWith(final byte[] value, final String algHeaderValue) {
         return EncodingUtils.signJws(this.signingKey, value, algHeaderValue, this.customHeaders);
     }

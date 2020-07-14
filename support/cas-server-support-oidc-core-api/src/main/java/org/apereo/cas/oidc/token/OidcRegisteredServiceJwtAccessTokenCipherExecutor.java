@@ -20,6 +20,7 @@ import org.jose4j.jwk.PublicJsonWebKey;
 
 import java.io.Serializable;
 import java.security.Key;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -135,7 +136,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
                 if (EncodingUtils.isJsonWebKey(signingKey)) {
                     val jwks = defaultJsonWebKeystoreCache.get(
                             OidcRegisteredServiceJwtAccessTokenCipherExecutor.this.issuer);
-                    if (jwks.isPresent()) {
+                    if (Objects.requireNonNull(jwks).isPresent()) {
                         return signWith(value, jwks.get().getAlgorithm());
                     }
                 }
