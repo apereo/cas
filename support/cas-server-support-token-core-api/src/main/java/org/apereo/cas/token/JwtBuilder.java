@@ -41,7 +41,7 @@ import java.util.Optional;
 public class JwtBuilder {
     private static final int MAP_SIZE = 8;
 
-    private final String casSeverPrefix;
+    private final String issuer;
 
     private final CipherExecutor<Serializable, String> defaultTokenCipherExecutor;
 
@@ -125,7 +125,7 @@ public class JwtBuilder {
         val serviceAudience = payload.getServiceAudience();
         val claims = new JWTClaimsSet.Builder()
             .audience(serviceAudience)
-            .issuer(casSeverPrefix)
+            .issuer(issuer)
             .jwtID(payload.getJwtId())
             .issueTime(payload.getIssueDate())
             .subject(payload.getSubject());

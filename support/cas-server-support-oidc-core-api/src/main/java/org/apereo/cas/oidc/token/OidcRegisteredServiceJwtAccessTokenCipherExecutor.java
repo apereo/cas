@@ -129,6 +129,18 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
                 }
                 return super.decode(value, parameters);
             }
+
+            @Override
+            protected byte[] sign(final byte[] value) {
+                if (EncodingUtils.isJsonWebKey(signingKey)) {
+                    val jwks = defaultJsonWebKeystoreCache.get(
+                            OidcRegisteredServiceJwtAccessTokenCipherExecutor.this.issuer);
+                    if (jwks.isPresent()) {
+                        return signWith(value, jwks.get().getAlgorithm());
+                    }
+                }
+                return super.sign(value);
+            }
         };
         if (EncodingUtils.isJsonWebKey(encryptionKey) || EncodingUtils.isJsonWebKey(signingKey)) {
             cipher.setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
