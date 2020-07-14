@@ -10,7 +10,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
 /**
  * This is {@link CasSwaggerConfiguration}.
  *
@@ -21,8 +20,8 @@ import org.springframework.context.annotation.Configuration;
 public class CasSwaggerConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(name = "swaggerOpenApi")
-    public OpenAPI swaggerOpenApi() {
+    @ConditionalOnMissingBean(name = "casSwaggerOpenApi")
+    public OpenAPI casSwaggerOpenApi() {
         return new OpenAPI()
             .info(new Info()
                 .title("Apereo CAS Swagger API Documentation")
