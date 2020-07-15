@@ -38,7 +38,7 @@ public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInit
             val context = new MockRequestContext();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(),
                 new MockHttpServletResponse()));
-            assertEquals("error", authenticationViaFormAction.execute(context).getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, authenticationViaFormAction.execute(context).getId());
         } catch (final Exception e) {
             throw new AssertionError(e);
         }
@@ -54,7 +54,7 @@ public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInit
             c.setSurrogateUsername("cassurrogate");
             WebUtils.putCredential(context, c);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
-            assertEquals("success", authenticationViaFormAction.execute(context).getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, authenticationViaFormAction.execute(context).getId());
         } catch (final Exception e) {
             throw new AssertionError(e);
         }
