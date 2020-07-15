@@ -9,26 +9,30 @@ import org.springframework.core.io.ClassPathResource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link PublicKeyFactoryBeanTests}.
+ * This is {@link PrivateKeyFactoryBeanTests}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
 @Tag("Simple")
-public class PublicKeyFactoryBeanTests {
+public class PrivateKeyFactoryBeanTests {
 
     @Test
     public void verifyOperation() throws Exception {
-        val factory = new PublicKeyFactoryBean(new ClassPathResource("publickey.pem"), RsaKeyUtil.RSA);
+        val factory = new PrivateKeyFactoryBean();
+        factory.setLocation(new ClassPathResource("privatekey2.pem"));
+        factory.setAlgorithm(RsaKeyUtil.RSA);
         factory.setSingleton(false);
         val object = factory.getObject();
         assertNotNull(object);
     }
 
     @Test
-    public void verifyFails() {
-        val factory = new PublicKeyFactoryBean(new ClassPathResource("badkey.pem"), RsaKeyUtil.RSA);
+    public void verifyFails() throws Exception {
+        val factory = new PrivateKeyFactoryBean();
+        factory.setLocation(new ClassPathResource("badkey.pem"));
+        factory.setAlgorithm(RsaKeyUtil.RSA);
         factory.setSingleton(false);
-        assertNull(factory.toCipher());
+        assertNull(factory.getObject());
     }
 }

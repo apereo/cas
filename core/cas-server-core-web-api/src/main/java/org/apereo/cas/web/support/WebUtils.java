@@ -65,11 +65,14 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class WebUtils {
     /**
+     * Flow attribute or request parameter indicating public workstation.
+     */
+    public static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
+
+    /**
      * Ticket-granting ticket id parameter used in various flow scopes.
      */
     public static final String PARAMETER_TICKET_GRANTING_TICKET_ID = "ticketGrantingTicketId";
-
-    private static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
 
     private static final String PARAMETER_AUTHENTICATION = "authentication";
 
