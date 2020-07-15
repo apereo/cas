@@ -15,11 +15,14 @@ import java.util.List;
 public class OidcAddressScopeAttributeReleasePolicy extends BaseOidcScopeAttributeReleasePolicy {
     private static final long serialVersionUID = 1532960981124784595L;
 
-    public static final List<String> ALLOWED_ATTRIBUTES = List.of("address");
+    /**
+     * Claims allowed by this attribute release policy.
+     */
+    public static final List<String> ALLOWED_CLAIMS = List.of("address");
 
     public OidcAddressScopeAttributeReleasePolicy() {
         super(OidcConstants.StandardScopes.ADDRESS.getScope());
-        setAllowedAttributes(ALLOWED_ATTRIBUTES);
+        setAllowedAttributes(ALLOWED_CLAIMS);
     }
 
     @JsonIgnore

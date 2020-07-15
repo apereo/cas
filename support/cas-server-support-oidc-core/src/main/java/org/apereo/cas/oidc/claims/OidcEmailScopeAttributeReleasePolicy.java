@@ -15,11 +15,14 @@ import java.util.List;
 public class OidcEmailScopeAttributeReleasePolicy extends BaseOidcScopeAttributeReleasePolicy {
     private static final long serialVersionUID = 1532960981124784595L;
 
-    public static final List<String> ALLOWED_ATTRIBUTES = List.of("email", "email_verified");
+    /**
+     * Claims allowed by this attribute release policy.
+     */
+    public static final List<String> ALLOWED_CLAIMS = List.of("email", "email_verified");
 
     public OidcEmailScopeAttributeReleasePolicy() {
         super(OidcConstants.StandardScopes.EMAIL.getScope());
-        setAllowedAttributes(ALLOWED_ATTRIBUTES);
+        setAllowedAttributes(ALLOWED_CLAIMS);
     }
 
     @JsonIgnore
