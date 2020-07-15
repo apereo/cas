@@ -14,6 +14,7 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.Transition;
+import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
@@ -557,6 +558,14 @@ public interface CasWebflowConfigurer extends Ordered {
      * @return the view state binder configuration
      */
     BinderConfiguration getViewStateBinderConfiguration(ViewState state);
+
+    /**
+     * Gets transition execution criteria chain for transition.
+     *
+     * @param def the def
+     * @return the transition execution criteria chain for transition
+     */
+    List<TransitionCriteria> getTransitionExecutionCriteriaChainForTransition(Transition def);
 
     /**
      * Gets state.

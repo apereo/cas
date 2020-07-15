@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.web.flow.configurer.DynamicFlowModelBuilderTests;
 import org.apereo.cas.web.flow.decorator.GroovyLoginWebflowDecoratorTests;
 import org.apereo.cas.web.flow.decorator.RestfulLoginWebflowDecoratorTests;
 import org.apereo.cas.web.flow.executor.ClientFlowExecutionRepositoryTests;
@@ -21,6 +22,7 @@ import org.junit.runner.RunWith;
     RestfulLoginWebflowDecoratorTests.class,
     ClientFlowExecutionRepositoryTests.class,
     DefaultRegisteredServiceUserInterfaceInfoTests.class,
+    DynamicFlowModelBuilderTests.class,
     EncryptedTranscoderTests.class
 })
 @RunWith(JUnitPlatform.class)

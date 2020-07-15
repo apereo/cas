@@ -2,6 +2,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.web.flow.ChainingSingleSignOnParticipationStrategyTests;
+import org.apereo.cas.web.flow.DefaultLoginWebflowConfigurerRememberMeTests;
 import org.apereo.cas.web.flow.DefaultLoginWebflowConfigurerTests;
 import org.apereo.cas.web.flow.DefaultLogoutWebflowConfigurerTests;
 import org.apereo.cas.web.flow.DefaultSingleSignOnParticipationStrategyTests;
@@ -34,6 +35,7 @@ import org.junit.runner.RunWith;
     DefaultLoginWebflowConfigurerTests.class,
     DefaultLogoutWebflowConfigurerTests.class,
     RedirectToServiceActionTests.class,
+    DefaultLoginWebflowConfigurerRememberMeTests.class,
     CheckWebAuthenticationRequestActionTests.class,
     ClientFlowExecutionKeyTests.class,
     ClearWebflowCredentialActionTests.class,

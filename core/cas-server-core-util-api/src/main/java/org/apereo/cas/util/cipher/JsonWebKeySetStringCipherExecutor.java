@@ -34,7 +34,9 @@ import java.util.function.Predicate;
 @Setter
 public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor implements AutoCloseable, DisposableBean {
     private final FileWatcherService keystorePatchWatcherService;
+
     private final Optional<String> keyIdToUse;
+
     private final Optional<HttpsJwks> httpsJkws;
 
     private JsonWebKeySet webKeySet;
@@ -178,7 +180,7 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
     private Optional<RsaJsonWebKey> findRsaJsonWebKeyByProvidedKeyId(final List<JsonWebKey> keys) {
         val predicate = this.keyIdToUse
             .<Predicate<JsonWebKey>>map(s -> jsonWebKey -> jsonWebKey.getKeyId()
-            .equalsIgnoreCase(s))
+                .equalsIgnoreCase(s))
             .orElseGet(() -> jsonWebKey -> true);
         return findRsaJsonWebKey(keys, predicate);
     }

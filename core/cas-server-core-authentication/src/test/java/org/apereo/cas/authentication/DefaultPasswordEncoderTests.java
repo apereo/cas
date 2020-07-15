@@ -67,4 +67,10 @@ public class DefaultPasswordEncoderTests {
         assertNull(encoder.encode(null));
         assertNull(encoder.encode("password"));
     }
+
+    @Test
+    public void verifyBadAlg() {
+        val encoder = new DefaultPasswordEncoder("BadAlgorithm", null);
+        assertNull(encoder.encode("password"));
+    }
 }

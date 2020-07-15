@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.authentication.AcceptUsersAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -23,9 +25,12 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.mock.web.MockFilterChain;
+import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -103,6 +108,10 @@ public class WiringConfigurationTests {
     @Qualifier("localeResolver")
     private LocaleResolver localeResolver;
 
+    @Autowired
+    @Qualifier("currentCredentialsAndAuthenticationClearingFilter")
+    private FilterRegistrationBean currentCredentialsAndAuthenticationClearingFilter;
+
     @Test
     public void verifyConfigurationClasses() {
         assertNotNull(applicationContext);
@@ -128,4 +137,19 @@ public class WiringConfigurationTests {
         request.setPreferredLocales(List.of(Locale.ITALIAN));
         assertEquals(Locale.ITALIAN, localeResolver.resolveLocale(request));
     }
+
+    @Test
+    public void verifyAuthFilterClearing() throws Exception {
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(CoreAuthenticationTestUtils.getAuthentication());
+        val filter = currentCredentialsAndAuthenticationClearingFilter.getFilter();
+        filter.init(new MockFilterConfig());
+        filter.doFilter(new MockHttpServletRequest(), new MockHttpServletResponse(), new MockFilterChain());
+        filter.destroy();
+        assertNull(AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication());
+        assertNull(AuthenticationCredentialsThreadLocalBinder.getCurrentAuthenticationBuilder());
+        assertNull(AuthenticationCredentialsThreadLocalBinder.getCurrentCredentialIds());
+        assertNull(AuthenticationCredentialsThreadLocalBinder.getCurrentCredentialIdsAsString());
+        assertNull(AuthenticationCredentialsThreadLocalBinder.getInProgressAuthentication());
+    }
+
 }

@@ -73,6 +73,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * The {@link AbstractCasWebflowConfigurer} is responsible for
@@ -660,17 +661,12 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         Assert.notNull(field, "exceptionHandlers cannot be null");
         ReflectionUtils.makeAccessible(field);
         val list = (List<FlowExecutionExceptionHandler>) ReflectionUtils.getField(field, target.getExceptionHandlerSet());
-        list.forEach(h -> source.getExceptionHandlerSet().add(h));
+        Objects.requireNonNull(list).forEach(h -> source.getExceptionHandlerSet().add(h));
         target.setDescription(source.getDescription());
         target.setCaption(source.getCaption());
     }
-
-    /**
-     * Gets transition execution criteria chain for transition.
-     *
-     * @param def the def
-     * @return the transition execution criteria chain for transition
-     */
+    
+    @Override
     public List<TransitionCriteria> getTransitionExecutionCriteriaChainForTransition(final Transition def) {
         if (def.getExecutionCriteria() instanceof TransitionCriteriaChain) {
             val chain = (TransitionCriteriaChain) def.getExecutionCriteria();

@@ -54,7 +54,48 @@ public class DefaultRegisteredServiceUserInterfaceInfoTests {
         assertNotNull(info.getDisplayName());
         assertTrue(info.getLogoWidth() > 0);
         assertTrue(info.getLogoHeight() > 0);
+    }
 
+    @Test
+    public void verifySpecialCases() {
+        val service = mock(RegisteredService.class);
+        when(service.getInformationUrl()).thenReturn("https://apereo.org/cas");
+        when(service.getPrivacyUrl()).thenReturn("https://apereo.org/cas");
+        when(service.getLogo()).thenReturn("https://apereo.org/cas");
+
+        val info = new DefaultRegisteredServiceUserInterfaceInfo(service) {
+            private static final long serialVersionUID = 2331519665722637762L;
+
+            @Override
+            public Collection<String> getDescriptions() {
+                return List.of("Description");
+            }
+
+            @Override
+            public Collection<String> getDisplayNames() {
+                return List.of("DisplayNames");
+            }
+
+            @Override
+            public Collection<String> getInformationURLs() {
+                return List.of();
+            }
+
+            @Override
+            public Collection<Logo> getLogoUrls() {
+                throw new RuntimeException("Bad Logo");
+            }
+
+            @Override
+            public Collection<String> getPrivacyStatementURLs() {
+                return List.of();
+            }
+        };
+        assertNotNull(info.getInformationURL());
+        assertNotNull(info.getLogoUrl());
+        assertNotNull(info.getPrivacyStatementURL());
+        assertTrue(info.getLogoWidth() > 0);
+        assertTrue(info.getLogoHeight() > 0);
     }
 
 }
