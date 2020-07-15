@@ -114,6 +114,7 @@ public class SurrogateAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "surrogateAuthenticationPostProcessor")
     @Bean
+    @RefreshScope
     public AuthenticationPostProcessor surrogateAuthenticationPostProcessor() {
         return new SurrogateAuthenticationPostProcessor(
             surrogateAuthenticationService(),
@@ -136,12 +137,14 @@ public class SurrogateAuthenticationConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "surrogateAuditPrincipalIdProvider")
     public AuditPrincipalIdProvider surrogateAuditPrincipalIdProvider() {
         return new SurrogateAuditPrincipalIdProvider();
     }
 
     @ConditionalOnMissingBean(name = "surrogateAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() {
         return plan -> plan.registerAuthenticationPostProcessor(surrogateAuthenticationPostProcessor());
     }

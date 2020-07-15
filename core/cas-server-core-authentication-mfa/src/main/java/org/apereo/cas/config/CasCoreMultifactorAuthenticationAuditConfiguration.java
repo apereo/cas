@@ -24,9 +24,9 @@ public class CasCoreMultifactorAuthenticationAuditConfiguration {
     @ConditionalOnMissingBean(name = "casCoreMfaAuditTrailRecordResolutionPlanConfigurer")
     public AuditTrailRecordResolutionPlanConfigurer casCoreMfaAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
-            plan.registerAuditResourceResolver("MFA_BYPASS_RESOURCE_RESOLVER",
+            plan.registerAuditResourceResolver("MULTIFACTOR_AUTHENTICATION_BYPASS_RESOURCE_RESOLVER",
                 new MultifactorAuthenticationProviderBypassAuditResourceResolver());
-            plan.registerAuditActionResolver("MFA_BYPASS_ACTION_RESOLVER", new DefaultAuditActionResolver());
+            plan.registerAuditActionResolver("MULTIFACTOR_AUTHENTICATION_BYPASS_ACTION_RESOLVER", new DefaultAuditActionResolver());
         };
     }
 }

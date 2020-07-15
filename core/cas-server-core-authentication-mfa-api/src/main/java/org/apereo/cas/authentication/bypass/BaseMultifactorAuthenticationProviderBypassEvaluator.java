@@ -76,9 +76,9 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
         return Optional.empty();
     }
 
-    @Audit(action = "MFA_BYPASS",
-        actionResolverName = "MFA_BYPASS_ACTION_RESOLVER",
-        resourceResolverName = "MFA_BYPASS_RESOURCE_RESOLVER")
+    @Audit(action = "MULTIFACTOR_AUTHENTICATION_BYPASS",
+        actionResolverName = "MULTIFACTOR_AUTHENTICATION_BYPASS_ACTION_RESOLVER",
+        resourceResolverName = "MULTIFACTOR_AUTHENTICATION_BYPASS_RESOURCE_RESOLVER")
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication, final RegisteredService registeredService,
                                                                   final MultifactorAuthenticationProvider provider, final HttpServletRequest request) {

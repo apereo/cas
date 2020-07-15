@@ -184,7 +184,7 @@ The following events are tracked and recorded in the audit log:
 | `AUP_SUBMIT`                          | `TRIGGERED`
 | `EVALUATE_RISKY_AUTHENTICATION`       | N/A
 | `MITIGATE_RISKY_AUTHENTICATION`       | N/A
-| `MFA_BYPASS`                          | N/A
+| `MULTIFACTOR_AUTHENTICATION_BYPASS`   | N/A
 | `SAVE_SERVICE`                        | `SUCCESS`, `FAILURE`
 | `SAVE_CONSENT`                        | `SUCCESS`, `FAILURE`
 | `CHANGE_PASSWORD`                     | `SUCCESS`, `FAILURE`
@@ -200,3 +200,4 @@ The following events are tracked and recorded in the audit log:
 | `SERVICE_ACCESS_ENFORCEMENT`          | `TRIGGERED`
 | `DELEGATED_CLIENT`                    | `SUCCESS`, `FAILURE`
 | `SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION`          | `TRIGGERED`
+| `SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION`             | `TRIGGERED`
