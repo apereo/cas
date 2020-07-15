@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 public class CasSwaggerConfigurationTests {
     @Autowired
-    @Qualifier("swaggerOpenApi")
+    @Qualifier("casSwaggerOpenApi")
     private OpenAPI swaggerOpenApi;
 
     @Test
