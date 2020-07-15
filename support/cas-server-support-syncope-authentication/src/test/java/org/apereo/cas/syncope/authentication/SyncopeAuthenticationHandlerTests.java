@@ -96,10 +96,20 @@ public class SyncopeAuthenticationHandlerTests {
         user.putArray("relationships").add(MAPPER.createObjectNode()
             .put("type", "T1").put("otherEndName", "Other1"));
 
-        val attrs = MAPPER.createObjectNode();
-        attrs.put("schema", "S1");
-        attrs.putArray("values").add("V1");
-        user.putArray("plainAttrs").add(attrs);
+        val plainAttrs = MAPPER.createObjectNode();
+        plainAttrs.put("schema", "S1");
+        plainAttrs.putArray("values").add("V1");
+        user.putArray("plainAttrs").add(plainAttrs);
+
+        val derAttrs = MAPPER.createObjectNode();
+        derAttrs.put("schema", "S2");
+        derAttrs.putArray("values").add("V2");
+        user.putArray("derAttrs").add(derAttrs);
+
+        val virAttrs = MAPPER.createObjectNode();
+        virAttrs.put("schema", "S3");
+        virAttrs.putArray("values").add("V3");
+        user.putArray("virAttrs").add(virAttrs);
 
         user.put("securityQuestion", "Q1");
         user.put("status", "OK");
