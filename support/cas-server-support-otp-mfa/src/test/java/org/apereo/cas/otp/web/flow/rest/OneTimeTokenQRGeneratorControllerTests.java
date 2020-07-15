@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = BaseOneTimeTokenRepositoryTests.SharedTestConfiguration.class)
-@Tag("Simple")
+@Tag("MFA")
 public class OneTimeTokenQRGeneratorControllerTests {
 
     @Autowired
