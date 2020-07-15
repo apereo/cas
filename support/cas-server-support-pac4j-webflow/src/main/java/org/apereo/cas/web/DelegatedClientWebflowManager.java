@@ -104,6 +104,9 @@ public class DelegatedClientWebflowManager {
             config.setStateGenerator(new StaticValueGenerator(ticketId));
         }
         if (client instanceof CasClient) {
+	    // ====Code from 5.3 branch=====
+	    // final CasClient casClient = (CasClient) client;
+            // casClient.getConfiguration().addCustomParam(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticketId);
             sessionStore.set(webContext, CAS_CLIENT_ID_SESSION_KEY, ticket.getId());
         }
         if (client instanceof OAuth10Client) {
