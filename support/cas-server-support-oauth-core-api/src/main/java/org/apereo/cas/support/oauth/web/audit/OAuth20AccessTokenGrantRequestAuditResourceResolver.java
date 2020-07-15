@@ -6,10 +6,9 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequ
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
-
-import static org.apache.commons.lang3.builder.ToStringStyle.NO_CLASS_NAME_STYLE;
 
 /**
  * The {@link OAuth20AccessTokenGrantRequestAuditResourceResolver} for audit advice
@@ -29,7 +28,7 @@ public class OAuth20AccessTokenGrantRequestAuditResourceResolver extends ReturnV
             val accessTokenRequest = (AccessTokenRequestDataHolder) executionResult.get();
             val tokenId = accessTokenRequest.getToken() == null ? "N/A" : accessTokenRequest.getToken().getId();
 
-            val result = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
+            val result = new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("token", tokenId)
                 .append("client_id", accessTokenRequest.getRegisteredService().getClientId())
                 .append("service", accessTokenRequest.getService().getId())
