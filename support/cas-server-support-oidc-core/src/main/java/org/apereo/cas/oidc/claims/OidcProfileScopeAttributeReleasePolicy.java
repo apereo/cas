@@ -13,14 +13,14 @@ import java.util.List;
  * @since 5.1.0
  */
 public class OidcProfileScopeAttributeReleasePolicy extends BaseOidcScopeAttributeReleasePolicy {
-    private static final long serialVersionUID = 1532960981124784595L;
-
     /**
      * Claims allowed by this attribute release policy.
      */
     public static final List<String> ALLOWED_CLAIMS = List.of("name", "family_name", "given_name",
         "middle_name", "nickname", "preferred_username", "profile", "picture", "website",
         "gender", "birthdate", "zoneinfo", "locale", "updated_at");
+
+    private static final long serialVersionUID = 1532960981124784595L;
 
     public OidcProfileScopeAttributeReleasePolicy() {
         super(OidcConstants.StandardScopes.PROFILE.getScope());

@@ -13,12 +13,12 @@ import java.util.List;
  * @since 5.1.0
  */
 public class OidcPhoneScopeAttributeReleasePolicy extends BaseOidcScopeAttributeReleasePolicy {
-    private static final long serialVersionUID = 1532960981124784595L;
-
     /**
      * Claims allowed by this attribute release policy.
      */
     public static final List<String> ALLOWED_CLAIMS = List.of("phone_number", "phone_number_verified");
+
+    private static final long serialVersionUID = 1532960981124784595L;
 
     public OidcPhoneScopeAttributeReleasePolicy() {
         super(OidcConstants.StandardScopes.PHONE.getScope());

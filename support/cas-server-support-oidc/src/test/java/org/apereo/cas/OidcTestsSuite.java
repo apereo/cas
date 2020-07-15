@@ -7,6 +7,7 @@ import org.apereo.cas.oidc.authn.OidcPrivateKeyJwtAuthenticatorTests;
 import org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicyTests;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicyTests;
 import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicyTests;
+import org.apereo.cas.oidc.claims.OidcOpenIdScopeAttributeReleasePolicyTests;
 import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicyTests;
 import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicyTests;
 import org.apereo.cas.oidc.claims.mapping.OidcDefaultAttributeToScopeClaimMapperTests;
@@ -101,6 +102,7 @@ import org.junit.runner.RunWith;
     OidcDefaultAttributeToScopeClaimMapperTests.class,
     OidcAccessTokenAuthenticatorTests.class,
     OidcWebflowConfigurerTests.class,
+    OidcOpenIdScopeAttributeReleasePolicyTests.class,
     OidcSingleLogoutServiceLogoutUrlBuilderTests.class,
     OidcImplicitIdTokenAuthorizationResponseBuilderTests.class,
     OidcJwksEndpointControllerTests.class,
