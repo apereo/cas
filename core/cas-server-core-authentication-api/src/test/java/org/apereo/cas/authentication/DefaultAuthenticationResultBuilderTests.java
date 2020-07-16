@@ -22,6 +22,9 @@ public class DefaultAuthenticationResultBuilderTests {
     @Test
     public void verifyAuthenticationResultBuildsPrincipals() {
         val builder = new DefaultAuthenticationResultBuilder();
+        assertFalse(builder.getInitialAuthentication().isPresent());
+        assertFalse(builder.getInitialCredential().isPresent());
+
         val p1 = CoreAuthenticationTestUtils.getPrincipal("casuser1", CollectionUtils.wrap("uid", "casuser1"));
         val p2 = CoreAuthenticationTestUtils.getPrincipal("casuser2", CollectionUtils.wrap("givenName", "CAS"));
         val authn1 = CoreAuthenticationTestUtils.getAuthentication(p1, CollectionUtils.wrap("authn1", "first"));
