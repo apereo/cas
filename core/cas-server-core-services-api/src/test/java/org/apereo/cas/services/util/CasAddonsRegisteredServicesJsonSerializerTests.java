@@ -1,5 +1,7 @@
 package org.apereo.cas.services.util;
 
+import org.apereo.cas.util.ResourceUtils;
+
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -31,6 +33,13 @@ public class CasAddonsRegisteredServicesJsonSerializerTests {
         val s = new CasAddonsRegisteredServicesJsonSerializer();
         val services = s.load(getServiceRegistryResource());
         assertEquals(3, services.size());
+    }
+
+    @Test
+    public void verifyLoadEmpty() throws Exception {
+        val s = new CasAddonsRegisteredServicesJsonSerializer();
+        val services = s.load(ResourceUtils.EMPTY_RESOURCE.getInputStream());
+        assertEquals(0, services.size());
     }
 
     @SneakyThrows

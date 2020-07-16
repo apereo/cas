@@ -11,14 +11,17 @@ import org.apereo.cas.authentication.FileTrustStoreSslSocketFactoryTests;
 import org.apereo.cas.authentication.OneTimePasswordCredentialTests;
 import org.apereo.cas.authentication.RememberMePasswordCredentialTests;
 import org.apereo.cas.authentication.UsernamePasswordCredentialTests;
+import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionTests;
 import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalExceptionTests;
 import org.apereo.cas.authentication.handler.ConvertCasePrincipalNameTransformerTests;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandlerSystemConfigurationTests;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandlerTests;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandlersConfigurationTests;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordHandlerTests;
+import org.apereo.cas.authentication.handler.support.jaas.AccountsPreDefinedLoginModuleTests;
 import org.apereo.cas.authentication.metadata.CacheCredentialsCipherExecutorTests;
 import org.apereo.cas.authentication.policy.AllAuthenticationHandlersSucceededAuthenticationPolicyTests;
+import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicyTests;
 import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicyTests;
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicyTests;
 import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicyTests;
@@ -47,6 +50,8 @@ import org.junit.runner.RunWith;
     DefaultAuthenticationEventExecutionPlanTests.class,
     JaasAuthenticationHandlersConfigurationTests.class,
     PasswordEncoderUtilsTests.class,
+    AccountsPreDefinedLoginModuleTests.class,
+    AtLeastOneCredentialValidatedAuthenticationPolicyTests.class,
     SimplePrincipalFactoryTests.class,
     RememberMeAuthenticationMetaDataPopulatorTests.class,
     ConvertCasePrincipalNameTransformerTests.class,
@@ -54,6 +59,7 @@ import org.junit.runner.RunWith;
     JaasAuthenticationHandlerTests.class,
     SimpleTestUsernamePasswordHandlerTests.class,
     CoreAuthenticationUtilsTests.class,
+    DefaultAttributeDefinitionTests.class,
     UsernamePasswordCredentialTests.class,
     DefaultPasswordEncoderTests.class,
     DefaultAuthenticationTests.class,

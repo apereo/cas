@@ -10,6 +10,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
+import org.apereo.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
@@ -40,13 +43,6 @@ public class CoreAuthenticationUtilsTests {
         .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
         .findAndRegisterModules();
 
-    private static void verifySerialization(final Collection<AuthenticationPolicy> policy) throws IOException {
-        val file = new File(FileUtils.getTempDirectoryPath(), UUID.randomUUID().toString() + ".json");
-        MAPPER.writeValue(file, policy);
-        val readPolicy = MAPPER.readValue(file, Collection.class);
-        assertEquals(policy, readPolicy);
-    }
-
     @Test
     public void verifyAttributeRepositories() {
         val repository = CoreAuthenticationTestUtils.getAttributeRepository();
@@ -57,6 +53,27 @@ public class CoreAuthenticationUtilsTests {
         assertTrue(attrs.containsKey("memberOf"));
     }
 
+    @Test
+    public void verifyAttributeRepositoriesByFilter() {
+        val repository = new StubPersonAttributeDao(CoreAuthenticationTestUtils.getAttributes()) {
+            @Override
+            public IPersonAttributes getPerson(final String uid, final IPersonAttributeDaoFilter filter) {
+                if (filter.choosePersonAttributeDao(this)) {
+                    return super.getPerson(uid, filter);
+                }
+                return null;
+            }
+        };
+        var attrs = CoreAuthenticationUtils.retrieveAttributesFromAttributeRepository(repository, "casuser",
+            Set.of("*"), Optional.of(CoreAuthenticationTestUtils.getPrincipal("casuser")));
+        assertTrue(attrs.containsKey("uid"));
+        assertTrue(attrs.containsKey("mail"));
+        assertTrue(attrs.containsKey("memberOf"));
+
+        attrs = CoreAuthenticationUtils.retrieveAttributesFromAttributeRepository(repository, "casuser",
+            Set.of("Invalid"), Optional.of(CoreAuthenticationTestUtils.getPrincipal("casuser")));
+        assertTrue(attrs.isEmpty());
+    }
 
     @Test
     public void verifyAuthnPolicyRequired() throws Exception {
@@ -74,12 +91,26 @@ public class CoreAuthenticationUtilsTests {
         verifySerialization(policy);
     }
 
+
     @Test
     public void verifyAuthnPolicyAll() throws Exception {
         val props = new AuthenticationPolicyProperties();
-        props.getAllHandlers().setEnabled(true);
+        props.getAll().setEnabled(true);
         val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
         verifySerialization(policy);
+    }
+
+    @Test
+    public void verifyBadMerger() {
+        assertThrows(IllegalArgumentException.class, () -> CoreAuthenticationUtils.getAttributeMerger("bad"));
+    }
+
+    @Test
+    public void verifyNoAuthPolicy() {
+        val props = new AuthenticationPolicyProperties();
+        props.getAny().setEnabled(false);
+        props.getNotPrevented().setEnabled(false);
+        assertTrue(CoreAuthenticationUtils.newAuthenticationPolicy(props).isEmpty());
     }
 
     @Test
@@ -176,6 +207,13 @@ public class CoreAuthenticationUtilsTests {
         assertTrue(a2.contains("newA2"));
         assertTrue(a1.contains("a1"));
         assertTrue(a1.contains("newA1"));
+    }
+
+    private static void verifySerialization(final Collection<AuthenticationPolicy> policy) throws IOException {
+        val file = new File(FileUtils.getTempDirectoryPath(), UUID.randomUUID().toString() + ".json");
+        MAPPER.writeValue(file, policy);
+        val readPolicy = MAPPER.readValue(file, Collection.class);
+        assertEquals(policy, readPolicy);
     }
 
     public static class PredicateExample implements Predicate<Credential> {

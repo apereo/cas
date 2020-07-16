@@ -43,6 +43,8 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
         if (fileName.exists()) {
             System.setProperty("java.security.auth.login.config", '=' + fileName.getCanonicalPath());
             handler = new JaasAuthenticationHandler(StringUtils.EMPTY, null, null, null);
+            handler.setKerberosKdcSystemProperty("P1");
+            handler.setKerberosRealmSystemProperty("P2");
         }
     }
 

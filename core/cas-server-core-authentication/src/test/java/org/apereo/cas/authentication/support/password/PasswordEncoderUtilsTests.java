@@ -38,6 +38,28 @@ public class PasswordEncoderUtilsTests {
     }
 
     @Test
+    public void verifyBcryptType() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        val properties = new PasswordEncoderProperties();
+        properties.setSecret(null);
+        properties.setType(PasswordEncoderProperties.PasswordEncoderTypes.BCRYPT.name());
+        val encoder = PasswordEncoderUtils.newPasswordEncoder(properties, applicationContext);
+        assertNotNull(encoder);
+    }
+
+    @Test
+    public void verifyPbkdf2() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        val properties = new PasswordEncoderProperties();
+        properties.setSecret(null);
+        properties.setType(PasswordEncoderProperties.PasswordEncoderTypes.PBKDF2.name());
+        val encoder = PasswordEncoderUtils.newPasswordEncoder(properties, applicationContext);
+        assertNotNull(encoder);
+    }
+    
+    @Test
     public void verifyGroovyType() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServicePublicKey;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
@@ -19,14 +20,20 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,11 +60,15 @@ import static org.mockito.Mockito.*;
         "cas.person-directory.attribute-definition-store.json.location=classpath:/basic-attribute-definitions.json"
     })
 @Tag("Simple")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DefaultAttributeDefinitionStoreTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "DefaultAttributeDefinitionStoreTests.json");
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("attributeRepository")
@@ -295,6 +306,30 @@ public class DefaultAttributeDefinitionStoreTests {
         when(service.getPublicKey()).thenReturn(mock(RegisteredServicePublicKey.class));
         results = store.resolveAttributeValues("cn", List.of("common-name"), service);
         assertTrue(results.get().getValue().isEmpty());
+    }
+
+    @Test
+    public void verifyDefinitionsReload() {
+        val resource = casProperties.getPersonDirectory().getAttributeDefinitionStore().getJson().getLocation();
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                val store = new DefaultAttributeDefinitionStore(resource);
+                store.setScope("example.org");
+                Files.setLastModifiedTime(resource.getFile().toPath(), FileTime.from(Instant.now()));
+                Thread.sleep(5_000);
+                store.destroy();
+            }
+        });
+    }
+
+    @Test
+    public void verifyBadDefinitionsResource() throws Exception {
+        val file = File.createTempFile("badfile", ".json");
+        FileUtils.write(file, "data", StandardCharsets.UTF_8);
+        val store = new DefaultAttributeDefinitionStore(new FileSystemResource(file));
+        store.setScope("example.org");
+        assertTrue(store.isEmpty());
     }
 
 }

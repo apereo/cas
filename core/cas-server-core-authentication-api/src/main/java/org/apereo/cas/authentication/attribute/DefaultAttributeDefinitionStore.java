@@ -25,7 +25,6 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -82,7 +81,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         Arrays.stream(defns).forEach(this::registerAttributeDefinition);
     }
 
-    private void loadAttributeDefinitionsFromInputStream(final Resource resource) throws IOException {
+    private void loadAttributeDefinitionsFromInputStream(final Resource resource) {
         try {
             LOGGER.trace("Loading attribute definitions from [{}]", resource);
             val json = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
