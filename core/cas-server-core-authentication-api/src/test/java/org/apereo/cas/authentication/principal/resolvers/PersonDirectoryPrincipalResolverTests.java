@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 4.2
  */
 @SuppressWarnings("OptionalAssignedToNull")
-@Tag("Simple")
+@Tag("Attributes")
 public class PersonDirectoryPrincipalResolverTests {
 
     private static final String ATTR_1 = "attr1";

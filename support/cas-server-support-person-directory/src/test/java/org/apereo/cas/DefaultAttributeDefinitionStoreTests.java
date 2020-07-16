@@ -59,7 +59,7 @@ import static org.mockito.Mockito.*;
         "cas.server.scope=cas.org",
         "cas.person-directory.attribute-definition-store.json.location=classpath:/basic-attribute-definitions.json"
     })
-@Tag("Simple")
+@Tag("Attributes")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DefaultAttributeDefinitionStoreTests {
 

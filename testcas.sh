@@ -6,7 +6,7 @@ printHelp() {
     echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--no-parallel] [--dry-run] [--info] [--with-coverage] \n"
     echo -e "Available test categories are:\n"
     echo -e "simple,memcached,cassandra,groovy,kafka,ldap,rest,mfa,jdbc,mssql,oracle,radius,couchdb,webapp,tickets,\
-mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,hazelcast,jmx,ehcache,actuator,wsfed,authn,\
+mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,hazelcast,jmx,ehcache,actuator,wsfed,authn,attributes,\
 oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,cosmosdb,config,sms,util,services"
     echo -e "\nPlease see the test script for details.\n"
 }
@@ -103,6 +103,9 @@ while (( "$#" )); do
                 ;;
             wsfed)
                 task+="testWSFederation "
+                ;;
+            attrs|attr|attributes)
+                task+="testAttributes "
                 ;;
             sms)
                 task+="testSMS "
