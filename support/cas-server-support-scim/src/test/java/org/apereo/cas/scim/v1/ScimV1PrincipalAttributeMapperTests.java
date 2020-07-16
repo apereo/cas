@@ -19,7 +19,7 @@ import java.util.Date;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Simple")
+@Tag("Attributes")
 @SuppressWarnings("JdkObsolete")
 public class ScimV1PrincipalAttributeMapperTests {
     @Test

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("Simple")
+@Tag("Attributes")
 public class AttributeValuesPerLineProtocolAttributesRendererTests {
     @Test
     public void verifyAction() {

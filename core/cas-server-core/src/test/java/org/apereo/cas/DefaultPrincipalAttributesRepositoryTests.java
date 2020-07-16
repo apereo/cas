@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Tag("Simple")
+@Tag("Attributes")
 public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultPrincipalAttributesRepository.json");
 

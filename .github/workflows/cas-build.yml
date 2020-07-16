@@ -469,6 +469,7 @@ jobs:
           - groovy
           - filesystem
           - webflow
+          - attributes
           - services
           - rest
           - mfa

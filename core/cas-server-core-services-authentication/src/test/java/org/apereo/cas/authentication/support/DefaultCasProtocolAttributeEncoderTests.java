@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("Simple")
+@Tag("Attributes")
 public class DefaultCasProtocolAttributeEncoderTests {
     private final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(mock(ServicesManager.class), CipherExecutor.noOpOfStringToString());
     private RegisteredService registeredService;

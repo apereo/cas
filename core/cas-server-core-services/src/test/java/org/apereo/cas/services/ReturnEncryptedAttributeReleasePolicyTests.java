@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Simple")
+@Tag("Attributes")
 public class ReturnEncryptedAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "EncryptingAttributeReleasePolicyTests.json");
 

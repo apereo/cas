@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.aggregation=cascade",
     "cas.authn.attribute-repository.merger=multivalued"
 })
-@Tag("Simple")
+@Tag("Attributes")
 public class PrincipalAttributeRepositoryFetcherCascadeTests {
     @Autowired
     @Qualifier("aggregatingAttributeRepository")

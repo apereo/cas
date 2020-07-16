@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Tag("Simple")
+@Tag("Attributes")
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = "cas.authn.attribute-repository.default-attributes-to-release=cn,mail")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

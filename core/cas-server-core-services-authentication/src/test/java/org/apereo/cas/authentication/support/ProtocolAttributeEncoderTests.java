@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Simple")
+@Tag("Attributes")
 public class ProtocolAttributeEncoderTests {
     @Test
     public void verifyEncoder() {
