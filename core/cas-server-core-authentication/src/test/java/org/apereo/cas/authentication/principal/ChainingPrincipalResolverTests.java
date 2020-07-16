@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Tag("Simple")
+@Tag("Attributes")
 public class ChainingPrincipalResolverTests {
 
     private final PrincipalFactory principalFactory = PrincipalFactoryUtils.newPrincipalFactory();
