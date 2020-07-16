@@ -1,33 +1,9 @@
-plugins {
-    id "org.springframework.boot" version "2.2.7.RELEASE"
-    id "io.spring.dependency-management" version "1.0.9.RELEASE"
-    id "java-library"
-}
 
-group = "org.apereo.cas"
-version = "0.0.1"
-sourceCompatibility = "11"
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-    jcenter()
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "io.spring.initializr:initializr-bom:0.8.0.RELEASE"
+allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
     }
 }
 
-dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-web"
-
-    implementation "io.spring.initializr:initializr-web"
-    implementation "io.spring.initializr:initializr-actuator"
-    implementation "io.spring.initializr:initializr-generator-spring"
-    implementation "io.spring.initializr:initializr-generator-test"
-    implementation "io.spring.initializr:initializr-generator"
-
-    runtime "org.springframework.boot:spring-boot-starter-tomcat"
-}

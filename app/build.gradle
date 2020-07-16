@@ -1,0 +1,45 @@
+plugins {
+    id "org.springframework.boot" version "${springBootVersion}"
+    id "io.spring.dependency-management" version "${springDependencyManagementPluginVersion}"
+    id "io.freefair.lombok" version "${lombokPluginVersion}"
+    id "java-library"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "io.spring.initializr:initializr-bom:${springInitializrVersion}"
+    }
+}
+
+springBoot {
+    buildInfo()
+    mainClassName = "org.apereo.cas.CasOverlayInitializrApplication"
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-web"
+
+    implementation "io.spring.initializr:initializr-web"
+    implementation "io.spring.initializr:initializr-actuator"
+    implementation "io.spring.initializr:initializr-generator-spring"
+    implementation "io.spring.initializr:initializr-generator"
+
+    runtime "org.springframework.boot:spring-boot-starter-tomcat"
+}
+
+bootRun {
+    def list = []
+    list.add("-Xrunjdwp:transport=dt_socket,address=5005,server=y,suspend=y")
+
+    jvmArgs = list
+
+    def appArgList = []
+    args = appArgList
+}
+
+task copyWrapper(type: Copy) {
+    from "../gradle"
+    into "src/main/resources/gradle"
+}
+
+bootRun.dependsOn(copyWrapper)

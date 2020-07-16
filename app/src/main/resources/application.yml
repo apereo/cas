@@ -1,3 +1,7 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+    
 initializr:
   name:
     value: cas
@@ -27,7 +31,7 @@ initializr:
       id: gradle-project
       description: Generate a Gradle-based project as a zip file
       tags:
-        build: gradle
+        build: overlay
         format: project
       default: true
       action: /starter.zip
@@ -35,7 +39,7 @@ initializr:
       id: gradle-project
       description: Generate a Gradle-based project as a tgz file
       tags:
-        build: gradle
+        build: overlay
         format: project
       default: false
       action: /starter.tgz
@@ -43,7 +47,7 @@ initializr:
       id: gradle-build
       description: Generate a Gradle-based build
       tags:
-        build: gradle
+        build: overlay
         format: project
       default: false
       action: /build.gradle
@@ -65,6 +69,3 @@ initializr:
           artifactId: cas-server-core
           description: A solid description for this dependency
           bom: cas-bom
-          aliases:
-            - core
-
