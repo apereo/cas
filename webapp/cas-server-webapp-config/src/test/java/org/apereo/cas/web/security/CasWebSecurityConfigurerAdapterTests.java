@@ -1,6 +1,8 @@
 package org.apereo.cas.web.security;
 
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasWebAppSecurityConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
@@ -25,6 +27,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
  * @since 6.1.0
  */
 @SpringBootTest(classes = {
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreWebConfiguration.class,
     CasWebAppSecurityConfiguration.class,
     SecurityAutoConfiguration.class,
     EndpointAutoConfiguration.class,

@@ -83,6 +83,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = ApplicationContextProvider.BEAN_NAME_SCRIPT_RESOURCE_CACHE_MANAGER)
     public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> scriptResourceCacheManager() {
         return new GroovyScriptResourceCacheManager();
     }

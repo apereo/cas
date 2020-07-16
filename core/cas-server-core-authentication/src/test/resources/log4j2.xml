@@ -11,6 +11,8 @@
 
         <!-- Required for test coverage on statements that execute conditionally on debug -->
         <Logger name="org.apereo.cas.authentication.policy" level="warn" additivity="false"/>
+        <Logger name="org.apereo.cas.authentication.policy.AllAuthenticationHandlersSucceededAuthenticationPolicyTests"
+                level="debug" additivity="false"/>
 
         <Root level="off">
             <AppenderRef ref="console"/>
