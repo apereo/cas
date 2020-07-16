@@ -52,10 +52,15 @@ public class FunctionUtilsTests {
 
     @Test
     public void verifyDoIfNull() {
-        val supplier = FunctionUtils.doIfNotNull(new Object(), () -> {
+        var supplier = FunctionUtils.doIfNotNull(new Object(), () -> {
             throw new IllegalArgumentException();
         }, Suppliers.ofInstance(Boolean.FALSE));
         assertFalse(supplier.get());
+
+        supplier = FunctionUtils.doIfNotNull(null, Suppliers.ofInstance(Boolean.TRUE), Suppliers.ofInstance(Boolean.FALSE));
+        assertFalse(supplier.get());
+        supplier = FunctionUtils.doIfNotNull(new Object(), Suppliers.ofInstance(Boolean.TRUE), Suppliers.ofInstance(Boolean.FALSE));
+        assertTrue(supplier.get());
     }
 
     @Test
@@ -63,6 +68,10 @@ public class FunctionUtilsTests {
         assertDoesNotThrow(() -> FunctionUtils.doIfNotNull(Boolean.TRUE, result -> {
             throw new IllegalArgumentException();
         }));
+        val supplier = FunctionUtils.doIfNull(null, () -> {
+            throw new IllegalArgumentException();
+        }, Suppliers.ofInstance(Boolean.FALSE));
+        assertFalse(supplier.get());
     }
 
     @Test
@@ -80,11 +89,15 @@ public class FunctionUtilsTests {
             }, (CheckedFunction<Throwable, Boolean>) o -> {
                 throw new IllegalArgumentException();
             }).apply(Void.class));
+
+        assertFalse(FunctionUtils.doAndHandle(o -> {
+            throw new IllegalArgumentException();
+        }, (CheckedFunction<Throwable, Boolean>) o -> false).apply(Void.class));
     }
 
     @Test
     public void verifyDoAndHandle2() {
-        val supplier = FunctionUtils.doAndHandle(
+        var supplier = FunctionUtils.doAndHandle(
             new Supplier<Object>() {
                 @Override
                 public Object get() {
@@ -94,6 +107,14 @@ public class FunctionUtilsTests {
                 throw new IllegalArgumentException();
             });
         assertThrows(IllegalArgumentException.class, supplier::get);
+        supplier = FunctionUtils.doAndHandle(
+            new Supplier<Object>() {
+                @Override
+                public Object get() {
+                    throw new IllegalArgumentException();
+                }
+            }, o -> false);
+        assertFalse((Boolean) supplier.get());
     }
 
     @Test
