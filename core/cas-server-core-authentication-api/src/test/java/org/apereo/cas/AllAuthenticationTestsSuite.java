@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationCredentialTypeMetaDataPopulat
 import org.apereo.cas.authentication.AuthenticationDateAttributeMetaDataPopulatorTests;
 import org.apereo.cas.authentication.CredentialCustomFieldsAttributeMetaDataPopulatorTests;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilderTests;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResultTests;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderTests;
 import org.apereo.cas.authentication.DefaultPrincipalFactoryTests;
 import org.apereo.cas.authentication.GroovyAuthenticationPostProcessorTests;
@@ -60,6 +61,7 @@ import org.junit.runner.RunWith;
     PasswordExpiringWarningMessageDescriptorTests.class,
     OneTimeTokenAccountTests.class,
     CredentialTests.class,
+    DefaultAuthenticationHandlerExecutionResultTests.class,
     OneTimeTokenTests.class,
     ProxyingPrincipalResolverTests.class,
     CredentialCustomFieldsAttributeMetaDataPopulatorTests.class,
