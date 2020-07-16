@@ -1,0 +1,101 @@
+apply plugin: "org.springframework.boot"
+
+configurations {
+    bootRunConfig.extendsFrom compileClasspath
+}
+
+dependencies {
+    bootRunConfig "org.apereo.cas:cas-server-webapp-init:${casServerVersion}"
+    bootRunConfig "org.apereo.cas:cas-server-webapp-tomcat:${casServerVersion}"
+    bootRunConfig "org.springframework.boot:spring-boot-devtools:${project.springBootVersion}"
+}
+
+sourceSets {
+    bootRunSources {
+        resources {
+            srcDirs new File("//etc/cas/templates/"),
+                    new File("${project.getProjectDir()}/src/main/resources/")
+        }
+    }
+}
+
+bootRun {
+    classpath = configurations.bootRunConfig + sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath
+    doFirst {
+        sourceResources sourceSets.bootRunSources
+        systemProperties = System.properties
+    }
+
+    def list = []
+    list.add("-XX:TieredStopAtLevel=1")
+    list.add("-Xverify:none")
+    list.add("--add-modules")
+    list.add("java.se")
+    list.add("--add-exports")
+    list.add("java.base/jdk.internal.ref=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.lang=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.nio=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/sun.nio.ch=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.management/sun.management=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
+
+    list.add("-XX:+UnlockExperimentalVMOptions")
+    list.add("-XX:+EnableJVMCI")
+    list.add("-XX:+UseJVMCICompiler")
+
+    list.add("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n")
+
+    jvmArgs = list
+
+    def appArgList = []
+    args = appArgList
+}
+
+springBoot {
+    buildInfo()
+    mainClassName = "org.apereo.cas.web.CasWebApplication"
+}
+
+bootWar {
+    def executable = project.hasProperty("executable") && Boolean.valueOf(project.getProperty("executable"))
+    if (executable) {
+        logger.info "Including launch script for executable WAR artifact"
+        launchScript()
+    } else {
+        logger.info "WAR artifact is not marked as an executable"
+    }
+    archiveName "${casWebApplicationBinaryName}"
+    baseName "cas"
+    excludeDevtools = false
+
+    entryCompression = ZipEntryCompression.STORED
+    /*
+        attachClasses = true 
+        classesClassifier = 'classes'
+        archiveClasses = true
+    */
+    overlays {
+        /*
+            https://docs.freefair.io/gradle-plugins/current/reference/#_io_freefair_war_overlay
+            Note: The "excludes" property is only for files in the war dependency.
+            If a jar is excluded from the war, it could be brought back into the final war as a dependency
+            of non-war dependencies. Those should be excluded via normal gradle dependency exclusions.
+        */
+        cas {
+            from "org.apereo.cas:cas-server-webapp${project.appServer}:${casServerVersion}@war"
+            provided = false
+            /*
+            excludes = ["WEB-INF/lib/somejar-1.0*"]
+            enableCompilation = true
+            includes = ["*.xyz"]
+            targetPath = "sub-path/bar"
+            skip = false
+            */
+        }
+    }
+}
