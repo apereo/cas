@@ -7,6 +7,7 @@ import org.apereo.cas.overlay.CasOverlayGradleBuild;
 import org.apereo.cas.overlay.contrib.CasOverlayConfigurationContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayProjectLicenseContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayReadMeContributor;
+import org.apereo.cas.overlay.contrib.CasOverlayWebXmlContributor;
 import org.apereo.cas.overlay.contrib.ChainingMultipleResourcesProjectContributor;
 import org.apereo.cas.overlay.contrib.ChainingSingleResourceProjectContributor;
 import org.apereo.cas.overlay.contrib.docker.CasOverlayDockerContributor;
@@ -61,6 +62,11 @@ public class CasOverlayProjectGenerationConfiguration {
         return new CasOverlayDockerContributor();
     }
 
+    @Bean
+    public CasOverlayWebXmlContributor casOverlayWebXmlContributor() {
+        return new CasOverlayWebXmlContributor();
+    }
+    
     @Bean
     public ChainingSingleResourceProjectContributor casOverlayGradleConfigurationContributor() {
         var chain = new ChainingSingleResourceProjectContributor();
