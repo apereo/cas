@@ -4,9 +4,11 @@ import io.spring.initializr.generator.buildsystem.BuildItemResolver;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import io.spring.initializr.generator.spring.build.BuildCustomizer;
 import org.apereo.cas.overlay.contrib.CasOverlayConfigurationContributor;
-import org.apereo.cas.overlay.contrib.CasOverlayGradleWrapperContributor;
+import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperConfigurationContributor;
 import org.apereo.cas.overlay.CasOverlayGradleBuild;
 import org.apereo.cas.overlay.contrib.CasOverlayReadMeContributor;
+import org.apereo.cas.overlay.contrib.ChainingMultipleResourcesProjectContributor;
+import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperExecutablesContributor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 
@@ -22,8 +24,11 @@ public class CasOverlayProjectGenerationConfiguration {
     }
 
     @Bean
-    public CasOverlayGradleWrapperContributor casOverlayGradleWrapperContributor() {
-        return new CasOverlayGradleWrapperContributor();
+    public ChainingMultipleResourcesProjectContributor casOverlayGradleWrapperContributor() {
+        var chain = new ChainingMultipleResourcesProjectContributor();
+        chain.addContributor(new CasOverlayGradleWrapperConfigurationContributor());
+        chain.addContributor(new CasOverlayGradleWrapperExecutablesContributor());
+        return chain;
     }
 
     @Bean

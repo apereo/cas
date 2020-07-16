@@ -17,6 +17,7 @@ springBoot {
 }
 
 dependencies {
+    implementation "org.jooq:jool:0.9.14"
     implementation "org.springframework.boot:spring-boot-starter-web"
 
     implementation "io.spring.initializr:initializr-web"
@@ -38,8 +39,13 @@ bootRun {
 }
 
 task copyWrapper(type: Copy) {
-    from "../gradle"
-    into "src/main/resources/gradle"
+    from "../gradle/wrapper"
+    into "src/main/resources/overlay/gradle/wrapper"
 }
 
-bootRun.dependsOn(copyWrapper)
+task copyWrapperExecutables(type: Copy) {
+    from "../gradlew", "../gradlew.bat"
+    into "src/main/resources/overlay/gradle/exec"
+}
+
+build.dependsOn([copyWrapper, copyWrapperExecutables])
