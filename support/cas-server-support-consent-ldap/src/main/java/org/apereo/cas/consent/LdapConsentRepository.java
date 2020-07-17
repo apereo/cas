@@ -20,7 +20,6 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.springframework.beans.factory.DisposableBean;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,11 +44,101 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
 
     private final Ldap ldapProperties;
 
+    @Override
+    public ConsentDecision findConsentDecision(final Service service,
+                                               final RegisteredService registeredService,
+                                               final Authentication authentication) {
+        val principal = authentication.getPrincipal().getId();
+        val entry = readConsentEntry(principal);
+        if (entry != null) {
+            val consentDecisions = entry.getAttribute(this.ldapProperties.getConsentAttributeName());
+            if (consentDecisions != null) {
+                val values = consentDecisions.getStringValues();
+                LOGGER.debug("Locating consent decision(s) for [{}] and service [{}]", principal, service.getId());
+                return values
+                    .stream()
+                    .map(LdapConsentRepository::mapFromJson)
+                    .filter(Objects::nonNull)
+                    .filter(d -> d.getService().equals(service.getId()))
+                    .findFirst()
+                    .orElse(null);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
+        val entry = readConsentEntry(principal);
+        if (entry != null) {
+            val consentDecisions = entry.getAttribute(this.ldapProperties.getConsentAttributeName());
+            if (consentDecisions != null) {
+                LOGGER.debug("Located consent decision for [{}] at attribute [{}]", principal, this.ldapProperties.getConsentAttributeName());
+                return consentDecisions.getStringValues()
+                    .stream()
+                    .map(LdapConsentRepository::mapFromJson)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+            }
+        }
+        return new HashSet<>(0);
+    }
+
+    @Override
+    public Collection<? extends ConsentDecision> findConsentDecisions() {
+        val entries = readConsentEntries();
+        if (!entries.isEmpty()) {
+            return entries
+                .stream()
+                .map(e -> e.getAttribute(this.ldapProperties.getConsentAttributeName()))
+                .filter(Objects::nonNull)
+                .map(attr -> attr.getStringValues()
+                    .stream()
+                    .map(LdapConsentRepository::mapFromJson)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet()))
+                .flatMap(Set::stream)
+                .collect(Collectors.toList());
+        }
+        LOGGER.debug("No consent decision could be found");
+        return new HashSet<>(0);
+    }
+
+    @Override
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
+        LOGGER.debug("Storing consent decision [{}]", decision);
+        val entry = readConsentEntry(decision.getPrincipal());
+        if (entry != null) {
+            val newConsent = mergeDecision(entry.getAttribute(ldapProperties.getConsentAttributeName()), decision);
+            if (executeModifyOperation(newConsent, entry)) {
+                return decision;
+            }
+        }
+        LOGGER.debug("Unable to read consent entry for [{}]. Consent decision is not stored", decision.getPrincipal());
+        return null;
+    }
+
+    @Override
+    public boolean deleteConsentDecision(final long id, final String principal) {
+        LOGGER.debug("Deleting consent decision [{}] for principal [{}]", id, principal);
+        val entry = readConsentEntry(principal);
+        if (entry != null) {
+            val newConsent = removeDecision(entry.getAttribute(this.ldapProperties.getConsentAttributeName()), id);
+            return executeModifyOperation(newConsent, entry);
+        }
+        return false;
+    }
+
+    @Override
+    public void destroy() {
+        connectionFactory.close();
+    }
+
     private static ConsentDecision mapFromJson(final String json) {
         try {
             LOGGER.trace("Mapping JSON value [{}] to consent object", json);
             return MAPPER.readValue(JsonValue.readHjson(json).toString(), ConsentDecision.class);
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return null;
@@ -119,89 +208,6 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
         return new HashSet<>(0);
     }
 
-    @Override
-    public ConsentDecision findConsentDecision(final Service service,
-                                               final RegisteredService registeredService,
-                                               final Authentication authentication) {
-        val principal = authentication.getPrincipal().getId();
-        val entry = readConsentEntry(principal);
-        if (entry != null) {
-            val consentDecisions = entry.getAttribute(this.ldapProperties.getConsentAttributeName());
-            if (consentDecisions != null) {
-                val values = consentDecisions.getStringValues();
-                LOGGER.debug("Locating consent decision(s) for [{}] and service [{}]", principal, service.getId());
-                return values
-                    .stream()
-                    .map(LdapConsentRepository::mapFromJson)
-                    .filter(Objects::nonNull)
-                    .filter(d -> d.getService().equals(service.getId()))
-                    .findFirst()
-                    .orElse(null);
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
-        val entry = readConsentEntry(principal);
-        if (entry != null) {
-            val consentDecisions = entry.getAttribute(this.ldapProperties.getConsentAttributeName());
-            if (consentDecisions != null) {
-                LOGGER.debug("Located consent decision for [{}] at attribute [{}]", principal, this.ldapProperties.getConsentAttributeName());
-                return consentDecisions.getStringValues()
-                    .stream()
-                    .map(LdapConsentRepository::mapFromJson)
-                    .collect(Collectors.toSet());
-            }
-        }
-        return new HashSet<>(0);
-    }
-
-    @Override
-    public Collection<? extends ConsentDecision> findConsentDecisions() {
-        val entries = readConsentEntries();
-        if (!entries.isEmpty()) {
-            return entries
-                .stream()
-                .map(e -> e.getAttribute(this.ldapProperties.getConsentAttributeName()))
-                .filter(Objects::nonNull)
-                .map(attr -> attr.getStringValues()
-                    .stream()
-                    .map(LdapConsentRepository::mapFromJson)
-                    .collect(Collectors.toSet()))
-                .flatMap(Set::stream)
-                .collect(Collectors.toList());
-        }
-        LOGGER.debug("No consent decision could be found");
-        return new HashSet<>(0);
-    }
-
-    @Override
-    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
-        LOGGER.debug("Storing consent decision [{}]", decision);
-        val entry = readConsentEntry(decision.getPrincipal());
-        if (entry != null) {
-            val newConsent = mergeDecision(entry.getAttribute(ldapProperties.getConsentAttributeName()), decision);
-            if (executeModifyOperation(newConsent, entry)) {
-                return decision;
-            }
-        }
-        LOGGER.debug("Unable to read consent entry for [{}]. Consent decision is not stored", decision.getPrincipal());
-        return null;
-    }
-
-    @Override
-    public boolean deleteConsentDecision(final long id, final String principal) {
-        LOGGER.debug("Deleting consent decision [{}] for principal [{}]", id, principal);
-        val entry = readConsentEntry(principal);
-        if (entry != null) {
-            val newConsent = removeDecision(entry.getAttribute(this.ldapProperties.getConsentAttributeName()), id);
-            return executeModifyOperation(newConsent, entry);
-        }
-        return false;
-    }
-
     /**
      * Modifies the consent decisions attribute on the entry.
      *
@@ -236,7 +242,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
                 return entry;
             }
         } catch (final LdapException e) {
-            LOGGER.debug(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -248,24 +254,20 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
      */
     private Collection<LdapEntry> readConsentEntries() {
         val att = ldapProperties.getConsentAttributeName();
-        val filter = LdapUtils.newLdaptiveSearchFilter('(' + att + "=*)");
         try {
+            val filter = LdapUtils.newLdaptiveSearchFilter('(' + att + "=*)");
             LOGGER.debug("Locating consent LDAP entries via filter [{}] based on attribute [{}]", filter, att);
-            val response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize(), att);
+            val response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(),
+                filter, ldapProperties.getPageSize(), att);
             if (LdapUtils.containsResultEntry(response)) {
                 val results = response.getEntries();
                 LOGGER.debug("Locating [{}] consent LDAP entries based on response [{}]", results.size(), response);
                 return results;
             }
         } catch (final LdapException e) {
-            LOGGER.debug(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
-        LOGGER.debug("Unable to read consent entries from LDAP via filter [{}]", filter);
+        LOGGER.debug("Unable to read consent entries from LDAP for attribute [{}]", att);
         return new HashSet<>(0);
-    }
-
-    @Override
-    public void destroy() {
-        connectionFactory.close();
     }
 }

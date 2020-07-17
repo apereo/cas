@@ -12,12 +12,16 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link CassandraServiceRegistryTests}.
@@ -46,4 +50,14 @@ public class CassandraServiceRegistryTests extends AbstractServiceRegistryTests 
     @Autowired
     @Qualifier("cassandraServiceRegistry")
     private ServiceRegistry newServiceRegistry;
+
+    @Test
+    public void verifyFailOps() throws Exception {
+        assertNull(newServiceRegistry.save(null));
+        assertFalse(newServiceRegistry.delete(null));
+        if (newServiceRegistry instanceof DisposableBean) {
+            DisposableBean.class.cast(newServiceRegistry).destroy();
+        }
+    }
+
 }

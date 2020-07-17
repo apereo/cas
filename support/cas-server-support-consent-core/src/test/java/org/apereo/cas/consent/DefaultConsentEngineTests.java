@@ -6,6 +6,7 @@ import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 
@@ -48,12 +49,50 @@ public class DefaultConsentEngineTests {
     @Qualifier("consentEngine")
     private ConsentEngine consentEngine;
 
+    @Autowired
+    @Qualifier("consentDecisionBuilder")
+    private ConsentDecisionBuilder consentDecisionBuilder;
+
     @BeforeAll
     public static void beforeAll() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("127.0.0.1");
         request.setLocalAddr("127.0.0.1");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
+    }
+
+    @Test
+    public void verifyConsentDisablesRelease() {
+        val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
+        val service = CoreAuthenticationTestUtils.getService();
+        val consentService = RegisteredServiceTestUtils.getRegisteredService("consentService");
+        consentService.setAttributeReleasePolicy(null);
+        assertTrue(consentEngine.resolveConsentableAttributesFrom(authentication, service, consentService).isEmpty());
+        assertFalse(consentEngine.isConsentRequiredFor(service, consentService, authentication).isRequired());
+    }
+
+    @Test
+    public void verifyConsentIgnored() {
+        val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
+        val service = CoreAuthenticationTestUtils.getService();
+        val consentService = RegisteredServiceTestUtils.getRegisteredService("consentService");
+        val policy = new ReturnAllAttributeReleasePolicy();
+        policy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy());
+        consentService.setAttributeReleasePolicy(policy);
+        assertTrue(consentEngine.isConsentRequiredFor(service, consentService, authentication).isRequired());
+    }
+
+    @Test
+    public void verifyConsentExpired() {
+        val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
+        val service = CoreAuthenticationTestUtils.getService();
+        val consentService = RegisteredServiceTestUtils.getRegisteredService("consentService");
+        val policy = new ReturnAllAttributeReleasePolicy();
+        policy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy());
+        consentService.setAttributeReleasePolicy(policy);
+        consentEngine.storeConsentDecision(service, consentService,
+            authentication, -20, ChronoUnit.MONTHS, ConsentReminderOptions.ATTRIBUTE_NAME);
+        assertTrue(consentEngine.isConsentRequiredFor(service, consentService, authentication).isRequired());
     }
 
     @Test

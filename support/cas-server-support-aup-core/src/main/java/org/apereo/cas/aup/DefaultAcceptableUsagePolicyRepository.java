@@ -69,9 +69,8 @@ public class DefaultAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
                 }
                 return Pair.of(credential.getId(), policyMap);
             case AUTHENTICATION:
-                return Pair.of(AUP_ACCEPTED, requestContext.getFlowScope().asMap());
             default:
-                throw new IllegalStateException("Unexpected scope");
+                return Pair.of(AUP_ACCEPTED, requestContext.getFlowScope().asMap());
         }
     }
 }
