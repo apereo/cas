@@ -5,7 +5,10 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectory;
+import com.amazonaws.services.clouddirectory.model.ListIndexRequest;
 import com.amazonaws.services.clouddirectory.model.ListIndexResult;
+import com.amazonaws.services.clouddirectory.model.ListObjectAttributesRequest;
+import com.amazonaws.services.clouddirectory.model.ObjectReference;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -31,6 +34,7 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
     private static final int MAP_SIZE = 8;
 
     private final AmazonCloudDirectory amazonCloudDirectory;
+
     private final CloudDirectoryProperties properties;
 
     @Override
@@ -43,19 +47,44 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
         return getUserInfoFromIndexResult(indexResult);
     }
 
-    private ListIndexResult getIndexResult(final String username) {
-        val reference = CloudDirectoryUtils.getObjectRefByPath(properties.getUsernameIndexPath());
-        if (reference != null) {
-            val listIndexRequest = CloudDirectoryUtils.getListIndexRequest(
-                properties.getUsernameAttributeName(),
-                username, reference, properties);
+    /**
+     * Gets list index request.
+     *
+     * @param username  the username
+     * @param reference the reference
+     * @return the list index request
+     */
+    protected ListIndexRequest getListIndexRequest(final String username, final ObjectReference reference) {
+        return CloudDirectoryUtils.getListIndexRequest(
+            properties.getUsernameAttributeName(),
+            username, reference, properties);
+    }
 
+    /**
+     * Gets index result.
+     *
+     * @param username the username
+     * @return the index result
+     */
+    protected ListIndexResult getIndexResult(final String username) {
+        val reference = getObjectReference();
+        if (reference != null) {
+            val listIndexRequest = getListIndexRequest(username, reference);
             if (listIndexRequest != null) {
                 return amazonCloudDirectory.listIndex(listIndexRequest);
             }
         }
         LOGGER.warn("Object reference or list index request could not be found for user [{}]", username);
         return null;
+    }
+
+    /**
+     * Gets object reference.
+     *
+     * @return the object reference
+     */
+    protected ObjectReference getObjectReference() {
+        return CloudDirectoryUtils.getObjectRefByPath(properties.getUsernameIndexPath());
     }
 
     /**
@@ -72,7 +101,7 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
         }
 
         val identifier = attachment.getObjectIdentifier();
-        val listObjectAttributesRequest = CloudDirectoryUtils.getListObjectAttributesRequest(properties.getDirectoryArn(), identifier);
+        val listObjectAttributesRequest = getListObjectAttributesRequest(identifier);
         if (listObjectAttributesRequest == null) {
             LOGGER.warn("No object attribute request is available for identifier [{}]", identifier);
             return null;
@@ -106,5 +135,15 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
             })
             .filter(p -> p.getValue() != null)
             .collect(Collectors.toMap(Pair::getKey, s -> CollectionUtils.toCollection(s.getValue(), ArrayList.class)));
+    }
+
+    /**
+     * Gets list object attributes request.
+     *
+     * @param identifier the identifier
+     * @return the list object attributes request
+     */
+    protected ListObjectAttributesRequest getListObjectAttributesRequest(final String identifier) {
+        return CloudDirectoryUtils.getListObjectAttributesRequest(properties.getDirectoryArn(), identifier);
     }
 }

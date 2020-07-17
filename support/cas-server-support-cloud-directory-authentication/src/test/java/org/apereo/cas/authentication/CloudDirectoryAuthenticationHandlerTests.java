@@ -15,6 +15,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
+import javax.security.auth.login.AccountNotFoundException;
+import javax.security.auth.login.FailedLoginException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,8 +30,8 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = {
-    "cas.authn.cloudDirectory.usernameAttributeName=username",
-    "cas.authn.cloudDirectory.passwordAttributeName=password"
+    "cas.authn.cloud-directory.username-attribute-name=username",
+    "cas.authn.cloud-directory.password-attribute-name=password"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("AmazonWebServices")
@@ -45,5 +47,26 @@ public class CloudDirectoryAuthenticationHandlerTests {
         val h = new CloudDirectoryAuthenticationHandler(StringUtils.EMPTY, mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), repository, casProperties.getAuthn().getCloudDirectory());
         assertNotNull(h.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon")));
+    }
+
+    @Test
+    public void verifyNoPassAttr() {
+        val repository = mock(CloudDirectoryRepository.class);
+        when(repository.getUser(anyString())).thenReturn(CollectionUtils.wrap("username", List.of("casuser")));
+        val h = new CloudDirectoryAuthenticationHandler(StringUtils.EMPTY, mock(ServicesManager.class),
+            PrincipalFactoryUtils.newPrincipalFactory(), repository, casProperties.getAuthn().getCloudDirectory());
+        assertThrows(AccountNotFoundException.class,
+            () -> h.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "123456")));
+    }
+
+    @Test
+    public void verifyNoMatch() {
+        val repository = mock(CloudDirectoryRepository.class);
+        when(repository.getUser(anyString())).thenReturn(CollectionUtils.wrap("username",
+            List.of("casuser"), "password", List.of("Mellon")));
+        val h = new CloudDirectoryAuthenticationHandler(StringUtils.EMPTY, mock(ServicesManager.class),
+            PrincipalFactoryUtils.newPrincipalFactory(), repository, casProperties.getAuthn().getCloudDirectory());
+        assertThrows(FailedLoginException.class,
+            () -> h.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "123456")));
     }
 }

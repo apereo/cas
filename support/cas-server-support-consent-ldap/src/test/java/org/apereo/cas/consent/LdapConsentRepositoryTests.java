@@ -25,14 +25,14 @@ import org.springframework.test.context.TestPropertySource;
     "cas.consent.ldap.ldap-url=ldap://localhost:10389",
     "cas.consent.ldap.base-dn=ou=people,dc=example,dc=org",
     "cas.consent.ldap.search-filter=cn={0}",
-    "cas.consent.ldap.consentAttributeName=description",
-    "cas.consent.ldap.bindDn=cn=Directory Manager",
-    "cas.consent.ldap.bindCredential=password"
+    "cas.consent.ldap.consent-attribute-name=description",
+    "cas.consent.ldap.bind-dn=cn=Directory Manager",
+    "cas.consent.ldap.bind-credential=password"
 })
 @EnabledIfPortOpen(port = 10389)
 @Slf4j
 @Tag("Ldap")
-public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
+public class LdapConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     private static final int LDAP_PORT = 10389;
 
     @Autowired
@@ -47,6 +47,7 @@ public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapCon
         LOGGER.debug("Populating LDAP entries from [{}]", resource);
         LdapIntegrationTestsOperations.populateEntries(localhost, resource.getInputStream(), "ou=people,dc=example,dc=org");
     }
+
 
     @Override
     @SneakyThrows

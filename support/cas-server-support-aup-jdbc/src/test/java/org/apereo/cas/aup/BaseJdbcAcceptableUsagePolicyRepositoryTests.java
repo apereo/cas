@@ -105,8 +105,7 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseA
         val principal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
         val auth = CoreAuthenticationTestUtils.getAuthentication(principal);
         WebUtils.putAuthentication(auth, context);
-
-        return jdbcAupRepository.determinePrincipalId(context, c);
+        return jdbcAupRepository.determinePrincipalId(principal);
     }
 
     @Override

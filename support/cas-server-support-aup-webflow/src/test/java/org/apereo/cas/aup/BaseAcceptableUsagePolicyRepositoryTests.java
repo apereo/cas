@@ -1,5 +1,6 @@
 package org.apereo.cas.aup;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -25,6 +26,8 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -35,22 +38,29 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.binding.message.MessageContext;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link BaseAcceptableUsagePolicyRepositoryTests}.
@@ -111,13 +121,43 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     public static class SharedTestConfiguration {
     }
 
-    protected void verifyRepositoryAction(final String actualPrincipalId, final Map<String, List<Object>> profileAttributes) {
+    protected void verifyFetchingPolicy(final RegisteredService service,
+                                        final Authentication authentication,
+                                        final boolean expectPolicyFound) {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        val credential = getCredential("casuser");
+        val context = mock(RequestContext.class);
+        when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
+        when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
+        when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
+        val flowDefn = mock(FlowDefinition.class);
+        when(flowDefn.getApplicationContext()).thenReturn(applicationContext);
+        when(context.getActiveFlow()).thenReturn(flowDefn);
+
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
+
+        WebUtils.putRegisteredService(context, service);
+        WebUtils.putAuthentication(authentication, context);
+        assertEquals(expectPolicyFound, getAcceptableUsagePolicyRepository().fetchPolicy(context, credential).isPresent());
+    }
+    
+    protected void verifyRepositoryAction(final String actualPrincipalId,
+                                          final Map<String, List<Object>> profileAttributes) {
         val c = getCredential(actualPrincipalId);
         val context = getRequestContext(actualPrincipalId, profileAttributes, c);
 
         assertFalse(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
         assertTrue(getAcceptableUsagePolicyRepository().submit(context, c));
         if (hasLiveUpdates()) {
+            val authentication = WebUtils.getAuthentication(context);
+            var principal = authentication.getPrincipal();
+            val attributes = new HashMap<>(principal.getAttributes());
+            attributes.put(casProperties.getAcceptableUsagePolicy().getAupAttributeName(), List.of(Boolean.TRUE));
+            principal = RegisteredServiceTestUtils.getPrincipal(principal.getId(), attributes);
+            WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
             assertTrue(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
         }
     }

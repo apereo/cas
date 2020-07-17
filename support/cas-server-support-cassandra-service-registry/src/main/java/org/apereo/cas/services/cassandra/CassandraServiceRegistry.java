@@ -21,7 +21,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.cassandra.core.InsertOptions;
 import org.springframework.data.cassandra.core.query.Query;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -73,7 +72,6 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
     @Override
     public boolean delete(final RegisteredService registeredService) {
         try {
-            
             cassandraSessionFactory.getCassandraTemplate()
                 .deleteById(registeredService.getId(), CassandraRegisteredServiceHolder.class);
             return true;
@@ -85,40 +83,26 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
 
     @Override
     public long size() {
-        try {
-            return cassandraSessionFactory.getCassandraTemplate()
-                .count(CassandraRegisteredServiceHolder.class);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return 0;
+        return cassandraSessionFactory.getCassandraTemplate()
+            .count(CassandraRegisteredServiceHolder.class);
     }
 
     @Override
     public Collection<RegisteredService> load() {
-        try {
-            val results = cassandraSessionFactory.getCassandraTemplate().select(Query.query(), CassandraRegisteredServiceHolder.class);
-            return results.stream()
-                .map(holder -> SERIALIZER.from(holder.getData()))
-                .filter(Objects::nonNull)
-                .map(this::invokeServiceRegistryListenerPostLoad)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return new ArrayList<>(0);
+        val results = cassandraSessionFactory.getCassandraTemplate().select(Query.query(), CassandraRegisteredServiceHolder.class);
+        return results.stream()
+            .map(holder -> SERIALIZER.from(holder.getData()))
+            .filter(Objects::nonNull)
+            .map(this::invokeServiceRegistryListenerPostLoad)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        try {
-            val holder = cassandraSessionFactory.getCassandraTemplate().selectOneById(id, CassandraRegisteredServiceHolder.class);
-            if (holder != null) {
-                return SERIALIZER.from(holder.getData());
-            }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+        val holder = cassandraSessionFactory.getCassandraTemplate().selectOneById(id, CassandraRegisteredServiceHolder.class);
+        if (holder != null) {
+            return SERIALIZER.from(holder.getData());
         }
         return null;
     }
