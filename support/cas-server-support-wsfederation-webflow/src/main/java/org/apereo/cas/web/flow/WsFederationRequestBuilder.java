@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
@@ -46,11 +46,12 @@ public class WsFederationRequestBuilder {
      * @return the redirect url for
      */
     @SneakyThrows
-    private static String getRelativeRedirectUrlFor(final WsFederationConfiguration config, final Service service, final HttpServletRequest request) {
+    private static String getRelativeRedirectUrlFor(final WsFederationConfiguration config, final WebApplicationService service,
+                                                    final HttpServletRequest request) {
         val builder = new URIBuilder(WsFederationNavigationController.ENDPOINT_REDIRECT);
         builder.addParameter(WsFederationNavigationController.PARAMETER_NAME, config.getId());
         if (service != null) {
-            builder.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+            builder.addParameter(service.getSource(), service.getId());
         }
         val method = request.getParameter(CasProtocolConstants.PARAMETER_METHOD);
         if (StringUtils.isNotBlank(method)) {
@@ -68,7 +69,7 @@ public class WsFederationRequestBuilder {
     public Event buildAuthenticationRequestEvent(final RequestContext context) {
         val clients = new ArrayList<WsFedClient>(this.configurations.size());
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        val service = (Service) context.getFlowScope().get(CasProtocolConstants.PARAMETER_SERVICE);
+        val service = (WebApplicationService) context.getFlowScope().get(CasProtocolConstants.PARAMETER_SERVICE);
         this.configurations.forEach(cfg -> {
             val c = new WsFedClient();
             c.setName(cfg.getName());

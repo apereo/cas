@@ -9,6 +9,7 @@ import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
+import org.apereo.cas.web.support.ArgumentExtractor;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,11 @@ public class WsFederationAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+
+    @Autowired
+    @Qualifier("argumentExtractor")
+    private ObjectProvider<ArgumentExtractor> argumentExtractor;
+    
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "wsFederationHelper")
@@ -71,11 +77,13 @@ public class WsFederationAuthenticationConfiguration {
 
     @Bean
     public WsFederationNavigationController wsFederationNavigationController() {
-        return new WsFederationNavigationController(wsFederationCookieManager(),
+        return new WsFederationNavigationController(
+            wsFederationCookieManager(),
             wsFederationHelper(),
             wsFederationConfigurations,
             authenticationRequestServiceSelectionStrategies.getObject(),
             webApplicationServiceFactory.getObject(),
-            casProperties.getServer().getLoginUrl());
+            casProperties.getServer().getLoginUrl(),
+            argumentExtractor.getObject());
     }
 }

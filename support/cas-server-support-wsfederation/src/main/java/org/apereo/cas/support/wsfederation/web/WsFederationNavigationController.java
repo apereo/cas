@@ -1,6 +1,5 @@
 package org.apereo.cas.support.wsfederation.web;
 
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -9,10 +8,12 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,6 +58,8 @@ public class WsFederationNavigationController {
 
     private final String casLoginEndpoint;
 
+    private final ArgumentExtractor argumentExtractor;
+
     /**
      * Redirect to provider. Receive the client name from the request and then try to determine and build the endpoint url
      * for the redirection. The redirection data/url must contain a delegated client ticket id so that the request be can
@@ -86,7 +89,8 @@ public class WsFederationNavigationController {
     }
 
     private Service determineService(final HttpServletRequest request) {
-        val serviceParameter = StringUtils.defaultIfBlank(request.getParameter(CasProtocolConstants.PARAMETER_SERVICE), casLoginEndpoint);
-        return this.authenticationRequestServiceSelectionStrategies.resolveService(webApplicationServiceFactory.createService(serviceParameter));
+        val initialService = ObjectUtils.defaultIfNull(argumentExtractor.extractService(request),
+            webApplicationServiceFactory.createService(casLoginEndpoint));
+        return this.authenticationRequestServiceSelectionStrategies.resolveService(initialService);
     }
 }
