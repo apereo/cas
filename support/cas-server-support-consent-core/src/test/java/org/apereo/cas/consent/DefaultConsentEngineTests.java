@@ -48,11 +48,7 @@ public class DefaultConsentEngineTests {
     @Autowired
     @Qualifier("consentEngine")
     private ConsentEngine consentEngine;
-
-    @Autowired
-    @Qualifier("consentDecisionBuilder")
-    private ConsentDecisionBuilder consentDecisionBuilder;
-
+    
     @BeforeAll
     public static void beforeAll() {
         val request = new MockHttpServletRequest();
