@@ -43,3 +43,9 @@ cas.version=6.3.0-RC2
 ## Other Stuff
  
 ## Library Upgrades
+
+- Commons Lang
+- Mockito
+- DropWizard
+- Azure DocumentDb
+- Grouper Client
