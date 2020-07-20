@@ -537,7 +537,7 @@ jobs:
       - name: Run Tests
         run: ./testcas.sh --info --with-coverage --category ${{ matrix.category }}
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1.0.10
+        uses: codecov/codecov-action@v1.0.11
         with:
           flags: ${{ matrix.category }}
           fail_ci_if_error: true
