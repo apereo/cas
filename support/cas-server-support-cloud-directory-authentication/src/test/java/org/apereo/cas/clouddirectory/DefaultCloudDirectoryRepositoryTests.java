@@ -50,7 +50,7 @@ public class DefaultCloudDirectoryRepositoryTests {
         result.setIndexAttachments(List.of());
         when(cloud.listIndex(any())).thenReturn(result);
         val r = getMockCloudDirectoryRepository(cloud, null);
-        assertTrue(r.getUser("casuser").isEmpty());
+        assertNull(r.getUser("casuser"));
     }
 
     @Test
