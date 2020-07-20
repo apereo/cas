@@ -94,6 +94,7 @@ public class CoreAuthenticationTestUtils {
         val svc = mock(WebApplicationService.class);
         when(svc.getId()).thenReturn(id);
         when(svc.getOriginalUrl()).thenReturn(id);
+        when(svc.getSource()).thenReturn(CasProtocolConstants.PARAMETER_SERVICE);
         return svc;
     }
 
