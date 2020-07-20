@@ -599,7 +599,8 @@ ext.libraries = [
         },
         bytebuddy               : [
                 dependencies.create("net.bytebuddy:byte-buddy:$bytebuddyVersion") {
-
+                },
+                dependencies.create("de.cronn:reflection-util:$reflectionUtilVersion") {
                 }
         ],
         hibernatevalidator      : [
@@ -607,11 +608,9 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
-
                 },
                 dependencies.create("javax.persistence:javax.persistence-api:$jpaPersistenceApiVersion") {
                     exclude(group: "xml-apis", module: "xml-apis")
-
                 }
         ],
         hikaricp                : [
