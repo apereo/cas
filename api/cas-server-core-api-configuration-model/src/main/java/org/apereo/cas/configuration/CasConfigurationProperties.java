@@ -45,6 +45,7 @@ import org.apereo.cas.configuration.model.support.scim.ScimProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProvidersProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -66,6 +67,7 @@ import java.time.Instant;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("CasConfigurationProperties")
 public class CasConfigurationProperties implements Serializable {
     /**
      * Prefix used for all CAS-specific settings.
