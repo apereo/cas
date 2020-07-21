@@ -486,6 +486,7 @@ jobs:
           - wsfed
           - uma
           - oidc
+          - audit
           - saml
           - infinispan
           - spnego

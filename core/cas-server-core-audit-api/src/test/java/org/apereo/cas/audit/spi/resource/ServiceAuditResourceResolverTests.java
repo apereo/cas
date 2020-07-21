@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("Simple")
+@Tag("Audits")
 public class ServiceAuditResourceResolverTests {
     @Test
     public void verifyOperation() {
