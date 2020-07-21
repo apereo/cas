@@ -1,6 +1,6 @@
 package org.apereo.cas.audit.spi;
 
-import org.apereo.cas.audit.spi.resource.ShortenedReturnValueAsStringResourceResolver;
+import org.apereo.cas.audit.spi.resource.ShortenedReturnValueAsStringAuditResourceResolver;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
@@ -12,14 +12,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link ShortenedReturnValueAsStringResourceResolverTests}.
+ * This is {@link ShortenedReturnValueAsStringAuditResourceResolverTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @Tag("Simple")
-public class ShortenedReturnValueAsStringResourceResolverTests {
-    private final ShortenedReturnValueAsStringResourceResolver r = new ShortenedReturnValueAsStringResourceResolver();
+public class ShortenedReturnValueAsStringAuditResourceResolverTests {
+    private final ShortenedReturnValueAsStringAuditResourceResolver r = new ShortenedReturnValueAsStringAuditResourceResolver();
 
     @Test
     public void verifyActionPassed() {

@@ -66,7 +66,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class
 },
     properties = "cas.theme.default-theme-name=test")
-@Tag("Simple")
+@Tag("Web")
 public class ServiceThemeResolverTests {
     private static final String MOZILLA = "Mozilla";
 

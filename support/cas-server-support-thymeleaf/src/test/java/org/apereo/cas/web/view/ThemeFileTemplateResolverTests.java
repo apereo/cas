@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
     ThymeleafAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("Web")
 public class ThemeFileTemplateResolverTests {
 
     @Autowired
