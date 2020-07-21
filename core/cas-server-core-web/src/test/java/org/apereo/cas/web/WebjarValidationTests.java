@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Hal Deadman
  * @since 6.1.0
  */
-@Tag("Simple")
+@Tag("Web")
 public class WebjarValidationTests {
 
     @Test

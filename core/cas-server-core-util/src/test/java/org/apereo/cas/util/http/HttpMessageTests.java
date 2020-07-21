@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Francesco Cina
  * @since 4.1
  */
-@Tag("Simple")
+@Tag("Web")
 public class HttpMessageTests {
 
     @Test

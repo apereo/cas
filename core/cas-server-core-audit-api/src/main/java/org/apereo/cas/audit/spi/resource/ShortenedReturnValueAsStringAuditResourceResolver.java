@@ -11,12 +11,12 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link ShortenedReturnValueAsStringResourceResolver}.
+ * This is {@link ShortenedReturnValueAsStringAuditResourceResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class ShortenedReturnValueAsStringResourceResolver extends ReturnValueAsStringResourceResolver {
+public class ShortenedReturnValueAsStringAuditResourceResolver extends ReturnValueAsStringResourceResolver {
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
         val resources = super.resolveFrom(auditableTarget, retval);

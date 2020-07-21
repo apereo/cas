@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Simple")
+@Tag("Web")
 public class ChainingTemplateViewResolverTests {
     @Test
     public void verifyAction() {

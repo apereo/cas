@@ -14,7 +14,7 @@ import org.aspectj.lang.JoinPoint;
  * @author Scott Battaglia
  * @since 3.1.2
  */
-public class ServiceResourceResolver implements AuditResourceResolver {
+public class ServiceAuditResourceResolver implements AuditResourceResolver {
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {

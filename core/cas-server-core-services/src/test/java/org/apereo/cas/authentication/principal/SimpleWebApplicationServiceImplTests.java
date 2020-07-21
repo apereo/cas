@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @author Arnaud Lesueur
  * @since 3.1
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class SimpleWebApplicationServiceImplTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "simpleWebApplicationServiceImpl.json");
 

@@ -41,7 +41,7 @@ import org.springframework.context.annotation.Import;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public abstract class BaseRemoteAddressTests {
 
     @ImportAutoConfiguration({

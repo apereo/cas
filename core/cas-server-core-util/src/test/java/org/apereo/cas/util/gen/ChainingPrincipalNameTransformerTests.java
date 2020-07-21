@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class ChainingPrincipalNameTransformerTests {
     @Test
     public void verifyChain() {

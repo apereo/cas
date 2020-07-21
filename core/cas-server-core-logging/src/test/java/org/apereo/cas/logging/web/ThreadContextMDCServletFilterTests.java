@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @ExtendWith(MockitoExtension.class)
-@Tag("Simple")
+@Tag("Web")
 public class ThreadContextMDCServletFilterTests {
 
     @Mock

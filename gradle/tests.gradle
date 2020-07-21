@@ -28,6 +28,16 @@ if (hasTestsOfCategory(project, "Attributes")) {
     }
 }
 
+if (hasTestsOfCategory(project, "Web")) {
+    task testWeb(type: Test) {
+        enabled = shouldTest(project, "Web")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "Web"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "Infinispan")) {
     task testInfinispan(type: Test) {
         enabled = shouldTest(project, "Infinispan")
