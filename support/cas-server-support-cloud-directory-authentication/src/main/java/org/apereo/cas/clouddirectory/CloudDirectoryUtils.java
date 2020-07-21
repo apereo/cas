@@ -3,10 +3,8 @@ package org.apereo.cas.clouddirectory;
 import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
 
 import com.amazonaws.services.clouddirectory.model.AttributeKey;
-import com.amazonaws.services.clouddirectory.model.AttributeKeyAndValue;
 import com.amazonaws.services.clouddirectory.model.ListIndexRequest;
 import com.amazonaws.services.clouddirectory.model.ListObjectAttributesRequest;
-import com.amazonaws.services.clouddirectory.model.ListObjectAttributesResult;
 import com.amazonaws.services.clouddirectory.model.ObjectAttributeRange;
 import com.amazonaws.services.clouddirectory.model.ObjectReference;
 import com.amazonaws.services.clouddirectory.model.RangeMode;
@@ -25,19 +23,15 @@ import lombok.val;
 public class CloudDirectoryUtils {
 
     /**
-     * Gets attribute key value by name.
+     * Gets object ref by id.
      *
-     * @param attributesResult the attributes result
-     * @param attributeName    the attribute name
-     * @return the attribute key value by name
+     * @param objectId the object id
+     * @return the object ref by id
      */
-    public static AttributeKeyAndValue getAttributeKeyValueByName(final ListObjectAttributesResult attributesResult,
-                                                                  final String attributeName) {
-        return attributesResult.getAttributes().stream()
-            .filter(a -> a.getKey().getName().equalsIgnoreCase(attributeName))
-            .findFirst()
-            .orElse(null);
+    public static ObjectReference getObjectRefById(final String objectId) {
+        return getObjectRefByPath('$' + objectId);
     }
+
 
     /**
      * Gets list object attributes request.
@@ -53,7 +47,6 @@ public class CloudDirectoryUtils {
             .withObjectReference(getObjectRefById(objectId));
     }
 
-
     /**
      * Gets object ref by path.
      *
@@ -65,16 +58,6 @@ public class CloudDirectoryUtils {
             return null;
         }
         return new ObjectReference().withSelector(path);
-    }
-
-    /**
-     * Gets object ref by id.
-     *
-     * @param objectId the object id
-     * @return the object ref by id
-     */
-    public static ObjectReference getObjectRefById(final String objectId) {
-        return getObjectRefByPath('$' + objectId);
     }
 
     /**
@@ -109,7 +92,6 @@ public class CloudDirectoryUtils {
      */
     public static ObjectAttributeRange getObjectAttributeRanges(final String schemaArn, final String facetName,
                                                                 final String attributeName, final String attributeValue) {
-
         val attributeKey = getAttributeKey(schemaArn, facetName, attributeName);
         return new ObjectAttributeRange().withAttributeKey(attributeKey)
             .withRange(new TypedAttributeValueRange()
@@ -127,8 +109,10 @@ public class CloudDirectoryUtils {
      * @param attributeName the attribute name
      * @return the attribute key
      */
-    private static AttributeKey getAttributeKey(final String schemaArn, final String facetName, final String attributeName) {
-        return new AttributeKey().withFacetName(facetName).withSchemaArn(schemaArn).withName(attributeName);
+    private static AttributeKey getAttributeKey(final String schemaArn, final String facetName,
+                                                final String attributeName) {
+        return new AttributeKey().withFacetName(facetName)
+            .withSchemaArn(schemaArn).withName(attributeName);
     }
 
     /**

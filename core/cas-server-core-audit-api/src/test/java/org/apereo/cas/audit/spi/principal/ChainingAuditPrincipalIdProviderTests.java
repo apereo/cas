@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("Simple")
+@Tag("Audits")
 public class ChainingAuditPrincipalIdProviderTests {
     @Test
     public void verifyOperation() {

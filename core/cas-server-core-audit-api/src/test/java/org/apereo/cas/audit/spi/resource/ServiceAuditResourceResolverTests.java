@@ -11,18 +11,18 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link ServiceResourceResolverTests}.
+ * This is {@link ServiceAuditResourceResolverTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("Simple")
-public class ServiceResourceResolverTests {
+@Tag("Audits")
+public class ServiceAuditResourceResolverTests {
     @Test
     public void verifyOperation() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"something", RegisteredServiceTestUtils.getService()});
-        val resolver = new ServiceResourceResolver();
+        val resolver = new ServiceAuditResourceResolver();
         var input = resolver.resolveFrom(jp, null);
         assertTrue(input.length > 0);
 

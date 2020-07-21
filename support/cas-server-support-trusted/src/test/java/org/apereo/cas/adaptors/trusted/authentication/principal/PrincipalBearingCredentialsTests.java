@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class PrincipalBearingCredentialsTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "principalBearingCredential.json");

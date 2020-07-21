@@ -1,7 +1,7 @@
 package org.apereo.cas.audit.spi;
 
 import org.apereo.cas.audit.spi.principal.DefaultAuditPrincipalIdProvider;
-import org.apereo.cas.audit.spi.principal.ThreadLocalPrincipalResolver;
+import org.apereo.cas.audit.spi.principal.ThreadLocalAuditPrincipalResolver;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
@@ -13,16 +13,16 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit test for {@link ThreadLocalPrincipalResolver}.
+ * Unit test for {@link ThreadLocalAuditPrincipalResolver}.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Tag("Simple")
-public class ThreadLocalPrincipalResolverTests {
+@Tag("Audits")
+public class ThreadLocalAuditPrincipalResolverTests {
 
-    private final ThreadLocalPrincipalResolver theResolver =
-        new ThreadLocalPrincipalResolver(new DefaultAuditPrincipalIdProvider());
+    private final ThreadLocalAuditPrincipalResolver theResolver =
+        new ThreadLocalAuditPrincipalResolver(new DefaultAuditPrincipalIdProvider());
 
     @AfterEach
     public void cleanup() {

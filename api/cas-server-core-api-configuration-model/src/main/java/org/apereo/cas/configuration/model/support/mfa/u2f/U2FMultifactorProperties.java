@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("U2FMultifactorProperties")
 public class U2FMultifactorProperties extends BaseMultifactorProviderProperties {
 
     /**

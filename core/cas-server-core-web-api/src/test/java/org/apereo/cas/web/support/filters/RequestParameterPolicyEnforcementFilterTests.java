@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1
  */
-@Tag("Simple")
+@Tag("Web")
 public class RequestParameterPolicyEnforcementFilterTests {
 
     private static void internalTestOnlyPostParameter(final String method) {

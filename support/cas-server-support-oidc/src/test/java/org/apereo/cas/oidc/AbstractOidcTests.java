@@ -253,8 +253,8 @@ public abstract class AbstractOidcTests {
     protected ConsentApprovalViewResolver consentApprovalViewResolver;
 
     @Autowired
-    @Qualifier("accessTokenJwtBuilder")
-    protected JwtBuilder accessTokenJwtBuilder;
+    @Qualifier("oidcAccessTokenJwtBuilder")
+    protected JwtBuilder oidcAccessTokenJwtBuilder;
 
     protected static OidcRegisteredService getOidcRegisteredService() {
         return getOidcRegisteredService(true, true);

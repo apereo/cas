@@ -89,14 +89,22 @@ ext.libraries = [
                     exclude(group: "net.java.dev.jna", module: "jna")
                 }
         ],
+        springdoc : [
+                dependencies.create("org.springdoc:springdoc-openapi-ui:$springDocVersion") {
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "javax.validation", module: "validation-api")
+                }
+        ],
         swagger                 : [
-                dependencies.create("io.swagger:swagger-annotations:$swaggerVersion") {
+                dependencies.create("io.swagger.core.v3:swagger-annotations:$swaggerVersion") {
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "javax.validation", module: "validation-api")
                 },
-                dependencies.create("io.swagger:swagger-core:$swaggerVersion") {
+                dependencies.create("io.swagger.core.v3:swagger-core:$swaggerVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
@@ -104,7 +112,7 @@ ext.libraries = [
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "javax.validation", module: "validation-api")
                 },
-                dependencies.create("io.swagger:swagger-jaxrs:$swaggerVersion") {
+                dependencies.create("io.swagger.core.v3:swagger-jaxrs2:$swaggerVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
@@ -112,36 +120,12 @@ ext.libraries = [
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "javax.validation", module: "validation-api")
                 },
-                dependencies.create("io.swagger:swagger-models:$swaggerVersion") {
+                dependencies.create("io.swagger.core.v3:swagger-models:$swaggerVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "javax.validation", module: "validation-api")
-                }
-        ],
-        swaggerfox              : [
-                dependencies.create("io.springfox:springfox-swagger2:$swaggerSpringFoxVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.fasterxml", module: "classmate")
-                    exclude(group: "org.apache.commons", module: "commons-lang3")
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "net.bytebuddy", module: "byte-buddy")
-                    exclude(group: "io.swagger", module: "swagger-annotations")
-                    exclude(group: "io.swagger", module: "swagger-core")
-                    exclude(group: "io.swagger", module: "swagger-models")
-                    exclude(group: "io.swagger", module: "swagger-jaxrs")
-                    exclude(group: "javax.validation", module: "validation-api")
-                }
-        ],
-        swaggerui               : [
-                dependencies.create("io.springfox:springfox-swagger-ui:$swaggerSpringFoxVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.fasterxml", module: "classmate")
-                    exclude(group: "org.apache.commons", module: "commons-lang3")
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "net.bytebuddy", module: "byte-buddy")
                     exclude(group: "javax.validation", module: "validation-api")
                 }
         ],
@@ -615,7 +599,8 @@ ext.libraries = [
         },
         bytebuddy               : [
                 dependencies.create("net.bytebuddy:byte-buddy:$bytebuddyVersion") {
-
+                },
+                dependencies.create("de.cronn:reflection-util:$reflectionUtilVersion") {
                 }
         ],
         hibernatevalidator      : [
@@ -623,11 +608,9 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
-
                 },
                 dependencies.create("javax.persistence:javax.persistence-api:$jpaPersistenceApiVersion") {
                     exclude(group: "xml-apis", module: "xml-apis")
-
                 }
         ],
         hikaricp                : [

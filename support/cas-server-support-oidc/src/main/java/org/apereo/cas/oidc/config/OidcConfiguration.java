@@ -87,20 +87,29 @@ import org.apereo.cas.support.oauth.validator.authorization.OAuth20Authorization
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultTokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
+import org.apereo.cas.ticket.accesstoken.OAuth20DefaultAccessTokenFactory;
+import org.apereo.cas.ticket.accesstoken.OAuth20JwtBuilder;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.JwtBuilder;
@@ -161,6 +170,7 @@ import org.springframework.webflow.execution.Action;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -185,10 +195,6 @@ public class OidcConfiguration implements WebMvcConfigurer {
     private ObjectProvider<SessionStore> oauthDistributedSessionStore;
 
     @Autowired
-    @Qualifier("accessTokenJwtBuilder")
-    private ObjectProvider<JwtBuilder> accessTokenJwtBuilder;
-
-    @Autowired
     @Qualifier("accessTokenGrantAuditableRequestExtractor")
     private ObjectProvider<AuditableExecution> accessTokenGrantAuditableRequestExtractor;
 
@@ -207,14 +213,6 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
     private ObjectProvider<ExpirationPolicyBuilder> grantingTicketExpirationPolicy;
-
-    @Autowired
-    @Qualifier("oauthTokenGenerator")
-    private ObjectProvider<OAuth20TokenGenerator> oauthTokenGenerator;
-
-    @Autowired
-    @Qualifier("oauthAuthorizationResponseBuilders")
-    private ObjectProvider<Set<OAuth20AuthorizationResponseBuilder>> oauthAuthorizationResponseBuilders;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -286,10 +284,6 @@ public class OidcConfiguration implements WebMvcConfigurer {
     private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
-    @Qualifier("defaultAccessTokenFactory")
-    private ObjectProvider<OAuth20AccessTokenFactory> defaultAccessTokenFactory;
-
-    @Autowired
     @Qualifier("defaultDeviceTokenFactory")
     private ObjectProvider<OAuth20DeviceTokenFactory> defaultDeviceTokenFactory;
 
@@ -335,6 +329,18 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
+
+    @Autowired
+    @Qualifier("oauthAccessTokenJwtCipherExecutor")
+    private ObjectProvider<CipherExecutor> oauthAccessTokenJwtCipherExecutor;
+
+    @Autowired
+    @Qualifier("accessTokenIdGenerator")
+    private ObjectProvider<UniqueTicketIdGenerator> accessTokenIdGenerator;
+
+    @Autowired
+    @Qualifier("defaultRefreshTokenFactory")
+    private ObjectProvider<OAuth20RefreshTokenFactory> defaultRefreshTokenFactory;
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
@@ -413,8 +419,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     @RefreshScope
     public OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator() {
-        return new OidcAccessTokenResponseGenerator(oidcIdTokenGenerator(),
-            accessTokenJwtBuilder.getObject(), casProperties);
+        return new OidcAccessTokenResponseGenerator(oidcIdTokenGenerator(), oidcAccessTokenJwtBuilder(), casProperties);
     }
 
     @Bean
@@ -720,17 +725,86 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcImplicitIdTokenCallbackUrlBuilder")
     public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder() {
-        return new OidcImplicitIdTokenAuthorizationResponseBuilder(oidcIdTokenGenerator(), oauthTokenGenerator.getObject(),
-            grantingTicketExpirationPolicy.getObject(),
-            servicesManager.getObject(), accessTokenJwtBuilder.getObject(), casProperties);
+        return new OidcImplicitIdTokenAuthorizationResponseBuilder(
+                oidcIdTokenGenerator(),
+                oidcTokenGenerator(),
+                accessTokenExpirationPolicy.getObject(),
+                grantingTicketExpirationPolicy.getObject(),
+                servicesManager.getObject(),
+                oidcAccessTokenJwtBuilder(),
+                casProperties);
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcImplicitIdTokenAndTokenCallbackUrlBuilder")
     public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenAndTokenCallbackUrlBuilder() {
-        return new OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder(oidcIdTokenGenerator(), oauthTokenGenerator.getObject(),
-            grantingTicketExpirationPolicy.getObject(),
-            servicesManager.getObject(), accessTokenJwtBuilder.getObject(), casProperties);
+        return new OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder(
+                oidcIdTokenGenerator(),
+                oidcTokenGenerator(),
+                accessTokenExpirationPolicy.getObject(),
+                grantingTicketExpirationPolicy.getObject(),
+                servicesManager.getObject(),
+                oidcAccessTokenJwtBuilder(),
+                casProperties);
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcResourceOwnerCredentialsResponseBuilder")
+    public OAuth20AuthorizationResponseBuilder oidcResourceOwnerCredentialsResponseBuilder() {
+        return new OAuth20ResourceOwnerCredentialsResponseBuilder(
+                oidcAccessTokenResponseGenerator(), 
+                oidcTokenGenerator(),
+                accessTokenExpirationPolicy.getObject(),
+                casProperties);
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcClientCredentialsResponseBuilder")
+    public OAuth20AuthorizationResponseBuilder oidcClientCredentialsResponseBuilder() {
+        return new OAuth20ClientCredentialsResponseBuilder(
+                oidcAccessTokenResponseGenerator(),
+                oidcTokenGenerator(),
+                accessTokenExpirationPolicy.getObject(),
+                casProperties);
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcTokenResponseBuilder")
+    public OAuth20AuthorizationResponseBuilder oidcTokenResponseBuilder() {
+        return new OAuth20TokenAuthorizationResponseBuilder(
+                oidcTokenGenerator(), 
+                accessTokenExpirationPolicy.getObject(),
+                servicesManager.getObject(), 
+                oidcAccessTokenJwtBuilder(), 
+                casProperties);
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcAuthorizationCodeResponseBuilder")
+    public OAuth20AuthorizationResponseBuilder oidcAuthorizationCodeResponseBuilder() {
+        return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(
+                ticketRegistry.getObject(),
+                defaultOAuthCodeFactory.getObject(), 
+                servicesManager.getObject());
+    }
+    
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcAuthorizationResponseBuilders")
+    public Set<OAuth20AuthorizationResponseBuilder> oidcAuthorizationResponseBuilders() {
+        val builders = applicationContext.getBeansOfType(OAuth20AuthorizationResponseBuilder.class, false, true);
+        return builders.entrySet().stream().
+                filter(e -> !e.getKey().startsWith("oauth")).
+                map(Map.Entry::getValue).
+                collect(Collectors.toSet());
     }
 
     @Bean
@@ -747,7 +821,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
             val accessTokenClient = new HeaderClient();
             accessTokenClient.setCredentialsExtractor(new BearerAuthExtractor());
             accessTokenClient.setAuthenticator(new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry.getObject(),
-                accessTokenJwtBuilder.getObject()));
+                oidcAccessTokenJwtBuilder()));
             accessTokenClient.setName(OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
             accessTokenClient.init();
             return accessTokenClient;
@@ -794,7 +868,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     public Authenticator<TokenCredentials> oAuthAccessTokenAuthenticator() {
         return new OidcAccessTokenAuthenticator(ticketRegistry.getObject(),
             oidcTokenSigningAndEncryptionService(), servicesManager.getObject(),
-            accessTokenJwtBuilder.getObject());
+            oidcAccessTokenJwtBuilder());
     }
 
     @ConditionalOnMissingBean(name = "oidcCasWebflowExecutionPlanConfigurer")
@@ -843,13 +917,49 @@ public class OidcConfiguration implements WebMvcConfigurer {
         return plan -> plan.registerSingleLogoutServiceMessageHandler(oidcSingleLogoutServiceMessageHandler());
     }
 
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcAccessTokenJwtBuilder")
+    public JwtBuilder oidcAccessTokenJwtBuilder() {
+        val oidc = casProperties.getAuthn().getOidc();
+        return new OAuth20JwtBuilder(
+                oidc.getIssuer(),
+                oauthAccessTokenJwtCipherExecutor.getObject(),
+                servicesManager.getObject(),
+                oauthRegisteredServiceJwtAccessTokenCipherExecutor());
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcAccessTokenFactory")
+    public OAuth20AccessTokenFactory oidcAccessTokenFactory() {
+        return new OAuth20DefaultAccessTokenFactory(
+                accessTokenIdGenerator.getObject(),
+                accessTokenExpirationPolicy.getObject(),
+                oidcAccessTokenJwtBuilder(),
+                servicesManager.getObject());
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcTokenGenerator")
+    public OAuth20TokenGenerator oidcTokenGenerator() {
+        return new OAuth20DefaultTokenGenerator(
+                oidcAccessTokenFactory(),
+                defaultDeviceTokenFactory.getObject(),
+                defaultDeviceUserCodeFactory.getObject(),
+                defaultRefreshTokenFactory.getObject(),
+                centralAuthenticationService.getObject(),
+                casProperties);
+    }
+    
     private OAuth20ConfigurationContext buildConfigurationContext() {
         return OAuth20ConfigurationContext.builder()
             .registeredServiceCipherExecutor(oauthRegisteredServiceCipherExecutor.getObject())
             .sessionStore(oauthDistributedSessionStore.getObject())
             .servicesManager(servicesManager.getObject())
             .ticketRegistry(ticketRegistry.getObject())
-            .accessTokenFactory(defaultAccessTokenFactory.getObject())
+            .accessTokenFactory(oidcAccessTokenFactory())
             .deviceTokenFactory(defaultDeviceTokenFactory.getObject())
             .deviceUserCodeFactory(defaultDeviceUserCodeFactory.getObject())
             .clientRegistrationRequestSerializer(clientRegistrationRequestSerializer())
@@ -865,7 +975,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .centralAuthenticationService(centralAuthenticationService.getObject())
             .callbackAuthorizeViewResolver(callbackAuthorizeViewResolver())
             .profileScopeToAttributesFilter(profileScopeToAttributesFilter())
-            .accessTokenGenerator(oauthTokenGenerator.getObject())
+            .accessTokenGenerator(oidcTokenGenerator())
             .accessTokenResponseGenerator(oidcAccessTokenResponseGenerator())
             .deviceTokenExpirationPolicy(deviceTokenExpirationPolicy.getObject())
             .accessTokenGrantRequestValidators(oauthTokenRequestValidators.getObject())
@@ -874,11 +984,11 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .oAuthCodeFactory(defaultOAuthCodeFactory.getObject())
             .consentApprovalViewResolver(consentApprovalViewResolver())
             .authenticationBuilder(authenticationBuilder.getObject())
-            .oauthAuthorizationResponseBuilders(oauthAuthorizationResponseBuilders.getObject())
+            .oauthAuthorizationResponseBuilders(oidcAuthorizationResponseBuilders())
             .oauthRequestValidators(oauthRequestValidators.getObject())
             .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder.getObject())
             .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService())
-            .accessTokenJwtBuilder(accessTokenJwtBuilder.getObject())
+            .accessTokenJwtBuilder(oidcAccessTokenJwtBuilder())
             .build();
     }
 }

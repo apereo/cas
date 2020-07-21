@@ -2,7 +2,6 @@ package org.apereo.cas.util.cipher;
 
 import org.apereo.cas.util.MockWebServer;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -29,8 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 public class JsonWebKeySetStringCipherExecutorTests {
     @Test
-    @SneakyThrows
-    public void verifyAction() {
+    public void verifyAction() throws Exception {
         val jwksKeystore = new ClassPathResource("sample.jwks");
         val data = IOUtils.toString(jwksKeystore.getInputStream(), StandardCharsets.UTF_8);
         val keystoreFile = new File(FileUtils.getTempDirectoryPath(), "sample.jwks");

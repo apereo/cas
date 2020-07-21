@@ -40,7 +40,7 @@ import static org.springframework.http.HttpStatus.OK;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Simple")
+@Tag("Web")
 public class RegisteredServiceThemeResolverTests {
     @Test
     public void verifyNoAccess() {

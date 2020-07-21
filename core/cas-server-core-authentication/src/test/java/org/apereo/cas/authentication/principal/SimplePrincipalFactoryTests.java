@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class SimplePrincipalFactoryTests {
     @Test
     public void checkPrincipalCreation() {

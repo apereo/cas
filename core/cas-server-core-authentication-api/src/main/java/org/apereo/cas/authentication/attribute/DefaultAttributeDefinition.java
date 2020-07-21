@@ -33,6 +33,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -139,12 +140,12 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
                                                    final List<Object> currentValues) {
         LOGGER.trace("Locating attribute value via script for definition [{}]", this);
         val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(getScript());
-        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(getScript());
 
         if (matcherInline.find()) {
             return fetchAttributeValueAsInlineGroovyScript(attributeKey, currentValues, matcherInline.group(1));
         }
 
+        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(getScript());
         if (matcherFile.find()) {
             return fetchAttributeValueFromExternalGroovyScript(attributeKey, currentValues, matcherFile.group());
         }
@@ -167,13 +168,14 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
             } else {
                 try {
                     val scriptPath = SpringExpressionLanguageValueResolver.getInstance().resolve(file);
-                    val resource = ResourceUtils.getRawResourceFrom(scriptPath);
+                    val resource = ResourceUtils.getResourceFrom(scriptPath);
                     LOGGER.trace("Groovy script [{}] for key [{}] is not cached", resource, cacheKey);
                     script = new WatchableGroovyScriptResource(resource);
                     cacheMgr.put(cacheKey, script);
                     LOGGER.trace("Cached groovy script [{}] for key [{}]", script, cacheKey);
                 } catch (final Exception e) {
                     LoggingUtils.error(LOGGER, e);
+                    return new ArrayList<>(0);
                 }
             }
             if (script != null) {
@@ -212,7 +214,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     private static List<Object> fetchAttributeValueFromScript(final ExecutableCompiledGroovyScript scriptToExec,
                                                               final String attributeKey,
                                                               final List<Object> currentValues) {
-        val args = CollectionUtils.<String, Object>wrap("attributeName", attributeKey,
+        val args = CollectionUtils.<String, Object>wrap("attributeName", Objects.requireNonNull(attributeKey),
             "attributeValues", currentValues, "logger", LOGGER);
         scriptToExec.setBinding(args);
         return scriptToExec.execute(args.values().toArray(), List.class);

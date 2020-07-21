@@ -60,7 +60,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.view.rest.url=http://localhost:8182",
         "cas.view.template-prefixes=file:/templates"
     })
-@Tag("Simple")
+@Tag("Web")
 public class CasThymeleafConfigurationTests {
     @Autowired
     @Qualifier("chainingTemplateViewResolver")

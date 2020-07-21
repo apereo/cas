@@ -7,8 +7,10 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,6 +38,24 @@ public class GroovyScriptAttributeReleasePolicyTests {
         val policy = new GroovyScriptAttributeReleasePolicy();
         policy.setGroovyScript("classpath:GroovyAttributeRelease.groovy");
         val attributes = policy.getAttributes(CoreAuthenticationTestUtils.getPrincipal(), CoreAuthenticationTestUtils.getService(),
+            CoreAuthenticationTestUtils.getRegisteredService());
+        assertTrue(attributes.containsKey("username"));
+        assertTrue(attributes.containsKey("likes"));
+        assertTrue(attributes.containsKey("id"));
+        assertTrue(attributes.containsKey("another"));
+    }
+
+    @Test
+    public void verifySystemPropertyInRef() throws Exception {
+        val file = File.createTempFile("GroovyAttributeRelease", ".groovy");
+        try (val is = new ClassPathResource("GroovyAttributeRelease.groovy").getInputStream()) {
+            is.transferTo(new FileOutputStream(file));
+        }
+        assertTrue(file.exists());
+        val policy = new GroovyScriptAttributeReleasePolicy();
+        policy.setGroovyScript("file:${#systemProperties['java.io.tmpdir']}/" + file.getName());
+        val attributes = policy.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
+            CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
         assertTrue(attributes.containsKey("username"));
         assertTrue(attributes.containsKey("likes"));

@@ -33,7 +33,7 @@ public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
             .accessToken(accessToken)
             .registeredService(registeredService)
             .service(accessToken.getService())
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
+            .accessTokenJwtBuilder(oidcAccessTokenJwtBuilder)
             .casProperties(casProperties)
             .build();
     }

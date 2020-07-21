@@ -33,8 +33,7 @@ public class YubiKeyAccountSaveRegistrationActionTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
-        val action =
-            new YubiKeyAccountSaveRegistrationAction(new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()));
+        val action = new YubiKeyAccountSaveRegistrationAction(new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }
 }

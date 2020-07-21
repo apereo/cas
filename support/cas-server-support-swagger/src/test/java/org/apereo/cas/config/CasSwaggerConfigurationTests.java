@@ -1,11 +1,11 @@
 package org.apereo.cas.config;
 
+import io.swagger.v3.oas.models.OpenAPI;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import springfox.documentation.spring.web.plugins.Docket;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 public class CasSwaggerConfigurationTests {
     @Autowired
-    @Qualifier("api")
-    private Docket api;
+    @Qualifier("casSwaggerOpenApi")
+    private OpenAPI swaggerOpenApi;
 
     @Test
     public void verifyOperation() {
-        assertNotNull(api);
+        assertNotNull(swaggerOpenApi);
     }
 }

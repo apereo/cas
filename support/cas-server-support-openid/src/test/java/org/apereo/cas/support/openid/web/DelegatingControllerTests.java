@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @deprecated Since 6.2.0
  */
 @Deprecated(since = "6.2.0")
-@Tag("Simple")
+@Tag("Web")
 public class DelegatingControllerTests {
 
     @Test

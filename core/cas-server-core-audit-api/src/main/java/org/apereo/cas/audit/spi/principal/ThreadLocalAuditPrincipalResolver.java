@@ -20,7 +20,7 @@ import org.aspectj.lang.JoinPoint;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class ThreadLocalPrincipalResolver implements PrincipalResolver {
+public class ThreadLocalAuditPrincipalResolver implements PrincipalResolver {
     private final AuditPrincipalIdProvider auditPrincipalIdProvider;
 
     @Override

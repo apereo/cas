@@ -42,6 +42,12 @@ public class RandomUtilsTests {
     }
 
     @Test
+    public void verifyLong() {
+        var value = RandomUtils.nextLong(3, 3);
+        assertEquals(3, value);
+    }
+
+    @Test
     public void verifyDouble() {
         var value = RandomUtils.nextDouble();
         assertNotNull(value);

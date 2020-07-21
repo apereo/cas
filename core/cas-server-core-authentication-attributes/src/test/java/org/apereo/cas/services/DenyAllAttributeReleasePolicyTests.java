@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Tag("Simple")
+@Tag("Attributes")
 public class DenyAllAttributeReleasePolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "denyAllAttributeReleasePolicy.json");

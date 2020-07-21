@@ -33,9 +33,9 @@ public class AccountsPreDefinedLoginModule implements LoginModule {
     private static final int MAP_SIZE = 8;
 
     private Subject subject;
+
     private CallbackHandler callbackHandler;
-
-
+    
     private Map<String, String> accounts;
 
     private boolean succeeded;

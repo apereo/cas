@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
@@ -40,13 +41,8 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     private String algorithm;
 
     @Override
-    protected PrivateKey createInstance() {
-        var key = readPemPrivateKey();
-        if (key == null) {
-            LOGGER.debug("Key [{}] is not in PEM format. Trying next...", this.location);
-            key = readDERPrivateKey();
-        }
-        return key;
+    public Class getObjectType() {
+        return PrivateKey.class;
     }
 
     private PrivateKey readPemPrivateKey() {
@@ -54,13 +50,20 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
         try (Reader in = new InputStreamReader(this.location.getInputStream(), StandardCharsets.UTF_8);
              val br = new BufferedReader(in);
              val pp = new PEMParser(br)) {
-            val pemKeyPair = (PEMKeyPair) pp.readObject();
-            val kp = new JcaPEMKeyConverter().getKeyPair(pemKeyPair);
-            return kp.getPrivate();
+
+            val object = pp.readObject();
+            if (object instanceof PrivateKeyInfo) {
+                return new JcaPEMKeyConverter().getPrivateKey((PrivateKeyInfo) object);
+            }
+            if (object instanceof PEMKeyPair) {
+                val pemKeyPair = (PEMKeyPair) object;
+                val kp = new JcaPEMKeyConverter().getKeyPair(pemKeyPair);
+                return kp.getPrivate();
+            }
         } catch (final Exception e) {
             LOGGER.debug("Unable to read key", e);
-            return null;
         }
+        return null;
     }
 
     private PrivateKey readDERPrivateKey() {
@@ -78,8 +81,13 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     }
 
     @Override
-    public Class getObjectType() {
-        return PrivateKey.class;
+    protected PrivateKey createInstance() {
+        var key = readPemPrivateKey();
+        if (key == null) {
+            LOGGER.debug("Key [{}] is not in PEM format. Trying next...", this.location);
+            key = readDERPrivateKey();
+        }
+        return key;
     }
 
 }

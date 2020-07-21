@@ -1,4 +1,3 @@
-
 package org.apereo.cas;
 
 import org.apereo.cas.adaptors.yubikey.AcceptAllYubiKeyAccountValidatorTests;

@@ -47,6 +47,17 @@ public class DefaultConsentDecisionBuilderTests {
     }
 
     @Test
+    public void verifyBadDecision() {
+        val consentDecision = new ConsentDecision();
+        consentDecision.setPrincipal("casuser");
+        consentDecision.setService(RegisteredServiceTestUtils.getService().getId());
+        assertThrows(IllegalArgumentException.class,
+            () -> consentDecisionBuilder.getConsentableAttributesFrom(consentDecision));
+        assertThrows(IllegalArgumentException.class,
+            () -> consentDecisionBuilder.update(consentDecision, null));
+    }
+
+    @Test
     public void verifyAttributesRequireConsent() {
         val consentDecision = getConsentDecision();
         assertTrue(consentDecisionBuilder.doesAttributeReleaseRequireConsent(consentDecision,
