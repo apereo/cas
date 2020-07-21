@@ -28,6 +28,16 @@ if (hasTestsOfCategory(project, "Attributes")) {
     }
 }
 
+if (hasTestsOfCategory(project, "Audits")) {
+    task testAudits(type: Test) {
+        enabled = shouldTest(project, "Audits")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "Audits"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "Web")) {
     task testWeb(type: Test) {
         enabled = shouldTest(project, "Web")

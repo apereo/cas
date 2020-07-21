@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Tag("Simple")
+@Tag("Audits")
 public class ThreadLocalAuditPrincipalResolverTests {
 
     private final ThreadLocalAuditPrincipalResolver theResolver =
