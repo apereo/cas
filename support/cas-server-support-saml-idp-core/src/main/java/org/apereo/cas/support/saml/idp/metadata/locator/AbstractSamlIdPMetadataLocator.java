@@ -14,10 +14,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
-import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Optional;
@@ -48,7 +47,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
             LOGGER.warn("Cannot determine resource based on blank/empty data");
             return ResourceUtils.EMPTY_RESOURCE;
         }
-        return new InputStreamResource(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
+        return new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8));
     }
 
     private static String buildCacheKey(final Optional<SamlRegisteredService> registeredService) {
@@ -135,8 +134,9 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
         if (metadataDocument != null && metadataDocument.isValid()) {
             LOGGER.trace("Fetched and cached SAML IdP metadata document [{}] under key [{}]", metadataDocument, key);
             map.put(key, metadataDocument);
+        } else {
+            LOGGER.trace("SAML IdP metadata document [{}] is considered invalid", metadataDocument);
         }
-        LOGGER.trace("SAML IdP metadata document [{}] is considered invalid", metadataDocument);
         return metadataDocument;
     }
 
