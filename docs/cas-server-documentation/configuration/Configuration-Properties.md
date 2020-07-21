@@ -3262,6 +3262,7 @@ A given attribute that is to be encoded in the final SAML response may contain a
 
 ```properties
 # cas.authn.saml-idp.metadata.location=file:/etc/cas/saml
+# cas.authn.saml-idp.metadata.metadata-backup-location=
 
 # cas.authn.saml-idp.metadata.cache-expiration-minutes=30
 # cas.authn.saml-idp.metadata.fail-fast=true
