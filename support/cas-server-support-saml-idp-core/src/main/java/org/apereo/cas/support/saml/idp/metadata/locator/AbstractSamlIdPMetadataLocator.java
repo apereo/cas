@@ -130,7 +130,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
         if (metadataCache == null) {
             metadataCache = Caffeine.newBuilder()
                 .initialCapacity(1)
-                .maximumSize(1)
+                .maximumSize(100)
                 .expireAfterAccess(1, TimeUnit.HOURS)
                 .build();
         }
