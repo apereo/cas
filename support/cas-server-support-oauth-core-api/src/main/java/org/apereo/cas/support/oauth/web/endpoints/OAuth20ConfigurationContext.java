@@ -40,7 +40,7 @@ import lombok.ToString;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -57,6 +57,8 @@ import java.util.Set;
 @Setter
 @Builder
 public class OAuth20ConfigurationContext {
+    private final ConfigurableApplicationContext applicationContext;
+
     private final ServicesManager servicesManager;
 
     private final TicketRegistry ticketRegistry;
@@ -115,14 +117,12 @@ public class OAuth20ConfigurationContext {
 
     private final RandomStringGenerator clientSecretGenerator;
 
-    private final ResourceLoader resourceLoader;
-
-    private OAuth20TokenSigningAndEncryptionService idTokenSigningAndEncryptionService;
-
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
     private final SessionStore<JEEContext> sessionStore;
 
     private final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
+
+    private OAuth20TokenSigningAndEncryptionService idTokenSigningAndEncryptionService;
 
 }
