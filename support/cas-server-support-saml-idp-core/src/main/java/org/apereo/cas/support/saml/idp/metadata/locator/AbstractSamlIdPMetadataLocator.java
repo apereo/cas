@@ -123,19 +123,18 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     public final SamlIdPMetadataDocument fetch(final Optional<SamlRegisteredService> registeredService) {
         initializeCache();
 
-        val map = metadataCache.asMap();
         val key = buildCacheKey(registeredService);
 
-        if (map.containsKey(key)) {
-            LOGGER.trace("Found SAML IdP metadata document from cache key [{}]", key);
-            return map.get(key);
-        }
-        val metadataDocument = fetchInternal(registeredService);
-        if (metadataDocument != null && metadataDocument.isValid()) {
-            LOGGER.trace("Fetched and cached SAML IdP metadata document [{}] under key [{}]", metadataDocument, key);
-            map.put(key, metadataDocument);
-        }
-        return metadataDocument;
+        return metadataCache.get(key, k -> {
+            val metadataDocument = fetchInternal(registeredService);
+            if (metadataDocument != null && metadataDocument.isValid()) {
+                LOGGER.trace("Fetched and cached SAML IdP metadata document [{}] under key [{}]", metadataDocument, key);
+                return metadataDocument;
+            }
+
+            LOGGER.trace("SAML IdP metadata document [{}] is considered invalid", metadataDocument);
+            return null;
+        });
     }
 
     /**
@@ -150,7 +149,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
         if (metadataCache == null) {
             metadataCache = Caffeine.newBuilder()
                 .initialCapacity(1)
-                .maximumSize(1)
+                .maximumSize(100)
                 .expireAfterAccess(Duration.ofHours(1))
                 .build();
         }
