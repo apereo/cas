@@ -2,9 +2,7 @@ package org.apereo.cas.authentication.metadata;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetaData;
-import org.apereo.cas.util.serialization.SerializationUtils;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,8 +34,6 @@ public class BasicCredentialMetaData implements CredentialMetaData {
      */
     private final Class<? extends Credential> credentialClass;
 
-    private byte[] credentialInstance;
-
     /**
      * Creates a new instance from the given credential.
      *
@@ -46,16 +42,5 @@ public class BasicCredentialMetaData implements CredentialMetaData {
     public BasicCredentialMetaData(final Credential credential) {
         this.id = credential.getId();
         this.credentialClass = credential.getClass();
-        try {
-            this.credentialInstance = SerializationUtils.serialize(credential);
-        } catch (final Exception e) {
-            throw new IllegalArgumentException("Unable to accept/serialize credential " + credentialClass + " to build credential metadata instance.");
-        }
-    }
-
-    @JsonIgnore
-    @Override
-    public Credential toCredential() {
-        return SerializationUtils.deserialize(this.credentialInstance, credentialClass);
     }
 }
