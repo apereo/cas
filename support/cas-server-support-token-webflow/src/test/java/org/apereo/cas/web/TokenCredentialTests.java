@@ -20,6 +20,6 @@ public class TokenCredentialTests {
     public void verifyTokenFromParameter() {
         val credential = new TokenCredential("tokenid", RegisteredServiceTestUtils.getService());
         val metadata = new BasicCredentialMetaData(credential);
-        assertNotNull(metadata.toCredential());
+        assertNotNull(metadata.getCredentialClass());
     }
 }

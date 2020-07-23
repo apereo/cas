@@ -76,10 +76,4 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
                 .build());
         }
     }
-
-    @JsonIgnore
-    @Override
-    public Credential toCredential() {
-        return this;
-    }
 }
