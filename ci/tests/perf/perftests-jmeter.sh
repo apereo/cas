@@ -38,17 +38,20 @@ if [ $retVal == 0 ]; then
     echo "Launched CAS with pid ${pid}. Waiting for CAS server to come online..."
     sleep 60
     
-    mkdir -p /etc/cas/config/loadtests/jmeter/
-    cp etc/loadtests/jmeter/cas-users.csv /etc/cas/config/loadtests/jmeter/
+    sudo mkdir -p /etc/cas/config/loadtests/jmeter/
+    sudo cp etc/loadtests/jmeter/cas-users.csv /etc/cas/config/loadtests/jmeter/
+    sudo chmod -R ugo+r /etc/cas/config/loadtests
     echo "Copied users file" && cat /etc/cas/config/loadtests/jmeter/cas-users.csv
 
     curl -LO https://downloads.apache.org/jmeter/binaries/apache-jmeter-${jmeterVersion}.zip
-    unzip apache-jmeter-${jmeterVersion}.zip
+    unzip -q apache-jmeter-${jmeterVersion}.zip
+    echo Unzipped apache-jmeter-${jmeterVersion}.zip rc=$?
     chmod +x apache-jmeter-${jmeterVersion}/bin/jmeter
 
     echo "Running JMeter tests..."
     apache-jmeter-${jmeterVersion}/bin/jmeter -n -t etc/loadtests/jmeter/CAS_CAS.jmx > results.log
 #    ~/Workspace/Portal/apache-jmeter/bin/jmeter -n -t etc/loadtests/jmeter/CAS_CAS.jmx > results.log
+    cat ./results.log
     java ci/tests/perf/EvalJMeterTestResults.java ./results.log
 
     retVal=$?
