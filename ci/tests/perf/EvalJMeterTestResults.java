@@ -5,6 +5,7 @@ import java.util.regex.*;
 public class EvalJMeterTestResults {
     public static void main(String[] args) throws Exception {
         var content = new String(Files.readAllBytes(Paths.get(args[0])), StandardCharsets.UTF_8);
+        System.out.format("JMeter results from %s: ", args[0]);
         System.out.println(content);
 
         var pattern = Pattern.compile("summary\\s=.+Err:\\s*(\\d+)");
@@ -13,7 +14,7 @@ public class EvalJMeterTestResults {
         if (matcher.find()) {
             var count = Integer.parseInt(matcher.group(1));
             if (count > 0) {
-                System.out.println("JMeter tests contain errors.");
+                System.out.format("JMeter tests contain %d errors.", count);
                 System.exit(1);
             }
         }
