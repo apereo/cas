@@ -285,8 +285,9 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
+        val ctx = new JEEContext(mockRequest, mockResponse, new JEESessionStore());
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore()
-                .set(new JEEContext(mockRequest, mockResponse, new JEESessionStore()), Pac4jConstants.USER_PROFILES, profile);
+            .set(ctx, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
