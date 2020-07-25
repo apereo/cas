@@ -45,7 +45,6 @@ public class UsernamePasswordCredentialTests {
         val input = new UsernamePasswordCredential("casuser", "Mellon", StringUtils.EMPTY, Map.of());
         assertTrue(input.isValid());
         assertEquals(UsernamePasswordCredential.class, input.getClass());
-        assertEquals(input, input.toCredential());
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
