@@ -2,24 +2,10 @@ package org.apereo.cas.support.events;
 
 import org.apereo.cas.configuration.model.core.events.DynamoDbEventsProperties;
 import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
+import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.util.LoggingUtils;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
-import com.amazonaws.services.dynamodbv2.model.Condition;
-import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
-import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
-import com.amazonaws.services.dynamodbv2.model.DescribeTableRequest;
-import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
-import com.amazonaws.services.dynamodbv2.model.KeyType;
-import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
-import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
-import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
-import com.amazonaws.services.dynamodbv2.model.ScanRequest;
-import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +14,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
+import software.amazon.awssdk.services.dynamodb.model.Condition;
+import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
+import software.amazon.awssdk.services.dynamodb.model.KeyType;
+import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
+import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -56,7 +57,7 @@ public class DynamoDbCasEventsFacilitator {
 
     private final DynamoDbEventsProperties dynamoDbProperties;
 
-    private final AmazonDynamoDB amazonDynamoDBClient;
+    private final DynamoDbClient amazonDynamoDBClient;
 
     /**
      * Create tables.
@@ -65,23 +66,29 @@ public class DynamoDbCasEventsFacilitator {
      */
     @SneakyThrows
     public void createTable(final boolean deleteTables) {
-        val request = new CreateTableRequest()
-            .withAttributeDefinitions(new AttributeDefinition(ColumnNames.ID.getColumnName(), ScalarAttributeType.N))
-            .withKeySchema(new KeySchemaElement(ColumnNames.ID.getColumnName(), KeyType.HASH))
-            .withProvisionedThroughput(new ProvisionedThroughput(dynamoDbProperties.getReadCapacity(),
-                dynamoDbProperties.getWriteCapacity())).withTableName(dynamoDbProperties.getTableName());
+        val throughput = ProvisionedThroughput.builder()
+            .readCapacityUnits(dynamoDbProperties.getReadCapacity())
+            .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
+            .build();
+
+        val request = CreateTableRequest.builder()
+            .attributeDefinitions(AttributeDefinition.builder().attributeName(ColumnNames.ID.getColumnName()).attributeType(ScalarAttributeType.N).build())
+            .keySchema(KeySchemaElement.builder().attributeName(ColumnNames.ID.getColumnName()).keyType(KeyType.HASH).build())
+            .provisionedThroughput(throughput)
+            .tableName(dynamoDbProperties.getTableName())
+            .build();
         if (deleteTables) {
-            val delete = new DeleteTableRequest(dynamoDbProperties.getTableName());
+            val delete = DeleteTableRequest.builder().tableName(dynamoDbProperties.getTableName()).build();
             LOGGER.debug("Sending delete request [{}] to remove table if necessary", delete);
-            TableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
+            DynamoDbTableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
         }
-        LOGGER.debug("Sending delete request [{}] to create table", request);
-        TableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
-        LOGGER.debug("Waiting until table [{}] becomes active...", request.getTableName());
-        TableUtils.waitUntilActive(amazonDynamoDBClient, request.getTableName());
-        val describeTableRequest = new DescribeTableRequest().withTableName(request.getTableName());
+        LOGGER.debug("Sending create request [{}] to create table", request);
+        DynamoDbTableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
+        LOGGER.debug("Waiting until table [{}] becomes active...", request.tableName());
+        DynamoDbTableUtils.waitUntilActive(amazonDynamoDBClient, request.tableName());
+        val describeTableRequest = DescribeTableRequest.builder().tableName(request.tableName()).build();
         LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
-        val tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
+        val tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).table();
         LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
     }
 
@@ -92,7 +99,7 @@ public class DynamoDbCasEventsFacilitator {
      */
     public void save(final CasEvent record) {
         val values = buildTableAttributeValuesMap(record);
-        val putItemRequest = new PutItemRequest(dynamoDbProperties.getTableName(), values);
+        val putItemRequest = PutItemRequest.builder().tableName(dynamoDbProperties.getTableName()).item(values).build();
         LOGGER.debug("Submitting put request [{}] for record [{}]", putItemRequest, record);
         val putItemResult = amazonDynamoDBClient.putItem(putItemRequest);
         LOGGER.debug("Record added with result [{}]", putItemResult);
@@ -118,13 +125,12 @@ public class DynamoDbCasEventsFacilitator {
     public Collection<? extends CasEvent> getEventsForPrincipal(final String id) {
         val query = DynamoDbQueryBuilder.builder()
             .key(ColumnNames.PRINCIPAL.getColumnName())
-            .attributeValue(List.of(new AttributeValue(id)))
+            .attributeValue(List.of(AttributeValue.builder().s(id).build()))
             .operator(ComparisonOperator.EQ)
             .build();
         return getRecordsByKeys(query);
     }
-
-
+    
     /**
      * Gets events for principal.
      *
@@ -137,12 +143,12 @@ public class DynamoDbCasEventsFacilitator {
             List.of(
                 DynamoDbQueryBuilder.builder()
                     .key(ColumnNames.PRINCIPAL.getColumnName())
-                    .attributeValue(List.of(new AttributeValue(id)))
+                    .attributeValue(List.of(AttributeValue.builder().s(id).build()))
                     .operator(ComparisonOperator.EQ)
                     .build(),
                 DynamoDbQueryBuilder.builder()
                     .key(ColumnNames.CREATION_TIME.getColumnName())
-                    .attributeValue(List.of(new AttributeValue(dateTime.toString())))
+                    .attributeValue(List.of(AttributeValue.builder().s(dateTime.toString()).build()))
                     .operator(ComparisonOperator.GE)
                     .build());
         return getRecordsByKeys(query);
@@ -159,12 +165,12 @@ public class DynamoDbCasEventsFacilitator {
         val query = List.of(
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.TYPE.getColumnName())
-                .attributeValue(List.of(new AttributeValue(type)))
+                .attributeValue(List.of(AttributeValue.builder().s(type).build()))
                 .operator(ComparisonOperator.EQ)
                 .build(),
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.CREATION_TIME.getColumnName())
-                .attributeValue(List.of(new AttributeValue(dateTime.toString())))
+                .attributeValue(List.of(AttributeValue.builder().s(dateTime.toString()).build()))
                 .operator(ComparisonOperator.GE)
                 .build());
         return getRecordsByKeys(query);
@@ -179,7 +185,7 @@ public class DynamoDbCasEventsFacilitator {
     public Collection<? extends CasEvent> getEventsOfType(final String type) {
         val query = DynamoDbQueryBuilder.builder()
             .key(ColumnNames.TYPE.getColumnName())
-            .attributeValue(List.of(new AttributeValue(type)))
+            .attributeValue(List.of(AttributeValue.builder().s(type).build()))
             .operator(ComparisonOperator.EQ)
             .build();
         return getRecordsByKeys(query);
@@ -198,17 +204,17 @@ public class DynamoDbCasEventsFacilitator {
         val query = List.of(
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.TYPE.getColumnName())
-                .attributeValue(List.of(new AttributeValue(type)))
+                .attributeValue(List.of(AttributeValue.builder().s(type).build()))
                 .operator(ComparisonOperator.EQ)
                 .build(),
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.PRINCIPAL.getColumnName())
-                .attributeValue(List.of(new AttributeValue(principal)))
+                .attributeValue(List.of(AttributeValue.builder().s(principal).build()))
                 .operator(ComparisonOperator.EQ)
                 .build(),
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.CREATION_TIME.getColumnName())
-                .attributeValue(List.of(new AttributeValue(dateTime.toString())))
+                .attributeValue(List.of(AttributeValue.builder().s(dateTime.toString()).build()))
                 .operator(ComparisonOperator.GE)
                 .build());
         return getRecordsByKeys(query);
@@ -226,12 +232,12 @@ public class DynamoDbCasEventsFacilitator {
             List.of(
                 DynamoDbQueryBuilder.builder()
                     .key(ColumnNames.PRINCIPAL.getColumnName())
-                    .attributeValue(List.of(new AttributeValue(principal)))
+                    .attributeValue(List.of(AttributeValue.builder().s(principal).build()))
                     .operator(ComparisonOperator.EQ)
                     .build(),
                 DynamoDbQueryBuilder.builder()
                     .key(ColumnNames.TYPE.getColumnName())
-                    .attributeValue(List.of(new AttributeValue(type)))
+                    .attributeValue(List.of(AttributeValue.builder().s(type).build()))
                     .operator(ComparisonOperator.EQ)
                     .build());
         return getRecordsByKeys(query);
@@ -246,17 +252,12 @@ public class DynamoDbCasEventsFacilitator {
     @SneakyThrows
     private static Map<String, AttributeValue> buildTableAttributeValuesMap(final CasEvent record) {
         val values = new HashMap<String, AttributeValue>();
-        values.put(ColumnNames.PRINCIPAL.getColumnName(), new AttributeValue(record.getPrincipalId()));
-
-        val id = new AttributeValue();
-        id.setN(String.valueOf(record.getId()));
-        values.put(ColumnNames.ID.getColumnName(), id);
-
-        values.put(ColumnNames.CREATION_TIME.getColumnName(), new AttributeValue(record.getCreationTime()));
-        values.put(ColumnNames.TYPE.getColumnName(), new AttributeValue(record.getType()));
-
+        values.put(ColumnNames.PRINCIPAL.getColumnName(), AttributeValue.builder().s(record.getPrincipalId()).build());
+        values.put(ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getId())).build());
+        values.put(ColumnNames.CREATION_TIME.getColumnName(), AttributeValue.builder().s(record.getCreationTime()).build());
+        values.put(ColumnNames.TYPE.getColumnName(), AttributeValue.builder().s(record.getType()).build());
         val properties = MAPPER.writeValueAsString(record.getProperties());
-        values.put(ColumnNames.PROPERTIES.getColumnName(), new AttributeValue(properties));
+        values.put(ColumnNames.PROPERTIES.getColumnName(), AttributeValue.builder().s(properties).build());
         LOGGER.debug("Created attribute values [{}] based on [{}]", values, record);
         return values;
     }
@@ -269,16 +270,18 @@ public class DynamoDbCasEventsFacilitator {
     @SneakyThrows
     private Set<CasEvent> getRecordsByKeys(final List<DynamoDbQueryBuilder> queries) {
         try {
-            val scanRequest = new ScanRequest(dynamoDbProperties.getTableName());
-            queries.forEach(query -> {
-                val cond = new Condition();
-                cond.setComparisonOperator(query.getOperator());
-                cond.setAttributeValueList(query.getAttributeValue());
-                scanRequest.addScanFilterEntry(query.getKey(), cond);
-            });
-
+            var scanRequest = ScanRequest.builder()
+                .tableName(dynamoDbProperties.getTableName())
+                .scanFilter(queries.stream()
+                    .map(query -> {
+                        val cond = Condition.builder().comparisonOperator(query.getOperator()).attributeValueList(query.getAttributeValue()).build();
+                        return Pair.of(query.getKey(), cond);
+                    })
+                    .collect(Collectors.toMap(Pair::getKey, Pair::getValue)))
+                .build();
+            
             LOGGER.debug("Submitting request [{}] to get record with keys [{}]", scanRequest, queries);
-            val items = amazonDynamoDBClient.scan(scanRequest).getItems();
+            val items = amazonDynamoDBClient.scan(scanRequest).items();
             return items
                 .stream()
                 .map(DynamoDbCasEventsFacilitator::extractAttributeValuesFrom)
@@ -291,11 +294,11 @@ public class DynamoDbCasEventsFacilitator {
 
     @SneakyThrows
     private static CasEvent extractAttributeValuesFrom(final Map<String, AttributeValue> item) {
-        val principal = item.get(ColumnNames.PRINCIPAL.getColumnName()).getS();
-        val id = Long.valueOf(item.get(ColumnNames.ID.getColumnName()).getN());
-        val type = item.get(ColumnNames.TYPE.getColumnName()).getS();
-        val creationTime = item.get(ColumnNames.CREATION_TIME.getColumnName()).getS();
-        val properties = MAPPER.readValue(item.get(ColumnNames.PROPERTIES.getColumnName()).getS(),
+        val principal = item.get(ColumnNames.PRINCIPAL.getColumnName()).s();
+        val id = Long.valueOf(item.get(ColumnNames.ID.getColumnName()).n());
+        val type = item.get(ColumnNames.TYPE.getColumnName()).s();
+        val creationTime = item.get(ColumnNames.CREATION_TIME.getColumnName()).s();
+        val properties = MAPPER.readValue(item.get(ColumnNames.PROPERTIES.getColumnName()).s(),
             new TypeReference<Map<String, String>>() {
             });
         return new CasEvent(id, type, principal, creationTime, properties);
@@ -305,6 +308,7 @@ public class DynamoDbCasEventsFacilitator {
      * Column names for tables holding records.
      */
     @Getter
+    @RequiredArgsConstructor
     public enum ColumnNames {
         /**
          * principal column.
@@ -328,9 +332,5 @@ public class DynamoDbCasEventsFacilitator {
         CREATION_TIME("creationTime");
 
         private final String columnName;
-
-        ColumnNames(final String columnName) {
-            this.columnName = columnName;
-        }
     }
 }

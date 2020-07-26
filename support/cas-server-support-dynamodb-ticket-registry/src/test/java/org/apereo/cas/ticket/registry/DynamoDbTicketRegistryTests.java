@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import software.amazon.awssdk.core.SdkSystemSetting;
 
 import java.util.HashMap;
 
@@ -51,8 +52,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     static {
-        System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");
-        System.setProperty("aws.secretKey", "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");
+        System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
+        System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");
     }
 
     @Autowired
@@ -61,8 +62,7 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-
+    
     @RepeatedTest(2)
     public void verifyOAuthCodeCanBeAdded() {
         val code = new OAuth20DefaultOAuthCodeFactory(neverExpiresExpirationPolicyBuilder(), servicesManager)

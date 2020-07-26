@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import software.amazon.awssdk.core.SdkSystemSetting;
 
 /**
  * This is {@link DynamoDbAuditTrailManagerTests}.
@@ -43,8 +44,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 public class DynamoDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
 
     static {
-        System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");
-        System.setProperty("aws.secretKey", "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");
+        System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
+        System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");
     }
     
     @Autowired

@@ -9,24 +9,22 @@ import org.apereo.cas.configuration.model.support.cognito.AmazonCognitoAuthentic
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
-import com.amazonaws.services.cognitoidp.model.AdminGetUserRequest;
-import com.amazonaws.services.cognitoidp.model.AdminInitiateAuthRequest;
-import com.amazonaws.services.cognitoidp.model.AuthFlowType;
-import com.amazonaws.services.cognitoidp.model.InvalidPasswordException;
-import com.amazonaws.services.cognitoidp.model.NotAuthorizedException;
-import com.amazonaws.services.cognitoidp.model.UserNotFoundException;
 import com.nimbusds.jose.proc.SimpleSecurityContext;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.DisposableBean;
+import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminGetUserRequest;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminInitiateAuthRequest;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.AuthFlowType;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.InvalidPasswordException;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.NotAuthorizedException;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.UserNotFoundException;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
-
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,8 +37,8 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements DisposableBean {
-    private final AWSCognitoIdentityProvider cognitoIdentityProvider;
+public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
+    private final CognitoIdentityProviderClient cognitoIdentityProvider;
 
     private final AmazonCognitoAuthenticationProperties properties;
 
@@ -49,18 +47,13 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
     public AmazonCognitoAuthenticationAuthenticationHandler(final String name,
                                                             final ServicesManager servicesManager,
                                                             final PrincipalFactory principalFactory,
-                                                            final AWSCognitoIdentityProvider cognitoIdentityProvider,
+                                                            final CognitoIdentityProviderClient cognitoIdentityProvider,
                                                             final AmazonCognitoAuthenticationProperties properties,
                                                             final ConfigurableJWTProcessor jwtProcessor) {
         super(name, servicesManager, principalFactory, properties.getOrder());
         this.cognitoIdentityProvider = cognitoIdentityProvider;
         this.properties = properties;
         this.jwtProcessor = jwtProcessor;
-    }
-
-    @Override
-    public void destroy() {
-        this.cognitoIdentityProvider.shutdown();
     }
 
     @Override
@@ -71,38 +64,36 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
             val authParams = new HashMap<String, String>();
             authParams.put("USERNAME", credential.getUsername());
             authParams.put("PASSWORD", credential.getPassword());
-            val authRequest = new AdminInitiateAuthRequest();
+            val authRequest = AdminInitiateAuthRequest.builder();
 
-            authRequest.withAuthFlow(AuthFlowType.ADMIN_NO_SRP_AUTH)
-                .withClientId(properties.getClientId())
-                .withUserPoolId(properties.getUserPoolId())
-                .withAuthParameters(authParams);
+            val request = authRequest.authFlow(AuthFlowType.ADMIN_NO_SRP_AUTH)
+                .clientId(properties.getClientId())
+                .userPoolId(properties.getUserPoolId())
+                .authParameters(authParams).build();
+            val result = cognitoIdentityProvider.adminInitiateAuth(request);
 
-            val result = cognitoIdentityProvider.adminInitiateAuth(authRequest);
-
-            if ("NEW_PASSWORD_REQUIRED".equalsIgnoreCase(result.getChallengeName())) {
+            if ("NEW_PASSWORD_REQUIRED".equalsIgnoreCase(result.challengeNameAsString())) {
                 throw new CredentialExpiredException();
             }
-            val authenticationResult = result.getAuthenticationResult();
-            val claims = jwtProcessor.process(authenticationResult.getIdToken(), new SimpleSecurityContext());
+            val authenticationResult = result.authenticationResult();
+            val claims = jwtProcessor.process(authenticationResult.idToken(), new SimpleSecurityContext());
             if (StringUtils.isBlank(claims.getSubject())) {
                 throw new FailedLoginException("Unable to accept the id token with an invalid [sub] claim");
             }
 
-            val userRequest = new AdminGetUserRequest()
-                .withUsername(credential.getUsername())
-                .withUserPoolId(properties.getUserPoolId());
+            val userResult = cognitoIdentityProvider.adminGetUser(AdminGetUserRequest.builder()
+                .userPoolId(credential.getUsername())
+                .userPoolId(properties.getUserPoolId()).build());
 
-            val userResult = cognitoIdentityProvider.adminGetUser(userRequest);
             val attributes = new LinkedHashMap<String, List<Object>>();
-            attributes.put("userStatus", CollectionUtils.wrap(userResult.getUserStatus()));
-            attributes.put("userCreatedDate", CollectionUtils.wrap(userResult.getUserCreateDate()));
-            attributes.put("userModifiedDate", CollectionUtils.wrap(userResult.getUserLastModifiedDate()));
+            attributes.put("userStatus", CollectionUtils.wrap(userResult.userStatusAsString()));
+            attributes.put("userCreatedDate", CollectionUtils.wrap(userResult.userCreateDate().toEpochMilli()));
+            attributes.put("userModifiedDate", CollectionUtils.wrap(userResult.userLastModifiedDate().toEpochMilli()));
 
-            val userAttributes = userResult.getUserAttributes();
-            userAttributes.forEach(attr -> attributes.put(attr.getName(), CollectionUtils.wrap(attr.getValue())));
+            val userAttributes = userResult.userAttributes();
+            userAttributes.forEach(attr -> attributes.put(attr.name(), CollectionUtils.wrap(attr.value())));
 
-            val principal = principalFactory.createPrincipal(userResult.getUsername(), attributes);
+            val principal = principalFactory.createPrincipal(userResult.username(), attributes);
             return createHandlerResult(credential, principal, new ArrayList<>(0));
         } catch (final NotAuthorizedException e) {
             val message = e.getMessage();
@@ -112,12 +103,12 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
             if (message.contains("disabled")) {
                 throw new AccountDisabledException(message);
             }
-            throw new FailedLoginException(e.getErrorMessage());
+            throw new FailedLoginException(e.getMessage());
         } catch (final UserNotFoundException e) {
             throw new AccountNotFoundException(e.getMessage());
-        } catch (final InvalidPasswordException e) {
-            throw new AccountPasswordMustChangeException(e.getMessage());
         } catch (final CredentialExpiredException e) {
+            throw new AccountPasswordMustChangeException(e.getMessage());
+        } catch (final InvalidPasswordException e) {
             throw new AccountPasswordMustChangeException(e.getMessage());
         } catch (final Exception e) {
             throw new FailedLoginException(e.getMessage());

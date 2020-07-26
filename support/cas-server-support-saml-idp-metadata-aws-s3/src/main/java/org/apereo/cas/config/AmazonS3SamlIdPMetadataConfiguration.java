@@ -11,7 +11,6 @@ import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyW
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import com.amazonaws.services.s3.AmazonS3;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,6 +24,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import java.util.Optional;
 
@@ -51,7 +51,7 @@ public class AmazonS3SamlIdPMetadataConfiguration {
 
     @Autowired
     @Qualifier("amazonS3Client")
-    private ObjectProvider<AmazonS3> amazonS3Client;
+    private ObjectProvider<S3Client> amazonS3Client;
 
     @Bean
     @RefreshScope

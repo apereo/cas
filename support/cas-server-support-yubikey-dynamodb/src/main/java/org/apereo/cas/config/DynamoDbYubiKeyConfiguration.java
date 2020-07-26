@@ -8,7 +8,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -19,6 +18,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
  * This is {@link DynamoDbYubiKeyConfiguration}.
@@ -55,7 +55,7 @@ public class DynamoDbYubiKeyConfiguration {
     @Bean
     @SneakyThrows
     @ConditionalOnMissingBean(name = "yubikeyDynamoDbClient")
-    public AmazonDynamoDB yubikeyDynamoDbClient() {
+    public DynamoDbClient yubikeyDynamoDbClient() {
         val db = casProperties.getAuthn().getMfa().getYubikey().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(db);

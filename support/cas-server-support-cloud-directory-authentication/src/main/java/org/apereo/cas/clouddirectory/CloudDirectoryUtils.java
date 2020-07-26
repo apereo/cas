@@ -2,16 +2,16 @@ package org.apereo.cas.clouddirectory;
 
 import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
 
-import com.amazonaws.services.clouddirectory.model.AttributeKey;
-import com.amazonaws.services.clouddirectory.model.ListIndexRequest;
-import com.amazonaws.services.clouddirectory.model.ListObjectAttributesRequest;
-import com.amazonaws.services.clouddirectory.model.ObjectAttributeRange;
-import com.amazonaws.services.clouddirectory.model.ObjectReference;
-import com.amazonaws.services.clouddirectory.model.RangeMode;
-import com.amazonaws.services.clouddirectory.model.TypedAttributeValue;
-import com.amazonaws.services.clouddirectory.model.TypedAttributeValueRange;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import software.amazon.awssdk.services.clouddirectory.model.AttributeKey;
+import software.amazon.awssdk.services.clouddirectory.model.ListIndexRequest;
+import software.amazon.awssdk.services.clouddirectory.model.ListObjectAttributesRequest;
+import software.amazon.awssdk.services.clouddirectory.model.ObjectAttributeRange;
+import software.amazon.awssdk.services.clouddirectory.model.ObjectReference;
+import software.amazon.awssdk.services.clouddirectory.model.RangeMode;
+import software.amazon.awssdk.services.clouddirectory.model.TypedAttributeValue;
+import software.amazon.awssdk.services.clouddirectory.model.TypedAttributeValueRange;
 
 /**
  * This is {@link CloudDirectoryUtils}.
@@ -42,9 +42,10 @@ public class CloudDirectoryUtils {
      */
     public static ListObjectAttributesRequest getListObjectAttributesRequest(final String arnName,
                                                                              final String objectId) {
-        return new ListObjectAttributesRequest()
-            .withDirectoryArn(arnName)
-            .withObjectReference(getObjectRefById(objectId));
+        return ListObjectAttributesRequest.builder()
+            .directoryArn(arnName)
+            .objectReference(getObjectRefById(objectId))
+            .build();
     }
 
     /**
@@ -57,7 +58,7 @@ public class CloudDirectoryUtils {
         if (path == null) {
             return null;
         }
-        return new ObjectReference().withSelector(path);
+        return ObjectReference.builder().selector(path).build();
     }
 
     /**
@@ -76,9 +77,11 @@ public class CloudDirectoryUtils {
         val range = getObjectAttributeRanges(cloud.getSchemaArn(), cloud.getFacetName(),
             attributeName, attributeValue);
 
-        return new ListIndexRequest().withDirectoryArn(cloud.getDirectoryArn())
-            .withIndexReference(reference)
-            .withRangesOnIndexedValues(range);
+        return ListIndexRequest.builder()
+            .directoryArn(cloud.getDirectoryArn())
+            .indexReference(reference)
+            .rangesOnIndexedValues(range)
+            .build();
     }
 
     /**
@@ -93,12 +96,15 @@ public class CloudDirectoryUtils {
     public static ObjectAttributeRange getObjectAttributeRanges(final String schemaArn, final String facetName,
                                                                 final String attributeName, final String attributeValue) {
         val attributeKey = getAttributeKey(schemaArn, facetName, attributeName);
-        return new ObjectAttributeRange().withAttributeKey(attributeKey)
-            .withRange(new TypedAttributeValueRange()
-                .withStartValue(getTypedAttributeValue(attributeValue))
-                .withEndValue(getTypedAttributeValue(attributeValue))
-                .withStartMode(RangeMode.INCLUSIVE.toString())
-                .withEndMode(RangeMode.INCLUSIVE.toString()));
+        return ObjectAttributeRange.builder()
+            .attributeKey(attributeKey)
+            .range(TypedAttributeValueRange.builder()
+                .startValue(getTypedAttributeValue(attributeValue))
+                .endValue(getTypedAttributeValue(attributeValue))
+                .startMode(RangeMode.INCLUSIVE.toString())
+                .endMode(RangeMode.INCLUSIVE.toString())
+                .build())
+            .build();
     }
 
     /**
@@ -111,8 +117,11 @@ public class CloudDirectoryUtils {
      */
     private static AttributeKey getAttributeKey(final String schemaArn, final String facetName,
                                                 final String attributeName) {
-        return new AttributeKey().withFacetName(facetName)
-            .withSchemaArn(schemaArn).withName(attributeName);
+        return AttributeKey.builder()
+            .facetName(facetName)
+            .schemaArn(schemaArn)
+            .name(attributeName)
+            .build();
     }
 
     /**
@@ -122,6 +131,6 @@ public class CloudDirectoryUtils {
      * @return the typed attribute value
      */
     private static TypedAttributeValue getTypedAttributeValue(final String attributeValue) {
-        return new TypedAttributeValue().withStringValue(attributeValue);
+        return TypedAttributeValue.builder().stringValue(attributeValue).build();
     }
 }

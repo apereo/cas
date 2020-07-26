@@ -1,10 +1,11 @@
 package org.apereo.cas.aws;
 
-import com.amazonaws.auth.BasicAWSCredentials;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.FileSystemResource;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProviderChain;
+import software.amazon.awssdk.core.SdkSystemSetting;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,17 +18,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("AmazonWebServices")
 public class ChainingAWSCredentialsProviderTests {
     static {
-        System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");
-        System.setProperty("aws.secretKey", "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");
+        System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
+        System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");
     }
 
     @Test
     public void verifyInstance() {
-        val p = (ChainingAWSCredentialsProvider) ChainingAWSCredentialsProvider.getInstance("accesskey", "secretKey",
-            new FileSystemResource("credentials.properties"), "profilePath", "profileName");
-        assertFalse(p.getChain().isEmpty());
-        val credentials = p.getCredentials();
+        val p = (AwsCredentialsProviderChain) ChainingAWSCredentialsProvider.getInstance("accesskey", "secretKey",
+            "profilePath", "profileName");
+        val credentials = p.resolveCredentials();
         assertNotNull(credentials);
-        assertTrue(credentials instanceof BasicAWSCredentials);
+        assertTrue(credentials instanceof AwsBasicCredentials);
     }
 }

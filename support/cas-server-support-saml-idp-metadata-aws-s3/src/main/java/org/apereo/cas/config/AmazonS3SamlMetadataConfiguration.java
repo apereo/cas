@@ -1,19 +1,17 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.aws.AmazonClientConfigurationBuilder;
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.services.s3.S3Client;
 
 /**
  * This is {@link AmazonS3SamlMetadataConfiguration}.
@@ -30,23 +28,14 @@ public class AmazonS3SamlMetadataConfiguration {
     @ConditionalOnMissingBean(name = "amazonS3Client")
     @Bean
     @RefreshScope
-    public AmazonS3 amazonS3Client() {
+    public S3Client amazonS3Client() {
         val amz = casProperties.getAuthn().getSamlIdp().getMetadata().getAmazonS3();
-        val endpoint = new AwsClientBuilder.EndpointConfiguration(amz.getEndpoint(), amz.getRegion());
         val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
             amz.getCredentialSecretKey(),
-            amz.getCredentialsPropertiesFile(),
             amz.getProfilePath(),
             amz.getProfileName());
-
-        val builder = AmazonS3ClientBuilder
-            .standard()
-            .withCredentials(credentials)
-            .withEndpointConfiguration(endpoint);
-
-        if (StringUtils.isNotBlank(amz.getRegion())) {
-            builder.withRegion(amz.getRegion());
-        }
+        val builder = S3Client.builder();
+        AmazonClientConfigurationBuilder.prepareClientBuilder(builder, credentials, amz);
         return builder.build();
     }
 }
