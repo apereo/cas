@@ -7,7 +7,6 @@ import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.DynamoDbCasEventRepository;
 import org.apereo.cas.support.events.DynamoDbCasEventsFacilitator;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
  * This is {@link CasEventsDynamoDbRepositoryConfiguration}.
@@ -56,7 +56,7 @@ public class CasEventsDynamoDbRepositoryConfiguration {
     @Bean
     @SneakyThrows
     @ConditionalOnMissingBean(name = "dynamoDbEventRepositoryClient")
-    public AmazonDynamoDB dynamoDbEventRepositoryClient() {
+    public DynamoDbClient dynamoDbEventRepositoryClient() {
         val dynamoDbProperties = casProperties.getEvents().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(dynamoDbProperties);

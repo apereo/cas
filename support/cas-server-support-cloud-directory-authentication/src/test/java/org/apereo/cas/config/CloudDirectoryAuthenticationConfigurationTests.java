@@ -4,7 +4,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
-import com.amazonaws.services.clouddirectory.AmazonCloudDirectory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import software.amazon.awssdk.services.clouddirectory.CloudDirectoryClient;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CloudDirectoryAuthenticationConfigurationTests {
     @Autowired
     @Qualifier("amazonCloudDirectory")
-    private AmazonCloudDirectory amazonCloudDirectory;
+    private CloudDirectoryClient amazonCloudDirectory;
 
     @Test
     public void verifyOperation() {

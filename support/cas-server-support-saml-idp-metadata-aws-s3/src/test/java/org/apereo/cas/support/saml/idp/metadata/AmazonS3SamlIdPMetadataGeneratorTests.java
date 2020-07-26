@@ -8,7 +8,6 @@ import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import com.amazonaws.services.s3.internal.SkipMd5CheckStrategy;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -41,11 +40,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfPortOpen(port = 4572)
 @Tag("AmazonWebServices")
 public class AmazonS3SamlIdPMetadataGeneratorTests {
-    static {
-        System.setProperty(SkipMd5CheckStrategy.DISABLE_GET_OBJECT_MD5_VALIDATION_PROPERTY, "true");
-        System.setProperty(SkipMd5CheckStrategy.DISABLE_PUT_OBJECT_MD5_VALIDATION_PROPERTY, "true");
-    }
-
     @Autowired
     @Qualifier("samlIdPMetadataLocator")
     protected SamlIdPMetadataLocator samlIdPMetadataLocator;

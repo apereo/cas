@@ -40,12 +40,23 @@ cas.version=6.3.0-RC2
 
 ## New & Noteworthy
 
+### Amazon SDK v2
+
+CAS is now using the Amazon SDK v2, which effectively upgrades and impacts the functionality for DynamoDb, SNS, SSM, S3 and all other features based on Amazon Web Services.
+
 ## Other Stuff
- 
+
+- Adjustments to SAML2 metadata resolution to cache to ensure enough capacity for resolved metadata providers. 
+
 ## Library Upgrades
 
 - Commons Lang
 - Mockito
 - DropWizard
+- Spring
+- Spring Boot
+- Amazon SDK
+- Ldaptive
+- Person Directory
 - Azure DocumentDb
 - Grouper Client

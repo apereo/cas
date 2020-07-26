@@ -223,7 +223,7 @@ while (( "$#" )); do
                 ./ci/tests/kafka/run-kafka-server.sh
                 task+="testKafka "
                 ;;
-            aws)
+            aws|amz)
                 ./ci/tests/aws/run-aws-server.sh
                 task+="testAmazonWebServices "
                 ;;

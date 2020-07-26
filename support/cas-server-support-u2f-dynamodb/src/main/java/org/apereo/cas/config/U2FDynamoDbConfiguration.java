@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.SneakyThrows;
@@ -21,6 +20,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
  * This is {@link U2FDynamoDbConfiguration}.
@@ -53,7 +53,7 @@ public class U2FDynamoDbConfiguration {
     @Bean
     @SneakyThrows
     @ConditionalOnMissingBean(name = "u2fDynamoDbClient")
-    public AmazonDynamoDB u2fDynamoDbClient() {
+    public DynamoDbClient u2fDynamoDbClient() {
         val db = casProperties.getAuthn().getMfa().getU2f().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(db);

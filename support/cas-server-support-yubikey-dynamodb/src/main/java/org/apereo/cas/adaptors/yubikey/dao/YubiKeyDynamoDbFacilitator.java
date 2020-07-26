@@ -3,32 +3,34 @@ package org.apereo.cas.adaptors.yubikey.dao;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.configuration.model.support.mfa.yubikey.YubiKeyDynamoDbMultifactorProperties;
 import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
+import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.model.AttributeAction;
-import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
-import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
-import com.amazonaws.services.dynamodbv2.model.Condition;
-import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
-import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
-import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
-import com.amazonaws.services.dynamodbv2.model.DescribeTableRequest;
-import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
-import com.amazonaws.services.dynamodbv2.model.KeyType;
-import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
-import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
-import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
-import com.amazonaws.services.dynamodbv2.model.ScanRequest;
-import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
-import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeAction;
+import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValueUpdate;
+import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
+import software.amazon.awssdk.services.dynamodb.model.Condition;
+import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
+import software.amazon.awssdk.services.dynamodb.model.KeyType;
+import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
+import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
+import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,10 +49,10 @@ import java.util.stream.Collectors;
 public class YubiKeyDynamoDbFacilitator {
     private final YubiKeyDynamoDbMultifactorProperties dynamoDbProperties;
 
-    private final AmazonDynamoDB amazonDynamoDBClient;
+    private final DynamoDbClient amazonDynamoDBClient;
 
     public YubiKeyDynamoDbFacilitator(final YubiKeyDynamoDbMultifactorProperties dynamoDbProperties,
-                                      final AmazonDynamoDB amazonDynamoDBClient) {
+                                      final DynamoDbClient amazonDynamoDBClient) {
         this.dynamoDbProperties = dynamoDbProperties;
         this.amazonDynamoDBClient = amazonDynamoDBClient;
         if (!dynamoDbProperties.isPreventTableCreationOnStartup()) {
@@ -66,23 +68,30 @@ public class YubiKeyDynamoDbFacilitator {
     @SneakyThrows
     public void createTable(final boolean deleteTables) {
         LOGGER.debug("Attempting to create DynamoDb table");
-        val request = new CreateTableRequest().withAttributeDefinitions(
-            new AttributeDefinition(ColumnNames.USERNAME.getColumnName(), ScalarAttributeType.S))
-            .withKeySchema(new KeySchemaElement(ColumnNames.USERNAME.getColumnName(), KeyType.HASH))
-            .withProvisionedThroughput(new ProvisionedThroughput(dynamoDbProperties.getReadCapacity(),
-                dynamoDbProperties.getWriteCapacity())).withTableName(dynamoDbProperties.getTableName());
+        val throughput = ProvisionedThroughput.builder()
+            .readCapacityUnits(dynamoDbProperties.getReadCapacity())
+            .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
+            .build();
+
+        val request = CreateTableRequest.builder()
+            .attributeDefinitions(AttributeDefinition.builder().attributeName(ColumnNames.USERNAME.getColumnName()).attributeType(ScalarAttributeType.S).build())
+            .keySchema(KeySchemaElement.builder().attributeName(ColumnNames.USERNAME.getColumnName()).keyType(KeyType.HASH).build())
+            .provisionedThroughput(throughput)
+            .tableName(dynamoDbProperties.getTableName())
+            .build();
+
         if (deleteTables) {
-            val delete = new DeleteTableRequest(request.getTableName());
+            val delete = DeleteTableRequest.builder().tableName(request.tableName()).build();
             LOGGER.debug("Sending delete request [{}] to remove table if necessary", delete);
-            TableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
+            DynamoDbTableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
         }
-        LOGGER.debug("Sending delete request [{}] to create table", request);
-        TableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
-        LOGGER.debug("Waiting until table [{}] becomes active...", request.getTableName());
-        TableUtils.waitUntilActive(amazonDynamoDBClient, request.getTableName());
-        val describeTableRequest = new DescribeTableRequest().withTableName(request.getTableName());
+        LOGGER.debug("Sending create request [{}] to create table", request);
+        DynamoDbTableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
+        LOGGER.debug("Waiting until table [{}] becomes active...", request.tableName());
+        DynamoDbTableUtils.waitUntilActive(amazonDynamoDBClient, request.tableName());
+        val describeTableRequest = DescribeTableRequest.builder().tableName(request.tableName()).build();
         LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
-        val tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
+        val tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).table();
         LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
     }
 
@@ -112,7 +121,7 @@ public class YubiKeyDynamoDbFacilitator {
         return getRecordsByKeys(
             DynamoDbQueryBuilder.builder()
                 .operator(ComparisonOperator.EQ)
-                .attributeValue(List.of(new AttributeValue(uid)))
+                .attributeValue(List.of(AttributeValue.builder().s(uid).build()))
                 .key(ColumnNames.USERNAME.getColumnName())
                 .build());
     }
@@ -123,9 +132,9 @@ public class YubiKeyDynamoDbFacilitator {
      * @param uid the uid
      */
     public void delete(final String uid) {
-        val del = new DeleteItemRequest().withTableName(dynamoDbProperties.getTableName())
-            .withKey(CollectionUtils.wrap(ColumnNames.USERNAME.getColumnName(),
-                new AttributeValue().withS(uid)));
+        val del = DeleteItemRequest.builder().tableName(dynamoDbProperties.getTableName())
+            .key(CollectionUtils.wrap(ColumnNames.USERNAME.getColumnName(), AttributeValue.builder().s(uid).build()))
+            .build();
         amazonDynamoDBClient.deleteItem(del);
     }
 
@@ -137,7 +146,7 @@ public class YubiKeyDynamoDbFacilitator {
      */
     public boolean save(final YubiKeyAccount registration) {
         val values = buildTableAttributeValuesMap(registration);
-        val putItemRequest = new PutItemRequest(dynamoDbProperties.getTableName(), values);
+        val putItemRequest = PutItemRequest.builder().tableName(dynamoDbProperties.getTableName()).item(values).build();
         LOGGER.debug("Submitting put request [{}] for record [{}]", putItemRequest, registration);
         val putItemResult = amazonDynamoDBClient.putItem(putItemRequest);
         LOGGER.debug("Record added with result [{}]", putItemResult);
@@ -151,10 +160,14 @@ public class YubiKeyDynamoDbFacilitator {
      * @return the boolean
      */
     public boolean update(final YubiKeyAccount registration) {
-        val attributeValue = new AttributeValue().withSS(registration.getDeviceIdentifiers());
-        val updateRequest = new UpdateItemRequest(dynamoDbProperties.getTableName(),
-            Map.of(ColumnNames.USERNAME.getColumnName(), new AttributeValue().withS(String.valueOf(registration.getUsername()))),
-            Map.of(ColumnNames.DEVICE_IDENTIFIERS.getColumnName(), new AttributeValueUpdate(attributeValue, AttributeAction.PUT)));
+        val attributeValue = AttributeValue.builder().ss(registration.getDeviceIdentifiers()).build();
+        val updateRequest = UpdateItemRequest.builder()
+            .tableName(dynamoDbProperties.getTableName())
+            .key(Map.of(ColumnNames.USERNAME.getColumnName(),
+                AttributeValue.builder().s(String.valueOf(registration.getUsername())).build()))
+            .attributeUpdates(Map.of(ColumnNames.DEVICE_IDENTIFIERS.getColumnName(),
+                AttributeValueUpdate.builder().value(attributeValue).action(AttributeAction.PUT).build()))
+            .build();
         LOGGER.debug("Submitting put request [{}] for record [{}]", updateRequest, registration);
         val putItemResult = amazonDynamoDBClient.updateItem(updateRequest);
         LOGGER.debug("Record added with result [{}]", putItemResult);
@@ -169,9 +182,9 @@ public class YubiKeyDynamoDbFacilitator {
      */
     private static Map<String, AttributeValue> buildTableAttributeValuesMap(final YubiKeyAccount record) {
         val values = new HashMap<String, AttributeValue>();
-        values.put(ColumnNames.ID.getColumnName(), new AttributeValue().withN(String.valueOf(record.getId())));
-        values.put(ColumnNames.USERNAME.getColumnName(), new AttributeValue().withS(String.valueOf(record.getUsername())));
-        values.put(ColumnNames.DEVICE_IDENTIFIERS.getColumnName(), new AttributeValue().withSS(record.getDeviceIdentifiers()));
+        values.put(ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getId())).build());
+        values.put(ColumnNames.USERNAME.getColumnName(), AttributeValue.builder().s(String.valueOf(record.getUsername())).build());
+        values.put(ColumnNames.DEVICE_IDENTIFIERS.getColumnName(), AttributeValue.builder().ss(record.getDeviceIdentifiers()).build());
         LOGGER.debug("Created attribute values [{}] based on [{}]", values, record);
         return values;
     }
@@ -179,21 +192,24 @@ public class YubiKeyDynamoDbFacilitator {
     @SneakyThrows
     private List<YubiKeyAccount> getRecordsByKeys(final DynamoDbQueryBuilder... queries) {
         try {
-            val scanRequest = new ScanRequest(dynamoDbProperties.getTableName());
-            Arrays.stream(queries).forEach(query -> {
-                val cond = new Condition();
-                cond.setComparisonOperator(query.getOperator());
-                cond.setAttributeValueList(query.getAttributeValue());
-                scanRequest.addScanFilterEntry(query.getKey(), cond);
-            });
+            var scanRequest = ScanRequest.builder()
+                .tableName(dynamoDbProperties.getTableName())
+                .scanFilter(Arrays.stream(queries)
+                    .map(query -> {
+                        val cond = Condition.builder().comparisonOperator(query.getOperator()).attributeValueList(query.getAttributeValue()).build();
+                        return Pair.of(query.getKey(), cond);
+                    })
+                    .collect(Collectors.toMap(Pair::getKey, Pair::getValue)))
+                .build();
+
             LOGGER.debug("Submitting request [{}] to get record with keys [{}]", scanRequest, queries);
-            val items = amazonDynamoDBClient.scan(scanRequest).getItems();
+            val items = amazonDynamoDBClient.scan(scanRequest).items();
             return items
                 .stream()
                 .map(item -> {
-                    val id = Long.parseLong(item.get(ColumnNames.ID.getColumnName()).getN());
-                    val username = item.get(ColumnNames.USERNAME.getColumnName()).getS();
-                    val records = new ArrayList<>(item.get(ColumnNames.DEVICE_IDENTIFIERS.getColumnName()).getSS());
+                    val id = Long.parseLong(item.get(ColumnNames.ID.getColumnName()).n());
+                    val username = item.get(ColumnNames.USERNAME.getColumnName()).s();
+                    val records = new ArrayList<>(item.get(ColumnNames.DEVICE_IDENTIFIERS.getColumnName()).ss());
                     return YubiKeyAccount.builder()
                         .id(id)
                         .username(username)
@@ -208,14 +224,11 @@ public class YubiKeyDynamoDbFacilitator {
     }
 
     @Getter
+    @RequiredArgsConstructor
     private enum ColumnNames {
         ID("id"), USERNAME("username"), DEVICE_IDENTIFIERS("deviceIdentifiers");
 
         private final String columnName;
-
-        ColumnNames(final String columnName) {
-            this.columnName = columnName;
-        }
     }
 
 }

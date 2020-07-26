@@ -678,7 +678,7 @@ ext.libraries = [
                 }
         ],
         awsclouddirectory       : [
-                dependencies.create("com.amazonaws:aws-java-sdk-clouddirectory:$amazonSdkVersion") {
+                dependencies.create("software.amazon.awssdk:clouddirectory:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
@@ -689,18 +689,33 @@ ext.libraries = [
                 }
         ],
         aws                     : [
-                dependencies.create("com.amazonaws:aws-java-sdk-core:$amazonSdkVersion") {
+                dependencies.create("software.amazon.awssdk:core:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
+                },
+                dependencies.create("software.amazon.awssdk:aws-core:$amazonSdkVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                },
+                dependencies.create("software.amazon.awssdk:apache-client:$amazonSdkVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
         awssns                  : [
-                dependencies.create("com.amazonaws:aws-java-sdk-sns:$amazonSdkVersion") {
+                dependencies.create("software.amazon.awssdk:sns:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
@@ -711,7 +726,7 @@ ext.libraries = [
                 }
         ],
         awsssm                  : [
-                dependencies.create("com.amazonaws:aws-java-sdk-ssm:$amazonSdkVersion") {
+                dependencies.create("software.amazon.awssdk:ssm:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
@@ -722,7 +737,7 @@ ext.libraries = [
                 }
         ],
         awss3                   : [
-                dependencies.create("com.amazonaws:aws-java-sdk-s3:$amazonSdkVersion") {
+                dependencies.create("software.amazon.awssdk:s3:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
@@ -733,7 +748,16 @@ ext.libraries = [
                 }
         ],
         awscognito              : [
-                dependencies.create("com.amazonaws:aws-java-sdk-cognitoidp:$amazonSdkVersion") {
+                dependencies.create("software.amazon.awssdk:cognitoidentity:$amazonSdkVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+
+                },
+                dependencies.create("software.amazon.awssdk:cognitoidentityprovider:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
@@ -744,7 +768,7 @@ ext.libraries = [
                 }
         ],
         awssecretsmanager       : [
-                dependencies.create("com.amazonaws:aws-java-sdk-secretsmanager:$amazonSdkVersion") {
+                dependencies.create("software.amazon.awssdk:secretsmanager:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
@@ -755,21 +779,19 @@ ext.libraries = [
                 }
         ],
         awscloudwatch           : [
-                dependencies.create("com.amazonaws:aws-java-sdk-logs:$amazonSdkVersion") {
+                dependencies.create("software.amazon.awssdk:cloudwatchlogs:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-
                 },
-                dependencies.create("com.amazonaws:aws-java-sdk-cloudwatch:$amazonSdkVersion") {
+                dependencies.create("software.amazon.awssdk:cloudwatch:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-aws:$springCloudAwsVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -777,7 +799,6 @@ ext.libraries = [
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-aws-actuator:$springCloudAwsVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -785,19 +806,10 @@ ext.libraries = [
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-
                 }
         ],
         awsjavadynamodb         : [
-                dependencies.create("com.amazonaws:aws-java-sdk-s3:$amazonSdkVersion") {
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
-                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-
-                },
-                dependencies.create("com.amazonaws:aws-java-sdk-dynamodb:$amazonSdkVersion") {
+                dependencies.create("software.amazon.awssdk:dynamodb:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
