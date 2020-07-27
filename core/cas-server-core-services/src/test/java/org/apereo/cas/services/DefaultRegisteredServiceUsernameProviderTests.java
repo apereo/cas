@@ -50,8 +50,7 @@ public class DefaultRegisteredServiceUsernameProviderTests {
 
     @Test
     public void verifyRegServiceUsernameUpper() {
-        val provider = new DefaultRegisteredServiceUsernameProvider();
-        provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
+        val provider = new DefaultRegisteredServiceUsernameProvider(CaseCanonicalizationMode.UPPER.name());
         val principal = mock(Principal.class);
         when(principal.getId()).thenReturn("id");
         val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),

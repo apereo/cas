@@ -1,7 +1,5 @@
-
 package org.apereo.cas;
 
-import org.apereo.cas.monitor.AbstractCacheHealthIndicatorTests;
 import org.apereo.cas.monitor.CacheHealthIndicatorTests;
 import org.apereo.cas.monitor.CasCoreMonitorConfigurationTests;
 import org.apereo.cas.monitor.MemoryHealthIndicatorTests;
@@ -23,7 +21,6 @@ import org.junit.runner.RunWith;
     CasCoreMonitorConfigurationTests.class,
     MemoryHealthIndicatorTests.class,
     PoolHealthIndicatorTests.class,
-    AbstractCacheHealthIndicatorTests.class,
     TicketRegistryHealthIndicatorTests.class,
     SessionHealthIndicatorTests.class,
     CacheHealthIndicatorTests.class

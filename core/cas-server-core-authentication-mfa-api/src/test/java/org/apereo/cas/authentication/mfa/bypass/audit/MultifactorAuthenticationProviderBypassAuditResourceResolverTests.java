@@ -35,7 +35,9 @@ public class MultifactorAuthenticationProviderBypassAuditResourceResolverTests {
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext)
         };
         when(jp.getArgs()).thenReturn(args);
+        when(jp.getTarget()).thenReturn("TargetObject");
         val outcome = resolver.resolveFrom(jp, new Object());
         assertTrue(outcome.length > 0);
+        assertNotNull(resolver.resolveFrom(jp, new RuntimeException("failed")));
     }
 }
