@@ -96,7 +96,12 @@ public abstract class BaseAmazonWebServicesProperties implements Serializable {
      */
     private String proxyUsername;
 
+    /**
+     * Outline the requested retry mode.
+     * Accepted values are {@code STANDARD, LEGACY}.
+     */
     private String retryMode = "STANDARD";
+    
     /**
      * Local address.
      */
