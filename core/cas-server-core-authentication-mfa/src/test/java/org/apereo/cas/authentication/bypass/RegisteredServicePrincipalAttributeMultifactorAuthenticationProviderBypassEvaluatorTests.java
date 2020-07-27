@@ -47,4 +47,19 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProvide
         when(registeredService.getMultifactorPolicy()).thenReturn(policy);
         assertFalse(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, new MockHttpServletRequest()));
     }
+
+    @Test
+    public void verifyNoService() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+
+        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        eval.addMultifactorAuthenticationProviderBypassEvaluator(
+            new RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(TestMultifactorAuthenticationProvider.ID));
+
+        val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("example")));
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
+        assertTrue(eval.shouldMultifactorAuthenticationProviderExecute(authentication, null, provider, new MockHttpServletRequest()));
+    }
 }

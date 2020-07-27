@@ -1,5 +1,8 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas;
 
+import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategyTests;
+import org.apereo.cas.authentication.GroovyMultifactorAuthenticationProviderBypassEvaluatorTests;
+import org.apereo.cas.authentication.RestMultifactorAuthenticationProviderBypassEvaluatorTests;
 import org.apereo.cas.authentication.mfa.DefaultChainingMultifactorAuthenticationProviderTests;
 import org.apereo.cas.authentication.mfa.DefaultMultifactorAuthenticationContextValidatorTests;
 import org.apereo.cas.authentication.mfa.DefaultRequestedAuthenticationContextValidatorTests;
