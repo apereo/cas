@@ -7,9 +7,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link ResourceUtilsTests}.
@@ -22,6 +24,9 @@ public class ResourceUtilsTests {
     @Test
     public void verifyResourceExists() {
         assertFalse(ResourceUtils.doesResourceExist(new FileSystemResource("invalid.json")));
+        val resourceLoader = mock(ResourceLoader.class);
+        when(resourceLoader.getResource(anyString())).thenThrow(new RuntimeException());
+        assertFalse(ResourceUtils.doesResourceExist("bad-resource", resourceLoader));
         assertFalse(ResourceUtils.doesResourceExist("invalid.json"));
         assertTrue(ResourceUtils.doesResourceExist("classpath:valid.json",
             new DefaultResourceLoader(ResourceUtilsTests.class.getClassLoader())));

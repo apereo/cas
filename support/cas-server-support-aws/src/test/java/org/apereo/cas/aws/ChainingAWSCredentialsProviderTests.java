@@ -7,6 +7,8 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProviderChain;
 import software.amazon.awssdk.core.SdkSystemSetting;
 
+import java.io.File;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -23,11 +25,13 @@ public class ChainingAWSCredentialsProviderTests {
     }
 
     @Test
-    public void verifyInstance() {
+    public void verifyInstance() throws Exception {
+        val path = File.createTempFile("props", ".txt").getCanonicalPath();
         val p = (AwsCredentialsProviderChain) ChainingAWSCredentialsProvider.getInstance("accesskey", "secretKey",
-            "profilePath", "profileName");
+            "profilePath", path);
         val credentials = p.resolveCredentials();
         assertNotNull(credentials);
         assertTrue(credentials instanceof AwsBasicCredentials);
+        assertNotNull(ChainingAWSCredentialsProvider.getInstance());
     }
 }

@@ -40,13 +40,22 @@ cas.version=6.3.0-RC2
 
 ## New & Noteworthy
 
+The following items are new improvements and enhancements presented in this release. 
+
 ### Amazon SDK v2
 
 CAS is now using the Amazon SDK v2, which effectively upgrades and impacts the functionality for DynamoDb, SNS, SSM, S3 and all other features based on Amazon Web Services.
 
+### Test Coverage via CodeCov
+
+CAS test coverage across all modules in the codebase has now reached `83%` and continues to climb. Additional validation rules are also applied 
+to fail all pull requests that fall below this threshold. This area will be closely monitored and improved
+as progress is made with the goal of hopefully reaching at least `85%` before the final GA release. Of course, this will not be a blocker for the final release.
+
 ## Other Stuff
 
 - Adjustments to SAML2 metadata resolution to cache to ensure enough capacity for resolved metadata providers. 
+- The expiration of access tokens is now correctly communicated back to OAuth relying parties, specially if the access token expiration policy is defined per application.
 
 ## Library Upgrades
 
