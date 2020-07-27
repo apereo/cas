@@ -1,5 +1,9 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.adaptive.intel.DefaultIPAddressIntelligenceService;
+import org.apereo.cas.authentication.adaptive.intel.GroovyIPAddressIntelligenceService;
+import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceService;
+import org.apereo.cas.authentication.adaptive.intel.RestfulIPAddressIntelligenceService;
 import org.apereo.cas.authentication.policy.AllAuthenticationHandlersSucceededAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
@@ -14,6 +18,7 @@ import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipa
 import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPolicyHandlingStrategy;
+import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
@@ -369,5 +374,26 @@ public class CoreAuthenticationUtils {
             return CollectionUtils.wrapList(new AtLeastOneCredentialValidatedAuthenticationPolicy(policyProps.getAny().isTryAll()));
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * New ip address intelligence service.
+     *
+     * @param adaptive the adaptive
+     * @return the ip address intelligence service
+     */
+    public static IPAddressIntelligenceService newIpAddressIntelligenceService(final AdaptiveAuthenticationProperties adaptive) {
+        val intel = adaptive.getIpIntel();
+
+        if (StringUtils.isNotBlank(intel.getRest().getUrl())) {
+            return new RestfulIPAddressIntelligenceService(adaptive);
+        }
+        if (intel.getGroovy().getLocation() != null) {
+            return new GroovyIPAddressIntelligenceService(adaptive);
+        }
+        if (StringUtils.isNotBlank(intel.getBlackDot().getEmailAddress())) {
+            return new RestfulIPAddressIntelligenceService(adaptive);
+        }
+        return new DefaultIPAddressIntelligenceService(adaptive);
     }
 }
