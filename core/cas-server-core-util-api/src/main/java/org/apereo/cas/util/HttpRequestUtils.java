@@ -53,7 +53,7 @@ public class HttpRequestUtils {
     public static HttpServletRequest getHttpServletRequestFromRequestAttributes() {
         try {
             val requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            return Optional.ofNullable(requestAttributes).map(ServletRequestAttributes::getRequest).orElse(null);
+            return Optional.of(Objects.requireNonNull(requestAttributes)).map(ServletRequestAttributes::getRequest).orElse(null);
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }

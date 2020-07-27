@@ -362,16 +362,15 @@ public class DateTimeUtils {
                 return ChronoUnit.HOURS;
             case MINUTES:
                 return ChronoUnit.MINUTES;
-            case SECONDS:
-                return ChronoUnit.SECONDS;
             case MICROSECONDS:
                 return ChronoUnit.MICROS;
             case MILLISECONDS:
                 return ChronoUnit.MILLIS;
             case NANOSECONDS:
                 return ChronoUnit.NANOS;
+            case SECONDS:
             default:
-                return null;
+                return ChronoUnit.SECONDS;
         }
     }
 }

@@ -7,9 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProviderChain;
 import software.amazon.awssdk.auth.credentials.ContainerCredentialsProvider;
@@ -34,7 +32,7 @@ import java.util.function.Function;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class ChainingAWSCredentialsProvider implements AwsCredentialsProvider {
+public class ChainingAWSCredentialsProvider {
     private final List<AwsCredentialsProvider> chain;
 
     /**
@@ -78,8 +76,8 @@ public class ChainingAWSCredentialsProvider implements AwsCredentialsProvider {
         if (StringUtils.isNotBlank(profilePath) && StringUtils.isNotBlank(profileName)) {
             addProviderToChain(nothing -> {
                 chain.add(ProfileCredentialsProvider.builder()
-                    .profileFile(ProfileFile.builder().content(Path.of(profilePath)).build())
                     .profileName(profileName)
+                    .profileFile(ProfileFile.builder().content(Path.of(profilePath)).build())
                     .build());
                 return null;
             });
@@ -116,35 +114,11 @@ public class ChainingAWSCredentialsProvider implements AwsCredentialsProvider {
         return AwsCredentialsProviderChain.builder().credentialsProviders(chain).build();
     }
 
-    @Override
-    public AwsCredentials resolveCredentials() {
-        LOGGER.debug("Attempting to locate AWS credentials from the chain...");
-        for (val p : this.chain) {
-            val c = getCredentialsFromProvider(p);
-            if (c != null) {
-                LOGGER.debug("Fetched credentials from [{}] provider successfully.", p.getClass().getSimpleName());
-                return c;
-            }
-        }
-        LOGGER.warn("No AWS credentials could be determined from the chain. Using anonymous credentials...");
-        return AnonymousCredentialsProvider.create().resolveCredentials();
-    }
-
     private static void addProviderToChain(final Function<Void, Void> func) {
         try {
             func.apply(null);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
-    }
-
-    private static AwsCredentials getCredentialsFromProvider(final AwsCredentialsProvider p) {
-        try {
-            LOGGER.debug("Calling credential provider [{}] to fetch credentials...", p.getClass().getSimpleName());
-            return p.resolveCredentials();
-        } catch (final Throwable e) {
-            LOGGER.trace(e.getMessage(), e);
-        }
-        return null;
     }
 }

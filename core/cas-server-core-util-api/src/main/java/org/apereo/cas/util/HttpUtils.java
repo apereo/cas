@@ -19,7 +19,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
@@ -202,7 +201,7 @@ public class HttpUtils {
             val closeableHttpResponse = (CloseableHttpResponse) response;
             try {
                 closeableHttpResponse.close();
-            } catch (final IOException e) {
+            } catch (final Exception e) {
                 LoggingUtils.error(LOGGER, e);
             }
         }
@@ -265,12 +264,7 @@ public class HttpUtils {
      */
     public static HttpResponse executeGet(final String url,
                                           final Map<String, Object> parameters) {
-        try {
-            return executeGet(url, null, null, parameters);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return null;
+        return executeGet(url, null, null, parameters);
     }
 
     /**
