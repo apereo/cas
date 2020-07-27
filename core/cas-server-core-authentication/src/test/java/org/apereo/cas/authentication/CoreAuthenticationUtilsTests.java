@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.GroovyAuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
@@ -189,6 +190,21 @@ public class CoreAuthenticationUtilsTests {
 
         properties.setStrategy(PasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE);
         assertNotNull(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(properties, mock(ApplicationContext.class)));
+    }
+
+    @Test
+    public void verifyIpIntelligenceService() {
+        val properties = new AdaptiveAuthenticationProperties();
+        assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
+
+        properties.getIpIntel().getRest().setUrl("http://localhost:1234");
+        assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
+
+        properties.getIpIntel().getGroovy().setLocation(new ClassPathResource("GroovyIPService.groovy"));
+        assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
+
+        properties.getIpIntel().getBlackDot().setEmailAddress("cas@example.org");
+        assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
     }
 
     @Test

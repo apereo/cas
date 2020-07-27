@@ -32,6 +32,7 @@ import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataP
 import org.apereo.cas.authentication.principal.SimplePrincipalFactoryTests;
 import org.apereo.cas.authentication.principal.SimplePrincipalTests;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtilsTests;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfigurationTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -67,6 +68,7 @@ import org.junit.runner.RunWith;
     NotPreventedAuthenticationPolicyTests.class,
     AllAuthenticationHandlersSucceededAuthenticationPolicyTests.class,
     BasicCredentialMetaDataTests.class,
+    CasCoreAuthenticationSupportConfigurationTests.class,
     ChainingPrincipalElectionStrategyTests.class,
     UsernamePasswordCredentialTests.class,
     UnresolvedPrincipalExceptionTests.class,
