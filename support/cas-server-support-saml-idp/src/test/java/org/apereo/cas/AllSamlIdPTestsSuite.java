@@ -36,7 +36,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfile
 import org.apereo.cas.support.saml.web.idp.profile.ecp.ECPSamlIdPProfileHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.query.SamlIdPSaml2AttributeQueryProfileHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLOSamlIdPPostProfileHandlerControllerTests;
-import org.apereo.cas.support.saml.web.idp.profile.slo.SLOSamlRedirectProfileHandlerControllerTests;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SLOSamlIdPRedirectProfileHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPHttpRedirectDeflateEncoderTests;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceMessageHandlerTests;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHandlerControllerTests;
@@ -107,7 +107,7 @@ import org.junit.runner.RunWith;
     ECPSamlIdPProfileHandlerControllerTests.class,
     SamlIdPSaml2AttributeQueryProfileHandlerControllerTests.class,
     SSOSamlIdPPostProfileHandlerControllerTests.class,
-    SLOSamlRedirectProfileHandlerControllerTests.class,
+    SLOSamlIdPRedirectProfileHandlerControllerTests.class,
     EduPersonTargetedIdAttributeReleasePolicyTests.class,
     SamlProfileSaml2ResponseBuilderTests.class
 })

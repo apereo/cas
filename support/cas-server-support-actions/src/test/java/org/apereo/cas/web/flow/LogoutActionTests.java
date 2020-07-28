@@ -77,49 +77,58 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
     }
 
-    @NotNull
-    private LogoutAction getLogoutAction(final LogoutProperties properties) {
-        return new LogoutAction(getWebApplicationServiceFactory(), properties,
-            new DefaultSingleLogoutServiceLogoutUrlBuilder(serviceManager, SimpleUrlValidator.getInstance()));
-    }
-
     @Test
     public void verifyLogoutForServiceWithFollowRedirectsAndMatchingService() {
         this.request.addParameter("service", TEST_SERVICE_ID);
-        val impl = new RegexRegisteredService();
-        impl.setServiceId(TEST_SERVICE_ID);
-        impl.setName(TEST_SERVICE_ID);
-        this.serviceManager.save(impl);
+        val service = new RegexRegisteredService();
+        service.setServiceId(TEST_SERVICE_ID);
+        service.setName(TEST_SERVICE_ID);
+        this.serviceManager.save(service);
         val properties = new LogoutProperties();
         properties.setFollowServiceRedirects(true);
         this.logoutAction = getLogoutAction(properties);
         val event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
-        assertEquals(TEST_SERVICE_ID, this.requestContext.getFlowScope().get("logoutRedirectUrl"));
+        assertEquals(TEST_SERVICE_ID, WebUtils.getLogoutRedirectUrl(this.requestContext, String.class));
+    }
+
+    @Test
+    public void verifyLogoutForServiceWithFollowRedirectsAndInternalService() {
+        val service = new RegexRegisteredService();
+        service.setServiceId(TEST_SERVICE_ID);
+        service.setName(TEST_SERVICE_ID);
+        this.serviceManager.save(service);
+        val properties = new LogoutProperties();
+        properties.setFollowServiceRedirects(true);
+        this.logoutAction = getLogoutAction(properties);
+        WebUtils.putLogoutRedirectUrl(request, "https://example.com");
+        val event = this.logoutAction.doExecute(this.requestContext);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
+        assertEquals("https://example.com", WebUtils.getLogoutRedirectUrl(this.requestContext, String.class));
     }
 
     @Test
     public void logoutForServiceWithNoFollowRedirects() {
         this.request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST_SERVICE_ID);
         val properties = new LogoutProperties();
-        this.logoutAction =getLogoutAction(properties);
+        this.logoutAction = getLogoutAction(properties);
         val event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
-        assertNull(this.requestContext.getFlowScope().get("logoutRedirectUrl"));
+        assertNull(WebUtils.getLogoutRedirectUrl(this.requestContext, String.class));
     }
 
     @Test
     public void logoutForServiceWithFollowRedirectsNoAllowedService() {
         this.request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST_SERVICE_ID);
-        val impl = new RegexRegisteredService();
-        impl.setServiceId("http://FooBar");
-        impl.setName("FooBar");
-        this.serviceManager.save(impl);
+        val service = new RegexRegisteredService();
+        service.setServiceId("http://FooBar");
+        service.setName("FooBar");
+        this.serviceManager.save(service);
         val properties = new LogoutProperties();
         this.logoutAction = getLogoutAction(properties);
         val event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
-        assertNull(this.requestContext.getFlowScope().get("logoutRedirectUrl"));
+        assertNull(WebUtils.getLogoutRedirectUrl(this.requestContext, String.class));
     }
 
     @Test
@@ -164,5 +173,11 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
         val logoutRequests = WebUtils.getLogoutRequests(this.requestContext);
         assertEquals(1, logoutRequests.size());
         assertEquals(logoutRequest, logoutRequests.get(0));
+    }
+
+    @NotNull
+    private LogoutAction getLogoutAction(final LogoutProperties properties) {
+        return new LogoutAction(getWebApplicationServiceFactory(), properties,
+            new DefaultSingleLogoutServiceLogoutUrlBuilder(serviceManager, SimpleUrlValidator.getInstance()));
     }
 }
