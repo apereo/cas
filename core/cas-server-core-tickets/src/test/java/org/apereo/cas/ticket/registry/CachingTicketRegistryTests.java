@@ -9,8 +9,8 @@ import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,8 +31,7 @@ public class CachingTicketRegistryTests extends BaseTicketRegistryTests {
         return new CachingTicketRegistry(mock(LogoutManager.class));
     }
 
-    @Test
-    @Tag("DisableEncryption")
+    @RepeatedTest(1)
     public void verifyOtherConstructor() {
         assertDoesNotThrow(new Executable() {
             @Override
@@ -42,8 +41,7 @@ public class CachingTicketRegistryTests extends BaseTicketRegistryTests {
         });
     }
 
-    @Test
-    @Tag("DisableEncryption")
+    @RepeatedTest(1)
     public void verifyExpirationByTimeout() throws Exception {
         val registry = new CachingTicketRegistry(CipherExecutor.noOp(), mock(LogoutManager.class));
         val ticket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + "-12346", RegisteredServiceTestUtils.getAuthentication(),
@@ -53,8 +51,7 @@ public class CachingTicketRegistryTests extends BaseTicketRegistryTests {
         assertNull(registry.getTicket(ticket.getId()));
     }
 
-    @Test
-    @Tag("DisableEncryption")
+    @RepeatedTest(1)
     public void verifyExpirationExplicit() throws Exception {
         val registry = new CachingTicketRegistry(CipherExecutor.noOp(), mock(LogoutManager.class));
         val ticket = new MockTicketGrantingTicket("casuser");

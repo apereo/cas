@@ -84,7 +84,7 @@ import org.apereo.cas.ticket.expiration.RememberMeDelegatingExpirationPolicy;
 import org.apereo.cas.ticket.expiration.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
-import org.apereo.cas.ticket.registry.EncodedTicket;
+import org.apereo.cas.ticket.registry.DefaultEncodedTicket;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.apereo.cas.validation.ValidationResponseType;
 
@@ -320,7 +320,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(ServiceTicketImpl.class);
         kryo.register(ProxyGrantingTicketImpl.class);
         kryo.register(ProxyTicketImpl.class);
-        kryo.register(EncodedTicket.class);
+        kryo.register(DefaultEncodedTicket.class);
         kryo.register(TransientSessionTicketImpl.class);
     }
 

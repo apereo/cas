@@ -98,7 +98,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Collection<? extends Ticket> getTickets() {
         if (isCipherExecutorEnabled()) {
-            val sql = String.format("SELECT t FROM %s t", EncodedTicket.class.getSimpleName());
+            val sql = String.format("SELECT t FROM %s t", DefaultEncodedTicket.class.getSimpleName());
             val query = (org.hibernate.query.Query<Ticket>) entityManager.createQuery(sql, Ticket.class);
             query.setLockMode(this.lockType);
             return query
@@ -141,7 +141,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Stream<? extends Ticket> getTicketsStream() {
         if (isCipherExecutorEnabled()) {
-            val sql = String.format("SELECT t FROM %s t", EncodedTicket.class.getSimpleName());
+            val sql = String.format("SELECT t FROM %s t", DefaultEncodedTicket.class.getSimpleName());
             val query = (org.hibernate.query.Query<Ticket>) entityManager.createQuery(sql, Ticket.class);
             query.setFetchSize(STREAM_BATCH_SIZE);
             query.setLockOptions(LockOptions.NONE);
@@ -264,7 +264,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     private Class<? extends Ticket> getTicketImplementationClass(final TicketDefinition tk) {
         if (isCipherExecutorEnabled()) {
-            return EncodedTicket.class;
+            return DefaultEncodedTicket.class;
         }
         return tk.getImplementationClass();
     }

@@ -1,4 +1,7 @@
-package org.apereo.cas.ticket.registry;
+package org.apereo.cas;
+
+import org.apereo.cas.ticket.registry.RedisSentinelServerTicketRegistryTests;
+import org.apereo.cas.ticket.registry.RedisServerTicketRegistryTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
