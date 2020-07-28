@@ -242,6 +242,14 @@ The `entityId` parameter may be passed as such:
 https://.../cas/login?service=http://idp.example.org&entityId=the-entity-id-passed
 ```
 
+Alternatively, you can also configure your Shibboleth Identity Provider to embed the entity id into the service string itself, resulting in the following service URL:
+
+```bash
+https://.../cas/login?service=http%3A%2F%2Fidp.example.org%2Fidp%2FAuthn%2FExtCas%3Fconversation%3De2s1%26entityId%3Dthe-entity-id-passed
+```
+
+See [`shibcas.entityIdLocation` setting](https://github.com/Unicon/shib-cas-authn3#cas-service-registry) more details and suggested service matching regex patterns.
+
 ## Custom
 
 While support for triggers may seem extensive, there is always that edge use case that would have you trigger MFA based on a special set of requirements. To learn how to design your own triggers, [please see this guide](Configuring-Multifactor-Authentication-CustomTriggers.html).
