@@ -13,7 +13,13 @@ confidence in a particular release, it is strongly recommended that you start ea
 
 ## Apereo Membership
 
-If you benefit from Apereo CAS as free and open-source software, we invite you to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership) and financially support the project at a capacity that best suits your deployment. Note that all development activity is performed *almost exclusively* on a voluntary basis with no expectations, commitments or strings attached. Having the financial means to better sustain engineering activities will allow the developer community to allocate *dedicated and committed* time for long-term support, maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner. Funding will ensure support for the software you rely on and you gain an advantage and say in the way Apereo, and the CAS project at that, runs and operates. If you consider your CAS deployment to be a critical part of the identity and access management ecosystem, this is a viable option to consider.
+If you benefit from Apereo CAS as free and open-source software, we invite you to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership) 
+and financially support the project at a capacity that best suits your deployment. Note that all development activity 
+is performed *almost exclusively* on a voluntary basis with no expectations, commitments or strings attached. Having the financial means to better 
+sustain engineering activities will allow the developer community to allocate *dedicated and committed* time for long-term support, 
+maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner. Funding will 
+ensure support for the software you rely on and you gain an advantage and say in the way Apereo, and the CAS project at that, runs 
+and operates. If you consider your CAS deployment to be a critical part of the identity and access management ecosystem, this is a viable option to consider.
 
 ## Get Involved
 
@@ -51,6 +57,10 @@ CAS is now using the Amazon SDK v2, which effectively upgrades and impacts the f
 CAS test coverage across all modules in the codebase has now reached `83%` and continues to climb. Additional validation rules are also applied 
 to fail all pull requests that fall below this threshold. This area will be closely monitored and improved
 as progress is made with the goal of hopefully reaching at least `85%` before the final GA release. Of course, this will not be a blocker for the final release.
+
+### Amazon S3 Service Registry
+
+CAS registered service definitions can now be natively stored in [Amazon S3 buckets](../services/AmazonS3-Service-Management.html).
 
 ## Other Stuff
 

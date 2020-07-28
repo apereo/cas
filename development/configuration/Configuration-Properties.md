@@ -4459,6 +4459,13 @@ To learn more about this topic, [please review this guide](../services/CosmosDb-
 # cas.service-registry.cosmos-db.consistency-level=Session
 ```
 
+### Amazon S3 Service Registry
+
+To learn more about this topic, [please review this guide](../services/AmazonS3-Service-Management.html).
+
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.service-registry.amazon-s3`.
+
 ### DynamoDb Service Registry
 
 To learn more about this topic, [please review this guide](../services/DynamoDb-Service-Management.html).
