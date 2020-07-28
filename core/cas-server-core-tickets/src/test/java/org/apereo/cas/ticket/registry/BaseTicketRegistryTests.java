@@ -51,8 +51,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -89,7 +89,7 @@ public abstract class BaseTicketRegistryTests {
     @Autowired
     @Qualifier("defaultTicketFactory")
     protected TicketFactory ticketFactory;
-    
+
     protected boolean useEncryption;
 
     protected String ticketGrantingTicketId;
@@ -103,7 +103,7 @@ public abstract class BaseTicketRegistryTests {
     private TicketRegistry ticketRegistry;
 
     @BeforeEach
-    public void initialize(final TestInfo info) {
+    public void initialize(final TestInfo info, final RepetitionInfo repetitionInfo) {
         this.ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
             .getNewTicketId(TicketGrantingTicket.PREFIX);
         this.serviceTicketId = new ServiceTicketIdGenerator(10, StringUtils.EMPTY)
@@ -112,7 +112,13 @@ public abstract class BaseTicketRegistryTests {
             .getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
         this.transientSessionTicketId = new DefaultUniqueTicketIdGenerator().getNewTicketId(TransientSessionTicket.PREFIX);
 
-        useEncryption = !info.getTags().contains("DisableEncryption");
+        if (info.getTags().contains("TicketRegistryTestWithEncryption")) {
+            useEncryption = true;
+        } else if (info.getTags().contains("TicketRegistryTestWithoutEncryption")) {
+            useEncryption = false;
+        } else {
+            useEncryption = repetitionInfo.getTotalRepetitions() == 2 && repetitionInfo.getCurrentRepetition() == 2;
+        }
         ticketRegistry = this.getNewTicketRegistry();
         if (ticketRegistry != null) {
             ticketRegistry.deleteAll();
@@ -166,8 +172,8 @@ public abstract class BaseTicketRegistryTests {
         assertEquals(ticketGrantingTicketId, ticket.getId(), () -> "Ticket IDs don't match. useEncryption[" + useEncryption + ']');
     }
 
-    @Test
-    @Tag("DisableEncryption")
+    @RepeatedTest(1)
+    @Tag("DisableTicketRegistryTestWithEncryption")
     public void verifyCountSessionsPerUser() {
         assumeTrue(isIterableRegistry());
         val id = UUID.randomUUID().toString();

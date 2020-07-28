@@ -1,7 +1,7 @@
 package org.apereo.cas;
 
+import org.apereo.cas.ticket.DefaultEncodedTicketTests;
 import org.apereo.cas.ticket.DefaultTicketCatalogTests;
-import org.apereo.cas.ticket.EncodedTicketTests;
 import org.apereo.cas.ticket.InvalidTicketExceptionTests;
 import org.apereo.cas.ticket.ServiceTicketImplTests;
 import org.apereo.cas.ticket.TicketGrantingTicketImplTests;
@@ -63,7 +63,7 @@ import org.junit.runner.RunWith;
     CachingTicketRegistryTests.class,
     DistributedTicketRegistryTests.class,
     Cas10ProxyHandlerTests.class,
-    EncodedTicketTests.class,
+    DefaultEncodedTicketTests.class,
     TicketValidationExceptionTests.class,
     DefaultProxyGrantingTicketFactoryTests.class,
     DelegatingExpirationPolicyTests.class,

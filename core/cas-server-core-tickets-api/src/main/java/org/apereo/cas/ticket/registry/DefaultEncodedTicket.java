@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.ticket.EncodedTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -38,7 +39,7 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "ENCODEDTICKET")
-public class EncodedTicket implements Ticket {
+public class DefaultEncodedTicket implements EncodedTicket {
 
     private static final long serialVersionUID = -7078771807487764116L;
 
@@ -62,9 +63,9 @@ public class EncodedTicket implements Ticket {
      */
     @SneakyThrows
     @JsonCreator
-    public EncodedTicket(@JsonProperty("encoded") final String encodedTicket,
-                         @JsonProperty("id") final String encodedTicketId,
-                         @JsonProperty("prefix") final String prefix) {
+    public DefaultEncodedTicket(@JsonProperty("encoded") final String encodedTicket,
+                                @JsonProperty("id") final String encodedTicketId,
+                                @JsonProperty("prefix") final String prefix) {
         this.id = encodedTicketId;
         this.encodedTicket = EncodingUtils.decodeBase64(encodedTicket);
         this.prefix = prefix;

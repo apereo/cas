@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket;
 
-import org.apereo.cas.ticket.registry.EncodedTicket;
+import org.apereo.cas.ticket.registry.DefaultEncodedTicket;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -12,19 +12,19 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link EncodedTicketTests}.
+ * This is {@link DefaultEncodedTicketTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Tag("Tickets")
-public class EncodedTicketTests {
+public class DefaultEncodedTicketTests {
     @Test
     public void verifyDefaults() {
         val id = UUID.randomUUID().toString();
-        val ticket1 = new EncodedTicket(UUID.randomUUID().toString(),
+        val ticket1 = new DefaultEncodedTicket(UUID.randomUUID().toString(),
             id, TicketGrantingTicket.PREFIX);
-        val ticket2 = new EncodedTicket(UUID.randomUUID().toString(),
+        val ticket2 = new DefaultEncodedTicket(UUID.randomUUID().toString(),
             id, TicketGrantingTicket.PREFIX);
 
         assertNull(ticket1.getTicketGrantingTicket());

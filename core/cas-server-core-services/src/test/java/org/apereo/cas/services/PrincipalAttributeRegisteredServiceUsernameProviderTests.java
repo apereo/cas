@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +10,9 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +27,8 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @Tag("RegisteredService")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "principalAttributeRegisteredServiceUsernameProvider.json");
