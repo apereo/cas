@@ -1,7 +1,9 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
@@ -22,10 +24,12 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
+import javax.servlet.http.HttpServletResponse;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link SLOSamlRedirectProfileHandlerControllerTests}.
+ * This is {@link SLOSamlIdPRedirectProfileHandlerControllerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
@@ -33,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.location=file:src/test/resources/metadata")
-public class SLOSamlRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
+public class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
 
     @Autowired
     @Qualifier("sloRedirectProfileHandlerController")
@@ -41,12 +45,36 @@ public class SLOSamlRedirectProfileHandlerControllerTests extends BaseSamlIdPCon
 
     @Test
     @Order(1)
-    public void verifyOperation() throws Exception {
+    public void verifyOperationRedirectWithParameter() throws Exception {
         val request = new MockHttpServletRequest();
         request.setMethod("GET");
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceFor(false, false, false, "https://cassp.example.org");
+        service.setLogoutUrl("https://github.com/apereo/cas");
+
+        executeTest(request, response, service);
+
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
+        assertNotNull(WebUtils.getLogoutRedirectUrl(request, String.class));
+    }
+
+    @Test
+    @Order(2)
+    public void verifyOperationRedirectWithoutParameter() throws Exception {
+        val request = new MockHttpServletRequest();
+        request.setMethod("GET");
+        val response = new MockHttpServletResponse();
+
+        val service = getSamlRegisteredServiceFor(false, false, false, "https://cassp.example.org");
+        executeTest(request, response, service);
+
+        assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
+        assertNull(WebUtils.getLogoutRedirectUrl(request, String.class));
+    }
+
+    private void executeTest(final MockHttpServletRequest request, final HttpServletResponse response,
+                             final SamlRegisteredService service) throws Exception {
         servicesManager.save(service);
         var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(LogoutRequest.DEFAULT_ELEMENT_NAME);
@@ -70,6 +98,5 @@ public class SLOSamlRedirectProfileHandlerControllerTests extends BaseSamlIdPCon
             .getQueryParams().forEach(param -> request.addParameter(param.getFirst(), param.getSecond()));
         request.setQueryString(queryStrings);
         controller.handleSaml2ProfileSLORedirectRequest(response, request);
-        assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
     }
 }

@@ -13,10 +13,8 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultSingleLogoutServiceLogoutUrlBuilder} which acts on a registered
@@ -41,12 +39,9 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogout
                                                           final WebApplicationService singleLogoutService,
                                                           final Optional<HttpServletRequest> httpRequest) {
         val serviceLogoutUrl = registeredService.getLogoutUrl();
-        if (serviceLogoutUrl != null) {
+        if (StringUtils.hasText(serviceLogoutUrl)) {
             LOGGER.debug("Logout request will be sent to [{}] for service [{}]", serviceLogoutUrl, singleLogoutService);
-
-            return Arrays.stream(StringUtils.commaDelimitedListToStringArray(serviceLogoutUrl))
-                .map(url -> new SingleLogoutUrl(url, registeredService.getLogoutType()))
-                .collect(Collectors.toList());
+            return SingleLogoutUrl.from(registeredService);
         }
         val originalUrl = singleLogoutService.getOriginalUrl();
         if (this.urlValidator.isValid(originalUrl)) {

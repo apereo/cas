@@ -1,11 +1,14 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
+import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.logout.slo.SingleLogoutUrl;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -55,19 +58,28 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
         if (logout.isForceSignedLogoutRequests() && !SAMLBindingSupport.isMessageSigned(ctx)) {
             throw new SAMLException("Logout request is not signed but should be.");
         }
-        
+
+        val entityId = SamlIdPUtils.getIssuerFromSamlObject(logoutRequest);
+        LOGGER.trace("SAML logout request from entity id [{}] is signed", entityId);
+        val registeredService = getSamlProfileHandlerConfigurationContext()
+            .getServicesManager().findServiceBy(entityId, SamlRegisteredService.class);
+        LOGGER.trace("SAML registered service tied to [{}] is [{}]", entityId, registeredService);
+        val facade = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+            getSamlProfileHandlerConfigurationContext().getSamlRegisteredServiceCachingMetadataResolver(), registeredService, entityId).get();
         if (SAMLBindingSupport.isMessageSigned(ctx)) {
-            val entityId = SamlIdPUtils.getIssuerFromSamlObject(logoutRequest);
-            LOGGER.trace("SAML logout request from entity id [{}] is signed", entityId);
-            val registeredService = getSamlProfileHandlerConfigurationContext().getServicesManager().findServiceBy(entityId, SamlRegisteredService.class);
-            LOGGER.trace("SAML registered service tied to [{}] is [{}]", entityId, registeredService);
-            val facade = SamlRegisteredServiceServiceProviderMetadataFacade.get(
-                getSamlProfileHandlerConfigurationContext().getSamlRegisteredServiceCachingMetadataResolver(), registeredService, entityId).get();
             LOGGER.trace("Verifying signature on the SAML logout request for [{}]", entityId);
             getSamlProfileHandlerConfigurationContext().getSamlObjectSignatureValidator()
                 .verifySamlProfileRequestIfNeeded(logoutRequest, facade, request, ctx);
         }
         SamlUtils.logSamlObject(getSamlProfileHandlerConfigurationContext().getOpenSamlConfigBean(), logoutRequest);
-        response.sendRedirect(getSamlProfileHandlerConfigurationContext().getCasProperties().getServer().getLogoutUrl());
+
+        val logoutUrls = SingleLogoutUrl.from(registeredService);
+        if (!logoutUrls.isEmpty()) {
+            val destination = logoutUrls.iterator().next().getUrl();
+            WebUtils.putLogoutRedirectUrl(request, destination);
+            request.getServletContext().getRequestDispatcher(CasProtocolConstants.ENDPOINT_LOGOUT).forward(request, response);
+        } else {
+            response.sendRedirect(getSamlProfileHandlerConfigurationContext().getCasProperties().getServer().getLogoutUrl());
+        }
     }
 }

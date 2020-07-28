@@ -736,6 +736,41 @@ public class WebUtils {
     }
 
     /**
+     * Put logout redirect url.
+     *
+     * @param context the context
+     * @param service the service
+     */
+    public static void putLogoutRedirectUrl(final HttpServletRequest context, final String service) {
+        context.setAttribute("logoutRedirectUrl", service);
+    }
+
+    /**
+     * Gets logout redirect url.
+     *
+     * @param <T>     the type parameter
+     * @param request the request
+     * @param clazz   the clazz
+     * @return the logout redirect url
+     */
+    public static <T> T getLogoutRedirectUrl(final HttpServletRequest request, final Class<T> clazz) {
+        val value = request.getAttribute("logoutRedirectUrl");
+        return value != null ? clazz.cast(value) : null;
+    }
+
+    /**
+     * Gets logout redirect url.
+     *
+     * @param <T>     the type parameter
+     * @param context the context
+     * @param clazz   the clazz
+     * @return the logout redirect url
+     */
+    public static <T> T getLogoutRedirectUrl(final RequestContext context, final Class<T> clazz) {
+        return context.getFlowScope().get("logoutRedirectUrl", clazz);
+    }
+
+    /**
      * Put remember me authentication enabled.
      *
      * @param context the context
@@ -1396,4 +1431,6 @@ public class WebUtils {
     public static Boolean isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("multipleDeviceRegistrationEnabled", Boolean.class);
     }
+
+
 }
