@@ -55,6 +55,15 @@ public class ResponseTests {
     }
 
     @Test
+    public void verifyConstructionWithFragmentAndNoQueryString2() {
+        val url = "http://localhost:8080/foo#hello?test=boo";
+        val attributes = new HashMap<String, String>();
+        attributes.put(TICKET_PARAM, TICKET_VALUE);
+        val response = DefaultResponse.getRedirectResponse(url, attributes);
+        assertEquals("http://localhost:8080/foo?ticket=foobar#hello?test=boo", response.getUrl());
+    }
+
+    @Test
     public void verifyUrlSanitization() {
         val url = "https://www.example.com\r\nLocation: javascript:\r\n\r\n<script>alert(document.cookie)</script>";
         val attributes = new HashMap<String, String>();

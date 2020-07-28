@@ -86,7 +86,7 @@ public class DefaultResponse implements Response {
             })
             .collect(Collectors.joining("&"));
         if (!(params == null || params.isEmpty())) {
-            builder.append(url.contains("?") ? "&" : "?");
+            builder.append(fragmentSplit.get(0).contains("?") ? "&" : "?");
             builder.append(params);
         }
         if (fragmentSplit.size() > 1) {
