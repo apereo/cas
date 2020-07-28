@@ -17,6 +17,8 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -139,7 +141,8 @@ public class RegisteredServiceTestUtils {
         s.setServiceId(id);
         s.setEvaluationOrder(1);
         if (uniq) {
-            s.setName("TestService" + UUID.randomUUID().toString());
+            val uuid = Iterables.get(Splitter.on('-').split(UUID.randomUUID().toString()), 0);
+            s.setName("TestService" + uuid);
         } else {
             s.setName(id);
         }

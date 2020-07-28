@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -88,6 +89,7 @@ public class CasCoreAuthenticationSupportConfigurationTests {
     @TestConfiguration("CasCoreAuthenticationSupportConfigurationTestConfiguration")
     public static class CasCoreAuthenticationSupportConfigurationTestConfiguration {
         @Bean
+        @ConditionalOnMissingBean(name = "authenticationServiceSelectionPlan")
         public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan() {
             return mock(AuthenticationServiceSelectionPlan.class);
         }

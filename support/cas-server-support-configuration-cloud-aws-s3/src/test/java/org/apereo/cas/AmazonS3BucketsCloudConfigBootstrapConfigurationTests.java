@@ -20,6 +20,8 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -84,6 +86,8 @@ public class AmazonS3BucketsCloudConfigBootstrapConfigurationTests {
 
     private static void deleteBucket(final S3Client s3Client) {
         try {
+            val objects = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(BUCKET_NAME).build());
+            objects.contents().forEach(object -> s3Client.deleteObject(DeleteObjectRequest.builder().bucket(BUCKET_NAME).key(object.key()).build()));
             s3Client.deleteBucket(DeleteBucketRequest.builder().bucket(BUCKET_NAME).build());
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage());
