@@ -36,7 +36,7 @@
                 </div>
             </div>
 
-            <form method="post" id="fm2" th:if="${multipleDeviceRegistrationEnabled}">
+            <form method="post" id="fm2" th:if="${gauthMultipleDeviceRegistrationEnabled}">
                 <p>
                 <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
                 <input type="hidden" name="_eventId_register" value="Register"/>

@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -70,6 +71,7 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
             val r = this.mongoTemplate.findAll(GoogleAuthenticatorAccount.class, this.collectionName);
             return r.stream()
                 .map(this::decode)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         } catch (final Exception e) {

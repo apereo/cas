@@ -17,6 +17,8 @@ import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link JpaGoogleAuthenticatorTokenCredentialRepository} that stores gauth data into a RDBMS database.
@@ -74,20 +76,20 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     @Override
     public Collection<? extends OneTimeTokenAccount> load() {
         try {
-            val r = this.entityManager.createQuery("SELECT r FROM "
+            val results = this.entityManager.createQuery("SELECT r FROM "
                 + ENTITY_NAME + " r", JpaGoogleAuthenticatorAccount.class).getResultList();
-            val results = new ArrayList<OneTimeTokenAccount>(r.size());
-            r.forEach(account -> {
-                this.entityManager.detach(account);
-                results.add(decode(account));
-            });
-            return results;
+            return results.stream()
+                .map(account -> {
+                    entityManager.detach(account);
+                    return decode(account);
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
         }
         return new ArrayList<>(0);
     }
-
 
     @Override
     public OneTimeTokenAccount save(final OneTimeTokenAccount account) {

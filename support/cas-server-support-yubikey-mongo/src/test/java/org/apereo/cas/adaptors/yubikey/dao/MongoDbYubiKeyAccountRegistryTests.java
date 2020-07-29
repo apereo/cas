@@ -1,20 +1,19 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
+import org.apereo.cas.adaptors.yubikey.AbstractYubiKeyAccountRegistryTests;
 import org.apereo.cas.adaptors.yubikey.BaseYubiKeyTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.config.MongoDbYubiKeyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import lombok.val;
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link MongoDbYubiKeyAccountRegistryTests}.
@@ -40,45 +39,13 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnabledIfPortOpen(port = 27017)
-public class MongoDbYubiKeyAccountRegistryTests {
-    private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
-
-    private static final String BAD_TOKEN = "123456";
+@Getter
+public class MongoDbYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTests {
+    @Autowired
+    @Qualifier("yubikeyAccountCipherExecutor")
+    private CipherExecutor yubikeyAccountCipherExecutor;
 
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")
     private YubiKeyAccountRegistry yubiKeyAccountRegistry;
-
-    @Test
-    public void verifyAccountNotRegistered() {
-        assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("missing-user"));
-    }
-
-    @Test
-    public void verifyAccountNotRegisteredWithBadToken() {
-        assertFalse(yubiKeyAccountRegistry.registerAccountFor("casuser", BAD_TOKEN));
-        assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuser"));
-    }
-
-    @Test
-    public void verifyAccountRegistered() {
-        assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser2", OTP));
-        assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", OTP));
-        assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", OTP + OTP));
-        assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuser"));
-        assertEquals(2, yubiKeyAccountRegistry.getAccounts().size());
-        val account = yubiKeyAccountRegistry.getAccount("casuser");
-        account.ifPresent(acct -> assertEquals(2, acct.getDeviceIdentifiers().size()));
-
-        yubiKeyAccountRegistry.delete("casuser");
-        assertTrue(yubiKeyAccountRegistry.getAccount("casuser").isEmpty());
-        yubiKeyAccountRegistry.deleteAll();
-    }
-
-    @Test
-    public void verifyEncryptedAccount() {
-        assertTrue(yubiKeyAccountRegistry.registerAccountFor("encrypteduser", OTP));
-        assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("encrypteduser",
-            yubiKeyAccountRegistry.getAccountValidator().getTokenPublicId(OTP)));
-    }
 }

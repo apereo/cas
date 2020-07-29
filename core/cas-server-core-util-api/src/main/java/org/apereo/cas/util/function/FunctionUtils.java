@@ -49,6 +49,26 @@ public class FunctionUtils {
     }
 
     /**
+     * Do if consumer.
+     *
+     * @param <T>           the type parameter
+     * @param condition     the condition
+     * @param trueFunction  the true function
+     * @param falseFunction the false function
+     * @return the consumer
+     */
+    @SneakyThrows
+    public static <T> Consumer<T> doIf(final boolean condition, final Consumer<T> trueFunction,
+                                       final Consumer<T> falseFunction) {
+        return account -> {
+            if (condition) {
+                trueFunction.accept(account);
+            }
+            falseFunction.accept(account);
+        };
+    }
+
+    /**
      * Do if function.
      *
      * @param <R>           the type parameter

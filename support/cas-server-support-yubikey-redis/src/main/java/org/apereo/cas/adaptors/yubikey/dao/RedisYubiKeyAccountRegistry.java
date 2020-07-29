@@ -2,15 +2,18 @@ package org.apereo.cas.adaptors.yubikey.dao;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
-import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 
-import java.io.IOException;
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -28,7 +31,6 @@ import java.util.stream.StreamSupport;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Slf4j
 public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     /**
      * Redis key prefix.
@@ -43,29 +45,30 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         this.redisTemplate = mongoTemplate;
     }
 
-    private static String getPatternYubiKeyDevices() {
-        return CAS_YUBIKEY_PREFIX + '*';
-    }
-
-    private static String getYubiKeyDeviceRedisKey(final String id) {
-        return CAS_YUBIKEY_PREFIX + id;
-    }
-
     @Override
-    public boolean registerAccountFor(final String uid, final String token) {
+    public boolean registerAccountFor(final YubiKeyDeviceRegistrationRequest request) {
         val accountValidator = getAccountValidator();
-        if (accountValidator.isValid(uid, token)) {
-            val yubikeyPublicId = getCipherExecutor().encode(accountValidator.getTokenPublicId(token));
-            val redisKey = getYubiKeyDeviceRedisKey(uid);
+        if (accountValidator.isValid(request.getUsername(), request.getToken())) {
+            val yubikeyPublicId = getCipherExecutor().encode(accountValidator.getTokenPublicId(request.getToken()));
+
+            val redisKey = getYubiKeyDeviceRedisKey(request.getUsername());
             var account = this.redisTemplate.boundValueOps(redisKey).get();
+
+            val device = YubiKeyRegisteredDevice.builder()
+                .id(System.currentTimeMillis())
+                .name(request.getName())
+                .publicId(yubikeyPublicId)
+                .registrationDate(ZonedDateTime.now(Clock.systemUTC()))
+                .build();
             if (account == null) {
-                account = new YubiKeyAccount();
-                account.setUsername(uid);
-                account.registerDevice(yubikeyPublicId);
+                account = YubiKeyAccount.builder()
+                    .username(request.getUsername())
+                    .devices(CollectionUtils.wrapList(device))
+                    .build();
                 this.redisTemplate.boundValueOps(redisKey).set(account);
                 return true;
             }
-            account.registerDevice(yubikeyPublicId);
+            account.getDevices().add(device);
             this.redisTemplate.boundValueOps(redisKey).set(account);
             return true;
         }
@@ -85,26 +88,26 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             })
             .filter(Objects::nonNull)
             .map(account -> {
-                val devices = account.getDeviceIdentifiers().stream()
-                    .map(pubId -> getCipherExecutor().decode(pubId))
+                val devices = account.getDevices().stream()
+                    .filter(device -> getCipherExecutor().decode(device.getPublicId()) != null)
                     .collect(Collectors.toCollection(ArrayList::new));
-                return new YubiKeyAccount(account.getId(), devices, account.getUsername());
+                account.setDevices(devices);
+                return account;
             })
             .collect(Collectors.toList());
-
     }
 
     @Override
     public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
         val redisKey = getYubiKeyDeviceRedisKey(uid);
         val account = this.redisTemplate.boundValueOps(redisKey).get();
-
         if (account != null) {
-            val devices = account.getDeviceIdentifiers().stream()
-                .map(pubId -> getCipherExecutor().decode(pubId))
+            val devices = account.getDevices()
+                .stream()
+                .map(device -> device.setPublicId(getCipherExecutor().decode(device.getPublicId())))
                 .collect(Collectors.toCollection(ArrayList::new));
-            val yubiAccount = new YubiKeyAccount(account.getId(), devices, account.getUsername());
-            return Optional.of(yubiAccount);
+            account.setDevices(devices);
+            return Optional.of(account);
         }
         return Optional.empty();
     }
@@ -123,6 +126,14 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         }
     }
 
+    private static String getPatternYubiKeyDevices() {
+        return CAS_YUBIKEY_PREFIX + '*';
+    }
+
+    private static String getYubiKeyDeviceRedisKey(final String id) {
+        return CAS_YUBIKEY_PREFIX + id;
+    }
+
     private Stream<String> getYubiKeyDevicesStream() {
         val cursor = Objects.requireNonNull(redisTemplate.getConnectionFactory()).getConnection()
             .scan(ScanOptions.scanOptions().match(getPatternYubiKeyDevices()).build());
@@ -131,12 +142,6 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             .map(key -> (String) redisTemplate.getKeySerializer().deserialize(key))
             .collect(Collectors.toSet())
             .stream()
-            .onClose(() -> {
-                try {
-                    cursor.close();
-                } catch (final IOException e) {
-                    LoggingUtils.error(LOGGER, e);
-                }
-            });
+            .onClose(() -> IOUtils.closeQuietly(cursor));
     }
 }

@@ -2,7 +2,10 @@ package org.apereo.cas.adaptors.yubikey.dao;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -10,6 +13,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -36,23 +41,31 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public boolean registerAccountFor(final String uid, final String token) {
+    public boolean registerAccountFor(final YubiKeyDeviceRegistrationRequest request) {
         val accountValidator = getAccountValidator();
-        if (accountValidator.isValid(uid, token)) {
-            val yubikeyPublicId = getCipherExecutor().encode(accountValidator.getTokenPublicId(token));
+        if (accountValidator.isValid(request.getUsername(), request.getToken())) {
+            val yubikeyPublicId = getCipherExecutor().encode(accountValidator.getTokenPublicId(request.getToken()));
 
-            val query = new Query().addCriteria(Criteria.where(MongoDbYubiKeyAccount.FIELD_USERNAME).is(uid));
+            val device = YubiKeyRegisteredDevice.builder()
+                .id(System.currentTimeMillis())
+                .name(request.getName())
+                .publicId(yubikeyPublicId)
+                .registrationDate(ZonedDateTime.now(Clock.systemUTC()))
+                .build();
+
+            val query = new Query().addCriteria(Criteria.where(MongoDbYubiKeyAccount.FIELD_USERNAME).is(request.getUsername()));
             var account = this.mongoTemplate.findOne(query, MongoDbYubiKeyAccount.class, this.collectionName);
             if (account == null) {
-                account = new MongoDbYubiKeyAccount();
-                account.setId(System.currentTimeMillis());
-                account.setUsername(uid);
-                account.registerDevice(yubikeyPublicId);
+                account = MongoDbYubiKeyAccount.builder()
+                    .id(System.currentTimeMillis())
+                    .username(request.getUsername())
+                    .devices(CollectionUtils.wrapList(device))
+                    .build();
                 this.mongoTemplate.save(account, this.collectionName);
                 return true;
             }
-            account.registerDevice(yubikeyPublicId);
-            val update = Update.update(MongoDbYubiKeyAccount.FIELD_DEVICE_IDENTIFIERS, account.getDeviceIdentifiers());
+            account.getDevices().add(device);
+            val update = Update.update("devices", account.getDevices());
             this.mongoTemplate.updateFirst(query, update, MongoDbYubiKeyAccount.class, this.collectionName);
             return true;
         }
@@ -64,10 +77,11 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         return this.mongoTemplate.findAll(MongoDbYubiKeyAccount.class, this.collectionName)
             .stream()
             .peek(it -> {
-                val devices = it.getDeviceIdentifiers().stream()
-                    .map(pubId -> getCipherExecutor().decode(pubId))
+                val devices = it.getDevices()
+                    .stream()
+                    .map(device -> device.setPublicId(getCipherExecutor().decode(device)))
                     .collect(Collectors.toCollection(ArrayList::new));
-                it.setDeviceIdentifiers(devices);
+                it.setDevices(devices);
             })
             .collect(Collectors.toList());
     }
@@ -77,11 +91,12 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         val query = new Query().addCriteria(Criteria.where(MongoDbYubiKeyAccount.FIELD_USERNAME).is(uid));
         val account = this.mongoTemplate.findOne(query, MongoDbYubiKeyAccount.class, this.collectionName);
         if (account != null) {
-            val devices = account.getDeviceIdentifiers().stream()
-                .map(pubId -> getCipherExecutor().decode(pubId))
+            val devices = account.getDevices()
+                .stream()
+                .map(device -> device.setPublicId(getCipherExecutor().decode(device.getPublicId())))
                 .collect(Collectors.toCollection(ArrayList::new));
-            val yubiAccount = new MongoDbYubiKeyAccount(account.getId(), devices, account.getUsername());
-            return Optional.of(yubiAccount);
+            account.setDevices(devices);
+            return Optional.of(account);
         }
         return Optional.empty();
     }

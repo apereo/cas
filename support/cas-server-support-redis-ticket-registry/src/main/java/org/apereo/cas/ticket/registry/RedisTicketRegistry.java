@@ -6,10 +6,10 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Spliterator;
@@ -173,12 +173,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             .map(key -> (String) client.getKeySerializer().deserialize(key))
             .collect(Collectors.toSet())
             .stream()
-            .onClose(() -> {
-                try {
-                    cursor.close();
-                } catch (final IOException e) {
-                    LoggingUtils.error(LOGGER, e);
-                }
-            });
+        .onClose(() -> IOUtils.closeQuietly(cursor));
     }
 }

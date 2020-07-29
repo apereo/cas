@@ -40,6 +40,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-reports")
 
+
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
@@ -50,4 +51,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-audit-api", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-yubikey-core", configuration: "tests")
 }

@@ -1,4 +1,4 @@
-package org.apereo.cas.config.support.authentication;
+package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;

@@ -218,7 +218,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             return verifySignature(currentValue);
         }, () -> currentValue).get();
 
-        if (encoded.length > 0) {
+        if (encoded != null && encoded.length > 0) {
             val encodedObj = new String(encoded, StandardCharsets.UTF_8);
 
             if (isEncryptionPossible()) {

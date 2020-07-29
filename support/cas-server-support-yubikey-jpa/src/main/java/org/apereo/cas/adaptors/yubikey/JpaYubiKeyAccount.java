@@ -12,7 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link JpaYubiKeyAccount}.
@@ -39,7 +39,7 @@ public class JpaYubiKeyAccount extends YubiKeyAccount {
     }
 
     public JpaYubiKeyAccount(final long id,
-                             final ArrayList<String> deviceIdentifiers,
+                             final List<YubiKeyRegisteredDevice> deviceIdentifiers,
                              final String username) {
         super(id, deviceIdentifiers, username);
         this.id = id;
