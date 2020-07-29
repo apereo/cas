@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.persistence.NoResultException;
-
 import java.io.Serializable;
 import java.util.NoSuchElementException;
 
@@ -42,9 +41,9 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
             val account = getAccount(uid);
             if (account.isPresent()) {
                 val yubiKeyAccount = account.get();
-                return yubiKeyAccount.getDeviceIdentifiers()
+                return yubiKeyAccount.getDevices()
                     .stream()
-                    .anyMatch(pubId -> pubId.equals(yubikeyPublicId));
+                    .anyMatch(device -> device.getPublicId().equals(yubikeyPublicId));
             }
         } catch (final NoSuchElementException | NoResultException e) {
             LOGGER.debug("No registration record could be found for id [{}] and public id [{}]", uid, yubikeyPublicId);
@@ -57,7 +56,8 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid) {
         try {
-            return getAccount(uid).isPresent();
+            val account = getAccount(uid);
+            return account.isPresent() && !account.get().getDevices().isEmpty();
         } catch (final NoResultException e) {
             LOGGER.debug("No registration record could be found for id [{}]", uid);
         } catch (final Exception e) {

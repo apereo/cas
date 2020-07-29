@@ -1,17 +1,17 @@
-package org.apereo.cas.config.support.authentication;
+package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.yubikey.DefaultYubiKeyAccountValidator;
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAuthenticationHandler;
 import org.apereo.cas.adaptors.yubikey.YubiKeyCredential;
 import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
+import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.adaptors.yubikey.registry.JsonYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.registry.OpenYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.registry.PermissiveYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.registry.YubiKeyAccountRegistryEndpoint;
-import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountCheckRegistrationAction;
-import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountSaveRegistrationAction;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -24,7 +24,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
 
@@ -42,7 +41,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.webflow.execution.Action;
+
+import java.time.Clock;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link YubiKeyAuthenticationEventExecutionPlanConfiguration}.
@@ -131,20 +136,6 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
-    @ConditionalOnMissingBean(name = "yubiKeyAccountRegistrationAction")
-    public Action yubiKeyAccountRegistrationAction() {
-        return new YubiKeyAccountCheckRegistrationAction(yubiKeyAccountRegistry());
-    }
-
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "yubiKeySaveAccountRegistrationAction")
-    public Action yubiKeySaveAccountRegistrationAction() {
-        return new YubiKeyAccountSaveRegistrationAction(yubiKeyAccountRegistry());
-    }
-
-    @Bean
-    @RefreshScope
     @ConditionalOnMissingBean(name = "yubiKeyAccountValidator")
     public YubiKeyAccountValidator yubiKeyAccountValidator() {
         return new DefaultYubiKeyAccountValidator(yubicoClient());
@@ -166,9 +157,20 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         if (yubi.getAllowedDevices() != null && !yubi.getAllowedDevices().isEmpty()) {
             LOGGER.debug("Using statically-defined devices for [{}] as the YubiKey account registry",
                 yubi.getAllowedDevices().keySet());
-            val map = CollectionUtils.asMultiValueMap(yubi.getAllowedDevices());
+            val map = (Map<String, YubiKeyAccount>) yubi.getAllowedDevices().entrySet()
+                .stream()
+                .map(entry -> YubiKeyAccount.builder()
+                    .id(System.currentTimeMillis())
+                    .username(entry.getKey())
+                    .devices(List.of(YubiKeyRegisteredDevice.builder()
+                        .publicId(entry.getValue())
+                        .name(UUID.randomUUID().toString())
+                        .registrationDate(ZonedDateTime.now(Clock.systemUTC()))
+                        .build()))
+                    .build())
+                .collect(Collectors.toMap(YubiKeyAccount::getUsername, acct -> acct));
             val registry = new PermissiveYubiKeyAccountRegistry(map, yubiKeyAccountValidator());
-            registry.setCipherExecutor(cipher);
+            registry.setCipherExecutor(CipherExecutor.noOpOfSerializableToString());
             return registry;
         }
 

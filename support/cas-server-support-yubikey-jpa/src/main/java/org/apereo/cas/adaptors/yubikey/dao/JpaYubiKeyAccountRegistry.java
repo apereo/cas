@@ -3,7 +3,10 @@ package org.apereo.cas.adaptors.yubikey.dao;
 import org.apereo.cas.adaptors.yubikey.JpaYubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -13,7 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -42,20 +46,33 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public boolean registerAccountFor(final String uid, final String token) {
+    public boolean registerAccountFor(final YubiKeyDeviceRegistrationRequest request) {
         val accountValidator = getAccountValidator();
-        if (accountValidator.isValid(uid, token)) {
-            val yubikeyPublicId = getCipherExecutor().encode(accountValidator.getTokenPublicId(token));
+        if (accountValidator.isValid(request.getUsername(), request.getToken())) {
+            val yubikeyPublicId = getCipherExecutor().encode(accountValidator.getTokenPublicId(request.getToken()));
 
             val results = this.entityManager.createQuery(SELECT_ACCOUNT_QUERY, JpaYubiKeyAccount.class)
-                .setParameter("username", uid)
+                .setParameter("username", request.getUsername())
                 .setMaxResults(1)
                 .getResultList();
 
-            val account = results.isEmpty() ? new JpaYubiKeyAccount() : results.get(0);
-            account.registerDevice(getCipherExecutor().encode(yubikeyPublicId));
-            account.setUsername(uid);
-            return this.entityManager.merge(account) != null;
+            val device = YubiKeyRegisteredDevice.builder()
+                .id(System.currentTimeMillis())
+                .name(request.getName())
+                .publicId(yubikeyPublicId)
+                .registrationDate(ZonedDateTime.now(Clock.systemUTC()))
+                .build();
+
+            if (results.isEmpty()) {
+                val jpaAccount = JpaYubiKeyAccount.builder()
+                    .username(request.getUsername())
+                    .devices(CollectionUtils.wrapList(device))
+                    .build();
+                return this.entityManager.merge(jpaAccount) != null;
+            }
+            val jpaAccount = results.get(0);
+            jpaAccount.getDevices().add(device);
+            return this.entityManager.merge(jpaAccount) != null;
         }
         return false;
     }
@@ -67,10 +84,10 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 .getResultList()
                 .stream()
                 .peek(it -> {
-                    val devices = it.getDeviceIdentifiers().stream()
-                        .map(pubId -> getCipherExecutor().decode(pubId))
+                    val devices = it.getDevices().stream()
+                        .filter(device -> getCipherExecutor().decode(device.getPublicId()) != null)
                         .collect(Collectors.toCollection(ArrayList::new));
-                    it.setDeviceIdentifiers(devices);
+                    it.setDevices(devices);
                 })
                 .collect(Collectors.toList());
         } catch (final NoResultException e) {
@@ -87,11 +104,14 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             val account = this.entityManager.createQuery(SELECT_ACCOUNT_QUERY, JpaYubiKeyAccount.class)
                 .setParameter("username", uid)
                 .getSingleResult();
-            val devices = account.getDeviceIdentifiers().stream()
-                .map(pubId -> getCipherExecutor().decode(pubId))
+            val devices = account.getDevices()
+                .stream()
+                .map(device -> device.setPublicId(getCipherExecutor().decode(device.getPublicId())))
                 .collect(Collectors.toCollection(ArrayList::new));
-            val yubiKeyAccount = new JpaYubiKeyAccount(account.getId(), devices, account.getUsername());
-            return Optional.of(yubiKeyAccount);
+
+            entityManager.detach(account);
+            account.setDevices(devices);
+            return Optional.of(account);
         } catch (final NoResultException e) {
             LOGGER.debug("No registration record could be found", e);
         } catch (final Exception e) {
@@ -102,14 +122,15 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public void delete(final String uid) {
-        val count = this.entityManager.createQuery("DELETE FROM " + JpaYubiKeyAccount.class.getSimpleName() + " r WHERE r.username = :username")
+        val account = this.entityManager.createQuery(SELECT_ACCOUNT_QUERY, JpaYubiKeyAccount.class)
             .setParameter("username", uid)
-            .executeUpdate();
-        LOGGER.debug("Deleted [{}] record(s)", count);
+            .getSingleResult();
+        entityManager.remove(account);
+        LOGGER.debug("Deleted [{}] record(s)", account);
     }
 
     @Override
     public void deleteAll() {
-        this.entityManager.createQuery("DELETE FROM " + JpaYubiKeyAccount.class.getSimpleName()).executeUpdate();
+        this.entityManager.createQuery(SELECT_QUERY).getResultList().forEach(r -> entityManager.remove(r));
     }
 }

@@ -1,12 +1,13 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import org.apereo.cas.util.crypto.CipherExecutor;
+
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,10 +20,24 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("MFA")
 public abstract class AbstractYubiKeyAccountRegistryTests {
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
+
     private static final String BAD_TOKEN = "123456";
-    private static final String CASUSER = "casuser";
 
     public abstract YubiKeyAccountRegistry getYubiKeyAccountRegistry();
+
+    public abstract CipherExecutor getYubikeyAccountCipherExecutor();
+
+    @BeforeEach
+    public void setUp() {
+        getYubiKeyAccountRegistry().deleteAll();
+    }
+
+    @Test
+    public void verifyCipher() {
+        val pubKey = getYubiKeyAccountRegistry().getAccountValidator().getTokenPublicId(OTP);
+        val encoded = getYubikeyAccountCipherExecutor().encode(pubKey);
+        assertEquals(pubKey, getYubikeyAccountCipherExecutor().decode(encoded));
+    }
 
     @Test
     public void verifyAccountNotRegistered() {
@@ -31,34 +46,43 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
 
     @Test
     public void verifyAccountNotRegisteredWithBadToken() {
-        val yubiKeyAccountRegistry = getYubiKeyAccountRegistry();
-        assertFalse(yubiKeyAccountRegistry.registerAccountFor(CASUSER, BAD_TOKEN));
-        assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor(CASUSER));
+        val request = YubiKeyDeviceRegistrationRequest.builder().username("casuser")
+            .token(BAD_TOKEN).name(UUID.randomUUID().toString()).build();
+        assertFalse(getYubiKeyAccountRegistry().registerAccountFor(request));
+        assertFalse(getYubiKeyAccountRegistry().isYubiKeyRegisteredFor("casuser"));
     }
 
     @Test
     public void verifyAccountRegistered() {
-        val yubiKeyAccountRegistry = getYubiKeyAccountRegistry();
-        assertTrue(yubiKeyAccountRegistry.registerAccountFor(CASUSER, OTP));
-        assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor(CASUSER));
-        assertEquals(1, yubiKeyAccountRegistry.getAccounts().size());
+        val request1 = YubiKeyDeviceRegistrationRequest.builder().username("casuser2")
+            .token(OTP).name(UUID.randomUUID().toString()).build();
+        assertTrue(getYubiKeyAccountRegistry().registerAccountFor(request1));
+
+        val request2 = YubiKeyDeviceRegistrationRequest.builder().username("casuser")
+            .token(OTP).name(UUID.randomUUID().toString()).build();
+        assertTrue(getYubiKeyAccountRegistry().registerAccountFor(request2));
+
+        val request3 = YubiKeyDeviceRegistrationRequest.builder().username("casuser")
+            .token(OTP + OTP).name(UUID.randomUUID().toString()).build();
+        assertTrue(getYubiKeyAccountRegistry().registerAccountFor(request3));
+
+        assertTrue(getYubiKeyAccountRegistry().isYubiKeyRegisteredFor("casuser"));
+        assertEquals(2, getYubiKeyAccountRegistry().getAccounts().size());
+        val account = getYubiKeyAccountRegistry().getAccount("casuser");
+        account.ifPresent(acct -> assertEquals(2, acct.getDevices().size()));
+
+        getYubiKeyAccountRegistry().delete("casuser");
+        assertTrue(getYubiKeyAccountRegistry().getAccount("casuser").isEmpty());
+        getYubiKeyAccountRegistry().deleteAll();
     }
 
     @Test
     public void verifyEncryptedAccount() {
-        val yubiKeyAccountRegistry = getYubiKeyAccountRegistry();
-        assertTrue(yubiKeyAccountRegistry.registerAccountFor("encrypteduser", OTP));
-        assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("encrypteduser", yubiKeyAccountRegistry.getAccountValidator().getTokenPublicId(OTP)));
-    }
+        val request1 = YubiKeyDeviceRegistrationRequest.builder().username("encrypteduser")
+            .token(OTP).name(UUID.randomUUID().toString()).build();
+        assertTrue(getYubiKeyAccountRegistry().registerAccountFor(request1));
 
-
-    @TestConfiguration("YubiKeyAccountRegistryTestConfiguration")
-    @Lazy(false)
-    public static class YubiKeyAccountRegistryTestConfiguration {
-        @Bean
-        @RefreshScope
-        public YubiKeyAccountValidator yubiKeyAccountValidator() {
-            return (uid, token) -> !token.equals(BAD_TOKEN);
-        }
+        assertTrue(getYubiKeyAccountRegistry().isYubiKeyRegisteredFor("encrypteduser",
+            getYubiKeyAccountRegistry().getAccountValidator().getTokenPublicId(OTP)));
     }
 }

@@ -1,4 +1,4 @@
-package org.apereo.cas.config.support.authentication;
+package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.CredentialMultifactorAuthenticationProviderBypassEvaluator;

@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.yubikey.web.flow;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,6 @@ public class YubiKeyAccountCheckRegistrationAction extends AbstractAction {
         if (registry.isYubiKeyRegisteredFor(uid)) {
             return success();
         }
-        return new EventFactorySupport().event(this, "register");
+        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
     }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -27,7 +28,10 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @Tag("RegisteredService")
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@SpringBootTest(classes = {
+    CasCoreUtilConfiguration.class,
+    RefreshAutoConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
 

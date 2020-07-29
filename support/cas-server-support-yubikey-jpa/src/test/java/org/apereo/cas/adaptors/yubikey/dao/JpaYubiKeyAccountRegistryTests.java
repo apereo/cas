@@ -1,20 +1,19 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
+import org.apereo.cas.adaptors.yubikey.AbstractYubiKeyAccountRegistryTests;
 import org.apereo.cas.adaptors.yubikey.BaseYubiKeyTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.JpaYubiKeyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.val;
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link JpaYubiKeyAccountRegistryTests}.
@@ -33,36 +32,15 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mfa.yubikey.jpa.ddl-auto=create-drop"
 })
 @Tag("JDBC")
+@Getter
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class JpaYubiKeyAccountRegistryTests {
-    private static final String BAD_TOKEN = "123456";
+public class JpaYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTests {
+    @Autowired
+    @Qualifier("yubikeyAccountCipherExecutor")
+    private CipherExecutor yubikeyAccountCipherExecutor;
 
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")
     private YubiKeyAccountRegistry yubiKeyAccountRegistry;
 
-    @Test
-    public void verifyAccountNotRegistered() {
-        assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("missing-user"));
-    }
-
-    @Test
-    public void verifyAccountNotRegisteredWithBadToken() {
-        assertFalse(yubiKeyAccountRegistry.registerAccountFor("casuser", BAD_TOKEN));
-        assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuser"));
-    }
-
-    @Test
-    public void verifyAccountRegistered() {
-        assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", "cccccccvlidchlffblbghhckbctgethcrtdrruchvlud"));
-        assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", "cccccccvlidchlffblbghhckbctgethcrtdrruchvluq"));
-        assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuser"));
-        assertEquals(1, yubiKeyAccountRegistry.getAccounts().size());
-        val account = yubiKeyAccountRegistry.getAccount("casuser");
-        account.ifPresent(acct -> assertEquals(2, acct.getDeviceIdentifiers().size()));
-
-        yubiKeyAccountRegistry.delete("casuser");
-        assertTrue(yubiKeyAccountRegistry.getAccount("casuser").isEmpty());
-        yubiKeyAccountRegistry.deleteAll();
-    }
 }

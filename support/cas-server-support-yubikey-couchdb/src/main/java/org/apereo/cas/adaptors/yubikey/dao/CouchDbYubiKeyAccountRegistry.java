@@ -2,15 +2,19 @@ package org.apereo.cas.adaptors.yubikey.dao;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
 import org.apereo.cas.couchdb.yubikey.CouchDbYubiKeyAccount;
 import org.apereo.cas.couchdb.yubikey.YubiKeyAccountCouchDbRepository;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -30,15 +34,27 @@ public class CouchDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public boolean registerAccountFor(final String uid, final String token) {
+    public boolean registerAccountFor(final YubiKeyDeviceRegistrationRequest request) {
         val accountValidator = getAccountValidator();
-        if (accountValidator.isValid(uid, token)) {
-            val publicKeyId = getCipherExecutor().encode(accountValidator.getTokenPublicId(token));
-            var account = couchDb.findByUsername(uid);
+        if (accountValidator.isValid(request.getUsername(), request.getToken())) {
+            val yubikeyPublicId = getCipherExecutor().encode(accountValidator.getTokenPublicId(request.getToken()));
+
+            val device = YubiKeyRegisteredDevice.builder()
+                .id(System.currentTimeMillis())
+                .name(request.getName())
+                .publicId(yubikeyPublicId)
+                .registrationDate(ZonedDateTime.now(Clock.systemUTC()))
+                .build();
+
+            var account = couchDb.findByUsername(request.getUsername());
             if (account == null) {
-                couchDb.add(new CouchDbYubiKeyAccount(List.of(publicKeyId), uid));
+                account = CouchDbYubiKeyAccount.builder()
+                    .username(request.getUsername())
+                    .devices(CollectionUtils.wrapList(device))
+                    .build();
+                couchDb.add(account);
             } else {
-                account.registerDevice(publicKeyId);
+                account.getDevices().add(device);
                 couchDb.update(account);
             }
             return true;
@@ -51,10 +67,10 @@ public class CouchDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         return couchDb.getAll()
             .stream()
             .peek(it -> {
-                val devices = it.getDeviceIdentifiers().stream()
-                    .map(pubId -> getCipherExecutor().decode(pubId))
+                val devices = it.getDevices().stream()
+                    .filter(device -> getCipherExecutor().decode(device.getPublicId()) != null)
                     .collect(Collectors.toCollection(ArrayList::new));
-                it.setDeviceIdentifiers(devices);
+                it.setDevices(devices);
             })
             .collect(Collectors.toCollection(ArrayList::new));
     }
@@ -63,11 +79,11 @@ public class CouchDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public Optional<YubiKeyAccount> getAccount(final String uid) {
         val account = couchDb.findByUsername(uid);
         if (account != null) {
-            val devices = account.getDeviceIdentifiers().stream()
-                .map(pubId -> getCipherExecutor().decode(pubId))
+            val devices = account.getDevices().stream()
+                .filter(device -> getCipherExecutor().decode(device.getPublicId()) != null)
                 .collect(Collectors.toCollection(ArrayList::new));
-            val yubiKeyAccount = new YubiKeyAccount(account.getId(), devices, account.getUsername());
-            return Optional.of(yubiKeyAccount);
+            account.setDevices(devices);
+            return Optional.of(account);
         }
         return Optional.empty();
     }

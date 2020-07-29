@@ -38,11 +38,10 @@ public interface YubiKeyAccountRegistry {
     /**
      * Register account/device.
      *
-     * @param uid   the uid
-     * @param token the yubikey token
-     * @return true/false
+     * @param request the request
+     * @return true /false
      */
-    boolean registerAccountFor(String uid, String token);
+    boolean registerAccountFor(YubiKeyDeviceRegistrationRequest request);
 
     /**
      * Gets accounts for all users.

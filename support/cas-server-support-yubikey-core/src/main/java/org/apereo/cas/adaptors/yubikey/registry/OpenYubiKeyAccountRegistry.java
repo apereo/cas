@@ -2,8 +2,12 @@ package org.apereo.cas.adaptors.yubikey.registry;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.util.CollectionUtils;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -31,14 +35,22 @@ public class OpenYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public boolean registerAccountFor(final String uid, final String yubikeyPublicId) {
+    public boolean registerAccountFor(final YubiKeyDeviceRegistrationRequest request) {
         return true;
     }
 
     @Override
     public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
-        return Optional.of(new YubiKeyAccount(System.currentTimeMillis(),
-            CollectionUtils.wrapArrayList(UUID.randomUUID().toString()), uid));
+        return Optional.of(YubiKeyAccount.builder()
+            .username(uid)
+            .id(System.currentTimeMillis())
+            .devices(CollectionUtils.wrapArrayList(YubiKeyRegisteredDevice.builder()
+                .id(System.currentTimeMillis())
+                .name(UUID.randomUUID().toString())
+                .publicId(UUID.randomUUID().toString())
+                .registrationDate(ZonedDateTime.now(ZoneOffset.UTC))
+                .build()))
+            .build());
     }
 
     @Override

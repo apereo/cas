@@ -1,6 +1,7 @@
 package org.apereo.cas.couchdb.yubikey;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
+import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,8 +10,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * This is {@link CouchDbYubiKeyAccount}.
@@ -34,14 +34,14 @@ public class CouchDbYubiKeyAccount extends YubiKeyAccount {
     public CouchDbYubiKeyAccount(@JsonProperty("_id") final String cid,
                                  @JsonProperty("_rev") final String rev,
                                  @JsonProperty("id") final long id,
-                                 @JsonProperty("deviceIdentifiers") final @NonNull ArrayList<String> deviceIdentifiers,
+                                 @JsonProperty("devices") final @NonNull List<YubiKeyRegisteredDevice> deviceIdentifiers,
                                  @JsonProperty("username") final @NonNull String username) {
         super(id, deviceIdentifiers, username);
         this.cid = cid;
         this.rev = rev;
     }
 
-    public CouchDbYubiKeyAccount(final Collection<String> publicId, final String username) {
-        this(null, null, -1, new ArrayList<>(publicId), username);
+    public CouchDbYubiKeyAccount(final List<YubiKeyRegisteredDevice> devices, final String username) {
+        this(null, null, -1, devices, username);
     }
 }

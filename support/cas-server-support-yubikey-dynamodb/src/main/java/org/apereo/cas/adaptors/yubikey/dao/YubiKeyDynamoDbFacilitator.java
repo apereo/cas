@@ -1,12 +1,16 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
+import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.configuration.model.support.mfa.yubikey.YubiKeyDynamoDbMultifactorProperties;
 import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
 import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -47,6 +51,10 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class YubiKeyDynamoDbFacilitator {
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
+        .findAndRegisterModules();
+
     private final YubiKeyDynamoDbMultifactorProperties dynamoDbProperties;
 
     private final DynamoDbClient amazonDynamoDBClient;
@@ -160,18 +168,40 @@ public class YubiKeyDynamoDbFacilitator {
      * @return the boolean
      */
     public boolean update(final YubiKeyAccount registration) {
-        val attributeValue = AttributeValue.builder().ss(registration.getDeviceIdentifiers()).build();
         val updateRequest = UpdateItemRequest.builder()
             .tableName(dynamoDbProperties.getTableName())
             .key(Map.of(ColumnNames.USERNAME.getColumnName(),
                 AttributeValue.builder().s(String.valueOf(registration.getUsername())).build()))
             .attributeUpdates(Map.of(ColumnNames.DEVICE_IDENTIFIERS.getColumnName(),
-                AttributeValueUpdate.builder().value(attributeValue).action(AttributeAction.PUT).build()))
+                AttributeValueUpdate.builder().value(toAttributeValue(registration)).action(AttributeAction.PUT).build()))
             .build();
         LOGGER.debug("Submitting put request [{}] for record [{}]", updateRequest, registration);
         val putItemResult = amazonDynamoDBClient.updateItem(updateRequest);
         LOGGER.debug("Record added with result [{}]", putItemResult);
         return true;
+    }
+
+    private static AttributeValue toAttributeValue(final YubiKeyAccount account) {
+        val devices = account.getDevices().stream()
+            .map(device -> AttributeValue.builder()
+                .m(Map.of(
+                    "id", AttributeValue.builder().n(String.valueOf(device.getId())).build(),
+                    "name", AttributeValue.builder().s(device.getName()).build(),
+                    "publicId", AttributeValue.builder().s(device.getPublicId()).build(),
+                    "registrationDate", AttributeValue.builder().s(device.getRegistrationDate().toString()).build()
+                ))
+                .build())
+            .collect(Collectors.toList());
+        return AttributeValue.builder().l(devices).build();
+    }
+
+    private static YubiKeyRegisteredDevice toYubiKeyRegisteredDevice(final Map<String, AttributeValue> map) {
+        return YubiKeyRegisteredDevice.builder()
+            .id(Long.parseLong(map.get("id").n()))
+            .name(map.get("name").s())
+            .publicId(map.get("publicId").s())
+            .registrationDate(DateTimeUtils.zonedDateTimeOf(map.get("registrationDate").s()))
+            .build();
     }
 
     /**
@@ -184,7 +214,7 @@ public class YubiKeyDynamoDbFacilitator {
         val values = new HashMap<String, AttributeValue>();
         values.put(ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getId())).build());
         values.put(ColumnNames.USERNAME.getColumnName(), AttributeValue.builder().s(String.valueOf(record.getUsername())).build());
-        values.put(ColumnNames.DEVICE_IDENTIFIERS.getColumnName(), AttributeValue.builder().ss(record.getDeviceIdentifiers()).build());
+        values.put(ColumnNames.DEVICE_IDENTIFIERS.getColumnName(), toAttributeValue(record));
         LOGGER.debug("Created attribute values [{}] based on [{}]", values, record);
         return values;
     }
@@ -209,11 +239,12 @@ public class YubiKeyDynamoDbFacilitator {
                 .map(item -> {
                     val id = Long.parseLong(item.get(ColumnNames.ID.getColumnName()).n());
                     val username = item.get(ColumnNames.USERNAME.getColumnName()).s();
-                    val records = new ArrayList<>(item.get(ColumnNames.DEVICE_IDENTIFIERS.getColumnName()).ss());
+                    val details = item.get(ColumnNames.DEVICE_IDENTIFIERS.getColumnName()).l();
+                    val records = details.stream().map(value -> toYubiKeyRegisteredDevice(value.m())).collect(Collectors.toList());
                     return YubiKeyAccount.builder()
                         .id(id)
                         .username(username)
-                        .deviceIdentifiers(records)
+                        .devices(records)
                         .build();
                 })
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -222,6 +253,7 @@ public class YubiKeyDynamoDbFacilitator {
         }
         return new ArrayList<>(0);
     }
+
 
     @Getter
     @RequiredArgsConstructor

@@ -2,10 +2,15 @@ package org.apereo.cas.adaptors.yubikey.dao;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -27,18 +32,29 @@ public class DynamoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public boolean registerAccountFor(final String uid, final String token) {
+    public boolean registerAccountFor(final YubiKeyDeviceRegistrationRequest request) {
         val accountValidator = getAccountValidator();
-        if (accountValidator.isValid(uid, token)) {
-            val yubikeyPublicId = getCipherExecutor().encode(accountValidator.getTokenPublicId(token));
+        if (accountValidator.isValid(request.getUsername(), request.getToken())) {
+            val yubikeyPublicId = getCipherExecutor().encode(accountValidator.getTokenPublicId(request.getToken()));
 
-            val results = dynamoDbFacilitator.getAccounts(uid);
-            val account = results.isEmpty() ? new YubiKeyAccount() : results.get(0);
-            account.registerDevice(yubikeyPublicId);
-            account.setUsername(uid);
+            val results = dynamoDbFacilitator.getAccounts(request.getUsername());
+
+            val device = YubiKeyRegisteredDevice.builder()
+                .id(System.currentTimeMillis())
+                .name(request.getName())
+                .publicId(yubikeyPublicId)
+                .registrationDate(ZonedDateTime.now(Clock.systemUTC()))
+                .build();
+
             if (results.isEmpty()) {
+                val account = YubiKeyAccount.builder()
+                    .username(request.getUsername())
+                    .devices(CollectionUtils.wrapList(device))
+                    .build();
                 return dynamoDbFacilitator.save(account);
             }
+            val account = results.get(0);
+            account.getDevices().add(device);
             return dynamoDbFacilitator.update(account);
         }
         return false;
@@ -49,10 +65,10 @@ public class DynamoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         return dynamoDbFacilitator.getAccounts()
             .stream()
             .peek(it -> {
-                val devices = it.getDeviceIdentifiers().stream()
-                    .map(pubId -> getCipherExecutor().decode(pubId))
+                val devices = it.getDevices().stream()
+                    .filter(device -> getCipherExecutor().decode(device.getPublicId()) != null)
                     .collect(Collectors.toCollection(ArrayList::new));
-                it.setDeviceIdentifiers(devices);
+                it.setDevices(devices);
             })
             .collect(Collectors.toList());
     }
@@ -64,15 +80,12 @@ public class DynamoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             return Optional.empty();
         }
         val account = accounts.iterator().next();
-        val devices = account.getDeviceIdentifiers().stream()
-            .map(pubId -> getCipherExecutor().decode(pubId))
+        val devices = account.getDevices()
+            .stream()
+            .map(device -> device.setPublicId(getCipherExecutor().decode(device.getPublicId())))
             .collect(Collectors.toCollection(ArrayList::new));
-        val yubiAccount = YubiKeyAccount.builder()
-            .id(account.getId())
-            .username(account.getUsername())
-            .deviceIdentifiers(devices)
-            .build();
-        return Optional.of(yubiAccount);
+        account.setDevices(devices);
+        return Optional.of(account);
     }
 
     @Override

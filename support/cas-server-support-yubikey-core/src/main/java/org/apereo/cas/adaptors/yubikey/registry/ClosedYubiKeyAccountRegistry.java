@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.yubikey.registry;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,7 +30,7 @@ public class ClosedYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public boolean registerAccountFor(final String uid, final String yubikeyPublicId) {
+    public boolean registerAccountFor(final YubiKeyDeviceRegistrationRequest request) {
         return false;
     }
 

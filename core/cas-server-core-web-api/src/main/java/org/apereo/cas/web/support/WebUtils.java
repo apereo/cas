@@ -1419,7 +1419,7 @@ public class WebUtils {
      */
     public static void putGoogleAuthenticatorMultipleDeviceRegistrationEnabled(final RequestContext requestContext,
                                                                                final boolean enabled) {
-        requestContext.getFlowScope().put("multipleDeviceRegistrationEnabled", enabled);
+        requestContext.getFlowScope().put("gauthMultipleDeviceRegistrationEnabled", enabled);
     }
 
     /**
@@ -1429,8 +1429,16 @@ public class WebUtils {
      * @return true/false
      */
     public static Boolean isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("multipleDeviceRegistrationEnabled", Boolean.class);
+        return requestContext.getFlowScope().get("gauthMultipleDeviceRegistrationEnabled", Boolean.class);
     }
 
-
+    /**
+     * Put yubikey multiple device registration enabled.
+     *
+     * @param requestContext the request context
+     * @param enabled        the enabled
+     */
+    public static void putYubiKeyMultipleDeviceRegistrationEnabled(final RequestContext requestContext, final boolean enabled) {
+        requestContext.getFlowScope().put("yubikeyMultipleDeviceRegistrationEnabled", enabled);
+    }
 }
