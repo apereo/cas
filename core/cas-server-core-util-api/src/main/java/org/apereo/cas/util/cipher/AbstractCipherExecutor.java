@@ -42,6 +42,7 @@ import java.util.Map;
 @Getter
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
     private static final int MAP_SIZE = 8;
+    
     private static final BigInteger RSA_PUBLIC_KEY_EXPONENT = BigInteger.valueOf(65537);
 
     static {
