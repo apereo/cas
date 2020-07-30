@@ -40,21 +40,49 @@ public class OpenYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
-        return Optional.of(YubiKeyAccount.builder()
-            .username(uid)
-            .id(System.currentTimeMillis())
-            .devices(CollectionUtils.wrapArrayList(YubiKeyRegisteredDevice.builder()
-                .id(System.currentTimeMillis())
-                .name(UUID.randomUUID().toString())
-                .publicId(UUID.randomUUID().toString())
-                .registrationDate(ZonedDateTime.now(ZoneOffset.UTC))
-                .build()))
-            .build());
+    public void delete(final String uid) {
     }
 
     @Override
-    public Collection<? extends YubiKeyAccount> getAccounts() {
+    public void delete(final String username, final long deviceId) {
+    }
+
+    @Override
+    public void deleteAll() {
+    }
+
+    @Override
+    public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
+        return Optional.of(getStaticAccount(uid));
+    }
+
+    @Override
+    public Collection<? extends YubiKeyAccount> getAccountsInternal() {
         return new ArrayList<>(0);
+    }
+
+    private static YubiKeyAccount getStaticAccount(final String uid) {
+        return YubiKeyAccount.builder()
+            .username(uid)
+            .id(System.currentTimeMillis())
+            .devices(CollectionUtils.wrapArrayList(
+                YubiKeyRegisteredDevice.builder()
+                    .id(System.currentTimeMillis())
+                    .name(UUID.randomUUID().toString())
+                    .publicId(UUID.randomUUID().toString())
+                    .registrationDate(ZonedDateTime.now(ZoneOffset.UTC))
+                    .build()))
+            .build();
+    }
+
+    @Override
+    protected YubiKeyAccount saveAccount(final YubiKeyDeviceRegistrationRequest request,
+                                         final YubiKeyRegisteredDevice... device) {
+        return getStaticAccount(request.getUsername());
+    }
+
+    @Override
+    protected boolean update(final YubiKeyAccount account) {
+        return true;
     }
 }

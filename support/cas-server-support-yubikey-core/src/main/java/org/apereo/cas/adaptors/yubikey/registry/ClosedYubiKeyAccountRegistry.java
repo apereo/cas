@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.yubikey.registry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,6 +18,14 @@ import java.util.Optional;
 public class ClosedYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public ClosedYubiKeyAccountRegistry(final YubiKeyAccountValidator accountValidator) {
         super(accountValidator);
+    }
+
+    @Override
+    public void delete(final String username, final long deviceId) {
+    }
+
+    @Override
+    public void delete(final String uid) {
     }
 
     @Override
@@ -35,12 +44,28 @@ public class ClosedYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
+    protected YubiKeyAccount saveAccount(final YubiKeyDeviceRegistrationRequest request,
+                                                                    final YubiKeyRegisteredDevice... device) {
+        return null;
+    }
+
+    @Override
+    protected boolean update(final YubiKeyAccount account) {
+        return false;
+    }
+
+    @Override
     public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
         return Optional.empty();
     }
 
     @Override
-    public Collection<? extends YubiKeyAccount> getAccounts() {
+    public Collection<? extends YubiKeyAccount> getAccountsInternal() {
         return new ArrayList<>(0);
+    }
+
+
+    @Override
+    public void deleteAll() {
     }
 }
