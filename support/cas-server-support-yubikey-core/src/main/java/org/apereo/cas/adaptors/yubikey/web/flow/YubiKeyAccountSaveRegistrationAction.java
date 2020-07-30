@@ -28,10 +28,15 @@ public class YubiKeyAccountSaveRegistrationAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val token = request.getParameter("token");
+        val token = requestContext.getRequestParameters().getRequired("token");
+        val accountName = requestContext.getRequestParameters().getRequired("accountName");
 
-        val regRequest = YubiKeyDeviceRegistrationRequest.builder().username(uid).token(token).build();
+        val regRequest = YubiKeyDeviceRegistrationRequest.builder()
+            .username(uid)
+            .name(accountName)
+            .token(token)
+            .build();
+
         if (StringUtils.isNotBlank(token) && registry.registerAccountFor(regRequest)) {
             return success();
         }

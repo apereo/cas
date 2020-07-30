@@ -2991,6 +2991,7 @@ To learn more about this topic, [please review this guide](../mfa/YubiKey-Authen
 # cas.authn.mfa.yubikey.rank=0
 # cas.authn.mfa.yubikey.api-urls=
 # cas.authn.mfa.yubikey.trusted-device-enabled=false
+# cas.authn.mfa.yubikey.multiple-device-registration-enabled=false
 
 # cas.authn.mfa.yubikey.name=
 # cas.authn.mfa.yubikey.order=

@@ -52,6 +52,13 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
     private String secretKey = StringUtils.EMPTY;
 
     /**
+     * When enabled, allows the user/system to accept multiple accounts
+     * and device registrations per user, allowing one to switch between
+     * or register new devices/accounts automatically.
+     */
+    private boolean multipleDeviceRegistrationEnabled;
+    
+    /**
      * Keep device registration records inside a static JSON resource.
      */
     private transient Resource jsonFile;
