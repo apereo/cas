@@ -21,6 +21,11 @@ public class ClosedYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
+    protected YubiKeyAccount getAccountInternal(final String username) {
+        return null;
+    }
+
+    @Override
     public void delete(final String username, final long deviceId) {
     }
 
@@ -44,13 +49,13 @@ public class ClosedYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    protected YubiKeyAccount saveAccount(final YubiKeyDeviceRegistrationRequest request,
-                                                                    final YubiKeyRegisteredDevice... device) {
+    public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request,
+                                  final YubiKeyRegisteredDevice... device) {
         return null;
     }
 
     @Override
-    protected boolean update(final YubiKeyAccount account) {
+    public boolean update(final YubiKeyAccount account) {
         return false;
     }
 

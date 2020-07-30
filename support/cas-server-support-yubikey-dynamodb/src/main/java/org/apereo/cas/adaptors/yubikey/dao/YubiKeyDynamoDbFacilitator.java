@@ -131,6 +131,22 @@ public class YubiKeyDynamoDbFacilitator {
     /**
      * Delete.
      *
+     * @param username the username
+     * @param deviceId the device id
+     */
+    public void delete(final String username, final long deviceId) {
+        val accounts = getAccounts(username);
+        if (!accounts.isEmpty()) {
+            val account = accounts.get(0);
+            if (account != null && account.getDevices().removeIf(device -> device.getId() == deviceId)) {
+                update(account);
+            }
+        }
+    }
+
+    /**
+     * Delete.
+     *
      * @param uid the uid
      */
     public void delete(final String uid) {
@@ -175,21 +191,6 @@ public class YubiKeyDynamoDbFacilitator {
         return true;
     }
 
-    /**
-     * Delete.
-     *
-     * @param username the username
-     * @param deviceId the device id
-     */
-    public void delete(final String username, final long deviceId) {
-        val accounts = getAccounts(username);
-        if (!accounts.isEmpty()) {
-            val account = accounts.get(0);
-            if (account != null && account.getDevices().removeIf(device -> device.getId() == deviceId)) {
-                update(account);
-            }
-        }
-    }
 
     private static AttributeValue toAttributeValue(final YubiKeyAccount account) {
         val devices = account.getDevices().stream()

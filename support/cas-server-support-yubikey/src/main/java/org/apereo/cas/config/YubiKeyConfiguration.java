@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.yubikey.YubikeyAccountCipherExecutor;
+import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -13,6 +14,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * This is {@link YubiKeyConfiguration}.
@@ -28,6 +30,12 @@ public class YubiKeyConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Bean
+    @ConditionalOnMissingBean(name = "transactionManagerYubiKey")
+    public PlatformTransactionManager transactionManagerYubiKey() {
+        return new PseudoPlatformTransactionManager();
+    }
 
     @Bean
     @RefreshScope

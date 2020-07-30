@@ -11,11 +11,9 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -59,18 +57,9 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
+    public YubiKeyAccount getAccountInternal(final String uid) {
         val redisKey = getYubiKeyDeviceRedisKey(uid);
-        val account = this.redisTemplate.boundValueOps(redisKey).get();
-        if (account != null) {
-            val devices = account.getDevices()
-                .stream()
-                .map(device -> device.setPublicId(getCipherExecutor().decode(device.getPublicId())))
-                .collect(Collectors.toCollection(ArrayList::new));
-            account.setDevices(devices);
-            return Optional.of(account);
-        }
-        return Optional.empty();
+        return this.redisTemplate.boundValueOps(redisKey).get();
     }
 
     @Override
@@ -96,6 +85,25 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         }
     }
 
+    @Override
+    public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request,
+                               final YubiKeyRegisteredDevice... device) {
+        val redisKey = getYubiKeyDeviceRedisKey(request.getUsername());
+        val account = YubiKeyAccount.builder()
+            .username(request.getUsername())
+            .devices(Arrays.stream(device).collect(Collectors.toList()))
+            .build();
+        this.redisTemplate.boundValueOps(redisKey).set(account);
+        return account;
+    }
+
+    @Override
+    public boolean update(final YubiKeyAccount account) {
+        val redisKey = getYubiKeyDeviceRedisKey(account.getUsername());
+        this.redisTemplate.boundValueOps(redisKey).set(account);
+        return true;
+    }
+
     private static String getPatternYubiKeyDevices() {
         return CAS_YUBIKEY_PREFIX + '*';
     }
@@ -113,24 +121,5 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             .collect(Collectors.toSet())
             .stream()
             .onClose(() -> IOUtils.closeQuietly(cursor));
-    }
-
-    @Override
-    protected YubiKeyAccount saveAccount(final YubiKeyDeviceRegistrationRequest request,
-                                         final YubiKeyRegisteredDevice... device) {
-        val redisKey = getYubiKeyDeviceRedisKey(request.getUsername());
-        val account = YubiKeyAccount.builder()
-            .username(request.getUsername())
-            .devices(Arrays.stream(device).collect(Collectors.toList()))
-            .build();
-        this.redisTemplate.boundValueOps(redisKey).set(account);
-        return account;
-    }
-
-    @Override
-    protected boolean update(final YubiKeyAccount account) {
-        val redisKey = getYubiKeyDeviceRedisKey(account.getUsername());
-        this.redisTemplate.boundValueOps(redisKey).set(account);
-        return true;
     }
 }

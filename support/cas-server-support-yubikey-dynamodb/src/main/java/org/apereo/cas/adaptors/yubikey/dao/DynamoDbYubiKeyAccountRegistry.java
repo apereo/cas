@@ -8,10 +8,8 @@ import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
 
 import lombok.val;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -35,18 +33,12 @@ public class DynamoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
+    public YubiKeyAccount getAccountInternal(final String uid) {
         val accounts = dynamoDbFacilitator.getAccounts(uid);
         if (accounts.isEmpty()) {
-            return Optional.empty();
+            return null;
         }
-        val account = accounts.iterator().next();
-        val devices = account.getDevices()
-            .stream()
-            .map(device -> device.setPublicId(getCipherExecutor().decode(device.getPublicId())))
-            .collect(Collectors.toCollection(ArrayList::new));
-        account.setDevices(devices);
-        return Optional.of(account);
+        return accounts.iterator().next();
     }
 
     @Override
@@ -65,8 +57,8 @@ public class DynamoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    protected YubiKeyAccount saveAccount(final YubiKeyDeviceRegistrationRequest request,
-                                         final YubiKeyRegisteredDevice... device) {
+    public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request,
+                                  final YubiKeyRegisteredDevice... device) {
         val account = YubiKeyAccount.builder()
             .username(request.getUsername())
             .devices(Arrays.stream(device).collect(Collectors.toList()))
@@ -78,7 +70,7 @@ public class DynamoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    protected boolean update(final YubiKeyAccount account) {
+    public boolean update(final YubiKeyAccount account) {
         return dynamoDbFacilitator.update(account);
     }
 }
