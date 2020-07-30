@@ -16,10 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link JpaYubiKeyAccountRegistry}.
@@ -49,23 +46,15 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
+    public YubiKeyAccount getAccountInternal(final String uid) {
         try {
             val account = fetchSingleYubiKeyAccount(uid);
-            val devices = account.getDevices()
-                .stream()
-                .map(device -> device.setPublicId(getCipherExecutor().decode(device.getPublicId())))
-                .collect(Collectors.toCollection(ArrayList::new));
-
             entityManager.detach(account);
-            account.setDevices(devices);
-            return Optional.of(account);
+            return account;
         } catch (final NoResultException e) {
             LOGGER.debug("No registration record could be found", e);
-        } catch (final Exception e) {
-            LOGGER.debug(e.getMessage(), e);
         }
-        return Optional.empty();
+        return null;
     }
 
     @Override
@@ -92,14 +81,8 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         this.entityManager.createQuery(SELECT_QUERY).getResultList().forEach(r -> entityManager.remove(r));
     }
 
-    private JpaYubiKeyAccount fetchSingleYubiKeyAccount(final String username) {
-        return this.entityManager.createQuery(SELECT_ACCOUNT_QUERY, JpaYubiKeyAccount.class)
-            .setParameter("username", username)
-            .getSingleResult();
-    }
-
     @Override
-    protected YubiKeyAccount saveAccount(final YubiKeyDeviceRegistrationRequest request, final YubiKeyRegisteredDevice... device) {
+    public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request, final YubiKeyRegisteredDevice... device) {
         val jpaAccount = JpaYubiKeyAccount.builder()
             .username(request.getUsername())
             .devices(CollectionUtils.wrapList(device))
@@ -108,7 +91,13 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    protected boolean update(final YubiKeyAccount account) {
+    public boolean update(final YubiKeyAccount account) {
         return this.entityManager.merge(account) != null;
+    }
+
+    private JpaYubiKeyAccount fetchSingleYubiKeyAccount(final String username) {
+        return this.entityManager.createQuery(SELECT_ACCOUNT_QUERY, JpaYubiKeyAccount.class)
+            .setParameter("username", username)
+            .getSingleResult();
     }
 }

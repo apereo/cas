@@ -7,16 +7,11 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
 import org.apereo.cas.couchdb.yubikey.CouchDbYubiKeyAccount;
 import org.apereo.cas.couchdb.yubikey.YubiKeyAccountCouchDbRepository;
-import org.apereo.cas.util.LoggingUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -25,7 +20,6 @@ import java.util.stream.Collectors;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Slf4j
 public class CouchDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     private final YubiKeyAccountCouchDbRepository couchDb;
 
@@ -36,8 +30,8 @@ public class CouchDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    protected YubiKeyAccount saveAccount(final YubiKeyDeviceRegistrationRequest request,
-                                         final YubiKeyRegisteredDevice... device) {
+    public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request,
+                               final YubiKeyRegisteredDevice... device) {
         val account = CouchDbYubiKeyAccount.builder()
             .username(request.getUsername())
             .devices(Arrays.stream(device).collect(Collectors.toList()))
@@ -47,7 +41,7 @@ public class CouchDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    protected boolean update(final YubiKeyAccount account) {
+    public boolean update(final YubiKeyAccount account) {
         couchDb.update(CouchDbYubiKeyAccount.class.cast(account));
         return true;
     }
@@ -58,12 +52,8 @@ public class CouchDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public Optional<YubiKeyAccount> getAccount(final String uid) {
-        val account = couchDb.findByUsername(uid);
-        if (account != null) {
-            return toYubiKeyAccount(account);
-        }
-        return Optional.empty();
+    public YubiKeyAccount getAccountInternal(final String uid) {
+        return couchDb.findByUsername(uid);
     }
 
     @Override
@@ -82,25 +72,5 @@ public class CouchDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     @Override
     public void deleteAll() {
         couchDb.removeAll();
-    }
-
-    private Optional<YubiKeyAccount> toYubiKeyAccount(final CouchDbYubiKeyAccount account) {
-        val devices = account.getDevices()
-            .stream()
-            .map(device -> {
-                try {
-                    val pubId = getCipherExecutor().decode(device.getPublicId());
-                    device.setPublicId(pubId);
-                    return device;
-                } catch (final Exception e) {
-                    LoggingUtils.error(LOGGER, e);
-                    delete(account.getUsername(), device.getId());
-                }
-                return null;
-            })
-            .filter(Objects::nonNull)
-            .collect(Collectors.toCollection(ArrayList::new));
-        account.setDevices(devices);
-        return Optional.of(account);
     }
 }

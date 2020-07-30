@@ -47,7 +47,7 @@ public class YubiKeyAccountCheckRegistrationActionTests {
         WebUtils.putAuthentication(authentication, context);
         val registry = new ClosedYubiKeyAccountRegistry(new DenyAllYubiKeyAccountValidator());
         val action = new YubiKeyAccountCheckRegistrationAction(registry);
-        assertEquals("register", action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, action.execute(context).getId());
 
     }
 }

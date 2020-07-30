@@ -10,7 +10,6 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -52,8 +51,8 @@ public class OpenYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
-        return Optional.of(getStaticAccount(uid));
+    public YubiKeyAccount getAccountInternal(final String uid) {
+        return getStaticAccount(uid);
     }
 
     @Override
@@ -76,13 +75,13 @@ public class OpenYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    protected YubiKeyAccount saveAccount(final YubiKeyDeviceRegistrationRequest request,
-                                         final YubiKeyRegisteredDevice... device) {
+    public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request,
+                                  final YubiKeyRegisteredDevice... device) {
         return getStaticAccount(request.getUsername());
     }
 
     @Override
-    protected boolean update(final YubiKeyAccount account) {
+    public boolean update(final YubiKeyAccount account) {
         return true;
     }
 }

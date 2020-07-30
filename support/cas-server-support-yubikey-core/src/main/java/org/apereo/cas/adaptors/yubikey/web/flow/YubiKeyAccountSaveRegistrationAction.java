@@ -21,6 +21,16 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 public class YubiKeyAccountSaveRegistrationAction extends AbstractAction {
 
+    /**
+     * Token parameter.
+     */
+    public static final String PARAMETER_NAME_TOKEN = "token";
+
+    /**
+     * Account name parameter.
+     */
+    public static final String PARAMETER_NAME_ACCOUNT = "accountName";
+
     private static final String CODE_FAILURE = "cas.mfa.yubikey.register.fail";
 
     private final YubiKeyAccountRegistry registry;
@@ -28,8 +38,8 @@ public class YubiKeyAccountSaveRegistrationAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
-        val token = requestContext.getRequestParameters().getRequired("token");
-        val accountName = requestContext.getRequestParameters().getRequired("accountName");
+        val token = requestContext.getRequestParameters().getRequired(PARAMETER_NAME_TOKEN);
+        val accountName = requestContext.getRequestParameters().getRequired(PARAMETER_NAME_ACCOUNT);
 
         val regRequest = YubiKeyDeviceRegistrationRequest.builder()
             .username(uid)

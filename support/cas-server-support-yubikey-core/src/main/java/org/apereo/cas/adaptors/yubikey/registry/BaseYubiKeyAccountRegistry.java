@@ -15,6 +15,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
 import java.io.Serializable;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -38,6 +40,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
+@Transactional(transactionManager = "transactionManagerYubiKey")
 public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegistry {
 
     private final YubiKeyAccountValidator accountValidator;
@@ -80,24 +83,8 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
         val currentDevices = getAccountsInternal();
         return currentDevices
             .stream()
-            .peek(it -> {
-                val devices = it.getDevices()
-                    .stream()
-                    .map(device -> {
-                        try {
-                            val pubId = getCipherExecutor().decode(device.getPublicId());
-                            device.setPublicId(pubId);
-                            return device;
-                        } catch (final Exception e) {
-                            LoggingUtils.error(LOGGER, e);
-                            delete(it.getUsername(), device.getId());
-                        }
-                        return null;
-                    })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toCollection(ArrayList::new));
-                it.setDevices(devices);
-            })
+            .map(it -> buildAndDecodeYubiKeyAccount(it).orElse(null))
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 
@@ -113,15 +100,27 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
                 .registrationDate(ZonedDateTime.now(Clock.systemUTC()))
                 .build();
 
-            var result = getAccount(request.getUsername());
-            if (result.isEmpty()) {
-                return saveAccount(request, device) != null;
+            var account = getAccountInternal(request.getUsername());
+            if (account == null) {
+                return save(request, device) != null;
             }
-            val account = result.get();
             account.getDevices().add(device);
             return update(account);
         }
         return false;
+    }
+
+    @Override
+    public Optional<? extends YubiKeyAccount> getAccount(final String username) {
+        try {
+            val account = getAccountInternal(username);
+            if (account != null) {
+                return buildAndDecodeYubiKeyAccount(account);
+            }
+        } catch (final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
+        }
+        return Optional.empty();
     }
 
     /**
@@ -129,17 +128,48 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
      *
      * @param request the request
      * @param device  the device
-     * @return the boolean
+     * @return the account
      */
-    protected abstract YubiKeyAccount saveAccount(YubiKeyDeviceRegistrationRequest request, YubiKeyRegisteredDevice... device);
+    public abstract YubiKeyAccount save(YubiKeyDeviceRegistrationRequest request, YubiKeyRegisteredDevice... device);
 
     /**
      * Update.
      *
      * @param account the account
-     * @return boolean
+     * @return true/false
      */
-    protected abstract boolean update(YubiKeyAccount account);
+    public abstract boolean update(YubiKeyAccount account);
+
+    private Optional<? extends YubiKeyAccount> buildAndDecodeYubiKeyAccount(final YubiKeyAccount account) {
+        val yubiKeyAccount = account.clone();
+        val devices = yubiKeyAccount.getDevices()
+            .stream()
+            .map(device -> decodeYubiKeyRegisteredDevice(account, device))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toCollection(ArrayList::new));
+        yubiKeyAccount.setDevices(devices);
+        return Optional.of(yubiKeyAccount);
+    }
+
+    private YubiKeyRegisteredDevice decodeYubiKeyRegisteredDevice(final YubiKeyAccount account, final YubiKeyRegisteredDevice device) {
+        try {
+            val pubId = getCipherExecutor().decode(device.getPublicId());
+            device.setPublicId(pubId);
+            return device;
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            delete(account.getUsername(), device.getId());
+        }
+        return null;
+    }
+
+    /**
+     * Gets account internal.
+     *
+     * @param username the username
+     * @return the account internal
+     */
+    protected abstract YubiKeyAccount getAccountInternal(String username);
 
     /**
      * Gets accounts internal.

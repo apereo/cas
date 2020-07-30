@@ -12,10 +12,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -39,18 +37,9 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
+    public YubiKeyAccount getAccountInternal(final String uid) {
         val query = new Query().addCriteria(Criteria.where(MongoDbYubiKeyAccount.FIELD_USERNAME).is(uid));
-        val account = this.mongoTemplate.findOne(query, MongoDbYubiKeyAccount.class, this.collectionName);
-        if (account != null) {
-            val devices = account.getDevices()
-                .stream()
-                .map(device -> device.setPublicId(getCipherExecutor().decode(device.getPublicId())))
-                .collect(Collectors.toCollection(ArrayList::new));
-            account.setDevices(devices);
-            return Optional.of(account);
-        }
-        return Optional.empty();
+        return mongoTemplate.findOne(query, MongoDbYubiKeyAccount.class, this.collectionName);
     }
 
     @Override
@@ -80,7 +69,7 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    protected boolean update(final YubiKeyAccount account) {
+    public boolean update(final YubiKeyAccount account) {
         val query = new Query().addCriteria(Criteria.where(MongoDbYubiKeyAccount.FIELD_USERNAME).is(account.getUsername()));
         val update = Update.update(MongoDbYubiKeyAccount.FIELD_DEVICES, account.getDevices());
         this.mongoTemplate.updateFirst(query, update, MongoDbYubiKeyAccount.class, this.collectionName);
@@ -88,7 +77,7 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    protected YubiKeyAccount saveAccount(final YubiKeyDeviceRegistrationRequest request, final YubiKeyRegisteredDevice... device) {
+    public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request, final YubiKeyRegisteredDevice... device) {
         val result = MongoDbYubiKeyAccount.builder()
             .id(System.currentTimeMillis())
             .username(request.getUsername())

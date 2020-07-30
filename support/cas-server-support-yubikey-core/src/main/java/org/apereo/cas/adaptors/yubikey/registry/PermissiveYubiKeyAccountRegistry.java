@@ -8,9 +8,9 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link PermissiveYubiKeyAccountRegistry}.
@@ -40,7 +40,8 @@ public class PermissiveYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
         if (devices.containsKey(uid)) {
             val account = devices.get(uid);
-            return account.getDevices().stream()
+            return account.getDevices()
+                .stream()
                 .anyMatch(device -> getCipherExecutor().decode(device.getPublicId()).equals(yubikeyPublicId));
         }
         return false;
@@ -48,22 +49,7 @@ public class PermissiveYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry
 
     @Override
     public Collection<? extends YubiKeyAccount> getAccountsInternal() {
-        return this.devices.values();
-    }
-
-    @Override
-    public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
-        if (devices.containsKey(uid)) {
-            val account = devices.get(uid);
-            val yubiAccount = account.clone();
-
-            yubiAccount.getDevices().forEach(device -> {
-                val decoded = getCipherExecutor().decode(device.getPublicId());
-                device.setPublicId(decoded);
-            });
-            return Optional.of(yubiAccount);
-        }
-        return Optional.empty();
+        return new ArrayList<>(this.devices.values());
     }
 
     @Override
@@ -84,8 +70,17 @@ public class PermissiveYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry
     }
 
     @Override
-    protected YubiKeyAccount saveAccount(final YubiKeyDeviceRegistrationRequest request,
-                                         final YubiKeyRegisteredDevice... device) {
+    protected YubiKeyAccount getAccountInternal(final String username) {
+        if (devices.containsKey(username)) {
+            val account = devices.get(username);
+            return account.clone();
+        }
+        return null;
+    }
+
+    @Override
+    public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request,
+                                  final YubiKeyRegisteredDevice... device) {
         val yubiAccount = YubiKeyAccount.builder()
             .username(request.getUsername())
             .id(System.currentTimeMillis())
@@ -96,7 +91,7 @@ public class PermissiveYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry
     }
 
     @Override
-    protected boolean update(final YubiKeyAccount account) {
+    public boolean update(final YubiKeyAccount account) {
         devices.put(account.getUsername(), account);
         return true;
     }

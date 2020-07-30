@@ -82,15 +82,15 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
     }
 
     @Override
-    protected YubiKeyAccount saveAccount(final YubiKeyDeviceRegistrationRequest request,
-                                                                    final YubiKeyRegisteredDevice... device) {
-        val acct = super.saveAccount(request, device);
+    public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request,
+                                  final YubiKeyRegisteredDevice... device) {
+        val acct = super.save(request, device);
         writeDevicesToFile();
         return acct;
     }
 
     @Override
-    protected boolean update(final YubiKeyAccount account) {
+    public boolean update(final YubiKeyAccount account) {
         val result = super.update(account);
         writeDevicesToFile();
         return result;
