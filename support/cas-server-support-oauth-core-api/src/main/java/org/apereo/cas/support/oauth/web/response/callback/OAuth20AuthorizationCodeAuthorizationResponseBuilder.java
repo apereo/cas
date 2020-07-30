@@ -83,20 +83,13 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
             .orElse(StringUtils.EMPTY);
         LOGGER.debug("Authorize request successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
 
-        var callbackUrl = redirectUri;
-        callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.CODE, code.getId());
-        if (StringUtils.isNotBlank(state)) {
-            callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.STATE, state);
-        }
-        if (StringUtils.isNotBlank(nonce)) {
-            callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.NONCE, nonce);
-        }
-        LOGGER.debug("Redirecting to URL [{}]", callbackUrl);
+
         val params = new LinkedHashMap<String, String>();
         params.put(OAuth20Constants.CODE, code.getId());
         params.put(OAuth20Constants.STATE, state);
         params.put(OAuth20Constants.NONCE, nonce);
         params.put(OAuth20Constants.CLIENT_ID, clientId);
-        return buildResponseModelAndView(context, servicesManager, clientId, callbackUrl, params);
+        LOGGER.debug("Redirecting to URL [{}] with params [{}] for clientId [{}]", redirectUri, params.keySet(), clientId);
+        return buildResponseModelAndView(context, servicesManager, clientId, redirectUri, params);
     }
 }
