@@ -9,8 +9,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -51,10 +49,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class YubiKeyDynamoDbFacilitator {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
-        .findAndRegisterModules();
-
     private final YubiKeyDynamoDbMultifactorProperties dynamoDbProperties;
 
     private final DynamoDbClient amazonDynamoDBClient;
