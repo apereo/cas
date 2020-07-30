@@ -50,7 +50,8 @@ The following items are new improvements and enhancements presented in this rele
 
 ### Amazon SDK v2
 
-CAS is now using the Amazon SDK v2, which effectively upgrades and impacts the functionality for DynamoDb, SNS, SSM, S3 and all other features based on Amazon Web Services.
+CAS is now using the Amazon SDK v2, which effectively upgrades and impacts the functionality for DynamoDb, SNS, SSM, 
+S3 and all other features based on Amazon Web Services.
 
 ### Test Coverage via CodeCov
 
@@ -74,6 +75,10 @@ Multiple YubiKey devices can now be registered with CAS for multifactor authenti
 
 CAS registered service definitions can now be natively stored in [Amazon S3 buckets](../services/AmazonS3-Service-Management.html).
 
+### Okta Authentication SDK v2
+
+CAS is now using the Okta SDK v2 mainly used to handle the integration between CAS and Okta for authentication and attribute resolution.
+
 ## Other Stuff
 
 - Adjustments to SAML2 metadata resolution to cache to ensure enough capacity for resolved metadata providers. 
@@ -88,6 +93,8 @@ CAS registered service definitions can now be natively stored in [Amazon S3 buck
 - Spring
 - Spring Boot
 - Amazon SDK
+- Spotbugs
+- Okta
 - Ldaptive
 - Person Directory
 - Azure DocumentDb

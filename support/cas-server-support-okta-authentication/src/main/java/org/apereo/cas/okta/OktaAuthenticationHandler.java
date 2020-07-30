@@ -10,7 +10,7 @@ import org.apereo.cas.util.LoggingUtils;
 
 import com.okta.authn.sdk.client.AuthenticationClient;
 import com.okta.authn.sdk.client.AuthenticationClients;
-import com.okta.sdk.client.Proxy;
+import com.okta.commons.http.config.Proxy;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
