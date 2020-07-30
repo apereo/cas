@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Configuration("yubikeyConfiguration")
+@Configuration(value = "yubikeyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class YubiKeyConfiguration {
