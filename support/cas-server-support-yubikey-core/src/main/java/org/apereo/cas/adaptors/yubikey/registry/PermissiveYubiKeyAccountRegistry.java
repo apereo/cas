@@ -8,13 +8,9 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link PermissiveYubiKeyAccountRegistry}.
@@ -51,42 +47,8 @@ public class PermissiveYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry
     }
 
     @Override
-    public boolean registerAccountFor(final YubiKeyDeviceRegistrationRequest request) {
-        val accountValidator = getAccountValidator();
-        if (accountValidator.isValid(request.getUsername(), request.getToken())) {
-            val yubikeyPublicId = accountValidator.getTokenPublicId(request.getToken());
-            val pubId = getCipherExecutor().encode(yubikeyPublicId);
-
-            val device = YubiKeyRegisteredDevice.builder()
-                .id(System.currentTimeMillis())
-                .name(request.getName())
-                .publicId(pubId)
-                .registrationDate(ZonedDateTime.now(Clock.systemUTC()))
-                .build();
-            getAccount(request.getUsername()).ifPresentOrElse(account -> {
-                account.getDevices().add(device);
-                devices.put(request.getUsername(), account);
-            },
-                () -> {
-                    val yubiAccount = YubiKeyAccount.builder()
-                        .username(request.getUsername())
-                        .id(System.currentTimeMillis())
-                        .devices(CollectionUtils.wrapList(device))
-                        .build();
-                    devices.put(request.getUsername(), yubiAccount);
-                });
-            return isYubiKeyRegisteredFor(request.getUsername(), yubikeyPublicId);
-        }
-        return false;
-    }
-
-    @Override
-    public Collection<? extends YubiKeyAccount> getAccounts() {
-        return this.devices.values()
-            .stream()
-            .map(account -> getAccount(account.getUsername()).orElse(null))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
+    public Collection<? extends YubiKeyAccount> getAccountsInternal() {
+        return this.devices.values();
     }
 
     @Override
@@ -102,5 +64,40 @@ public class PermissiveYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry
             return Optional.of(yubiAccount);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public void delete(final String username, final long deviceId) {
+        if (devices.containsKey(username)) {
+            devices.get(username).getDevices().removeIf(device -> device.getId() == deviceId);
+        }
+    }
+
+    @Override
+    public void delete(final String uid) {
+        this.devices.remove(uid);
+    }
+
+    @Override
+    public void deleteAll() {
+        this.devices.clear();
+    }
+
+    @Override
+    protected YubiKeyAccount saveAccount(final YubiKeyDeviceRegistrationRequest request,
+                                         final YubiKeyRegisteredDevice... device) {
+        val yubiAccount = YubiKeyAccount.builder()
+            .username(request.getUsername())
+            .id(System.currentTimeMillis())
+            .devices(CollectionUtils.wrapList(device))
+            .build();
+        devices.put(request.getUsername(), yubiAccount);
+        return yubiAccount;
+    }
+
+    @Override
+    protected boolean update(final YubiKeyAccount account) {
+        devices.put(account.getUsername(), account);
+        return true;
     }
 }

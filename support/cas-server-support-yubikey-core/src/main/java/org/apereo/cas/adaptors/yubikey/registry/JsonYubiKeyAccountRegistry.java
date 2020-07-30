@@ -4,7 +4,6 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
 import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -15,8 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,50 +37,26 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
         this.jsonResource = jsonResource;
     }
 
-    @SneakyThrows
     @Override
-    public boolean registerAccountFor(final YubiKeyDeviceRegistrationRequest request) {
-        val accountValidator = getAccountValidator();
-        if (accountValidator.isValid(request.getUsername(), request.getToken())) {
-            val yubikeyPublicId = accountValidator.getTokenPublicId(request.getToken());
-            val file = jsonResource.getFile();
-
-            val device = YubiKeyRegisteredDevice.builder()
-                .id(System.currentTimeMillis())
-                .name(request.getName())
-                .publicId(getCipherExecutor().encode(yubikeyPublicId))
-                .registrationDate(ZonedDateTime.now(Clock.systemUTC()))
-                .build();
-
-            if (devices.containsKey(request.getUsername())) {
-                val account = devices.get(request.getUsername());
-                account.getDevices().add(device);
-                this.devices.put(request.getUsername(), account);
-            } else {
-                val account = YubiKeyAccount.builder()
-                    .username(request.getUsername())
-                    .devices(CollectionUtils.wrapList(device))
-                    .build();
-                this.devices.put(request.getUsername(), account);
-            }
-            MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    @SneakyThrows
     public void delete(final String uid) {
-        this.devices.remove(uid);
-        val file = jsonResource.getFile();
-        MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
+        super.delete(uid);
+        writeDevicesToFile();
     }
 
     @Override
-    @SneakyThrows
+    public void delete(final String username, final long deviceId) {
+        super.delete(username, deviceId);
+        writeDevicesToFile();
+    }
+
+    @Override
     public void deleteAll() {
-        this.devices.clear();
+        super.deleteAll();
+        writeDevicesToFile();
+    }
+
+    @SneakyThrows
+    private void writeDevicesToFile() {
         val file = jsonResource.getFile();
         MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
     }
@@ -106,5 +79,20 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
             LOGGER.warn("JSON resource @ [{}] does not exist", jsonResource);
         }
         return new HashMap<>(0);
+    }
+
+    @Override
+    protected YubiKeyAccount saveAccount(final YubiKeyDeviceRegistrationRequest request,
+                                                                    final YubiKeyRegisteredDevice... device) {
+        val acct = super.saveAccount(request, device);
+        writeDevicesToFile();
+        return acct;
+    }
+
+    @Override
+    protected boolean update(final YubiKeyAccount account) {
+        val result = super.update(account);
+        writeDevicesToFile();
+        return result;
     }
 }

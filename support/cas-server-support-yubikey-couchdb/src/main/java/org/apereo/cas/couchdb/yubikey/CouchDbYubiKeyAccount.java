@@ -34,14 +34,14 @@ public class CouchDbYubiKeyAccount extends YubiKeyAccount {
     public CouchDbYubiKeyAccount(@JsonProperty("_id") final String cid,
                                  @JsonProperty("_rev") final String rev,
                                  @JsonProperty("id") final long id,
-                                 @JsonProperty("devices") final @NonNull List<YubiKeyRegisteredDevice> deviceIdentifiers,
+                                 @JsonProperty("devices") final @NonNull List<YubiKeyRegisteredDevice> devices,
                                  @JsonProperty("username") final @NonNull String username) {
-        super(id, deviceIdentifiers, username);
+        super(id, devices, username);
         this.cid = cid;
         this.rev = rev;
     }
 
     public CouchDbYubiKeyAccount(final List<YubiKeyRegisteredDevice> devices, final String username) {
-        this(null, null, -1, devices, username);
+        this(null, null, System.currentTimeMillis(), devices, username);
     }
 }

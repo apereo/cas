@@ -5,13 +5,11 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
 import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
-import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,45 +30,8 @@ public class DynamoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public boolean registerAccountFor(final YubiKeyDeviceRegistrationRequest request) {
-        val accountValidator = getAccountValidator();
-        if (accountValidator.isValid(request.getUsername(), request.getToken())) {
-            val yubikeyPublicId = getCipherExecutor().encode(accountValidator.getTokenPublicId(request.getToken()));
-
-            val results = dynamoDbFacilitator.getAccounts(request.getUsername());
-
-            val device = YubiKeyRegisteredDevice.builder()
-                .id(System.currentTimeMillis())
-                .name(request.getName())
-                .publicId(yubikeyPublicId)
-                .registrationDate(ZonedDateTime.now(Clock.systemUTC()))
-                .build();
-
-            if (results.isEmpty()) {
-                val account = YubiKeyAccount.builder()
-                    .username(request.getUsername())
-                    .devices(CollectionUtils.wrapList(device))
-                    .build();
-                return dynamoDbFacilitator.save(account);
-            }
-            val account = results.get(0);
-            account.getDevices().add(device);
-            return dynamoDbFacilitator.update(account);
-        }
-        return false;
-    }
-
-    @Override
-    public Collection<? extends YubiKeyAccount> getAccounts() {
-        return dynamoDbFacilitator.getAccounts()
-            .stream()
-            .peek(it -> {
-                val devices = it.getDevices().stream()
-                    .filter(device -> getCipherExecutor().decode(device.getPublicId()) != null)
-                    .collect(Collectors.toCollection(ArrayList::new));
-                it.setDevices(devices);
-            })
-            .collect(Collectors.toList());
+    public Collection<? extends YubiKeyAccount> getAccountsInternal() {
+        return dynamoDbFacilitator.getAccounts();
     }
 
     @Override
@@ -89,6 +50,11 @@ public class DynamoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
+    public void delete(final String username, final long deviceId) {
+        dynamoDbFacilitator.delete(username, deviceId);
+    }
+
+    @Override
     public void delete(final String uid) {
         dynamoDbFacilitator.delete(uid);
     }
@@ -96,5 +62,23 @@ public class DynamoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     @Override
     public void deleteAll() {
         dynamoDbFacilitator.removeDevices();
+    }
+
+    @Override
+    protected YubiKeyAccount saveAccount(final YubiKeyDeviceRegistrationRequest request,
+                                         final YubiKeyRegisteredDevice... device) {
+        val account = YubiKeyAccount.builder()
+            .username(request.getUsername())
+            .devices(Arrays.stream(device).collect(Collectors.toList()))
+            .build();
+        if (dynamoDbFacilitator.save(account)) {
+            return account;
+        }
+        return null;
+    }
+
+    @Override
+    protected boolean update(final YubiKeyAccount account) {
+        return dynamoDbFacilitator.update(account);
     }
 }

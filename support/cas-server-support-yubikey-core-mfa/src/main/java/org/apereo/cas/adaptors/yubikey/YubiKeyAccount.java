@@ -46,6 +46,11 @@ public class YubiKeyAccount implements Serializable, Cloneable {
      */
     public static final String FIELD_USERNAME = "username";
 
+    /**
+     * devices field.
+     */
+    public static final String FIELD_DEVICES = "devices";
+
     private static final long serialVersionUID = 311869140885521905L;
 
     @Id
