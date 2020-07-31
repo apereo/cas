@@ -111,6 +111,12 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
     private YubiKeyDynamoDbMultifactorProperties dynamoDb = new YubiKeyDynamoDbMultifactorProperties();
 
     /**
+     * Keep device registration records inside a rest api.
+     */
+    @NestedConfigurationProperty
+    private YubiKeyRestfulMultifactorProperties rest = new YubiKeyRestfulMultifactorProperties();
+
+    /**
      * Crypto settings that sign/encrypt the yubikey registration records.
      */
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();

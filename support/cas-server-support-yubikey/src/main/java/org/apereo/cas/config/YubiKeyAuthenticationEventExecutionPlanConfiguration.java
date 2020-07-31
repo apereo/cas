@@ -11,6 +11,7 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.adaptors.yubikey.registry.JsonYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.registry.OpenYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.registry.PermissiveYubiKeyAccountRegistry;
+import org.apereo.cas.adaptors.yubikey.registry.RestfulYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.registry.YubiKeyAccountRegistryEndpoint;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -151,6 +152,12 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         if (yubi.getJsonFile() != null) {
             LOGGER.debug("Using JSON resource [{}] as the YubiKey account registry", yubi.getJsonFile());
             val registry = new JsonYubiKeyAccountRegistry(yubi.getJsonFile(), yubiKeyAccountValidator());
+            registry.setCipherExecutor(cipher);
+            return registry;
+        }
+        if (StringUtils.isNotBlank(yubi.getRest().getUrl())) {
+            LOGGER.debug("Using REST API resource [{}] as the YubiKey account registry", yubi.getRest().getUrl());
+            val registry = new RestfulYubiKeyAccountRegistry(yubi.getRest(), yubiKeyAccountValidator());
             registry.setCipherExecutor(cipher);
             return registry;
         }
