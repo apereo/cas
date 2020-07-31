@@ -12,10 +12,14 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SAMLException;
+import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.core.LogoutRequest;
+import org.opensaml.saml.saml2.core.LogoutResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,30 +37,15 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
         super(context);
     }
 
-    /**
-     * Handle profile request.
-     *
-     * @param response the response
-     * @param request  the request
-     * @param decoder  the decoder
-     * @throws Exception the exception
-     */
-    protected void handleSloProfileRequest(final HttpServletResponse response,
-                                           final HttpServletRequest request,
-                                           final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
+    private void handleLogoutResponse(final Pair<? extends SignableSAMLObject, MessageContext> pair) {
+        val logoutResponse = (LogoutResponse) pair.getKey();
+        LOGGER.debug("Received logout response from [{}]", SamlIdPUtils.getIssuerFromSamlObject(logoutResponse.getIssuer()));
+        SamlUtils.logSamlObject(getSamlProfileHandlerConfigurationContext().getOpenSamlConfigBean(), logoutResponse);
+    }
+
+    private void handleLogoutRequest(final HttpServletResponse response, final HttpServletRequest request,
+                                     final Pair<? extends SignableSAMLObject, MessageContext> pair) throws Exception {
         val logout = getSamlProfileHandlerConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getLogout();
-        if (logout.isSingleLogoutCallbacksDisabled()) {
-            LOGGER.info("Processing SAML2 IdP SLO requests is disabled");
-            return;
-        }
-
-        val result = getSamlProfileHandlerConfigurationContext().getSamlHttpRequestExtractor().extract(request, decoder, LogoutRequest.class);
-        if (result.isEmpty()) {
-            LOGGER.trace("Unable to extract the logout request from the given request");
-            return;
-        }
-
-        val pair = result.get();
         val logoutRequest = (LogoutRequest) pair.getKey();
         val ctx = pair.getValue();
 
@@ -86,5 +75,37 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
         } else {
             response.sendRedirect(getSamlProfileHandlerConfigurationContext().getCasProperties().getServer().getLogoutUrl());
         }
+    }
+
+    /**
+     * Handle profile request.
+     *
+     * @param response the response
+     * @param request  the request
+     * @param decoder  the decoder
+     * @throws Exception the exception
+     */
+    protected void handleSloProfileRequest(final HttpServletResponse response,
+                                           final HttpServletRequest request,
+                                           final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
+        val logout = getSamlProfileHandlerConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getLogout();
+        if (logout.isSingleLogoutCallbacksDisabled()) {
+            LOGGER.info("Processing SAML2 IdP SLO requests is disabled");
+            return;
+        }
+
+        val extractor = getSamlProfileHandlerConfigurationContext().getSamlHttpRequestExtractor();
+        val result = extractor.extract(request, decoder, SignableSAMLObject.class);
+        if (result.isPresent()) {
+            val pair = result.get();
+            if (pair.getKey() instanceof LogoutResponse) {
+                handleLogoutResponse(pair);
+            } else if (pair.getKey() instanceof LogoutRequest) {
+                handleLogoutRequest(response, request, pair);
+            }
+        } else {
+            LOGGER.trace("Unable to process logout request/response");
+        }
+
     }
 }

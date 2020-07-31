@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.1.0
  */
 public class SLOSamlIdPRedirectProfileHandlerController extends AbstractSamlSLOProfileHandlerController {
-    public SLOSamlIdPRedirectProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
-        super(samlProfileHandlerConfigurationContext);
+    public SLOSamlIdPRedirectProfileHandlerController(final SamlProfileHandlerConfigurationContext context) {
+        super(context);
     }
 
     /**
