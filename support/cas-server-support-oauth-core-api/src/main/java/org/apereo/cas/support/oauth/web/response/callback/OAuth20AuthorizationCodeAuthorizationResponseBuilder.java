@@ -15,7 +15,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.util.CommonHelper;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.LinkedHashMap;
