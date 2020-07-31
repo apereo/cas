@@ -3000,6 +3000,10 @@ To learn more about this topic, [please review this guide](../mfa/YubiKey-Authen
 Multifactor authentication bypass settings for this provider are 
 available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.yubikey`.
 
+#### YubiKey REST Device Store
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.mfa.yubikey.rest`.
+
 #### YubiKey JSON Device Store
 
 ```properties

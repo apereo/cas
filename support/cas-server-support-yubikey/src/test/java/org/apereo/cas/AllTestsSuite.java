@@ -2,6 +2,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.adaptors.yubikey.JsonYubiKeyAccountRegistryTests;
+import org.apereo.cas.adaptors.yubikey.RestfulYubiKeyAccountRegistryTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorWebflowConfigurerTests;
 import org.apereo.cas.adaptors.yubikey.registry.YubiKeyAccountRegistryEndpointTests;
@@ -24,6 +25,7 @@ import org.junit.runner.RunWith;
     JsonYubiKeyAccountRegistryTests.class,
     YubiKeyConfigurationAllowedDevicesTests.class,
     YubiKeyAuthenticationHandlerTests.class,
+    RestfulYubiKeyAccountRegistryTests.class,
     YubiKeyAuthenticationWebflowEventResolverTests.class,
     YubiKeyAuthenticationMultifactorProviderBypassConfigurationTests.class,
     YubiKeyConfigurationOpenRegistryTests.class,

@@ -53,6 +53,10 @@ The following items are new improvements and enhancements presented in this rele
 CAS is now using the Amazon SDK v2, which effectively upgrades and impacts the functionality for DynamoDb, SNS, SSM, 
 S3 and all other features based on Amazon Web Services.
 
+### YubiKey Device Management via REST
+
+YubiKey devices used for [multifactor authentication](../mfa/YubiKey-Authentication.html) can now be externally managed via a REST API.
+
 ### Test Coverage via CodeCov
 
 CAS test coverage across all modules in the codebase has now reached `83%` and continues to climb. Additional validation rules are also applied 
@@ -61,7 +65,7 @@ as progress is made with the goal of hopefully reaching at least `85%` before th
 
 ### YubiKey Multiple Devices
 
-Multiple YubiKey devices can now be registered with CAS for multifactor authentication. This ability can be controlled via CAS settings.
+Multiple YubiKey devices can now be registered with CAS for [multifactor authentication](../mfa/YubiKey-Authentication.html). This ability can be controlled via CAS settings.
 
 ![image](https://user-images.githubusercontent.com/1205228/88883051-8b9caa80-d248-11ea-9ad5-487c6071fbc5.png)
 
@@ -75,7 +79,7 @@ Multiple YubiKey devices can now be registered with CAS for multifactor authenti
 
 CAS registered service definitions can now be natively stored in [Amazon S3 buckets](../services/AmazonS3-Service-Management.html).
 
-### Okta Authentication SDK v2
+### Okta SDK v2
 
 CAS is now using the Okta SDK v2 mainly used to handle the integration between CAS and Okta for authentication and attribute resolution.
 

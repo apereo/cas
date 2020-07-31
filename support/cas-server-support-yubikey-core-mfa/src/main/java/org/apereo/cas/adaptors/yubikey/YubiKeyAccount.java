@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.springframework.data.annotation.Id;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(of = {"id", "username"})
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @SuperBuilder
+@Accessors(chain = true)
 public class YubiKeyAccount implements Serializable, Cloneable {
     /**
      * username field.
