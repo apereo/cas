@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.List;
 @Getter
 @Setter
 @SuperBuilder
+@Accessors(chain = true)
 public class CouchDbYubiKeyAccount extends YubiKeyAccount {
     private static final long serialVersionUID = 2323614397554244567L;
 

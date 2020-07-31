@@ -36,8 +36,8 @@ public class DefaultSSOSamlHttpRequestExtractorTests extends BaseSamlIdPConfigur
         val request = getMockHttpServletRequest(decoded);
         val decoder = new UrlDecodingHTTPRedirectDeflateDecoder(false);
         val result = ext.extract(request, decoder, AuthnRequest.class);
-        assertNotNull(result.getKey());
-        assertNotNull(result.getValue());
+        assertNotNull(result.get().getKey());
+        assertNotNull(result.get().getValue());
     }
 
 
@@ -47,8 +47,8 @@ public class DefaultSSOSamlHttpRequestExtractorTests extends BaseSamlIdPConfigur
         val request = getMockHttpServletRequest(SAML_REQUEST);
         val decoder = new UrlDecodingHTTPRedirectDeflateDecoder(true);
         val result = ext.extract(request, decoder, AuthnRequest.class);
-        assertNotNull(result.getKey());
-        assertNotNull(result.getValue());
+        assertNotNull(result.get().getKey());
+        assertNotNull(result.get().getValue());
     }
 
     private static MockHttpServletRequest getMockHttpServletRequest(final String decoded) {

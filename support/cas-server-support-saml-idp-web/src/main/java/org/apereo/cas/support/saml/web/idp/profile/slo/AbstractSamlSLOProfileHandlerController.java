@@ -50,8 +50,13 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
             return;
         }
 
-        val pair = getSamlProfileHandlerConfigurationContext().getSamlHttpRequestExtractor()
-            .extract(request, decoder, LogoutRequest.class);
+        val result = getSamlProfileHandlerConfigurationContext().getSamlHttpRequestExtractor().extract(request, decoder, LogoutRequest.class);
+        if (result.isEmpty()) {
+            LOGGER.trace("Unable to extract the logout request from the given request");
+            return;
+        }
+
+        val pair = result.get();
         val logoutRequest = (LogoutRequest) pair.getKey();
         val ctx = pair.getValue();
 
