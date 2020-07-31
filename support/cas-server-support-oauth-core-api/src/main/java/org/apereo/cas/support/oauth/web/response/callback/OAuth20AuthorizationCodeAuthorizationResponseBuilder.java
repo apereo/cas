@@ -83,11 +83,14 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
             .orElse(StringUtils.EMPTY);
         LOGGER.debug("Authorize request successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
 
-
         val params = new LinkedHashMap<String, String>();
         params.put(OAuth20Constants.CODE, code.getId());
-        params.put(OAuth20Constants.STATE, state);
-        params.put(OAuth20Constants.NONCE, nonce);
+        if (StringUtils.isNotBlank(state)) {
+            params.put(OAuth20Constants.STATE, state);
+        }
+        if (StringUtils.isNotBlank(nonce)) {
+            params.put(OAuth20Constants.NONCE, nonce);
+        }
         params.put(OAuth20Constants.CLIENT_ID, clientId);
         LOGGER.debug("Redirecting to URL [{}] with params [{}] for clientId [{}]", redirectUri, params.keySet(), clientId);
         return buildResponseModelAndView(context, servicesManager, clientId, redirectUri, params);
