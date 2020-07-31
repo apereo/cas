@@ -5,10 +5,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.encoder.MessageEncodingException;
+import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPRedirectDeflateEncoder;
-import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.xmlsec.SignatureSigningParameters;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
+import org.opensaml.xmlsec.signature.SignableXMLObject;
+
+import java.util.Objects;
 
 /**
  * This is {@link SamlIdPHttpRedirectDeflateEncoder}.
@@ -21,7 +24,7 @@ import org.opensaml.xmlsec.context.SecurityParametersContext;
 public class SamlIdPHttpRedirectDeflateEncoder extends HTTPRedirectDeflateEncoder {
     private final String endpointUrl;
 
-    private final RequestAbstractType request;
+    private final SignableXMLObject request;
 
     private String redirectUrl;
 
@@ -36,13 +39,14 @@ public class SamlIdPHttpRedirectDeflateEncoder extends HTTPRedirectDeflateEncode
             val signingContext = messageContext.getSubcontext(SecurityParametersContext.class, true);
             val signingParams = new SignatureSigningParameters();
             val signature = request.getSignature();
-            signingParams.setSigningCredential(signature.getSigningCredential());
+            signingParams.setSigningCredential(Objects.requireNonNull(signature).getSigningCredential());
             signingParams.setSignatureAlgorithm(signature.getSignatureAlgorithm());
-            signingContext.setSignatureSigningParameters(signingParams);
+            Objects.requireNonNull(signingContext).setSignatureSigningParameters(signingParams);
         }
 
-        removeSignature(request);
-        encodedRequest = deflateAndBase64Encode(request);
+        val samlObject = SAMLObject.class.cast(request);
+        removeSignature(samlObject);
+        encodedRequest = deflateAndBase64Encode(samlObject);
         messageContext.setMessage(request);
 
         this.redirectUrl = buildRedirectURL(messageContext, endpointUrl, encodedRequest);
