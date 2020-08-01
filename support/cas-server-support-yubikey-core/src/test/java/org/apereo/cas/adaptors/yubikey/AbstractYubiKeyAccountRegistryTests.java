@@ -79,21 +79,22 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
 
     @Test
     public void verifyDeviceRemoval() {
-        val request = YubiKeyDeviceRegistrationRequest.builder()
-            .username("casuser-registered-device")
-            .token(OTP)
-            .name(UUID.randomUUID().toString())
-            .build();
-        assertTrue(registerAccount(request));
-        assertTrue(isYubiKeyRegisteredFor(request.getUsername(), null));
-        var account = getAccount(request.getUsername());
+        val username = "casuser-registered-device";
+        for (int i = 0; i < 4; i++) {
+            val request = YubiKeyDeviceRegistrationRequest.builder()
+                .username("casuser-registered-device")
+                .token(OTP)
+                .name(UUID.randomUUID().toString())
+                .build();
+            assertTrue(registerAccount(request));
+            assertTrue(isYubiKeyRegisteredFor(request.getUsername(), null));
+        }
+        var account = getAccount(username);
         assertTrue(account.isPresent());
         assertFalse(account.get().getDevices().isEmpty());
 
-        account.get().getDevices().forEach(device -> {
-            getYubiKeyAccountRegistry().delete(request.getUsername(), device.getId());
-        });
-        account = getAccount(request.getUsername());
+        account.get().getDevices().forEach(device -> getYubiKeyAccountRegistry().delete(username, device.getId()));
+        account = getAccount(username);
         assertTrue(account.get().getDevices().isEmpty());
     }
 
