@@ -15,6 +15,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
@@ -151,14 +152,28 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
         return Optional.of(yubiKeyAccount);
     }
 
-    private YubiKeyRegisteredDevice decodeYubiKeyRegisteredDevice(final YubiKeyAccount account, final YubiKeyRegisteredDevice device) {
-        try {
-            val pubId = getCipherExecutor().decode(device.getPublicId());
+    private YubiKeyRegisteredDevice decodeYubiKeyRegisteredDevice(final YubiKeyAccount account,
+                                                                  final YubiKeyRegisteredDevice device) {
+        val pubId = decodeYubikeyRegisteredDevice(device.getPublicId());
+        if (StringUtils.isNotBlank(pubId)) {
             device.setPublicId(pubId);
             return device;
+        }
+        delete(account.getUsername(), device.getId());
+        return null;
+    }
+
+    /**
+     * Decode yubikey registered device.
+     *
+     * @param devicePublicId the device public id
+     * @return the string
+     */
+    protected String decodeYubikeyRegisteredDevice(final String devicePublicId) {
+        try {
+            return getCipherExecutor().decode(devicePublicId);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
-            delete(account.getUsername(), device.getId());
         }
         return null;
     }

@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -78,6 +79,28 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
     }
 
     @Test
+    public void verifyAuthnHandledWithRenew() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+
+        val service = RegisteredServiceTestUtils.getRegisteredService(Map.of());
+        servicesManager.save(service);
+        WebUtils.putRegisteredService(context, service);
+
+        val tgt = new MockTicketGrantingTicket("casuser");
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        cas.addTicket(tgt);
+
+        WebUtils.putCredential(context, RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon"));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, resolver.resolve(context).iterator().next().getId());
+    }
+
+    @Test
     public void verifyAuthnResolvesEvent() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -124,6 +147,33 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
             new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);
         context.getRootFlow().getGlobalTransitionSet().add(transition);
         assertEquals(TestMultifactorAuthenticationProvider.ID, resolver.resolveSingle(context).getId());
+    }
+
+    @Test
+    public void verifyAuthnResolvesMfaContextValidatedNoForceExecution() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        request.addParameter(casProperties.getAuthn().getMfa().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        val tgt = new MockTicketGrantingTicket("casuser", Map.of(),
+            Map.of(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), List.of(TestMultifactorAuthenticationProvider.ID)));
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        cas.addTicket(tgt);
+
+        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        WebUtils.putCredential(context,
+            RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon"));
+
+        val targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
+        val transition = new Transition(new DefaultTransitionCriteria(
+            new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);
+        context.getRootFlow().getGlobalTransitionSet().add(transition);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, resolver.resolve(context).iterator().next().getId());
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(Map.of());
+        WebUtils.putRegisteredService(context, registeredService);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, resolver.resolveSingle(context).getId());
     }
 
     @Test

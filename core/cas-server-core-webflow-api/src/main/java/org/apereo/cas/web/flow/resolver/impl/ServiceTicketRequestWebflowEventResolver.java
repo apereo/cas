@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.CollectionUtils;
@@ -25,18 +25,34 @@ import java.util.Set;
  */
 @Slf4j
 public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflowEventResolver {
-    public ServiceTicketRequestWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext) {
-        super(webflowEventResolutionConfigurationContext);
+    public ServiceTicketRequestWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext context) {
+        super(context);
     }
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         if (isRequestAskingForServiceTicket(context)) {
-            LOGGER.debug("Authentication request is asking for service tickets");
+            LOGGER.trace("Authentication request is asking for service tickets");
             val source = grantServiceTicket(context);
             return source != null ? CollectionUtils.wrapSet(source) : null;
         }
         return null;
+    }
+
+    private boolean validateExistingAuthentication(final Authentication authentication,
+                                                   final RequestContext requestContext) {
+        if (authentication != null) {
+            val configContext = getWebflowEventResolutionConfigurationContext();
+            val ssoStrategy = configContext.getSingleSignOnParticipationStrategy();
+            if (ssoStrategy.supports(requestContext) && !ssoStrategy.isParticipating(requestContext)) {
+                LOGGER.debug("Single sign-on strategy does not allow reusing the authentication attempt [{}]", authentication);
+                return false;
+            }
+            LOGGER.trace("Existing authentication attempt [{}] is valid", authentication);
+            return true;
+        }
+        LOGGER.trace("Cannot validate absent/missing authentication attempt");
+        return false;
     }
 
     /**
@@ -48,32 +64,25 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
      */
     protected boolean isRequestAskingForServiceTicket(final RequestContext context) {
         val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
-        LOGGER.debug("Located ticket-granting ticket [{}] from the request context", ticketGrantingTicketId);
+        LOGGER.trace("Located ticket-granting ticket [{}] from the request context", ticketGrantingTicketId);
 
         val service = WebUtils.getService(context);
-        LOGGER.debug("Located service [{}] from the request context", service);
+        LOGGER.trace("Located service [{}] from the request context", service);
 
         val configContext = getWebflowEventResolutionConfigurationContext();
-        val renewParam = configContext.getCasProperties().getSso().isRenewAuthnEnabled()
-            ? context.getRequestParameters().get(CasProtocolConstants.PARAMETER_RENEW)
-            : StringUtils.EMPTY;
-        LOGGER.debug("Provided value for [{}] request parameter is [{}]", CasProtocolConstants.PARAMETER_RENEW, renewParam);
-
         if (service != null && StringUtils.isNotBlank(ticketGrantingTicketId)) {
             val authn = configContext.getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicketId);
-            if (StringUtils.isNotBlank(renewParam)) {
-                LOGGER.debug("Request identifies itself as one asking for service tickets. Checking for authentication context validity...");
-                val validAuthn = authn != null;
-                if (validAuthn) {
-                    LOGGER.debug("Existing authentication context linked to ticket-granting ticket [{}] is valid. "
-                        + "CAS will try to issue service tickets for [{}] once credentials are renewed", ticketGrantingTicketId, service);
-                    return true;
-                }
-                LOGGER.debug("Existing authentication context linked to ticket-granting ticket [{}] is NOT valid. "
-                        + "CAS will not issue service tickets for [{}] just yet without renewing the authentication context",
-                    ticketGrantingTicketId, service);
-                return false;
+            LOGGER.debug("Request identifies itself as one asking for service tickets. Checking for authentication context validity...");
+            val validAuthn = validateExistingAuthentication(authn, context);
+            if (validAuthn) {
+                LOGGER.debug("Existing authentication context linked to ticket-granting ticket [{}] is valid. "
+                    + "CAS will try to issue service tickets for [{}] once credentials are renewed", ticketGrantingTicketId, service);
+                return true;
             }
+            LOGGER.debug("Existing authentication context linked to ticket-granting ticket [{}] is NOT valid. "
+                    + "CAS will not issue service tickets for [{}] just yet without renewing the authentication context",
+                ticketGrantingTicketId, service);
+            return false;
         }
 
         LOGGER.debug("Request is not eligible to be issued service tickets just yet");

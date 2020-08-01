@@ -91,4 +91,13 @@ public interface YubiKeyAccountRegistry {
      * Delete all.
      */
     void deleteAll();
+
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    default String getName() {
+        return getClass().getSimpleName();
+    }
 }

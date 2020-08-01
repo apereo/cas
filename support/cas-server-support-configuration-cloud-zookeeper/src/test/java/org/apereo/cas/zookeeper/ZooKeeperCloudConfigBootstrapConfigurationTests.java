@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "spring.cloud.zookeeper.enabled=true",
     "spring.cloud.zookeeper.config.watcher.enabled=true",
     "spring.cloud.zookeeper.config.enabled=true",
-    "spring.cloud.zookeeper.connectString=localhost:2181",
+    "spring.cloud.zookeeper.connect-string=localhost:2181",
     "spring.cloud.zookeeper.enabled=true",
     "spring.application.name=cas"
 })

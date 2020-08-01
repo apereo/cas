@@ -2908,7 +2908,8 @@ ext.libraries = [
                     exclude(group: "org.apache.zookeeper", module: "zookeeper")
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "org.apache.curator", module: "curator-recipes")
-
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-zookeeper:$springCloudZookeeperVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -2920,7 +2921,8 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "org.apache.curator", module: "curator-recipes")
-
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                 }
         ],
         springcloudvault        : [

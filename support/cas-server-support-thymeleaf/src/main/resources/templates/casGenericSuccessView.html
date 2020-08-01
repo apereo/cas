@@ -15,7 +15,14 @@
         <div class="w-100 m-auto mdc-card p-4">
             
             <h2 th:utext="#{screen.success.header}">Log In Successful</h2>
-            <p th:utext="#{screen.success.success(${authentication.principal.id})}">You, <strong>username</strong>, have successfully logged into the Central Authentication Service. This is what CAS knows about you:However, you are seeing this page because CAS does not know about your target destination and how to get you there. Examine the authentication request again and make sure a target service/application that is authorized and registered with CAS is specified.</p>
+            <p th:utext="#{screen.success.success(${authentication.principal.id})}">You, <strong>username</strong>, have successfully logged into the Central Authentication Service.
+                However, you are seeing this page because CAS does not know about your target destination and how
+                to get you there. Examine the authentication request again and make sure a target service/application that is authorized and registered with CAS is specified.</p>
+
+            <p th:utext="#{screen.success.security}">
+                When you are finished, for security reasons, please <a href="logout">log out</a> and exit your web browser.
+            </p>
+
             <p th:unless="${#maps.isEmpty(authentication.principal.attributes)}">
 
                 The following attributes are resolved for <strong th:utext="${authentication.principal.id}" />:
@@ -44,9 +51,6 @@
                     </table>
                 </div>
 
-            </p>
-            <p th:utext="#{screen.success.security}">
-                When you are finished, for security reasons, please <a href="logout">log out</a> and exit your web browser.
             </p>
         </div>
         
