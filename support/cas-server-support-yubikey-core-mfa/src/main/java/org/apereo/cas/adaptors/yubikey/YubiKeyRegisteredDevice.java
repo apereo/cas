@@ -16,8 +16,8 @@ import org.springframework.data.annotation.Id;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -44,10 +44,9 @@ public class YubiKeyRegisteredDevice implements Serializable, Cloneable {
     private static final long serialVersionUID = 221869140885521905L;
 
     @Id
+    @GeneratedValue
     @JsonProperty
-    @Transient
-    @Builder.Default
-    private long id = System.currentTimeMillis();
+    private long id;
 
     @Column(nullable = false, length = 2048)
     @JsonProperty("publicId")
