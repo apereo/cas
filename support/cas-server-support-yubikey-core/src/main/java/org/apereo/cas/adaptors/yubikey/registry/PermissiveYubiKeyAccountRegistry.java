@@ -11,6 +11,7 @@ import lombok.val;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This is {@link PermissiveYubiKeyAccountRegistry}.
@@ -42,7 +43,9 @@ public class PermissiveYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry
             val account = devices.get(uid);
             return account.getDevices()
                 .stream()
-                .anyMatch(device -> getCipherExecutor().decode(device.getPublicId()).equals(yubikeyPublicId));
+                .map(device -> decodeYubikeyRegisteredDevice(device.getPublicId()))
+                .filter(Objects::nonNull)
+                .anyMatch(publicId -> publicId.equals(yubikeyPublicId));
         }
         return false;
     }
@@ -70,17 +73,8 @@ public class PermissiveYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry
     }
 
     @Override
-    protected YubiKeyAccount getAccountInternal(final String username) {
-        if (devices.containsKey(username)) {
-            val account = devices.get(username);
-            return account.clone();
-        }
-        return null;
-    }
-
-    @Override
     public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request,
-                                  final YubiKeyRegisteredDevice... device) {
+                               final YubiKeyRegisteredDevice... device) {
         val yubiAccount = YubiKeyAccount.builder()
             .username(request.getUsername())
             .id(System.currentTimeMillis())
@@ -94,5 +88,14 @@ public class PermissiveYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry
     public boolean update(final YubiKeyAccount account) {
         devices.put(account.getUsername(), account);
         return true;
+    }
+
+    @Override
+    protected YubiKeyAccount getAccountInternal(final String username) {
+        if (devices.containsKey(username)) {
+            val account = devices.get(username);
+            return account.clone();
+        }
+        return null;
     }
 }
