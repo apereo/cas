@@ -51,21 +51,15 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public void delete(final String username, final long deviceId) {
-        val query = new Query();
-        query.addCriteria(
-            Criteria.where(MongoDbYubiKeyAccount.FIELD_USERNAME).is(username)
-                .and(MongoDbYubiKeyAccount.FIELD_DEVICES).elemMatch(Criteria.where("_id").is(deviceId)));
-        this.mongoTemplate.remove(query, this.collectionName);
+        val account = getAccountInternal(username);
+        if (account.getDevices().removeIf(device -> device.getId() == deviceId)) {
+            update(account);
+        }
     }
 
     @Override
     public void deleteAll() {
         this.mongoTemplate.remove(new Query(), MongoDbYubiKeyAccount.class, this.collectionName);
-    }
-
-    @Override
-    protected Collection<? extends YubiKeyAccount> getAccountsInternal() {
-        return this.mongoTemplate.findAll(MongoDbYubiKeyAccount.class, this.collectionName);
     }
 
     @Override
@@ -84,5 +78,10 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             .devices(Arrays.stream(device).collect(Collectors.toList()))
             .build();
         return mongoTemplate.save(result, this.collectionName);
+    }
+
+    @Override
+    protected Collection<? extends YubiKeyAccount> getAccountsInternal() {
+        return this.mongoTemplate.findAll(MongoDbYubiKeyAccount.class, this.collectionName);
     }
 }
