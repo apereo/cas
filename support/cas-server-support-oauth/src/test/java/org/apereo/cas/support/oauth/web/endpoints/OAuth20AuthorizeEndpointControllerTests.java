@@ -13,7 +13,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
 import org.jose4j.jwt.JwtClaims;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -188,14 +187,10 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
-        assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=" + OAuth20Code.PREFIX));
+        assertEquals(redirectUrl, REDIRECT_URI);
 
-        val builder = new URIBuilder(redirectUrl);
-        val code = builder.getQueryParams()
-            .stream()
-            .filter(a -> a.getName().equalsIgnoreCase("code"))
-            .findFirst().get().getValue();
-        val oAuthCode = (OAuth20Code) this.ticketRegistry.getTicket(code);
+        val code = modelAndView.getModelMap().get("code");
+        val oAuthCode = (OAuth20Code) this.ticketRegistry.getTicket(String.valueOf(code));
         assertNotNull(oAuthCode);
         val principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
@@ -354,17 +349,11 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
-        assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=" + OAuth20Code.PREFIX));
+        assertEquals(redirectUrl, REDIRECT_URI);
 
-        val builder = new URIBuilder(redirectUrl);
-        val code = builder.getQueryParams()
-            .stream()
-            .filter(a -> a.getName().equalsIgnoreCase("code"))
-            .findFirst()
-            .get()
-            .getValue();
+        val code = modelAndView.getModelMap().getAttribute("code");
 
-        val oAuthCode = (OAuth20Code) this.ticketRegistry.getTicket(code);
+        val oAuthCode = (OAuth20Code) this.ticketRegistry.getTicket(String.valueOf(code));
         assertNotNull(oAuthCode);
         val principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
@@ -463,16 +452,10 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
-        assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=OC-"));
+        assertEquals(redirectUrl, REDIRECT_URI);
 
-        val builder = new URIBuilder(redirectUrl);
-        val code = builder.getQueryParams()
-            .stream()
-            .filter(a -> a.getName().equalsIgnoreCase("code"))
-            .findFirst()
-            .get()
-            .getValue();
-        val oAuthCode = (OAuth20Code) this.ticketRegistry.getTicket(code);
+        val code = modelAndView.getModelMap().get("code");
+        val oAuthCode = (OAuth20Code) this.ticketRegistry.getTicket(String.valueOf(code));
         assertNotNull(oAuthCode);
         val principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
