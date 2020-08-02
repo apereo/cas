@@ -24,6 +24,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.config.OneTimeTokenAuthenticationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
@@ -92,6 +93,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         CasCoreUtilConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasWebflowContextConfiguration.class,
+        CasCoreWebflowConfiguration.class,
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCoreConfiguration.class,
         CasCookieConfiguration.class,
