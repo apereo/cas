@@ -25,6 +25,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.config.OneTimeTokenAuthenticationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -90,6 +91,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
+        CasWebflowContextConfiguration.class,
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCoreConfiguration.class,
         CasCookieConfiguration.class,
