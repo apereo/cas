@@ -12,6 +12,7 @@ import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.val;
@@ -78,6 +79,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCookieConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreValidationConfiguration.class,
+    CasCoreMultifactorAuthenticationConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasPersonDirectoryConfiguration.class,
