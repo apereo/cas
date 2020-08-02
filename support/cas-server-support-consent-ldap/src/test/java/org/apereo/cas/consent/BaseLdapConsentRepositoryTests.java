@@ -65,6 +65,9 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     private static final String DEF_FILTER = "(objectClass=*)";
 
     @Autowired
+    protected CasConfigurationProperties casProperties;
+    
+    @Autowired
     @Qualifier("consentRepository")
     protected ConsentRepository repository;
 
@@ -89,21 +92,6 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
         }
-    }
-
-    @Test
-    public void verifyFailOps(@Autowired final CasConfigurationProperties casProperties) {
-        assertTrue(repository.findConsentDecisions().isEmpty());
-        assertNull(repository.storeConsentDecision(mock(ConsentDecision.class)));
-
-        val ldap = casProperties.getConsent().getLdap();
-        ldap.setConsentAttributeName("---");
-        ldap.setBaseDn(null);
-        assertTrue(repository.findConsentDecisions().isEmpty());
-
-        val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
-        decision.setId(1543);
-        assertNull(repository.storeConsentDecision(decision));
     }
 
     @Test
