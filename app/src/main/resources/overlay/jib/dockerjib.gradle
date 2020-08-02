@@ -1,5 +1,3 @@
-package overlay.jib
-
 apply plugin: "com.google.cloud.tools.jib"
 
 jib {

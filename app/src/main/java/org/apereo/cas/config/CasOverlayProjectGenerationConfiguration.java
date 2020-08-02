@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import io.spring.initializr.generator.buildsystem.BuildItemResolver;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
-import io.spring.initializr.generator.spring.build.BuildCustomizer;
 import org.apereo.cas.overlay.CasOverlayGradleBuild;
 import org.apereo.cas.overlay.contrib.CasOverlayConfigurationContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayProjectLicenseContributor;
@@ -20,17 +19,15 @@ import org.apereo.cas.overlay.contrib.gradle.CasOverlayGradleSpringBootContribut
 import org.apereo.cas.overlay.contrib.gradle.CasOverlayGradleTasksContributor;
 import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperConfigurationContributor;
 import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperExecutablesContributor;
+import org.apereo.cas.overlay.contrib.spring.CasApplicationYamlPropertiesContributor;
+import org.apereo.cas.overlay.contrib.spring.CasOverlaySpringBootConfigurationContributor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @ProjectGenerationConfiguration
 public class CasOverlayProjectGenerationConfiguration {
 
-    private static CasOverlayGradleBuild createGradleBuild(BuildItemResolver buildItemResolver,
-                                                           List<BuildCustomizer<?>> buildCustomizers) {
+    private static CasOverlayGradleBuild createGradleBuild(BuildItemResolver buildItemResolver) {
         return buildItemResolver != null ? new CasOverlayGradleBuild(buildItemResolver) : new CasOverlayGradleBuild();
     }
 
@@ -63,6 +60,11 @@ public class CasOverlayProjectGenerationConfiguration {
     }
 
     @Bean
+    public CasOverlaySpringBootConfigurationContributor casOverlaySpringBootConfigurationContributor() {
+        return new CasOverlaySpringBootConfigurationContributor();
+    }
+    
+    @Bean
     public CasOverlayWebXmlContributor casOverlayWebXmlContributor() {
         return new CasOverlayWebXmlContributor();
     }
@@ -75,6 +77,7 @@ public class CasOverlayProjectGenerationConfiguration {
         chain.addContributor(new CasOverlayGradleSettingsContributor());
         chain.addContributor(new CasOverlayGradleSpringBootContributor());
         chain.addContributor(new CasOverlayGradleTasksContributor());
+        chain.addContributor(new CasApplicationYamlPropertiesContributor());
         return chain;
     }
 
@@ -87,10 +90,8 @@ public class CasOverlayProjectGenerationConfiguration {
     }
 
     @Bean
-    public CasOverlayGradleBuild gradleBuild(ObjectProvider<BuildItemResolver> buildItemResolver,
-                                             ObjectProvider<BuildCustomizer<?>> buildCustomizers) {
-        return createGradleBuild(buildItemResolver.getIfAvailable(),
-            buildCustomizers.orderedStream().collect(Collectors.toList()));
+    public CasOverlayGradleBuild gradleBuild(ObjectProvider<BuildItemResolver> buildItemResolver) {
+        return createGradleBuild(buildItemResolver.getIfAvailable());
     }
 
 }
