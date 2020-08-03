@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -15,22 +16,23 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {
     "cas.authn.ldap[0].type=AD",
-    "cas.authn.ldap[0].ldapUrl=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_LDAP_URL,
-    "cas.authn.ldap[0].useStartTls=true",
-    "cas.authn.ldap[0].subtreeSearch=true",
-    "cas.authn.ldap[0].baseDn=cn=Users,dc=cas,dc=example,dc=org",
-    "cas.authn.ldap[0].dnFormat=CAS\\\\%s",
+    "cas.authn.ldap[0].ldap-url=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_LDAP_URL,
+    "cas.authn.ldap[0].use-start-tls=true",
+    "cas.authn.ldap[0].subtree-search=true",
+    "cas.authn.ldap[0].base-dn=cn=Users,dc=cas,dc=example,dc=org",
+    "cas.authn.ldap[0].dn-format=CAS\\\\%s",
     "cas.authn.ldap[0].principalAttributeList=sAMAccountName,cn",
-    "cas.authn.ldap[0].enhanceWithEntryResolver=true",
-    "cas.authn.ldap[0].searchFilter=(sAMAccountName={user})",
-    "cas.authn.ldap[0].poolPassivator=BIND",
-    "cas.authn.ldap[0].minPoolSize=0",
-    "cas.authn.ldap[0].trustStore=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_TRUST_STORE,
-    "cas.authn.ldap[0].trustStoreType=JKS",
-    "cas.authn.ldap[0].trustStorePassword=changeit",
-    "cas.authn.ldap[0].hostnameVerifier=DEFAULT"
+    "cas.authn.ldap[0].enhance-with-entry-resolver=true",
+    "cas.authn.ldap[0].search-filter=(sAMAccountName={user})",
+    "cas.authn.ldap[0].pool-passivator=bind",
+    "cas.authn.ldap[0].min-pool-size=0",
+    "cas.authn.ldap[0].trust-store=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_TRUST_STORE,
+    "cas.authn.ldap[0].trust-store-type=JKS",
+    "cas.authn.ldap[0].trust-store-password=changeit",
+    "cas.authn.ldap[0].hostname-verifier=-default"
 })
 @EnabledIfPortOpen(port = 10390)
+@Tag("Ldap")
 public class ActiveDirectorySamAccountNameLdapAuthenticationHandlerTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
 
     /**

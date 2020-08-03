@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorTrustWebflowConfigurer;
+import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -36,6 +36,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 public class GoogleAuthenticatorConfiguration {
+    private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -62,10 +63,14 @@ public class GoogleAuthenticatorConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer() {
-        return new GoogleAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
+        val cfg = new GoogleAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
-            googleAuthenticatorFlowRegistry(), applicationContext, casProperties,
+            googleAuthenticatorFlowRegistry(),
+            applicationContext,
+            casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+        cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
+        return cfg;
     }
 
     @Bean
@@ -73,24 +78,27 @@ public class GoogleAuthenticatorConfiguration {
     public CasWebflowExecutionPlanConfigurer googleCasWebflowExecutionPlanConfigurer() {
         return plan -> plan.registerWebflowConfigurer(googleAuthenticatorMultifactorWebflowConfigurer());
     }
-    
+
     /**
      * The google authenticator multifactor trust configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth", name = "trusted-device-enabled", havingValue = "true", matchIfMissing = true)
     @Configuration("gauthMultifactorTrustConfiguration")
     public class GoogleAuthenticatorMultifactorTrustConfiguration {
 
         @ConditionalOnMissingBean(name = "gauthMultifactorTrustWebflowConfigurer")
         @Bean
-        @DependsOn("defaultWebflowConfigurer")
+        @DependsOn({"defaultWebflowConfigurer", "googleAuthenticatorMultifactorWebflowConfigurer"})
         public CasWebflowConfigurer gauthMultifactorTrustWebflowConfigurer() {
-            return new GoogleAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
+            val cfg = new GoogleAuthenticatorMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(),
-                casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), googleAuthenticatorFlowRegistry(),
-                applicationContext, casProperties,
+                googleAuthenticatorFlowRegistry(),
+                applicationContext,
+                casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+            cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
+            return cfg;
         }
 
         @Bean

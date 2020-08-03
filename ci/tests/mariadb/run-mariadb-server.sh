@@ -3,7 +3,7 @@
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
 echo "Running MariaDb docker image..."
-docker run -p 3306:3306 --name mariadb -e MYSQL_ROOT_PASSWORD=mypass -d mariadb:10.5.1
+docker run -p 3306:3306 --name mariadb -e MYSQL_ROOT_PASSWORD=mypass -d mariadb:10.5.2
 
 docker ps | grep "mariadb"
 retVal=$?

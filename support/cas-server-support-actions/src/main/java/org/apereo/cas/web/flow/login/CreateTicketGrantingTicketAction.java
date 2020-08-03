@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.WebUtils;
@@ -48,7 +49,8 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
      * @return authn warnings from all handlers and results
      * @since 4.1.0
      */
-    private static Collection<MessageDescriptor> calculateAuthenticationWarningMessages(final TicketGrantingTicket tgtId, final MessageContext messageContext) {
+    private static Collection<MessageDescriptor> calculateAuthenticationWarningMessages(final TicketGrantingTicket tgtId,
+                                                                                        final MessageContext messageContext) {
         val entries = tgtId.getAuthentication().getSuccesses().entrySet();
         val messages = entries
             .stream()
@@ -168,10 +170,10 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
             webflowEventResolutionConfigurationContext.getCentralAuthenticationService().updateTicket(tgt);
             return tgt;
         } catch (final PrincipalException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw e;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw new InvalidTicketException(ticketGrantingTicket);
         }
     }
@@ -180,7 +182,7 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
         if (StringUtils.isBlank(ticketGrantingTicket)) {
             return true;
         }
-        LOGGER.debug("Located ticket-granting ticket in the context. Retrieving associated authentication");
+        LOGGER.trace("Located ticket-granting ticket in the context. Retrieving associated authentication");
         val authenticationFromTgt = webflowEventResolutionConfigurationContext.getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicket);
 
         if (authenticationFromTgt == null) {

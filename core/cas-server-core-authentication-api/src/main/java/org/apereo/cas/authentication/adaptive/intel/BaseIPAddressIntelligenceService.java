@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.adaptive.intel;
 
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -15,12 +16,16 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseIPAddressIntelligenceService implements IPAddressIntelligenceService {
     /**
      * Adaptive authentication settings.
      */
     protected final AdaptiveAuthenticationProperties adaptiveAuthenticationProperties;
+
+    private static void trackResponseInRequestContext(final RequestContext context, final IPAddressIntelligenceResponse response) {
+        context.getFlowScope().put("ipAddressIntelligenceResponse", response);
+    }
 
     private boolean isClientIpAddressRejected(final String clientIp) {
         return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectIpAddresses())
@@ -37,10 +42,6 @@ public abstract class BaseIPAddressIntelligenceService implements IPAddressIntel
         val response = examineInternal(context, clientIpAddress);
         trackResponseInRequestContext(context, response);
         return response;
-    }
-
-    private static void trackResponseInRequestContext(final RequestContext context, final IPAddressIntelligenceResponse response) {
-        context.getFlowScope().put("ipAddressIntelligenceResponse", response);
     }
 
     /**

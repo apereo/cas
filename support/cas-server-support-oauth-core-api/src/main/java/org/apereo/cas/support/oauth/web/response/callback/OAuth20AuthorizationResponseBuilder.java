@@ -40,7 +40,7 @@ public interface OAuth20AuthorizationResponseBuilder {
      * Supports request?
      *
      * @param context the context
-     * @return the boolean
+     * @return true/false
      */
     boolean supports(JEEContext context);
 
@@ -65,6 +65,6 @@ public interface OAuth20AuthorizationResponseBuilder {
             model.put("parameters", parameters);
             return new ModelAndView(CasWebflowConstants.VIEW_ID_POST_RESPONSE, model);
         }
-        return new ModelAndView(new RedirectView(redirectUrl));
+        return new ModelAndView(new RedirectView(redirectUrl), parameters);
     }
 }

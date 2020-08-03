@@ -2,6 +2,8 @@ package org.apereo.cas.adaptors.yubikey.dao;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
 
 import lombok.val;
@@ -10,9 +12,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -36,53 +37,9 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public boolean registerAccountFor(final String uid, final String token) {
-        val accountValidator = getAccountValidator();
-        if (accountValidator.isValid(uid, token)) {
-            val yubikeyPublicId = getCipherExecutor().encode(accountValidator.getTokenPublicId(token));
-
-            val query = new Query().addCriteria(Criteria.where(MongoDbYubiKeyAccount.FIELD_USERNAME).is(uid));
-            var account = this.mongoTemplate.findOne(query, MongoDbYubiKeyAccount.class, this.collectionName);
-            if (account == null) {
-                account = new MongoDbYubiKeyAccount();
-                account.setUsername(uid);
-                account.registerDevice(yubikeyPublicId);
-                this.mongoTemplate.save(account, this.collectionName);
-                return true;
-            }
-            account.registerDevice(yubikeyPublicId);
-            val update = Update.update(MongoDbYubiKeyAccount.FIELD_DEVICE_IDENTIFIERS, account.getDeviceIdentifiers());
-            this.mongoTemplate.updateFirst(query, update, MongoDbYubiKeyAccount.class, this.collectionName);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public Collection<? extends YubiKeyAccount> getAccounts() {
-        return this.mongoTemplate.findAll(MongoDbYubiKeyAccount.class, this.collectionName)
-            .stream()
-            .peek(it -> {
-                val devices = it.getDeviceIdentifiers().stream()
-                    .map(pubId -> getCipherExecutor().decode(pubId))
-                    .collect(Collectors.toCollection(ArrayList::new));
-                it.setDeviceIdentifiers(devices);
-            })
-            .collect(Collectors.toList());
-    }
-
-    @Override
-    public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
+    public YubiKeyAccount getAccountInternal(final String uid) {
         val query = new Query().addCriteria(Criteria.where(MongoDbYubiKeyAccount.FIELD_USERNAME).is(uid));
-        val account = this.mongoTemplate.findOne(query, MongoDbYubiKeyAccount.class, this.collectionName);
-        if (account != null) {
-            val devices = account.getDeviceIdentifiers().stream()
-                .map(pubId -> getCipherExecutor().decode(pubId))
-                .collect(Collectors.toCollection(ArrayList::new));
-            val yubiAccount = new MongoDbYubiKeyAccount(account.getId(), devices, account.getUsername());
-            return Optional.of(yubiAccount);
-        }
-        return Optional.empty();
+        return mongoTemplate.findOne(query, MongoDbYubiKeyAccount.class, this.collectionName);
     }
 
     @Override
@@ -93,7 +50,38 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
+    public void delete(final String username, final long deviceId) {
+        val account = getAccountInternal(username);
+        if (account.getDevices().removeIf(device -> device.getId() == deviceId)) {
+            update(account);
+        }
+    }
+
+    @Override
     public void deleteAll() {
         this.mongoTemplate.remove(new Query(), MongoDbYubiKeyAccount.class, this.collectionName);
+    }
+
+    @Override
+    public boolean update(final YubiKeyAccount account) {
+        val query = new Query().addCriteria(Criteria.where(MongoDbYubiKeyAccount.FIELD_USERNAME).is(account.getUsername()));
+        val update = Update.update(MongoDbYubiKeyAccount.FIELD_DEVICES, account.getDevices());
+        this.mongoTemplate.updateFirst(query, update, MongoDbYubiKeyAccount.class, this.collectionName);
+        return true;
+    }
+
+    @Override
+    public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request, final YubiKeyRegisteredDevice... device) {
+        val result = MongoDbYubiKeyAccount.builder()
+            .id(System.currentTimeMillis())
+            .username(request.getUsername())
+            .devices(Arrays.stream(device).collect(Collectors.toList()))
+            .build();
+        return mongoTemplate.save(result, this.collectionName);
+    }
+
+    @Override
+    protected Collection<? extends YubiKeyAccount> getAccountsInternal() {
+        return this.mongoTemplate.findAll(MongoDbYubiKeyAccount.class, this.collectionName);
     }
 }

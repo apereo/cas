@@ -1,10 +1,7 @@
 package org.apereo.cas.support.saml;
 
-import lombok.SneakyThrows;
-import lombok.val;
 import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
 import org.springframework.core.io.Resource;
-import org.w3c.dom.Element;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,23 +17,17 @@ import java.nio.file.Files;
 public class InMemoryResourceMetadataResolver extends DOMMetadataResolver {
 
     public InMemoryResourceMetadataResolver(final Resource metadataResource, final OpenSamlConfigBean configBean) throws IOException {
-        super(getMetadataRootElement(metadataResource.getInputStream(), configBean));
+        super(SamlUtils.getRootElementFrom(metadataResource.getInputStream(), configBean));
         setParserPool(configBean.getParserPool());
     }
 
     public InMemoryResourceMetadataResolver(final InputStream metadataResource, final OpenSamlConfigBean configBean) {
-        super(getMetadataRootElement(metadataResource, configBean));
+        super(SamlUtils.getRootElementFrom(metadataResource, configBean));
         setParserPool(configBean.getParserPool());
     }
 
     public InMemoryResourceMetadataResolver(final File metadataResource, final OpenSamlConfigBean configBean) throws IOException {
-        super(getMetadataRootElement(Files.newInputStream(metadataResource.toPath()), configBean));
+        super(SamlUtils.getRootElementFrom(Files.newInputStream(metadataResource.toPath()), configBean));
         setParserPool(configBean.getParserPool());
-    }
-
-    @SneakyThrows
-    private static Element getMetadataRootElement(final InputStream metadataResource, final OpenSamlConfigBean configBean) {
-        val document = configBean.getParserPool().parse(metadataResource);
-        return document.getDocumentElement();
     }
 }

@@ -7,6 +7,7 @@ import org.apereo.cas.oidc.authn.OidcPrivateKeyJwtAuthenticatorTests;
 import org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicyTests;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicyTests;
 import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicyTests;
+import org.apereo.cas.oidc.claims.OidcOpenIdScopeAttributeReleasePolicyTests;
 import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicyTests;
 import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicyTests;
 import org.apereo.cas.oidc.claims.mapping.OidcDefaultAttributeToScopeClaimMapperTests;
@@ -14,24 +15,42 @@ import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactoryTests;
 import org.apereo.cas.oidc.discovery.webfinger.OidcEchoingWebFingerUserInfoRepositoryTests;
 import org.apereo.cas.oidc.discovery.webfinger.OidcGroovyWebFingerUserInfoRepositoryTests;
 import org.apereo.cas.oidc.discovery.webfinger.OidcRestfulWebFingerUserInfoRepositoryTests;
+import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryServiceTests;
+import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponseTests;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoaderTests;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorServiceTests;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtilsTests;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheLoaderTests;
+import org.apereo.cas.oidc.jwks.generator.OidcDefaultJsonWebKeystoreGeneratorServiceTests;
+import org.apereo.cas.oidc.jwks.generator.OidcRestfulJsonWebKeystoreGeneratorServiceTests;
 import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilterTests;
 import org.apereo.cas.oidc.profile.OidcUserProfileDataCreatorTests;
+import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionServiceTests;
 import org.apereo.cas.oidc.profile.OidcUserProfileViewRendererDefaultTests;
 import org.apereo.cas.oidc.profile.OidcUserProfileViewRendererFlatTests;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListenerTests;
+import org.apereo.cas.oidc.slo.OidcSingleLogoutMessageCreatorTests;
+import org.apereo.cas.oidc.slo.OidcSingleLogoutServiceLogoutUrlBuilderTests;
+import org.apereo.cas.oidc.slo.OidcSingleLogoutServiceMessageHandlerTests;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorServiceTests;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionServiceTests;
 import org.apereo.cas.oidc.token.OidcJwtAccessTokenEncoderTests;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutorTests;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupportTests;
 import org.apereo.cas.oidc.web.OidcAccessTokenResponseGeneratorTests;
+import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolverTests;
+import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilderTests;
+import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolverTests;
+import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapterTests;
+import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests;
+import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilderTests;
 import org.apereo.cas.oidc.web.controllers.OidcIntrospectionEndpointControllerTests;
-import org.apereo.cas.oidc.web.controllers.OidcLogoutEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.OidcWellKnownEndpointControllerTests;
+import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientConfigurationEndpointControllerTests;
+import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistrationEndpointControllerTests;
+import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksEndpointControllerTests;
+import org.apereo.cas.oidc.web.controllers.logout.OidcLogoutEndpointControllerTests;
 import org.apereo.cas.oidc.web.flow.OidcAuthenticationContextWebflowEventResolverTests;
+import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIActionTests;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurerTests;
 
@@ -49,7 +68,7 @@ import org.junit.runner.RunWith;
     OidcWellKnownEndpointControllerTests.class,
     OidcIdTokenGeneratorServiceTests.class,
     OidcIdTokenSigningAndEncryptionServiceTests.class,
-    OidcJsonWebKeystoreGeneratorServiceTests.class,
+    OidcDefaultJsonWebKeystoreGeneratorServiceTests.class,
     OidcDefaultJsonWebKeystoreCacheLoaderTests.class,
     OidcAuthenticationContextWebflowEventResolverTests.class,
     OidcProfileScopeToAttributesFilterTests.class,
@@ -63,7 +82,12 @@ import org.junit.runner.RunWith;
     OidcGroovyWebFingerUserInfoRepositoryTests.class,
     OidcServiceRegistryListenerTests.class,
     OidcUserProfileDataCreatorTests.class,
+    OidcHandlerInterceptorAdapterTests.class,
+    OidcClientConfigurationEndpointControllerTests.class,
     OidcJwtAccessTokenEncoderTests.class,
+    OidcUserProfileSigningAndEncryptionServiceTests.class,
+    OidcJsonWebKeyStoreUtilsTests.class,
+    OidcDynamicClientRegistrationEndpointControllerTests.class,
     OidcUserProfileViewRendererDefaultTests.class,
     OidcUserProfileViewRendererFlatTests.class,
     OidcAccessTokenResponseGeneratorTests.class,
@@ -78,8 +102,22 @@ import org.junit.runner.RunWith;
     OidcDefaultAttributeToScopeClaimMapperTests.class,
     OidcAccessTokenAuthenticatorTests.class,
     OidcWebflowConfigurerTests.class,
+    OidcOpenIdScopeAttributeReleasePolicyTests.class,
+    OidcSingleLogoutServiceLogoutUrlBuilderTests.class,
+    OidcImplicitIdTokenAuthorizationResponseBuilderTests.class,
+    OidcJwksEndpointControllerTests.class,
+    OidcMultifactorAuthenticationTriggerTests.class,
+    OidcWebFingerDiscoveryServiceTests.class,
+    OidcCasClientRedirectActionBuilderTests.class,
+    OidcConsentApprovalViewResolverTests.class,
+    OidcClientRegistrationResponseTests.class,
+    OidcCallbackAuthorizeViewResolverTests.class,
+    OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests.class,
+    OidcRestfulJsonWebKeystoreGeneratorServiceTests.class,
     OidcRegisteredServiceJwtAccessTokenCipherExecutorTests.class,
-    OidcClientConfigurationAccessTokenAuthenticatorTests.class
+    OidcClientConfigurationAccessTokenAuthenticatorTests.class,
+    OidcSingleLogoutMessageCreatorTests.class,
+    OidcSingleLogoutServiceMessageHandlerTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class OidcTestsSuite {

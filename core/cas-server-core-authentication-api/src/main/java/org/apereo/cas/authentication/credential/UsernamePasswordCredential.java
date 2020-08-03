@@ -64,6 +64,7 @@ public class UsernamePasswordCredential extends AbstractCredential {
      *
      * @param context the context
      */
+    @Override
     public void validate(final ValidationContext context) {
         val messages = context.getMessageContext();
         if (!context.getUserEvent().equalsIgnoreCase("submit") || messages.hasErrorMessages()) {

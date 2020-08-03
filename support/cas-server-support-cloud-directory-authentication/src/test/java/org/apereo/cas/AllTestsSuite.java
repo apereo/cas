@@ -3,6 +3,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.CloudDirectoryAuthenticationHandlerTests;
 import org.apereo.cas.clouddirectory.DefaultCloudDirectoryRepositoryTests;
+import org.apereo.cas.config.CloudDirectoryAuthenticationConfigurationTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -16,6 +17,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     DefaultCloudDirectoryRepositoryTests.class,
+    CloudDirectoryAuthenticationConfigurationTests.class,
     CloudDirectoryAuthenticationHandlerTests.class
 })
 @RunWith(JUnitPlatform.class)

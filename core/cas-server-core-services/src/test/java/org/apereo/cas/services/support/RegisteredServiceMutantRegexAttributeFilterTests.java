@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("RegisteredService")
 public class RegisteredServiceMutantRegexAttributeFilterTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "RegisteredServiceMutantRegexAttributeFilterTests.json");
@@ -46,7 +48,7 @@ public class RegisteredServiceMutantRegexAttributeFilterTests {
     @BeforeEach
     public void initialize() {
         MockitoAnnotations.initMocks(this);
-        when(this.registeredService.getName()).thenReturn("sample test service");
+        when(this.registeredService.getName()).thenReturn("Sample test service1");
         when(this.registeredService.getServiceId()).thenReturn("https://www.apereo.org");
         this.filter = new RegisteredServiceMutantRegexAttributeFilter();
 

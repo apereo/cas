@@ -23,6 +23,7 @@ public interface WatcherService extends Closeable, AutoCloseable {
     /**
      * Close.
      */
+    @Override
     default void close() {
     }
 

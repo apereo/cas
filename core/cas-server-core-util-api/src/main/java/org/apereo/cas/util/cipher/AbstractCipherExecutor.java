@@ -6,6 +6,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.RsaKeyUtil;
 
@@ -36,10 +38,11 @@ import java.util.Map;
  */
 @Slf4j
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
     private static final int MAP_SIZE = 8;
+    
     private static final BigInteger RSA_PUBLIC_KEY_EXPONENT = BigInteger.valueOf(65537);
 
     static {
@@ -77,9 +80,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
     public static PublicKey extractPublicKeyFromResource(final String secretKeyToUse) {
         LOGGER.debug("Attempting to extract public key from [{}]...", secretKeyToUse);
         val resource = ResourceUtils.getResourceFrom(secretKeyToUse);
-        val factory = new PublicKeyFactoryBean();
-        factory.setAlgorithm(RsaKeyUtil.RSA);
-        factory.setResource(resource);
+        val factory = new PublicKeyFactoryBean(resource, RsaKeyUtil.RSA);
         factory.setSingleton(false);
         return factory.getObject();
     }
@@ -94,11 +95,22 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         if (this.signingKey == null) {
             return value;
         }
-        if ("RSA".equalsIgnoreCase(this.signingKey.getAlgorithm())) {
-            return EncodingUtils.signJwsRSASha512(this.signingKey, value, this.customHeaders);
-        }
-        return EncodingUtils.signJwsHMACSha512(this.signingKey, value, this.customHeaders);
+        return signWith(
+                value,
+                "RSA".equalsIgnoreCase(this.signingKey.getAlgorithm())
+                ? AlgorithmIdentifiers.RSA_USING_SHA512
+                : AlgorithmIdentifiers.HMAC_SHA512);
+    }
 
+    /**
+     * Sign value with given parameters.
+     *
+     * @param value          the value
+     * @param algHeaderValue the alg header value
+     * @return the byte [ ]
+     */
+    protected byte[] signWith(final byte[] value, final String algHeaderValue) {
+        return EncodingUtils.signJws(this.signingKey, value, algHeaderValue, this.customHeaders);
     }
 
     /**

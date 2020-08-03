@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
 import org.apereo.cas.configuration.support.Beans;
 
 import lombok.experimental.UtilityClass;
@@ -14,7 +15,6 @@ import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AttributeModification;
-import org.ldaptive.AttributeModification.Type;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.CompareConnectionValidator;
 import org.ldaptive.CompareRequest;
@@ -282,7 +282,8 @@ public class LdapUtils {
                                                          final AbstractLdapProperties.LdapType type) {
         try {
             val connConfig = connectionFactory.getConnectionConfig();
-            if (connConfig.getUseStartTLS() || (connConfig.getLdapUrl() != null && !connConfig.getLdapUrl().toLowerCase().contains("ldaps://"))) {
+            if (connConfig.getUseStartTLS()
+                || (connConfig.getLdapUrl() != null && !connConfig.getLdapUrl().toLowerCase().contains("ldaps://"))) {
                 LOGGER.warn("Executing password modification op under a non-secure LDAP connection; "
                         + "To modify password attributes, the connection to the LDAP server {} be secured and/or encrypted.",
                     type == AbstractLdapProperties.LdapType.AD ? "MUST" : "SHOULD");
@@ -298,8 +299,8 @@ public class LdapUtils {
                         new AttributeModification(AttributeModification.Type.REPLACE, new UnicodePwdAttribute(newPassword))))
                     :
                     operation.execute(new ModifyRequest(currentDn,
-                        new AttributeModification(Type.DELETE, new UnicodePwdAttribute(oldPassword)),
-                        new AttributeModification(Type.ADD, new UnicodePwdAttribute(newPassword))));
+                        new AttributeModification(AttributeModification.Type.DELETE, new UnicodePwdAttribute(oldPassword)),
+                        new AttributeModification(AttributeModification.Type.ADD, new UnicodePwdAttribute(newPassword))));
                 LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
                 return response.getResultCode() == ResultCode.SUCCESS;
             }
@@ -312,7 +313,7 @@ public class LdapUtils {
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -334,6 +335,7 @@ public class LdapUtils {
                 .map(entry -> {
                     val values = entry.getValue().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
                     val attr = new LdapAttribute(entry.getKey(), values);
+                    LOGGER.debug("Constructed new attribute [{}]", attr);
                     return new AttributeModification(AttributeModification.Type.REPLACE, attr);
                 })
                 .toArray(AttributeModification[]::new);
@@ -342,7 +344,7 @@ public class LdapUtils {
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -376,7 +378,7 @@ public class LdapUtils {
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -396,7 +398,7 @@ public class LdapUtils {
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -927,8 +929,7 @@ public class LdapUtils {
     private static DefaultConnectionFactory newLdaptiveDefaultConnectionFactory(final AbstractLdapProperties l) {
         LOGGER.debug("Creating LDAP connection factory for [{}]", l.getLdapUrl());
         val cc = newLdaptiveConnectionConfig(l);
-        val bindCf = new DefaultConnectionFactory(cc);
-        return bindCf;
+        return new DefaultConnectionFactory(cc);
     }
 
     /**
@@ -959,9 +960,32 @@ public class LdapUtils {
         if (StringUtils.isNotBlank(l.getDerefAliases())) {
             entryResolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
         }
+
+        val entryHandlers = newLdaptiveEntryHandlers(l.getSearchEntryHandlers());
+        val searchResultHandlers = newLdaptiveSearchResultHandlers(l.getSearchEntryHandlers());
+        if (!entryHandlers.isEmpty()) {
+            LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), entryHandlers);
+            entryResolver.setEntryHandlers(entryHandlers.toArray(LdapEntryHandler[]::new));
+        }
+        if (!searchResultHandlers.isEmpty()) {
+            LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), searchResultHandlers);
+            entryResolver.setSearchResultHandlers(searchResultHandlers.toArray(SearchResultHandler[]::new));
+        }
+        if (l.isFollowReferrals()) {
+            entryResolver.setSearchResultHandlers(new FollowSearchReferralHandler());
+        }
+        return entryResolver;
+    }
+
+    /**
+     * New list of ldap entry handlers derived from the supplied properties.
+     *
+     * @param properties to inspect
+     * @return the list of entry handlers
+     */
+    public static List<LdapEntryHandler> newLdaptiveEntryHandlers(final List<LdapSearchEntryHandlersProperties> properties) {
         val entryHandlers = new ArrayList<LdapEntryHandler>();
-        val searchResultHandlers = new ArrayList<SearchResultHandler>();
-        l.getSearchEntryHandlers().forEach(h -> {
+        properties.forEach(h -> {
             switch (h.getType()) {
                 case CASE_CHANGE:
                     val eh = new CaseChangeEntryHandler();
@@ -992,6 +1016,23 @@ public class LdapUtils {
                 case OBJECT_SID:
                     entryHandlers.add(new ObjectSidHandler());
                     break;
+                default:
+                    break;
+            }
+        });
+        return entryHandlers;
+    }
+
+    /**
+     * New list of ldap search result handlers derived from the supplied properties.
+     *
+     * @param properties to inspect
+     * @return the list of search result handlers
+     */
+    public static List<SearchResultHandler> newLdaptiveSearchResultHandlers(final List<LdapSearchEntryHandlersProperties> properties) {
+        val searchResultHandlers = new ArrayList<SearchResultHandler>();
+        properties.forEach(h -> {
+            switch (h.getType()) {
                 case PRIMARY_GROUP:
                     val ehp = new PrimaryGroupIdHandler();
                     val primaryGroupId = h.getPrimaryGroupId();
@@ -1012,18 +1053,6 @@ public class LdapUtils {
                     break;
             }
         });
-
-        if (!entryHandlers.isEmpty()) {
-            LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), entryHandlers);
-            entryResolver.setEntryHandlers(entryHandlers.toArray(LdapEntryHandler[]::new));
-        }
-        if (!searchResultHandlers.isEmpty()) {
-            LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), searchResultHandlers);
-            entryResolver.setSearchResultHandlers(searchResultHandlers.toArray(SearchResultHandler[]::new));
-        }
-        if (l.isFollowReferrals()) {
-            entryResolver.setSearchResultHandlers(new FollowSearchReferralHandler());
-        }
-        return entryResolver;
+        return searchResultHandlers;
     }
 }

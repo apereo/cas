@@ -13,14 +13,13 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
@@ -30,13 +29,16 @@ import static org.mockito.Mockito.*;
 public class OAuthRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthRegisteredService.json");
+
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
     private final ServiceRegistry dao;
 
     public OAuthRegisteredServiceTests() throws Exception {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
         this.dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
-            mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy(),
+            appCtx, new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
     }

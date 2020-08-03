@@ -31,9 +31,10 @@ import java.util.Optional;
 @Slf4j
 public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-
     private final List<RadiusServer> servers;
+
     private final boolean failoverOnException;
+
     private final boolean failoverOnAuthenticationFailure;
 
     public RadiusTokenAuthenticationHandler(final String name, final ServicesManager servicesManager,

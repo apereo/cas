@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,6 +20,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("CasSimpleMultifactorProperties")
 public class CasSimpleMultifactorProperties extends BaseMultifactorProviderProperties {
     /**
      * Provider id by default.

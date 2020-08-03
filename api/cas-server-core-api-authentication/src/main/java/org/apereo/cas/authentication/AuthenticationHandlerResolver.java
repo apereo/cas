@@ -41,7 +41,7 @@ public interface AuthenticationHandlerResolver extends Ordered {
      *
      * @param handlers    the handlers
      * @param transaction the transaction
-     * @return the boolean
+     * @return true/false
      */
     default boolean supports(final Set<AuthenticationHandler> handlers, final AuthenticationTransaction transaction) {
         return !handlers.isEmpty() && transaction != null;

@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.pm.LdapPasswordManagementPrope
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.jooq.lambda.Unchecked;
+import org.ldaptive.ConnectionFactory;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -29,16 +32,24 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-public class LdapPasswordManagementService extends BasePasswordManagementService {
+public class LdapPasswordManagementService extends BasePasswordManagementService implements DisposableBean {
     private final List<LdapPasswordManagementProperties> ldapProperties;
-
+    private final Map<String, ConnectionFactory> connectionFactoryMap;
 
     public LdapPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                          final String issuer,
                                          final PasswordManagementProperties passwordManagementProperties,
-                                         final PasswordHistoryService passwordHistoryService) {
+                                         final PasswordHistoryService passwordHistoryService,
+                                         final Map<String, ConnectionFactory> connectionFactoryMap) {
         super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
         this.ldapProperties = passwordManagementProperties.getLdap();
+        this.connectionFactoryMap = connectionFactoryMap;
+    }
+
+    @Override
+    public void destroy() {
+        this.connectionFactoryMap.forEach((ldap, connectionFactory) ->
+            connectionFactory.close());
     }
 
     @Override
@@ -75,7 +86,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                     LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                     CollectionUtils.wrap(username));
                 LOGGER.debug("Constructed LDAP filter [{}] to locate security questions", filter);
-                val ldapConnectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
+                val ldapConnectionFactory = this.connectionFactoryMap.get(ldap.getLdapUrl());
                 val response = LdapUtils.executeSearchOperation(ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
                 LOGGER.debug("LDAP response for security questions [{}]", response);
 
@@ -151,7 +162,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 .findFirst()
                 .orElse(null);
         } catch (final Exception e) {
-            LOGGER.error("Error finding phone: {}", e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -190,7 +201,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
             return results.stream().allMatch(result -> result);
         } catch (final Exception e) {
-            LOGGER.error("Error changing password: {}", e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

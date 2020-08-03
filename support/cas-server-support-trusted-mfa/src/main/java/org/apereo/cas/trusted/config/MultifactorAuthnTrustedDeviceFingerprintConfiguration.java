@@ -57,7 +57,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Qualifier("geoLocationService")
     private ObjectProvider<GeoLocationService> geoLocationService;
 
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.deviceFingerprint.clientIp", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.client-ip", name = "enabled", havingValue = "true")
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "deviceFingerprintClientIpComponentExtractor")
@@ -71,7 +71,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "deviceFingerprintGeoLocationComponentExtractor")
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.deviceFingerprint.geolocation", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.geolocation", name = "enabled", havingValue = "true")
     public DeviceFingerprintComponentExtractor deviceFingerprintGeoLocationComponentExtractor() {
         val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getGeolocation();
         val component = new GeoLocationDeviceFingerprintComponentExtractor(geoLocationService.getIfAvailable());
@@ -79,7 +79,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         return component;
     }
 
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.deviceFingerprint.cookie", name = "enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.cookie", name = "enabled", havingValue = "true", matchIfMissing = true)
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "deviceFingerprintCookieComponentExtractor")
@@ -92,7 +92,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         return component;
     }
 
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.deviceFingerprint.cookie", name = "enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.cookie", name = "enabled", havingValue = "true", matchIfMissing = true)
     @ConditionalOnMissingBean(name = BEAN_DEVICE_FINGERPRINT_COOKIE_GENERATOR)
     @Bean(BEAN_DEVICE_FINGERPRINT_COOKIE_GENERATOR)
     @RefreshScope
@@ -104,7 +104,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         );
     }
 
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.deviceFingerprint.userAgent", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.user-agent", name = "enabled", havingValue = "true")
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "deviceFingerprintUserAgentComponentExtractor")

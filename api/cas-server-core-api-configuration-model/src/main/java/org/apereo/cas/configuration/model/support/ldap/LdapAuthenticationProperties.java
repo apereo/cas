@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderPro
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -22,6 +23,7 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("LdapAuthenticationProperties")
 public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProperties {
 
     private static final long serialVersionUID = -5357843463521189892L;

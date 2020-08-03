@@ -67,6 +67,7 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "casAccepttoMultifactorAuthenticationProvider")
     public MultifactorAuthenticationProvider casAccepttoMultifactorAuthenticationProvider() {
         val simple = casProperties.getAuthn().getMfa().getAcceptto();
         val p = new AccepttoMultifactorAuthenticationProvider();
@@ -80,6 +81,7 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "casAccepttoMultifactorAuthenticationMetaDataPopulator")
     public AuthenticationMetaDataPopulator casAccepttoMultifactorAuthenticationMetaDataPopulator() {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),

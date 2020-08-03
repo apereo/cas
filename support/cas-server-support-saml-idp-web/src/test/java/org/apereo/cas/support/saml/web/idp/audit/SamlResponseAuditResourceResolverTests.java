@@ -13,8 +13,6 @@ import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Fault;
 import org.opensaml.soap.soap11.FaultActor;
 import org.opensaml.soap.soap11.FaultString;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -25,9 +23,29 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
 @Tag("SAML")
 public class SamlResponseAuditResourceResolverTests {
+    @Test
+    public void verifyActionUnknown() {
+        val r = new SamlResponseAuditResourceResolver();
+        val result = r.resolveFrom(mock(JoinPoint.class), new Object());
+        assertNotNull(result);
+        assertTrue(result.length == 0);
+    }
+
+    @Test
+    public void verifyActionEmptyEnvelope() {
+        val r = new SamlResponseAuditResourceResolver();
+        val envelope = mock(Envelope.class);
+        val body = mock(Body.class);
+
+        when(body.getUnknownXMLObjects()).thenReturn(CollectionUtils.wrapList());
+        when(envelope.getBody()).thenReturn(body);
+        val result = r.resolveFrom(mock(JoinPoint.class), envelope);
+        assertNotNull(result);
+        assertTrue(result.length == 0);
+    }
+
     @Test
     public void verifyAction() {
         val r = new SamlResponseAuditResourceResolver();
@@ -52,7 +70,7 @@ public class SamlResponseAuditResourceResolverTests {
 
         val fault = mock(Fault.class);
         val actor = mock(FaultActor.class);
-        when(actor.getValue()).thenReturn("actor");
+        when(actor.getURI()).thenReturn("actor");
         val msg = mock(FaultString.class);
         when(msg.getValue()).thenReturn("message");
         when(fault.getMessage()).thenReturn(msg);

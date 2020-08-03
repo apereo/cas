@@ -1,7 +1,7 @@
 package org.apereo.cas.support.oauth.web.mgmt;
 
+import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuth")
 public class OAuth20TokenManagementEndpointTests extends AbstractOAuth20Tests {
     @Autowired
-    @Qualifier("oAuth20TokenManagementEndpoint")
+    @Qualifier("oauth20TokenManagementEndpoint")
     private OAuth20TokenManagementEndpoint tokenManagementEndpoint;
 
     @Test

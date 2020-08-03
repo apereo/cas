@@ -10,6 +10,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@FunctionalInterface
 public interface AuthenticationPolicyResolver extends Ordered {
     /**
      * Resolve set of authentication handlers.
@@ -28,7 +29,7 @@ public interface AuthenticationPolicyResolver extends Ordered {
      * Supports this transaction?
      *
      * @param transaction the transaction
-     * @return the boolean
+     * @return true/false
      */
     default boolean supports(final AuthenticationTransaction transaction) {
         return transaction != null;

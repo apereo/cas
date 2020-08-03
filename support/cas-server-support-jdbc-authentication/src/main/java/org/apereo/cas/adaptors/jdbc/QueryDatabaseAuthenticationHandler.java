@@ -143,7 +143,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         val parameters = new LinkedHashMap<String, Object>();
         parameters.put("username", credential.getUsername());
         parameters.put("password", credential.getPassword());
-        return getNamedJdbcTemplate().queryForMap(this.sql, parameters);
+        return getNamedParameterJdbcTemplate().queryForMap(this.sql, parameters);
     }
 
     private void collectPrincipalAttributes(final Map<String, List<Object>> attributes, final Map<String, Object> dbFields) {

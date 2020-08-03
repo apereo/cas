@@ -30,9 +30,9 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     RefreshAutoConfiguration.class
     },
     properties = {
-        "cas.events.couchDb.asynchronous=false",
-        "cas.events.couchDb.username=cas",
-        "cas.events.couchdb.password=password"
+        "cas.events.couch-db.asynchronous=false",
+        "cas.events.couch-db.username=cas",
+        "cas.events.couch-db.password=password"
     })
 @Getter
 @EnabledIfPortOpen(port = 5984)

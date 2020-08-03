@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
 
+import java.time.Clock;
 import java.util.UUID;
 
 /**
@@ -30,7 +31,9 @@ public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
 
     private String name;
 
-    public AbstractCasExpirationPolicy() {
+    private Clock clock = Clock.systemUTC();
+
+    protected AbstractCasExpirationPolicy() {
         this.name = this.getClass().getSimpleName() + '-' + UUID.randomUUID().toString();
     }
 

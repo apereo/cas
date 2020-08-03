@@ -10,6 +10,19 @@ CAS presents the ability to notify users on select actions via SMS messaging. Ex
 or password reset links/tokens. SMS providers supported by CAS are listed below. Note that an active/professional subscription may be required for certain
 providers.
 
+Default support for SMS notifications is automatically enabled/included by the relevant modules using the following module:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-core-notifications</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+You need not explicitly include this module in WAR Overlay configurations, except when there is a need to access components and APIs at compile-time. 
+See below on how to customize or override the default behavior with specific providers.
+
 ## Custom
 
 Send text messages using your own custom implementation.

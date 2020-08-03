@@ -1,6 +1,7 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
@@ -12,10 +13,9 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 @Getter
 public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
     private final MongoOperations mongoTemplate;
+
     private final String collectionName;
 
     public MongoDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
@@ -41,18 +42,27 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     }
 
     @Override
-    public OneTimeTokenAccount get(final String username) {
-        try {
-            val query = new Query();
-            query.addCriteria(Criteria.where("username").is(username));
-            val r = this.mongoTemplate.findOne(query, GoogleAuthenticatorAccount.class, this.collectionName);
-            if (r != null) {
-                return decode(r);
-            }
-        } catch (final NoResultException e) {
-            LOGGER.debug("No record could be found for google authenticator id [{}]", username);
-        }
-        return null;
+    public OneTimeTokenAccount get(final String username, final long id) {
+        val query = new Query();
+        query.addCriteria(Criteria.where("username").is(username).and("id").is(id));
+        val r = this.mongoTemplate.findOne(query, GoogleAuthenticatorAccount.class, this.collectionName);
+        return r != null ? decode(r) : null;
+    }
+
+    @Override
+    public OneTimeTokenAccount get(final long id) {
+        val query = new Query();
+        query.addCriteria(Criteria.where("id").is(id));
+        val r = this.mongoTemplate.findOne(query, GoogleAuthenticatorAccount.class, this.collectionName);
+        return r != null ? decode(r) : null;
+    }
+
+    @Override
+    public Collection<? extends OneTimeTokenAccount> get(final String username) {
+        val query = new Query();
+        query.addCriteria(Criteria.where("username").is(username));
+        val r = this.mongoTemplate.find(query, GoogleAuthenticatorAccount.class, this.collectionName);
+        return decode(r);
     }
 
     @Override
@@ -61,18 +71,18 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
             val r = this.mongoTemplate.findAll(GoogleAuthenticatorAccount.class, this.collectionName);
             return r.stream()
                 .map(this::decode)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         } catch (final Exception e) {
-            LOGGER.error("No record could be found for google authenticator", e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }
 
     @Override
-    public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
-        val account = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
-        update(account);
+    public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
+        return update(account);
     }
 
     @Override
@@ -98,6 +108,13 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     public long count() {
         val query = new Query();
         query.addCriteria(Criteria.where("username").exists(true));
+        return this.mongoTemplate.count(query, GoogleAuthenticatorAccount.class, this.collectionName);
+    }
+
+    @Override
+    public long count(final String username) {
+        val query = new Query();
+        query.addCriteria(Criteria.where("username").is(username));
         return this.mongoTemplate.count(query, GoogleAuthenticatorAccount.class, this.collectionName);
     }
 }

@@ -14,6 +14,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.io.Serializable;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -50,7 +52,8 @@ public class RequiredHandlerAuthenticationPolicy extends BaseAuthenticationPolic
 
     @Override
     public boolean isSatisfiedBy(final Authentication authn, final Set<AuthenticationHandler> authenticationHandlers,
-                                 final ConfigurableApplicationContext applicationContext) {
+                                 final ConfigurableApplicationContext applicationContext,
+                                 final Optional<Serializable> assertion) {
         var credsOk = true;
         val sum = authn.getSuccesses().size() + authn.getFailures().size();
         if (this.tryAll) {

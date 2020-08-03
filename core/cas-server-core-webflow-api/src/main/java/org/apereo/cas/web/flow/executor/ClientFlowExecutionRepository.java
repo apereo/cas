@@ -16,7 +16,6 @@ import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -38,9 +37,11 @@ public class ClientFlowExecutionRepository implements FlowExecutionRepository, F
      * Client flow storage has not backing store independent from the flow key, so no locking is required.
      */
     private static final FlowExecutionLock NOOP_LOCK = new FlowExecutionLock() {
+        @Override
         public void lock() {
         }
 
+        @Override
         public void unlock() {
         }
     };
@@ -51,6 +52,7 @@ public class ClientFlowExecutionRepository implements FlowExecutionRepository, F
 
     private Transcoder transcoder;
 
+    @Override
     public FlowExecutionKey parseFlowExecutionKey(final String encodedKey) throws FlowExecutionRepositoryException {
         return ClientFlowExecutionKey.parse(encodedKey);
     }
@@ -70,13 +72,13 @@ public class ClientFlowExecutionRepository implements FlowExecutionRepository, F
             throw new IllegalArgumentException(
                 "Expected instance of ClientFlowExecutionKey but got " + key.getClass().getName());
         }
-        val encoded = ((ClientFlowExecutionKey) key).getData();
         try {
+            val encoded = ((ClientFlowExecutionKey) key).getData();
             val state = (SerializedFlowExecutionState) this.transcoder.decode(encoded);
-            val flow = this.flowDefinitionLocator.getFlowDefinition(state.getFlowId());
-            return this.flowExecutionFactory.restoreFlowExecution(
+            val flow = flowDefinitionLocator.getFlowDefinition(state.getFlowId());
+            return flowExecutionFactory.restoreFlowExecution(
                 state.getExecution(), flow, key, state.getConversationScope(), this.flowDefinitionLocator);
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             throw new ClientFlowExecutionRepositoryException("Error decoding flow execution", e);
         }
     }
@@ -93,7 +95,7 @@ public class ClientFlowExecutionRepository implements FlowExecutionRepository, F
     public FlowExecutionKey getKey(final FlowExecution execution) {
         try {
             return new ClientFlowExecutionKey(this.transcoder.encode(new SerializedFlowExecutionState(execution)));
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             throw new ClientFlowExecutionRepositoryException("Error encoding flow execution", e);
         }
     }

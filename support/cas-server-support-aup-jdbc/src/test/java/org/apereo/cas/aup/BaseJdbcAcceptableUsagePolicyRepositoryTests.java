@@ -10,6 +10,8 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -20,11 +22,11 @@ import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -42,7 +44,6 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import javax.sql.DataSource;
-
 import java.util.List;
 import java.util.Map;
 
@@ -73,8 +74,11 @@ import java.util.Map;
     CasCoreHttpConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreWebflowConfiguration.class,
+    CasCoreMultifactorAuthenticationConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreLogoutConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
@@ -92,9 +96,6 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseA
     @Qualifier("defaultTicketRegistrySupport")
     protected ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
-    @Autowired
-    protected CasConfigurationProperties casProperties;
-
     protected String determinePrincipalId(final String actualPrincipalId, final Map<String, List<Object>> profileAttributes) {
         val aupProperties = casProperties.getAcceptableUsagePolicy();
         val jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(
@@ -108,8 +109,7 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseA
         val principal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
         val auth = CoreAuthenticationTestUtils.getAuthentication(principal);
         WebUtils.putAuthentication(auth, context);
-
-        return jdbcAupRepository.determinePrincipalId(context, c);
+        return jdbcAupRepository.determinePrincipalId(principal);
     }
 
     @Override

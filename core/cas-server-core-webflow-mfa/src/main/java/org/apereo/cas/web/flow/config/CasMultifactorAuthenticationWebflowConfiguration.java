@@ -32,6 +32,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationAvailableAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationBypassAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationFailureAction;
@@ -95,6 +96,10 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     private ObjectProvider<GeoLocationService> geoLocationService;
 
     @Autowired
+    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
+
+    @Autowired
     @Qualifier("authenticationContextValidator")
     private ObjectProvider<MultifactorAuthenticationContextValidator> authenticationContextValidator;
 
@@ -140,10 +145,14 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @Qualifier("failureModeEvaluator")
     private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
 
+    @Autowired
+    @Qualifier("singleSignOnParticipationStrategy")
+    private ObjectProvider<SingleSignOnParticipationStrategy> webflowSingleSignOnParticipationStrategy;
+    
     @Bean
     @ConditionalOnMissingBean(name = "multifactorAuthenticationProviderResolver")
     public MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver() {
-        return new DefaultMultifactorAuthenticationProviderResolver(multifactorAuthenticationProviderSelector());
+        return new DefaultMultifactorAuthenticationProviderResolver();
     }
 
     @ConditionalOnMissingBean(name = "adaptiveAuthenticationPolicyWebflowEventResolver")
@@ -215,7 +224,8 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
         return new RankedMultifactorAuthenticationProviderWebflowEventResolver(
             getWebflowConfigurationContext(),
             initialAuthenticationAttemptWebflowEventResolver(),
-            authenticationContextValidator.getObject());
+            authenticationContextValidator.getObject(),
+            webflowSingleSignOnParticipationStrategy.getObject());
     }
 
     @ConditionalOnMissingBean(name = "authenticationAttributeMultifactorAuthenticationTrigger")
@@ -445,11 +455,13 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "multifactorProviderSelectedAction")
     public Action multifactorProviderSelectedAction() {
         return new MultifactorProviderSelectedAction();
     }
 
+    @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "prepareMultifactorProviderSelectionAction")
     public Action prepareMultifactorProviderSelectionAction() {
@@ -458,6 +470,8 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
     private CasWebflowEventResolutionConfigurationContext getWebflowConfigurationContext() {
         return CasWebflowEventResolutionConfigurationContext.builder()
+            .casDelegatingWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver.getObject())
+            .authenticationContextValidator(authenticationContextValidator.getObject())
             .authenticationSystemSupport(authenticationSystemSupport.getObject())
             .centralAuthenticationService(centralAuthenticationService.getObject())
             .servicesManager(servicesManager.getObject())
@@ -467,6 +481,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
             .ticketRegistry(ticketRegistry.getObject())
+            .singleSignOnParticipationStrategy(webflowSingleSignOnParticipationStrategy.getObject())
             .applicationContext(applicationContext)
             .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getObject())
             .build();

@@ -3,6 +3,7 @@ package org.apereo.cas.mfa.accepto.web.flow;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.accepto.AccepttoApiUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -99,7 +100,7 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
                 return channel;
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         throw new AuthenticationException("Unable to fetch channel for user");
     }

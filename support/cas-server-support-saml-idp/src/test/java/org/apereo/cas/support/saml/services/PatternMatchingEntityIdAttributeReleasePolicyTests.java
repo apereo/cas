@@ -6,11 +6,8 @@ import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.FileSystemResource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,11 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML")
 public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
-
-    @BeforeAll
-    public static void beforeClass() {
-        METADATA_DIRECTORY = new FileSystemResource(FileUtils.getTempDirectory());
-    }
 
     @Test
     public void verifyPatternDoesNotMatch() {

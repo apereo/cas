@@ -32,15 +32,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @deprecated 6.2
  */
 @Tag("Webflow")
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 @SpringBootTest(classes = {
     AbstractOpenIdTests.SharedTestConfiguration.class,
     OpenIdWebflowConfiguration.class
-},
-    properties = {
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+})
 public class OpenIdSingleSignOnActionTests {
 
     @Autowired

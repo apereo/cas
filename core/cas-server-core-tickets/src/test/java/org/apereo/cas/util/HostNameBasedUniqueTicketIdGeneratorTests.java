@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Tag("Tickets")
 public class HostNameBasedUniqueTicketIdGeneratorTests {
 
     @Test

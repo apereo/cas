@@ -1,16 +1,14 @@
 package org.apereo.cas.trusted.authentication.storage.fingerprint;
 
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
-import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.Getter;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -28,11 +26,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Getter
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
+@Tag("Simple")
 public class DefaultDeviceFingerprintStrategyTests extends AbstractMultifactorAuthenticationTrustStorageTests {
-
-    @Autowired
-    @Qualifier("mfaTrustEngine")
-    protected MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
     @Test
     public void verifyAction() {

@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
@@ -31,7 +32,6 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
@@ -45,7 +45,6 @@ import org.springframework.context.annotation.Import;
 public abstract class BaseAuthyAuthenticationTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-        MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration
@@ -53,6 +52,7 @@ public abstract class BaseAuthyAuthenticationTests {
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,

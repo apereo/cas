@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("RegisteredService")
 public class RegisteredServiceNoOpCipherExecutorTests {
 
     @Test

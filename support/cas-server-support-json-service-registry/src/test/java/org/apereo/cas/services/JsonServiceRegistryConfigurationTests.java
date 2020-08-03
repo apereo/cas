@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.JsonServiceRegistryConfiguration;
@@ -23,11 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     JsonServiceRegistryConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 },
-properties = "cas.serviceRegistry.json.location=classpath:/services")
+properties = "cas.service-registry.json.location=classpath:/services")
 @Tag("FileSystem")
 public class JsonServiceRegistryConfigurationTests {
     @Autowired

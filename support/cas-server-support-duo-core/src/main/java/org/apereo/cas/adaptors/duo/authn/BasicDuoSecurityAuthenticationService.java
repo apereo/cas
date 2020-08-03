@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
 
 import com.duosecurity.duoweb.DuoWeb;
@@ -64,7 +65,7 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
                 return Pair.of(Boolean.TRUE, crds.getId());
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return Pair.of(Boolean.FALSE, crds.getId());
     }

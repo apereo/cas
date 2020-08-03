@@ -8,6 +8,8 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.val;
 
+import java.util.UUID;
+
 /**
  * This is {@link BaseGoogleAuthenticatorTokenCredentialRepository}.
  *
@@ -22,9 +24,8 @@ public abstract class BaseGoogleAuthenticatorTokenCredentialRepository extends B
      */
     protected final IGoogleAuthenticator googleAuthenticator;
 
-    public BaseGoogleAuthenticatorTokenCredentialRepository(
-        final CipherExecutor<String, String> tokenCredentialCipher,
-        final IGoogleAuthenticator googleAuthenticator) {
+    protected BaseGoogleAuthenticatorTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher,
+                                                               final IGoogleAuthenticator googleAuthenticator) {
         super(tokenCredentialCipher);
         this.googleAuthenticator = googleAuthenticator;
     }
@@ -35,8 +36,15 @@ public abstract class BaseGoogleAuthenticatorTokenCredentialRepository extends B
      * @param username the username
      * @return the one time token account
      */
+    @Override
     public OneTimeTokenAccount create(final String username) {
         val key = getGoogleAuthenticator().createCredentials();
-        return new GoogleAuthenticatorAccount(username, key.getKey(), key.getVerificationCode(), key.getScratchCodes());
+        return GoogleAuthenticatorAccount.builder()
+            .username(username)
+            .secretKey(key.getKey())
+            .validationCode(key.getVerificationCode())
+            .scratchCodes(key.getScratchCodes())
+            .name(UUID.randomUUID().toString())
+            .build();
     }
 }

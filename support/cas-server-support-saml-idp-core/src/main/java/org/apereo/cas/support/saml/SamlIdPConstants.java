@@ -15,59 +15,65 @@ public interface SamlIdPConstants {
     String ENDPOINT_IDP_METADATA = "/idp/metadata";
 
     /**
+     * Base endpoint url for saml2 requests.
+     */
+    String BASE_ENDPOINT_SAML2 = "/idp/profile/SAML2";
+
+    /**
+     * Base endpoint url for saml1 requests.
+     */
+    String BASE_ENDPOINT_SAML1 = "/idp/profile/SAML1";
+
+    /**
      * The SAML2 SSO simple-sign post profile endpoint.
      */
-    String ENDPOINT_SAML2_SSO_PROFILE_POST_SIMPLE_SIGN = "/idp/profile/SAML2/POST-SimpleSign/SSO";
+    String ENDPOINT_SAML2_SSO_PROFILE_POST_SIMPLE_SIGN = BASE_ENDPOINT_SAML2 + "/POST-SimpleSign/SSO";
 
     /**
      * The SAML2 SSO post profile endpoint.
      */
-    String ENDPOINT_SAML2_SSO_PROFILE_POST = "/idp/profile/SAML2/POST/SSO";
+    String ENDPOINT_SAML2_SSO_PROFILE_POST = BASE_ENDPOINT_SAML2 + "/POST/SSO";
 
     /**
      * The SAML2 SSO redirect profile endpoint.
      */
-    String ENDPOINT_SAML2_SSO_PROFILE_REDIRECT = "/idp/profile/SAML2/Redirect/SSO";
+    String ENDPOINT_SAML2_SSO_PROFILE_REDIRECT = BASE_ENDPOINT_SAML2 + "/Redirect/SSO";
 
     /**
      * The SAML2 SLO post endpoint.
      */
-    String ENDPOINT_SAML2_SLO_PROFILE_POST = "/idp/profile/SAML2/POST/SLO";
+    String ENDPOINT_SAML2_SLO_PROFILE_POST = BASE_ENDPOINT_SAML2 + "/POST/SLO";
 
     /**
      * The SAML2 SLO redirect endpoint.
      */
-    String ENDPOINT_SAML2_SLO_PROFILE_REDIRECT = "/idp/profile/SAML2/Redirect/SLO";
+    String ENDPOINT_SAML2_SLO_PROFILE_REDIRECT = BASE_ENDPOINT_SAML2 + "/Redirect/SLO";
 
     /**
      * The SAML2 IDP initiated endpoint.
      */
-    String ENDPOINT_SAML2_IDP_INIT_PROFILE_SSO = "/idp/profile/SAML2/Unsolicited/SSO";
+    String ENDPOINT_SAML2_IDP_INIT_PROFILE_SSO = BASE_ENDPOINT_SAML2 + "/Unsolicited/SSO";
 
     /**
      * The SAML2 artifact resolution endpoint.
      */
-    String ENDPOINT_SAML2_SOAP_ATTRIBUTE_QUERY = "/idp/profile/SAML2/SOAP/AttributeQuery";
+    String ENDPOINT_SAML2_SOAP_ATTRIBUTE_QUERY = BASE_ENDPOINT_SAML2 + "/SOAP/AttributeQuery";
 
-    /**
-     * The SAML2 attribute query endpoint.
-     */
-    String ENDPOINT_SAML2_SOAP_ARTIFACT_RESOLUTION = "/idp/profile/SAML2/SOAP/ArtifactResolution";
 
     /**
      * The SAML2 artifact resolution endpoint.
      */
-    String ENDPOINT_SAML1_SOAP_ARTIFACT_RESOLUTION = "/idp/profile/SAML1/SOAP/ArtifactResolution";
+    String ENDPOINT_SAML1_SOAP_ARTIFACT_RESOLUTION = BASE_ENDPOINT_SAML1 + "/SOAP/ArtifactResolution";
 
     /**
      * The SAML2 IDP ECP endpoint.
      */
-    String ENDPOINT_SAML2_IDP_ECP_PROFILE_SSO = "/idp/profile/SAML2/SOAP/ECP";
+    String ENDPOINT_SAML2_IDP_ECP_PROFILE_SSO = BASE_ENDPOINT_SAML2 + "/SOAP/ECP";
 
     /**
      * The SAML2 callback profile endpoint.
      */
-    String ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK = "/idp/profile/SAML2/Callback";
+    String ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK = BASE_ENDPOINT_SAML2 + "/Callback";
 
     /**
      * The shire constant.

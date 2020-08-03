@@ -29,7 +29,7 @@ import java.util.Map;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class SmartOpenIdController extends AbstractDelegateController implements Serializable {
     private static final long serialVersionUID = -594058549445950430L;
 

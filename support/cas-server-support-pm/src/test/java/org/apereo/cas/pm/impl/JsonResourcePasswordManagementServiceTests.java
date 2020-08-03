@@ -10,6 +10,7 @@ import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -26,6 +27,7 @@ import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -60,6 +62,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreLogoutConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreUtilConfiguration.class,
     MailSenderAutoConfiguration.class,
@@ -68,10 +71,9 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.authn.pm.json.location=classpath:jsonResourcePassword.json",
         "cas.authn.pm.enabled=true",
-        "cas.authn.pm.policyPattern=^Test1.+",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
+        "cas.authn.pm.policy-pattern=^Test1.+"
     })
+@Tag("FileSystem")
 public class JsonResourcePasswordManagementServiceTests {
     @Autowired
     @Qualifier("passwordChangeService")
@@ -85,6 +87,18 @@ public class JsonResourcePasswordManagementServiceTests {
     public void verifyUserEmailCanBeFound() {
         val email = passwordChangeService.findEmail("casuser");
         assertEquals("casuser@example.org", email);
+    }
+
+    @Test
+    public void verifyUserCanBeFound() {
+        val user = passwordChangeService.findUsername("casuser@example.org");
+        assertEquals("casuser", user);
+    }
+
+    @Test
+    public void verifyUserPhoneCanBeFound() {
+        val phone = passwordChangeService.findPhone("casuser");
+        assertEquals("1234567890", phone);
     }
 
     @Test

@@ -32,11 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(properties = {
-    "cas.scim.target=http://localhost:8218",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
+@TestPropertySource(properties ="cas.scim.target=http://localhost:8218")
 @Tag("Webflow")
 public class PrincipalScimV2ProvisionerActionTests extends BaseScimProvisionerActionTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

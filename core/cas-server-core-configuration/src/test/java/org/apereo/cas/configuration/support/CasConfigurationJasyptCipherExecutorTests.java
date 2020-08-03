@@ -5,6 +5,7 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jasypt.registry.AlgorithmRegistry;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class
 })
+@Tag("CasConfiguration")
 public class CasConfigurationJasyptCipherExecutorTests {
     static {
         System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getPropertyName(), "P@$$w0rd");

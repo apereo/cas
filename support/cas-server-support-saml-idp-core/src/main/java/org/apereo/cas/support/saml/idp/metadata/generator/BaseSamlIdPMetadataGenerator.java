@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.idp.metadata.generator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -22,7 +23,7 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGenerator {
 
@@ -107,7 +108,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
     private String buildMetadataGeneratorParameters(final Pair<String, String> signing,
                                                     final Pair<String, String> encryption,
                                                     final Optional<SamlRegisteredService> registeredService) {
-        val template = configurationContext.getResourceLoader().getResource("classpath:/template-idp-metadata.xml");
+        val template = configurationContext.getApplicationContext().getResource("classpath:/template-idp-metadata.xml");
         val signingCert = SamlIdPMetadataGenerator.cleanCertificate(signing.getKey());
         val encryptionCert = SamlIdPMetadataGenerator.cleanCertificate(encryption.getKey());
 

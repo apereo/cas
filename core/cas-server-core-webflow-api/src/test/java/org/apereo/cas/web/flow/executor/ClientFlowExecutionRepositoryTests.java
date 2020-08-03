@@ -15,15 +15,19 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.config.FlowBuilderServicesBuilder;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
+import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionFactory;
+import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
@@ -32,6 +36,7 @@ import org.springframework.webflow.test.CasMockViewFactoryCreator;
 import org.springframework.webflow.test.MockExternalContext;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Test cases for {@link ClientFlowExecutionRepository}.
@@ -50,6 +55,18 @@ public class ClientFlowExecutionRepositoryTests {
     @Qualifier("flowExecutor")
     private FlowExecutor flowExecutor;
 
+    @Test
+    public void verifyBadKey() {
+        val factory = new ClientFlowExecutionRepository(mock(FlowExecutionFactory.class), mock(FlowDefinitionLocator.class), mock(Transcoder.class));
+        factory.removeFlowExecutionSnapshot(mock(FlowExecution.class));
+        factory.removeAllFlowExecutionSnapshots(mock(FlowExecution.class));
+        assertThrows(ClientFlowExecutionRepositoryException.class, () -> factory.getKey(mock(FlowExecution.class)));
+        assertThrows(IllegalArgumentException.class, () -> factory.getFlowExecution(mock(FlowExecutionKey.class)));
+        val key = mock(ClientFlowExecutionKey.class);
+        when(key.getData()).thenThrow(IllegalArgumentException.class);
+        assertThrows(ClientFlowExecutionRepositoryException.class, () -> factory.getFlowExecution(key));
+
+    }
     @Test
     public void verifyLaunchAndResumeFlow() {
         assertNotNull(flowExecutor);
@@ -70,6 +87,7 @@ public class ClientFlowExecutionRepositoryTests {
     }
 
     @TestConfiguration("WebflowTestConfiguration")
+    @Lazy(false)
     public static class WebflowTestConfiguration {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
@@ -116,9 +134,6 @@ public class ClientFlowExecutionRepositoryTests {
 
         @Bean
         public Transcoder transcoder() {
-            val t = new EncryptedTranscoder();
-            t.setCompression(true);
-
             val keystoreFactory = new KeyStoreFactoryBean();
             keystoreFactory.setType("JCEKS");
             keystoreFactory.setPassword("changeit");
@@ -131,8 +146,7 @@ public class ClientFlowExecutionRepositoryTests {
             cipher.setBlockCipherSpec(new AEADBlockCipherSpec("AES", "GCM"));
             cipher.setNonce(new RBGNonce());
 
-            t.setCipherBean(cipher);
-            return t;
+            return new EncryptedTranscoder(cipher);
         }
     }
 }

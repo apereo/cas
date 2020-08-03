@@ -11,8 +11,6 @@ import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Subject;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -23,7 +21,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
 @Tag("SAML")
 public class SamlResponseAuditPrincipalIdProviderTests {
     @Test
@@ -46,5 +43,16 @@ public class SamlResponseAuditPrincipalIdProviderTests {
         assertNotNull(result);
         assertEquals("casuser", result);
         assertTrue(r.supports(CoreAuthenticationTestUtils.getAuthentication(), response, null));
+    }
+
+    @Test
+    public void verifyDefaultAction() {
+        val r = new SamlResponseAuditPrincipalIdProvider();
+        val response = mock(Response.class);
+        when(response.getAssertions()).thenReturn(CollectionUtils.wrapList());
+        val result = r.getPrincipalIdFrom(CoreAuthenticationTestUtils.getAuthentication("casuser"), response, null);
+        assertNotNull(result);
+        assertTrue(r.getOrder() > 0);
+        assertEquals("casuser", result);
     }
 }

@@ -9,10 +9,11 @@ import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider;
-import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -23,18 +24,21 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "oidcComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class OidcComponentSerializationConfiguration implements ComponentSerializationPlanConfigurer {
+public class OidcComponentSerializationConfiguration {
 
-    @Override
-    public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
-        plan.registerSerializableClass(PairwiseOidcRegisteredServiceUsernameAttributeProvider.class);
-        plan.registerSerializableClass(OidcRegisteredService.class);
-        plan.registerSerializableClass(OidcPairwisePersistentIdGenerator.class);
+    @Bean
+    @ConditionalOnMissingBean(name = "oidcComponentSerializationPlanConfigurer")
+    public ComponentSerializationPlanConfigurer oidcComponentSerializationPlanConfigurer() {
+        return plan -> {
+            plan.registerSerializableClass(PairwiseOidcRegisteredServiceUsernameAttributeProvider.class);
+            plan.registerSerializableClass(OidcRegisteredService.class);
+            plan.registerSerializableClass(OidcPairwisePersistentIdGenerator.class);
 
-        plan.registerSerializableClass(OidcAddressScopeAttributeReleasePolicy.class);
-        plan.registerSerializableClass(OidcCustomScopeAttributeReleasePolicy.class);
-        plan.registerSerializableClass(OidcEmailScopeAttributeReleasePolicy.class);
-        plan.registerSerializableClass(OidcPhoneScopeAttributeReleasePolicy.class);
-        plan.registerSerializableClass(OidcProfileScopeAttributeReleasePolicy.class);
+            plan.registerSerializableClass(OidcAddressScopeAttributeReleasePolicy.class);
+            plan.registerSerializableClass(OidcCustomScopeAttributeReleasePolicy.class);
+            plan.registerSerializableClass(OidcEmailScopeAttributeReleasePolicy.class);
+            plan.registerSerializableClass(OidcPhoneScopeAttributeReleasePolicy.class);
+            plan.registerSerializableClass(OidcProfileScopeAttributeReleasePolicy.class);
+        };
     }
 }

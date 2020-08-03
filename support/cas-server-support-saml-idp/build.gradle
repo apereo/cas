@@ -14,9 +14,11 @@ dependencies {
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-webflow-mfa")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
@@ -29,17 +31,15 @@ dependencies {
     implementation project(":support:cas-server-support-saml-idp-metadata")
     implementation project(":support:cas-server-support-saml-idp-web")
     implementation project(":support:cas-server-support-saml-idp-ticket")
-    
+
     compileOnly project(":support:cas-server-support-consent-api")
-    
+
     implementation libraries.casclient
-    implementation libraries.shibidp
     implementation libraries.pac4jcore
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
 
-    testImplementation libraries.pac4j
+    testImplementation libraries.pac4joidcoauth
     testImplementation libraries.pac4jsaml
-
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
@@ -55,11 +55,13 @@ dependencies {
     testImplementation project(":support:cas-server-support-jdbc-drivers")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-consent-api")
+    testImplementation project(":support:cas-server-support-saml")
 
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core-validation-api")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-authentication-attributes")

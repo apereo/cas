@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -38,12 +39,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -64,11 +65,11 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreWebConfiguration.class,
@@ -89,11 +90,7 @@ import static org.mockito.Mockito.*;
     CasPersonDirectoryTestConfiguration.class,
     GrouperMultifactorAuthenticationPolicyEventResolverTests.GrouperTestConfiguration.class,
     GrouperMultifactorAuthenticationConfiguration.class
-}, properties = {
-    "cas.authn.mfa.grouperGroupField=name",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
+}, properties = "cas.authn.mfa.grouper-group-field=name")
 @Tag("Webflow")
 public class GrouperMultifactorAuthenticationPolicyEventResolverTests {
     @Autowired
@@ -122,6 +119,7 @@ public class GrouperMultifactorAuthenticationPolicyEventResolverTests {
     }
 
     @TestConfiguration("GrouperTestConfiguration")
+    @Lazy(false)
     public static class GrouperTestConfiguration {
         @Bean
         public GrouperFacade grouperFacade() {

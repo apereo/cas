@@ -10,8 +10,9 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-throttle")
 
     implementation project(":support:cas-server-support-throttle-core")
-    
+
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-audit-api")
     testImplementation project(":core:cas-server-core-authentication")

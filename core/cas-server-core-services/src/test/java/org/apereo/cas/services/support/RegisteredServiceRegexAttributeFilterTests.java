@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -31,16 +32,23 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@Tag("RegisteredService")
 public class RegisteredServiceRegexAttributeFilterTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "registeredServiceRegexAttributeFilter.json");
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
     private static final String PHONE = "phone";
+
     private static final String FAMILY_NAME = "familyName";
+
     private static final String GIVEN_NAME = "givenName";
+
     private static final String UID = "uid";
 
     private final RegisteredServiceAttributeFilter filter;
+
     private final Map<String, List<Object>> givenAttributesMap;
 
     @Mock
@@ -116,7 +124,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     @Test
     public void verifySerialization() {
         val data = SerializationUtils.serialize(this.filter);
-        val secondFilter =SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
+        val secondFilter = SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
         assertEquals(secondFilter, this.filter);
     }
 

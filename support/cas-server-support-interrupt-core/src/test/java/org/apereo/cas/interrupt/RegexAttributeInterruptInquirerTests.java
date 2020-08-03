@@ -5,6 +5,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Attributes")
 public class RegexAttributeInterruptInquirerTests {
     @Test
     public void verifyResponseCanBeFoundFromAttributes() {

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title>Service UI Fragment</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div th:fragment="submitButton (messageKey)">
+
+        <button
+                class="mdc-button mdc-button--raised"
+                th:if="${recaptchaSiteKey == null}"
+                name="submit"
+                accesskey="l"
+                type="submit">
+            <span class="mdc-button__label" th:text="#{${messageKey}}">Login</span>
+        </button>
+
+        <span th:unless="${recaptchaSiteKey == null}" th:switch="${recaptchaVersion}">
+            <span th:case="'v2'" th:remove="tag">
+                <button th:unless="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
+                        class="mdc-button mdc-button--raised"
+                        name="submit"
+                        accesskey="l"
+                        type="submit"
+                        value="Login3">
+                    <span class="mdc-button__label" th:text="#{${messageKey}}">Login</span>
+                </button>
+                <button th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
+                        class="mdc-button mdc-button--raised"
+                        th:attr="data-sitekey=${recaptchaSiteKey}, data-badge=${recaptchaPosition}"
+                        data-callback="onRecaptchaV2Submit"
+                        name="submitBtn"
+                        accesskey="l">
+                    <span class="mdc-button__label" th:text="#{${messageKey}}" ></span>
+                </button>
+            </span>
+
+            <span th:case="'v3'" th:remove="tag">
+                <button class="mdc-button mdc-button--raised"
+                        th:if="${recaptchaSiteKey != null}"
+                        name="submit"
+                        th:attr="data-sitekey=${recaptchaSiteKey}"
+                        accesskey="l"
+                        th:value="#{screen.welcome.button.login}"
+                        type="submit"
+                        value="Login3">
+                    <span class="mdc-button__label" th:text="#{${messageKey}}" />
+                </button>
+             </span>
+        </span>
+
+    </div>
+</main>
+</body>
+
+</html>
+
+

@@ -39,7 +39,7 @@ import java.util.Collection;
  */
 @Configuration("restServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(name = "cas.serviceRegistry.rest.url")
+@ConditionalOnProperty(name = "cas.service-registry.rest.url")
 @Slf4j
 public class RestServiceRegistryConfiguration {
     @Autowired

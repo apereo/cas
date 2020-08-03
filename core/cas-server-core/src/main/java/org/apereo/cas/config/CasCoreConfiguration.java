@@ -94,7 +94,8 @@ public class CasCoreConfiguration {
     @ConditionalOnMissingBean(name = "authenticationServiceSelectionPlan")
     @Autowired
     @Bean
-    public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan(final List<AuthenticationServiceSelectionStrategyConfigurer> configurers) {
+    public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan(
+        final List<AuthenticationServiceSelectionStrategyConfigurer> configurers) {
         val plan = new DefaultAuthenticationServiceSelectionPlan();
         configurers.forEach(c -> {
             LOGGER.trace("Configuring authentication request service selection strategy plan [{}]", c.getName());

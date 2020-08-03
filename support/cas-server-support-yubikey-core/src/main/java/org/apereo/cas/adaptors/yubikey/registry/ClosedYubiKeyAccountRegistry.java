@@ -2,6 +2,8 @@ package org.apereo.cas.adaptors.yubikey.registry;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,6 +21,19 @@ public class ClosedYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
+    protected YubiKeyAccount getAccountInternal(final String username) {
+        return null;
+    }
+
+    @Override
+    public void delete(final String username, final long deviceId) {
+    }
+
+    @Override
+    public void delete(final String uid) {
+    }
+
+    @Override
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
         return false;
     }
@@ -29,7 +44,18 @@ public class ClosedYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public boolean registerAccountFor(final String uid, final String yubikeyPublicId) {
+    public boolean registerAccountFor(final YubiKeyDeviceRegistrationRequest request) {
+        return false;
+    }
+
+    @Override
+    public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request,
+                                  final YubiKeyRegisteredDevice... device) {
+        return null;
+    }
+
+    @Override
+    public boolean update(final YubiKeyAccount account) {
         return false;
     }
 
@@ -39,7 +65,12 @@ public class ClosedYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public Collection<? extends YubiKeyAccount> getAccounts() {
+    public Collection<? extends YubiKeyAccount> getAccountsInternal() {
         return new ArrayList<>(0);
+    }
+
+
+    @Override
+    public void deleteAll() {
     }
 }

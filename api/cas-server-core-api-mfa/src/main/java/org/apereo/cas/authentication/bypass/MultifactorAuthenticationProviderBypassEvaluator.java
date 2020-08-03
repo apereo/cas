@@ -49,7 +49,7 @@ public interface MultifactorAuthenticationProviderBypassEvaluator extends Serial
      *
      * @param authentication   the authentication
      * @param requestedContext the requested context
-     * @return the boolean
+     * @return true/false
      */
     default boolean isMultifactorAuthenticationBypassed(final Authentication authentication,
                                                         final String requestedContext) {
@@ -104,7 +104,7 @@ public interface MultifactorAuthenticationProviderBypassEvaluator extends Serial
     /**
      * Is empty?.
      *
-     * @return the boolean
+     * @return true/false
      */
     default boolean isEmpty() {
         return false;

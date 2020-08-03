@@ -45,6 +45,10 @@ Issued tokens are also captured into a self-cleaning cache to prevent token reus
 This option should only be used for demo and testing purposes. Production deployments of this feature will require a separate
 implementation of the registry that is capable to register accounts into persistent storage.
 
+Note that each individual account is allowed to register multiple devices to be used later for multifactor authentication. Duration the
+authentication flow, the user will be asked to select the appropriate device for authentication if multiple device registration records
+are found. The ability to handle multiple device registration records can be controlled via CAS settings.
+
 ### JPA
 
 Registration records and tokens may be kept inside a database instance via the following module:
@@ -59,38 +63,6 @@ Registration records and tokens may be kept inside a database instance via the f
 
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-jpa).
-
-#### MySQL / Galera Limitations
-
-Registration records and tokens keps inside a MySQL database backd by a [Galera cluster](http://galeracluster.com) might produce the following error when running CAS for the first time: `This table type requires a primary key`.
-
-This is due to the fact that Galera needs primary keys on all tables (Galera setting `innodb_force_primary_key = 1`). [See Galera known limitations](https://mariadb.com/kb/en/mariadb/mariadb-galera-cluster-known-limitations/), but the `hibernate_sequence` table does not define a primary key (See [HHH-11923](https://hibernate.atlassian.net/browse/HHH-11923)).
-
-To workaround this issue, you can either:
-
-1. Create a custom `hibernate_sequence` table manually with a primary key id column in your Galera cluster:
-
-```sql
-CREATE TABLE `hibernate_sequence` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `next_val` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
-```
-
-2. Define your own `OneTimeToken` and `OneTimeTokenAccount` classes in your overlay project and in both classes, annotate the id column with a `@SequenceGenerator` definition holding a primary key:
-
-```java
-  @Id
-  @GeneratedValue(strategy = GenerationType.TABLE, generator="ticket_sequence")
-  @javax.persistence.TableGenerator (name="ticket_sequence", 
-                                     table="ticket_sequence", 
-                                     pkColumnName = "gen_name", 
-                                     valueColumnName = "next_val", 
-                                     pkColumnValue="gen_name", 
-                                     allocationSize=100)
-  private long id = Integer.MAX_VALUE;
-```
 
 ### CouchDb
 
@@ -141,17 +113,37 @@ The behavior is only activated when an endpoint url is provided.
 
 | Method    | Headers             | Expected Response     | Behavior
 |-----------|------------------------------------------------------------------------------------
-| `GET`     | `username`          | `200`. Account record in the body for the user. | Fetch user record
+| `GET`     | `username`          | `200`. Account records in the body for the user. | Fetch user records
+| `GET`     | `id`                | `200`. Account record in the body for the user. | Fetch record for the given identifier.
+| `GET`     | `id`, `username`    | `200`. Account record in the body for the user. | Fetch user record for the given identifier.
 | `GET`     | N/A                 | `200`. Account records currently registered. | Fetch all records
 | `DELETE`  | N/A                 | `200`. | Delete all records.
 | `DELETE`  | `username`          | `200`. Count deleted records. | Delete all records assigned to user
-| `POST`    | `username`, `validationCode`, `secretKey`, `scratchCodes` | `200`. `true/false` in the body. | Save user record
+| `POST`    | `username`, `validationCode`, `secretKey`, `scratchCodes`, `name` | `200`. `true/false` in the body. | Save user record
+
+A sample payload that lists device registration records for the user might be:
+
+```json 
+[
+    "java.util.ArrayList", [{
+        "@class": "org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount",
+        "scratchCodes": ["java.util.ArrayList", [14883628,81852839,40126334,86724930,54355266] ],
+        "id": 123456,
+        "secretKey": "UM6ALPJU34CBNFTBBLRFMKBNANMFAIBW",
+        "validationCode": 565889,
+        "username": "casuser",
+        "name": "required-account-name",
+        "registrationDate": "2018-06-20T09:47:31.761155Z"
+    }]
+]
+```
 
 The following endpoints need also be available:
 
 | Method    | Endpoint   | Headers           | Expected Response     | Behavior
 |-----------|------------------------------------------------------------------------------------
-| `GET`     | `count`    | N/A             | `200`. Numeric count | Count all user records
+| `GET`     | `count`    | N/A             | `200`. Numeric count | Count all records
+| `GET`     | `count`    | `username`             | `200`. Numeric count | Count all records for the user
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-rest).
 
@@ -166,4 +158,5 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ## REST Protocol Credential Extraction 
 
-In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is turned on, a special credential extractor is injected into the REST authentication engine in order to recognize YubiKey credentials and authenticate them as part of the REST request. The expected parameter name in the request body is `gauthotp`.
+In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is turned on, a special credential extractor is injected into the REST authentication engine in order to recognize credentials and authenticate them as part of the REST request. 
+The expected parameter name in the request body is `gauthotp`. The account identifier may also be passed using the `gauthacct` parameter in the request body.

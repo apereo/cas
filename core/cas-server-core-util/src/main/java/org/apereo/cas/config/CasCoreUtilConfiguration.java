@@ -3,27 +3,22 @@ package org.apereo.cas.config;
 import org.apereo.cas.CasEmbeddedValueResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.SchedulingUtils;
-import org.apereo.cas.util.io.CommunicationsManager;
-import org.apereo.cas.util.io.GroovySmsSender;
-import org.apereo.cas.util.io.RestfulSmsSender;
-import org.apereo.cas.util.io.SmsSender;
+import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.Converters;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,7 +31,6 @@ import org.springframework.core.convert.converter.ConverterRegistry;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.format.support.DefaultFormattingConversionService;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.StringValueResolver;
 import org.springframework.validation.beanvalidation.BeanValidationPostProcessor;
@@ -55,15 +49,9 @@ import java.time.ZonedDateTime;
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreUtilConfiguration implements InitializingBean {
-    @Autowired
-    @Qualifier("mailSender")
-    private ObjectProvider<JavaMailSender> mailSender;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -74,12 +62,6 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     @Bean
     public MessageInterpolator messageInterpolator() {
         return new SpringAwareMessageMessageInterpolator();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "communicationsManager")
-    public CommunicationsManager communicationsManager() {
-        return new CommunicationsManager(smsSender(), mailSender.getIfAvailable());
     }
 
     @Bean
@@ -101,18 +83,9 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "smsSender")
-    @RefreshScope
-    public SmsSender smsSender() {
-        val groovy = casProperties.getSmsProvider().getGroovy();
-        if (groovy.getLocation() != null) {
-            return new GroovySmsSender(groovy.getLocation());
-        }
-        val rest = casProperties.getSmsProvider().getRest();
-        if (StringUtils.isNotBlank(rest.getUrl())) {
-            return new RestfulSmsSender(rest);
-        }
-        return SmsSender.noOp();
+    @ConditionalOnMissingBean(name = ApplicationContextProvider.BEAN_NAME_SCRIPT_RESOURCE_CACHE_MANAGER)
+    public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> scriptResourceCacheManager() {
+        return new GroovyScriptResourceCacheManager();
     }
 
     /**

@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CouchbaseAuthenticationConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CouchbaseAuthenticationConfiguration,\
+  org.apereo.cas.config.CouchbasePersonDirectoryConfiguration

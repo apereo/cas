@@ -28,7 +28,7 @@ public interface RegisteredServiceDelegatedAuthenticationPolicy extends Serializ
      * limited to allowed providers, disabling other forms of
      * authentication such as username/password, etc.
      *
-     * @return the boolean
+     * @return true/false
      */
     boolean isExclusive();
 
@@ -36,7 +36,7 @@ public interface RegisteredServiceDelegatedAuthenticationPolicy extends Serializ
      * If no providers are defined, indicates whether or not access strategy should
      * authorize the request.
      *
-     * @return the boolean
+     * @return true/false
      */
     boolean isPermitUndefined();
 
@@ -45,7 +45,7 @@ public interface RegisteredServiceDelegatedAuthenticationPolicy extends Serializ
      *
      * @param provider          the provider
      * @param registeredService the registered service
-     * @return the boolean
+     * @return true/false
      */
     @JsonIgnore
     default boolean isProviderAllowed(final String provider, final RegisteredService registeredService) {

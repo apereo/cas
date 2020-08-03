@@ -92,6 +92,7 @@ public class WsFederationAuthenticationWebflowConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "wsFederationAction")
     public Action wsFederationAction() {
         return new WsFederationAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
             serviceTicketRequestWebflowEventResolver.getObject(),

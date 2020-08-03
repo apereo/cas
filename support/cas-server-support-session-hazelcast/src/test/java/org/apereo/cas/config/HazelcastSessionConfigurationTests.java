@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import com.hazelcast.core.HazelcastInstance;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     HazelcastSessionConfiguration.class
 })
+@Tag("Hazelcast")
 public class HazelcastSessionConfigurationTests {
     @Autowired
     @Qualifier("hazelcastInstance")

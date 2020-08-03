@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -66,19 +67,21 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 },
     properties = {
-        "cas.monitor.mongo.userId=root",
+        "cas.monitor.mongo.user-id=root",
         "cas.monitor.mongo.password=secret",
         "cas.monitor.mongo.host=localhost",
         "cas.monitor.mongo.port=27017",
-        "cas.monitor.mongo.authenticationDatabaseName=admin",
-        "cas.monitor.mongo.databaseName=monitor"
+        "cas.monitor.mongo.authentication-database-name=admin",
+        "cas.monitor.mongo.database-name=monitor"
     })
 @EnabledIfPortOpen(port = 27017)
+@SuppressWarnings("JdkObsolete")
 public class MongoDbHealthIndicatorTests {
     @Autowired
     @Qualifier("mongoHealthIndicator")

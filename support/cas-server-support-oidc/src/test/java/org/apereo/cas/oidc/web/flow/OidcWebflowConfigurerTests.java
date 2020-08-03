@@ -3,8 +3,10 @@ package org.apereo.cas.oidc.web.flow;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasOAuth20Configuration;
+import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
 import org.apereo.cas.config.CasOAuth20ThrottleConfiguration;
 import org.apereo.cas.config.CasOAuth20WebflowConfiguration;
+import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.oidc.config.OidcComponentSerializationConfiguration;
 import org.apereo.cas.oidc.config.OidcConfiguration;
@@ -36,14 +38,16 @@ import static org.junit.jupiter.api.Assertions.*;
     OidcComponentSerializationConfiguration.class,
     OidcThrottleConfiguration.class,
     CasOAuth20Configuration.class,
+    CasOAuth20EndpointsConfiguration.class,
     CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
     CasOAuth20ThrottleConfiguration.class,
     CasOAuth20WebflowConfiguration.class,
+    CasThrottlingConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
-@TestPropertySource(properties = "cas.authn.oidc.jwksFile=classpath:keystore.jwks")
+@TestPropertySource(properties = "cas.authn.oidc.jwks.jwksFile=classpath:keystore.jwks")
 @Tag("OIDC")
 public class OidcWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 

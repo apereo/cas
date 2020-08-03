@@ -1,6 +1,7 @@
 package org.apereo.cas.web.view;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Web")
 public class ChainingTemplateViewResolverTests {
     @Test
     public void verifyAction() {

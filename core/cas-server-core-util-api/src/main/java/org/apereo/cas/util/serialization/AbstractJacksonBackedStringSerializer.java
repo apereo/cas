@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -43,7 +44,7 @@ import java.nio.file.Files;
  */
 @Slf4j
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractJacksonBackedStringSerializer<T> implements StringSerializer<T> {
     /**
      * Minimal pretty printer instance.
@@ -53,13 +54,14 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     private static final long serialVersionUID = -8415599777321259365L;
 
     private final ObjectMapper objectMapper;
+    
     private final transient PrettyPrinter prettyPrinter;
 
     /**
      * Instantiates a new Registered service json serializer.
      * Uses the {@link com.fasterxml.jackson.core.util.DefaultPrettyPrinter} for formatting.
      */
-    public AbstractJacksonBackedStringSerializer() {
+    protected AbstractJacksonBackedStringSerializer() {
         this(new DefaultPrettyPrinter());
     }
 
@@ -68,7 +70,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      *
      * @param prettyPrinter the pretty printer
      */
-    public AbstractJacksonBackedStringSerializer(final PrettyPrinter prettyPrinter) {
+    protected AbstractJacksonBackedStringSerializer(final PrettyPrinter prettyPrinter) {
         this.objectMapper = initializeObjectMapper();
         this.prettyPrinter = prettyPrinter;
     }
@@ -201,7 +203,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
         mapper.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
         mapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
         mapper.setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);

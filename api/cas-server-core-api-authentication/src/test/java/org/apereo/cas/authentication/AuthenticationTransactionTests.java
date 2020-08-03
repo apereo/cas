@@ -1,13 +1,21 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.Service;
+
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @since 5.3.0
  */
+@Tag("Authentication")
 public class AuthenticationTransactionTests {
     @Test
     public void verifyHasCredentialOfTypeSingle() {
@@ -23,6 +31,25 @@ public class AuthenticationTransactionTests {
         assertTrue(transaction.hasCredentialOfType(BaseTestCredential.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType1.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType2.class));
+    }
+
+    @Test
+    public void verifyOperation() {
+        val transaction = new AuthenticationTransaction() {
+            private static final long serialVersionUID = -8503574003503719399L;
+
+            @Override
+            public Service getService() {
+                return mock(Service.class);
+            }
+
+            @Override
+            public Collection<Credential> getCredentials() {
+                return List.of(new TestCredentialType1());
+            }
+        };
+        assertNotNull(transaction.getPrimaryCredential());
+        assertTrue(transaction.hasCredentialOfType(TestCredentialType1.class));
     }
 
     public abstract static class BaseTestCredential implements Credential {

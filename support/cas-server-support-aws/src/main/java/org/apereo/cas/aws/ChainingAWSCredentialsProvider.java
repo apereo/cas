@@ -1,24 +1,24 @@
 package org.apereo.cas.aws;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.AnonymousAWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
-import com.amazonaws.auth.EC2ContainerCredentialsProviderWrapper;
-import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
-import com.amazonaws.auth.InstanceProfileCredentialsProvider;
-import com.amazonaws.auth.PropertiesFileCredentialsProvider;
-import com.amazonaws.auth.SystemPropertiesCredentialsProvider;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import org.apereo.cas.util.LoggingUtils;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.io.Resource;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProviderChain;
+import software.amazon.awssdk.auth.credentials.ContainerCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.InstanceProfileCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.SystemPropertyCredentialsProvider;
+import software.amazon.awssdk.profiles.ProfileFile;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -32,16 +32,16 @@ import java.util.function.Function;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
-    private final List<AWSCredentialsProvider> chain;
+public class ChainingAWSCredentialsProvider {
+    private final List<AwsCredentialsProvider> chain;
 
     /**
      * Gets instance.
      *
      * @return the instance
      */
-    public static AWSCredentialsProvider getInstance() {
-        return getInstance(null, null, null, null, null);
+    public static AwsCredentialsProvider getInstance() {
+        return getInstance(null, null, null, null);
     }
 
     /**
@@ -51,135 +51,74 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
      * @param credentialSecretKey the credential secret key
      * @return the instance
      */
-    public static AWSCredentialsProvider getInstance(final String credentialAccessKey, final String credentialSecretKey) {
-        return getInstance(credentialAccessKey, credentialSecretKey, null, null, null);
+    public static AwsCredentialsProvider getInstance(final String credentialAccessKey, final String credentialSecretKey) {
+        return getInstance(credentialAccessKey, credentialSecretKey, null, null);
     }
+
 
     /**
      * Gets instance.
      *
-     * @param credentialAccessKey      the credential access key
-     * @param credentialSecretKey      the credential secret key
-     * @param credentialPropertiesFile the credential properties file
+     * @param credentialAccessKey the credential access key
+     * @param credentialSecretKey the credential secret key
+     * @param profilePath         the profile path
+     * @param profileName         the profile name
      * @return the instance
      */
-    public static AWSCredentialsProvider getInstance(final String credentialAccessKey, final String credentialSecretKey,
-                                                     final Resource credentialPropertiesFile) {
-        return getInstance(credentialAccessKey, credentialSecretKey, credentialPropertiesFile, null, null);
-    }
-
-    /**
-     * Gets instance.
-     *
-     * @param credentialAccessKey      the credential access key
-     * @param credentialSecretKey      the credential secret key
-     * @param credentialPropertiesFile the credential properties file
-     * @param profilePath              the profile path
-     * @param profileName              the profile name
-     * @return the instance
-     */
-    public static AWSCredentialsProvider getInstance(final String credentialAccessKey, final String credentialSecretKey,
-                                                     final Resource credentialPropertiesFile,
+    public static AwsCredentialsProvider getInstance(final String credentialAccessKey, final String credentialSecretKey,
                                                      final String profilePath, final String profileName) {
 
         LOGGER.debug("Attempting to locate AWS credentials...");
 
-        val chain = new ArrayList<AWSCredentialsProvider>();
-        chain.add(new InstanceProfileCredentialsProvider(false));
+        val chain = new ArrayList<AwsCredentialsProvider>();
+        chain.add(InstanceProfileCredentialsProvider.create());
 
-        if (credentialPropertiesFile != null) {
-            try {
-                val f = credentialPropertiesFile.getFile();
-                chain.add(new PropertiesFileCredentialsProvider(f.getCanonicalPath()));
-            } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
         if (StringUtils.isNotBlank(profilePath) && StringUtils.isNotBlank(profileName)) {
             addProviderToChain(nothing -> {
-                chain.add(new ProfileCredentialsProvider(profilePath, profileName));
+                chain.add(ProfileCredentialsProvider.builder()
+                    .profileName(profileName)
+                    .profileFile(ProfileFile.builder().content(Path.of(profilePath)).build())
+                    .build());
                 return null;
             });
         }
         addProviderToChain(nothing -> {
-            chain.add(new SystemPropertiesCredentialsProvider());
+            chain.add(SystemPropertyCredentialsProvider.create());
             return null;
         });
 
         addProviderToChain(nothing -> {
-            chain.add(new EnvironmentVariableCredentialsProvider());
-            return null;
-        });
-
-        addProviderToChain(nothing -> {
-            chain.add(new EnvironmentVariableCredentialsProvider());
-            return null;
-        });
-
-        addProviderToChain(nothing -> {
-            chain.add(new ClasspathPropertiesFileCredentialsProvider("awscredentials.properties"));
+            chain.add(EnvironmentVariableCredentialsProvider.create());
             return null;
         });
 
         if (StringUtils.isNotBlank(credentialAccessKey) && StringUtils.isNotBlank(credentialSecretKey)) {
             addProviderToChain(nothing -> {
-                val credentials = new BasicAWSCredentials(credentialAccessKey, credentialSecretKey);
-                chain.add(new AWSStaticCredentialsProvider(credentials));
+                val credentials = AwsBasicCredentials.create(credentialAccessKey, credentialSecretKey);
+                chain.add(StaticCredentialsProvider.create(credentials));
                 return null;
             });
         }
 
         addProviderToChain(nothing -> {
-            chain.add(new EC2ContainerCredentialsProviderWrapper());
+            chain.add(ContainerCredentialsProvider.builder().build());
+            return null;
+        });
+
+        addProviderToChain(nothing -> {
+            chain.add(InstanceProfileCredentialsProvider.builder().build());
             return null;
         });
 
         LOGGER.debug("AWS chained credential providers are configured as [{}]", chain);
-        return new ChainingAWSCredentialsProvider(chain);
+        return AwsCredentialsProviderChain.builder().credentialsProviders(chain).build();
     }
 
     private static void addProviderToChain(final Function<Void, Void> func) {
         try {
             func.apply(null);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
     }
-
-    private static AWSCredentials getCredentialsFromProvider(final AWSCredentialsProvider p) {
-        try {
-            LOGGER.debug("Calling credential provider [{}] to fetch credentials...", p.getClass().getSimpleName());
-            return p.getCredentials();
-        } catch (final Throwable e) {
-            LOGGER.trace(e.getMessage(), e);
-        }
-        return null;
-    }
-
-    @Override
-    public AWSCredentials getCredentials() {
-        LOGGER.debug("Attempting to locate AWS credentials from the chain...");
-        for (val p : this.chain) {
-            val c = getCredentialsFromProvider(p);
-            if (c != null) {
-                LOGGER.debug("Fetched credentials from [{}] provider successfully.", p.getClass().getSimpleName());
-                return c;
-            }
-        }
-        LOGGER.warn("No AWS credentials could be determined from the chain. Using anonymous credentials...");
-        return new AnonymousAWSCredentials();
-    }
-
-    @Override
-    public void refresh() {
-        for (val p : this.chain) {
-            try {
-                p.refresh();
-            } catch (final Throwable e) {
-                LOGGER.trace(e.getMessage(), e);
-            }
-        }
-    }
-
-
 }

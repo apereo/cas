@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @TestPropertySource(properties = {
-    "cas.acceptableUsagePolicy.jdbc.tableName=aup_table",
-    "cas.acceptableUsagePolicy.aupAttributeName=accepted"
+    "cas.acceptable-usage-policy.jdbc.table-name=aup_table",
+    "cas.acceptable-usage-policy.aup-attribute-name=accepted"
 })
 @Tag("JDBC")
 public class JdbcAcceptableUsagePolicyRepositoryTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {

@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderAbsentException;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
@@ -11,6 +12,7 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
+import org.apereo.cas.authentication.exceptions.UniquePrincipalRequiredException;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
@@ -38,6 +40,7 @@ import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAbstractTicketExc
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAuthenticationExceptionHandler;
 import org.apereo.cas.web.flow.authentication.GenericCasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.authentication.RequiredAuthenticationHandlersSingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
@@ -86,6 +89,10 @@ public class CasCoreWebflowConfiguration {
     private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
+    @Qualifier("authenticationContextValidator")
+    private ObjectProvider<MultifactorAuthenticationContextValidator> authenticationContextValidator;
+
+    @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
@@ -100,6 +107,10 @@ public class CasCoreWebflowConfiguration {
     @Autowired
     @Qualifier("warnCookieGenerator")
     private ObjectProvider<CasCookieBuilder> warnCookieGenerator;
+
+    @Autowired
+    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -119,11 +130,17 @@ public class CasCoreWebflowConfiguration {
     @Qualifier("ticketRegistry")
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
+    @Autowired
+    @Qualifier("singleSignOnParticipationStrategy")
+    private ObjectProvider<SingleSignOnParticipationStrategy> webflowSingleSignOnParticipationStrategy;
+
     @ConditionalOnMissingBean(name = "serviceTicketRequestWebflowEventResolver")
     @Bean
     @RefreshScope
     public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver() {
         val context = CasWebflowEventResolutionConfigurationContext.builder()
+            .casDelegatingWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver.getObject())
+            .authenticationContextValidator(authenticationContextValidator.getObject())
             .authenticationSystemSupport(authenticationSystemSupport.getObject())
             .centralAuthenticationService(centralAuthenticationService.getObject())
             .servicesManager(servicesManager.getObject())
@@ -132,6 +149,7 @@ public class CasCoreWebflowConfiguration {
             .authenticationRequestServiceSelectionStrategies(authenticationServiceSelectionPlan.getObject())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
+            .singleSignOnParticipationStrategy(webflowSingleSignOnParticipationStrategy.getObject())
             .ticketRegistry(ticketRegistry.getObject())
             .applicationContext(applicationContext)
             .build();
@@ -206,34 +224,42 @@ public class CasCoreWebflowConfiguration {
         val resolvers = applicationContext.getBeansOfType(SingleSignOnParticipationStrategyConfigurer.class, false, true);
         val providers = new ArrayList<SingleSignOnParticipationStrategyConfigurer>(resolvers.values());
         AnnotationAwareOrderComparator.sort(providers);
-
         val chain = new ChainingSingleSignOnParticipationStrategy();
         providers.forEach(provider -> provider.configureStrategy(chain));
-
-        val sso = casProperties.getSso();
-        val defaultStrategy = new DefaultSingleSignOnParticipationStrategy(servicesManager.getObject(),
-            sso.isCreateSsoCookieOnRenewAuthn(),
-            sso.isRenewAuthnEnabled(),
-            ticketRegistrySupport.getObject(),
-            authenticationServiceSelectionPlan.getObject());
-
-        chain.addStrategy(defaultStrategy);
         return chain;
     }
+
+    @ConditionalOnMissingBean(name = "defaultCasWebflowAuthenticationExceptionHandler")
+    @Bean
+    @RefreshScope
+    public CasWebflowExceptionHandler defaultCasWebflowAuthenticationExceptionHandler() {
+        return new DefaultCasWebflowAuthenticationExceptionHandler(
+            handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+    }
+
+    @ConditionalOnMissingBean(name = "defaultCasWebflowAbstractTicketExceptionHandler")
+    @Bean
+    @RefreshScope
+    public CasWebflowExceptionHandler defaultCasWebflowAbstractTicketExceptionHandler() {
+        return new DefaultCasWebflowAbstractTicketExceptionHandler(
+            handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+    }
+
+    @ConditionalOnMissingBean(name = "genericCasWebflowExceptionHandler")
+    @Bean
+    @RefreshScope
+    public CasWebflowExceptionHandler genericCasWebflowExceptionHandler() {
+        return new GenericCasWebflowExceptionHandler(
+            handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+    }
+
 
     @ConditionalOnMissingBean(name = "authenticationExceptionHandler")
     @Bean
     @RefreshScope
     public Action authenticationExceptionHandler() {
         val beans = applicationContext.getBeansOfType(CasWebflowExceptionHandler.class, false, true);
-        val handlers = new ArrayList<CasWebflowExceptionHandler>(beans.values());
-        handlers.add(new DefaultCasWebflowAuthenticationExceptionHandler(
-            handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
-        handlers.add(new DefaultCasWebflowAbstractTicketExceptionHandler(
-            handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
-        handlers.add(new GenericCasWebflowExceptionHandler(
-            handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
-
+        val handlers = new ArrayList<>(beans.values());
         AnnotationAwareOrderComparator.sort(handlers);
         return new AuthenticationExceptionHandlerAction(handlers);
     }
@@ -257,6 +283,7 @@ public class CasCoreWebflowConfiguration {
         errors.add(InvalidLoginLocationException.class);
         errors.add(AccountPasswordMustChangeException.class);
         errors.add(InvalidLoginTimeException.class);
+        errors.add(UniquePrincipalRequiredException.class);
 
         errors.add(AccountNotFoundException.class);
         errors.add(FailedLoginException.class);
@@ -283,5 +310,22 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public SingleSignOnParticipationStrategyConfigurer requiredAuthenticationHandlersSingleSignOnParticipationStrategyConfigurer() {
         return chain -> chain.addStrategy(requiredAuthenticationHandlersSingleSignOnParticipationStrategy());
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "defaultSingleSignOnParticipationStrategy")
+    public SingleSignOnParticipationStrategy defaultSingleSignOnParticipationStrategy() {
+        return new DefaultSingleSignOnParticipationStrategy(servicesManager.getObject(),
+            casProperties.getSso(),
+            ticketRegistrySupport.getObject(),
+            authenticationServiceSelectionPlan.getObject());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "defaultSingleSignOnParticipationStrategyConfigurer")
+    @RefreshScope
+    public SingleSignOnParticipationStrategyConfigurer defaultSingleSignOnParticipationStrategyConfigurer() {
+        return chain -> chain.addStrategy(defaultSingleSignOnParticipationStrategy());
     }
 }

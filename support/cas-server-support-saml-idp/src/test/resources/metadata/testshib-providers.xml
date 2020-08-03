@@ -1,7 +1,96 @@
 <EntitiesDescriptor Name="urn:mace:shibboleth:testshib:two"
                     xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
                     xmlns:mdalg="urn:oasis:names:tc:SAML:metadata:algsupport" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui">
-    
+
+    <EntityDescriptor entityID="https://mocky.io"
+                      xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+                      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+                      xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
+                      xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi"
+                      xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui"
+                      xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                      xmlns:xrd="http://docs.oasis-open.org/ns/xri/xrd-1.0">
+
+        <Extensions>
+            <mdalg:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/>
+            <mdalg:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+            <mdalg:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#sha384"/>
+            <mdalg:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+            <mdalg:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#sha224"/>
+
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha224"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha512"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha384"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2009/xmldsig11#dsa-sha256"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2000/09/xmldsig#dsa-sha1"/>
+        </Extensions>
+
+
+        <!-- An SP supporting SAML 1 and 2 contains this element with protocol support as shown. -->
+        <SPSSODescriptor
+                protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol http://schemas.xmlsoap.org/ws/2003/07/secext">
+
+            <KeyDescriptor>
+                <ds:KeyInfo>
+                    <ds:X509Data>
+                        <ds:X509Certificate>
+                            MIIEPjCCAyagAwIBAgIBADANBgkqhkiG9w0BAQUFADB3MQswCQYDVQQGEwJVUzEV
+                            MBMGA1UECBMMUGVubnN5bHZhbmlhMRMwEQYDVQQHEwpQaXR0c2J1cmdoMSIwIAYD
+                            VQQKExlUZXN0U2hpYiBTZXJ2aWNlIFByb3ZpZGVyMRgwFgYDVQQDEw9zcC50ZXN0
+                            c2hpYi5vcmcwHhcNMDYwODMwMjEyNDM5WhcNMTYwODI3MjEyNDM5WjB3MQswCQYD
+                            VQQGEwJVUzEVMBMGA1UECBMMUGVubnN5bHZhbmlhMRMwEQYDVQQHEwpQaXR0c2J1
+                            cmdoMSIwIAYDVQQKExlUZXN0U2hpYiBTZXJ2aWNlIFByb3ZpZGVyMRgwFgYDVQQD
+                            Ew9zcC50ZXN0c2hpYi5vcmcwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIB
+                            AQDJyR6ZP6MXkQ9z6RRziT0AuCabDd3x1m7nLO9ZRPbr0v1LsU+nnC363jO8nGEq
+                            sqkgiZ/bSsO5lvjEt4ehff57ERio2Qk9cYw8XCgmYccVXKH9M+QVO1MQwErNobWb
+                            AjiVkuhWcwLWQwTDBowfKXI87SA7KR7sFUymNx5z1aoRvk3GM++tiPY6u4shy8c7
+                            vpWbVfisfTfvef/y+galxjPUQYHmegu7vCbjYP3On0V7/Ivzr+r2aPhp8egxt00Q
+                            XpilNai12LBYV3Nv/lMsUzBeB7+CdXRVjZOHGuQ8mGqEbsj8MBXvcxIKbcpeK5Zi
+                            JCVXPfarzuriM1G5y5QkKW+LAgMBAAGjgdQwgdEwHQYDVR0OBBYEFKB6wPDxwYrY
+                            StNjU5P4b4AjBVQVMIGhBgNVHSMEgZkwgZaAFKB6wPDxwYrYStNjU5P4b4AjBVQV
+                            oXukeTB3MQswCQYDVQQGEwJVUzEVMBMGA1UECBMMUGVubnN5bHZhbmlhMRMwEQYD
+                            VQQHEwpQaXR0c2J1cmdoMSIwIAYDVQQKExlUZXN0U2hpYiBTZXJ2aWNlIFByb3Zp
+                            ZGVyMRgwFgYDVQQDEw9zcC50ZXN0c2hpYi5vcmeCAQAwDAYDVR0TBAUwAwEB/zAN
+                            BgkqhkiG9w0BAQUFAAOCAQEAc06Kgt7ZP6g2TIZgMbFxg6vKwvDL0+2dzF11Onpl
+                            5sbtkPaNIcj24lQ4vajCrrGKdzHXo9m54BzrdRJ7xDYtw0dbu37l1IZVmiZr12eE
+                            Iay/5YMU+aWP1z70h867ZQ7/7Y4HW345rdiS6EW663oH732wSYNt9kr7/0Uer3KD
+                            9CuPuOidBacospDaFyfsaJruE99Kd6Eu/w5KLAGG+m0iqENCziDGzVA47TngKz2v
+                            PVA+aokoOyoz3b53qeti77ijatSEoKjxheBWpO+eoJeGq/e49Um3M2ogIX/JAlMa
+                            Inh+vYSYngQB2sx9LGkR9KHaMKNIGCDehk93Xla4pWJx1w==
+                        </ds:X509Certificate>
+                    </ds:X509Data>
+                </ds:KeyInfo>
+                <EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#aes128-gcm"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#aes192-gcm"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#aes256-gcm"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes192-cbc"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes256-cbc"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#rsa-oaep"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"/>
+            </KeyDescriptor>
+
+            <!-- This tells IdPs that Single Logout is supported and where/how to request it. -->
+            <SingleLogoutService Location="https://httpbin.org/get"
+                                 Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"/>
+
+            <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+
+            <AssertionConsumerService index="1" isDefault="true"
+                                      Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://mocky.io/Shibboleth.sso/SAML2/POST"/>
+        </SPSSODescriptor>
+        
+
+    </EntityDescriptor>
+
     <EntityDescriptor entityID="https://sp.testshib.org/shibboleth-sp"
                       xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
                       xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
@@ -111,7 +200,7 @@
                                  Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"/>
             <SingleLogoutService Location="https://sp.testshib.org/Shibboleth.sso/SLO/Redirect"
                                  Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"/>
-            <SingleLogoutService Location="https://sp.testshib.org/Shibboleth.sso/SLO/POST"
+            <SingleLogoutService Location="https://httpbin.org/post"
                                  Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"/>
             <SingleLogoutService Location="https://sp.testshib.org/Shibboleth.sso/SLO/Artifact"
                                  Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"/>
@@ -183,6 +272,102 @@
             <SurName>Klingenstein</SurName>
             <EmailAddress>ndk@internet2.edu</EmailAddress>
         </ContactPerson>
+
+    </EntityDescriptor>
+
+
+    <EntityDescriptor entityID="https://cassp.example.org"
+                      xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+                      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+                      xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
+                      xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi"
+                      xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui"
+                      xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                      xmlns:xrd="http://docs.oasis-open.org/ns/xri/xrd-1.0">
+
+        <Extensions>
+            <mdalg:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/>
+            <mdalg:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+            <mdalg:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#sha384"/>
+            <mdalg:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+            <mdalg:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#sha224"/>
+
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha224"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha512"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha384"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2009/xmldsig11#dsa-sha256"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+            <mdalg:SigningMethod Algorithm="http://www.w3.org/2000/09/xmldsig#dsa-sha1"/>
+        </Extensions>
+
+
+        <!-- An SP supporting SAML 1 and 2 contains this element with protocol support as shown. -->
+        <SPSSODescriptor
+                protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol http://schemas.xmlsoap.org/ws/2003/07/secext">
+
+            <KeyDescriptor>
+                <ds:KeyInfo>
+                    <ds:X509Data>
+                        <ds:X509Certificate>
+                            MIIDHjCCAgagAwIBAgIVALMbwVFgdeXJstsfQm0+Tj5TNSD7MA0GCSqGSIb3DQEB
+                            CwUAMBoxGDAWBgNVBAMMD2Nhcy5leGFtcGxlLm9yZzAeFw0yMDA0MTMxNjM2MTRa
+                            Fw00MDA0MTMxNjM2MTRaMBoxGDAWBgNVBAMMD2Nhcy5leGFtcGxlLm9yZzCCASIw
+                            DQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMbmthg4aUzFuVCYnNODOz94Vz6y
+                            gClw3KAuFnd8jBDylD/6LXsuy8fxeJ+03fc+gcwVCI1EdK/F/Z7WvQH1qiNwxh5J
+                            xSe1kFQ/pyRs1hY0m7RWITEIHHqB4SF6YRws0LcaO/wbvHxmfx4DO9ARIAMuaJU+
+                            DLmpsjp0XTf9wqb555oxTewxfUIkTBdutH6blVTA7lHtS541zxRJ9FQ1tAixnQYP
+                            jOKnZK5afpMwihdMd3ehxyYAX2qP8JWaj3zsHZckFe6Vpkf3x6eFU1PYg7bK0GrU
+                            qcKpUPwC/T9neX7Z2yPnhceXNx/kGoC5UrHTpjrq5fQw94X0kq9H+xbdtAsCAwEA
+                            AaNbMFkwHQYDVR0OBBYEFJf2+B9GGMet6heHRQaXNrzrtRDbMDgGA1UdEQQxMC+C
+                            D2Nhcy5leGFtcGxlLm9yZ4YcY2FzLmV4YW1wbGUub3JnL2lkcC9tZXRhZGF0YTAN
+                            BgkqhkiG9w0BAQsFAAOCAQEAIcmTuX5CvoaDlflHtLl1Lom0Aa38VB58ERsnXzbD
+                            YK6oBEdG2eaZz7aqevoLlZM870g/WP09oba4pV5CP/YKfj0fugmIbJJIbEjlQ54R
+                            5/SVfDfVbtqP16+0h6ETBlVWm2JMtURtqaBa8CigdITy7pUe1M67H3TtYPqoLd5y
+                            +E9N0topYi7eAV2JZYXdEnJwXAZcPVhkgTl2ewMo3H5z+2dB2OM+je34xUdfn/YC
+                            sdDgtzlrPpO9InwpYcOpUzrKpHf089d4csIjbGdL6Kb/zDm9hadTZqrGmMGskyXi
+                            b0CfxW374ZqbP6ijIoFtxfSvMjwVtEVX5unLasID1I9fKA==
+                        </ds:X509Certificate>
+                    </ds:X509Data>
+                </ds:KeyInfo>
+                <EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#aes128-gcm"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#aes192-gcm"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#aes256-gcm"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes192-cbc"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes256-cbc"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#rsa-oaep"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"/>
+            </KeyDescriptor>
+
+            <!-- This tells IdPs that Single Logout is supported and where/how to request it. -->
+            <SingleLogoutService Location="https://httpbin.org/post"
+                                 Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"/>
+            <SingleLogoutService Location="https://httpbin.org/get"
+                                 Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"/>
+
+            <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+
+
+            <AssertionConsumerService index="1"
+                                      Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://httpbin.org/post"/>
+            <AssertionConsumerService index="2"
+                                      Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
+                                      Location="https://httpbin.org/post"/>
+            <AssertionConsumerService index="3"
+                                      Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
+                                      Location="https://httpbin.org/post"/>
+            <AssertionConsumerService index="4"
+                                      Binding="urn:oasis:names:tc:SAML:2.0:bindings:PAOS"
+                                      Location="https://httpbin.org/post"/>
+        </SPSSODescriptor>
+
 
     </EntityDescriptor>
 

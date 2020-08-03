@@ -23,6 +23,16 @@ Automatic support for drivers includes the following databases.
 All other drivers need to be manually added to the build configuration.
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties-Common.html#hibernate--jdbc).
 
+### H2
+    
+Available drivers are:
+
+1. `org.h2.Driver`
+
+| Dialects             
+|-------------------------------------
+| `org.hibernate.dialect.H2Dialect`    
+
 ### HSQLDB
 
 Available drivers are:
@@ -34,7 +44,6 @@ Available drivers are:
 | `org.hibernate.dialect.HSQLDialect`    
 
 ### Oracle
-
 
 Available drivers are:
 

@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.token.authentication.TokenCredential;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,11 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("Authentication")
 public class TokenCredentialTests {
     @Test
     public void verifyTokenFromParameter() {
         val credential = new TokenCredential("tokenid", RegisteredServiceTestUtils.getService());
         val metadata = new BasicCredentialMetaData(credential);
-        assertNotNull(metadata.toCredential());
+        assertNotNull(metadata.getCredentialClass());
     }
 }

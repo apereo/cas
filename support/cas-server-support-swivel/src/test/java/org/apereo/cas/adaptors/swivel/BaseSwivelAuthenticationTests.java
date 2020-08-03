@@ -10,6 +10,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -20,6 +21,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.SwivelAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.SwivelAuthenticationMultifactorProviderBypassConfiguration;
+import org.apereo.cas.config.SwivelComponentSerializationConfiguration;
 import org.apereo.cas.config.SwivelConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -71,6 +73,7 @@ public abstract class BaseSwivelAuthenticationTests {
         CasCoreAuthenticationConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreWebflowConfiguration.class,
         CasWebflowContextConfiguration.class,
@@ -86,6 +89,7 @@ public abstract class BaseSwivelAuthenticationTests {
         MultifactorAuthnTrustWebflowConfiguration.class,
 
         SwivelConfiguration.class,
+        SwivelComponentSerializationConfiguration.class,
         SwivelConfiguration.SwivelMultifactorTrustConfiguration.class,
         SwivelAuthenticationMultifactorProviderBypassConfiguration.class,
         SwivelAuthenticationEventExecutionPlanConfiguration.class

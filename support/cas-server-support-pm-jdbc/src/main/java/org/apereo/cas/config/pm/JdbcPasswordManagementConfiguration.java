@@ -50,6 +50,8 @@ public class JdbcPasswordManagementConfiguration {
     private ObjectProvider<PasswordHistoryService> passwordHistoryService;
 
     @Bean
+    @ConditionalOnMissingBean(name = "jdbcPasswordManagementDataSource")
+    @RefreshScope
     public DataSource jdbcPasswordManagementDataSource() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getPm().getJdbc());
     }

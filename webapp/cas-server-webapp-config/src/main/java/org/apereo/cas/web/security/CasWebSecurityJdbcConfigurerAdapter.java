@@ -22,7 +22,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  */
 @RequiredArgsConstructor
 @Slf4j
-@Order(101)
+@Order(98)
 public class CasWebSecurityJdbcConfigurerAdapter extends WebSecurityConfigurerAdapter {
     private final CasConfigurationProperties casProperties;
 

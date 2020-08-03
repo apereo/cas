@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -41,7 +42,7 @@ public class JdbcCloudConfigBootstrapConfiguration implements PropertySourceLoca
                 .stream()
                 .collect(Collectors.toMap(row -> row.get("name"), row -> row.get("value"), (a, b) -> b, Properties::new)));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new PropertiesPropertySource(getClass().getSimpleName(), props);
     }

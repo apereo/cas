@@ -69,6 +69,7 @@ public class CasCoreAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "authenticationEventExecutionPlan")
     @Autowired
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(final List<AuthenticationEventExecutionPlanConfigurer> configurers) {
         val plan = new DefaultAuthenticationEventExecutionPlan();
         val sortedConfigurers = new ArrayList<AuthenticationEventExecutionPlanConfigurer>(configurers);

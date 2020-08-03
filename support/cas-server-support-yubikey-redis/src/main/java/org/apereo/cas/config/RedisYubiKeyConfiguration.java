@@ -49,6 +49,7 @@ public class RedisYubiKeyConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisYubiKeyConnectionFactory")
+    @RefreshScope
     public RedisConnectionFactory redisYubiKeyConnectionFactory() {
         val redis = casProperties.getAuthn().getMfa().getYubikey().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);

@@ -13,14 +13,16 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":support:cas-server-support-validation-core")
     implementation project(":support:cas-server-support-ws-idp-api")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-ws-sts-api")
+    implementation project(":core:cas-server-core-logout-api")
+    implementation project(":core:cas-server-core-cookie-api")
 
     testImplementation project(":core:cas-server-core")
-    testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-util")
@@ -29,10 +31,10 @@ dependencies {
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-configuration")
-    testImplementation project(":core:cas-server-core-cookie-api")
-    
+
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

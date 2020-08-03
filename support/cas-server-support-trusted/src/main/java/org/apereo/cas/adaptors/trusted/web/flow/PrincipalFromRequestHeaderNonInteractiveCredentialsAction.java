@@ -39,7 +39,7 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsAction extends B
     }
 
     @Override
-    protected String getRemotePrincipalId(final HttpServletRequest request) {
+    public String getRemotePrincipalId(final HttpServletRequest request) {
         val principal = request.getUserPrincipal();
         if (principal != null) {
             LOGGER.debug("Principal [{}] found in request", principal.getName());
@@ -64,6 +64,7 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsAction extends B
         return null;
     }
 
+    @SuppressWarnings("JdkObsolete")
     private static Map<String, List<String>> getAllRequestHeaderValues(final HttpServletRequest request) {
         val headers = new HashMap<String, List<String>>(DEFAULT_SIZE);
         val names = request.getHeaderNames();

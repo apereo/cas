@@ -7,6 +7,7 @@ import org.apereo.cas.validation.Assertion;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.aspectj.lang.JoinPoint;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Tickets")
 public class TicketValidationResourceResolverTests {
     private final TicketValidationResourceResolver r = new TicketValidationResourceResolver();
 

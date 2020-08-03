@@ -8,7 +8,7 @@ package org.apereo.cas.support.openid.web.support;
  * @since 3.1
  */
 @FunctionalInterface
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public interface OpenIdUserNameExtractor {
 
     /**

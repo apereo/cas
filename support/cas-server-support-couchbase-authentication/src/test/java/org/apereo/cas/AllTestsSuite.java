@@ -1,8 +1,8 @@
 package org.apereo.cas;
 
-import org.apereo.cas.authentication.CouchbaseAuthenticationHandlerIntegrationTests;
 import org.apereo.cas.authentication.CouchbaseAuthenticationHandlerTests;
 import org.apereo.cas.authentication.CouchbasePersonAttributeDaoTests;
+import org.apereo.cas.config.CouchbaseConfigurationTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -15,9 +15,9 @@ import org.junit.runner.RunWith;
  * @since 6.0.0-RC3
  */
 @SelectClasses({
+    CouchbaseConfigurationTests.class,
     CouchbasePersonAttributeDaoTests.class,
-    CouchbaseAuthenticationHandlerTests.class,
-    CouchbaseAuthenticationHandlerIntegrationTests.class
+    CouchbaseAuthenticationHandlerTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {

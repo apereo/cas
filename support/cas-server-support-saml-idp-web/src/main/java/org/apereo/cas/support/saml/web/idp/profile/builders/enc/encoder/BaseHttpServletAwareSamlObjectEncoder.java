@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -24,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseHttpServletAwareSamlObjectEncoder<T extends SAMLObject> {
     /**
      * The Velocity engine factory.
@@ -76,7 +77,7 @@ public abstract class BaseHttpServletAwareSamlObjectEncoder<T extends SAMLObject
      * @return the message context
      */
     protected MessageContext getEncoderMessageContext(final RequestAbstractType request, final T samlObject, final String relayState) {
-        val ctx = new MessageContext<SAMLObject>();
+        val ctx = new MessageContext();
         ctx.setMessage(samlObject);
         SAMLBindingSupport.setRelayState(ctx, relayState);
         SamlIdPUtils.preparePeerEntitySamlEndpointContext(request, ctx, adaptor, getBinding());

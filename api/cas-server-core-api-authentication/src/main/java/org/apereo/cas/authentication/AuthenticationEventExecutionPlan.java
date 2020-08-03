@@ -186,6 +186,13 @@ public interface AuthenticationEventExecutionPlan {
     Collection<AuthenticationPolicy> getAuthenticationPolicies(Authentication authentication);
 
     /**
+     * Gets authentication policies.
+     *
+     * @return the authentication policies
+     */
+    Collection<AuthenticationPolicy> getAuthenticationPolicies();
+
+    /**
      * Gets authentication handler resolvers.
      *
      * @param transaction the transaction

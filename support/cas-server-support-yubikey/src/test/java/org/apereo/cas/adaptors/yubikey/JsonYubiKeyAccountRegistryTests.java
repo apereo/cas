@@ -1,17 +1,14 @@
 package org.apereo.cas.adaptors.yubikey;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.Bean;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  * This is {@link JsonYubiKeyAccountRegistryTests}.
@@ -20,38 +17,21 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("FileSystem")
+@Getter
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class JsonYubiKeyAccountRegistryTests extends BaseYubiKeyTests {
-    private static final String BAD_TOKEN = "123456";
-
+@SpringBootTest(classes = BaseYubiKeyTests.SharedTestConfiguration.class,
+    properties = {
+        "cas.authn.mfa.yubikey.client-id=18423",
+        "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As=",
+        "cas.authn.mfa.yubikey.json-file=file:/tmp/yubikey.json"
+    })
+@Tag("MFA")
+public class JsonYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTests {
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")
     private YubiKeyAccountRegistry yubiKeyAccountRegistry;
 
-    @Test
-    public void verifyAccountNotRegistered() {
-        assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("missing-user"));
-    }
-
-    @Test
-    public void verifyAccountNotRegisteredWithBadToken() {
-        assertFalse(yubiKeyAccountRegistry.registerAccountFor("baduser", BAD_TOKEN));
-        assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("baduser"));
-    }
-
-    @Test
-    public void verifyAccountRegistered() {
-        assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", "cccccccvlidchlffblbghhckbctgethcrtdrruchvlud"));
-        assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuser"));
-        assertEquals(1, yubiKeyAccountRegistry.getAccounts().size());
-    }
-
-    @TestConfiguration("JsonYubiKeyAccountRegistryTestConfiguration")
-    public static class JsonYubiKeyAccountRegistryTestConfiguration {
-        @Bean
-        @RefreshScope
-        public YubiKeyAccountValidator yubiKeyAccountValidator() {
-            return (uid, token) -> !token.equals(BAD_TOKEN);
-        }
-    }
+    @Autowired
+    @Qualifier("yubikeyAccountCipherExecutor")
+    private CipherExecutor yubikeyAccountCipherExecutor;
 }

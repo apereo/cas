@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.metadata;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("Simple")
 public class CacheCredentialsCipherExecutorTests {
     @Test
     public void verifyAction() {

@@ -35,15 +35,13 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
 
     private final AuthenticationRiskMitigator authenticationRiskMitigator;
 
-    private final double threshold;
 
-    public RiskAwareAuthenticationWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext,
+    public RiskAwareAuthenticationWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext context,
                                                        final AuthenticationRiskEvaluator authenticationRiskEvaluator,
                                                        final AuthenticationRiskMitigator authenticationRiskMitigator) {
-        super(webflowEventResolutionConfigurationContext);
+        super(context);
         this.authenticationRiskEvaluator = authenticationRiskEvaluator;
         this.authenticationRiskMitigator = authenticationRiskMitigator;
-        threshold = webflowEventResolutionConfigurationContext.getCasProperties().getAuthn().getAdaptive().getRisk().getThreshold();
     }
 
     @Override
@@ -78,6 +76,8 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
         LOGGER.debug("Evaluating possible suspicious authentication attempt for [{}]", authentication.getPrincipal());
         val score = authenticationRiskEvaluator.eval(authentication, service, request);
 
+        val threshold = getWebflowEventResolutionConfigurationContext()
+            .getCasProperties().getAuthn().getAdaptive().getRisk().getThreshold();
         if (score.isRiskGreaterThan(threshold)) {
             applicationContext
                 .publishEvent(new CasRiskyAuthenticationDetectedEvent(this, authentication, service, score));

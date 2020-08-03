@@ -6,6 +6,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,6 +21,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Tag("SAML")
 public class SamlCompliantLogoutMessageCreatorTests {
     private static final String CONST_TEST_URL = "https://google.com";
 

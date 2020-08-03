@@ -17,7 +17,6 @@ import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
-import org.apereo.cas.web.AbstractDelegateController;
 import org.apereo.cas.web.DelegatingController;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.ServiceValidationViewFactory;
@@ -54,7 +53,7 @@ import java.util.Properties;
 @Configuration("openidConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class OpenIdConfiguration {
     @Autowired
     @Qualifier("serviceValidationViewFactory")
@@ -111,7 +110,7 @@ public class OpenIdConfiguration {
     private ObjectProvider<ServiceTicketValidationAuthorizersExecutionPlan> validationAuthorizers;
 
     @Bean
-    public AbstractDelegateController smartOpenIdAssociationController() {
+    public SmartOpenIdController smartOpenIdAssociationController() {
         return new SmartOpenIdController(serverManager(), casOpenIdAssociationSuccessView.getObject());
     }
 

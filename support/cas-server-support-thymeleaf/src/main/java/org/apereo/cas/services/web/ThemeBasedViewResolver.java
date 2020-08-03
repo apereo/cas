@@ -1,6 +1,5 @@
 package org.apereo.cas.services.web;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -40,7 +39,6 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
     private int order = LOWEST_PRECEDENCE;
 
     @Override
-    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     public View resolveViewName(final String viewName, final Locale locale) {
         val theme = Optional.of(RequestContextHolder.currentRequestAttributes())
             .filter(ServletRequestAttributes.class::isInstance)

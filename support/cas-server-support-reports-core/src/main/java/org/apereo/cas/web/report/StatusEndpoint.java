@@ -23,9 +23,11 @@ import java.util.Map;
  *
  * @author Marvin S. Addison
  * @since 3.5
+ * @deprecated since 6.2.0
  */
 @Slf4j
 @Endpoint(id = "status", enableByDefault = false)
+@Deprecated(since ="6.2.0")
 public class StatusEndpoint extends BaseCasActuatorEndpoint {
     private final HealthEndpoint healthEndpoint;
 
@@ -48,7 +50,6 @@ public class StatusEndpoint extends BaseCasActuatorEndpoint {
             LOGGER.info("Health endpoint is undefined/disabled. No health indicators may be consulted to query for health data "
                 + "and the status results are always going to be [{}]", model);
         } else {
-
             val health = this.healthEndpoint.health();
             val status = health.getStatus();
 

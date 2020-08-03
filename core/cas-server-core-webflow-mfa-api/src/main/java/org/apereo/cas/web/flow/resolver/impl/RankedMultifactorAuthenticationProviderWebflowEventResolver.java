@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -34,16 +35,21 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
     implements CasDelegatingWebflowEventResolver {
 
     private final CasDelegatingWebflowEventResolver casDelegatingWebflowEventResolver;
+
     private final MultifactorAuthenticationContextValidator authenticationContextValidator;
+
+    private final SingleSignOnParticipationStrategy renewalStrategy;
 
     public RankedMultifactorAuthenticationProviderWebflowEventResolver(
         final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext,
         final CasDelegatingWebflowEventResolver casDelegatingWebflowEventResolver,
-        final MultifactorAuthenticationContextValidator authenticationContextValidator) {
+        final MultifactorAuthenticationContextValidator authenticationContextValidator,
+        final SingleSignOnParticipationStrategy renewalStrategy) {
 
         super(webflowEventResolutionConfigurationContext);
         this.casDelegatingWebflowEventResolver = casDelegatingWebflowEventResolver;
         this.authenticationContextValidator = authenticationContextValidator;
+        this.renewalStrategy = renewalStrategy;
     }
 
     @Override
@@ -73,6 +79,12 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         LOGGER.trace("Recording and tracking initial authentication results in the request context");
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putAuthentication(authentication, context);
+
+        if (this.renewalStrategy.supports(context) && !renewalStrategy.isParticipating(context)) {
+            LOGGER.debug("Cannot proceed with existing authenticated session for [{}] since the single sign-on participation "
+                + "strategy for this request could now allow participation in the current session.", authentication);
+            return resumeFlow();
+        }
 
         val event = this.casDelegatingWebflowEventResolver.resolveSingle(context);
         if (event == null) {
@@ -121,6 +133,16 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         return super.resolveSingle(context);
     }
 
+    @Override
+    public void addDelegate(final CasWebflowEventResolver r) {
+        casDelegatingWebflowEventResolver.addDelegate(r);
+    }
+
+    @Override
+    public void addDelegate(final CasWebflowEventResolver r, final int index) {
+        casDelegatingWebflowEventResolver.addDelegate(r, index);
+    }
+
     private Set<Event> resumeFlow() {
         return CollectionUtils.wrapSet(new EventFactorySupport().success(this));
     }
@@ -134,15 +156,5 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         val resultEvent = MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(id, Optional.of(context), attributeMap);
         LOGGER.trace("Finalized event for multifactor provider  [{}] is [{}]", id, resultEvent);
         return CollectionUtils.wrapSet(resultEvent);
-    }
-
-    @Override
-    public void addDelegate(final CasWebflowEventResolver r) {
-        casDelegatingWebflowEventResolver.addDelegate(r);
-    }
-
-    @Override
-    public void addDelegate(final CasWebflowEventResolver r, final int index) {
-        casDelegatingWebflowEventResolver.addDelegate(r, index);
     }
 }

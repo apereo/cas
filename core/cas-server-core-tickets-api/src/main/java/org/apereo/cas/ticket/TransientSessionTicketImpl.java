@@ -41,10 +41,6 @@ import java.util.Map;
 @DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(TransientSessionTicket.PREFIX)
 public class TransientSessionTicketImpl extends AbstractTicket implements TransientSessionTicket {
-
-    /**
-     * The constant serialVersionUID.
-     */
     private static final long serialVersionUID = 7839186396717950243L;
 
     /**
@@ -60,11 +56,6 @@ public class TransientSessionTicketImpl extends AbstractTicket implements Transi
     @Lob
     @Column(name = "PROPERTIES", length = Integer.MAX_VALUE, nullable = false)
     private HashMap<String, Object> properties = new HashMap<>(0);
-
-    public TransientSessionTicketImpl(final String id, final ExpirationPolicy expirationPolicy, final Service service) {
-        super(id, expirationPolicy);
-        this.service = service;
-    }
 
     public TransientSessionTicketImpl(final String id, final ExpirationPolicy expirationPolicy,
                                       final Service service, final Map<String, Serializable> properties) {

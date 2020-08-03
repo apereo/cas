@@ -24,7 +24,7 @@ import java.security.GeneralSecurityException;
  * @deprecated 6.2
  * @since 3.1
  */
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
     private final TicketRegistry ticketRegistry;

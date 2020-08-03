@@ -23,11 +23,17 @@ public class OAuth20TokenGeneratedResult {
     private static final int MAP_SIZE = 8;
 
     private OAuth20AccessToken accessToken;
+
     private OAuth20RefreshToken refreshToken;
+
     private OAuth20ResponseTypes responseType;
+
     private OAuth20GrantTypes grantType;
+
     private RegisteredService registeredService;
+
     private String deviceCode;
+
     private String userCode;
 
     @Builder.Default

@@ -18,21 +18,21 @@ import org.springframework.test.context.TestPropertySource;
 @Tag("Ldap")
 @EnabledIfPortOpen(port = 10389)
 @TestPropertySource(properties = {
-    "cas.authn.spnego.ldap.ldapUrl=ldap://localhost:10389",
-    "cas.authn.spnego.ldap.baseDn=ou=people,dc=example,dc=org",
-    "cas.authn.spnego.ldap.searchFilter=host={host}",
-    "cas.authn.spnego.ldap.bindDn=cn=Directory Manager",
-    "cas.authn.spnego.ldap.bindCredential=password",
+    "cas.authn.spnego.ldap.ldap-url=ldap://localhost:10389",
+    "cas.authn.spnego.ldap.base-dn=ou=people,dc=example,dc=org",
+    "cas.authn.spnego.ldap.search-filter=host={host}",
+    "cas.authn.spnego.ldap.bind-dn=cn=Directory Manager",
+    "cas.authn.spnego.ldap.bind-credential=password",
 
-    "cas.authn.attributeRepository.stub.attributes.uid=uid",
-    "cas.authn.attributeRepository.stub.attributes.host=host",
-    "cas.authn.attributeRepository.stub.attributes.mail=mail",
+    "cas.authn.attribute-repository.stub.attributes.uid=uid",
+    "cas.authn.attribute-repository.stub.attributes.host=host",
+    "cas.authn.attribute-repository.stub.attributes.mail=mail",
 
-    "cas.authn.spnego.alternativeRemoteHostAttribute=",
-    "cas.authn.spnego.ipsToCheckPattern=.+",
-    "cas.authn.spnego.dnsTimeout=0",
-    "cas.authn.spnego.hostNameClientActionStrategy=ldapSpnegoClientAction",
-    "cas.authn.spnego.spnegoAttributeName=mail"
+    "cas.authn.spnego.alternative-remote-host-attribute=",
+    "cas.authn.spnego.ips-to-check-pattern=.+",
+    "cas.authn.spnego.dns-timeout=0",
+    "cas.authn.spnego.host-name-client-action-strategy=ldapSpnegoClientAction",
+    "cas.authn.spnego.spnego-attribute-name=mail"
 })
 public class LdapContinuousIntegrationSpnegoKnownClientSystemsFilterActionTests
     extends BaseLdapSpnegoKnownClientSystemsFilterActionTests {

@@ -74,7 +74,7 @@ public abstract class AbstractCasEventRepositoryTests {
                 assertEquals(dto2.getClientIpAddress(), event.getClientIpAddress());
                 assertEquals(dto2.getServerIpAddress(), event.getServerIpAddress());
             } else {
-                fail("Unexpected event ID");
+                fail("Unexpected event");
             }
         });
     }

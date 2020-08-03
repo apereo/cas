@@ -4,7 +4,6 @@ dependencies {
     api project(":api:cas-server-core-api-events")
     api project(":api:cas-server-core-api-audit")
     
-
     implementation libraries.nimbus
     
     implementation project(":core:cas-server-core-web-api")

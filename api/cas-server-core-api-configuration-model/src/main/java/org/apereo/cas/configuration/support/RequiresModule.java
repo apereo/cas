@@ -33,7 +33,7 @@ public @interface RequiresModule {
      * on the classpath. In such cases, the feature at hand may only be tweaked
      * using a toggle in settings.
      *
-     * @return the boolean
+     * @return true/false
      */
     boolean automated() default false;
 }

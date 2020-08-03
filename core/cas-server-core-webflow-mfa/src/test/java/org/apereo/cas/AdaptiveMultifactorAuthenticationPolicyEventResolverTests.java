@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -39,7 +40,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(properties = "cas.authn.adaptive.requireMultifactor.mfa-dummy=MSIE")
+@TestPropertySource(properties = "cas.authn.adaptive.require-multifactor.mfa-dummy=MSIE")
 @Tag("Webflow")
 public class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
@@ -57,7 +58,6 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends B
         request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("195.88.151.11");
-
 
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
@@ -92,6 +92,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends B
     }
 
     @TestConfiguration("GeoLocationServiceTestConfiguration")
+    @Lazy(false)
     public static class GeoLocationServiceTestConfiguration {
         @Bean
         public GeoLocationService geoLocationService() {

@@ -1,9 +1,9 @@
 package org.apereo.cas.uma.web.controllers;
 
+import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.config.CasOAuthUmaComponentSerializationConfiguration;
 import org.apereo.cas.config.CasOAuthUmaConfiguration;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicyPermission;
 import org.apereo.cas.uma.web.controllers.authz.UmaAuthorizationRequestEndpointController;
@@ -118,7 +118,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     }
 
     private Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithScope(
-        final String scope, final SecurityInterceptor interceptor) throws Exception {
+        final String scope, final SecurityInterceptor interceptor) {
         val service = addRegisteredService();
         val pair = assertClientOK(service, false, scope);
         assertNotNull(pair.getKey());

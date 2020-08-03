@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("Attributes")
 public class ProtocolAttributeEncoderTests {
     @Test
     public void verifyEncoder() {

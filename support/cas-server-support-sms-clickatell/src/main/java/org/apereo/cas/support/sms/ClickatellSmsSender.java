@@ -1,7 +1,8 @@
 package org.apereo.cas.support.sms;
 
+import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.io.SmsSender;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -30,10 +31,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class ClickatellSmsSender implements SmsSender {
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
     private final String token;
+
     private final String serverUrl;
 
-    private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
     private final transient RestTemplate restTemplate = new RestTemplate(CollectionUtils.wrapList(new MappingJackson2HttpMessageConverter()));
 
     @Override
@@ -50,7 +53,7 @@ public class ClickatellSmsSender implements SmsSender {
             map.put("from", from);
 
             val stringify = new StringWriter();
-            mapper.writeValue(stringify, map);
+            MAPPER.writeValue(stringify, map);
 
             val request = new HttpEntity<String>(stringify.toString(), headers);
             val response = restTemplate.postForEntity(new URI(this.serverUrl), request, Map.class);
@@ -80,7 +83,7 @@ public class ClickatellSmsSender implements SmsSender {
                 errors.forEach(LOGGER::error);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

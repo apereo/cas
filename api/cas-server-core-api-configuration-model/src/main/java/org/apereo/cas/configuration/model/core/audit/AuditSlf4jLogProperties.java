@@ -40,4 +40,9 @@ public class AuditSlf4jLogProperties implements Serializable {
      * Accepted value are: DEFAULT, JSON.
      */
     private String auditFormat = "DEFAULT";
+
+    /**
+     * Decide whether Slf4j audits should be enabled.
+     */
+    private boolean enabled = true;
 }

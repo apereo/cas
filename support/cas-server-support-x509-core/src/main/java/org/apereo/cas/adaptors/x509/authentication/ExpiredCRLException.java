@@ -4,11 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.security.GeneralSecurityException;
-import java.time.Instant;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.chrono.ChronoZonedDateTime;
-import java.util.Optional;
 
 /**
  * Exception describing an expired CRL condition.
@@ -20,9 +16,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ExpiredCRLException extends GeneralSecurityException {
 
-    /**
-     * Serialization version marker.
-     */
     private static final long serialVersionUID = 5157864033250359972L;
 
     /**
@@ -49,50 +42,7 @@ public class ExpiredCRLException extends GeneralSecurityException {
     public ExpiredCRLException(final String identifier, final ZonedDateTime expirationDate) {
         this(identifier, expirationDate, 0);
     }
-
-    /**
-     * Creates a new instance describing a CRL that expired on a date that is
-     * more than leniency seconds beyond its expiration date.
-     *
-     * @param identifier     Identifier or name that describes CRL.
-     * @param expirationDate CRL expiration date.
-     * @param leniency       Number of seconds beyond the expiration date at which
-     *                       the CRL is considered expired.  MUST be non-negative integer.
-     */
-    public ExpiredCRLException(final String identifier, final ChronoZonedDateTime expirationDate, final int leniency) {
-        this.id = identifier;
-        this.expirationDate = (ZonedDateTime) expirationDate;
-        if (leniency < 0) {
-            throw new IllegalArgumentException("Leniency is negative.");
-        }
-        this.leniency = leniency;
-    }
-
-    /**
-     * Creates a new instance describing a CRL that expired on a date that is
-     * more than leniency seconds beyond its expiration date.
-     *
-     * @param identifier     Identifier or name that describes CRL.
-     * @param expirationDate CRL expiration date.
-     * @param leniency       Number of seconds beyond the expiration date at which
-     *                       the CRL is considered expired.  MUST be non-negative integer.
-     */
-    public ExpiredCRLException(final String identifier, final Instant expirationDate, final int leniency) {
-        this.id = identifier;
-        this.expirationDate = ZonedDateTime.ofInstant(expirationDate, ZoneOffset.UTC);
-        if (leniency < 0) {
-            throw new IllegalArgumentException("Leniency cannot be negative.");
-        }
-        this.leniency = leniency;
-    }
-
-    /**
-     * @return Returns the expirationDate.
-     */
-    public ZonedDateTime getExpirationDate() {
-        return Optional.ofNullable(this.expirationDate).map(ZonedDateTime::from).orElse(null);
-    }
-
+    
     @Override
     public String getMessage() {
         if (this.leniency > 0) {

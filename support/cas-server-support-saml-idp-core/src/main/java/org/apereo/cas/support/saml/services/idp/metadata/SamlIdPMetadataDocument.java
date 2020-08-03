@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -29,6 +30,7 @@ import javax.persistence.Transient;
 @Setter
 @AllArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+@Builder
 public class SamlIdPMetadataDocument {
 
     /**
@@ -38,10 +40,12 @@ public class SamlIdPMetadataDocument {
     @Column(name = "id", columnDefinition = "BIGINT")
     @JsonProperty
     @Transient
+    @Builder.Default
     private long id = -1;
 
     @Column(name = "appliesTo", unique = true, length = 512)
     @JsonProperty
+    @Builder.Default
     private String appliesTo = "CAS";
 
     /**

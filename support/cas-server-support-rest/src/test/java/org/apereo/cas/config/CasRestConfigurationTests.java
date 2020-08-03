@@ -5,6 +5,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreLogoutConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
@@ -43,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasRestConfiguration.class
 })
 @EnableWebMvc
+@Tag("Simple")
 public class CasRestConfigurationTests {
 
     @Autowired

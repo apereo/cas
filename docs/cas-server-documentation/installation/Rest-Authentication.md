@@ -56,7 +56,7 @@ For each `X-CAS-Warning` header present in the response, a corresponding message
 
 ### `X-CAS-PasswordExpirationDate`
 
-If this header is present in the response and contains a RFC1123 date a special message will be shown
+If this header is present in the response and contains a `RFC1123 date` a special message will be shown
 to warn the user about the expiring password. If a [password management provider](../password_management/Password-Management.html) is configured,
 the user will be able to directly change the password.
 

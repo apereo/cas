@@ -2,6 +2,7 @@ package org.apereo.cas.support.rest.resources;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +40,7 @@ public class TicketStatusResource {
      * @param id ticket id
      * @return {@link ResponseEntity} representing RESTful response
      */
-    @GetMapping(value = "/v1/tickets/{id:.+}")
+    @GetMapping(value = RestProtocolConstants.ENDPOINT_TICKETS + "/{id:.+}")
     public ResponseEntity<String> getTicketStatus(@PathVariable("id") final String id) {
         try {
             val ticket = this.centralAuthenticationService.getTicket(id);
@@ -47,7 +48,7 @@ public class TicketStatusResource {
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<>("Ticket could not be found", HttpStatus.NOT_FOUND);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

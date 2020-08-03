@@ -27,6 +27,8 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.opensaml.xmlsec.signature.Signature;
 
+import java.time.Duration;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +51,7 @@ import java.util.stream.Collectors;
 public class SamlRegisteredServiceServiceProviderMetadataFacade {
 
     private final SPSSODescriptor ssoDescriptor;
+
     private final EntityDescriptor entityDescriptor;
 
     @Getter
@@ -101,25 +104,32 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         }
         LOGGER.trace("Located entity descriptor in metadata for [{}]", entityID);
 
-        if (entityDescriptor.getValidUntil() != null && entityDescriptor.getValidUntil().isBeforeNow()) {
-            LOGGER.warn("Entity descriptor in the metadata has expired at [{}]", entityDescriptor.getValidUntil());
-            return Optional.empty();
+        if (entityDescriptor.getValidUntil() != null) {
+            val expired = entityDescriptor.getValidUntil()
+                .isBefore(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
+            if (expired) {
+                LOGGER.warn("Entity descriptor in the metadata has expired at [{}]", entityDescriptor.getValidUntil());
+                return Optional.empty();
+            }
         }
-
         return getServiceProviderSsoDescriptor(entityID, chainingMetadataResolver, entityDescriptor);
-
     }
 
-    private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getServiceProviderSsoDescriptor(final String entityID,
-                                                                                                                final MetadataResolver chainingMetadataResolver,
-                                                                                                                final EntityDescriptor entityDescriptor) {
+    private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade>
+        getServiceProviderSsoDescriptor(final String entityID,
+                                    final MetadataResolver chainingMetadataResolver,
+                                    final EntityDescriptor entityDescriptor) {
         val ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
         if (ssoDescriptor != null) {
             LOGGER.debug("Located SP SSODescriptor in metadata for [{}]. Metadata is valid until [{}]", entityID,
                 ObjectUtils.defaultIfNull(ssoDescriptor.getValidUntil(), "forever"));
-            if (ssoDescriptor.getValidUntil() != null && ssoDescriptor.getValidUntil().isBeforeNow()) {
-                LOGGER.warn("SP SSODescriptor in the metadata has expired at [{}]", ssoDescriptor.getValidUntil());
-                return Optional.empty();
+            if (ssoDescriptor.getValidUntil() != null) {
+                val validUntil = DateTimeUtils.zonedDateTimeOf(ssoDescriptor.getValidUntil());
+                val expired = validUntil.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
+                if (expired) {
+                    LOGGER.warn("SP SSODescriptor in the metadata has expired at [{}]", ssoDescriptor.getValidUntil());
+                    return Optional.empty();
+                }
             }
             return Optional.of(new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor, entityDescriptor,
                 chainingMetadataResolver));
@@ -144,7 +154,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         return this.ssoDescriptor.getContactPersons();
     }
 
-    public long getCacheDuration() {
+    public Duration getCacheDuration() {
         return this.ssoDescriptor.getCacheDuration();
     }
 
@@ -197,7 +207,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         val children = this.ssoDescriptor.getOrderedChildren();
         if (children != null) {
             nameIdFormats.addAll(children.stream().filter(NameIDFormat.class::isInstance)
-                .map(child -> ((NameIDFormat) child).getFormat()).collect(Collectors.toList()));
+                .map(child -> ((NameIDFormat) child).getURI()).collect(Collectors.toList()));
         }
         return nameIdFormats;
     }

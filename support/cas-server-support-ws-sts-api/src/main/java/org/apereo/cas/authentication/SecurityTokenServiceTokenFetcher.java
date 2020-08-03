@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
@@ -42,7 +43,7 @@ public class SecurityTokenServiceTokenFetcher {
             LOGGER.debug("Requesting security token for principal [{}] and registered service [{}]", uid, rp);
             return sts.requestSecurityToken(rp.getAppliesTo());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw new AuthenticationException(e.getMessage());
         }
     }

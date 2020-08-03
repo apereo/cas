@@ -5,11 +5,13 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlan;
+import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -53,7 +55,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.webflow.execution.Action;
@@ -72,7 +73,8 @@ public class CasSupportActionsConfiguration {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    private ResourceLoader resourceLoader;
+    @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+    private ObjectProvider<SingleLogoutServiceLogoutUrlBuilder> singleLogoutServiceLogoutUrlBuilder;
 
     @Autowired
     @Qualifier("authenticationEventExecutionPlan")
@@ -124,6 +126,10 @@ public class CasSupportActionsConfiguration {
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier("authenticationContextValidator")
+    private ObjectProvider<MultifactorAuthenticationContextValidator> authenticationContextValidator;
 
     @Autowired
     @Qualifier("ticketRegistry")
@@ -187,6 +193,8 @@ public class CasSupportActionsConfiguration {
     @Bean
     public Action createTicketGrantingTicketAction() {
         val context = CasWebflowEventResolutionConfigurationContext.builder()
+            .casDelegatingWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver.getObject())
+            .authenticationContextValidator(authenticationContextValidator.getObject())
             .authenticationSystemSupport(authenticationSystemSupport.getObject())
             .centralAuthenticationService(centralAuthenticationService.getObject())
             .servicesManager(servicesManager.getObject())
@@ -196,6 +204,7 @@ public class CasSupportActionsConfiguration {
             .authenticationRequestServiceSelectionStrategies(authenticationServiceSelectionPlan.getObject())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
+            .singleSignOnParticipationStrategy(webflowSingleSignOnParticipationStrategy.getObject())
             .ticketRegistry(ticketRegistry.getObject())
             .applicationContext(applicationContext)
             .build();
@@ -207,11 +216,11 @@ public class CasSupportActionsConfiguration {
     @ConditionalOnMissingBean(name = "logoutAction")
     public Action logoutAction() {
         return new LogoutAction(webApplicationServiceFactory.getObject(),
-            servicesManager.getObject(),
-            casProperties.getLogout());
+            casProperties.getLogout(),
+            singleLogoutServiceLogoutUrlBuilder.getObject());
     }
 
-    @ConditionalOnMissingBean(name = "initializeLoginAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
     @Bean
     @RefreshScope
     public Action initializeLoginAction() {
@@ -280,7 +289,7 @@ public class CasSupportActionsConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redirectUnauthorizedServiceUrlAction")
     public Action redirectUnauthorizedServiceUrlAction() {
-        return new RedirectUnauthorizedServiceUrlAction(servicesManager.getObject(), resourceLoader, applicationContext);
+        return new RedirectUnauthorizedServiceUrlAction(servicesManager.getObject(), applicationContext);
     }
 
     @Bean

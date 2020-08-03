@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.MergeCommand;
 import org.eclipse.jgit.api.TransportConfigCallback;
@@ -36,6 +37,7 @@ import java.util.List;
 public class GitRepository implements DisposableBean {
     private final Git gitInstance;
 
+    @Getter
     private final List<CredentialsProvider> credentialsProvider;
 
     private final TransportConfigCallback transportConfigCallback;
@@ -51,16 +53,6 @@ public class GitRepository implements DisposableBean {
      */
     public File getRepositoryDirectory() {
         return this.gitInstance.getRepository().getDirectory().getParentFile();
-    }
-
-    /**
-     * Gets repository file.
-     *
-     * @param gitObject the git object
-     * @return the repository file
-     */
-    public File getRepositoryFile(final GitObject gitObject) {
-        return new File(getRepositoryDirectory(), gitObject.getTreeWalk().getPathString());
     }
 
     /**
@@ -109,16 +101,17 @@ public class GitRepository implements DisposableBean {
      */
     @SneakyThrows
     public GitObject readObject(final TreeWalk treeWalk) {
-        val objectId = treeWalk.getObjectId(0);
-        val repository = this.gitInstance.getRepository();
-        val loader = repository.open(objectId);
-        val out = new ByteArrayOutputStream();
-        loader.copyTo(out);
-        return GitObject.builder()
-            .content(out.toString(StandardCharsets.UTF_8))
-            .treeWalk(treeWalk)
-            .objectId(objectId)
-            .build();
+        try (val out = new ByteArrayOutputStream()) {
+            val objectId = treeWalk.getObjectId(0);
+            val repository = this.gitInstance.getRepository();
+            val loader = repository.open(objectId);
+            loader.copyTo(out);
+            return GitObject.builder()
+                .content(out.toString(StandardCharsets.UTF_8))
+                .path(treeWalk.getPathString())
+                .objectId(objectId)
+                .build();
+        }
     }
 
     /**
@@ -129,11 +122,14 @@ public class GitRepository implements DisposableBean {
     @SneakyThrows
     public void commitAll(final String message) {
         this.gitInstance.add().addFilepattern(".").call();
+        val config = this.gitInstance.getRepository().getConfig();
+        val name = StringUtils.defaultIfBlank(config.getString("user", null, "name"), "CAS");
+        val email = StringUtils.defaultIfBlank(config.getString("user", null, "email"), "cas@apereo.org");
         this.gitInstance.commit()
             .setMessage(message)
             .setAll(true)
             .setSign(this.signCommits)
-            .setAuthor("CAS", "cas@apereo.org")
+            .setAuthor(name, email)
             .call();
     }
 
@@ -158,13 +154,19 @@ public class GitRepository implements DisposableBean {
     /**
      * Pull repository changes.
      *
-     * @return the boolean
+     * @return true/false
      */
     @SneakyThrows
     public boolean pull() {
         val providers = this.credentialsProvider.toArray(CredentialsProvider[]::new);
         val remotes = this.gitInstance.getRepository().getRemoteNames();
-        return !remotes.isEmpty() && this.gitInstance.pull()
+
+        if (remotes.isEmpty()) {
+            LOGGER.debug("No remote repositories are specified to pull changes");
+            return false;
+        }
+
+        return this.gitInstance.pull()
             .setTimeout((int) timeoutInSeconds)
             .setFastForward(MergeCommand.FastForwardMode.FF_ONLY)
             .setRebase(false)
@@ -189,7 +191,9 @@ public class GitRepository implements DisposableBean {
     @Getter
     public static class GitObject {
         private final String content;
-        private final TreeWalk treeWalk;
+
         private final ObjectId objectId;
+
+        private final String path;
     }
 }

@@ -75,7 +75,7 @@ public class CasConfigurationMetadataRepository {
      * Is cas property ?.
      *
      * @param prop the prop
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isCasProperty(final ConfigurationMetadataProperty prop) {
         return prop.getName().startsWith(CasConfigurationProperties.PREFIX.concat("."));

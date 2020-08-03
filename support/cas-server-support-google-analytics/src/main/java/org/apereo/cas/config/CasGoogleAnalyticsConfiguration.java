@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,6 +54,7 @@ public class CasGoogleAnalyticsConfiguration {
 
     @ConditionalOnMissingBean(name = "casGoogleAnalyticsCookieGenerator")
     @Bean
+    @RefreshScope
     public CasCookieBuilder casGoogleAnalyticsCookieGenerator() {
         val props = casProperties.getGoogleAnalytics().getCookie();
         return new CasGoogleAnalyticsCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
@@ -71,18 +73,21 @@ public class CasGoogleAnalyticsConfiguration {
 
     @ConditionalOnMissingBean(name = "createGoogleAnalyticsCookieAction")
     @Bean
+    @RefreshScope
     public Action createGoogleAnalyticsCookieAction() {
         return new CreateGoogleAnalyticsCookieAction(casProperties, casGoogleAnalyticsCookieGenerator());
     }
 
     @ConditionalOnMissingBean(name = "removeGoogleAnalyticsCookieAction")
     @Bean
+    @RefreshScope
     public Action removeGoogleAnalyticsCookieAction() {
         return new RemoveGoogleAnalyticsCookieAction(casGoogleAnalyticsCookieGenerator());
     }
 
     @ConditionalOnMissingBean(name = "casGoogleAnalyticsWebflowExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public CasWebflowExecutionPlanConfigurer casGoogleAnalyticsWebflowExecutionPlanConfigurer() {
         return plan -> plan.registerWebflowConfigurer(casGoogleAnalyticsWebflowConfigurer());
     }

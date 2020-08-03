@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.accepto.AccepttoApiUtils;
 import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -98,7 +99,7 @@ public class AccepttoMultifactorDetermineUserAccountStatusAction extends Abstrac
                 }
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_DENY);
         }
         LOGGER.trace("Account status is verified for [{}]. Proceeding to MFA flow...", email);

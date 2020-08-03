@@ -25,9 +25,9 @@ import java.util.concurrent.TimeUnit;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
+@SuppressWarnings("JdkObsolete")
 @UtilityClass
 public class DateTimeUtils {
-
 
     /**
      * Parse the given value as a local datetime.
@@ -111,7 +111,7 @@ public class DateTimeUtils {
      * @return the local date time
      */
     public static LocalDateTime localDateTimeOf(final long time) {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault());
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneOffset.UTC);
     }
 
     /**
@@ -122,6 +122,16 @@ public class DateTimeUtils {
      */
     public static LocalDateTime localDateTimeOf(final Date time) {
         return localDateTimeOf(time.getTime());
+    }
+
+    /**
+     * Local date time local date.
+     *
+     * @param time the time
+     * @return the local date
+     */
+    public static LocalDate localDateTime(final long time) {
+        return LocalDate.ofInstant(Instant.ofEpochMilli(time), ZoneOffset.UTC);
     }
 
     /**
@@ -149,13 +159,23 @@ public class DateTimeUtils {
     }
 
     /**
+     * Zoned date time.
+     *
+     * @param time the time
+     * @return the zoned date time
+     */
+    public static ZonedDateTime zonedDateTimeOf(final Instant time) {
+        return time != null ? time.atZone(ZoneOffset.UTC) : null;
+    }
+
+    /**
      * Gets ZonedDateTime for ReadableInstant.
      *
      * @param time Time object to be converted.
      * @return ZonedDateTime representing time
      */
     public static ZonedDateTime zonedDateTimeOf(final ReadableInstant time) {
-        return zonedDateTimeOf(time.getMillis());
+        return zonedDateTimeOf(Instant.ofEpochMilli(time.getMillis()));
     }
 
     /**
@@ -186,7 +206,7 @@ public class DateTimeUtils {
      * @return ZonedDateTime representing time
      */
     public static ZonedDateTime zonedDateTimeOf(final Date time) {
-        return zonedDateTimeOf(time.getTime());
+        return zonedDateTimeOf(Instant.ofEpochMilli(time.getTime()));
     }
 
     /**
@@ -255,6 +275,7 @@ public class DateTimeUtils {
      * @param time Time object to be converted.
      * @return Date representing time
      */
+
     public static Date dateOf(final Instant time) {
         return Date.from(time);
     }
@@ -341,16 +362,15 @@ public class DateTimeUtils {
                 return ChronoUnit.HOURS;
             case MINUTES:
                 return ChronoUnit.MINUTES;
-            case SECONDS:
-                return ChronoUnit.SECONDS;
             case MICROSECONDS:
                 return ChronoUnit.MICROS;
             case MILLISECONDS:
                 return ChronoUnit.MILLIS;
             case NANOSECONDS:
                 return ChronoUnit.NANOS;
+            case SECONDS:
             default:
-                return null;
+                return ChronoUnit.SECONDS;
         }
     }
 }

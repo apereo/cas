@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.digest.DigestCredential;
 import org.apereo.cas.digest.DigestHashedCredentialRetriever;
 import org.apereo.cas.digest.util.DigestAuthenticationUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -29,8 +30,11 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class DigestAuthenticationAction extends AbstractNonInteractiveCredentialsAction {
     private final String nonce = DigestAuthenticationUtils.createNonce();
+
     private final DigestHashedCredentialRetriever credentialRetriever;
+
     private final String realm;
+
     private final String authenticationMethod;
 
     public DigestAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
@@ -64,19 +68,20 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
 
             val credentials = credentialsResult.get();
             LOGGER.debug("Received digest authentication request from credentials [{}] ", credentials);
-            val serverResponse = credentials.calculateServerDigest(true,
-                this.credentialRetriever.findCredential(credentials.getUsername(), this.realm));
-
+            val credential = this.credentialRetriever.findCredential(credentials.getUsername(), this.realm);
+            LOGGER.trace("Digest credential password on record for [{}] is [{}]", credentials.getUsername(), credential);
+            val serverResponse = credentials.calculateServerDigest(true, credential);
+            LOGGER.trace("Server digest calculated for [{}] is [{}]", credentials.getUsername(), serverResponse);
+            
             val clientResponse = credentials.getToken();
             if (!serverResponse.equals(clientResponse)) {
+                LOGGER.trace("Server digest [{}] does not mach [{}]", serverResponse, clientResponse);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return null;
             }
-
             return new DigestCredential(credentials.getUsername(), this.realm, credentials.getToken());
-
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

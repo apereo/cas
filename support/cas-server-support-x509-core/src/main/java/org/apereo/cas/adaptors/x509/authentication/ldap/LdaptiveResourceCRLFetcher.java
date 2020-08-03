@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.x509.authentication.ldap;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +18,8 @@ import org.ldaptive.SearchResponse;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.security.cert.CRLException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 
@@ -47,7 +46,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
     private final String certificateAttribute;
 
     @Override
-    public X509CRL fetch(final Resource crl) throws IOException, CRLException, CertificateException {
+    public X509CRL fetch(final Resource crl) throws Exception {
         if (LdapUtils.isLdapConnectionUrl(crl.toString())) {
             return fetchCRLFromLdap(crl);
         }
@@ -55,7 +54,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
     }
 
     @Override
-    public X509CRL fetch(final URI crl) throws IOException, CRLException, CertificateException {
+    public X509CRL fetch(final URI crl) throws Exception {
         if (LdapUtils.isLdapConnectionUrl(crl)) {
             return fetchCRLFromLdap(crl);
         }
@@ -63,7 +62,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
     }
 
     @Override
-    public X509CRL fetch(final URL crl) throws IOException, CRLException, CertificateException {
+    public X509CRL fetch(final URL crl) throws Exception {
         if (LdapUtils.isLdapConnectionUrl(crl)) {
             return fetchCRLFromLdap(crl);
         }
@@ -71,7 +70,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
     }
 
     @Override
-    public X509CRL fetch(final String crl) throws IOException, CRLException, CertificateException {
+    public X509CRL fetch(final String crl) throws Exception {
         if (LdapUtils.isLdapConnectionUrl(crl)) {
             return fetchCRLFromLdap(crl);
         }
@@ -83,11 +82,9 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
      *
      * @param r the resource that is the ldap url.
      * @return the x 509 cRL
-     * @throws IOException          the exception thrown if resources cant be fetched
-     * @throws CRLException         the exception thrown if resources cant be fetched
-     * @throws CertificateException if connection to ldap fails, or attribute to get the revocation list is unavailable
+     * @throws Exception the exception
      */
-    protected X509CRL fetchCRLFromLdap(final Object r) throws CertificateException, IOException, CRLException {
+    protected X509CRL fetchCRLFromLdap(final Object r) throws Exception {
         try {
             val ldapURL = r.toString();
             LOGGER.debug("Fetching CRL from ldap [{}]", ldapURL);
@@ -108,7 +105,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
             throw new CertificateException("Failed to establish a connection ldap and search.");
 
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw new CertificateException(e.getMessage());
         }
     }
@@ -118,15 +115,13 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
      * Gets x509 cRL from attribute. Retrieves the binary attribute value,
      * decodes it to base64, and fetches it as a byte-array resource.
      *
-     * @param aval the attribute, which may be null if it's not found
+     * @param attribute the attribute, which may be null if it's not found
      * @return the x 509 cRL from attribute
-     * @throws IOException          the exception thrown if resources cant be fetched
-     * @throws CRLException         the exception thrown if resources cant be fetched
-     * @throws CertificateException if connection to ldap fails, or attribute to get the revocation list is unavailable
+     * @throws Exception the exception
      */
-    protected X509CRL fetchX509CRLFromAttribute(final LdapAttribute aval) throws CertificateException, IOException, CRLException {
-        if (aval != null && aval.isBinary()) {
-            val val = aval.getBinaryValue();
+    protected X509CRL fetchX509CRLFromAttribute(final LdapAttribute attribute) throws Exception {
+        if (attribute != null && attribute.isBinary()) {
+            val val = attribute.getBinaryValue();
             if (val == null || val.length == 0) {
                 throw new CertificateException("Empty attribute. Can not download CRL from ldap");
             }
@@ -134,7 +129,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
             if (decoded64 == null) {
                 throw new CertificateException("Could not decode the attribute value to base64");
             }
-            LOGGER.debug("Retrieved CRL from ldap as byte array decoded in base64. Fetching...");
+            LOGGER.trace("Retrieved CRL from ldap as byte array decoded in base64. Fetching...");
             return super.fetch(new ByteArrayResource(decoded64));
         }
         throw new CertificateException("Attribute not found. Can not retrieve CRL");

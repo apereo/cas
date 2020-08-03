@@ -26,18 +26,17 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":core:cas-server-core-logout-api")
 
     implementation libraries.pac4jcore
     implementation libraries.pac4jcas
     implementation libraries.jose4j
     implementation libraries.nimbus
     
-
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
-    testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-webflow-mfa")
     

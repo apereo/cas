@@ -53,7 +53,7 @@ public class HttpRequestUtils {
     public static HttpServletRequest getHttpServletRequestFromRequestAttributes() {
         try {
             val requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            return Optional.ofNullable(requestAttributes).map(ServletRequestAttributes::getRequest).orElse(null);
+            return Optional.of(Objects.requireNonNull(requestAttributes)).map(ServletRequestAttributes::getRequest).orElse(null);
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }
@@ -110,6 +110,7 @@ public class HttpRequestUtils {
      * @param request the request
      * @return the request headers
      */
+    @SuppressWarnings("JdkObsolete")
     public static Map<String, String> getRequestHeaders(final HttpServletRequest request) {
         val headers = new LinkedHashMap<String, Object>();
         val headerNames = request.getHeaderNames();
@@ -184,7 +185,7 @@ public class HttpRequestUtils {
             connection.setRequestMethod(HttpMethod.HEAD.name());
             return HttpStatus.valueOf(connection.getResponseCode());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return HttpStatus.SERVICE_UNAVAILABLE;
 

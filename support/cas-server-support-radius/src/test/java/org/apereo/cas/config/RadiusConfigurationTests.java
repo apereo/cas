@@ -52,6 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RadiusConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreLogoutConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreUtilConfiguration.class,
@@ -67,8 +68,8 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 },
     properties = {
-        "cas.authn.radius.client.sharedSecret=NoSecret",
-        "cas.authn.radius.client.inetAddress=localhost,localguest",
+        "cas.authn.radius.client.shared-secret=NoSecret",
+        "cas.authn.radius.client.inet-address=localhost,localguest",
         "cas.authn.mfa.radius.id=" + TestMultifactorAuthenticationProvider.ID
     })
 @Tag("Radius")

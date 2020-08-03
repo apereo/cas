@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@Getter
+@Getter(onMethod = @__({@Override}))
 @RequiredArgsConstructor
 @ToString
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
@@ -33,6 +33,7 @@ public class DefaultAuthenticationTransaction implements AuthenticationTransacti
     private static final long serialVersionUID = 6213904009424725484L;
 
     private final Service service;
+
     private final Collection<Credential> credentials;
 
     /**
@@ -80,6 +81,7 @@ public class DefaultAuthenticationTransaction implements AuthenticationTransacti
      *
      * @return the credential
      */
+    @Override
     public Optional<Credential> getPrimaryCredential() {
         return Objects.requireNonNull(credentials).stream().findFirst();
     }
@@ -90,6 +92,7 @@ public class DefaultAuthenticationTransaction implements AuthenticationTransacti
      * @param type the credential type to check for
      * @return true if this AuthenticationTransaction contains a credential of the specified type
      */
+    @Override
     public boolean hasCredentialOfType(final Class<? extends Credential> type) {
         return Objects.requireNonNull(credentials).stream().anyMatch(type::isInstance);
     }

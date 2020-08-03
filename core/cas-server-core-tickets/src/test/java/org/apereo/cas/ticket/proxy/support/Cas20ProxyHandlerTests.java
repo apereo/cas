@@ -9,6 +9,7 @@ import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Tag("Authentication")
 public class Cas20ProxyHandlerTests {
 
     private Cas20ProxyHandler handler;

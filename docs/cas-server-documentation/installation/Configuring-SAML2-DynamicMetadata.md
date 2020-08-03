@@ -66,7 +66,8 @@ Use the below snippet as an example to fetch metadata from REST endpoints:
 The metadata location in the registration record above simply needs to be specified as <code>rest://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from REST endpoints defined in CAS configuration.
 </p></div>
 
-Requests are submitted to REST endpoints with `entityId` as the parameter and `Content-Type: application/xml` as the header. Upon a successful `200 - OK` response status, CAS expects the body of the HTTP response to match the below snippet:
+Requests are submitted to REST endpoints with `entityId` as the parameter and `Content-Type: application/xml` as the header. Upon 
+a successful `200 - OK` response status, CAS expects the body of the HTTP response to match the below snippet:
 
 ```json
 {  
@@ -79,16 +80,98 @@ Requests are submitted to REST endpoints with `entityId` as the parameter and `C
 
 To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-rest).
 
+### Identity Provider Metadata
+
+Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored via REST APIs. Artifacts such as the metadata, signing and 
+encryption keys, etc are passed along to an external API endpoint in the following structure as the request body:
+
+```json
+{
+    "signingCertificate": "...",
+    "signingKey": "...",
+    "encryptionCertificate": "...",
+    "encryptionKey": "...",
+    "metadata": "...",
+    "appliesTo": "CAS"
+}
+```
+
+The URL endpoint, defined in CAS settings is expected to be available at a path that ends in `/idp`, which is added onto the URL endpoint by CAS automatically.
+The API is expected to produce a successful `200 - OK` response status on all operations outlined below:  
+
+| Method               | Description
+|----------------------|----------------------------------------------------------------------------
+| `GET`                | The response is expected to produce a JSON document outlining keys and metadata as indicated above. An `appliesTo` parameter may be passed to indicate the document owner and applicability, where a value of `CAS` indicates the CAS server as the global owner of the metadata and keys.
+| `POST`               | Store the metadata and keys to finalize the metadata generation process. The request body contains the JSON document that outlines metadata and keys as indicated above.
+
+Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. To see the relevant 
+CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-rest).
+
+#### Per Service
+
+Identity provider metadata, certificates and keys can also be defined on a per-service basis to override the global defaults.
+Metadata documents that would be applicable to a service definition need to adjust the `appliesTo` field in the metadata
+document to carry the service definition's name and numeric identifier using the `[service-name]-[service-numeric-identifier]` format.
+
+## Git
+
+Metadata documents may also be stored in and fetched from Git repositories. This may specially be used to avoid copying metadata files across CAS nodes in a cluster, particularly where one needs to deal with more than a few bilateral SAML integrations. Metadata documents are stored as XML files, and their signing certificate, optionally, is expected to be found in a `.pem` file by the same name in the repository. (i.e. `SP.xml`'s certificate can be found in `SP.pem`).
+
+Support is enabled by including the following module in the overlay:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-saml-idp-metadata-git</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
+SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from Git repositories:
+
+```json
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "the-entity-id-of-the-sp",
+  "name" : "SAMLService",
+  "id" : 10000003,
+  "description" : "A MongoDb-based metadata resolver",
+  "metadataLocation" : "git://"
+}
+```
+
+Give the above definition, the expectation is that the git repository 
+contains a `SAMLService.xml` file which may optionally also be accompanied by a `SAMLService.pem` file.
+
+<div class="alert alert-info"><strong>Metadata Location</strong><p>
+The metadata location in the registration record above simply needs to be specified as <code>git://</code> to signal to CAS that 
+SAML metadata for registered service provider must be fetched from Git repositories defined in CAS configuration. 
+</p></div>
+
+To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-git).
+
+### Identity Provider Metadata
+
+Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored via Git. Artifacts such as the metadata, signing and encryption keys, etc are kept on the file-system in distinct directory locations inside the repository and data is pushed to or pulled from git repositories on demand.
+
+Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-git).
+
+#### Per Service
+
+Identity provider metadata, certificates and keys can also be defined on a per-service basis to override the global defaults.
+Metadata documents that would be applicable to a service definition need to adjust the `appliesTo` field in the metadata
+document, which is used to construct the directory path to metadata artifacts.
+
 ## MongoDb
 
 Metadata documents may also be stored in and fetched from a MongoDb instance.  This may specially be used to avoid copying metadata files across CAS nodes in a cluster, particularly where one needs to deal with more than a few bilateral SAML integrations. Metadata documents are stored in and fetched from a single pre-defined collection that is taught to CAS via settings.  The outline of the document is as follows:
 
-| Field                     | Description
-|--------------|---------------------------------------------------
-| `id`                          | The identifier of the record.
-| `name`             | Indexed field which describes and names the metadata briefly.
-| `value`              | The XML document representing the metadata for the service provider.
-| `signature`              | The contents of the signing certificate to validate metadata, if any.
+| Field                  | Description
+|------------------------|---------------------------------------------------
+| `id`                   | The identifier of the record.
+| `name`                 | Indexed field which describes and names the metadata briefly.
+| `value`                | The XML document representing the metadata for the service provider.
+| `signature`            | The contents of the signing certificate to validate metadata, if any.
 
 Support is enabled by including the following module in the overlay:
 
@@ -130,8 +213,8 @@ Metadata artifacts that belong to CAS as a SAML2 identity provider may also be m
     "signingKey": "...",
     "encryptionCertificate": "...",
     "encryptionKey": "...",
-    "metadata": "",
-    "appliesTo: "CAS"
+    "metadata": "...",
+    "appliesTo": "CAS"
 }
 ```
 

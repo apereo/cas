@@ -78,6 +78,7 @@ public class CollectionUtils {
      * @param obj the object to convert into a collection
      * @return The collection instance containing the object provided
      */
+    @SuppressWarnings("JdkObsolete")
     public static Set<Object> toCollection(final Object obj) {
         val c = new LinkedHashSet<Object>(MAP_SIZE);
         if (obj == null) {
@@ -527,6 +528,20 @@ public class CollectionUtils {
     public static <T> ArrayList<T> wrapArrayList(final T... source) {
         val list = new ArrayList<T>(MAP_SIZE);
         addToCollection(list, source);
+        return list;
+    }
+
+    /**
+     * Wrap linked hash map.
+     *
+     * @param <T>    the type parameter
+     * @param key    the key
+     * @param source the source
+     * @return the array list
+     */
+    public static <T> Map<String, T> wrapLinkedHashMap(final String key, final T source) {
+        val list = new LinkedHashMap<String, T>(MAP_SIZE);
+        list.put(key, source);
         return list;
     }
 

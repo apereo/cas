@@ -6,13 +6,14 @@ ext {
 
 dependencies {
     implementation libraries.cassandra
-
+    
     api project(":api:cas-server-core-api")
 
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":support:cas-server-support-cassandra-core")
 

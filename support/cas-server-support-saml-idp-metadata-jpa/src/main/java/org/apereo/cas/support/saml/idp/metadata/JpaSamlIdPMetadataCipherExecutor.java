@@ -30,11 +30,11 @@ public class JpaSamlIdPMetadataCipherExecutor extends BaseStringCipherExecutor {
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.authn.samlIdp.metadata.jpa.crypto.encryption.key";
+        return "cas.authn.saml-idp.metadata.jpa.crypto.encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.authn.samlIdp.metadata.jpa.crypto.signing.key";
+        return "cas.authn.saml-idp.metadata.jpa.crypto.signing.key";
     }
 }

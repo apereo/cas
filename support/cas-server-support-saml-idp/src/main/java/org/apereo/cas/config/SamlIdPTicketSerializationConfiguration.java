@@ -32,8 +32,7 @@ public class SamlIdPTicketSerializationConfiguration {
             plan.registerTicketSerializer(SamlAttributeQueryTicket.class.getName(), new SamlAttributeQueryTicketStringSerializer());
         };
     }
-
-
+    
     private static class SamlArtifactTicketStringSerializer extends AbstractJacksonBackedStringSerializer<SamlArtifactTicketImpl> {
         private static final long serialVersionUID = -2198623586274810263L;
 

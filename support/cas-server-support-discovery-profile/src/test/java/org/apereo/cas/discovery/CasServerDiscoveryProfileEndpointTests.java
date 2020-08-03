@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasDiscoveryProfileConfiguration;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoints.web.exposure.include=*",
         "management.endpoint.discoveryProfile.enabled=true"
     })
+@Tag("ActuatorEndpoint")
 public class CasServerDiscoveryProfileEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("discoveryProfileEndpoint")

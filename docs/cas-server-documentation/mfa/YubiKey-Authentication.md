@@ -48,9 +48,25 @@ The JSON structure is a simple map of user id to yubikey public id representing 
 }
 ```
 
-### Whitelist
+### REST
 
-Registration records may be specified statically via CAS settings in form of a map that links registered usernames with the public id of the YubiKey device. See [review this guide](../configuration/Configuration-Properties.html#yubikey) for more info.
+Registration records can be managed via an external REST API. See [review this guide](../configuration/Configuration-Properties.html#yubikey) for more info.
+
+The following endpoints are expected to be available and implemented by the REST API:
+
+| METHOD              | Endpoint        | Description
+|--------------------------------------------------------------------------------------
+| `GET`              | `/`              | Get all registered records.
+| `GET`              | `/{user}`        | Get all registered records for the user.
+| `DELETE`           | `/`              | Delete all registered records.
+| `DELETE`           | `/{user}`        | Delete all registered records for the user.
+| `DELETE`           | `/{user}/{id}`   | Delete the registered device by its id from the the registration record for the user.
+| `POST`             | `/`              | Store registration records passed as the request body.
+
+### Permissive
+
+Registration records may be specified statically via CAS settings in form of a map that links registered usernames 
+with the public id of the YubiKey device. See [review this guide](../configuration/Configuration-Properties.html#yubikey) for more info.
 
 ### JPA
 
@@ -101,6 +117,20 @@ Support is enabled by including the following dependencies in the WAR overlay:
 <dependency>
      <groupId>org.apereo.cas</groupId>
      <artifactId>cas-server-support-yubikey-redis</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#yubikey).
+
+### DynamoDb
+
+Support is enabled by including the following dependencies in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-yubikey-dynamodb</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```

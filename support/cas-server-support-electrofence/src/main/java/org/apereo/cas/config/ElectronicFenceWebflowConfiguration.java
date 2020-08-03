@@ -6,6 +6,7 @@ import org.apereo.cas.api.AuthenticationRiskMitigator;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -15,6 +16,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowEventResolver;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -74,6 +76,10 @@ public class ElectronicFenceWebflowConfiguration {
     private ObjectProvider<CasCookieBuilder> warnCookieGenerator;
 
     @Autowired
+    @Qualifier("singleSignOnParticipationStrategy")
+    private ObjectProvider<SingleSignOnParticipationStrategy> webflowSingleSignOnParticipationStrategy;
+
+    @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
@@ -102,11 +108,17 @@ public class ElectronicFenceWebflowConfiguration {
     @Qualifier("defaultAuthenticationSystemSupport")
     private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
+    @Autowired
+    @Qualifier("authenticationContextValidator")
+    private ObjectProvider<MultifactorAuthenticationContextValidator> authenticationContextValidator;
+
     @ConditionalOnMissingBean(name = "riskAwareAuthenticationWebflowEventResolver")
     @Bean
     @RefreshScope
     public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver() {
         val context = CasWebflowEventResolutionConfigurationContext.builder()
+            .casDelegatingWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver.getObject())
+            .authenticationContextValidator(authenticationContextValidator.getObject())
             .authenticationSystemSupport(authenticationSystemSupport.getObject())
             .centralAuthenticationService(centralAuthenticationService.getObject())
             .servicesManager(servicesManager.getObject())
@@ -115,6 +127,7 @@ public class ElectronicFenceWebflowConfiguration {
             .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getObject())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
+            .singleSignOnParticipationStrategy(webflowSingleSignOnParticipationStrategy.getObject())
             .ticketRegistry(ticketRegistry.getObject())
             .applicationContext(applicationContext)
             .build();
@@ -138,6 +151,7 @@ public class ElectronicFenceWebflowConfiguration {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "riskAwareCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer riskAwareCasWebflowExecutionPlanConfigurer() {
         return plan -> plan.registerWebflowConfigurer(riskAwareAuthenticationWebflowConfigurer());

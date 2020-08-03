@@ -40,7 +40,7 @@ public class PrepareMultifactorProviderSelectionAction extends AbstractAction {
             .map(MultifactorAuthenticationProvider::getId)
             .collect(Collectors.toList());
 
-        requestContext.getViewScope().put("mfaSelectableProviders", mfaProviders);
+        WebUtils.putSelectableMultifactorAuthenticationProviders(requestContext, mfaProviders);
         return null;
     }
 }

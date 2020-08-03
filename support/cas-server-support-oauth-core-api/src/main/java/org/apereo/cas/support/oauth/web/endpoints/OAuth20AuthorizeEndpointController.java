@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
@@ -11,6 +12,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.SneakyThrows;
@@ -72,7 +74,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
@@ -136,6 +138,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         LOGGER.trace("Created OAuth authentication [{}] for service [{}]", service, authentication);
 
         try {
+            AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
             val audit = AuditableContext.builder()
                 .service(service)
                 .authentication(authentication)
@@ -145,7 +148,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             val accessResult = getOAuthConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
         } catch (final UnauthorizedServiceException | PrincipalException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 

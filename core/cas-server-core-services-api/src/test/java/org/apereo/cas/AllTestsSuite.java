@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.services.support.RegisteredServiceReverseMappedRegexAttributeFilterTests;
+import org.apereo.cas.services.DefaultRegisteredServicePropertyTests;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializerTests;
 import org.apereo.cas.services.util.RegisteredServiceAccessStrategyAuditableEnforcerTests;
 import org.apereo.cas.services.util.RegisteredServiceNoOpCipherExecutorTests;
@@ -17,9 +17,9 @@ import org.junit.runner.RunWith;
  * @since 6.0.0-RC3
  */
 @SelectClasses({
+    DefaultRegisteredServicePropertyTests.class,
     CasAddonsRegisteredServicesJsonSerializerTests.class,
     RegisteredServiceAccessStrategyAuditableEnforcerTests.class,
-    RegisteredServiceReverseMappedRegexAttributeFilterTests.class,
     RegisteredServiceYamlHttpMessageConverterTests.class,
     RegisteredServiceNoOpCipherExecutorTests.class
 })

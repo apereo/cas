@@ -1,22 +1,5 @@
 #!/bin/bash
-source ./ci/functions.sh
 
-runBuild=false
-echo "Reviewing changes that might affect the Gradle build..."
-currentChangeSetAffectsDocumentation
-retval=$?
-if [ "$retval" == 0 ]
-then
-    echo "Found changes that affect project documentation."
-    runBuild=true
-else
-    echo "Changes do NOT affect project documentation."
-    runBuild=false
-fi
-
-if [ "$runBuild" = false ]; then
-    exit 0
-fi
 
 branchVersion="development"
 
@@ -29,7 +12,8 @@ git config --global user.name "travis-ci"
 git config --global pack.threads "8"
 
 echo -e "Cloning the repository to push documentation...\n"
-git clone --single-branch --depth 1 --branch gh-pages --quiet https://${GH_TOKEN}@github.com/apereo/cas gh-pages > /dev/null
+
+git clone --single-branch --depth 1 --branch gh-pages --quiet https://${GH_PAGES_TOKEN}@github.com/apereo/cas gh-pages
 cd gh-pages
 
 echo -e "Switching to gh-pages branch\n"
@@ -52,10 +36,15 @@ echo -e "Adding changes to the git index...\n"
 git add -f . > /dev/null
 
 echo -e "Committing changes...\n"
-git commit -m "Published docs from $TRAVIS_BRANCH to [gh-pages]. Build $TRAVIS_BUILD_NUMBER - $TRAVIS_COMMIT_MESSAGE " > /dev/null
+git commit -m "Published docs [gh-pages]. " > /dev/null
 
 echo -e "Pushing upstream to origin/gh-pages...\n"
-git push -fq origin --all > /dev/null
-
-echo -e "Successfully published documentation.\n"
-exit 0
+git push -fq origin --all
+retVal=$?
+if [[ ${retVal} -eq 0 ]]; then
+    echo -e "Successfully published documentation.\n"
+    exit 0
+else
+    echo -e "Failed to publish documentation.\n"
+    exit ${retVal}
+fi

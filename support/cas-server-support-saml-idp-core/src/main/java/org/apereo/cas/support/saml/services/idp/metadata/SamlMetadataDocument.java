@@ -5,6 +5,7 @@ import org.apereo.cas.util.EncodingUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -27,13 +28,14 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @AllArgsConstructor
+@Builder
 public class SamlMetadataDocument {
 
     @JsonProperty("id")
     @javax.persistence.Id
     @Id
+    @Builder.Default
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    //@GenericGenerator(name = "native", strategy = "native")
     private long id = -1;
 
     @JsonProperty("name")

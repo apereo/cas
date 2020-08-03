@@ -1,15 +1,12 @@
 description = "Apereo CAS Mongo Authentication Support"
 dependencies {
-    implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":core:cas-server-core-authentication-api")
-    implementation project(":support:cas-server-support-pac4j-authentication")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-notifications")
     implementation project(":support:cas-server-support-mongo-core")
 
     implementation libraries.nimbus
-    implementation libraries.pac4jcore
-    implementation libraries.pac4jmongodb
     implementation libraries.mongo
 
     testImplementation project(":support:cas-server-support-person-directory")

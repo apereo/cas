@@ -9,11 +9,8 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.security.cert.CRLException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.util.Collection;
 import java.util.Objects;
@@ -41,63 +38,24 @@ public class ResourceCRLFetcher implements CRLFetcher {
             .collect(Collectors.toSet());
     }
 
-    /**
-     * Fetch the resource. Designed so that extensions
-     * can decide how the resource should be retrieved.
-     *
-     * @param crl the resource
-     * @return the x 509 cRL
-     * @throws IOException          the exception thrown if resources cant be fetched
-     * @throws CRLException         the exception thrown if resources cant be fetched
-     * @throws CertificateException the exception thrown if resources cant be fetched
-     */
+
     @Override
-    public X509CRL fetch(final String crl) throws IOException, CRLException, CertificateException {
+    public X509CRL fetch(final String crl) throws Exception {
         return fetch(new URL(crl));
     }
 
-    /**
-     * Fetch the resource. Designed so that extensions
-     * can decide how the resource should be retrieved.
-     *
-     * @param crl the resource
-     * @return the x 509 cRL
-     * @throws IOException          the exception thrown if resources cant be fetched
-     * @throws CRLException         the exception thrown if resources cant be fetched
-     * @throws CertificateException the exception thrown if resources cant be fetched
-     */
     @Override
-    public X509CRL fetch(final URI crl) throws IOException, CRLException, CertificateException {
+    public X509CRL fetch(final URI crl) throws Exception {
         return fetch(crl.toURL());
     }
 
-    /**
-     * Fetch the resource. Designed so that extensions
-     * can decide how the resource should be retrieved.
-     *
-     * @param crl the resource
-     * @return the x 509 cRL
-     * @throws IOException          the exception thrown if resources cant be fetched
-     * @throws CRLException         the exception thrown if resources cant be fetched
-     * @throws CertificateException the exception thrown if resources cant be fetched
-     */
     @Override
-    public X509CRL fetch(final URL crl) throws IOException, CRLException, CertificateException {
+    public X509CRL fetch(final URL crl) throws Exception {
         return fetch(new UrlResource(crl));
     }
 
-    /**
-     * Fetch the resource. Designed so that extensions
-     * can decide how the resource should be retrieved.
-     *
-     * @param crl the resource
-     * @return the x 509 cRL
-     * @throws IOException          the exception thrown if resources cant be fetched
-     * @throws CRLException         the exception thrown if resources cant be fetched
-     * @throws CertificateException the exception thrown if resources cant be fetched
-     */
     @Override
-    public X509CRL fetch(final Resource crl) throws IOException, CRLException, CertificateException {
+    public X509CRL fetch(final Resource crl) throws Exception {
         val results = fetch(CollectionUtils.wrap(crl));
         if (!results.isEmpty()) {
             return results.iterator().next();

@@ -17,7 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(classes = {
     CasConsentCoreConfiguration.class,
     BaseConsentRepositoryTests.SharedTestConfiguration.class
-}, properties = "cas.consent.groovy.location=classpath:/ConsentRepository.groovy")
+},
+    properties = "cas.consent.groovy.location=classpath:/ConsentRepository.groovy")
 @Getter
 @Tag("Groovy")
 public class GroovyConsentRepositoryTests extends BaseConsentRepositoryTests {

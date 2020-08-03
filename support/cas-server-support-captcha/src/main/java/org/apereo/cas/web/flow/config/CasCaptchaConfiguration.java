@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasCaptchaWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.InitializeCaptchaAction;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
 
 import org.springframework.beans.factory.ObjectProvider;
@@ -29,7 +30,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("casCaptchaConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.googleRecaptcha", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "cas.google-recaptcha", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasCaptchaConfiguration {
 
     @Autowired
@@ -59,6 +60,13 @@ public class CasCaptchaConfiguration {
     @ConditionalOnMissingBean(name = "validateCaptchaAction")
     public Action validateCaptchaAction() {
         return new ValidateCaptchaAction(casProperties.getGoogleRecaptcha());
+    }
+
+    @RefreshScope
+    @Bean
+    @ConditionalOnMissingBean(name = "initializeCaptchaAction")
+    public Action initializeCaptchaAction() {
+        return new InitializeCaptchaAction(casProperties);
     }
 
     @Bean

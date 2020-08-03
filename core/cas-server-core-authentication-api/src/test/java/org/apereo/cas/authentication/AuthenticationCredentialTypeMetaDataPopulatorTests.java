@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.metadata.AuthenticationCredentialTypeMetaDataPopulator;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Authentication")
 public class AuthenticationCredentialTypeMetaDataPopulatorTests {
     private final AuthenticationCredentialTypeMetaDataPopulator populator =
         new AuthenticationCredentialTypeMetaDataPopulator();

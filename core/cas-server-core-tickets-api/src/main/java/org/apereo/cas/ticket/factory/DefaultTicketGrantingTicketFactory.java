@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.factory;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -47,11 +46,6 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
         return produceTicket(authentication, tgtId, clazz);
     }
 
-    @Override
-    public TicketFactory get(final Class<? extends Ticket> clazz) {
-        return this;
-    }
-
     /**
      * Produce ticket.
      *
@@ -87,5 +81,10 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
             LOGGER.trace("Encoded ticket-granting ticket id [{}]", tgtId);
         }
         return tgtId;
+    }
+
+    @Override
+    public Class<? extends Ticket> getTicketType() {
+        return TicketGrantingTicket.class;
     }
 }

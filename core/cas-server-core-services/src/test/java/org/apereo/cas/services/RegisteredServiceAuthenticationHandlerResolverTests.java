@@ -9,10 +9,12 @@ import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolve
 import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.util.CollectionUtils;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,7 +23,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RegisteredServiceAuthenticationHandlerResolverTests}.
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Tag("RegisteredService")
 public class RegisteredServiceAuthenticationHandlerResolverTests {
 
     private ServicesManager defaultServicesManager;
@@ -48,10 +50,15 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         svc.getAuthenticationPolicy().getRequiredAuthenticationHandlers().addAll(new HashSet<>(0));
         list.add(svc);
 
-        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), list, new ArrayList<>());
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val dao = new InMemoryServiceRegistry(appCtx, list, new ArrayList<>());
 
-        this.defaultServicesManager = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
-        this.defaultServicesManager.load();
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
+        defaultServicesManager = new DefaultServicesManager(dao, applicationContext, new HashSet<>(), Caffeine.newBuilder().build());
+        defaultServicesManager.load();
 
         val handler1 = new AcceptUsersAuthenticationHandler("handler1");
         val handler2 = new AcceptUsersAuthenticationHandler("handler2");

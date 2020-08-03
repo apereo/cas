@@ -74,7 +74,7 @@ user-friendly server-side error messages.
 
 ### Apache Tomcat
 
-Anything said here extends the [Apache Tomcat reference for SSL](https://tomcat.apache.org/tomcat-8.0-doc/ssl-howto.html).
+Anything said here extends the [Apache Tomcat reference for SSL](https://tomcat.apache.org/tomcat-9.0-doc/ssl-howto.html).
 
 The Tomcat server is configured in `$CATALINA_HOME/conf/server.xml` with one or more `<Connector> elements`. Each of these elements defines one port number on which Tomcat will listen for requests. Connectors that support SSL are configured with one or two files that represent a collection of X.509 certificates.
 

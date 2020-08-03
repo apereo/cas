@@ -15,6 +15,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
 
 import lombok.Getter;
@@ -88,7 +89,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
             val logoutRequest = (LogoutRequest) logoutMessage.getMessage();
             LOGGER.trace("Sending logout response for binding [{}]", binding);
             if (SAMLConstants.SAML2_REDIRECT_BINDING_URI.equalsIgnoreCase(binding)) {
-                val encoder = new SamlIdPHttpRedirectDeflateLogoutEncoder(msg.getUrl().toExternalForm(), logoutRequest);
+                val encoder = new SamlIdPHttpRedirectDeflateEncoder(msg.getUrl().toExternalForm(), logoutRequest);
                 encoder.doEncode();
                 val redirectUrl = encoder.getRedirectUrl();
                 LOGGER.trace("Final logout redirect URL is [{}]", redirectUrl);
@@ -109,7 +110,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
                 return true;
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

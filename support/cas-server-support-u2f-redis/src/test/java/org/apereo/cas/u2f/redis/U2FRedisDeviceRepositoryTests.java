@@ -9,10 +9,13 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link U2FRedisDeviceRepositoryTests}.
@@ -37,5 +40,10 @@ public class U2FRedisDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTe
     @Autowired
     @Qualifier("u2fDeviceRepository")
     private U2FDeviceRepository deviceRepository;
+
+    @Test
+    public void verifyOperation() {
+        assertNotNull(deviceRepository);
+    }
 }
 

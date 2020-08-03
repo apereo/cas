@@ -10,13 +10,14 @@ import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
+
+import java.time.Instant;
 
 /**
  * This is {@link DefaultCasEventListener} that attempts to consume CAS events
@@ -36,7 +37,8 @@ public class DefaultCasEventListener {
         val dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
-        dto.setCreationTime(DateTimeUtils.zonedDateTimeOf(event.getTimestamp()).toString());
+        val dt = DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(event.getTimestamp()));
+        dto.setCreationTime(dt.toString());
 
         val clientInfo = ClientInfoHolder.getClientInfo();
         dto.putClientIpAddress(clientInfo.getClientIpAddress());

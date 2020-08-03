@@ -1,5 +1,8 @@
 package org.apereo.cas.util.io;
 
+import org.apereo.cas.util.LoggingUtils;
+
+import com.sun.nio.file.SensitivityWatchEventModifier;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -63,7 +66,7 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
         LOGGER.trace("Created watcher for events of type [{}]", Arrays.stream(KINDS)
             .map(WatchEvent.Kind::name)
             .collect(Collectors.joining(",")));
-        watchablePath.register(this.watcher, KINDS);
+        watchablePath.register(this.watcher, KINDS, SensitivityWatchEventModifier.HIGH);
     }
 
     @Override
@@ -110,7 +113,7 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
                 }
             });
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 

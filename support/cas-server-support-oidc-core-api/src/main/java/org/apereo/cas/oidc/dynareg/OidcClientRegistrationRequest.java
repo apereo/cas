@@ -1,6 +1,6 @@
 package org.apereo.cas.oidc.dynareg;
 
-import org.apereo.cas.oidc.jwks.JsonWebKeySetJacksonSerializer;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreJacksonDeserializer;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -86,7 +86,7 @@ public class OidcClientRegistrationRequest implements Serializable {
     private String userInfoEncryptedResponseEncoding;
 
     @JsonProperty("jwks")
-    @JsonDeserialize(using = JsonWebKeySetJacksonSerializer.class)
+    @JsonDeserialize(using = OidcJsonWebKeyStoreJacksonDeserializer.class)
     private JsonWebKeySet jwks;
 
     @JsonProperty("sector_identifier_uri")

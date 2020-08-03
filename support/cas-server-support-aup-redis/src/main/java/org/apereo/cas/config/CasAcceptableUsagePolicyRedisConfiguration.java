@@ -27,7 +27,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 @Configuration("casAcceptableUsagePolicyRedisConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.acceptableUsagePolicy", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "cas.acceptable-usage-policy", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasAcceptableUsagePolicyRedisConfiguration {
 
     @Autowired
@@ -46,6 +46,7 @@ public class CasAcceptableUsagePolicyRedisConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisAcceptableUsagePolicyConnectionFactory")
+    @RefreshScope
     public RedisConnectionFactory redisAcceptableUsagePolicyConnectionFactory() {
         val redis = casProperties.getAcceptableUsagePolicy().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);

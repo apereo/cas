@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.adaptors.cassandra.services.CassandraServiceRegistry;
 import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.cassandra.DefaultCassandraSessionFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
+import org.apereo.cas.services.cassandra.CassandraServiceRegistry;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -19,6 +19,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.net.ssl.SSLContext;
 import java.util.Collection;
 
 /**
@@ -39,7 +40,11 @@ public class CassandraServiceRegistryConfiguration {
     @Autowired
     @Qualifier("serviceRegistryListeners")
     private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
-    
+
+    @Autowired
+    @Qualifier("sslContext")
+    private ObjectProvider<SSLContext> sslContext;
+
     @Bean
     @RefreshScope
     public ServiceRegistry cassandraServiceRegistry() {
@@ -53,11 +58,12 @@ public class CassandraServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "cassandraServiceRegistrySessionFactory")
     public CassandraSessionFactory cassandraServiceRegistrySessionFactory() {
         val cassandra = casProperties.getServiceRegistry().getCassandra();
-        return new DefaultCassandraSessionFactory(cassandra);
+        return new DefaultCassandraSessionFactory(cassandra, sslContext.getObject());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "cassandraServiceRegistryExecutionPlanConfigurer")
+    @RefreshScope
     public ServiceRegistryExecutionPlanConfigurer cassandraServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(cassandraServiceRegistry());
     }

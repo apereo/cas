@@ -6,6 +6,7 @@ import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.RegexPrincipalNameTransformer;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("Authentication")
 public class ChainingPrincipalNameTransformerTests {
     @Test
     public void verifyChain() {

@@ -19,6 +19,7 @@ import java.util.Map;
 public class DynamicHtmlView implements View {
     private final String html;
 
+    @Override
     public String getContentType() {
         return MediaType.TEXT_HTML_VALUE;
     }

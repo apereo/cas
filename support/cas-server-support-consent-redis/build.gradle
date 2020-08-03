@@ -12,11 +12,12 @@ dependencies {
     implementation project(":support:cas-server-support-consent-api")
     implementation project(":support:cas-server-support-consent-core")
 
-    implementation libraries.springbootredis
+    implementation libraries.redis
 
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-audit-api")
     testImplementation project(":core:cas-server-core-configuration")
 

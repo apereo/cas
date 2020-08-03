@@ -7,14 +7,17 @@ import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,7 +28,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-@TestPropertySource(properties = "cas.authn.oauth.userProfileViewType=FLAT")
+@TestPropertySource(properties = {
+    "cas.authn.oidc.user-info-signing-alg-values-supported=RS256",
+    "cas.authn.oidc.user-info-encryption-alg-values-supported=RSA1_5,RSA-OAEP,RSA-OAEP-256,A128KW,A192KW,A256KW",
+    "cas.authn.oauth.user-profile-view-type=FLAT"
+})
 public class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
@@ -45,7 +52,28 @@ public class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
         assertTrue(result.containsKey(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_CLIENT_ID));
         assertTrue(result.containsKey(CasProtocolConstants.PARAMETER_SERVICE));
         assertTrue(result.containsKey("email"));
-        assertTrue(result.containsKey("email"));
         assertEquals("casuser@example.org", result.get("email"));
+    }
+
+    @Test
+    public void verifyFailsOperation() throws Exception {
+        val id = UUID.randomUUID().toString();
+        val service = getOidcRegisteredService(id);
+        service.setUserInfoSigningAlg(AlgorithmIdentifiers.NONE);
+        service.setUserInfoEncryptedResponseAlg(AlgorithmIdentifiers.NONE);
+        servicesManager.save(service);
+
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(new MockHttpServletRequest(), response);
+        val accessToken = getAccessToken(id);
+        val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
+        val entity = oidcUserProfileViewRenderer.render(data, accessToken, response);
+        assertNotNull(entity);
+        assertEquals(HttpStatus.BAD_REQUEST, entity.getStatusCode());
+
+        service.setUserInfoSigningAlg(AlgorithmIdentifiers.RSA_USING_SHA256);
+        service.setUserInfoEncryptedResponseAlg(AlgorithmIdentifiers.NONE);
+        servicesManager.save(service);
+        assertEquals(HttpStatus.BAD_REQUEST, oidcUserProfileViewRenderer.render(data, accessToken, response).getStatusCode());
     }
 }

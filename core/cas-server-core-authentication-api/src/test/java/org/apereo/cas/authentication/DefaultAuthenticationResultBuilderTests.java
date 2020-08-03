@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
@@ -16,10 +17,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Tag("Authentication")
 public class DefaultAuthenticationResultBuilderTests {
     @Test
     public void verifyAuthenticationResultBuildsPrincipals() {
         val builder = new DefaultAuthenticationResultBuilder();
+        assertFalse(builder.getInitialAuthentication().isPresent());
+        assertFalse(builder.getInitialCredential().isPresent());
+
         val p1 = CoreAuthenticationTestUtils.getPrincipal("casuser1", CollectionUtils.wrap("uid", "casuser1"));
         val p2 = CoreAuthenticationTestUtils.getPrincipal("casuser2", CollectionUtils.wrap("givenName", "CAS"));
         val authn1 = CoreAuthenticationTestUtils.getAuthentication(p1, CollectionUtils.wrap("authn1", "first"));

@@ -69,6 +69,15 @@ public interface CentralAuthenticationService {
     Ticket updateTicket(Ticket ticket);
 
     /**
+     * Add the ticket instance in the underlying storage mechanism.
+     *
+     * @param ticket the ticket
+     * @return the updated ticket
+     * @since 6.2.0
+     */
+    Ticket addTicket(Ticket ticket);
+
+    /**
      * Obtains the given ticket by its id
      * and returns the CAS-representative object. Implementations
      * need to check for the validity of the ticket by making sure
@@ -109,6 +118,19 @@ public interface CentralAuthenticationService {
      * @param ticketId the ticket id
      */
     default void deleteTicket(final String ticketId) {
+    }
+
+    /**
+     * Attempts to delete a ticket from the underlying store
+     * and is allowed to run any number of processing on the ticket
+     * and removal op before invoking it. The ticket id can be associated
+     * with any ticket type that is valid and understood by CAS and the underlying
+     * ticket store.
+     *
+     * @param ticket the ticket id
+     */
+    default void deleteTicket(final Ticket ticket) {
+        deleteTicket(ticket.getId());
     }
 
     /**
@@ -165,7 +187,7 @@ public interface CentralAuthenticationService {
     ProxyTicket grantProxyTicket(String proxyGrantingTicket, Service service) throws AbstractTicketException;
 
     /**
-     * Validate a ServiceTicket for a particular Service.
+     * Validate a {@link ServiceTicket} for a particular Service.
      *
      * @param serviceTicketId Proof of prior authentication.
      * @param service         Service wishing to validate a prior authentication.
@@ -175,9 +197,9 @@ public interface CentralAuthenticationService {
     Assertion validateServiceTicket(String serviceTicketId, Service service) throws AbstractTicketException;
 
     /**
-     * Destroy a TicketGrantingTicket and perform back channel logout. This has the effect of invalidating any
-     * Ticket that was derived from the TicketGrantingTicket being destroyed. May throw an
-     * {@link IllegalArgumentException} if the TicketGrantingTicket ID is null.
+     * Destroy a {@link TicketGrantingTicket} and perform back channel logout. This has the effect of invalidating any
+     * Ticket that was derived from the {@link TicketGrantingTicket}  being destroyed. May throw an
+     * {@link IllegalArgumentException} if the {@link TicketGrantingTicket} ID is null.
      *
      * @param ticketGrantingTicketId the id of the ticket we want to destroy
      * @return the logout requests.
@@ -185,7 +207,7 @@ public interface CentralAuthenticationService {
     List<SingleLogoutRequest> destroyTicketGrantingTicket(String ticketGrantingTicketId);
 
     /**
-     * Delegate a TicketGrantingTicket to a Service for proxying authentication
+     * Delegate a {@link TicketGrantingTicket}  to a Service for proxying authentication
      * to other Services.
      *
      * @param serviceTicketId      The service ticket identifier that will delegate to a {@link TicketGrantingTicket}.

@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredService;
 
 import lombok.val;
 import org.apache.commons.lang3.NotImplementedException;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.MediaType;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("RegisteredService")
 public class RegisteredServiceYamlHttpMessageConverterTests {
     private static AbstractRegisteredService getService() {
         val svc = new RegexRegisteredService();

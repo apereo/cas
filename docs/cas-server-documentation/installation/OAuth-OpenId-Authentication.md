@@ -15,7 +15,7 @@ other providers (such as Google, Facebook, etc), <a href="../integration/Delegat
 ## Administrative Endpoints
 
 The following endpoints are provided by CAS:
- 
+
 | Endpoint                 | Description
 |--------------------------|------------------------------------------------
 | `oauthTokens`            | Manage and control [OAuth2 access tokens](OAuth-OpenId-Authentication.html). A `GET` operation produces a list of all access/refresh tokens. A `DELETE` operation will delete the provided access/refresh token provided in form of a parameter selector. (i.e. `/{token}`). A `GET` operation produces with a parameter selector of `/{token}` will list the details of the fetched access/refresh token.
@@ -43,12 +43,13 @@ After enabling OAuth support, the following endpoints will be available:
 | `/oauth2.0/authorize`     | Authorize the user and start the CAS authentication flow.                   | `GET`
 | `/oauth2.0/accessToken`,`/oauth2.0/token`      | Get an access token in plain-text or JSON              | `POST`
 | `/oauth2.0/profile`       | Get the authenticated user profile in JSON via `access_token` parameter.    | `GET`
-| `/oauth2.0/introspect`    | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662).  | `POST`
+| `/oauth2.0/introspect`    | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662). This endpoint expects HTTP basic authentication with OAuth2 service `client_id` and `client_secret` associated as username and password.  | `POST`
 | `/oauth2.0/device`        | Approve device user codes via the [device flow protocol](https://tools.ietf.org/html/draft-denniss-oauth-device-flow). | `POST`
+| `/oauth2.0/revoke`            | [Revoke](https://tools.ietf.org/html/rfc7009) access or refresh tokens. This endpoint expects HTTP basic authentication with OAuth2 service `client_id` and `client_secret` associated as username and password.
 
 ## Response/Grant Types
 
-The following types are supported; they allow you to get an access token representing the current user and OAuth 
+The following types are supported; they allow you to get an access token representing the current user and OAuth
 client application. With the access token, you'll be able to query the `/profile` endpoint and get the user profile.
 
 ### Authorization Code
@@ -77,7 +78,7 @@ The `/oauth2.0/accessToken`  endpoint is able to accept the following parameters
 |-------------------------|------------------------------------------------------
 | `code_verifier`        | The original code verifier for the PKCE request, that the app originally generated before the authorization request.
 
-If the method is `plain`, then the CAS needs only to check that the provided `code_verifier` matches the expected `code_challenge` string. 
+If the method is `plain`, then the CAS needs only to check that the provided `code_verifier` matches the expected `code_challenge` string.
 If the method is `S256`, then the CAS should take the provided `code_verifier` and transform it using the same method the client will have used initially. This means calculating the SHA256 hash of the verifier and base64-url-encoding it, then comparing it to the stored `code_challenge`.
 
 If the verifier matches the expected value, then the CAS can continue on as normal, issuing an access token and responding appropriately.
@@ -103,7 +104,7 @@ Because there is no `redirect_uri` specified by this grant type, the service ide
 
 ### Client Credentials
 
-The simplest of all of the OAuth grants, this grant is suitable for machine-to-machine authentication 
+The simplest of all of the OAuth grants, this grant is suitable for machine-to-machine authentication
 where a specific user’s permission to access data is not required.
 
 | Endpoint                | Parameters                                               | Response
@@ -186,7 +187,7 @@ Client secrets for OAuth relying parties may be defined as encrypted values pref
   "name": "Sample",
   "id": 100
 }
-``` 
+```
 
 Client secrets may be encrypted using CAS-provided cipher operations either manually or via the [CAS Command-line shell](Configuring-Commandline-Shell.html).
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
@@ -204,7 +205,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ### Per Service
 
-The expiration policy of certain OAuth tokens can be conditionally decided on a per-application basis. The candidate service 
+The expiration policy of certain OAuth tokens can be conditionally decided on a per-application basis. The candidate service
 whose token expiration policy is to deviate from the default configuration must be designed as the following snippets demonstrate.
 
 #### OAuth Code
@@ -280,7 +281,7 @@ whose token expiration policy is to deviate from the default configuration must 
 ## JWT Access Tokens
 
 By default, OAuth access tokens are created as opaque identifiers. There is also the option to generate JWTs as access tokens on a per-service basis:
-        
+
 ```json
 {
     "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
@@ -311,7 +312,7 @@ By default, OAuth access tokens are created as opaque identifiers. There is also
       "accessTokenAsJwtCipherStrategyType" : {
          "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
          "values" : [ "java.util.HashSet", [ "ENCRYPT_AND_SIGN" ] ]
-      } 
+      }
     }
 }
 ```
@@ -320,7 +321,7 @@ The following cipher strategy types are available:
 
 | Type                | Description
 |---------------------|---------------------------------------------------
-| `ENCRYPT_AND_SIGN`  | Default strategy; encrypt values, and then sign. 
+| `ENCRYPT_AND_SIGN`  | Default strategy; encrypt values, and then sign.
 | `SIGN_AND_ENCRYPT`  | Sign values, and then encrypt.
 
 Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings.
@@ -383,16 +384,16 @@ public class MyOAuthConfiguration {
 
 ## Throttling
 
-Authentication throttling may be enabled for the `/oauth2.0/accessToken` provided support is included in the overlay to [turn on authentication 
+Authentication throttling may be enabled for the `/oauth2.0/accessToken` provided support is included in the overlay to [turn on authentication
 throttling](Configuring-Authentication-Throttling.html) support. The throttling mechanism that handles the usual CAS server endpoints for authentication
-and ticket validation, etc is then activated for the OAuth endpoints that are supported for throttling. 
+and ticket validation, etc is then activated for the OAuth endpoints that are supported for throttling.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
 
 ## Server Configuration
 
 Remember that OAuth features of CAS require session affinity (and optionally session replication),
-as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. You will need to configure your deployment 
+as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. You will need to configure your deployment
 environment and load balancers accordingly.
 
 ## Sample Client Applications

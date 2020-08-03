@@ -21,7 +21,7 @@ public interface OAuth20DeviceUserCode extends Ticket {
      * Indicate whether the provided user code is approved
      * by the end-user.
      *
-     * @return the boolean
+     * @return true/false
      */
     boolean isUserCodeApproved();
 

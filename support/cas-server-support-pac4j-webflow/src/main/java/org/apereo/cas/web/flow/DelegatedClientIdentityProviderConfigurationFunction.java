@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
@@ -91,6 +92,7 @@ public class DelegatedClientIdentityProviderConfigurationFunction implements Fun
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val webContext = new JEEContext(request, response, this.sessionStore);
 
+        LOGGER.debug("Initialized context with request parameters [{}]", webContext.getRequestParameters());
         val allClients = this.clients.findAllClients();
         val urls = new LinkedHashSet<DelegatedClientIdentityProviderConfiguration>(allClients.size());
         allClients
@@ -99,6 +101,7 @@ public class DelegatedClientIdentityProviderConfigurationFunction implements Fun
             .map(IndirectClient.class::cast)
             .forEach(client -> {
                 try {
+                    LOGGER.debug("Initializing client [{}] with request parameters [{}]", client, webContext.getRequestParameters());
                     client.init();
                     val provider = DelegatedClientIdentityProviderConfigurationFactory.builder()
                         .client(client)
@@ -113,7 +116,8 @@ public class DelegatedClientIdentityProviderConfigurationFunction implements Fun
                         determineAutoRedirectPolicyForProvider(context, service, p);
                     });
                 } catch (final Exception e) {
-                    LOGGER.error("Cannot process client [{}]", client, e);
+                    LOGGER.error("Cannot process client [{}]", client);
+                    LoggingUtils.error(LOGGER, e);
                 }
             });
 

@@ -44,7 +44,7 @@ public class OAuth20RegisteredServiceJwtAccessTokenCipherExecutor extends Regist
      * Is signing enabled for registered service ?
      *
      * @param registeredService the registered service
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isSigningEnabledForRegisteredService(final RegisteredService registeredService) {
         val prop = RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_SIGNING_ENABLED;
@@ -58,7 +58,7 @@ public class OAuth20RegisteredServiceJwtAccessTokenCipherExecutor extends Regist
      * Is encryption enabled for registered service ?
      *
      * @param registeredService the registered service
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isEncryptionEnabledForRegisteredService(final RegisteredService registeredService) {
         val prop = RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_ENCRYPTION_ENABLED;

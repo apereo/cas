@@ -3,6 +3,7 @@ package org.apereo.cas.mfa.accepto.web.flow;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.accepto.AccepttoApiUtils;
 import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -43,7 +44,7 @@ public class AccepttoMultifactorValidateUserDeviceRegistrationAction extends Abs
             }
         } catch (final Exception e) {
             eventAttributes.put("error", e);
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         LOGGER.warn("Device linked to [{}] is not paired; authentication cannot proceed", email);
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_DENY, eventAttributes);
@@ -60,7 +61,7 @@ public class AccepttoMultifactorValidateUserDeviceRegistrationAction extends Abs
     /**
      * Verify user device is paired.
      *
-     * @return the boolean
+     * @return true/false
      */
     @Retryable(value = AccepttoUserDeviceRegistrationException.class,
         maxAttempts = 2, backoff = @Backoff(delay = 1000, maxDelay = 3000))

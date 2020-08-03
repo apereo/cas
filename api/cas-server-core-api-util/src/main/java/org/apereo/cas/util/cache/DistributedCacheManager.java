@@ -15,13 +15,23 @@ import java.util.function.Predicate;
  * While mostly value and output are one of the same, these are made separate intentionally
  * to avoid serialization issues and provide flexibility to provide transformations on the final result.
  *
+ * @author Misagh Moayyed
  * @param <K> the type parameter
  * @param <V> the type parameter
- * @author Misagh Moayyed
  * @since 5.2.0
  */
-@FunctionalInterface
-public interface DistributedCacheManager<K extends Serializable, V extends DistributedCacheObject> extends Closeable {
+public interface DistributedCacheManager<K extends Serializable, V extends Serializable, I extends Serializable>
+    extends Closeable {
+
+    /**
+     * No op distributed cache manager.
+     *
+     * @return the distributed cache manager
+     */
+    static DistributedCacheManager noOp() {
+        return new DistributedCacheManager() {
+        };
+    }
 
     /**
      * Get item.
@@ -42,14 +52,6 @@ public interface DistributedCacheManager<K extends Serializable, V extends Distr
         return new ArrayList<>(0);
     }
 
-    /**
-     * Set item in the cache.
-     *
-     * @param key  the key
-     * @param item the item to store in the cache
-     */
-    default void set(final K key, final V item) {
-    }
 
     /**
      * Contains key in the cache?
@@ -62,21 +64,41 @@ public interface DistributedCacheManager<K extends Serializable, V extends Distr
     }
 
     /**
+     * Set item in the cache.
+     *
+     * @param key        the key
+     * @param item       the item to store in the cache
+     * @param publish    the publish
+     * @return the distributed cache manager
+     */
+    default DistributedCacheManager<K, V, I> set(final K key, final V item,
+                                                 final boolean publish) {
+        return this;
+    }
+
+    /**
      * update key/item from the cache and overwrite.
      *
-     * @param key  the key
-     * @param item the item
+     * @param key        the key
+     * @param item       the item
+     * @param publish    the publish
+     * @return the distributed cache manager
      */
-    default void update(final K key, final V item) {
+    default DistributedCacheManager<K, V, I> update(final K key, final V item,
+                                                    final boolean publish) {
+        return this;
     }
 
     /**
      * Remove key/item from the cache.
      *
-     * @param key  the key
-     * @param item the item
+     * @param key        the key
+     * @param item       the item
+     * @param publish    the publish
+     * @return the distributed cache manager
      */
-    default void remove(final K key, final V item) {
+    default DistributedCacheManager<K, V, I> remove(final K key, final V item, final boolean publish) {
+        return this;
     }
 
     /**
@@ -110,5 +132,9 @@ public interface DistributedCacheManager<K extends Serializable, V extends Distr
             return Optional.empty();
         }
         return Optional.of(results.iterator().next());
+    }
+
+    @Override
+    default void close() {
     }
 }

@@ -6,9 +6,8 @@ dependencies {
     api libraries.jdom
     api libraries.xmlapis
     api libraries.apachevelocity
-    
-    implementation libraries.shibidp
-    implementation libraries.shibidpjavasupport
+
+    implementation libraries.shibutiljavasupport
     
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-services-api")
@@ -31,5 +30,7 @@ dependencies {
 
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }

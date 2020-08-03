@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.configuration.model.RestEndpointProperties;
+import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.couchdb.BaseCouchDbProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbMultifactorTrustProperties;
@@ -8,8 +10,6 @@ import org.apereo.cas.configuration.model.support.mfa.trusteddevice.DeviceFinger
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.RestEndpointProperties;
-import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
@@ -18,7 +18,6 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link TrustedDevicesMultifactorProperties}.
@@ -49,14 +48,11 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     private boolean deviceRegistrationEnabled = true;
 
     /**
-     * Indicates how long should record/devices be remembered as trusted devices.
+     * Indicates how record keys for trusted devices would be generated
+     * so they can be signed/verified on fetch operations.
+     * Acceptable values are {@code default}, {@code legacy}.
      */
-    private long expiration = 30;
-
-    /**
-     * Indicates the time unit by which record/devices are remembered as trusted devices.
-     */
-    private TimeUnit timeUnit = TimeUnit.DAYS;
+    private String keyGeneratorType = "default";
 
     /**
      * Store devices records via REST.

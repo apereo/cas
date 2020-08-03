@@ -35,19 +35,29 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     private static final long serialVersionUID = -8044100706027708789L;
 
     private static final int AUTH_API_VERSION = 2;
+
     private static final int RESULT_CODE_ERROR_THRESHOLD = 49999;
 
     private static final int USER_ACCOUNT_CACHE_INITIAL_SIZE = 50;
+
     private static final long USER_ACCOUNT_CACHE_MAX_SIZE = 100_000_000;
+
     private static final int USER_ACCOUNT_CACHE_EXPIRATION_SECONDS = 5;
 
     private static final String RESULT_KEY_RESPONSE = "response";
+
     private static final String RESULT_KEY_STAT = "stat";
+
     private static final String RESULT_KEY_RESULT = "result";
+
     private static final String RESULT_KEY_ENROLL_PORTAL_URL = "enroll_portal_url";
+
     private static final String RESULT_KEY_STATUS_MESSAGE = "status_msg";
+
     private static final String RESULT_KEY_CODE = "code";
+
     private static final String RESULT_KEY_MESSAGE = "message";
+
     private static final String RESULT_KEY_MESSAGE_DETAIL = "message_detail";
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
@@ -63,7 +73,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private final transient Cache<String, DuoSecurityUserAccount> userAccountCache;
 
-    public BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties,
+    protected BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties,
                                                 final HttpClient httpClient) {
         this.duoProperties = duoProperties;
         this.httpClient = httpClient;
@@ -128,7 +138,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             val userRequest = buildHttpPostUserPreAuthRequest(username);
             signHttpUserPreAuthRequest(userRequest);
             LOGGER.debug("Contacting Duo to inquire about username [{}]", username);
-            val userResponse = userRequest.executeHttpRequest().body().string();
+            val userResponse = getHttpResponse(userRequest);
             val jsonResponse = URLDecoder.decode(userResponse, StandardCharsets.UTF_8.name());
             LOGGER.debug("Received Duo admin response [{}]", jsonResponse);
 
@@ -139,7 +149,6 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             }
 
             if (result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
-
                 val response = result.get(RESULT_KEY_RESPONSE);
                 val authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase();
 
@@ -171,6 +180,17 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         userAccountCachedMap.put(account.getUsername(), account);
         LOGGER.debug("Fetched and cached duo user account [{}]", account);
         return account;
+    }
+
+    /**
+     * Gets http response.
+     *
+     * @param userRequest the user request
+     * @return the http response
+     * @throws Exception the exception
+     */
+    protected String getHttpResponse(final Http userRequest) throws Exception {
+        return userRequest.executeHttpRequest().body().string();
     }
 
     /**

@@ -12,6 +12,7 @@ import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.view.CasProtocolThymeleafViewFactory;
 import org.apereo.cas.web.view.ChainingTemplateViewResolver;
 import org.apereo.cas.web.view.RestfulUrlTemplateResolver;
+import org.apereo.cas.web.view.ThemeClassLoaderTemplateResolver;
 import org.apereo.cas.web.view.ThemeFileTemplateResolver;
 
 import lombok.val;
@@ -47,7 +48,6 @@ import org.thymeleaf.templateresolver.AbstractTemplateResolver;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
@@ -81,7 +81,7 @@ public class CasThymeleafConfiguration {
 
     @Autowired
     private ObjectProvider<ThymeleafProperties> thymeleafProperties;
-    
+
     private static String appendCharset(final MimeType type, final String charset) {
         if (type.getCharset() != null) {
             return type.toString();
@@ -97,13 +97,14 @@ public class CasThymeleafConfiguration {
         val chain = new ChainingTemplateViewResolver();
 
         val cpResolver = new ClassLoaderTemplateResolver();
+        configureTemplateViewResolver(cpResolver);
         cpResolver.setPrefix("thymeleaf/templates/");
-        cpResolver.setSuffix(".html");
-        cpResolver.setTemplateMode(TemplateMode.HTML);
-        cpResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        cpResolver.setOrder(0);
-        cpResolver.setCheckExistence(true);
         chain.addResolver(cpResolver);
+
+        val themeCp = new ThemeClassLoaderTemplateResolver(casProperties);
+        configureTemplateViewResolver(themeCp);
+        themeCp.setPrefix("templates/%s/");
+        chain.addResolver(themeCp);
 
         val templatePrefixes = casProperties.getView().getTemplatePrefixes();
         templatePrefixes.forEach(Unchecked.consumer(prefix -> {

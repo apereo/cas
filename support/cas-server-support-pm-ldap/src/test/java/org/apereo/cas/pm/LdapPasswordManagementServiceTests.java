@@ -42,15 +42,15 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuditConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {
-    "cas.authn.pm.reset.sms.attributeName=telephoneNumber",
-    "cas.authn.pm.ldap[0].ldapUrl=ldap://localhost:10389",
-    "cas.authn.pm.ldap[0].bindDn=cn=Directory Manager",
-    "cas.authn.pm.ldap[0].bindCredential=password",
-    "cas.authn.pm.ldap[0].baseDn=ou=people,dc=example,dc=org",
-    "cas.authn.pm.ldap[0].searchFilter=cn={user}",
+    "cas.authn.pm.reset.sms.attribute-name=telephoneNumber",
+    "cas.authn.pm.ldap[0].ldap-url=ldap://localhost:10389",
+    "cas.authn.pm.ldap[0].bind-dn=cn=Directory Manager",
+    "cas.authn.pm.ldap[0].bind-credential=password",
+    "cas.authn.pm.ldap[0].base-dn=ou=people,dc=example,dc=org",
+    "cas.authn.pm.ldap[0].search-filter=cn={user}",
     "cas.authn.pm.ldap[0].type=GENERIC",
-    "cas.authn.pm.ldap[0].securityQuestionsAttributes.registeredAddress=roomNumber",
-    "cas.authn.pm.ldap[0].securityQuestionsAttributes.postalCode=teletexTerminalIdentifier"
+    "cas.authn.pm.ldap[0].security-questions-attributes.registeredAddress=roomNumber",
+    "cas.authn.pm.ldap[0].security-questions-attributes.postalCode=teletexTerminalIdentifier"
 })
 @DirtiesContext
 @EnabledIfPortOpen(port = 10389)

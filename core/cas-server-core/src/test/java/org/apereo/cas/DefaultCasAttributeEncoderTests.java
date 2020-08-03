@@ -7,6 +7,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Tag("Attributes")
 public class DefaultCasAttributeEncoderTests extends BaseCasCoreTests {
     private Map<String, Object> attributes;
 

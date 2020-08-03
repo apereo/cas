@@ -122,6 +122,7 @@ public class SwivelAuthenticationMultifactorProviderBypassConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "swivelPrincipalMultifactorAuthenticationProviderBypass")
+    @RefreshScope
     public MultifactorAuthenticationProviderBypassEvaluator swivelPrincipalMultifactorAuthenticationProviderBypass() {
         val swivel = casProperties.getAuthn().getMfa().getSwivel();
         val props = swivel.getBypass();

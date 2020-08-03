@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.LinkedMultiValueMap;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,5 +23,14 @@ public class YubiKeyRestHttpRequestCredentialFactoryTests {
         val body = new LinkedMultiValueMap<String, String>();
         body.add(YubiKeyRestHttpRequestCredentialFactory.PARAMETER_NAME_YUBIKEY_OTP, "token");
         assertFalse(f.fromRequest(null, body).isEmpty());
+    }
+
+    @Test
+    public void verifyEmptyBody() {
+        val f = new YubiKeyRestHttpRequestCredentialFactory();
+        val body = new LinkedMultiValueMap<String, String>();
+        assertTrue(f.fromRequest(null, body).isEmpty());
+        body.put("some-other-key", List.of("value1"));
+        assertTrue(f.fromRequest(null, body).isEmpty());
     }
 }

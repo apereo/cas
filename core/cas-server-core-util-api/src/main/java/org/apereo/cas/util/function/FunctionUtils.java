@@ -1,5 +1,7 @@
 package org.apereo.cas.util.function;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -40,9 +42,29 @@ public class FunctionUtils {
                 }
                 return falseFunction.get();
             } catch (final Throwable e) {
-                LOGGER.warn(e.getMessage(), e);
+                LoggingUtils.warn(LOGGER, e);
                 return falseFunction.get();
             }
+        };
+    }
+
+    /**
+     * Do if consumer.
+     *
+     * @param <T>           the type parameter
+     * @param condition     the condition
+     * @param trueFunction  the true function
+     * @param falseFunction the false function
+     * @return the consumer
+     */
+    @SneakyThrows
+    public static <T> Consumer<T> doIf(final boolean condition, final Consumer<T> trueFunction,
+                                       final Consumer<T> falseFunction) {
+        return account -> {
+            if (condition) {
+                trueFunction.accept(account);
+            }
+            falseFunction.accept(account);
         };
     }
 
@@ -65,7 +87,7 @@ public class FunctionUtils {
                 }
                 return falseFunction.get();
             } catch (final Throwable e) {
-                LOGGER.warn(e.getMessage(), e);
+                LoggingUtils.warn(LOGGER, e);
                 return falseFunction.get();
             }
         };
@@ -90,7 +112,7 @@ public class FunctionUtils {
                 }
                 return falseFunction.apply(t);
             } catch (final Throwable e) {
-                LOGGER.warn(e.getMessage(), e);
+                LoggingUtils.warn(LOGGER, e);
                 try {
                     return falseFunction.apply(t);
                 } catch (final Throwable ex) {
@@ -120,7 +142,7 @@ public class FunctionUtils {
                 }
                 return falseFunction.get();
             } catch (final Throwable e) {
-                LOGGER.warn(e.getMessage(), e);
+                LoggingUtils.warn(LOGGER, e);
                 return falseFunction.get();
             }
         };
@@ -141,7 +163,7 @@ public class FunctionUtils {
                 trueFunction.accept(input);
             }
         } catch (final Throwable e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -165,7 +187,7 @@ public class FunctionUtils {
                 }
                 return falseFunction.get();
             } catch (final Throwable e) {
-                LOGGER.warn(e.getMessage(), e);
+                LoggingUtils.warn(LOGGER, e);
                 return falseFunction.get();
             }
         };
@@ -186,7 +208,7 @@ public class FunctionUtils {
             try {
                 return function.apply(t);
             } catch (final Throwable e) {
-                LOGGER.warn(e.getMessage(), e);
+                LoggingUtils.warn(LOGGER, e);
                 try {
                     return errorHandler.apply(e);
                 } catch (final Throwable ex) {
@@ -210,7 +232,7 @@ public class FunctionUtils {
             try {
                 return function.get();
             } catch (final Throwable e) {
-                LOGGER.warn(e.getMessage(), e);
+                LoggingUtils.warn(LOGGER, e);
                 try {
                     return errorHandler.apply(e);
                 } catch (final Throwable ex) {
@@ -225,14 +247,14 @@ public class FunctionUtils {
      *
      * @param func   the func
      * @param params the params
-     * @return the boolean
+     * @return true/false
      */
     public static boolean doWithoutThrows(final Consumer<Object> func, final Object... params) {
         try {
             func.accept(params);
             return true;
         } catch (final Throwable e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
             return false;
         }
     }

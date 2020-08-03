@@ -4,11 +4,13 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.BaseCasSimpleMultifactorAuthenticationTests;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
+import org.apereo.cas.notifications.push.NotificationSender;
+import org.apereo.cas.notifications.push.NotificationSenderExecutionPlanConfigurer;
+import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.sms.MockSmsSender;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.MockSmsSender;
-import org.apereo.cas.util.io.SmsSender;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -23,6 +25,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -113,10 +116,16 @@ public class CasSimpleSendTokenActionTests {
     }
 
     @TestConfiguration
-    public static class CasSimpleMultifactorTestConfiguration {
+    @Lazy(false)
+    public static class CasSimpleMultifactorTestConfiguration implements NotificationSenderExecutionPlanConfigurer {
         @Bean
         public SmsSender smsSender() {
             return new MockSmsSender();
+        }
+
+        @Override
+        public NotificationSender configureNotificationSender() {
+            return NotificationSender.noOp();
         }
     }
 }

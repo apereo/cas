@@ -40,19 +40,19 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class
 }, properties = {
     "cas.authn.pm.reset.sms.attributeName=telephoneNumber",
-    "cas.authn.pm.ldap[0].ldapUrl=ldaps://localhost:10636",
-    "cas.authn.pm.ldap[0].bindDn=CN=admin,CN=Users,DC=cas,DC=example,DC=org",
-    "cas.authn.pm.ldap[0].bindCredential=P@ssw0rd",
-    "cas.authn.pm.ldap[0].baseDn=CN=Users,DC=cas,DC=example,DC=org",
-    "cas.authn.pm.ldap[0].searchFilter=cn={user}",
+    "cas.authn.pm.ldap[0].ldap-url=ldaps://localhost:10636",
+    "cas.authn.pm.ldap[0].bind-dn=CN=admin,CN=Users,DC=cas,DC=example,DC=org",
+    "cas.authn.pm.ldap[0].bind-credential=P@ssw0rd",
+    "cas.authn.pm.ldap[0].base-dn=CN=Users,DC=cas,DC=example,DC=org",
+    "cas.authn.pm.ldap[0].search-filter=cn={user}",
     "cas.authn.pm.ldap[0].type=AD",
-    "cas.authn.pm.ldap[0].securityQuestionsAttributes.department=company",
-    "cas.authn.pm.ldap[0].securityQuestionsAttributes.description=physicalDeliveryOfficeName",
-    "cas.authn.pm.ldap[0].trustStore=file:/tmp/adcacerts.jks",
-    "cas.authn.pm.ldap[0].trustStoreType=JKS",
-    "cas.authn.pm.ldap[0].trustStorePassword=changeit",
-    "cas.authn.pm.ldap[0].minPoolSize=0",
-    "cas.authn.pm.ldap[0].hostnameVerifier=DEFAULT"
+    "cas.authn.pm.ldap[0].security-questions-attributes.department=company",
+    "cas.authn.pm.ldap[0].security-questions-attributes.description=physicalDeliveryOfficeName",
+    "cas.authn.pm.ldap[0].trust-store=file:/tmp/adcacerts.jks",
+    "cas.authn.pm.ldap[0].trust-store-type=JKS",
+    "cas.authn.pm.ldap[0].trust-store-password=changeit",
+    "cas.authn.pm.ldap[0].min-pool-size=0",
+    "cas.authn.pm.ldap[0].hostname-verifier=DEFAULT"
 })
 @DirtiesContext
 @EnabledIfPortOpen(port = 10636)

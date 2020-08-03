@@ -56,7 +56,8 @@ public class SurrogateAuthenticationExpirationPolicyBuilder implements Expiratio
         val surrogatePolicy = new HardTimeoutExpirationPolicy(su.getTgt().getTimeToKillInSeconds());
         val policy = new SurrogateSessionExpirationPolicy();
         policy.addPolicy(SurrogateSessionExpirationPolicy.POLICY_NAME_SURROGATE, surrogatePolicy);
-        policy.addPolicy(SurrogateSessionExpirationPolicy.POLICY_NAME_DEFAULT, ticketGrantingTicketExpirationPolicyBuilder.buildTicketExpirationPolicy());
+        policy.addPolicy(SurrogateSessionExpirationPolicy.POLICY_NAME_DEFAULT,
+            ticketGrantingTicketExpirationPolicyBuilder.buildTicketExpirationPolicy());
         return policy;
     }
 }

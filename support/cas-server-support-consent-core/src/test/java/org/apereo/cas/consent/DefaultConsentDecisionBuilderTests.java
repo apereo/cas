@@ -8,10 +8,10 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -29,13 +29,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasConsentCoreConfiguration.class,
     CasCoreAuditConfiguration.class,
     RefreshAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
+@Tag("Simple")
 public class DefaultConsentDecisionBuilderTests {
     @Autowired
     @Qualifier("consentDecisionBuilder")
@@ -47,6 +44,17 @@ public class DefaultConsentDecisionBuilderTests {
         assertNotNull(consentDecision);
         assertEquals("casuser", consentDecision.getPrincipal());
         assertEquals(consentDecision.getService(), RegisteredServiceTestUtils.getService().getId());
+    }
+
+    @Test
+    public void verifyBadDecision() {
+        val consentDecision = new ConsentDecision();
+        consentDecision.setPrincipal("casuser");
+        consentDecision.setService(RegisteredServiceTestUtils.getService().getId());
+        assertThrows(IllegalArgumentException.class,
+            () -> consentDecisionBuilder.getConsentableAttributesFrom(consentDecision));
+        assertThrows(IllegalArgumentException.class,
+            () -> consentDecisionBuilder.update(consentDecision, null));
     }
 
     @Test

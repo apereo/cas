@@ -25,7 +25,7 @@ import java.util.HashMap;
  * @since 4.2
  */
 @Slf4j
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class OpenIdValidateController extends AbstractServiceValidateController {
 
     private final ServerManager serverManager;

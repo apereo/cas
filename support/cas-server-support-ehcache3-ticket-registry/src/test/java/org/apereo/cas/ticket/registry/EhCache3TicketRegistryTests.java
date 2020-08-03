@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.config.Ehcache3TicketRegistryConfiguration;
 import org.apereo.cas.config.Ehcache3TicketRegistryTicketCatalogConfiguration;
 
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,19 +19,11 @@ import org.springframework.boot.test.context.SpringBootTest;
     Ehcache3TicketRegistryConfiguration.class,
     Ehcache3TicketRegistryTicketCatalogConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 @Tag("Ehcache")
+@Getter
 public class EhCache3TicketRegistryTests extends BaseTicketRegistryTests {
-
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
-
-    @Override
-    public TicketRegistry getNewTicketRegistry() {
-        return ticketRegistry;
-    }
+    private TicketRegistry newTicketRegistry;
 }

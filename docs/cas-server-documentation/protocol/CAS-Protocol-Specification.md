@@ -76,11 +76,10 @@ interpreted as described in RFC 2119[1](<#1>).
 
 **1.2 Reference Implementation**
 --------------------------------
-The Apereo CAS-Server [8](<#8>) is the official reference implementation of the
+The Apereo CAS Server [8](<#8>) is the official reference implementation of the
 CAS Protocol Specification.
 
-Apereo CAS Server 4.x supports the CAS Protocol 3.0 Specification.
-
+Apereo CAS Server 4.x and above supports the CAS Protocol 3.0 Specification.
 
 <a name="head2"/>
 
@@ -1776,7 +1775,7 @@ Engineering Task Force, October 1989.
 
 <a name="7"/>[7] OASIS SAML 1.1 standard, saml.xml.org, December 2009.
 
-<a name="8"/>[8] Apereo [CAS Server](<http://www.Apereo.org/cas>) reference
+<a name="8"/>[8] [Apereo CAS Server](<http://www.Apereo.org/cas>) reference
 implementation
 
 

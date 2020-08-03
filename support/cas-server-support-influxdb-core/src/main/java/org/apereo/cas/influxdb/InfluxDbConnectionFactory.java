@@ -48,7 +48,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
         this.influxDb.enableGzip();
 
         if (dropDatabase) {
-            this.influxDb.deleteDatabase(dbName);
+            this.influxDb.query(new Query("DROP DATABASE " + dbName));
         }
 
         if (!this.influxDb.databaseExists(dbName)) {

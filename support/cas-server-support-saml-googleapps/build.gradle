@@ -3,6 +3,7 @@ dependencies {
     implementation project(":support:cas-server-support-saml-googleapps-core")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")
+
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
@@ -10,26 +11,23 @@ dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-services-authentication")
-    
+
+    testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-validation")
+    testImplementation project(":support:cas-server-support-thymeleaf")
+    testImplementation project(":support:cas-server-support-saml")
+
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core-validation-api")
-    testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-services-registry")
     testImplementation project(":core:cas-server-core-configuration")
-    
-    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
-    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
-    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
-    testImplementation project(path: ":support:cas-server-support-saml", configuration: "tests")
-    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
-    
-    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-cookie-api")
@@ -38,6 +36,13 @@ dependencies {
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-webflow-api")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
 
-    testImplementation project(":support:cas-server-support-thymeleaf")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-saml", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+
 }

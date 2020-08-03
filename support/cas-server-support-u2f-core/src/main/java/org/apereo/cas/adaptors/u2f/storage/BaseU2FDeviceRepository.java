@@ -1,10 +1,13 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serializable;
@@ -16,16 +19,13 @@ import java.io.Serializable;
  * @since 5.1.0
  */
 @Getter
-@Setter
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
 
     private final LoadingCache<String, String> requestStorage;
 
-    private CipherExecutor<Serializable, String> cipherExecutor;
-
-    public BaseU2FDeviceRepository(final LoadingCache<String, String> requestStorage) {
-        this.requestStorage = requestStorage;
-    }
+    private final CipherExecutor<Serializable, String> cipherExecutor;
 
     @Override
     public String getDeviceRegistrationRequest(final String requestId, final String username) {
@@ -51,5 +51,20 @@ public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
     @Override
     public void requestDeviceAuthentication(final String requestId, final String username, final String registrationJsonData) {
         requestStorage.put(requestId, registrationJsonData);
+    }
+
+    @Override
+    public U2FDeviceRegistration verifyRegisteredDevice(final U2FDeviceRegistration registration) {
+        val devices = getRegisteredDevices(registration.getUsername());
+        val decoded = decode(registration);
+        LOGGER.trace("Located devices [{}] for username [{}]", devices, registration.getUsername());
+        val matched = devices.stream()
+            .map(this::decode)
+            .anyMatch(device -> device.matches(decoded));
+        if (!matched) {
+            throw new AuthenticationException("Failed to authenticate U2F device because "
+                + "no matching record was found. Is the device registered?");
+        }
+        return registration;
     }
 }

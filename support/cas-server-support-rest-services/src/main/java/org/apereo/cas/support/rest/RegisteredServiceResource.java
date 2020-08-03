@@ -10,6 +10,7 @@ import org.apereo.cas.rest.BadRestRequestException;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -68,7 +69,7 @@ public class RegisteredServiceResource {
         } catch (final AuthenticationException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

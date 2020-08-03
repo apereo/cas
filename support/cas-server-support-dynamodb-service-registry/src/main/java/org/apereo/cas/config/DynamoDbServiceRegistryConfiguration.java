@@ -8,7 +8,6 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -20,6 +19,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 import java.util.Collection;
 
@@ -57,6 +57,7 @@ public class DynamoDbServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbServiceRegistryExecutionPlanConfigurer")
+    @RefreshScope
     public ServiceRegistryExecutionPlanConfigurer dynamoDbServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(dynamoDbServiceRegistry());
     }
@@ -65,7 +66,7 @@ public class DynamoDbServiceRegistryConfiguration {
     @Bean
     @SneakyThrows
     @ConditionalOnMissingBean(name = "amazonDynamoDbServiceRegistryClient")
-    public AmazonDynamoDB amazonDynamoDbServiceRegistryClient() {
+    public DynamoDbClient amazonDynamoDbServiceRegistryClient() {
         val dynamoDbProperties = casProperties.getServiceRegistry().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(dynamoDbProperties);

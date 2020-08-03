@@ -11,9 +11,11 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jwt.JWTParser;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -30,7 +32,7 @@ import org.springframework.context.ApplicationContext;
  * @since 6.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseOidcJwtAuthenticator implements Authenticator<UsernamePasswordCredentials> {
 
     /**
@@ -84,7 +86,7 @@ public abstract class BaseOidcJwtAuthenticator implements Authenticator<Username
                 return null;
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             return null;
         }
 
@@ -112,7 +114,7 @@ public abstract class BaseOidcJwtAuthenticator implements Authenticator<Username
      * Validate jwt algorithm and return true/false.
      *
      * @param alg the alg
-     * @return the boolean
+     * @return true/false
      */
     protected abstract boolean validateJwtAlgorithm(Algorithm alg);
 }

@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +9,6 @@ import lombok.experimental.Accessors;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 
 import javax.security.auth.login.LoginException;
-
 import java.io.Serializable;
 import java.util.Map;
 
@@ -107,7 +106,7 @@ public class PasswordPolicyProperties implements Serializable {
         GROOVY,
         /**
          * Strategy to only activate password policy
-         * if the authentication response code is not blacklisted.
+         * if the authentication response code is not blocked.
          */
         REJECT_RESULT_CODE
     }

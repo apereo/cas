@@ -9,6 +9,7 @@ layout: null
     *   [Upgrade Guide](/$version/planning/Upgrade-Guide.html)
     *   [Release Policy](/cas/developer/Release-Policy.html)
     *   [Release Schedule](https://github.com/apereo/cas/milestones)
+    *   [Release Notes](/$version/release_notes/Overview.html)
     *   [Maintenance Policy](/cas/developer/Maintenance-Policy.html)
 
 * [Installation](#casinstallation)
@@ -31,6 +32,7 @@ layout: null
     *   [Reloading Changes](/$version/configuration/Configuration-Management-Reload.html)
     *   [Clustered Deployments](/$version/configuration/Configuration-Management-Clustered.html)
     *   [Configuration Discovery](/$version/configuration/Configuration-Discovery.html)
+    *   [Configuration Expressions](/$version/configuration/Configuration-Spring-Expressions.html)
 
 * [Authentication](#casauthentication)
     *   [Overview](/$version/installation/Configuring-Authentication-Components.html)
@@ -64,8 +66,8 @@ layout: null
         *   [Azure Active Directory](/$version/installation/Azure-ActiveDirectory-Authentication.html)
         *   [Okta](/$version/installation/Okta-Authentication.html)
         *   [Pac4J](/$version/installation/Pac4j-Authentication.html)
-        *   [Whitelist](/$version/installation/Whitelist-Authentication.html)
-        *   [Blacklist](/$version/installation/Blacklist-Authentication.html)
+        *   [Permissive](/$version/installation/Permissive-Authentication.html)
+        *   [Reject](/$version/installation/Reject-Authentication.html)
         *   [SOAP](/$version/installation/SOAP-Authentication.html)
         *   [Custom](/$version/installation/Configuring-Custom-Authentication.html)
     *   [Delegation](/$version/integration/Delegate-Authentication.html)
@@ -109,7 +111,7 @@ layout: null
     *   [Adaptive](/$version/mfa/Configuring-Adaptive-Authentication.html)
     
 *   [SSO & SLO](#ssoandslo) 
-    *   [SSO Session](/$version/installation/Configuring-SSO-Session-Cookie.html)
+    *   [SSO Session](/$version/installation/Configuring-SSO.html)
     *   [Remember Me](/$version/installation/Configuring-LongTerm-Authentication.html)
     *   [Logout & SLO](/$version/installation/Logout-Single-Signout.html)
 
@@ -240,6 +242,7 @@ layout: null
 * [Notifications](#casnotifications)
     *   [Sending Email](/$version/notifications/Sending-Email-Configuration.html)
     *   [Sending Text Messages](/$version/notifications/SMS-Messaging-Configuration.html)
+    *   [Sending Notifications](/$version/notifications/Notifications-Configuration.html)
     
 * [Integration](#appintegration)
     *   [SAML2 Service Providers](/$version/integration/Configuring-SAML-SP-Integrations.html)

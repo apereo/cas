@@ -5,6 +5,7 @@ import org.apereo.cas.util.crypto.CertUtils;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Stéphane Adenot
  * @since 6.0.0
  */
+@Tag("X509")
 public class X509RestTlsClientCertCredentialFactoryTests {
     private static final String REQUEST_ATTRIBUTE_X509_CERTIFICATE = "javax.servlet.request.X509Certificate";
 

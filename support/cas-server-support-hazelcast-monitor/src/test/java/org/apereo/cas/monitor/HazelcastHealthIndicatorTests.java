@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -25,6 +26,7 @@ import org.apereo.cas.monitor.config.HazelcastMonitorConfiguration;
 
 import com.hazelcast.internal.memory.MemoryStats;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -68,15 +70,13 @@ import static org.mockito.Mockito.*;
     CasCoreHttpConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 },
-    properties = {
-        "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalmonitor",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+    properties = "cas.ticket.registry.hazelcast.cluster.instance-name=testlocalmonitor")
+@Tag("Hazelcast")
 public class HazelcastHealthIndicatorTests {
     @Autowired
     @Qualifier("hazelcastHealthIndicator")

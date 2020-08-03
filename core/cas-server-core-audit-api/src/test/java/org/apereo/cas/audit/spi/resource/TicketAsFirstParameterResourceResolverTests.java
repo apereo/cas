@@ -2,6 +2,7 @@ package org.apereo.cas.audit.spi.resource;
 
 import lombok.val;
 import org.aspectj.lang.JoinPoint;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,6 +14,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Tag("Tickets")
 public class TicketAsFirstParameterResourceResolverTests {
     @Test
     public void verifyOperation() {

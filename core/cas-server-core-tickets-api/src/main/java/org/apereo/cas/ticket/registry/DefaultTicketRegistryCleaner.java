@@ -4,6 +4,7 @@ import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,9 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
     private static final long serialVersionUID = -8581398063126547772L;
 
     private final transient LockingStrategy lockingStrategy;
+
     private final transient LogoutManager logoutManager;
+
     private final transient TicketRegistry ticketRegistry;
 
     @Override
@@ -44,13 +47,23 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
             LOGGER.trace("Acquired lock. Proceeding with cleanup.");
             return cleanInternal();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             LOGGER.trace("Releasing ticket cleanup lock.");
             this.lockingStrategy.release();
             LOGGER.debug("Finished ticket cleanup.");
         }
         return 0;
+    }
+
+    @Override
+    public int cleanTicket(final Ticket ticket) {
+        if (ticket instanceof TicketGrantingTicket) {
+            LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
+            logoutManager.performLogout((TicketGrantingTicket) ticket);
+        }
+        LOGGER.debug("Cleaning up expired ticket [{}]", ticket.getId());
+        return ticketRegistry.deleteTicket(ticket);
     }
 
     /**
@@ -66,16 +79,6 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
             LOGGER.info("[{}] expired tickets removed.", ticketsDeleted);
             return ticketsDeleted;
         }
-    }
-
-    @Override
-    public int cleanTicket(final Ticket ticket) {
-        if (ticket instanceof TicketGrantingTicket) {
-            LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
-            logoutManager.performLogout((TicketGrantingTicket) ticket);
-        }
-        LOGGER.debug("Cleaning up expired ticket [{}]", ticket.getId());
-        return ticketRegistry.deleteTicket(ticket);
     }
 
     /**

@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -29,6 +30,7 @@ import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -39,11 +41,11 @@ import org.jasig.cas.client.validation.AssertionImpl;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 
 import java.net.URL;
 import java.util.List;
@@ -56,13 +58,13 @@ import java.util.List;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
     BaseTicketResourceEntityResponseFactoryTests.TicketResourceTestConfiguration.class,
     CasRestTokensConfiguration.class,
     CasRestConfiguration.class,
     TokenCoreConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreHttpConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreUtilConfiguration.class,
@@ -81,14 +83,15 @@ import java.util.List;
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreTicketsConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
 public abstract class BaseTicketResourceEntityResponseFactoryTests {
     @Autowired
     @Qualifier("ticketGrantingTicketResourceEntityResponseFactory")
     protected TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    protected ServicesManager servicesManager;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -106,7 +109,8 @@ public abstract class BaseTicketResourceEntityResponseFactoryTests {
     @Qualifier("serviceTicketResourceEntityResponseFactory")
     protected ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory;
 
-    @TestConfiguration
+    @TestConfiguration("TicketResourceTestConfiguration")
+    @Lazy(false)
     public static class TicketResourceTestConfiguration implements InitializingBean {
 
         @Autowired

@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.extern.slf4j.Slf4j;
@@ -96,7 +97,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
                 .map(entity -> Pair.of(entity.getEntityID(), SamlUtils.transformSamlObject(openSamlConfigBean, entity).toString()))
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             return CollectionUtils.wrap("error", e.getMessage());
         }
     }

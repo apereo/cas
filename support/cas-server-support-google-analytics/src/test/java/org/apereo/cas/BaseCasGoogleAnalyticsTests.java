@@ -6,6 +6,8 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -20,12 +22,12 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
@@ -38,7 +40,6 @@ import org.springframework.context.annotation.Import;
 public abstract class BaseCasGoogleAnalyticsTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-        MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration
@@ -52,12 +53,15 @@ public abstract class BaseCasGoogleAnalyticsTests {
         CasCoreHttpConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
         CasCoreConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
+        CasCoreMultifactorAuthenticationConfiguration.class,
+        CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCookieConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,

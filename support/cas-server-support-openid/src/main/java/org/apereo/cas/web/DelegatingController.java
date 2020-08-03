@@ -2,6 +2,7 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.CasProtocolConstants;
 
+import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.text.StringEscapeUtils;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,7 +24,8 @@ import java.util.List;
  * @since 3.5
  */
 @Setter
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
+@Getter
 public class DelegatingController extends AbstractController {
 
     /**
@@ -30,7 +33,7 @@ public class DelegatingController extends AbstractController {
      */
     private static final String DEFAULT_ERROR_VIEW_NAME = "casServiceFailureView";
 
-    private List<AbstractDelegateController> delegates;
+    private List<AbstractDelegateController> delegates = new ArrayList<>();
 
     /**
      * The view to redirect if no delegate can handle the request.

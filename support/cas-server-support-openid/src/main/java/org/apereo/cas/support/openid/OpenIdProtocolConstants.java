@@ -10,7 +10,7 @@ import lombok.experimental.UtilityClass;
  * @since 4.1.0
  */
 @UtilityClass
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class OpenIdProtocolConstants {
     /**
      * The application callback url.

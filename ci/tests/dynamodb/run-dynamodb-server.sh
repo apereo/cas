@@ -3,7 +3,8 @@
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
 echo "Running DynamoDb docker image..."
-docker run -d -p 8000:8000 --name "dynamodb-server" ryanratcliff/dynamodb
+docker stop dynamodb-server || true && docker rm dynamodb-server || true
+docker run -d -p 8000:8000 --name "dynamodb-server" amazon/dynamodb-local:1.12.0
 
 docker ps | grep "dynamodb-server"
 retVal=$?

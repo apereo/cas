@@ -33,16 +33,22 @@ in your configuration and overlays. This is just to teach you that it exists.</p
 
 ## Configuration
 
-To learn more about available notification options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) or [this guide](../notifications/Sending-Email-Configuration.html). 
+To learn more about available notification options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) 
+or [this guide](../notifications/Sending-Email-Configuration.html). 
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#password-management).
+
+## reCAPTCHA Integration
+
+Password reset attempts can be protected and integrated with [Google reCAPTCHA](https://developers.google.com/recaptcha). This requires the presence of reCAPTCHA settings for the basic integration and instructing the password management flow to turn on and verify requests via reCAPTCHA. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-recaptcha-integration) and [this guide](../configuration/Configuration-Properties.html#password-management).
 
 ## Password History
 
 CAS allows for strategies to track and storage recycled password. Recycled passwords are kept in storage for the user account and
 are examined upon password updates for validity. 
 
-Once password history functionality is enabled, passwords can be tracked in history via a Groovy or an in-memory backend. Specific storage options may also provide their own support for password history.
+Once password history functionality is enabled, passwords can be tracked in history via a Groovy or an in-memory backend. Specific 
+storage options may also provide their own support for password history.
 
 ### Groovy
 

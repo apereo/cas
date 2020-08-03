@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     JwtTicketCipherExecutorTests.class,
+    JwtTokenCipherSigningPublicKeyEndpointTests.class,
     JwtTokenTicketBuilderTests.class,
     JwtTokenTicketBuilderWithoutCryptoTests.class,
     JwtTokenTicketBuilderWithoutEncryptionTests.class

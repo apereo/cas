@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.ByteArrayResource;
@@ -36,7 +37,7 @@ public class MockWebServer implements AutoCloseable {
 
     public MockWebServer(final int port) {
         try {
-            this.worker = new Worker(new ServerSocket(port), null, MediaType.APPLICATION_JSON_VALUE);
+            this.worker = new Worker(new ServerSocket(port), MediaType.APPLICATION_JSON_VALUE);
         } catch (final IOException e) {
             throw new IllegalArgumentException("Cannot create Web server", e);
         }
@@ -52,7 +53,7 @@ public class MockWebServer implements AutoCloseable {
 
     public MockWebServer(final int port, final Resource resource, final String contentType) {
         try {
-            this.worker = new Worker(new ServerSocket(port), resource, contentType);
+            this.worker = new Worker(new ServerSocket(port), resource, contentType, HttpStatus.OK);
         } catch (final IOException e) {
             throw new IllegalArgumentException("Cannot create Web server", e);
         }
@@ -60,7 +61,8 @@ public class MockWebServer implements AutoCloseable {
 
     public MockWebServer(final int port, final String data) {
         try {
-            this.worker = new Worker(new ServerSocket(port), new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8)), MediaType.APPLICATION_JSON_VALUE);
+            this.worker = new Worker(new ServerSocket(port), MediaType.APPLICATION_JSON_VALUE);
+            responseBody(data);
         } catch (final IOException e) {
             throw new IllegalArgumentException("Cannot create Web server", e);
         }
@@ -72,6 +74,10 @@ public class MockWebServer implements AutoCloseable {
         } catch (final IOException e) {
             throw new IllegalArgumentException("Cannot create Web server", e);
         }
+    }
+
+    public void responseBody(final String data) {
+        this.worker.setResource(new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8)));
     }
 
     /**
@@ -93,7 +99,7 @@ public class MockWebServer implements AutoCloseable {
         try {
             this.workerThread.join();
         } catch (final InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -117,11 +123,6 @@ public class MockWebServer implements AutoCloseable {
     private static class Worker implements Runnable {
 
         /**
-         * Server always returns HTTP 200 response.
-         */
-        private static final String STATUS_LINE = "HTTP/1.1 %s %s\r\n";
-
-        /**
          * Separates HTTP header from body.
          */
         private static final String SEPARATOR = "\r\n";
@@ -130,15 +131,22 @@ public class MockWebServer implements AutoCloseable {
          * Response buffer size.
          */
         private static final int BUFFER_SIZE = 2048;
+
         private final ServerSocket serverSocket;
-        private final Resource resource;
+
         private final String contentType;
+
         private final Function<Socket, Object> functionToExecute;
-        private boolean running;
+
         private final HttpStatus status;
 
-        Worker(final ServerSocket sock, final Resource resource, final String contentType) {
-            this(sock, resource, contentType, HttpStatus.OK);
+        @Setter
+        private Resource resource;
+
+        private boolean running;
+
+        Worker(final ServerSocket sock, final String contentType) {
+            this(sock, null, contentType, HttpStatus.OK);
         }
 
         Worker(final ServerSocket sock, final Resource resource, final HttpStatus status) {
@@ -163,10 +171,6 @@ public class MockWebServer implements AutoCloseable {
             this.status = HttpStatus.OK;
         }
 
-        private static byte[] header(final String name, final Object value) {
-            return String.format("%s: %s\r\n", name, value).getBytes(StandardCharsets.UTF_8);
-        }
-
         @Override
         public synchronized void run() {
             while (this.running) {
@@ -183,7 +187,7 @@ public class MockWebServer implements AutoCloseable {
                     LOGGER.debug("Stopping on socket close.");
                     this.running = false;
                 } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    LoggingUtils.error(LOGGER, e);
                 }
             }
         }
@@ -196,12 +200,16 @@ public class MockWebServer implements AutoCloseable {
             }
         }
 
+        private static byte[] header(final String name, final Object value) {
+            return String.format("%s: %s\r%n", name, value).getBytes(StandardCharsets.UTF_8);
+        }
+
         private void writeResponse(final Socket socket) throws IOException {
             if (resource != null) {
                 LOGGER.debug("Socket response for resource [{}]", resource.getFilename());
                 val out = socket.getOutputStream();
 
-                val statusLine = String.format(STATUS_LINE, status.value(), status.getReasonPhrase());
+                val statusLine = String.format("HTTP/1.1 %s %s%n", status.value(), status.getReasonPhrase());
                 out.write(statusLine.getBytes(StandardCharsets.UTF_8));
                 out.write(header("Content-Length", this.resource.contentLength()));
                 out.write(header("Content-Type", this.contentType));

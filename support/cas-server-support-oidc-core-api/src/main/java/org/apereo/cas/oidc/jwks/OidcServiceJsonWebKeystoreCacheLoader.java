@@ -26,11 +26,11 @@ public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OAuthR
     public Optional<PublicJsonWebKey> load(final @NonNull OAuthRegisteredService service) {
         if (service instanceof OidcRegisteredService) {
             val svc = (OidcRegisteredService) service;
-            val jwks = OidcJsonWebKeySetUtils.getJsonWebKeySet(svc, applicationContext);
+            val jwks = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(svc, applicationContext);
             if (jwks.isEmpty() || jwks.get().getJsonWebKeys().isEmpty()) {
                 return Optional.empty();
             }
-            val key = OidcJsonWebKeySetUtils.getJsonWebKeyFromJsonWebKeySet(jwks.get());
+            val key = OidcJsonWebKeyStoreUtils.getJsonWebKeyFromJsonWebKeySet(jwks.get());
             if (key == null) {
                 return Optional.empty();
             }

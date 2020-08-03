@@ -4,6 +4,7 @@ import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.trusted.authentication.keys.DefaultMultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 import org.apereo.cas.trusted.config.RestMultifactorAuthenticationTrustConfiguration;
@@ -14,11 +15,12 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,8 +31,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,8 +49,17 @@ import static org.junit.jupiter.api.Assertions.*;
     MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
     MultifactorAuthnTrustConfiguration.class,
     CasCoreAuditConfiguration.class,
-    RefreshAutoConfiguration.class},
-    properties = "cas.authn.mfa.trusted.rest.url=http://localhost:9297")
+    RefreshAutoConfiguration.class
+},
+    properties = {
+        "cas.authn.mfa.trusted.device-fingerprint.cookie.crypto.encryption.key=3RXtt06xYUAli7uU-Z915ZGe0MRBFw3uDjWgOEf1GT8",
+        "cas.authn.mfa.trusted.device-fingerprint.cookie.crypto.signing.key=jIFR-fojN0vOIUcT0hDRXHLVp07CV-YeU8GnjICsXpu65lfkJbiKP028pT74Iurkor38xDGXNcXk_Y1V4rNDqw",
+
+        "cas.authn.mfa.trusted.crypto.encryption.key=zAaKugaeAUSEfS8MCAdQbj4rxgHRLpNvgjLs4Mr6iiM",
+        "cas.authn.mfa.trusted.crypto.signing.key=dU33-XjGeq8WhaAWCs1r1pPvgiLh_rQTgfANUq4hZcktvvhwOe6RXaeddMc446afK3emoOO4ZQpX85IBfAAQYA",
+        
+        "cas.authn.mfa.trusted.rest.url=http://localhost:9297"
+    })
 public class RestMultifactorAuthenticationTrustStorageTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
@@ -66,8 +78,60 @@ public class RestMultifactorAuthenticationTrustStorageTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifySetAnExpireByKey() {
+    public void verifyRemovalByKey() throws Exception {
+        val r = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
+        val data = MAPPER.writeValueAsString(CollectionUtils.wrap(r));
+        try (val webServer = new MockWebServer(9297,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+
+            mfaTrustEngine.save(r);
+            assertDoesNotThrow(new Executable() {
+                @Override
+                public void execute() {
+                    mfaTrustEngine.remove(r.getRecordKey());
+                }
+            });
+        } catch (final Exception e) {
+            throw new AssertionError(e.getMessage(), e);
+        }
+    }
+
+    @Test
+    public void verifyRemovalByDate() {
+        try (val webServer = new MockWebServer(9297,
+            new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+            assertDoesNotThrow(new Executable() {
+                @Override
+                public void execute() {
+                    mfaTrustEngine.remove(ZonedDateTime.now(ZoneOffset.UTC));
+                }
+            });
+        } catch (final Exception e) {
+            throw new AssertionError(e.getMessage(), e);
+        }
+    }
+
+    @Test
+    public void verifyFetchRecords() throws Exception {
+        val r = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
+        val data = MAPPER.writeValueAsString(CollectionUtils.wrap(r));
+        try (val webServer = new MockWebServer(9297,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+
+            mfaTrustEngine.save(r);
+            val record = mfaTrustEngine.get(r.getId());
+            assertNotNull(record);
+            assertNotNull(mfaTrustEngine.getAll());
+        } catch (final Exception e) {
+            throw new AssertionError(e.getMessage(), e);
+        }
+    }
+
+    @Test
+    public void verifySetAnExpireByKey() throws Exception {
         val r =
             MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap(r));
@@ -75,7 +139,7 @@ public class RestMultifactorAuthenticationTrustStorageTests {
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
 
-            mfaTrustEngine.set(r);
+            mfaTrustEngine.save(r);
             val records = mfaTrustEngine.get("casuser");
             assertNotNull(records);
         } catch (final Exception e) {
@@ -84,11 +148,9 @@ public class RestMultifactorAuthenticationTrustStorageTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyExpireByDate() {
-        val r =
-            MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
-        r.setRecordDate(LocalDateTime.now(ZoneId.systemDefault()).minusDays(2));
+    public void verifyExpireByDate() throws Exception {
+        val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
+        r.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS).minusDays(2));
 
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap(r));
         try (val webServer = new MockWebServer(9311,
@@ -97,10 +159,10 @@ public class RestMultifactorAuthenticationTrustStorageTests {
 
             val props = new CasConfigurationProperties();
             props.getAuthn().getMfa().getTrusted().getRest().setUrl("http://localhost:9311");
-            val mfaEngine = new RestMultifactorAuthenticationTrustStorage(new RestTemplate(), props);
-            mfaEngine.setCipherExecutor(mfaTrustCipherExecutor);
-
-            mfaEngine.set(r);
+            val mfaEngine = new RestMultifactorAuthenticationTrustStorage(props.getAuthn().getMfa().getTrusted(),
+                mfaTrustCipherExecutor, new DefaultMultifactorAuthenticationTrustRecordKeyGenerator(),
+                new RestTemplate());
+            mfaEngine.save(r);
             val records = mfaEngine.get(r.getPrincipal());
             assertNotNull(records);
         } catch (final Exception e) {

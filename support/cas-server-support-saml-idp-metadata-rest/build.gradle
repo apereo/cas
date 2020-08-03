@@ -9,6 +9,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-notifications")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-saml-mdui-core")
@@ -17,15 +18,15 @@ dependencies {
     implementation project(":support:cas-server-support-saml-idp-ticket")
     implementation project(":support:cas-server-support-saml-idp")
     
-    implementation libraries.shibidp
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
+
+    testImplementation project(":support:cas-server-support-person-directory")
 
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-configuration")
-    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-logout")
@@ -36,4 +37,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+
+    testImplementation project(path: ":support:cas-server-support-saml-idp", configuration: "tests")
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.util.gen;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Timur Duehr
  * @since 5.2.0
  */
+@Tag("Simple")
 public class HexRandomStringGeneratorTests {
 
     private static final int LENGTH = 36;

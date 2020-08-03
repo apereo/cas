@@ -33,8 +33,7 @@ The following fields may be assigned to the policy:
 ## Authentication Policy Criteria
 
 Authentication policy criteria can also be assigned to each application definition, which should override the global policy defined for the deployment.
-Such policies should closely follow after those [that can be defined globally](../installation/Configuring-Authentication-Components.html#authentication-policy), 
-are entirely optional and can be one of the following types:
+Such policies should closely follow after those [that can be defined globally](../installation/Configuring-Authentication-Components.html#authentication-policy), are entirely optional and can be one of the following types:
 
 
 ### Any
@@ -132,7 +131,7 @@ The `script` attribute can either be an inline Groovy script or a reference to a
     "criteria": {
       "@class" : "org.apereo.cas.services.RestfulRegisteredServiceAuthenticationPolicyCriteria",
       "url": "...",
-      "basicAuthUsername": "..",
+      "basicAuthUsername": "...",
       "basicAuthPassword": "..."
     }
   }

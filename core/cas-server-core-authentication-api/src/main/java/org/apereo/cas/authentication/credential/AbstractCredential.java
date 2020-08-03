@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetaData;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.ToString;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -19,12 +20,24 @@ import org.springframework.binding.validation.ValidationContext;
  * @since 4.0.0
  */
 @ToString
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public abstract class AbstractCredential implements Credential, CredentialMetaData {
 
     /**
      * Serialization version marker.
      */
     private static final long serialVersionUID = 8196868021183513898L;
+
+    @JsonIgnore
+    @Override
+    public Class<? extends Credential> getCredentialClass() {
+        return this.getClass();
+    }
+
+    @JsonIgnore
+    public boolean isValid() {
+        return StringUtils.isNotBlank(getId());
+    }
 
     @Override
     public boolean equals(final Object other) {
@@ -49,18 +62,7 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
         builder.append(getId());
         return builder.toHashCode();
     }
-
-    @JsonIgnore
-    @Override
-    public Class<? extends Credential> getCredentialClass() {
-        return this.getClass();
-    }
-
-    @JsonIgnore
-    public boolean isValid() {
-        return StringUtils.isNotBlank(getId());
-    }
-
+    
     /**
      * Validate.
      *
@@ -75,11 +77,5 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
                 .defaultText("Unable to accept credential with an empty or unspecified token")
                 .build());
         }
-    }
-
-    @JsonIgnore
-    @Override
-    public Credential toCredential() {
-        return this;
     }
 }

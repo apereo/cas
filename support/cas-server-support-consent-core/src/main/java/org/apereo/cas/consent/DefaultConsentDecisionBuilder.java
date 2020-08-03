@@ -21,6 +21,7 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -116,8 +117,9 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
      */
     protected String buildAndEncodeConsentAttributes(final Map<String, List<Object>> attributes) {
         try {
-            val json = MAPPER.writer(new MinimalPrettyPrinter()).writeValueAsString(attributes);
-            val base64 = EncodingUtils.encodeBase64(json);
+            val json = MAPPER.writer(new MinimalPrettyPrinter()).writeValueAsString(Objects.requireNonNull(attributes));
+            LOGGER.trace("Consentable attributes are [{}]", json);
+            val base64 = EncodingUtils.encodeBase64(Objects.requireNonNull(json));
             return this.consentCipherExecutor.encode(base64);
         } catch (final Exception e) {
             throw new IllegalArgumentException("Could not serialize attributes for consent decision");

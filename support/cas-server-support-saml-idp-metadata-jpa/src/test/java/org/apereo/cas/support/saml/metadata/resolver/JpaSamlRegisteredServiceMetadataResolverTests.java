@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@TestPropertySource(properties = "cas.authn.samlIdp.metadata.location=file:/tmp")
-@Tag("SAML")
+@TestPropertySource(properties = "cas.authn.saml-idp.metadata.location=file:/tmp")
+@Tag("JDBC")
 public class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMetadataTests {
 
     @Test
@@ -41,5 +41,7 @@ public class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMe
         assertTrue(resolver.supports(service));
         val resolvers = resolver.resolve(service);
         assertTrue(resolvers.size() == 1);
+
+        assertTrue(resolver.isAvailable(service));
     }
 }

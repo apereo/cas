@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
+import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.RepeatedTest;
@@ -42,20 +43,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
 @ResourceLock("jpa-tickets")
 @Tag("JDBC")
+@Getter
 public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
+    private TicketRegistry newTicketRegistry;
 
     @AfterEach
     public void cleanup() {
-        ticketRegistry.deleteAll();
-    }
-
-    @Override
-    protected TicketRegistry getNewTicketRegistry() {
-        return this.ticketRegistry;
+        newTicketRegistry.deleteAll();
     }
 
     @RepeatedTest(2)
@@ -67,13 +64,13 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         val tgt = new TicketGrantingTicketImpl(ticketGrantingTicketId,
             originalAuthn, NeverExpiresExpirationPolicy.INSTANCE);
-        this.ticketRegistry.addTicket(tgt);
+        this.newTicketRegistry.addTicket(tgt);
 
         val token = securityTokenTicketFactory.create(tgt, "dummy-token".getBytes(StandardCharsets.UTF_8));
-        this.ticketRegistry.addTicket(token);
+        this.newTicketRegistry.addTicket(token);
 
-        assertNotNull(this.ticketRegistry.getTicket(token.getId()));
-        this.ticketRegistry.deleteTicket(token);
-        assertNull(this.ticketRegistry.getTicket(token.getId()));
+        assertNotNull(this.newTicketRegistry.getTicket(token.getId()));
+        this.newTicketRegistry.deleteTicket(token);
+        assertNull(this.newTicketRegistry.getTicket(token.getId()));
     }
 }

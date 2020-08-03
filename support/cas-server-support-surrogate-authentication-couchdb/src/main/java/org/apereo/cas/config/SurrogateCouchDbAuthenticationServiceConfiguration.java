@@ -73,9 +73,7 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
     @RefreshScope
     public SurrogateAuthorizationCouchDbRepository surrogateAuthorizationCouchDbRepository() {
         val couch = casProperties.getAuthn().getSurrogate().getCouchDb();
-        val repository = new SurrogateAuthorizationCouchDbRepository(surrogateCouchDbFactory.getObject().getCouchDbConnector(), couch.isCreateIfNotExists());
-        repository.initStandardDesignDocument();
-        return repository;
+        return new SurrogateAuthorizationCouchDbRepository(surrogateCouchDbFactory.getObject().getCouchDbConnector(), couch.isCreateIfNotExists());
     }
 
     @ConditionalOnMissingBean(name = "surrogateAuthorizationProfileCouchDbRepository")
@@ -83,9 +81,7 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
     @RefreshScope
     public ProfileCouchDbRepository surrogateAuthorizationProfileCouchDbRepository() {
         val couch = casProperties.getAuthn().getSurrogate().getCouchDb();
-        val repository = new ProfileCouchDbRepository(surrogateCouchDbFactory.getObject().getCouchDbConnector(), couch.isCreateIfNotExists());
-        repository.initStandardDesignDocument();
-        return repository;
+        return new ProfileCouchDbRepository(surrogateCouchDbFactory.getObject().getCouchDbConnector(), couch.isCreateIfNotExists());
     }
 
     @ConditionalOnMissingBean(name = "couchDbSurrogateAuthenticationService")

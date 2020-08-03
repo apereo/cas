@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Andrew Petro
  * @since 3.0.0
  */
+@Tag("Authentication")
 public class PrincipalBearingCredentialsAuthenticationHandlerTests {
 
     private final PrincipalBearingCredentialsAuthenticationHandler handler =

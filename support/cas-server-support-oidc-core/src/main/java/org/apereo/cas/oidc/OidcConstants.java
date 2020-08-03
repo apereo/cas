@@ -52,6 +52,10 @@ public interface OidcConstants {
      */
     String CLAIM_AT_HASH = "at_hash";
     /**
+     * The session identifier claim.
+     */
+    String CLAIM_SESSIOND_ID = "sid";
+    /**
      * The id token.
      */
     String ID_TOKEN = "id_token";

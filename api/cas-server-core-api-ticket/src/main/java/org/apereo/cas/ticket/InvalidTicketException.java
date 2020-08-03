@@ -20,23 +20,11 @@ public class InvalidTicketException extends AbstractTicketException {
 
     private final String ticketId;
 
-    /**
-     * Constructs a InvalidTicketException with the default exception code.
-     *
-     * @param ticketId the ticket id that originally caused this exception to be thrown.
-     */
     public InvalidTicketException(final String ticketId) {
         super(CODE);
         this.ticketId = ticketId;
     }
 
-    /**
-     * Constructs a InvalidTicketException with the default exception code and
-     * the original exception that was thrown.
-     *
-     * @param throwable the chained exception
-     * @param ticketId  the ticket id that originally caused this exception to be thrown.
-     */
     public InvalidTicketException(final Throwable throwable, final String ticketId) {
         super(CODE, throwable);
         this.ticketId = ticketId;

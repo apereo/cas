@@ -1,15 +1,11 @@
 package org.apereo.cas.support.saml.idp.metadata.jpa;
 
-import org.apereo.cas.configuration.model.support.saml.idp.metadata.JpaSamlMetadataProperties;
+import org.apereo.cas.jpa.AbstractJpaEntityFactory;
 import org.apereo.cas.support.saml.idp.metadata.jpa.generic.JpaSamlIdPMetadataDocument;
 import org.apereo.cas.support.saml.idp.metadata.jpa.mysql.MySQLSamlIdPMetadataDocument;
 import org.apereo.cas.support.saml.idp.metadata.jpa.oracle.OracleSamlIdPMetadataDocument;
 import org.apereo.cas.support.saml.idp.metadata.jpa.postgres.PostgresSamlIdPMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
-
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 
 /**
  * This is {@link JpaSamlIdPMetadataDocumentFactory}.
@@ -17,39 +13,17 @@ import lombok.SneakyThrows;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@RequiredArgsConstructor
-@Getter
-public class JpaSamlIdPMetadataDocumentFactory {
-    private final JpaSamlMetadataProperties properties;
-
-    /**
-     * New instance of saml metadata document.
-     *
-     * @return the saml metadata document
-     */
-    @SneakyThrows
-    public SamlIdPMetadataDocument newInstance() {
-        return getType().getDeclaredConstructor().newInstance();
+public class JpaSamlIdPMetadataDocumentFactory extends AbstractJpaEntityFactory<SamlIdPMetadataDocument> {
+    public JpaSamlIdPMetadataDocumentFactory(final String dialect) {
+        super(dialect);
     }
 
-    private boolean isOracle() {
-        return properties.getDialect().contains("Oracle");
+    @Override
+    public Class<SamlIdPMetadataDocument> getType() {
+        return (Class<SamlIdPMetadataDocument>) getEntityClass();
     }
 
-    private boolean isMySql() {
-        return properties.getDialect().contains("MySQL");
-    }
-
-    private boolean isPostgres() {
-        return properties.getUrl().contains("postgresql");
-    }
-
-    /**
-     * Gets type.
-     *
-     * @return the type
-     */
-    public Class<? extends SamlIdPMetadataDocument> getType() {
+    private Class<? extends SamlIdPMetadataDocument> getEntityClass() {
         if (isOracle()) {
             return OracleSamlIdPMetadataDocument.class;
         }

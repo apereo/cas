@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.serialization;
 
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -29,7 +30,7 @@ public class DefaultTicketStringSerializationManager implements TicketSerializat
             }
             return serializer.toString(ticket);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw e;
         }
     }

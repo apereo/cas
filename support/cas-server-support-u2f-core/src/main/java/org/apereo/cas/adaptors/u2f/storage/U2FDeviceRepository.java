@@ -1,7 +1,10 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import com.yubico.u2f.data.DeviceRegistration;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.val;
+
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -18,29 +21,43 @@ public interface U2FDeviceRepository {
      * @param username the username
      * @return the registrations
      */
-    Collection<? extends DeviceRegistration> getRegisteredDevices(String username);
+    Collection<? extends U2FDeviceRegistration> getRegisteredDevices(String username);
+
+    /**
+     * Gets registrations.
+     *
+     * @return the registrations
+     */
+    Collection<? extends U2FDeviceRegistration> getRegisteredDevices();
 
     /**
      * Add registration.
      *
-     * @param username     the username
      * @param registration the registration
+     * @return u2f device registration
      */
-    void registerDevice(String username, DeviceRegistration registration);
+    U2FDeviceRegistration registerDevice(U2FDeviceRegistration registration);
 
     /**
      * Deliver authenticated device upon successful authentication events.
      *
-     * @param username     the username
+     * @param registration the registration
+     * @return u2f device registration
+     */
+    U2FDeviceRegistration verifyRegisteredDevice(U2FDeviceRegistration registration);
+
+    /**
+     * Delete registered device.
+     *
      * @param registration the registration
      */
-    void authenticateDevice(String username, DeviceRegistration registration);
+    void deleteRegisteredDevice(U2FDeviceRegistration registration);
 
     /**
      * Is registered ?
      *
      * @param username the username
-     * @return the boolean
+     * @return true/false
      */
     boolean isDeviceRegisteredFor(String username);
 
@@ -91,4 +108,24 @@ public interface U2FDeviceRepository {
      * @throws Exception the exception
      */
     void removeAll() throws Exception;
+
+    /**
+     * Gets cipher executor.
+     *
+     * @return the cipher executor
+     */
+    CipherExecutor<Serializable, String> getCipherExecutor();
+
+    /**
+     * Decode u2f device registration.
+     *
+     * @param registration the registration
+     * @return the u2f device registration
+     */
+    default U2FDeviceRegistration decode(U2FDeviceRegistration registration) {
+        val record = registration.clone();
+        val data = getCipherExecutor().decode(record.getRecord());
+        record.setRecord(data);
+        return record;
+    }
 }

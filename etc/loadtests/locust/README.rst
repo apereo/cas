@@ -3,24 +3,24 @@ Locust Files
 ============
 
 --------------
-CAS v6  Locust
+CAS Locust
 --------------
-These script files were created as a starting point for users to test the various protocols supported by CAS with the Python Locust load testing framework.  Feel free to use and update to meet your needs.
+These script files were created as a starting point for users to test the various protocols supported by
+CAS with the Python Locust load testing framework.  Feel free to use and update to meet your needs.
 
-The Python version used to create these script = Python 3.7.5
+The Python version used to create these script = Python 3.7.7
 
-There are 4 example scripts available for your use.
+These are the example scripts available for your use.
 
-- old_locustfile.py - This file is the old locust script file used for CAS v5 testing.  This still can be used and is included as a comparison file to the other 3.  Created with Locust 0.8a2
-- casLocust.py - A newer version of the old_locustfile.py.  Uses and updated Locus version of 0.13.2
+- casLocust.py - Script file for testing CAS protocol.
 - samlLocust.py - Script file for testing SAML protocol.
-- bothLocust.py - Script file combining the CAS and SAML protocol files to test against a CAS instance.
+- allLocust.py - Script file combining the CAS and SAML protocol files to test against a CAS instance.
 
 To run these scripts enter the following at the root of the locust project:
 
 .. code-block:: bash
 
-    $ locust -f cas5/locustfile.py --host=https://cas.stage.lafayette.edu
+    $ locust -f cas/locustfile.py --host=https://cas.example.org
 
 Please reference the below sites if needed:
 

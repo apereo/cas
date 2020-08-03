@@ -30,11 +30,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Tag("Ldap")
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = {
-        "cas.monitor.endpoints.ldap.ldapUrl=ldap://localhost:10389",
-        "cas.monitor.endpoints.ldap.baseDn=ou=people,dc=example,dc=org",
-        "cas.monitor.endpoints.ldap.searchFilter=cn={user}",
-        "cas.monitor.endpoints.ldap.bindDn=cn=Directory Manager",
-        "cas.monitor.endpoints.ldap.bindCredential=password"
+        "cas.monitor.endpoints.ldap.ldap-url=ldap://localhost:10389",
+        "cas.monitor.endpoints.ldap.base-dn=ou=people,dc=example,dc=org",
+        "cas.monitor.endpoints.ldap.search-filter=cn={user}",
+        "cas.monitor.endpoints.ldap.bind-dn=cn=Directory Manager",
+        "cas.monitor.endpoints.ldap.bind-credential=password"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseMonitorEndpointLdapAuthenticationProviderTests {

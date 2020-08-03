@@ -1,8 +1,10 @@
 package org.apereo.cas.ticket;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
+import java.time.Clock;
 
 /**
  * Strategy that determines if the ticket is expired. Implementations of the
@@ -17,7 +19,7 @@ import java.io.Serializable;
 public interface ExpirationPolicy extends Serializable {
 
     /**
-     * Method to determine if a Ticket has expired or not, based on the policy.
+     * Method to determine if a {@link Ticket} has expired or not, based on the policy.
      *
      * @param ticketState The snapshot of the current ticket state
      * @return true if the ticket is expired, false otherwise.
@@ -25,7 +27,7 @@ public interface ExpirationPolicy extends Serializable {
     boolean isExpired(TicketState ticketState);
 
     /**
-     * Method to determine the actual TTL of a ticket, based on the policy.
+     * Method to determine the actual TTL of a {@link Ticket}, based on the policy.
      *
      * @param ticketState The snapshot of the current ticket state
      * @return The time to live in seconds. A zero value indicates the time duration is not supported or is inactive.
@@ -55,4 +57,12 @@ public interface ExpirationPolicy extends Serializable {
      * @return the name
      */
     String getName();
+
+    /**
+     * Gets clock of this expiration policy.
+     *
+     * @return the clock
+     */
+    @JsonIgnore
+    Clock getClock();
 }

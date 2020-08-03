@@ -13,11 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import javax.net.ssl.SSLContext;
 import java.util.Collection;
 
 /**
@@ -39,11 +41,15 @@ public class MongoDbServiceRegistryConfiguration {
     @Qualifier("serviceRegistryListeners")
     private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
+    @Autowired
+    @Qualifier("sslContext")
+    private ObjectProvider<SSLContext> sslContext;
+
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
     @Bean
     public MongoTemplate mongoDbServiceRegistryTemplate() {
         val mongo = casProperties.getServiceRegistry().getMongo();
-        val factory = new MongoDbConnectionFactory();
+        val factory = new MongoDbConnectionFactory(sslContext.getObject());
 
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
@@ -62,6 +68,7 @@ public class MongoDbServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryExecutionPlanConfigurer")
+    @RefreshScope
     public ServiceRegistryExecutionPlanConfigurer mongoDbServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(mongoDbServiceRegistry());
     }

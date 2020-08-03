@@ -21,7 +21,7 @@ import org.apereo.cas.configuration.model.support.jaas.JaasAuthenticationPropert
 import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.mongo.MongoAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mongo.MongoDbAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ntlm.NtlmProperties;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
@@ -48,6 +48,7 @@ import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -67,6 +68,7 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("AuthenticationProperties")
 public class AuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = -1233126985007049516L;
@@ -221,7 +223,6 @@ public class AuthenticationProperties implements Serializable {
     @NestedConfigurationProperty
     private AuthenticationExceptionsProperties errors = new AuthenticationExceptionsProperties();
 
-
     /**
      * Authentication policy settings.
      */
@@ -241,7 +242,7 @@ public class AuthenticationProperties implements Serializable {
     private FileAuthenticationProperties file = new FileAuthenticationProperties();
 
     /**
-     * Blacklist-based authentication.
+     * Blocked authentication.
      */
     @NestedConfigurationProperty
     private RejectAuthenticationProperties reject = new RejectAuthenticationProperties();
@@ -292,7 +293,7 @@ public class AuthenticationProperties implements Serializable {
      * MongoDb authentication settings.
      */
     @NestedConfigurationProperty
-    private MongoAuthenticationProperties mongo = new MongoAuthenticationProperties();
+    private MongoDbAuthenticationProperties mongo = new MongoDbAuthenticationProperties();
 
     /**
      * CouchDb authentication settings.
@@ -329,7 +330,7 @@ public class AuthenticationProperties implements Serializable {
      * @deprecated 6.2
      */
     @NestedConfigurationProperty
-    @Deprecated(since = "6.2")
+    @Deprecated(since = "6.2.0")
     private OpenIdProperties openid = new OpenIdProperties();
 
     /**

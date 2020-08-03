@@ -6,6 +6,7 @@ import io.lettuce.core.ReadFrom;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisNode;
@@ -73,15 +74,55 @@ public class RedisObjectFactory {
      */
     public static RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis,
                                                                    final boolean initialize) {
-        val redisConfiguration = redis.getSentinel() == null
-            ? (RedisConfiguration) getStandaloneConfig(redis)
-            : getSentinelConfig(redis);
+        var factory = (LettuceConnectionFactory) null;
+        if (redis.getSentinel() != null && StringUtils.hasText(redis.getSentinel().getMaster())) {
+            factory = new LettuceConnectionFactory(getSentinelConfig(redis), getRedisPoolConfig(redis));
+        } else if (redis.getCluster() != null && !redis.getCluster().getNodes().isEmpty()) {
+            factory = new LettuceConnectionFactory(getClusterConfig(redis), getRedisPoolConfig(redis));
+        } else {
+            factory = new LettuceConnectionFactory(getStandaloneConfig(redis), getRedisPoolConfig(redis));
+        }
 
-        val factory = new LettuceConnectionFactory(redisConfiguration, getRedisPoolConfig(redis));
         if (initialize) {
             factory.afterPropertiesSet();
         }
         return factory;
+    }
+
+    private static RedisClusterConfiguration getClusterConfig(final BaseRedisProperties redis) {
+        val redisConfiguration = new RedisClusterConfiguration();
+        val cluster = redis.getCluster();
+
+        cluster.getNodes()
+            .stream()
+            .filter(nodeConfig -> StringUtils.hasText(nodeConfig.getHost())
+                && nodeConfig.getPort() > 0
+                && StringUtils.hasText(nodeConfig.getType()))
+            .forEach(nodeConfig -> {
+                LOGGER.trace("Building redis cluster node for [{}]", nodeConfig);
+                
+                val nodeBuilder = new RedisNode.RedisNodeBuilder()
+                    .listeningAt(nodeConfig.getHost(), nodeConfig.getPort())
+                    .promotedAs(RedisNode.NodeType.valueOf(nodeConfig.getType().toUpperCase()));
+
+                if (StringUtils.hasText(nodeConfig.getReplicaOf())) {
+                    nodeBuilder.replicaOf(nodeConfig.getReplicaOf());
+                }
+                if (StringUtils.hasText(nodeConfig.getId())) {
+                    nodeBuilder.withId(nodeConfig.getId());
+                }
+                if (StringUtils.hasText(nodeConfig.getName())) {
+                    nodeBuilder.withName(nodeConfig.getName());
+                }
+                redisConfiguration.clusterNode(nodeBuilder.build());
+            });
+        if (StringUtils.hasText(cluster.getPassword())) {
+            redisConfiguration.setPassword(cluster.getPassword());
+        }
+        if (cluster.getMaxRedirects() > 0) {
+            redisConfiguration.setMaxRedirects(cluster.getMaxRedirects());
+        }
+        return redisConfiguration;
     }
 
     private static LettucePoolingClientConfiguration getRedisPoolConfig(final BaseRedisProperties redis) {
@@ -94,32 +135,32 @@ public class RedisObjectFactory {
             poolConfig.readFrom(ReadFrom.valueOf(redis.getReadFrom()));
             LOGGER.debug("Redis configuration: readFrom property is set to [{}]", redis.getReadFrom());
         }
-        if (redis.getTimeout() > 0){
+        if (redis.getTimeout() > 0) {
             poolConfig.commandTimeout(Duration.ofMillis(redis.getTimeout()));
             LOGGER.trace("Redis configuration: commandTimeout is set to [{}]ms", redis.getTimeout());
         }
 
-        if (redis.getPool() != null) {
+        val pool = redis.getPool();
+        if (pool != null && pool.isEnabled()) {
             val config = new GenericObjectPoolConfig();
-            val props = redis.getPool();
-            config.setMaxTotal(props.getMaxActive());
-            config.setMaxIdle(props.getMaxIdle());
-            config.setMinIdle(props.getMinIdle());
-            config.setMaxWaitMillis(props.getMaxWait());
-            config.setLifo(props.isLifo());
-            config.setFairness(props.isFairness());
-            config.setTestWhileIdle(props.isTestWhileIdle());
-            config.setTestOnBorrow(props.isTestOnBorrow());
-            config.setTestOnReturn(props.isTestOnReturn());
-            config.setTestOnCreate(props.isTestOnCreate());
-            if (props.getMinEvictableIdleTimeMillis() > 0) {
-                config.setMinEvictableIdleTimeMillis(props.getMinEvictableIdleTimeMillis());
+            config.setMaxTotal(pool.getMaxActive());
+            config.setMaxIdle(pool.getMaxIdle());
+            config.setMinIdle(pool.getMinIdle());
+            config.setMaxWaitMillis(pool.getMaxWait());
+            config.setLifo(pool.isLifo());
+            config.setFairness(pool.isFairness());
+            config.setTestWhileIdle(pool.isTestWhileIdle());
+            config.setTestOnBorrow(pool.isTestOnBorrow());
+            config.setTestOnReturn(pool.isTestOnReturn());
+            config.setTestOnCreate(pool.isTestOnCreate());
+            if (pool.getMinEvictableIdleTimeMillis() > 0) {
+                config.setMinEvictableIdleTimeMillis(pool.getMinEvictableIdleTimeMillis());
             }
-            if (props.getNumTestsPerEvictionRun() > 0) {
-                config.setNumTestsPerEvictionRun(props.getNumTestsPerEvictionRun());
+            if (pool.getNumTestsPerEvictionRun() > 0) {
+                config.setNumTestsPerEvictionRun(pool.getNumTestsPerEvictionRun());
             }
-            if (props.getSoftMinEvictableIdleTimeMillis() > 0) {
-                config.setSoftMinEvictableIdleTimeMillis(props.getSoftMinEvictableIdleTimeMillis());
+            if (pool.getSoftMinEvictableIdleTimeMillis() > 0) {
+                config.setSoftMinEvictableIdleTimeMillis(pool.getSoftMinEvictableIdleTimeMillis());
             }
             poolConfig.poolConfig(config);
             LOGGER.trace("Redis configuration: the pool is configured to [{}]", config);
@@ -127,9 +168,9 @@ public class RedisObjectFactory {
         return poolConfig.build();
     }
 
-    private static RedisStandaloneConfiguration getStandaloneConfig(final BaseRedisProperties redis) {
-        LOGGER.debug("Setting Redis standalone configuration on host [{}] and port [{}]", redis.getHost(),
-                redis.getPort());
+    private static RedisConfiguration getStandaloneConfig(final BaseRedisProperties redis) {
+
+        LOGGER.debug("Setting Redis standalone configuration on host [{}] and port [{}]", redis.getHost(), redis.getPort());
         val standaloneConfig = new RedisStandaloneConfiguration(redis.getHost(), redis.getPort());
         standaloneConfig.setDatabase(redis.getDatabase());
         if (StringUtils.hasText(redis.getPassword())) {
@@ -140,7 +181,8 @@ public class RedisObjectFactory {
 
     private static RedisSentinelConfiguration getSentinelConfig(final BaseRedisProperties redis) {
         LOGGER.debug("Setting Redis with Sentinel configuration on master [{}]", redis.getSentinel().getMaster());
-        val sentinelConfig = new RedisSentinelConfiguration().master(redis.getSentinel().getMaster());
+        val sentinelConfig = new RedisSentinelConfiguration()
+            .master(redis.getSentinel().getMaster());
         LOGGER.debug("Sentinel nodes configured are [{}]", redis.getSentinel().getNode());
         sentinelConfig.setSentinels(createRedisNodesForProperties(redis));
         sentinelConfig.setDatabase(redis.getDatabase());

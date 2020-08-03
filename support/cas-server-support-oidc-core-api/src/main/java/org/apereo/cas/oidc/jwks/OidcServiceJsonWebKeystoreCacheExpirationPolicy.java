@@ -20,29 +20,30 @@ import java.util.concurrent.TimeUnit;
  * @since 6.1.0
  */
 @RequiredArgsConstructor
-public class OidcServiceJsonWebKeystoreCacheExpirationPolicy implements Expiry<OAuthRegisteredService, Optional<PublicJsonWebKey>> {
+public class OidcServiceJsonWebKeystoreCacheExpirationPolicy
+    implements Expiry<OAuthRegisteredService, Optional<PublicJsonWebKey>> {
     private final CasConfigurationProperties casProperties;
 
     @Override
-    public long expireAfterCreate(final OAuthRegisteredService oidcRegisteredService,
+    public long expireAfterCreate(final OAuthRegisteredService service,
                                   final Optional<PublicJsonWebKey> rsaJsonWebKey,
                                   final long currentTime) {
-        return getExpiration(oidcRegisteredService);
+        return getExpiration(service);
     }
 
     @Override
-    public long expireAfterUpdate(final OAuthRegisteredService oidcRegisteredService,
+    public long expireAfterUpdate(final OAuthRegisteredService service,
                                   final Optional<PublicJsonWebKey> rsaJsonWebKey,
                                   final long currentTime, final long currentDuration) {
-        return getExpiration(oidcRegisteredService);
+        return getExpiration(service);
     }
 
     @Override
-    public long expireAfterRead(final OAuthRegisteredService oidcRegisteredService,
+    public long expireAfterRead(final OAuthRegisteredService service,
                                 final Optional<PublicJsonWebKey> rsaJsonWebKey,
                                 final long currentTime,
                                 final long currentDuration) {
-        return getExpiration(oidcRegisteredService);
+        return getExpiration(service);
     }
 
     private long getExpiration(final OAuthRegisteredService givenService) {
@@ -52,7 +53,8 @@ public class OidcServiceJsonWebKeystoreCacheExpirationPolicy implements Expiry<O
                 val timeUnit = TimeUnit.valueOf(service.getJwksCacheTimeUnit().trim().toUpperCase());
                 return timeUnit.toNanos(service.getJwksCacheDuration());
             }
-            return TimeUnit.MINUTES.toNanos(casProperties.getAuthn().getOidc().getJwksCacheInMinutes());
+            val jwks = casProperties.getAuthn().getOidc().getJwks();
+            return TimeUnit.MINUTES.toNanos(jwks.getJwksCacheInMinutes());
         }
         return -1;
     }

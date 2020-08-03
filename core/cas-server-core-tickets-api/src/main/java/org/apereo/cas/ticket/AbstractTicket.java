@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,6 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
@@ -40,7 +40,7 @@ import java.util.Optional;
 @MappedSuperclass
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
 @Setter
 @Slf4j
@@ -60,7 +60,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
      * The unique identifier for this ticket.
      */
     @Id
-    @Column(name = "ID", nullable = false)
+    @Column(name = "ID", nullable = false, length = 512)
     @Getter
     private String id;
 
@@ -99,10 +99,10 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     private Boolean expired = Boolean.FALSE;
 
 
-    public AbstractTicket(final String id, final ExpirationPolicy expirationPolicy) {
+    protected AbstractTicket(final String id, final ExpirationPolicy expirationPolicy) {
         this.id = id;
-        this.creationTime = ZonedDateTime.now(ZoneOffset.UTC);
-        this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
+        this.creationTime = ZonedDateTime.now(expirationPolicy.getClock());
+        this.lastTimeUsed = this.creationTime;
         this.expirationPolicy = expirationPolicy;
     }
 
@@ -126,12 +126,13 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     /**
      * Update ticket state.
      */
+    @SuppressWarnings("FromTemporalAccessor")
     protected void updateTicketState() {
         LOGGER.trace("Before updating ticket [{}]\n\tPrevious time used: [{}]\n\tLast time used: [{}]\n\tUsage count: [{}]",
             getId(), this.previousTimeUsed, this.lastTimeUsed, this.countOfUses);
 
         this.previousTimeUsed = ZonedDateTime.from(this.lastTimeUsed);
-        this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
+        this.lastTimeUsed = ZonedDateTime.now(this.expirationPolicy.getClock());
         this.countOfUses++;
 
         LOGGER.trace("After updating ticket [{}]\n\tPrevious time used: [{}]\n\tLast time used: [{}]\n\tUsage count: [{}]",

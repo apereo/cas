@@ -35,18 +35,25 @@ import java.util.List;
 public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20TokenAuthorizationResponseBuilder {
 
     private final IdTokenGeneratorService idTokenGenerator;
+
     private final ExpirationPolicyBuilder idTokenExpirationPolicy;
 
     public OidcImplicitIdTokenAuthorizationResponseBuilder(final IdTokenGeneratorService idTokenGenerator,
                                                            final OAuth20TokenGenerator accessTokenGenerator,
-                                                           final ExpirationPolicyBuilder<OAuth20AccessToken> accessTokenExpirationPolicy,
                                                            final ExpirationPolicyBuilder idTokenExpirationPolicy,
                                                            final ServicesManager servicesManager,
                                                            final JwtBuilder accessTokenJwtBuilder,
                                                            final CasConfigurationProperties casProperties) {
-        super(accessTokenGenerator, accessTokenExpirationPolicy, servicesManager, accessTokenJwtBuilder, casProperties);
+        super(accessTokenGenerator, servicesManager, accessTokenJwtBuilder, casProperties);
         this.idTokenGenerator = idTokenGenerator;
         this.idTokenExpirationPolicy = idTokenExpirationPolicy;
+    }
+
+    @Override
+    public boolean supports(final JEEContext context) {
+        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        return OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.ID_TOKEN);
     }
 
     @Override
@@ -55,19 +62,11 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20Toke
                                                         final List<NameValuePair> params,
                                                         final OAuth20RefreshToken refreshToken,
                                                         final JEEContext context) throws Exception {
-
         val idToken = this.idTokenGenerator.generate(context.getNativeRequest(),
             context.getNativeResponse(), accessToken, idTokenExpirationPolicy.buildTicketExpirationPolicy().getTimeToLive(),
             OAuth20ResponseTypes.ID_TOKEN, holder.getRegisteredService());
         LOGGER.debug("Generated id token [{}]", idToken);
         params.add(new BasicNameValuePair(OidcConstants.ID_TOKEN, idToken));
         return super.buildCallbackUrlResponseType(holder, redirectUri, accessToken, params, refreshToken, context);
-    }
-
-    @Override
-    public boolean supports(final JEEContext context) {
-        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        return OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.ID_TOKEN);
     }
 }

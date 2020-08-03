@@ -3,11 +3,11 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.trusted.MultifactorAuthenticationTrustRecordCouchDbRepository;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.CouchDbMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +27,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "couchDbMultifactorAuthenticationTrustConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchDbMultifactorAuthenticationTrustConfiguration {
+
+    @Autowired
+    @Qualifier("mfaTrustRecordKeyGenerator")
+    private ObjectProvider<MultifactorAuthenticationTrustRecordKeyGenerator> keyGenerationStrategy;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -60,8 +64,8 @@ public class CouchDbMultifactorAuthenticationTrustConfiguration {
     @RefreshScope
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(
         @Qualifier("couchDbTrustRecordRepository") final MultifactorAuthenticationTrustRecordCouchDbRepository couchDbTrustRecordRepository) {
-        val c = new CouchDbMultifactorAuthenticationTrustStorage(couchDbTrustRecordRepository);
-        c.setCipherExecutor(mfaTrustCipherExecutor.getObject());
-        return c;
+        return new CouchDbMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
+            mfaTrustCipherExecutor.getObject(),
+            couchDbTrustRecordRepository, keyGenerationStrategy.getObject());
     }
 }

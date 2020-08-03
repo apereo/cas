@@ -22,11 +22,14 @@ import org.apereo.cas.configuration.model.support.ldap.LdapPasswordPolicyPropert
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.google.common.collect.Multimap;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResponseHandler;
 import org.ldaptive.auth.Authenticator;
@@ -35,9 +38,11 @@ import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.SetFactoryBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -50,6 +55,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This is {@link LdapAuthenticationConfiguration} that attempts to create
@@ -90,7 +96,7 @@ public class LdapAuthenticationConfiguration {
                 val clazz = (Class<AuthenticationResponseHandler>) Class.forName(customPolicyClass);
                 handlers.add(clazz.getDeclaredConstructor().newInstance());
             } catch (final Exception e) {
-                LOGGER.warn("Unable to construct an instance of the password policy handler", e);
+                LoggingUtils.warn(LOGGER, "Unable to construct an instance of the password policy handler", e);
             }
         }
         LOGGER.debug("Password policy authentication response handler is set to accommodate directory type: [{}]", passwordPolicy.getType());
@@ -155,8 +161,25 @@ public class LdapAuthenticationConfiguration {
     }
 
     @Bean
+    public SetFactoryBean ldapAuthenticationHandlerSetFactoryBean() {
+        val bean = new SetFactoryBean() {
+            @Override
+            protected void destroyInstance(final Set set) {
+                set.forEach(Unchecked.consumer(handler ->
+                    ((DisposableBean) handler).destroy()
+                ));
+            }
+        };
+        bean.setSourceSet(new HashSet<>());
+        return bean;
+    }
+
+    @Bean
+    @SneakyThrows
     @RefreshScope
-    public Collection<AuthenticationHandler> ldapAuthenticationHandlers() {
+    public Collection<AuthenticationHandler> ldapAuthenticationHandlers(
+            @Qualifier("ldapAuthenticationHandlerSetFactoryBean")
+            final SetFactoryBean ldapAuthenticationHandlerSetFactoryBean) {
         val handlers = new HashSet<AuthenticationHandler>();
 
         casProperties.getAuthn().getLdap()
@@ -229,13 +252,14 @@ public class LdapAuthenticationConfiguration {
                 handler.initialize();
                 handlers.add(handler);
             });
+        ((Set) ldapAuthenticationHandlerSetFactoryBean.getObject()).addAll(handlers);
         return handlers;
     }
 
     private AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyContext>
         createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l) {
         if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
-            LOGGER.debug("Created LDAP password policy handling strategy based on blacklisted authentication result codes");
+            LOGGER.debug("Created LDAP password policy handling strategy based on blocked authentication result codes");
             return new RejectResultCodeLdapPasswordPolicyHandlingStrategy();
         }
 
@@ -251,9 +275,12 @@ public class LdapAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "ldapAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @Autowired
     @RefreshScope
-    public AuthenticationEventExecutionPlanConfigurer ldapAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> ldapAuthenticationHandlers().forEach(handler -> {
+    public AuthenticationEventExecutionPlanConfigurer ldapAuthenticationEventExecutionPlanConfigurer(
+            @Qualifier("ldapAuthenticationHandlerSetFactoryBean")
+            final SetFactoryBean ldapAuthenticationHandlerSetFactoryBean) {
+        return plan -> ldapAuthenticationHandlers(ldapAuthenticationHandlerSetFactoryBean).forEach(handler -> {
             LOGGER.info("Registering LDAP authentication for [{}]", handler.getName());
             plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver.getObject());
         });

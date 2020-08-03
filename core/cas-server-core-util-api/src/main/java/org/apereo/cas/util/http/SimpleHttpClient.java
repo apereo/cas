@@ -1,5 +1,7 @@
 package org.apereo.cas.util.http;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +80,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
             val task = this.requestExecutorService.execute(request, HttpClientContext.create(), handler);
             return message.isAsynchronous() || task.get();
         } catch (final RejectedExecutionException e) {
-            LOGGER.warn("Execution rejected", e);
+            LoggingUtils.warn(LOGGER, e);
             return false;
         } catch (final Exception e) {
             LOGGER.debug("Unable to send message", e);
@@ -111,7 +113,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
                 LOGGER.error("There was an error contacting the endpoint: [{}]; The error:\n[{}]", url.toExternalForm(), value);
             }
         } catch (final Exception e) {
-            LOGGER.error("Unable to send message", e);
+            LoggingUtils.error(LOGGER, e);
         }
 
         return null;
@@ -123,7 +125,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
             val u = new URL(url);
             return isValidEndPoint(u);
         } catch (final MalformedURLException e) {
-            LOGGER.error("Unable to build URL", e);
+            LoggingUtils.error(LOGGER, e);
             return false;
         }
     }
@@ -152,17 +154,16 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
                 EntityUtils.consumeQuietly(entity);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
 
-    /**
-     * Shutdown the executor service and close the http client.
-     */
     @Override
     public void destroy() {
+        IOUtils.closeQuietly(this.wrappedHttpClient);
         IOUtils.closeQuietly(this.requestExecutorService);
+        this.httpClientFactory.destroy();
     }
 
 }

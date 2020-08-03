@@ -5,6 +5,7 @@ import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.opensaml.saml.common.binding.artifact.AbstractSAMLArtifact;
 import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
@@ -66,6 +67,7 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
      * We ignore prefixes for SAML compliance.
      */
     @Override
+    @SneakyThrows
     public String getNewTicketId(final String prefix) {
         val artifact = getSAMLArtifactType();
         return prefix + SEPARATOR + artifact.base64Encode();

@@ -5,12 +5,14 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-webflow-mfa")
     implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
-    
+
     implementation project(":support:cas-server-support-token-core")
     implementation project(":support:cas-server-support-token-core-api")
     implementation project(":support:cas-server-support-pac4j-authentication")
@@ -19,12 +21,12 @@ dependencies {
     implementation libraries.pac4jjwt
     implementation libraries.jose4j
     implementation libraries.nimbus
-    
-    
+
     testImplementation project(":support:cas-server-support-person-directory")
-    
+
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-services-registry")
     testImplementation project(":core:cas-server-core-util")

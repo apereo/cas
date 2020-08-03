@@ -13,7 +13,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -23,7 +22,7 @@ import java.util.regex.Pattern;
 /**
  * Allows users to easily inject the default security headers to assist in protecting the application.
  * The default for is to include the following headers:
- * <pre>
+ * &lt;pre&gt;
  * Cache-Control: no-cache, no-store, max-age=0, must-revalidate
  * Pragma: no-cache
  * Expires: 0
@@ -31,7 +30,7 @@ import java.util.regex.Pattern;
  * Strict-Transport-Security: max-age=15768000 ; includeSubDomains
  * X-Frame-Options: DENY
  * X-XSS-Protection: 1; mode=block
- * </pre>
+ * &lt;/pre&gt;
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -39,6 +38,7 @@ import java.util.regex.Pattern;
 @Slf4j
 @Setter
 @Getter
+@SuppressWarnings("JdkObsolete")
 public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter implements Filter {
     /**
      * Enable CACHE_CONTROL.
@@ -80,7 +80,8 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
      */
     public static final String INIT_PARAM_CONTENT_SECURITY_POLICY = "contentSecurityPolicy";
 
-    private static final Pattern CACHE_CONTROL_STATIC_RESOURCES_PATTERN = Pattern.compile(".css|.js|.png|.txt|.jpg|.ico|.jpeg|.bmp|.gif");
+    private static final Pattern CACHE_CONTROL_STATIC_RESOURCES_PATTERN = 
+                    Pattern.compile("^.+\\.(css|js|png|txt|jpg|ico|jpeg|bmp|gif)$", Pattern.CASE_INSENSITIVE);
 
     private final Object lock = new Object();
 
@@ -156,49 +157,19 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         val xframeOpts = filterConfig.getInitParameter(INIT_PARAM_ENABLE_STRICT_XFRAME_OPTIONS);
         val xssOpts = filterConfig.getInitParameter(INIT_PARAM_ENABLE_XSS_PROTECTION);
 
-        try {
-            this.enableCacheControl = Boolean.parseBoolean(cacheControl);
-        } catch (final Exception e) {
-            logException(new ServletException("Error parsing parameter [" + INIT_PARAM_ENABLE_CACHE_CONTROL
-                + "] with value [" + cacheControl + ']', e));
+        this.enableCacheControl = Boolean.parseBoolean(cacheControl);
+        this.enableXContentTypeOptions = Boolean.parseBoolean(contentTypeOpts);
+        this.enableStrictTransportSecurity = Boolean.parseBoolean(stsEnabled);
+        this.enableXFrameOptions = Boolean.parseBoolean(xframeOpts);
+        this.xframeOptions = filterConfig.getInitParameter(INIT_PARAM_STRICT_XFRAME_OPTIONS);
+        if (this.xframeOptions == null || this.xframeOptions.isEmpty()) {
+            this.xframeOptions = "DENY";
         }
-
-        try {
-            this.enableXContentTypeOptions = Boolean.parseBoolean(contentTypeOpts);
-        } catch (final Exception e) {
-            logException(new ServletException("Error parsing parameter [" + INIT_PARAM_ENABLE_XCONTENT_OPTIONS
-                + "] with value [" + contentTypeOpts + ']', e));
+        this.enableXSSProtection = Boolean.parseBoolean(xssOpts);
+        this.xssProtection = filterConfig.getInitParameter(INIT_PARAM_XSS_PROTECTION);
+        if (this.xssProtection == null || this.xssProtection.isEmpty()) {
+            this.xssProtection = "1; mode=block";
         }
-
-        try {
-            this.enableStrictTransportSecurity = Boolean.parseBoolean(stsEnabled);
-        } catch (final Exception e) {
-            logException(new ServletException("Error parsing parameter [" + INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY
-                + "] with value [" + stsEnabled + ']', e));
-        }
-
-        try {
-            this.enableXFrameOptions = Boolean.parseBoolean(xframeOpts);
-            this.xframeOptions = filterConfig.getInitParameter(INIT_PARAM_STRICT_XFRAME_OPTIONS);
-            if (this.xframeOptions == null || this.xframeOptions.isEmpty()) {
-                this.xframeOptions = "DENY";
-            }
-        } catch (final Exception e) {
-            logException(new ServletException("Error parsing parameter [" + INIT_PARAM_ENABLE_STRICT_XFRAME_OPTIONS
-                + "] with value [" + xframeOpts + ']', e));
-        }
-
-        try {
-            this.enableXSSProtection = Boolean.parseBoolean(xssOpts);
-            this.xssProtection = filterConfig.getInitParameter(INIT_PARAM_XSS_PROTECTION);
-            if (this.xssProtection == null || this.xssProtection.isEmpty()) {
-                this.xssProtection = "1; mode=block";
-            }
-        } catch (final Exception e) {
-            logException(new ServletException("Error parsing parameter [" + INIT_PARAM_ENABLE_XSS_PROTECTION
-                + "] with value [" + xssOpts + ']', e));
-        }
-
         this.contentSecurityPolicy = filterConfig.getInitParameter(INIT_PARAM_CONTENT_SECURITY_POLICY);
     }
 
@@ -234,7 +205,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
     }
 
     protected Optional<Object> prepareFilterBeforeExecution(final HttpServletResponse httpServletResponse,
-                                                    final HttpServletRequest httpServletRequest) {
+                                                            final HttpServletRequest httpServletRequest) {
         return Optional.empty();
     }
 

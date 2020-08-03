@@ -5,11 +5,9 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,12 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Groovy")
+@TestPropertySource(properties = {
+    "cas.authn.saml-idp.entityId=https://cas.example.org/idp",
+    "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
+})
 public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
-
-    @BeforeAll
-    public static void beforeClass() {
-        METADATA_DIRECTORY = new FileSystemResource(FileUtils.getTempDirectory());
-    }
 
     @Test
     public void verifyScriptReleasesSamlAttributes() {

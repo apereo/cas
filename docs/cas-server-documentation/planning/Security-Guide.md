@@ -16,6 +16,7 @@ be considered to achieve suitable security.
 
 ## Announcements
 
+- [July 24 2020 Vulnerability Disclosure](https://apereo.github.io/2020/07/24/credvuln/)
 - [Feb 8 2020 Vulnerability Disclosure](https://apereo.github.io/2020/02/08/webflowcrypto/)
 - [Dec 20 2019 Vulnerability Disclosure](https://apereo.github.io/2019/12/20/surrogatevuln/)
 - [Nov 21 2019 Vulnerability Disclosure](https://apereo.github.io/2019/11/24/smfavuln/)
@@ -153,7 +154,7 @@ open for all applications may create an opportunity for security attacks.
 A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session.
 The cookie value is by default encrypted and signed via settings defined in CAS properties.
 While sample data is provided for initial deployments, these keys **MUST** be regenerated per your specific
-environment. Please [see this guide](../installation/Configuring-SSO-Session-Cookie.html) for more info.
+environment. Please [see this guide](../installation/Configuring-SSO.html) for more info.
 
 ### Password Management Secure Links
 

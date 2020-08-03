@@ -23,7 +23,8 @@ public class BlockingRadiusServerTests extends AbstractRadiusServerTests {
     @Test
     public void verifyBadSecret() {
         assertThrows(TimeoutException.class,
-            () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, 1, INET_ADDRESS, XYZ))
+            () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2,
+                new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, 1, INET_ADDRESS, XYZ))
                 .authenticate(XYZ, XYZ));
     }
 
@@ -44,6 +45,6 @@ public class BlockingRadiusServerTests extends AbstractRadiusServerTests {
     @Override
     public RadiusServer getRadiusServer() {
         return new BlockingRadiusServer(RadiusProtocol.MSCHAPv2,
-            new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, INET_ADDRESS, SECRET));
+            new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, 1, INET_ADDRESS, SECRET));
     }
 }

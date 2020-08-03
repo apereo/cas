@@ -1,11 +1,12 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.MultiValueMap;
@@ -35,13 +36,13 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
 
     private final RegisteredServiceEntityMapper registeredServiceEntityMapper;
 
-    public RestfulServiceRegistry(final ApplicationEventPublisher eventPublisher,
+    public RestfulServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                   final RestOperations restTemplate,
                                   final String url,
                                   final MultiValueMap<String, String> headers,
                                   final Collection<ServiceRegistryListener> serviceRegistryListeners,
                                   final RegisteredServiceEntityMapper registeredServiceEntityMapper) {
-        super(eventPublisher, serviceRegistryListeners);
+        super(applicationContext, serviceRegistryListeners);
         this.restTemplate = restTemplate;
         this.url = url;
         this.headers = headers;
@@ -59,7 +60,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 return registeredServiceEntityMapper.toRegisteredService(responseEntity.getBody());
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

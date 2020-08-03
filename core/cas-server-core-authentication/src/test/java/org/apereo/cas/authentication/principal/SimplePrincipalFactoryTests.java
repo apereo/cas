@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
+@Tag("Authentication")
 public class SimplePrincipalFactoryTests {
     @Test
     public void checkPrincipalCreation() {

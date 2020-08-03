@@ -58,7 +58,7 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
     private String[] getPrincipalIdFromSamlEcpFault(final Fault fault) {
         val result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-                .append("actor", fault.getActor().getValue())
+                .append("actor", fault.getActor().getURI())
                 .append("message", fault.getMessage().getValue())
                 .toString();
         return new String[]{result};

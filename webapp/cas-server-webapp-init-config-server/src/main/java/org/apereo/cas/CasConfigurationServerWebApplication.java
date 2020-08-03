@@ -3,7 +3,6 @@ package org.apereo.cas;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.DateTimeUtils;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -33,6 +32,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+import java.time.Instant;
+
 /**
  * This is {@link CasConfigurationServerWebApplication}.
  *
@@ -56,7 +57,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableConfigServer
 @NoArgsConstructor
 @Slf4j
-@SuppressFBWarnings(value = "PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS", justification = "Non-idempotent method chain")
 public class CasConfigurationServerWebApplication {
 
     /**
@@ -81,7 +81,7 @@ public class CasConfigurationServerWebApplication {
     @EventListener
     public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
         AsciiArtUtils.printAsciiArtReady(LOGGER, StringUtils.EMPTY);
-        LOGGER.info("Ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
+        LOGGER.info("Ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(event.getTimestamp())));
     }
 
     /**

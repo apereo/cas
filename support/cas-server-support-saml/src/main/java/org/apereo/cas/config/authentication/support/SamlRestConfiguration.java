@@ -10,6 +10,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,11 +31,13 @@ public class SamlRestConfiguration {
     private ObjectProvider<UniqueTicketIdGenerator> samlServiceTicketUniqueIdGenerator;
 
     @Bean
+    @ConditionalOnMissingBean(name = "samlRestServiceTicketResourceEntityResponseFactory")
     public ServiceTicketResourceEntityResponseFactory samlRestServiceTicketResourceEntityResponseFactory() {
         return new SamlRestServiceTicketResourceEntityResponseFactory(samlServiceTicketUniqueIdGenerator.getObject());
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "samlRestServiceTicketResourceEntityResponseFactoryConfigurer")
     public ServiceTicketResourceEntityResponseFactoryConfigurer samlRestServiceTicketResourceEntityResponseFactoryConfigurer() {
         return plan -> plan.registerFactory(samlRestServiceTicketResourceEntityResponseFactory());
     }

@@ -22,19 +22,21 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Groovy")
 public class GroovyRegisteredServiceAccessStrategyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "GroovyRegisteredServiceAccessStrategyTests.json");
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-
-
+    
     @Test
     public void checkDefaultAuthzStrategyConfig() {
         val authz = new GroovyRegisteredServiceAccessStrategy();
         authz.setGroovyScript("classpath:accessstrategy.groovy");
 
+        authz.setServiceAccessAllowed(true);
         assertTrue(authz.isServiceAccessAllowed());
         assertTrue(authz.isServiceAccessAllowedForSso());
         assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test", new HashMap<>()));
         assertNull(authz.getUnauthorizedRedirectUrl());
         assertNotNull(authz.getDelegatedAuthenticationPolicy());
+        assertNotNull(authz.getRequiredAttributes());
     }
 
     @Test

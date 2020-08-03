@@ -39,7 +39,7 @@ public interface SingleLogoutServiceMessageHandler extends Ordered {
      * Supports handling the logout message.
      *
      * @param service the service
-     * @return the boolean
+     * @return true/false
      */
     default boolean supports(final WebApplicationService service) {
         return service != null;

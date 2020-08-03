@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -22,6 +23,7 @@ import java.util.Optional;
  * @since 5.3.0
  */
 @Slf4j
+@Getter
 public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     private final File metadataLocation;
 
@@ -87,26 +89,40 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
 
     @Override
     public void initialize() {
+        initializeMetadataDirectory();
+        LOGGER.info("Metadata directory location is at [{}]", this.metadataLocation);
+    }
+
+    private void initializeMetadataDirectory() {
         if (!this.metadataLocation.exists()) {
             LOGGER.debug("Metadata directory [{}] does not exist. Creating...", this.metadataLocation);
             if (!this.metadataLocation.mkdir()) {
                 throw new IllegalArgumentException("Metadata directory location " + this.metadataLocation + " cannot be located/created");
             }
         }
-        LOGGER.info("Metadata directory location is at [{}]", this.metadataLocation);
     }
 
-    private Resource getMetadataArtifact(final Optional<SamlRegisteredService> result, final String artifactName) {
-        if (result.isEmpty()) {
+    /**
+     * Gets metadata artifact.
+     *
+     * @param result       the result
+     * @param artifactName the artifact name
+     * @return the metadata artifact
+     */
+    protected Resource getMetadataArtifact(final Optional<SamlRegisteredService> result, final String artifactName) {
+        if (result.isPresent()) {
             val serviceDirectory = new File(this.metadataLocation, getAppliesToFor(result));
+            LOGGER.trace("Metadata directory location for [{}] is [{}]", result.get().getName(), serviceDirectory);
             if (serviceDirectory.exists()) {
                 val artifact = new File(serviceDirectory, artifactName);
+                LOGGER.trace("Artifact location for [{}] and [{}] is [{}]", artifactName, result.get().getName(), artifact);
                 if (artifact.exists()) {
+                    LOGGER.debug("Using metadata artifact [{}] at [{}]", artifactName, artifact);
                     return new FileSystemResource(artifact);
                 }
             }
         }
-        initialize();
+        initializeMetadataDirectory();
         return new FileSystemResource(new File(this.metadataLocation, artifactName));
     }
 }

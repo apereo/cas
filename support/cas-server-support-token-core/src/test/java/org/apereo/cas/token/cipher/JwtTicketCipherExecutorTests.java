@@ -3,6 +3,7 @@ package org.apereo.cas.token.cipher;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("Tickets")
 public class JwtTicketCipherExecutorTests {
 
     public static final String ST = "ST-1234567890";

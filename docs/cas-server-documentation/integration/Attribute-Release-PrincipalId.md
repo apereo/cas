@@ -72,7 +72,7 @@ The public key is then configured for a service definition in CAS:
 }
 ``` 
 
-The configuration of the public key component qualifies to use the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax.
+The configuration of the public key component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
 
 The application can then proceed to decrypt the username using its own private key.
 The following sample code demonstrates how that might be done in Java:
@@ -170,7 +170,6 @@ Groovy scripts whether inlined or external will receive and have access to the f
 - `service`: The service object that is matched by the registered service definition.
 - `logger`: A logger object, able to provide `logger.info(...)` operations, etc.
 
-
 ### Inline
 
 Embed the groovy script directly inside the service configuration.
@@ -184,11 +183,14 @@ Embed the groovy script directly inside the service configuration.
   "description" : "sample",
   "usernameAttributeProvider" : {
     "@class" : "org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider",
-    "groovyScript" : "groovy { return attributes['uid'] + '123456789' }",
+    "groovyScript" : "groovy { return attributes['uid'][0] + '123456789' }",
     "canonicalizationMode" : "UPPER"
   }
 }
 ```
+
+Note that the `uid` attribute in the above example is resolved internally as a multivalued attribute, as should all attributes when fetched by CAS. So 
+the above example uses the `[0]` syntax to fetch the first value of the attribute.
 
 ### External
 
@@ -217,7 +219,7 @@ logger.info("Choosing username attribute out of attributes $attributes")
 return "newPrincipalId"
 ```
 
-The configuration of this component qualifies to use the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax.
+The configuration of this component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
 
 ## Anonymous / Transient
 

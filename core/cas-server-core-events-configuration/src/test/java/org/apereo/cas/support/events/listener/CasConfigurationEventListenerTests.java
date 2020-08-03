@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.config.CasCoreEnvironmentConfiguration;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("CasConfiguration")
 public class CasConfigurationEventListenerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

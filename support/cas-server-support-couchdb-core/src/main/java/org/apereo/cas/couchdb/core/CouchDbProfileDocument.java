@@ -50,6 +50,7 @@ public class CouchDbProfileDocument extends CouchDbDocument implements Principal
     @JsonAnySetter
     private Map<String, List<Object>> attributes = new LinkedHashMap<>(0);
 
+    @Override
     @JsonAnyGetter
     public Map<String, List<Object>> getAttributes() {
         return attributes;

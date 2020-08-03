@@ -18,8 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * This is {@link BasePrincipalFromNonInteractiveCredentialsAction}.
  *
@@ -29,7 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @Setter
 @Getter
-public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends AbstractNonInteractiveCredentialsAction implements Ordered {
+public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends AbstractNonInteractiveCredentialsAction
+    implements Ordered, PrincipalFromRequestExtractorAction {
 
     /**
      * The principal factory used to construct the final principal.
@@ -38,7 +37,7 @@ public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends A
     private final RemoteRequestPrincipalAttributesExtractor principalAttributesExtractor;
     private int order = Integer.MAX_VALUE;
 
-    public BasePrincipalFromNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+    protected BasePrincipalFromNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
                                                             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
                                                             final PrincipalFactory principalFactory, final RemoteRequestPrincipalAttributesExtractor extractor) {
@@ -52,20 +51,12 @@ public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends A
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val remoteUser = getRemotePrincipalId(request);
         if (StringUtils.isNotBlank(remoteUser)) {
-            LOGGER.debug("User [{}] found in HttpServletRequest", remoteUser);
+            LOGGER.debug("User [{}] found in request", remoteUser);
             val attributes = principalAttributesExtractor.getAttributes(request);
-            LOGGER.debug("Attributes [{}] found in HttpServletRequest", attributes);
+            LOGGER.debug("Attributes [{}] found in request", attributes);
             return new PrincipalBearingCredential(this.principalFactory.createPrincipal(remoteUser, attributes));
         }
-        LOGGER.debug("No user found in HttpServletRequest");
+        LOGGER.debug("No user found in request");
         return null;
     }
-
-    /**
-     * Gets remote principal id.
-     *
-     * @param request the request
-     * @return the remote principal id
-     */
-    protected abstract String getRemotePrincipalId(HttpServletRequest request);
 }

@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.WatcherService;
 
 import lombok.SneakyThrows;
@@ -16,8 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +35,6 @@ import java.util.Collection;
 @Configuration("jsonServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 1)
-@ConditionalOnProperty(prefix = "cas.serviceRegistry.json", name = "location")
 public class JsonServiceRegistryConfiguration {
 
     @Autowired
@@ -57,6 +57,7 @@ public class JsonServiceRegistryConfiguration {
 
     @Bean
     @SneakyThrows
+    @RefreshScope
     public ServiceRegistry jsonServiceRegistry() {
         val registry = casProperties.getServiceRegistry();
         val json = new JsonServiceRegistry(registry.getJson().getLocation(),
@@ -72,8 +73,10 @@ public class JsonServiceRegistryConfiguration {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "jsonServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer jsonServiceRegistryExecutionPlanConfigurer() {
-        return plan -> plan.registerServiceRegistry(jsonServiceRegistry());
+        val registry = casProperties.getServiceRegistry().getJson();
+        return plan -> FunctionUtils.doIfNotNull(registry.getLocation(), input -> plan.registerServiceRegistry(jsonServiceRegistry()));
     }
 }

@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @RequiresModule(name = "cas-server-support-person-directory", automated = true)
 @Getter
 @Setter
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 @Accessors(chain = true)
 public class ScriptedPrincipalAttributesProperties extends SpringResourceProperties {
 

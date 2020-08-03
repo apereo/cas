@@ -28,7 +28,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @deprecated 6.2
  * @since 3.1
  */
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsAction {
 
     private final TicketRegistrySupport ticketRegistrySupport;

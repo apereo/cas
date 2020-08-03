@@ -18,6 +18,13 @@ public interface CasWebflowConstants {
      * Transitions.
      ****************************************
      */
+
+
+    /**
+     * The transition state 'captchaError'.
+     */
+    String TRANSITION_ID_CAPTCHA_ERROR = "captchaError";
+
     /**
      * The transition state 'authenticationFailure'.
      */
@@ -52,6 +59,11 @@ public interface CasWebflowConstants {
      * The transition state 'submit'.
      */
     String TRANSITION_ID_SUBMIT = "submit";
+
+    /**
+     * The transition state 'resend'.
+     */
+    String TRANSITION_ID_RESEND = "resend";
 
     /**
      * The transition state 'error'.
@@ -124,6 +136,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_REGISTER = "register";
 
     /**
+     * Transition id 'select'.
+     */
+    String TRANSITION_ID_SELECT = "select";
+
+    /**
      * The transition state 'success'.
      */
     String TRANSITION_ID_SUCCESS = "success";
@@ -187,6 +204,11 @@ public interface CasWebflowConstants {
      * The transition state 'successWithWarnings'.
      */
     String TRANSITION_ID_SUCCESS_WITH_WARNINGS = "successWithWarnings";
+
+    /**
+     * Transition id 'passwordUpdateSuccess'.
+     */
+    String TRANSITION_ID_PASSWORD_UPDATE_SUCCESS = "passwordUpdateSuccess";
 
     /**
      * Transition id 'resetPassword'.
@@ -278,9 +300,19 @@ public interface CasWebflowConstants {
     String STATE_ID_INIT_LOGIN_FORM = "initializeLoginForm";
 
     /**
+     * The state 'cancel'.
+     */
+    String STATE_ID_CANCEL= "cancel";
+
+    /**
      * The state 'viewLoginForm'.
      */
     String STATE_ID_VIEW_LOGIN_FORM = "viewLoginForm";
+
+    /**
+     * The state 'unavailable'.
+     */
+    String STATE_ID_UNAVAILABLE = "unavailable";
 
     /**
      * The state 'serviceAuthorizationCheck'.
@@ -343,6 +375,16 @@ public interface CasWebflowConstants {
     String STATE_ID_MFA_FAILURE = "mfaFailure";
 
     /**
+     * The state 'deny'.
+     */
+    String STATE_ID_DENY = "deny";
+
+    /**
+     * The state 'registerDevice'.
+     */
+    String STATE_ID_REGISTER_DEVICE = "registerDevice";
+
+    /**
      * The state 'serviceUnauthorizedCheck'.
      */
     String STATE_ID_SERVICE_UNAUTHZ_CHECK = "serviceUnauthorizedCheck";
@@ -381,10 +423,12 @@ public interface CasWebflowConstants {
      * State id 'acceptableUsagePolicyView.
      */
     String STATE_ID_ACCEPTABLE_USAGE_POLICY_VIEW = "acceptableUsagePolicyView";
+
     /**
      * State id 'aupAcceptedAction.
      */
     String STATE_ID_AUP_ACCEPTED = "aupAcceptedAction";
+
     /**
      * State id 'acceptableUsagePolicyCheck.
      */
@@ -508,37 +552,54 @@ public interface CasWebflowConstants {
     /**
      * The state id 'registerDeviceView'.
      */
-    String STATE_ID_REGISTER_DEVICE = "registerDeviceView";
+    String STATE_ID_REGISTER_DEVICE_VIEW = "registerDeviceView";
 
     /**
      * The state id 'spnego'.
      */
     String STATE_ID_SPNEGO = "spnego";
+
     /**
      * The state id 'startSpnegoAuthenticate'.
      */
     String STATE_ID_START_SPNEGO_AUTHENTICATE = "startSpnegoAuthenticate";
+
     /**
      * The state id 'evaluateClientRequest'.
      */
     String STATE_ID_EVALUATE_SPNEGO_CLIENT = "evaluateClientRequest";
+
+    /**
+     * The view state 'casPac4jStopWebflow'.
+     */
+    String STATE_ID_PAC4J_STOP_WEBFLOW = "casPac4jStopWebflow";
+
+    /**
+     * The view state 'casWsFedStopWebflow'.
+     */
+    String STATE_ID_WSFED_STOP_WEBFLOW = "casWsFedStopWebflow";
+
+    /**
+     * The view state 'sendPasswordResetInstructions'.
+     */
+    String STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS = "sendPasswordResetInstructions";
+
+    /**
+     * The view state 'sendForgotUsernameInstructions'.
+     */
+    String STATE_ID_FORGOT_USERNAME_INSTRUCTIONS = "sendForgotUsernameInstructions";
+
+    /**
+     * The view state 'passwordChangeAction'.
+     */
+    String STATE_ID_PASSWORD_CHANGE_ACTION = "passwordChangeAction";
 
     /*
      ****************************************
      * Views.
      ****************************************
      */
-
-    /**
-     * The view state 'casPac4jStopWebflow'.
-     */
-    String VIEW_ID_PAC4J_STOP_WEBFLOW = "casPac4jStopWebflow";
-
-    /**
-     * The view state 'casWsFedStopWebflow'.
-     */
-    String VIEW_ID_WSFED_STOP_WEBFLOW = "casWsFedStopWebflow";
-
+    
     /**
      * The view state 'error'.
      */
@@ -643,6 +704,13 @@ public interface CasWebflowConstants {
      * View name used for form-login into admin/actuator endpoints.
      */
     String VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW = "casAdminLoginView";
+
+    /**
+     * View id 'casDelegatedAuthnErrorView'.
+     */
+    String VIEW_ID_DELEGATED_AUTHN_ERROR_VIEW = "casDelegatedAuthnErrorView";
+
+
     /*
      ****************************************
      * Decisions.
@@ -679,6 +747,10 @@ public interface CasWebflowConstants {
      */
     String VAR_ID_MFA_PROVIDER_ID = "mfaProviderId";
 
+    /**
+     * The flow var id 'mfaTrustRecord'.
+     */
+    String VAR_ID_MFA_TRUST_RECORD = "mfaTrustRecord";
 
     /**
      * Event attribute id 'authenticationWarnings'.
@@ -690,6 +762,31 @@ public interface CasWebflowConstants {
      * Actions.
      ****************************************
      */
+
+    /**
+     * Action id 'validateCaptchaAction'.
+     */
+    String ACTION_ID_VALIDATE_CAPTCHA = "validateCaptchaAction";
+    /**
+     * Action id 'initializeLoginAction'.
+     */
+    String ACTION_ID_INIT_LOGIN_ACTION = "initializeLoginAction";
+
+    /**
+     * Action id 'initializeCaptchaAction'.
+     */
+    String ACTION_ID_INIT_CAPTCHA = "initializeCaptchaAction";
+
+    /**
+     * Action id 'validateCaptchaAction'.
+     */
+    String ACTION_ID_PASSWORD_RESET_VALIDATE_CAPTCHA = "passwordResetValidateCaptchaAction";
+    
+    /**
+     * Action id 'passwordResetInitializeCaptchaAction'.
+     */
+    String ACTION_ID_PASSWORD_RESET_INIT_CAPTCHA = "passwordResetInitializeCaptchaAction";
+
     /**
      * Action id 'renderLoginFormAction'.
      */
@@ -785,7 +882,7 @@ public interface CasWebflowConstants {
      *
      * @deprecated Since 6.2
      */
-    @Deprecated(since = "6.2")
+    @Deprecated(since = "6.2.0")
     String ACTION_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
 
     /**

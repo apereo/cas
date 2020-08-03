@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -36,6 +37,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * This is {@link BaseSurrogateInitialAuthenticationActionTests}.
@@ -49,6 +51,7 @@ import org.springframework.context.annotation.Bean;
     MailSenderAutoConfiguration.class,
     SurrogateAuthenticationConfiguration.class,
     SurrogateAuthenticationWebflowConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreHttpConfiguration.class,
@@ -74,15 +77,13 @@ import org.springframework.context.annotation.Bean;
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
-}, properties = {
-    "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
+}, properties = 
+    "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate"
+)
 public class BaseSurrogateInitialAuthenticationActionTests {
     @TestConfiguration
+    @Lazy(false)
     public static class TestAuthenticationConfiguration {
-
         @Bean
         public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() {
             return plan -> plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler(CollectionUtils.wrap("casuser", "Mellon")));

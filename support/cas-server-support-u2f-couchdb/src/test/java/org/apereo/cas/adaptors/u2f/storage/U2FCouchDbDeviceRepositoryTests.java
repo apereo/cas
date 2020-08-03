@@ -11,11 +11,14 @@ import lombok.Getter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link U2FCouchDbDeviceRepositoryTests}.
@@ -29,11 +32,13 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCouchDbCoreConfiguration.class,
     AopAutoConfiguration.class,
     U2FConfiguration.class,
-    RefreshAutoConfiguration.class},
+    RefreshAutoConfiguration.class
+},
     properties = {
-        "cas.authn.mfa.u2f.couchDb.asynchronous=false",
-        "cas.authn.mfa.u2f.couchDb.username=cas",
-        "cas.authn.mfa.u2f.couchdb.password=password"
+        "cas.authn.mfa.u2f.couch-db.asynchronous=false",
+        "cas.authn.mfa.u2f.couch-db.caching=false",
+        "cas.authn.mfa.u2f.couch-db.username=cas",
+        "cas.authn.mfa.u2f.couch-db.password=password"
     })
 @Getter
 @EnabledIfPortOpen(port = 5984)
@@ -51,6 +56,7 @@ public class U2FCouchDbDeviceRepositoryTests extends AbstractU2FDeviceRepository
     private U2FDeviceRegistrationCouchDbRepository couchDbRepository;
 
     @BeforeEach
+    @Override
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
@@ -58,7 +64,13 @@ public class U2FCouchDbDeviceRepositoryTests extends AbstractU2FDeviceRepository
 
     @AfterEach
     public void tearDown() {
+        deviceRepository.removeAll();
         couchDbRepository.deleteAll();
         couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
+    }
+
+    @Test
+    public void verifyOperation() {
+        assertNotNull(deviceRepository);
     }
 }

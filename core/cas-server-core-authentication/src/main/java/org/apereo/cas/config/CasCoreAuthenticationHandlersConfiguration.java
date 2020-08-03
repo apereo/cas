@@ -67,8 +67,9 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
-    @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
     @Bean
+    @RefreshScope
     public AuthenticationHandler proxyAuthenticationHandler() {
         return new HttpBasedServiceCredentialsAuthenticationHandler(null,
             servicesManager.getObject(),
@@ -78,18 +79,21 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
     @ConditionalOnMissingBean(name = "proxyPrincipalFactory")
     @Bean
+    @RefreshScope
     public PrincipalFactory proxyPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "proxyPrincipalResolver")
     @Bean
+    @RefreshScope
     public PrincipalResolver proxyPrincipalResolver() {
         return new ProxyingPrincipalResolver(proxyPrincipalFactory());
     }
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "acceptUsersAuthenticationHandler")
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
         val props = casProperties.getAuthn().getAccept();
         val h = new AcceptUsersAuthenticationHandler(props.getName(),
@@ -117,39 +121,41 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
     @ConditionalOnMissingBean(name = "acceptUsersPrincipalFactory")
     @Bean
+    @RefreshScope
     public PrincipalFactory acceptUsersPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-    private Map<String, String> getParsedUsers() {
-        val pattern = Pattern.compile("::");
-        val usersProperty = casProperties.getAuthn().getAccept().getUsers();
-
-        if (StringUtils.isNotBlank(usersProperty) && usersProperty.contains(pattern.pattern())) {
-            return Stream.of(usersProperty.split(","))
-                .map(pattern::split)
-                .collect(Collectors.toMap(userAndPassword -> userAndPassword[0], userAndPassword -> userAndPassword[1]));
-        }
-        return new HashMap<>(0);
-    }
-
     @ConditionalOnMissingBean(name = "proxyAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
     public AuthenticationEventExecutionPlanConfigurer proxyAuthenticationEventExecutionPlanConfigurer() {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(proxyAuthenticationHandler(), proxyPrincipalResolver());
     }
 
     @ConditionalOnMissingBean(name = "acceptPasswordPolicyConfiguration")
     @Bean
+    @RefreshScope
     public PasswordPolicyContext acceptPasswordPolicyConfiguration() {
         return new PasswordPolicyContext();
     }
 
     @ConditionalOnMissingBean(name = "jaasPasswordPolicyConfiguration")
     @Bean
+    @RefreshScope
     public PasswordPolicyContext jaasPasswordPolicyConfiguration() {
         return new PasswordPolicyContext();
+    }
+
+    private Map<String, String> getParsedUsers() {
+        val usersProperty = casProperties.getAuthn().getAccept().getUsers();
+        if (StringUtils.isNotBlank(usersProperty) && usersProperty.contains("::")) {
+            val pattern = Pattern.compile("::");
+            return Stream.of(usersProperty.split(","))
+                .map(pattern::split)
+                .collect(Collectors.toMap(userAndPassword -> userAndPassword[0], userAndPassword -> userAndPassword[1]));
+        }
+        return new HashMap<>(0);
     }
 
     /**
@@ -165,12 +171,14 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
         @ConditionalOnMissingBean(name = "jaasPrincipalFactory")
         @Bean
+        @RefreshScope
         public PrincipalFactory jaasPrincipalFactory() {
             return PrincipalFactoryUtils.newPrincipalFactory();
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "jaasPersonDirectoryPrincipalResolvers")
+        @RefreshScope
         public List<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers() {
             val personDirectory = casProperties.getPersonDirectory();
             return casProperties.getAuthn().getJaas()
@@ -227,8 +235,10 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
         @ConditionalOnMissingBean(name = "jaasAuthenticationEventExecutionPlanConfigurer")
         @Bean
+        @RefreshScope
         public AuthenticationEventExecutionPlanConfigurer jaasAuthenticationEventExecutionPlanConfigurer() {
-            return plan -> plan.registerAuthenticationHandlerWithPrincipalResolvers(jaasAuthenticationHandlers(), jaasPersonDirectoryPrincipalResolvers());
+            return plan -> plan.registerAuthenticationHandlerWithPrincipalResolvers(jaasAuthenticationHandlers(),
+                jaasPersonDirectoryPrincipalResolvers());
         }
     }
 }

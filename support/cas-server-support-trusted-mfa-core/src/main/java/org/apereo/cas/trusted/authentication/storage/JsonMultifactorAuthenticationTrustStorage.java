@@ -1,7 +1,11 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,12 +16,14 @@ import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
@@ -29,29 +35,39 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
     private static final int MAP_SIZE = 8;
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private final Resource location;
 
     private Map<String, MultifactorAuthenticationTrustRecord> storage;
 
-    public JsonMultifactorAuthenticationTrustStorage(final Resource location) {
+    public JsonMultifactorAuthenticationTrustStorage(final TrustedDevicesMultifactorProperties properties,
+                                                     final CipherExecutor<Serializable, String> cipherExecutor,
+                                                     final Resource location,
+                                                     final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy) {
+        super(properties, cipherExecutor, keyGenerationStrategy);
         this.location = location;
         readTrustedRecordsFromResource();
     }
-    
+
     @Override
-    public void expire(final String key) {
+    public void remove(final String key) {
         storage.keySet().removeIf(k -> k.equalsIgnoreCase(key));
         writeTrustedRecordsToResource();
     }
 
     @Override
-    public void expire(final LocalDateTime onOrBefore) {
+    @SuppressWarnings("JdkObsolete")
+    public void remove(final ZonedDateTime expirationDate) {
         val results = storage
             .values()
             .stream()
-            .filter(entry -> entry.getRecordDate().isEqual(onOrBefore) || entry.getRecordDate().isBefore(onOrBefore))
+            .filter(entry -> entry.getExpirationDate() != null)
+            .filter(entry -> {
+                val expDate = DateTimeUtils.dateOf(expirationDate);
+                return expDate.compareTo(entry.getExpirationDate()) >= 0;
+            })
             .sorted()
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
@@ -64,7 +80,14 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     @Override
+    public Set<? extends MultifactorAuthenticationTrustRecord> getAll() {
+        remove();
+        return new TreeSet<>(storage.values());
+    }
+
+    @Override
     public MultifactorAuthenticationTrustRecord get(final long id) {
+        remove();
         return storage
             .values()
             .stream()
@@ -73,10 +96,10 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
             .findFirst()
             .orElse(null);
     }
-    
+
     @Override
-    public Set<? extends MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
-        expire(onOrAfterDate);
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final ZonedDateTime onOrAfterDate) {
+        remove();
         return storage
             .values()
             .stream()
@@ -87,6 +110,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal) {
+        remove();
         return storage
             .values()
             .stream()
@@ -97,7 +121,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
 
     @Override
-    public MultifactorAuthenticationTrustRecord setInternal(final MultifactorAuthenticationTrustRecord record) {
+    public MultifactorAuthenticationTrustRecord saveInternal(final MultifactorAuthenticationTrustRecord record) {
         this.storage.put(record.getRecordKey(), record);
         writeTrustedRecordsToResource();
         return record;

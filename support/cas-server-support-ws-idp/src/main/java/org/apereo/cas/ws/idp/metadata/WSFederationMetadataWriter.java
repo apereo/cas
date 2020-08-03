@@ -49,7 +49,8 @@ public class WSFederationMetadataWriter {
         try {
             val wsfedIdp = config.getAuthn().getWsfedIdp();
             val sts = wsfedIdp.getSts();
-            val prop = CryptoUtils.getSecurityProperties(sts.getRealm().getKeystoreFile(), sts.getRealm().getKeystorePassword(), sts.getRealm().getKeystoreAlias());
+            val prop = CryptoUtils.getSecurityProperties(sts.getRealm().getKeystoreFile(),
+                sts.getRealm().getKeystorePassword(), sts.getRealm().getKeystoreAlias());
             val crypto = CryptoFactory.getInstance(prop);
             val writer = new W3CDOMStreamWriter();
             writer.writeStartDocument(StandardCharsets.UTF_8.name(), "1.0");
@@ -63,7 +64,7 @@ public class WSFederationMetadataWriter {
             writer.writeNamespace("wsa", WS_ADDRESSING_NS);
             writer.writeNamespace("auth", WS_FEDERATION_NS);
             writer.writeNamespace("xsi", SCHEMA_INSTANCE_NS);
-            val stsUrl = config.getServer().getPrefix().concat(WSFederationConstants.ENDPOINT_STS).concat(wsfedIdp.getIdp().getRealmName());
+            val stsUrl = config.getServer().getPrefix().concat(WSFederationConstants.BASE_ENDPOINT_STS).concat(wsfedIdp.getIdp().getRealmName());
             writeFederationMetadata(writer, idpEntityId, stsUrl, crypto);
             writer.writeEndElement();
             writer.writeEndDocument();

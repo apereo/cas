@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -38,7 +40,7 @@ public class JdbcDataSourceHealthIndicator extends AbstractPoolHealthIndicator {
                 return builder.down();
             });
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             return builder.outOfService().withException(e);
         }
     }

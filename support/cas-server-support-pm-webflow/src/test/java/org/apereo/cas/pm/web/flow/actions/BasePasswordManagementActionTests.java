@@ -9,6 +9,8 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -28,6 +30,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +51,7 @@ import org.springframework.webflow.execution.Action;
 @SpringBootTest(classes = {
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class,
+    RefreshAutoConfiguration.class,
     PasswordManagementConfiguration.class,
     PasswordManagementWebflowConfiguration.class,
     CasCoreServicesConfiguration.class,
@@ -55,7 +59,6 @@ import org.springframework.webflow.execution.Action;
     CasCoreTicketsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
-    RefreshAutoConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -71,16 +74,19 @@ import org.springframework.webflow.execution.Action;
     CasCoreWebConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasCoreHttpConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
+    CasCoreMultifactorAuthenticationConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasWebflowContextConfiguration.class
 }, properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
-
+    
     "cas.authn.pm.enabled=true",
     "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
     "cas.authn.pm.reset.mail.from=cas@example.org",
-
-    "cas.authn.pm.reset.securityQuestionsEnabled=true"
+    "cas.authn.pm.forgot-username.mail.from=cas@example.org",
+    "cas.authn.pm.reset.security-questions-enabled=true"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class BasePasswordManagementActionTests {

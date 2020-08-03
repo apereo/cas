@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RequiredArgsConstructor
 @NoArgsConstructor(force = true)
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> {
 
     private final String openIdPrefixUrl;

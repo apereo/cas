@@ -42,7 +42,7 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureBefore(CasOAuthUmaConfiguration.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-@ConditionalOnProperty(name = "cas.authn.uma.resourceSet.jpa.url")
+@ConditionalOnProperty(name = "cas.authn.uma.resource-set.jpa.url")
 public class CasOAuthUmaJpaConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -84,6 +84,7 @@ public class CasOAuthUmaJpaConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "dataSourceUma")
+    @RefreshScope
     public DataSource dataSourceUma() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getUma().getResourceSet().getJpa());
     }

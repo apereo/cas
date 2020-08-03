@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.support;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("Ldap")
 public class DefaultLdapAccountStateHandlerTests {
     @Test
     public void verifyOperation() {

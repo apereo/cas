@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.*;
  * @author Travis Schmidt
  * @since 6.1.0
  */
+@Tag("RegisteredService")
 public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
 
     @Test

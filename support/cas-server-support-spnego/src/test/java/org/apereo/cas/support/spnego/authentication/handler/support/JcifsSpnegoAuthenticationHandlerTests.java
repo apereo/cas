@@ -11,6 +11,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.security.GeneralSecurityException;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.*;
  * @author Arnaud Lesueur
  * @since 4.2.0
  */
+@Tag("Spnego")
 public class JcifsSpnegoAuthenticationHandlerTests {
 
     private static final String USERNAME = "Username";

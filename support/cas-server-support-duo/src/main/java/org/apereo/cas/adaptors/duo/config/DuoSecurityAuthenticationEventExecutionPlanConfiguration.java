@@ -101,12 +101,15 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "prepareDuoWebLoginFormAction")
     public Action prepareDuoWebLoginFormAction() {
         return new DuoSecurityPrepareWebLoginFormAction(applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "determineDuoUserAccountAction")
     @Bean
+    @RefreshScope
     public Action determineDuoUserAccountAction() {
         return new DuoSecurityDetermineUserAccountAction(applicationContext);
     }
@@ -153,10 +156,8 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer duoMultifactorWebflowConfigurer() {
-        val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
         return new DuoSecurityMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
-            deviceRegistrationEnabled,
             applicationContext,
             casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));

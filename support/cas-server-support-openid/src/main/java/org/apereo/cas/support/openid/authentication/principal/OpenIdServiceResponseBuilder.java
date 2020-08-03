@@ -9,6 +9,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.Assertion;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ import java.util.Map;
  * @since 4.2
  */
 @Slf4j
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
     private static final long serialVersionUID = -4581238964007702423L;
@@ -93,7 +94,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
                 successFullAuthentication = false;
             }
         } catch (final AbstractTicketException e) {
-            LOGGER.error("Could not validate ticket : [{}]", e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             successFullAuthentication = false;
         }
         val id = determineIdentity(service, assertion);
@@ -158,7 +159,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
                 }
             }
         } catch (final MessageException e) {
-            LOGGER.error("Message exception : [{}]", e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

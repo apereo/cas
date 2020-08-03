@@ -1,5 +1,7 @@
 package org.apereo.cas.consent;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 
 /**
@@ -8,6 +10,7 @@ import java.util.Arrays;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Getter
 public enum ConsentReminderOptions {
     /**
      * Always ask for consent.
@@ -41,9 +44,5 @@ public enum ConsentReminderOptions {
             .filter(v -> v.getValue() == value)
             .findFirst()
             .orElseThrow(IllegalArgumentException::new);
-    }
-
-    public int getValue() {
-        return value;
     }
 }

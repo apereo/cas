@@ -20,6 +20,7 @@ import org.jose4j.jwk.PublicJsonWebKey;
 
 import java.io.Serializable;
 import java.security.Key;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -128,6 +129,18 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
                     setSecretKeyEncryptionKey(getEncryptionKeyForDecryption(registeredService));
                 }
                 return super.decode(value, parameters);
+            }
+
+            @Override
+            protected byte[] sign(final byte[] value) {
+                if (EncodingUtils.isJsonWebKey(signingKey)) {
+                    val jwks = defaultJsonWebKeystoreCache.get(
+                            OidcRegisteredServiceJwtAccessTokenCipherExecutor.this.issuer);
+                    if (Objects.requireNonNull(jwks).isPresent()) {
+                        return signWith(value, jwks.get().getAlgorithm());
+                    }
+                }
+                return super.sign(value);
             }
         };
         if (EncodingUtils.isJsonWebKey(encryptionKey) || EncodingUtils.isJsonWebKey(signingKey)) {

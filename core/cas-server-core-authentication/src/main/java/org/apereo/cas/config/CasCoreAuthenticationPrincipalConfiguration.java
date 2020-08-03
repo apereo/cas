@@ -1,17 +1,16 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.ChainingPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalResolutionExecutionPlan;
-import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalElectionStrategyConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
@@ -19,8 +18,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -47,20 +44,12 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
-    @Qualifier("attributeRepositories")
-    private ObjectProvider<List<IPersonAttributeDao>> attributeRepositories;
-
-    @Autowired
-    @Qualifier("attributeRepository")
-    private ObjectProvider<IPersonAttributeDao> attributeRepository;
-
     @ConditionalOnMissingBean(name = "principalElectionStrategy")
     @Bean
     @RefreshScope
     @Autowired
     public PrincipalElectionStrategy principalElectionStrategy(final List<PrincipalElectionStrategyConfigurer> configurers) {
-        LOGGER.trace("building principal election strategies from [{}]", configurers);
+        LOGGER.trace("Building principal election strategies from [{}]", configurers);
         val chain = new ChainingPrincipalElectionStrategy();
         AnnotationAwareOrderComparator.sortIfNecessary(configurers);
 
@@ -87,7 +76,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "globalPrincipalAttributeRepository")
-    public PrincipalAttributesRepository globalPrincipalAttributeRepository() {
+    public RegisteredServicePrincipalAttributesRepository globalPrincipalAttributeRepository() {
         val props = casProperties.getAuthn().getAttributeRepository();
         val cacheTime = props.getExpirationTime();
         if (cacheTime <= 0) {
@@ -97,23 +86,13 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         return new CachingPrincipalAttributesRepository(props.getExpirationTimeUnit().toUpperCase(), cacheTime);
     }
 
-    @RefreshScope
-    @Bean
-    @ConditionalOnMissingBean(name = "personDirectoryAttributeRepositoryPrincipalResolver")
-    public PrincipalResolver personDirectoryAttributeRepositoryPrincipalResolver() {
-        val personDirectory = casProperties.getPersonDirectory();
-        return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(principalFactory(),
-            attributeRepository.getObject(),
-            personDirectory);
-    }
 
     @Bean
     @ConditionalOnMissingBean(name = "defaultPrincipalResolver")
     @RefreshScope
     @Autowired
     public PrincipalResolver defaultPrincipalResolver(final List<PrincipalResolutionExecutionPlanConfigurer> configurers,
-                                                      @Qualifier("principalElectionStrategy")
-                                                      final PrincipalElectionStrategy principalElectionStrategy) {
+                                                      @Qualifier("principalElectionStrategy") final PrincipalElectionStrategy principalElectionStrategy) {
         val plan = new DefaultPrincipalResolutionExecutionPlan();
         val sortedConfigurers = new ArrayList<PrincipalResolutionExecutionPlanConfigurer>(configurers);
         AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
@@ -128,18 +107,5 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         val resolver = new ChainingPrincipalResolver(principalElectionStrategy);
         resolver.setChain(registeredPrincipalResolvers);
         return resolver;
-    }
-
-    @ConditionalOnMissingBean(name = "casCorePrincipalResolutionExecutionPlanConfigurer")
-    @Bean
-    public PrincipalResolutionExecutionPlanConfigurer casCorePrincipalResolutionExecutionPlanConfigurer() {
-        return plan -> {
-            if (attributeRepositories.getObject().isEmpty()) {
-                LOGGER.debug("Attribute repository sources are not available for person-directory principal resolution");
-            } else {
-                LOGGER.trace("Attribute repository sources are defined and available for person-directory principal resolution chain. ");
-                plan.registerPrincipalResolver(personDirectoryAttributeRepositoryPrincipalResolver());
-            }
-        };
     }
 }

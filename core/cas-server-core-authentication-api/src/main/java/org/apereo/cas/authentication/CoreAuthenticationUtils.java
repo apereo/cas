@@ -1,5 +1,9 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.adaptive.intel.DefaultIPAddressIntelligenceService;
+import org.apereo.cas.authentication.adaptive.intel.GroovyIPAddressIntelligenceService;
+import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceService;
+import org.apereo.cas.authentication.adaptive.intel.RestfulIPAddressIntelligenceService;
 import org.apereo.cas.authentication.policy.AllAuthenticationHandlersSucceededAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
@@ -7,7 +11,6 @@ import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
-import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -15,6 +18,7 @@ import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipa
 import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPolicyHandlingStrategy;
+import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
@@ -277,7 +281,7 @@ public class CoreAuthenticationUtils {
     public static AuthenticationPasswordPolicyHandlingStrategy newPasswordPolicyHandlingStrategy(final PasswordPolicyProperties properties,
                                                                                                  final ApplicationContext applicationContext) {
         if (properties.getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
-            LOGGER.debug("Created password policy handling strategy based on blacklisted authentication result codes");
+            LOGGER.debug("Created password policy handling strategy based on blocked authentication result codes");
             return new RejectResultCodePasswordPolicyHandlingStrategy<>();
         }
 
@@ -349,11 +353,6 @@ public class CoreAuthenticationUtils {
             return CollectionUtils.wrapList(new NotPreventedAuthenticationPolicy());
         }
 
-        if (policyProps.getUniquePrincipal().isEnabled()) {
-            LOGGER.trace("Activating authentication policy [{}]", UniquePrincipalAuthenticationPolicy.class.getSimpleName());
-            return CollectionUtils.wrapList(new UniquePrincipalAuthenticationPolicy());
-        }
-
         if (!policyProps.getGroovy().isEmpty()) {
             LOGGER.trace("Activating authentication policy [{}]", GroovyScriptAuthenticationPolicy.class.getSimpleName());
             return policyProps.getGroovy()
@@ -375,5 +374,26 @@ public class CoreAuthenticationUtils {
             return CollectionUtils.wrapList(new AtLeastOneCredentialValidatedAuthenticationPolicy(policyProps.getAny().isTryAll()));
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * New ip address intelligence service.
+     *
+     * @param adaptive the adaptive
+     * @return the ip address intelligence service
+     */
+    public static IPAddressIntelligenceService newIpAddressIntelligenceService(final AdaptiveAuthenticationProperties adaptive) {
+        val intel = adaptive.getIpIntel();
+
+        if (StringUtils.isNotBlank(intel.getRest().getUrl())) {
+            return new RestfulIPAddressIntelligenceService(adaptive);
+        }
+        if (intel.getGroovy().getLocation() != null) {
+            return new GroovyIPAddressIntelligenceService(adaptive);
+        }
+        if (StringUtils.isNotBlank(intel.getBlackDot().getEmailAddress())) {
+            return new RestfulIPAddressIntelligenceService(adaptive);
+        }
+        return new DefaultIPAddressIntelligenceService(adaptive);
     }
 }

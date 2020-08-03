@@ -34,8 +34,7 @@ There is no need for special ceremony to create separate issues. The pull reques
 | Version         | Reference
 |------------|-----------------------------------
 | ![](https://img.shields.io/badge/Development-WIP-blue.svg?style=flat) | [Link](https://apereo.github.io/cas/development)
-| ![](https://img.shields.io/badge/6.1.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/6.1.x)
-| ![](https://img.shields.io/badge/6.0.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/6.0.x)
+| ![](https://img.shields.io/badge/6.2.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/6.2.x)
 
 Additional resources are available as follows:
 
@@ -50,8 +49,7 @@ Additional resources are available as follows:
 [![Contributing Guide](https://img.shields.io/badge/Contributions-guide-green.svg?style=flat)][contribute]
 [![Open Pull Requests](https://img.shields.io/github/issues-pr/apereo/cas.svg?style=flat)][contribute]
 [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg)](https://codecov.io/gh/apereo/cas)
-[![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas)
-[![Build status](https://ci.appveyor.com/api/projects/status/0tl79vsqd2ei9bng?svg=true)](https://ci.appveyor.com/project/apereo/cas)
+![CAS Build](https://github.com/apereo/cas/workflows/Build/badge.svg)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-core/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-core)
 [![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
 
@@ -76,6 +74,7 @@ The following features are supported by the CAS project:
 * Administrative UIs to manage logging, monitoring, statistics, configuration, client registration and more.
 * Global and per-application user interface theme and branding.
 * Password management and password policy enforcement.
+* Deployment options using Apache Tomcat, Jetty, Undertow, packaged and running as Docker containers.
 
 The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/spring-boot) and
 [Spring Cloud](http://projects.spring.io/spring-cloud/).
