@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
     AopAutoConfiguration.class
 }, properties = {"cas.something=else", "cas.hello[0]=world"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("CasConfiguration")
 public class CasConfigurationPropertiesValidatorTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

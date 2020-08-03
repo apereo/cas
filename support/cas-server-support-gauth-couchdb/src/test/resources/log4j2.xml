@@ -6,7 +6,8 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo.cas" level="off" />
+        <Logger name="org.apereo.cas" level="error" />
+        <Logger name="org.ektorp" level="warn" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

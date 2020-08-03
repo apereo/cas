@@ -86,7 +86,7 @@ public class DefaultResponse implements Response {
             })
             .collect(Collectors.joining("&"));
         if (!(params == null || params.isEmpty())) {
-            builder.append(url.contains("?") ? "&" : "?");
+            builder.append(fragmentSplit.get(0).contains("?") ? "&" : "?");
             builder.append(params);
         }
         if (fragmentSplit.size() > 1) {
@@ -109,7 +109,7 @@ public class DefaultResponse implements Response {
      */
     private static String sanitizeUrl(final String url) {
         val m = NON_PRINTABLE.matcher(url);
-        val sb = new StringBuffer(url.length());
+        val sb = new StringBuilder(url.length());
         var hasNonPrintable = false;
         while (m.find()) {
             m.appendReplacement(sb, " ");

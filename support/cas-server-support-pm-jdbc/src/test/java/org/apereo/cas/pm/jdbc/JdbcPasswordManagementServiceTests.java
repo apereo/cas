@@ -25,19 +25,25 @@ public class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManageme
     public void verifyUserEmailCanBeFound() {
         val email = passwordChangeService.findEmail("casuser");
         assertEquals("casuser@example.org", email);
+        assertNull(passwordChangeService.findEmail("unknown"));
+        assertNull(passwordChangeService.findEmail("baduser"));
+    }
+
+    @Test
+    public void verifyUserCanBeFound() {
+        val user = passwordChangeService.findUsername("casuser@example.org");
+        assertEquals("casuser", user);
+        assertNull(passwordChangeService.findUsername("unknown"));
     }
 
     @Test
     public void verifyPhoneNumberCanBeFound() {
         val phone = passwordChangeService.findPhone("casuser");
         assertEquals("1234567890", phone);
+        assertNull(passwordChangeService.findPhone("whatever"));
+        assertNull(passwordChangeService.findPhone("baduser"));
     }
 
-    @Test
-    public void verifyNullReturnedIfUserEmailCannotBeFound() {
-        val email = passwordChangeService.findEmail("unknown");
-        assertNull(email);
-    }
 
     @Test
     public void verifyUserQuestionsCanBeFound() {
@@ -54,10 +60,10 @@ public class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManageme
         bean.setConfirmedPassword("newPassword1");
         bean.setUsername(c.getUsername());
         bean.setPassword("newPassword1");
-        val res = passwordChangeService.change(c, bean);
-        assertTrue(res);
+        assertTrue(passwordChangeService.change(c, bean));
+        assertFalse(passwordHistoryService.fetch(c.getUsername()).isEmpty());
+        assertFalse(passwordChangeService.change(c, bean));
     }
-
 
     @BeforeEach
     public void before() {
@@ -68,6 +74,7 @@ public class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManageme
             jdbcTemplate.execute("create table pm_table_accounts (id int, userid varchar(255),"
                 + "password varchar(255), email varchar(255), phone varchar(255));");
             jdbcTemplate.execute("insert into pm_table_accounts values (100, 'casuser', 'password', 'casuser@example.org', '1234567890');");
+            jdbcTemplate.execute("insert into pm_table_accounts values (100, 'baduser', 'password', '', '');");
 
             jdbcTemplate.execute("create table pm_table_questions (id int, userid varchar(255),"
                 + " question varchar(255), answer varchar(255));");

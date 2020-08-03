@@ -1,4 +1,7 @@
 description = "Apereo CAS Couchbase Audit Support"
+ext {
+    maxParallelForksForTests = 1
+}
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-audit")

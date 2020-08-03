@@ -1,10 +1,8 @@
 package org.apereo.cas.services;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -22,59 +20,37 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ServiceRegistryInitializer {
     private final ServiceRegistry jsonServiceRegistry;
-    private final ServiceRegistry serviceRegistry;
+
+    private final ChainingServiceRegistry serviceRegistry;
+
     private final ServicesManager servicesManager;
 
     /**
      * Init service registry if necessary.
      */
-    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     public void initServiceRegistryIfNecessary() {
-        val size = this.serviceRegistry.size();
-        LOGGER.trace("Service registry contains [{}] service definition(s)", size);
+        LOGGER.debug("Total count of service registries is [{}] which contain [{}] service definition(s)",
+            serviceRegistry.countServiceRegistries(), serviceRegistry.size());
 
-        LOGGER.warn("Service registry [{}] will be auto-initialized from JSON service definitions. "
-            + "This behavior is only useful for testing purposes and MAY NOT be appropriate for production. "
-            + "Consider turning off this behavior via the setting [cas.serviceRegistry.initFromJson=false] "
-            + "and explicitly register definitions in the services registry.", this.serviceRegistry.getName());
-        
-        val servicesLoaded = this.jsonServiceRegistry.load();
-        val servicesList = servicesLoaded.stream().map(RegisteredService::getName).collect(Collectors.joining(","));
-        LOGGER.debug("Loaded JSON services are [{}]", servicesList);
+        LOGGER.info("Service registries [{}] will be auto-initialized from JSON service definitions. "
+            + "You can turn off this behavior via the setting [cas.service-registry.init-from-json=false] "
+            + "and explicitly register definitions in the services registry.", serviceRegistry.getName());
+
+        val servicesLoaded = jsonServiceRegistry.load();
+        if (LOGGER.isDebugEnabled()) {
+            val servicesList = servicesLoaded
+                .stream()
+                .map(RegisteredService::getName)
+                .collect(Collectors.joining(","));
+            LOGGER.debug("Loaded JSON service definitions are [{}]", servicesList);
+        }
 
         servicesLoaded
             .stream()
             .sorted(Comparator.naturalOrder())
-            .forEach(r -> {
-                if (!findExistingMatchForService(r)) {
-                    LOGGER.debug("Initializing service registry with the [{}] JSON service definition...", r.getName());
-                    this.serviceRegistry.save(r);
-                }
-            });
+            .forEach(serviceRegistry::synchronize);
         this.servicesManager.load();
-        LOGGER.info("Service registry [{}] contains [{}] service definitions", this.serviceRegistry.getName(), this.servicesManager.count());
-    }
-
-    /**
-     * Find existing match for service.
-     *
-     * @param r the r
-     * @return the boolean
-     */
-    protected boolean findExistingMatchForService(final RegisteredService r) {
-        if (StringUtils.isNotBlank(r.getServiceId())) {
-            val match = this.serviceRegistry.findServiceByExactServiceId(r.getServiceId());
-            if (match != null) {
-                LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match.getName());
-                return true;
-            }
-        }
-
-        val match = this.serviceRegistry.findServiceById(r.getId());
-        if (match != null) {
-            LOGGER.warn("Skipping [{}] JSON service definition as a matching id [{}] is found in the registry", r.getName(), match.getId());
-            return true;
-        }
-        return false;
+        LOGGER.info("Service registry [{}] contains [{}] service definitions",
+            this.serviceRegistry.getName(), this.servicesManager.count());
     }
 }

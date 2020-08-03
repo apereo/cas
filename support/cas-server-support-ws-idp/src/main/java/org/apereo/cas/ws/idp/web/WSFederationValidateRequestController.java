@@ -27,8 +27,8 @@ import java.util.HashMap;
  */
 @Slf4j
 public class WSFederationValidateRequestController extends BaseWSFederationRequestController {
-    public WSFederationValidateRequestController(final WSFederationRequestConfigurationContext wsFederationRequestConfigurationContext) {
-        super(wsFederationRequestConfigurationContext);
+    public WSFederationValidateRequestController(final WSFederationRequestConfigurationContext ctx) {
+        super(ctx);
     }
 
     /**
@@ -39,7 +39,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
      * @throws Exception the exception
      */
     @GetMapping(path = WSFederationConstants.ENDPOINT_FEDERATION_REQUEST)
-    protected void handleFederationRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
+    public void handleFederationRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         val fedRequest = WSFederationRequest.of(request);
         val wa = fedRequest.getWa();
         if (StringUtils.isBlank(wa)) {
@@ -52,7 +52,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
                 handleLogoutRequest(fedRequest, request, response);
                 break;
             case WSFederationConstants.WSIGNIN10:
-                val targetService = getWsFederationRequestConfigurationContext().getWebApplicationServiceFactory().createService(fedRequest.getWreply());
+                val targetService = getConfigContext().getWebApplicationServiceFactory().createService(fedRequest.getWreply());
                 handleInitialAuthenticationRequest(fedRequest, targetService, response, request);
                 break;
             default:
@@ -65,15 +65,15 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
 
         val logoutUrl = FunctionUtils.doIf(StringUtils.isNotBlank(fedRequest.getWreply()),
             () -> {
-                val service = getWsFederationRequestConfigurationContext().getWebApplicationServiceFactory().createService(fedRequest.getWreply());
+                val service = getConfigContext().getWebApplicationServiceFactory().createService(fedRequest.getWreply());
                 val registeredService = getWsFederationRegisteredService(service);
                 LOGGER.debug("Invoking logout operation for request [{}], redirecting next to [{}] matched against [{}]",
                     fedRequest, fedRequest.getWreply(), registeredService);
-                val logoutParam = getWsFederationRequestConfigurationContext().getCasProperties().getLogout().getRedirectParameter();
-                return getWsFederationRequestConfigurationContext().getCasProperties()
+                val logoutParam = getConfigContext().getCasProperties().getLogout().getRedirectParameter();
+                return getConfigContext().getCasProperties()
                     .getServer().getLogoutUrl().concat("?").concat(logoutParam).concat("=").concat(service.getId());
             },
-            () -> getWsFederationRequestConfigurationContext().getCasProperties().getServer().getLogoutUrl())
+            () -> getConfigContext().getCasProperties().getServer().getLogoutUrl())
             .get();
 
         val authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
@@ -93,7 +93,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
         val serviceUrl = constructServiceUrl(request, response, fedRequest);
         LOGGER.debug("Created service url [{}] mapped to [{}]", serviceUrl, service);
         val renew = shouldRenewAuthentication(fedRequest, request);
-        val initialUrl = CommonUtils.constructRedirectUrl(getWsFederationRequestConfigurationContext().getCasProperties().getServer().getLoginUrl(),
+        val initialUrl = CommonUtils.constructRedirectUrl(getConfigContext().getCasProperties().getServer().getLoginUrl(),
             CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, renew, false);
         LOGGER.debug("Redirecting authN request to [{}]", initialUrl);
         val authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();

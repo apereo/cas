@@ -21,24 +21,19 @@ import lombok.val;
  * @since 4.0.0
  */
 @Slf4j
+@SuppressWarnings("InlineFormatString")
 public class DefaultSingleLogoutMessageCreator implements SingleLogoutMessageCreator {
 
     /**
      * A ticket Id generator.
      */
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator(18);
-
-    /**
-     * The logout request template.
-     */
-    private static final String LOGOUT_REQUEST_TEMPLATE =
-        "<samlp:LogoutRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\"%s\" Version=\"2.0\" "
-            + "IssueInstant=\"%s\"><saml:NameID xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">%s"
-            + "</saml:NameID><samlp:SessionIndex>%s</samlp:SessionIndex></samlp:LogoutRequest>";
-
+    
     @Override
     public SingleLogoutMessage create(final SingleLogoutRequest request) {
-        val logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE,
+        val logoutRequest = String.format("<samlp:LogoutRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\"%s\" Version=\"2.0\" "
+                + "IssueInstant=\"%s\"><saml:NameID xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">%s"
+                + "</saml:NameID><samlp:SessionIndex>%s</samlp:SessionIndex></samlp:LogoutRequest>",
             GENERATOR.getNewTicketId("LR"),
             new ISOStandardDateFormat().getCurrentDateAndTime(),
             request.getTicketGrantingTicket().getAuthentication().getPrincipal().getId(),

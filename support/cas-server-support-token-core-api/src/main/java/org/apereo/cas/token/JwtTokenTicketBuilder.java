@@ -77,7 +77,7 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
         val validUntilDate = DateTimeUtils.dateOf(dt);
 
         val builder = JwtBuilder.JwtRequest.builder();
-        val request = builder.serviceAudience(jwtBuilder.getCasSeverPrefix())
+        val request = builder.serviceAudience(jwtBuilder.getIssuer())
             .registeredService(Optional.empty())
             .issueDate(DateTimeUtils.dateOf(ticketGrantingTicket.getCreationTime()))
             .jwtId(ticketGrantingTicket.getId())

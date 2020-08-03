@@ -53,15 +53,20 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
         fault.setCode(faultCode);
 
         val faultActor = newSoapObject(FaultActor.class);
-        faultActor.setValue(SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
+        faultActor.setURI(SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
         fault.setActor(faultActor);
 
         val faultString = newSoapObject(FaultString.class);
-        faultString.setValue(request.getAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR).toString());
+        val error = request.getAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR);
+        if (error != null) {
+            faultString.setValue(error.toString());
+        } else {
+            faultString.setValue("SOAP failure");
+        }
         fault.setMessage(faultString);
 
         body.getUnknownXMLObjects().add(fault);
-
+        
         val envelope = newSoapObject(Envelope.class);
         val header = newSoapObject(Header.class);
         envelope.setHeader(header);

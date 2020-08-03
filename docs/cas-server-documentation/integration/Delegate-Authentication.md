@@ -6,7 +6,7 @@ category: Authentication
 
 # Delegated Authentication
 
-CAS can act as a client (i.e. service provider or proxy) using the [pac4j security engine](https://github.com/pac4j/pac4j) and delegate the authentication to:
+CAS can act as a client (i.e. service provider or proxy) using the [Pac4j library](https://github.com/pac4j/pac4j) and delegate the authentication to:
 
 * CAS servers
 * SAML2 identity providers
@@ -33,11 +33,37 @@ An identity provider is a server which can authenticate users (like Google, Yaho
 If you want to delegate the CAS authentication to Twitter for example, you have to add an
 OAuth client for the Twitter provider, which will be done automatically for you once provider settings are taught to CAS.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#pac4j-delegated-authn).
-
 Notice that for each OAuth provider, the CAS server is considered as an OAuth client and therefore should be declared as
 an OAuth client at the OAuth provider. After the declaration, a key and a secret is given by the OAuth provider which has
 to be defined in the CAS configuration as well.
+
+### Default
+
+Identity providers for delegated authentication can be registered with CAS using settings. To see the relevant list of 
+CAS properties, please [review this guide](../configuration/Configuration-Properties.html#pac4j-delegated-authn).
+
+### REST
+
+Identity providers for delegated authentication can be provided to CAS using an external REST endpoint. This allows the CAS server to reach to 
+a remote REST endpoint whose responsibility is to produce the following payload in the response body:
+
+```json
+{
+    "callbackUrl": "https://sso.example.org/cas/login",
+    "properties": {
+        "github.id": "...",
+        "github.secret": "...",
+        
+        "cas.loginUrl.1": "...",
+        "cas.protocol.1": "..."
+    }
+}
+```
+
+The syntax and collection of available `properties` in the above payload is controlled by [Pac4j]((https://pac4j.org/docs/index.html). 
+The response that is returned must be accompanied by a 200 status code.
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#pac4j-delegated-authn).
 
 ## User Interface
 

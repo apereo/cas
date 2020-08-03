@@ -2,6 +2,7 @@ package org.apereo.cas.pm;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
@@ -89,11 +90,9 @@ public class BasePasswordManagementService implements PasswordManagementService 
                 LOGGER.error("Token has expired.");
                 return null;
             }
-
-
             return claims.getSubject();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -126,7 +125,7 @@ public class BasePasswordManagementService implements PasswordManagementService 
             LOGGER.debug("Encoding the generated JSON token...");
             return this.cipherExecutor.encode(json);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -155,7 +154,7 @@ public class BasePasswordManagementService implements PasswordManagementService 
      *
      * @param c    the credential
      * @param bean the bean
-     * @return the boolean
+     * @return true/false
      * @throws InvalidPasswordException if new password fails downstream validation
      */
     public boolean changeInternal(final Credential c, final PasswordChangeRequest bean) throws InvalidPasswordException {

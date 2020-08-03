@@ -7,6 +7,7 @@ dependencies {
     implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-services-authentication")
+    implementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-validation-api")
@@ -23,8 +24,7 @@ dependencies {
     implementation project(":support:cas-server-support-saml-idp-ticket")
     
     implementation libraries.casclient
-    implementation libraries.shibidp
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
     implementation libraries.pac4jcore
 
     testImplementation project(":core:cas-server-core-web")

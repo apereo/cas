@@ -23,6 +23,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.persistence.Transient;
 
+import java.io.Serializable;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
 import java.util.Set;
@@ -53,13 +54,13 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
 
     public GroovyScriptAuthenticationPolicy(final String script) {
         this.script = script;
-        initializeWatchableScriptIfNeeded();
     }
 
     @Override
     public boolean isSatisfiedBy(final Authentication auth,
                                  final Set<AuthenticationHandler> authenticationHandlers,
-                                 final ConfigurableApplicationContext applicationContext) throws Exception {
+                                 final ConfigurableApplicationContext applicationContext,
+                                 final Optional<Serializable> assertion) throws Exception {
         initializeWatchableScriptIfNeeded();
         val ex = getScriptExecutionResult(auth);
         if (ex != null && ex.isPresent()) {

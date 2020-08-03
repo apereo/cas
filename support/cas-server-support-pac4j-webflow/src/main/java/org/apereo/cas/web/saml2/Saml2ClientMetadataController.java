@@ -32,7 +32,21 @@ import java.nio.charset.StandardCharsets;
 public class Saml2ClientMetadataController {
 
     private final Clients builtClients;
+
     private final OpenSamlConfigBean openSamlConfigBean;
+
+    @SneakyThrows
+    private static ResponseEntity<String> getSaml2ClientServiceProviderMetadataResponseEntity(final SAML2Client saml2Client) {
+        val headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_XML);
+        saml2Client.init();
+        val md = FileUtils.readFileToString(saml2Client.getConfiguration().getServiceProviderMetadataResource().getFile(), StandardCharsets.UTF_8);
+        return new ResponseEntity<>(md, headers, HttpStatus.OK);
+    }
+
+    private static ResponseEntity<String> getNotAcceptableResponseEntity() {
+        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+    }
 
     /**
      * Gets first service provider metadata.
@@ -84,15 +98,6 @@ public class Saml2ClientMetadataController {
             .orElseGet(Saml2ClientMetadataController::getNotAcceptableResponseEntity);
     }
 
-    @SneakyThrows
-    private static ResponseEntity<String> getSaml2ClientServiceProviderMetadataResponseEntity(final SAML2Client saml2Client) {
-        val headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_XML);
-        saml2Client.init();
-        val md = FileUtils.readFileToString(saml2Client.getConfiguration().getServiceProviderMetadataResource().getFile(), StandardCharsets.UTF_8);
-        return new ResponseEntity<>(md, headers, HttpStatus.OK);
-    }
-
     private ResponseEntity<String> getSaml2ClientIdentityProviderMetadataResponseEntity(final SAML2Client saml2Client) {
         val headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_XML);
@@ -105,9 +110,5 @@ public class Saml2ClientMetadataController {
         val entity = identityProviderMetadataResolver.getEntityDescriptorElement();
         val metadata = SamlUtils.transformSamlObject(openSamlConfigBean, entity).toString();
         return new ResponseEntity<>(metadata, headers, HttpStatus.OK);
-    }
-
-    private static ResponseEntity<String> getNotAcceptableResponseEntity() {
-        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
 }

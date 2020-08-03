@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.factory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicketImpl;
@@ -23,7 +22,7 @@ import java.util.Map;
  * @since 5.3.0
  */
 @RequiredArgsConstructor
-public class DefaultTransientSessionTicketFactory implements TransientSessionTicketFactory {
+public class DefaultTransientSessionTicketFactory implements TransientSessionTicketFactory<TransientSessionTicket> {
     private final ExpirationPolicyBuilder<TransientSessionTicket> expirationPolicyBuilder;
 
     private final UniqueTicketIdGenerator ticketIdGenerator = new DefaultUniqueTicketIdGenerator();
@@ -50,7 +49,7 @@ public class DefaultTransientSessionTicketFactory implements TransientSessionTic
     }
 
     @Override
-    public TicketFactory get(final Class<? extends Ticket> clazz) {
-        return this;
+    public Class<? extends Ticket> getTicketType() {
+        return TransientSessionTicket.class;
     }
 }

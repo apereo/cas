@@ -2,8 +2,7 @@ package org.apereo.cas.trusted.util;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.web.flow.configurer.AbstractMultifactorTrustedDeviceWebflowConfigurer;
+import org.apereo.cas.trusted.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.experimental.UtilityClass;
@@ -21,21 +20,6 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 @UtilityClass
 public class MultifactorAuthenticationTrustUtils {
-
-    /**
-     * Generate key.
-     *
-     * @param r the r
-     * @return the key for this trust record
-     */
-    public static String generateKey(final MultifactorAuthenticationTrustRecord r) {
-        val builder = new StringBuilder(r.getPrincipal());
-        return builder.append('@')
-            .append(r.getRecordDate())
-            .append('@')
-            .append(r.getDeviceFingerprint())
-            .toString();
-    }
 
     /**
      * Generate geography.
@@ -68,7 +52,7 @@ public class MultifactorAuthenticationTrustUtils {
      * Is multifactor authentication trusted in scope boolean.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isMultifactorAuthenticationTrustedInScope(final RequestContext requestContext) {
         return requestContext.getFlashScope().contains(

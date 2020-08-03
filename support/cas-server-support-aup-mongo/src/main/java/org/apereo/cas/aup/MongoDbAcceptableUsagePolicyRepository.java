@@ -3,6 +3,7 @@ package org.apereo.cas.aup;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -43,7 +44,7 @@ public class MongoDbAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
             this.mongoTemplate.updateFirst(query, update, aupProperties.getMongo().getCollection());
             return true;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

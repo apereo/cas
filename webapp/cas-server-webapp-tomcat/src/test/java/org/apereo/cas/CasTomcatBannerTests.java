@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import lombok.val;
 import org.apache.commons.io.output.WriterOutputStream;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class
 })
+@Tag("WebApp")
 public class CasTomcatBannerTests {
     @Autowired
     private Environment environment;

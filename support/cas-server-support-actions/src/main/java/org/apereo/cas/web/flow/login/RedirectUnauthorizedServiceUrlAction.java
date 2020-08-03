@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -27,7 +26,7 @@ import java.net.URI;
 @Getter
 public class RedirectUnauthorizedServiceUrlAction extends AbstractAction {
     private final ServicesManager servicesManager;
-    private final ResourceLoader resourceLoader;
+
     private final ApplicationContext applicationContext;
 
     @Override
@@ -36,7 +35,7 @@ public class RedirectUnauthorizedServiceUrlAction extends AbstractAction {
 
         val url = redirectUrl.toString();
         if (ScriptingUtils.isExternalGroovyScript(url)) {
-            val scriptResource = this.resourceLoader.getResource(url);
+            val scriptResource = applicationContext.getResource(url);
             val registeredService = WebUtils.getRegisteredService(context);
             val args = new Object[]{registeredService, context, this.applicationContext, LOGGER};
             redirectUrl = ScriptingUtils.executeGroovyScript(scriptResource, args, URI.class, true);

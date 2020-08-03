@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,6 +61,8 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
         properties.put("hibernate.connection.useUnicode", Boolean.TRUE);
         properties.put("hibernate.connection.characterEncoding", StandardCharsets.UTF_8.name());
         properties.put("hibernate.connection.charSet", StandardCharsets.UTF_8.name());
+        properties.put(Environment.AUTOCOMMIT, jpaProperties.isAutocommit());
+        properties.put("hibernate.jdbc.time_zone", "UTC");
         if (StringUtils.isNotBlank(jpaProperties.getPhysicalNamingStrategyClassName())) {
             try {
                 val clazz = ClassUtils.getClass(JpaBeans.class.getClassLoader(), jpaProperties.getPhysicalNamingStrategyClassName());
@@ -69,7 +72,7 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
                 }
                 properties.put(Environment.PHYSICAL_NAMING_STRATEGY, namingStrategy);
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                LoggingUtils.error(LOGGER, e);
             }
         }
         properties.putAll(jpaProperties.getProperties());

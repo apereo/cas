@@ -26,7 +26,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class EhcacheProperties implements Serializable {
 
     private static final long serialVersionUID = 7772510035918976450L;

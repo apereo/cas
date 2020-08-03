@@ -39,8 +39,8 @@ public interface ServiceTicket extends Ticket {
     boolean isFromNewLogin();
 
     /**
-     * Method to grant a TicketGrantingTicket from this service to the
-     * authentication. Analogous to the ProxyGrantingTicket.
+     * Method to grant a {@link TicketGrantingTicket} from this service to the
+     * authentication. Analogous to the {@link ProxyGrantingTicket}.
      *
      * @param id               The unique identifier for this ticket.
      * @param authentication   The Authentication we wish to grant a ticket for.

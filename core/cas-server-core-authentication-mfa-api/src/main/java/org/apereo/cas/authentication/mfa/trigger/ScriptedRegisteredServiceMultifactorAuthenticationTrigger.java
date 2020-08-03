@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.GroovyShellScript;
@@ -45,7 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Setter
 @Slf4j
 @RequiredArgsConstructor
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
 
@@ -104,7 +105,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implement
                     scriptCache.put(mfaScript, script);
                     LOGGER.trace("Caching multifactor authentication trigger script as script resource [{}]", resource);
                 } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    LoggingUtils.error(LOGGER, e);
                 }
             }
         }

@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -9,6 +8,7 @@ import org.apache.catalina.filters.CsrfPreventionFilter;
 import org.apache.catalina.filters.RemoteAddrFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -25,15 +25,15 @@ import org.springframework.http.HttpStatus;
  */
 @Configuration(value = "casEmbeddedContainerTomcatFiltersConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(name = CasEmbeddedContainerUtils.EMBEDDED_CONTAINER_CONFIG_ACTIVE, havingValue = "true")
 @ImportAutoConfiguration(CasEmbeddedContainerTomcatConfiguration.class)
 public class CasEmbeddedContainerTomcatFiltersConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @ConditionalOnProperty(prefix = "cas.server.csrf", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "cas.server.tomcat.csrf", name = "enabled", havingValue = "true")
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "tomcatCsrfPreventionFilter")
     public FilterRegistrationBean tomcatCsrfPreventionFilter() {
         val bean = new FilterRegistrationBean();
         bean.setFilter(new CsrfPreventionFilter());
@@ -42,9 +42,10 @@ public class CasEmbeddedContainerTomcatFiltersConfiguration {
         return bean;
     }
 
-    @ConditionalOnProperty(prefix = "cas.server.remoteAddr", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "cas.server.tomcat.remote-addr", name = "enabled", havingValue = "true")
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "tomcatRemoteAddressFilter")
     public FilterRegistrationBean tomcatRemoteAddressFilter() {
         val bean = new FilterRegistrationBean();
         val addr = casProperties.getServer().getTomcat().getRemoteAddr();

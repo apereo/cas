@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -24,10 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreServicesConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     YamlServiceRegistryConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 },
-    properties = "cas.serviceRegistry.yaml.location=classpath:/services")
+    properties = "cas.service-registry.yaml.location=classpath:/services")
 @Tag("FileSystem")
 public class YamlServiceRegistryConfigurationTests {
     @Autowired

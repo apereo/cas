@@ -5,6 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.webflow.test.MockRequestContext;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("FileSystem")
 public class JsonResourceInterruptInquirerTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

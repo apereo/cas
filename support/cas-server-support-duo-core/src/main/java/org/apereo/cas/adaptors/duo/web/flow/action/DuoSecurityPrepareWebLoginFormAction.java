@@ -11,6 +11,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Objects;
+
 /**
  * This is {@link DuoSecurityPrepareWebLoginFormAction}.
  *
@@ -26,16 +28,14 @@ public class DuoSecurityPrepareWebLoginFormAction extends AbstractMultifactorAut
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
-
         val credential = requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoSecurityCredential.class);
-        credential.setUsername(principal.getId());
+        Objects.requireNonNull(credential).setUsername(principal.getId());
         credential.setProviderId(provider.createUniqueId());
 
         val duoAuthenticationService = provider.getDuoAuthenticationService();
         val viewScope = requestContext.getViewScope();
         viewScope.put("sigRequest", duoAuthenticationService.signRequestToken(principal.getId()));
         viewScope.put("apiHost", duoAuthenticationService.getApiHost());
-        viewScope.put("commandName", "credential");
         viewScope.put("principal", principal);
         return success();
     }

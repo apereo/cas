@@ -1,5 +1,7 @@
 description = "Apereo CAS JDBC Driver Support"
 dependencies {
+    api project(":api:cas-server-core-api")
+    
     runtime ("org.hsqldb:hsqldb:$hsqlVersion") {
     }
     runtime ("org.postgresql:postgresql:$postgresqlVersion") {
@@ -13,5 +15,7 @@ dependencies {
     runtime ("com.microsoft.sqlserver:mssql-jdbc:$mssqlServerVersion") {
     }
     runtime ("com.oracle.ojdbc:ojdbc10:$oracleJdbcVersion") {
+    }
+    runtime ("com.h2database:h2:$h2Version") {
     }
 }

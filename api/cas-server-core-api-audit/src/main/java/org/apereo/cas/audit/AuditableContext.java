@@ -40,7 +40,7 @@ public class AuditableContext {
     private final Object httpResponse;
 
     /**
-     * retrievePrincipalAttributesFromReleasePolicy.
+     * Should attributes be refreshed from the release policy?
      */
     @Builder.Default
     private Boolean retrievePrincipalAttributesFromReleasePolicy = Boolean.FALSE;
@@ -52,7 +52,7 @@ public class AuditableContext {
     private Map<String, Object> properties = new LinkedHashMap<>(0);
 
     /**
-     * Get.
+     * Get service.
      *
      * @return optional service
      */
@@ -61,7 +61,7 @@ public class AuditableContext {
     }
 
     /**
-     * Get.
+     * Get registered service.
      *
      * @return optional registered service
      */

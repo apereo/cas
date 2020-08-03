@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.nimbusds.jose.JOSEObjectType;
@@ -40,7 +41,7 @@ import java.util.Optional;
 public class JwtBuilder {
     private static final int MAP_SIZE = 8;
 
-    private final String casSeverPrefix;
+    private final String issuer;
 
     private final CipherExecutor<Serializable, String> defaultTokenCipherExecutor;
 
@@ -62,10 +63,25 @@ public class JwtBuilder {
             try {
                 return JWTClaimsSet.parse(jwt);
             } catch (final Exception ex) {
-                LOGGER.error(e.getMessage(), ex);
+                LoggingUtils.error(LOGGER, ex);
                 throw new IllegalArgumentException("Unable to parse JWT");
             }
         }
+    }
+
+    /**
+     * Build plain string.
+     *
+     * @param claimsSet         the claims set
+     * @param registeredService the registered service
+     * @return the jwt
+     */
+    public static String buildPlain(final JWTClaimsSet claimsSet,
+                                    final Optional<RegisteredService> registeredService) {
+        val header = new PlainHeader.Builder().type(JOSEObjectType.JWT);
+        registeredService.ifPresent(svc ->
+            header.customParam(RegisteredServiceCipherExecutor.CUSTOM_HEADER_REGISTERED_SERVICE_ID, svc.getId()));
+        return new PlainJWT(header.build(), claimsSet).serialize();
     }
 
     /**
@@ -109,7 +125,7 @@ public class JwtBuilder {
         val serviceAudience = payload.getServiceAudience();
         val claims = new JWTClaimsSet.Builder()
             .audience(serviceAudience)
-            .issuer(casSeverPrefix)
+            .issuer(issuer)
             .jwtID(payload.getJwtId())
             .issueTime(payload.getIssueDate())
             .subject(payload.getSubject());
@@ -146,11 +162,7 @@ public class JwtBuilder {
             LOGGER.trace("Encoding JWT based on default global keys for [{}]", serviceAudience);
             return defaultTokenCipherExecutor.encode(jwtJson);
         }
-        val header = new PlainHeader.Builder()
-            .type(JOSEObjectType.JWT)
-            .customParam(RegisteredServiceCipherExecutor.CUSTOM_HEADER_REGISTERED_SERVICE_ID, registeredService.getId())
-            .build();
-        val token = new PlainJWT(header, claimsSet).serialize();
+        val token = buildPlain(claimsSet, Optional.of(registeredService));
         LOGGER.trace("Generating plain JWT as the ticket: [{}]", token);
         return token;
     }
@@ -182,10 +194,10 @@ public class JwtBuilder {
         private final Date validUntilDate;
 
         @Builder.Default
-        private Optional<RegisteredService> registeredService = Optional.empty();
+        private final Map<String, List<Object>> attributes = new LinkedHashMap<>(MAP_SIZE);
 
         @Builder.Default
-        private final Map<String, List<Object>> attributes = new LinkedHashMap<>(MAP_SIZE);
+        private Optional<RegisteredService> registeredService = Optional.empty();
 
     }
 }

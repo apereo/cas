@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.support.geo.config.GoogleMapsGeoCodingConfiguration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     GoogleMapsGeoCodingConfiguration.class
 }, properties = "cas.googleMaps.apiKey=AIzaSyCea6zDOkwJVIOm0vZyAI5eHYrz9Vzlhi9")
+@Tag("Simple")
 public class GoogleMapsGeoLocationServiceTests {
     @Autowired
     @Qualifier("geoLocationService")

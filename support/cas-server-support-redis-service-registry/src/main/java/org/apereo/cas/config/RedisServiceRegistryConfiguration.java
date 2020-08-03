@@ -63,6 +63,7 @@ public class RedisServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisServiceRegistryExecutionPlanConfigurer")
+    @RefreshScope
     public ServiceRegistryExecutionPlanConfigurer redisServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(redisServiceRegistry());
     }

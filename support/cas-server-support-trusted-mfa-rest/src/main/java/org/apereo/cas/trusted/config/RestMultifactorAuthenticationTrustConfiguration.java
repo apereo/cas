@@ -1,11 +1,11 @@
 package org.apereo.cas.trusted.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.RestMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,6 +26,10 @@ import org.springframework.web.client.RestTemplate;
 public class RestMultifactorAuthenticationTrustConfiguration {
 
     @Autowired
+    @Qualifier("mfaTrustRecordKeyGenerator")
+    private ObjectProvider<MultifactorAuthenticationTrustRecordKeyGenerator> keyGenerationStrategy;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
@@ -35,8 +39,8 @@ public class RestMultifactorAuthenticationTrustConfiguration {
     @RefreshScope
     @Bean
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        val m = new RestMultifactorAuthenticationTrustStorage(new RestTemplate(), casProperties);
-        m.setCipherExecutor(mfaTrustCipherExecutor.getObject());
-        return m;
+        return new RestMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
+            mfaTrustCipherExecutor.getObject(), keyGenerationStrategy.getObject(),
+            new RestTemplate());
     }
 }

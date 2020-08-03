@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,6 +40,16 @@ public class GroovyRegisteredServiceUsernameProviderTests {
         p.setGroovyScript("groovy { return attributes['uid'] + '123456789' }");
         var id = p.resolveUsername(RegisteredServiceTestUtils.getPrincipal("casuser",
             CollectionUtils.wrap("uid", "CAS-System")), RegisteredServiceTestUtils.getService(),
+            RegisteredServiceTestUtils.getRegisteredService());
+        assertEquals("CAS-System123456789", id);
+    }
+
+    @Test
+    public void verifyUsernameProviderInlineAsList() {
+        val p = new GroovyRegisteredServiceUsernameProvider();
+        p.setGroovyScript("groovy { return attributes['uid'][0] + '123456789' }");
+        var id = p.resolveUsername(RegisteredServiceTestUtils.getPrincipal("casuser",
+            CollectionUtils.wrap("uid", List.of("CAS-System"))), RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getRegisteredService());
         assertEquals("CAS-System123456789", id);
     }

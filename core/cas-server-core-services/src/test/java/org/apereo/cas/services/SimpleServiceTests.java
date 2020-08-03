@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Tag("Authentication")
 public class SimpleServiceTests {
 
     @Test

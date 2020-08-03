@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -16,6 +17,8 @@ import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.web.report.ExportRegisteredServicesEndpoint;
+import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpoint;
+import org.apereo.cas.web.report.RegisteredAuthenticationPoliciesEndpoint;
 import org.apereo.cas.web.report.RegisteredServicesEndpoint;
 import org.apereo.cas.web.report.SingleSignOnSessionStatusEndpoint;
 import org.apereo.cas.web.report.SingleSignOnSessionsEndpoint;
@@ -23,6 +26,7 @@ import org.apereo.cas.web.report.SpringWebflowEndpoint;
 import org.apereo.cas.web.report.StatisticsEndpoint;
 import org.apereo.cas.web.report.StatusEndpoint;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -85,6 +89,10 @@ public class CasReportsConfiguration {
     @Qualifier("principalFactory")
     private ObjectProvider<PrincipalFactory> principalFactory;
 
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
+
     @Bean
     @ConditionalOnAvailableEndpoint
     public SpringWebflowEndpoint springWebflowEndpoint() {
@@ -107,6 +115,18 @@ public class CasReportsConfiguration {
     @ConditionalOnAvailableEndpoint
     public ExportRegisteredServicesEndpoint exportRegisteredServicesEndpoint() {
         return new ExportRegisteredServicesEndpoint(casProperties, servicesManager.getObject());
+    }
+
+    @Bean
+    @ConditionalOnAvailableEndpoint
+    public RegisteredAuthenticationHandlersEndpoint registeredAuthenticationHandlersEndpoint() {
+        return new RegisteredAuthenticationHandlersEndpoint(casProperties, authenticationEventExecutionPlan.getObject());
+    }
+
+    @Bean
+    @ConditionalOnAvailableEndpoint
+    public RegisteredAuthenticationPoliciesEndpoint registeredAuthenticationPoliciesEndpoint() {
+        return new RegisteredAuthenticationPoliciesEndpoint(casProperties, authenticationEventExecutionPlan.getObject());
     }
 
     @Bean
@@ -153,9 +173,12 @@ public class CasReportsConfiguration {
      *
      * @author Misagh Moayyed
      * @since 6.0.0
+     * @deprecated since 6.2.0
      */
     @Configuration("statusEndpointConfiguration")
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @Slf4j
+    @Deprecated(since = "6.2.0")
     public static class StatusEndpointConfiguration {
         @Autowired
         private CasConfigurationProperties casProperties;
@@ -166,6 +189,8 @@ public class CasReportsConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         public StatusEndpoint statusEndpoint() {
+            LOGGER.warn("The status actuator endpoint is deprecated and is scheduled to be removed from CAS in the future. "
+                + "To obtain status and health inforation, please configure and use the health endpoint instead.");
             return new StatusEndpoint(casProperties, healthEndpoint.getIfAvailable());
         }
     }

@@ -3,16 +3,16 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
-
-import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,7 +36,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class HazelcastTicketRegistry extends AbstractTicketRegistry implements AutoCloseable, DisposableBean {
     private final HazelcastInstance hazelcastInstance;
+
     private final TicketCatalog ticketCatalog;
+
     private final long pageSize;
 
     @Override
@@ -63,12 +65,6 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         } else {
             LOGGER.warn("Unable to locate ticket map for ticket metadata [{}]", metadata);
         }
-    }
-
-    private IMap<String, Ticket> getTicketMapInstanceByMetadata(final TicketDefinition metadata) {
-        val mapName = metadata.getProperties().getStorageName();
-        LOGGER.debug("Locating map name [{}] for ticket definition [{}]", mapName, metadata);
-        return getTicketMapInstance(mapName);
     }
 
     @Override
@@ -155,13 +151,19 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         shutdown();
     }
 
-    private IMap<String, Ticket> getTicketMapInstance(@Nonnull final String mapName) {
+    private IMap<String, Ticket> getTicketMapInstanceByMetadata(final TicketDefinition metadata) {
+        val mapName = metadata.getProperties().getStorageName();
+        LOGGER.debug("Locating map name [{}] for ticket definition [{}]", mapName, metadata);
+        return getTicketMapInstance(mapName);
+    }
+
+    private IMap<String, Ticket> getTicketMapInstance(@NonNull final String mapName) {
         try {
             val inst = hazelcastInstance.<String, Ticket>getMap(mapName);
             LOGGER.debug("Located Hazelcast map instance [{}]", mapName);
             return inst;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

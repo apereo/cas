@@ -16,7 +16,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -108,7 +107,6 @@ public class OAuth20Utils {
         return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.matches(redirectUri));
     }
 
-    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     private static OAuthRegisteredService getRegisteredOAuthServiceByPredicate(final ServicesManager servicesManager,
                                                                                final Predicate<OAuthRegisteredService> predicate) {
         val services = servicesManager.getAllServices();
@@ -119,7 +117,6 @@ public class OAuth20Utils {
             .findFirst()
             .orElse(null);
     }
-
 
     /**
      * Gets attributes.
@@ -212,7 +209,7 @@ public class OAuth20Utils {
      *
      * @param registeredService the registered service
      * @param responseType      the response type
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isResponseModeTypeFormPost(final OAuthRegisteredService registeredService, final OAuth20ResponseModeTypes responseType) {
         return responseType == OAuth20ResponseModeTypes.FORM_POST || StringUtils.equalsIgnoreCase("post", registeredService.getResponseType());
@@ -279,7 +276,7 @@ public class OAuth20Utils {
      *
      * @param type         the type
      * @param expectedType the expected type
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isResponseModeType(final String type, final OAuth20ResponseModeTypes expectedType) {
         return expectedType.getType().equalsIgnoreCase(type);
@@ -290,7 +287,7 @@ public class OAuth20Utils {
      *
      * @param context           the context
      * @param registeredService the registered service
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isAuthorizedResponseTypeForService(final JEEContext context, final OAuthRegisteredService registeredService) {
         if (registeredService.getSupportedResponseTypes() != null && !registeredService.getSupportedResponseTypes().isEmpty()) {
@@ -449,7 +446,7 @@ public class OAuth20Utils {
     public static String getClientIdFromAuthenticatedProfile(final CommonProfile profile) {
         val attrs = new HashMap<>(profile.getAttributes());
         attrs.putAll(profile.getAuthenticationAttributes());
-        
+
         if (attrs.containsKey(OAuth20Constants.CLIENT_ID)) {
             val attribute = attrs.get(OAuth20Constants.CLIENT_ID);
             return CollectionUtils.toCollection(attribute, ArrayList.class).get(0).toString();
@@ -512,5 +509,15 @@ public class OAuth20Utils {
         val clientSecret = context.getRequestParameter(OAuth20Constants.CLIENT_SECRET)
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
         return Pair.of(clientId, clientSecret);
+    }
+
+    /**
+     * Is the registered service need authentication?
+     *
+     * @param registeredService the registered service
+     * @return whether the service need authentication
+     */
+    public boolean doesServiceNeedAuthentication(final OAuthRegisteredService registeredService) {
+        return StringUtils.isNotBlank(registeredService.getClientSecret());
     }
 }

@@ -36,8 +36,7 @@ public class DigestAuthenticationWebflowConfigurerTests extends BaseWebflowConfi
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
-
-        var state = (TransitionableState) flow.getState(DigestAuthenticationWebflowConfigurer.STATE_ID_DIGEST_AUTHENTICATION_CHECK);
+        val state = (TransitionableState) flow.getState(DigestAuthenticationWebflowConfigurer.STATE_ID_DIGEST_AUTHENTICATION_CHECK);
         assertNotNull(state);
     }
 }

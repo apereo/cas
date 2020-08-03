@@ -36,7 +36,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 <div class="alert alert-warning"><strong>Achtung, liebe Leser!</strong><p>Only attempt to 
 modify the Spring webflow configuration files by hand when/if absolutely necessary and the
 change is rather minimal or decorative. Extensive modifications of the webflow, if not done carefully
-may serverely complicate your deployment and future upgrades. If reasonable, consider contributing or
+may severely complicate your deployment and future upgrades. If reasonable, consider contributing or
 suggesting the change to the project and have it be maintained directly.</p></div>
 
 CAS by default is configured to hot reload changes to the Spring webflow configuration.

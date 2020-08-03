@@ -4,13 +4,12 @@ dependencies {
 
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-monitor")
-    implementation project(":support:cas-server-support-memcached-core")
     implementation project(":core:cas-server-core-configuration-api")
-    
+    implementation project(":support:cas-server-support-memcached-core")
+
     implementation libraries.kryo
 
     testImplementation project(":core:cas-server-core-authentication-api")
-    testImplementation project(path: ":support:cas-server-support-memcached-ticket-registry", configuration: "tests")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-cookie-api")
     testImplementation project(":core:cas-server-core")
@@ -18,6 +17,11 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-configuration")
 
+    testImplementation project(path: ":support:cas-server-support-memcached-ticket-registry", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    
     provided project(":support:cas-server-support-memcached-spy")
+
     compileOnly project(":support:cas-server-support-saml")
 }

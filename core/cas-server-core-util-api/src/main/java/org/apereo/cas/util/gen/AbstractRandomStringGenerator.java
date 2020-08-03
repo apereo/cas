@@ -2,7 +2,9 @@ package org.apereo.cas.util.gen;
 
 import org.apereo.cas.util.RandomUtils;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import java.nio.charset.StandardCharsets;
@@ -18,6 +20,7 @@ import java.security.SecureRandom;
  * @since 5.2.0
  */
 @Getter
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractRandomStringGenerator implements RandomStringGenerator {
     /**
      * An instance of secure random to ensure randomness is secure.
@@ -33,17 +36,8 @@ public abstract class AbstractRandomStringGenerator implements RandomStringGener
      * Instantiates a new default random string generator
      * with length set to {@link RandomStringGenerator#DEFAULT_LENGTH}.
      */
-    public AbstractRandomStringGenerator() {
-        this.defaultLength = DEFAULT_LENGTH;
-    }
-
-    /**
-     * Instantiates a new default random string generator.
-     *
-     * @param defaultLength the max random length
-     */
-    public AbstractRandomStringGenerator(final int defaultLength) {
-        this.defaultLength = defaultLength;
+    protected AbstractRandomStringGenerator() {
+        this(DEFAULT_LENGTH);
     }
 
     @Override

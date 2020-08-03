@@ -52,6 +52,8 @@ import org.springframework.webflow.execution.Action;
 @Configuration("webAuthnWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class WebAuthnWebflowConfiguration {
+    private static final int WEBFLOW_CONFIGURER_ORDER = 100;
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -181,12 +183,14 @@ public class WebAuthnWebflowConfiguration {
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer webAuthnMultifactorTrustWebflowConfigurer() {
-            val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-            return new WebAuthnMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
-                deviceRegistrationEnabled, webAuthnFlowRegistry(),
-                loginFlowDefinitionRegistry.getIfAvailable(),
-                applicationContext, casProperties,
+            val cfg = new WebAuthnMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
+                loginFlowDefinitionRegistry.getObject(),
+                webAuthnFlowRegistry(),
+                applicationContext,
+                casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+            cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
+            return cfg;
         }
 
         @Override

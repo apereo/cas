@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAut
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -50,14 +51,15 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
             val jaxbContext = JAXBContext.newInstance(Session.class);
             this.marshaller = jaxbContext.createMarshaller();
         } catch (final Exception e) {
-            LOGGER.error("Failed initialize fortress context", e);
+            LoggingUtils.error(LOGGER, e);
             throw new IllegalArgumentException(e);
         }
     }
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c,
-                                                                                        final String originalPassword) throws GeneralSecurityException, PreventedException {
+                                                                                        final String originalPassword)
+        throws GeneralSecurityException, PreventedException {
         val username = c.getUsername();
         val password = c.getPassword();
         try {
@@ -76,10 +78,10 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
             LOGGER.warn("Could not establish a fortress session or session cannot authenticate");
         } catch (final org.apache.directory.fortress.core.SecurityException e) {
             val errorMessage = String.format("Fortress authentication failed for [%s]", username);
-            LOGGER.error(errorMessage, e);
+            LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException(errorMessage);
         } catch (final JAXBException e) {
-            LOGGER.warn("Cannot marshal fortress session with value", e);
+            LoggingUtils.warn(LOGGER, e);
             throw new PreventedException(e);
         }
         throw new FailedLoginException(String.format("[%s] could not authenticate with fortress", username));

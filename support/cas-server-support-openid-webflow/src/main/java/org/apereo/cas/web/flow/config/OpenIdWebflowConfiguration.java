@@ -34,7 +34,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("openIdWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class OpenIdWebflowConfiguration {
 
     @Autowired

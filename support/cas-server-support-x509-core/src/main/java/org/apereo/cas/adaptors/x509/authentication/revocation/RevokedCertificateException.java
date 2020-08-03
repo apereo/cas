@@ -11,7 +11,6 @@ import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRLEntry;
 import java.time.ZonedDateTime;
-import java.util.Optional;
 
 
 /**
@@ -30,18 +29,18 @@ public class RevokedCertificateException extends GeneralSecurityException {
      */
     public static final String CRL_REASON_OID = "2.5.29.21";
 
-    /**
-     * The Constant serialVersionUID.
-     */
     private static final long serialVersionUID = 8827788431199129708L;
+
     /**
      * The revocation date.
      */
     private final ZonedDateTime revocationDate;
+
     /**
      * The serial.
      */
     private final BigInteger serial;
+
     /**
      * The reason.
      */
@@ -66,6 +65,15 @@ public class RevokedCertificateException extends GeneralSecurityException {
         this(DateTimeUtils.zonedDateTimeOf(entry.getRevocationDate()), entry.getSerialNumber(), getReasonFromX509Entry(entry));
     }
 
+    @Override
+    public String getMessage() {
+        if (this.reason != null) {
+            return String.format("Certificate %s revoked on %s for reason %s",
+                this.serial, this.revocationDate, this.reason);
+        }
+        return String.format("Certificate %s revoked on %s", this.serial, this.revocationDate);
+    }
+
     /**
      * Get reason from the x509 entry.
      *
@@ -85,24 +93,6 @@ public class RevokedCertificateException extends GeneralSecurityException {
             }
         }
         return null;
-    }
-
-    /**
-     * Gets the revocation date.
-     *
-     * @return Returns the revocationDate.
-     */
-    public ZonedDateTime getRevocationDate() {
-        return Optional.ofNullable(this.revocationDate).map(ZonedDateTime::from).orElse(null);
-    }
-
-    @Override
-    public String getMessage() {
-        if (this.reason != null) {
-            return String.format("Certificate %s revoked on %s for reason %s",
-                this.serial, this.revocationDate, this.reason);
-        }
-        return String.format("Certificate %s revoked on %s", this.serial, this.revocationDate);
     }
 
     /**

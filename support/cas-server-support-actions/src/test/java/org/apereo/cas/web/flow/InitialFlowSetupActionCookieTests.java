@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -42,6 +43,7 @@ import static org.mockito.Mockito.*;
 public class InitialFlowSetupActionCookieTests extends AbstractWebflowActionsTests {
 
     private static final String CONST_CONTEXT_PATH = "/test";
+
     private static final String CONST_CONTEXT_PATH_2 = "/test1";
 
     @Autowired
@@ -53,7 +55,9 @@ public class InitialFlowSetupActionCookieTests extends AbstractWebflowActionsTes
     private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     private InitialFlowSetupAction action;
+
     private CasCookieBuilder warnCookieGenerator;
+
     private CasCookieBuilder tgtCookieGenerator;
 
     @BeforeEach
@@ -87,11 +91,11 @@ public class InitialFlowSetupActionCookieTests extends AbstractWebflowActionsTes
         val argExtractors = Collections.<ArgumentExtractor>singletonList(new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
         val servicesManager = mock(ServicesManager.class);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(RegisteredServiceTestUtils.getRegisteredService("test"));
+        val sso = new SingleSignOnProperties().setCreateSsoCookieOnRenewAuthn(true).setRenewAuthnEnabled(true);
         this.action = new InitialFlowSetupAction(argExtractors, servicesManager,
             authenticationRequestServiceSelectionStrategies, tgtCookieGenerator,
             warnCookieGenerator, casProperties, authenticationEventExecutionPlan,
-            new DefaultSingleSignOnParticipationStrategy(servicesManager, true,
-                true, mock(TicketRegistrySupport.class), mock(AuthenticationServiceSelectionPlan.class)),
+            new DefaultSingleSignOnParticipationStrategy(servicesManager, sso, mock(TicketRegistrySupport.class), mock(AuthenticationServiceSelectionPlan.class)),
             mock(TicketRegistrySupport.class));
 
         this.action.afterPropertiesSet();

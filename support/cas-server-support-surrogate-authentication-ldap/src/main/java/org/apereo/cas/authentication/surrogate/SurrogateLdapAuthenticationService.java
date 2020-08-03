@@ -6,11 +6,13 @@ import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticat
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.ConnectionFactory;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +27,7 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @Slf4j
-public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticationService {
+public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticationService implements DisposableBean {
 
     private final ConnectionFactory connectionFactory;
     private final SurrogateAuthenticationProperties.Ldap ldapProperties;
@@ -54,7 +56,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
             LOGGER.debug("LDAP response: [{}]", response);
             return LdapUtils.containsResultEntry(response);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -99,10 +101,15 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
             LOGGER.debug("Following accounts may be eligible for surrogate authentication: [{}]", eligible);
             return eligible;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
 
         LOGGER.debug("No accounts may be eligible for surrogate authentication");
         return new ArrayList<>(0);
+    }
+
+    @Override
+    public void destroy() {
+        connectionFactory.close();
     }
 }

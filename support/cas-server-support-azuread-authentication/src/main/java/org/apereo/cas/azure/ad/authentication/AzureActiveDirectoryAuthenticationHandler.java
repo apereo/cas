@@ -79,7 +79,15 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
         throw new FailedLoginException(msg);
     }
 
-    private AuthenticationResult getAccessTokenFromUserCredentials(final String username, final String password) throws Exception {
+    /**
+     * Gets access token from user credentials.
+     *
+     * @param username the username
+     * @param password the password
+     * @return the access token from user credentials
+     * @throws Exception the exception
+     */
+    protected AuthenticationResult getAccessTokenFromUserCredentials(final String username, final String password) throws Exception {
         var service = (ExecutorService) null;
         try {
             service = Executors.newFixedThreadPool(1);

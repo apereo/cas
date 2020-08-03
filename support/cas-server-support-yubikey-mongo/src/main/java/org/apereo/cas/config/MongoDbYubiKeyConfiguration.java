@@ -18,6 +18,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import javax.net.ssl.SSLContext;
+
 /**
  * This is {@link MongoDbYubiKeyConfiguration}.
  *
@@ -39,6 +41,10 @@ public class MongoDbYubiKeyConfiguration {
     @Qualifier("yubikeyAccountCipherExecutor")
     private ObjectProvider<CipherExecutor> yubikeyAccountCipherExecutor;
 
+    @Autowired
+    @Qualifier("sslContext")
+    private ObjectProvider<SSLContext> sslContext;
+
     @RefreshScope
     @Bean
     public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcessor() {
@@ -49,9 +55,9 @@ public class MongoDbYubiKeyConfiguration {
     @Bean
     public MongoTemplate mongoYubiKeyTemplate() {
         val mongo = casProperties.getAuthn().getMfa().getYubikey().getMongo();
-        val factory = new MongoDbConnectionFactory();
+        val factory = new MongoDbConnectionFactory(sslContext.getObject());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
-        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
 

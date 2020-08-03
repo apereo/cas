@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +31,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
 import java.util.List;
 
 /**
@@ -47,7 +47,7 @@ public class U2FJpaConfiguration {
     @Autowired
     @Qualifier("jpaBeanFactory")
     private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -62,6 +62,8 @@ public class U2FJpaConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "dataSourceU2f")
+    @RefreshScope
     public DataSource dataSourceU2f() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getU2f().getJpa());
     }
@@ -73,6 +75,7 @@ public class U2FJpaConfiguration {
 
     @Lazy
     @Bean
+    @ConditionalOnMissingBean(name = "u2fEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean u2fEntityManagerFactory() {
         val factory = jpaBeanFactory.getObject();
         val ctx = new JpaConfigurationContext(
@@ -92,17 +95,17 @@ public class U2FJpaConfiguration {
     }
 
     @Bean
-    public U2FDeviceRepository u2fDeviceRepository() {
+    @RefreshScope
+    public U2FDeviceRepository u2fDeviceRepository(@Qualifier("transactionManagerU2f") final PlatformTransactionManager mgr) {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
         final LoadingCache<String, String> requestStorage =
             Caffeine.newBuilder()
                 .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
                 .build(key -> StringUtils.EMPTY);
-        val repo = new U2FJpaDeviceRepository(requestStorage,
-            u2f.getExpireRegistrations(),
-            u2f.getExpireDevicesTimeUnit());
-        repo.setCipherExecutor(u2fRegistrationRecordCipherExecutor.getObject());
-        return repo;
+        return new U2FJpaDeviceRepository(requestStorage,
+            u2f.getExpireDevices(),
+            u2f.getExpireDevicesTimeUnit(),
+            u2fRegistrationRecordCipherExecutor.getObject());
     }
 
 }

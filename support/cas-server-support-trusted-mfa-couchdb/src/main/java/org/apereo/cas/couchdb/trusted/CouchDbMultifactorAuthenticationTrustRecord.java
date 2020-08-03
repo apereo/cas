@@ -9,7 +9,8 @@ import lombok.NonNull;
 import lombok.Setter;
 import org.ektorp.support.TypeDiscriminator;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.Date;
 
 /**
  * This is {@link CouchDbMultifactorAuthenticationTrustRecord}.
@@ -34,7 +35,8 @@ public class CouchDbMultifactorAuthenticationTrustRecord extends MultifactorAuth
                                                        @JsonProperty("id") final long id,
                                                        @JsonProperty("principal") final @NonNull String principal,
                                                        @JsonProperty("deviceFingerprint") final @NonNull String deviceFingerprint,
-                                                       @JsonProperty("recordDate") final @NonNull LocalDateTime recordDate,
+                                                       @JsonProperty("recordDate") final @NonNull ZonedDateTime recordDate,
+                                                       @JsonProperty("expirationDate") final @NonNull Date expirationDate,
                                                        @JsonProperty("recordKey") final @NonNull String recordKey,
                                                        @JsonProperty("name") final String name) {
         this.cid = cid;
@@ -45,14 +47,17 @@ public class CouchDbMultifactorAuthenticationTrustRecord extends MultifactorAuth
         setRecordDate(recordDate);
         setRecordKey(recordKey);
         setName(name);
+        setExpirationDate(expirationDate);
     }
 
     public CouchDbMultifactorAuthenticationTrustRecord(final MultifactorAuthenticationTrustRecord record) {
-        this(null, null, record.getId(), record.getPrincipal(), record.getDeviceFingerprint(), record.getRecordDate(), record.getRecordKey(), record.getName());
+        this(null, null, record.getId(), record.getPrincipal(), record.getDeviceFingerprint(),
+            record.getRecordDate(), record.getExpirationDate(), record.getRecordKey(), record.getName());
     }
 
     /**
      * Merge other record into this one for updating.
+     *
      * @param other record to be merged into this one
      * @return this
      */
@@ -63,6 +68,7 @@ public class CouchDbMultifactorAuthenticationTrustRecord extends MultifactorAuth
         setRecordDate(other.getRecordDate());
         setRecordKey(other.getRecordKey());
         setName(other.getName());
+        setExpirationDate(other.getExpirationDate());
         return this;
     }
 }

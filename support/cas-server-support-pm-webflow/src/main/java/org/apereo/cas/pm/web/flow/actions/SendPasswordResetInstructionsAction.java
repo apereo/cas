@@ -3,6 +3,7 @@ package org.apereo.cas.pm.web.flow.actions;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -12,7 +13,6 @@ import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -150,7 +150,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      *
      * @param to  the to
      * @param url the url
-     * @return the boolean
+     * @return true/false
      */
     protected boolean sendPasswordResetSmsToAccount(final String to, final String url) {
         if (StringUtils.isNotBlank(to)) {
@@ -192,6 +192,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         messages.addMessage(new MessageBuilder()
             .error()
             .code("screen.pm.reset." + code)
+            .defaultText(defaultMessage)
             .build());
         LOGGER.error(defaultMessage);
         return new EventFactorySupport().event(this, CasWebflowConstants.VIEW_ID_ERROR);

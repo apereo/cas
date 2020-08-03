@@ -10,16 +10,17 @@ import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RegisteredServiceAuthenticationPolicyResolver;
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RegisteredServiceAuthenticationPolicyResolverTests}.
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("RegisteredService")
 public class RegisteredServiceAuthenticationPolicyResolverTests {
     private ServicesManager servicesManager;
 
@@ -78,9 +80,12 @@ public class RegisteredServiceAuthenticationPolicyResolverTests {
         svc6.setAuthenticationPolicy(p6);
         list.add(svc6);
 
-        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), list, new ArrayList<>());
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
 
-        this.servicesManager = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
+        val dao = new InMemoryServiceRegistry(appCtx, list, new ArrayList<>());
+
+        this.servicesManager = new DefaultServicesManager(dao, appCtx, new HashSet<>(), Caffeine.newBuilder().build());
         this.servicesManager.load();
     }
 
@@ -147,6 +152,15 @@ public class RegisteredServiceAuthenticationPolicyResolverTests {
         val policies = resolver.resolve(transaction);
         assertEquals(1, policies.size());
         assertTrue(policies.iterator().next() instanceof GroovyScriptAuthenticationPolicy);
+    }
+
+    @Test
+    public void checkDisabledPolicy() {
+        val resolver = new RegisteredServiceAuthenticationPolicyResolver(this.servicesManager,
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
+        val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("not-found-service"),
+            RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+        assertThrows(UnauthorizedSsoServiceException.class, () -> resolver.supports(transaction));
     }
 
     @Test

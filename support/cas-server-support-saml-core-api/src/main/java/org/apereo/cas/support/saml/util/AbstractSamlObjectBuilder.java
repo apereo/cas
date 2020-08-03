@@ -2,10 +2,12 @@ package org.apereo.cas.support.saml.util;
 
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.gen.HexRandomStringGenerator;
 import org.apereo.cas.util.serialization.JacksonXmlSerializer;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -17,7 +19,6 @@ import org.jdom2.Document;
 import org.jdom2.input.DOMBuilder;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.XMLOutputter;
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSBase64Binary;
@@ -60,6 +61,7 @@ import java.nio.charset.Charset;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -73,7 +75,7 @@ import java.util.Objects;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractSamlObjectBuilder implements Serializable {
     /**
      * The constant DEFAULT_ELEMENT_NAME_FIELD.
@@ -120,20 +122,22 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     }
 
     /**
-     * Construct document from xml string.
+     * Construct document from xml.
      *
      * @param xmlString the xml string
      * @return the document
      */
+    @SuppressWarnings("java:S2755")
     public static Document constructDocumentFromXml(final String xmlString) {
         LOGGER.trace("Attempting to construct an instance of Document from xml: [{}]", xmlString);
         try {
             val builder = new SAXBuilder();
+            builder.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
             builder.setFeature("http://xml.org/sax/features/external-general-entities", false);
             builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             return builder.build(new ByteArrayInputStream(xmlString.getBytes(Charset.defaultCharset())));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             return null;
         }
     }
@@ -147,8 +151,8 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @return the element
      */
     private static org.jdom2.Element signSamlElement(final org.jdom2.Element element, final PrivateKey privKey, final PublicKey pubKey) {
-        LOGGER.trace("Attempting to sign Element: [{}]", element);
         try {
+            LOGGER.trace("Attempting to sign Element: [{}]", element);
             val providerName = System.getProperty("jsr105Provider", SIGNATURE_FACTORY_PROVIDER_CLASS);
 
             val clazz = Class.forName(providerName);
@@ -233,8 +237,8 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @return the org.w3c.dom. document
      */
     private static org.w3c.dom.Document toDom(final Document doc) {
-        LOGGER.trace("Creating org.w3c.dom.Document from: [{}]", doc);
         try {
+            LOGGER.trace("Creating document from: [{}]", doc);
             val xmlOutputter = new XMLOutputter();
             val elemStrWriter = new StringWriter();
             xmlOutputter.output(doc, elemStrWriter);
@@ -294,7 +298,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     }
 
     /**
-     * Gets saml object QName.
+     * Gets saml object QName indicated by field {@link #DEFAULT_ELEMENT_NAME_FIELD}.
      *
      * @param objectType the object type
      * @return the saml object QName
@@ -303,10 +307,8 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         try {
             val f = objectType.getField(DEFAULT_ELEMENT_NAME_FIELD);
             return (QName) f.get(null);
-        } catch (final NoSuchFieldException e) {
-            throw new IllegalStateException("Cannot find field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD, e);
-        } catch (final IllegalAccessException e) {
-            throw new IllegalStateException("Cannot access field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD, e);
+        } catch (final Exception e) {
+            throw new IllegalStateException("Cannot find/access field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD, e);
         }
     }
 
@@ -331,7 +333,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         if (XSURI.class.getSimpleName().equalsIgnoreCase(valueType)) {
             val builder = new XSURIBuilder();
             val attrValueObj = builder.buildObject(elementName, XSURI.TYPE_NAME);
-            attrValueObj.setValue(value.toString());
+            attrValueObj.setURI(value.toString());
             LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
             return attrValueObj;
         }
@@ -355,7 +357,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         if (XSDateTime.class.getSimpleName().equalsIgnoreCase(valueType)) {
             val builder = new XSDateTimeBuilder();
             val attrValueObj = builder.buildObject(elementName, XSDateTime.TYPE_NAME);
-            attrValueObj.setValue(DateTime.parse(value.toString()));
+            attrValueObj.setValue(ZonedDateTime.parse(value.toString()).toInstant());
             LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
             return attrValueObj;
         }
@@ -390,16 +392,9 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @return the secure id string
      */
     public String generateSecureRandomId() {
-        try {
-            val random = new HexRandomStringGenerator(RANDOM_ID_SIZE);
-            val hex = random.getNewString();
-            if (StringUtils.isBlank(hex)) {
-                throw new IllegalArgumentException("Could not generate a secure random id based on " + random.getAlgorithm());
-            }
-            return '_' + hex;
-        } catch (final Exception e) {
-            throw new IllegalStateException("Cannot create secure random ID generator for SAML message IDs.", e);
-        }
+        val random = new HexRandomStringGenerator(RANDOM_ID_SIZE);
+        val hex = random.getNewString();
+        return '_' + hex;
     }
 
     /**
@@ -416,20 +411,15 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
                                                      final String valueType,
                                                      final List<XMLObject> attributeList,
                                                      final QName defaultElementName) {
-        if (attributeValue == null) {
-            LOGGER.debug("Skipping over SAML attribute [{}] since it has no value", attributeName);
+        val values = CollectionUtils.toCollection(attributeValue);
+        if (values == null || values.isEmpty()) {
+            LOGGER.trace("Skipping over SAML attribute [{}] since it has no value", attributeName);
             return;
         }
-
-        LOGGER.trace("Attempting to generate SAML attribute [{}] with value(s) [{}]", attributeName, attributeValue);
-        if (attributeValue instanceof Collection<?>) {
-            val c = (Collection<?>) attributeValue;
-            LOGGER.debug("Generating multi-valued SAML attribute [{}] with values [{}]", attributeName, c);
-            c.stream().map(value -> newAttributeValue(value, valueType, defaultElementName)).forEach(attributeList::add);
-        } else {
-            LOGGER.debug("Generating SAML attribute [{}] with value [{}]", attributeName, attributeValue);
-            attributeList.add(newAttributeValue(attributeValue, valueType, defaultElementName));
-        }
+        LOGGER.trace("Attempting to generate SAML attribute [{}] with value(s) [{}]", attributeName, values);
+        val c = (Collection<?>) values;
+        LOGGER.debug("Generating multi-valued SAML attribute [{}] with values [{}]", attributeName, c);
+        c.stream().map(value -> newAttributeValue(value, valueType, defaultElementName)).forEach(attributeList::add);
     }
 }
 

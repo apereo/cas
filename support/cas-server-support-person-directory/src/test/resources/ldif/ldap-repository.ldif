@@ -1,0 +1,10 @@
+dn: cn=ldapuser,ou=people,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: account
+cn: ldapuser
+userPassword: 123456
+sn: casuser
+uid: casuser
+mail: ldapuser@example.org

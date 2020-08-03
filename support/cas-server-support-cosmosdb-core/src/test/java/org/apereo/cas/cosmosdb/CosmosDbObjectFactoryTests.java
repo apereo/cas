@@ -4,11 +4,9 @@ import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegist
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,10 +16,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@Tag("CosmosDb")
 public class CosmosDbObjectFactoryTests {
-    @Autowired
-    private ApplicationContext applicationContext;
 
     @Test
     public void verifyDatabaseLinkCollections() {
@@ -32,6 +28,8 @@ public class CosmosDbObjectFactoryTests {
 
     @Test
     public void verifyClient() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         val factory = new CosmosDbObjectFactory(applicationContext);
         val properties = new CosmosDbServiceRegistryProperties();
         properties.setUri("http://localhost:1234");
@@ -41,6 +39,8 @@ public class CosmosDbObjectFactoryTests {
 
     @Test
     public void verifyDocumentDb() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         val factory = new CosmosDbObjectFactory(applicationContext);
         val properties = new CosmosDbServiceRegistryProperties();
         properties.setUri("http://localhost:1234");
@@ -50,6 +50,8 @@ public class CosmosDbObjectFactoryTests {
 
     @Test
     public void verifyDocumentDbTemplate() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         val factory = new CosmosDbObjectFactory(applicationContext);
         val properties = new CosmosDbServiceRegistryProperties();
         properties.setUri("http://localhost:1234");

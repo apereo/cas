@@ -1,6 +1,8 @@
 package org.apereo.cas.trusted.authentication.api;
 
-import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
 
 /**
@@ -12,18 +14,32 @@ import java.util.Set;
 public interface MultifactorAuthenticationTrustStorage {
 
     /**
-     * Expire records that are on/before the provided date.
+     * Remove records that are expired by date.
      *
-     * @param onOrBefore the on or before
+     * @param expirationTime the expiration time
      */
-    void expire(LocalDateTime onOrBefore);
+    void remove(ZonedDateTime expirationTime);
+
+    /**
+     * Remove records that are expired by now.
+     */
+    default void remove() {
+        remove(ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS));
+    }
 
     /**
      * Expire device by registration key.
      *
      * @param key the key
      */
-    void expire(String key);
+    void remove(String key);
+
+    /**
+     * Gets all.
+     *
+     * @return the all
+     */
+    Set<? extends MultifactorAuthenticationTrustRecord> getAll();
 
     /**
      * Get all records by date.
@@ -31,7 +47,7 @@ public interface MultifactorAuthenticationTrustStorage {
      * @param onOrAfterDate the on or after date
      * @return the records
      */
-    Set<? extends MultifactorAuthenticationTrustRecord> get(LocalDateTime onOrAfterDate);
+    Set<? extends MultifactorAuthenticationTrustRecord> get(ZonedDateTime onOrAfterDate);
 
     /**
      * Get record.
@@ -56,7 +72,7 @@ public interface MultifactorAuthenticationTrustStorage {
      * @param onOrAfterDate the on or after date
      * @return the optional
      */
-    Set<? extends MultifactorAuthenticationTrustRecord> get(String principal, LocalDateTime onOrAfterDate);
+    Set<? extends MultifactorAuthenticationTrustRecord> get(String principal, ZonedDateTime onOrAfterDate);
 
     /**
      * Set trusted record.
@@ -64,5 +80,5 @@ public interface MultifactorAuthenticationTrustStorage {
      * @param record the record
      * @return the multifactor authentication trust record
      */
-    MultifactorAuthenticationTrustRecord set(MultifactorAuthenticationTrustRecord record);
+    MultifactorAuthenticationTrustRecord save(MultifactorAuthenticationTrustRecord record);
 }

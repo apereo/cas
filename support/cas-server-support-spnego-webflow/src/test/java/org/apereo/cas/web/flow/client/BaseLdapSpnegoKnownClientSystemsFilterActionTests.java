@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -42,6 +43,7 @@ public abstract class BaseLdapSpnegoKnownClientSystemsFilterActionTests extends 
     }
 
     @TestConfiguration
+    @Lazy(false)
     public static class CasTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;

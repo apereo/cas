@@ -4,6 +4,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
 import org.aspectj.lang.JoinPoint;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("Web")
 public class MessageBundleAwareResourceResolverTests {
     @Test
     public void verifyOperationByExceptionMessage() {

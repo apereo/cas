@@ -1,8 +1,9 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.SpringResourceProperties;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,6 +21,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("CoreAuthenticationProperties")
 public class CoreAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = -2244126985007049516L;
 
@@ -61,6 +63,7 @@ public class CoreAuthenticationProperties implements Serializable {
     @Getter
     @Setter
     @Accessors(chain = true)
+    @JsonFilter("RegisteredServiceAuthenticationHandlerResolution")
     public static class RegisteredServiceAuthenticationHandlerResolution implements Serializable {
         private static final long serialVersionUID = 8079027843747126083L;
 

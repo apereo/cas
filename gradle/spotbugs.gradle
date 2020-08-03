@@ -1,13 +1,18 @@
+apply plugin: "com.github.spotbugs"
+
 task outputSpotbugsReports(description: "Display Spotbugs output") {
     doFirst {
-        printSpotbugsReportToConsole(spotbugsMain.reports.xml.destination)
+        def main = spotbugsMain.reports.findByName("XML").destination
+        printSpotbugsReportToConsole(main)
+        def test = spotbugsTest.reports.findByName("XML").destination
+        printSpotbugsReportToConsole(test)
     }
 }
 
 def printSpotbugsReportToConsole(File file) {
-    println "Reviewing file $file"
-    if (file.exists()) {
-        println "Processing found file $file"
+    logger.info "Reviewing file $file"
+    if (file.exists() && file.length() > 0) {
+        logger.info "Processing found file $file"
         def slurper = new XmlSlurper().parse(file)
         def bugsFound = slurper.BugInstance.size()
         if (bugsFound > 0) {
@@ -40,9 +45,28 @@ def printSpotbugsReportToConsole(File file) {
                 throw new GradleException(msg)
             }
         } else {
-            println "$file contains no bug instances"
+            logger.debug "$file contains no bug instances"
         }
     } else {
-        println "$file does not exist"
+        logger.info "$file does not exist"
     }
+}
+
+spotbugs {
+    toolVersion = "${spotbugsVersion}"
+    showProgress = true
+    ignoreFailures = false
+    reportsDir = file("$project.buildDir/spotbugs")
+    effort = "max"
+    reportLevel = "low"
+    includeFilter = file("$rootProject.projectDir/style/spotbugs-includes.xml")
+    excludeFilter = file("$rootProject.projectDir/style/spotbugs-excludes.xml")
+    maxHeapSize = "3g"
+}
+
+[spotbugsMain, spotbugsTest].each {
+    it.reports {
+        xml.enabled = true
+    }
+    it.finalizedBy outputSpotbugsReports
 }

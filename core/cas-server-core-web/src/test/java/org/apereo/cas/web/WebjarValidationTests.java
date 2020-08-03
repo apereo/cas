@@ -1,6 +1,7 @@
 package org.apereo.cas.web;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Hal Deadman
  * @since 6.1.0
  */
+@Tag("Web")
 public class WebjarValidationTests {
 
     @Test

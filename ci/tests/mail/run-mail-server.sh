@@ -2,13 +2,15 @@
 
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
-echo "Downloading SMTP mail mock server..."
-wget -O MockMock.jar https://github.com/tweakers-dev/MockMock/blob/master/release/MockMock.jar?raw=true
+echo "Running MockMock docker image"
+docker stop email-server || true && docker rm email-server || true
+docker run -d -p25000:25000 -p8282:8282 --name "email-server" mmoayyed/mockmock:latest
 
-if [ ! -f MockMock.jar ]; then
-    echo "Mock mail server file MockMock.jar could not be downloaded!"
-    exit 1
+docker ps | grep "email-server"
+retVal=$?
+if [ $retVal == 0 ]; then
+    echo "MockMock docker image is running."
+else
+    echo "MockMock docker image failed to start."
+    exit $retVal
 fi
-
-echo "Running SMTP mail mock server..."
-java -jar MockMock.jar -p 25000 &>/dev/null &

@@ -28,7 +28,7 @@ public class ConfigurationPropertiesLoaderFactory {
     private final Environment environment;
 
     /**
-     * Gets loader.
+     * Gets loader based on the given resource.
      *
      * @param resource the resource
      * @param name     the name

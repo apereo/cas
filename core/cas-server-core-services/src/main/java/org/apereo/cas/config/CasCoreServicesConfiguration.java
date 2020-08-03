@@ -9,8 +9,11 @@ import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdG
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.ChainingServicesManager;
+import org.apereo.cas.services.DefaultChainingServiceRegistry;
 import org.apereo.cas.services.DefaultServiceRegistryExecutionPlan;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.ImmutableServiceRegistry;
@@ -27,15 +30,16 @@ import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManagerScheduledLoader;
+import org.apereo.cas.services.domain.DefaultDomainAwareServicesManager;
 import org.apereo.cas.services.domain.DefaultRegisteredServiceDomainExtractor;
-import org.apereo.cas.services.domain.DomainServicesManager;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceYamlHttpMessageConverter;
-import org.apereo.cas.util.io.CommunicationsManager;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
@@ -172,7 +176,7 @@ public class CasCoreServicesConfiguration {
         return plan;
     }
 
-    @ConditionalOnProperty(prefix = "cas.serviceRegistry.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.service-registry.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
     @Bean
     public Runnable servicesManagerScheduledLoader() {
         val plan = serviceRegistryExecutionPlan();
@@ -196,11 +200,11 @@ public class CasCoreServicesConfiguration {
     @Bean
     @RefreshScope
     @Lazy(false)
-    public ServiceRegistry serviceRegistry() {
+    public ChainingServiceRegistry serviceRegistry() {
         val plan = serviceRegistryExecutionPlan();
         val filter = (Predicate) Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
 
-        val chainingRegistry = new ChainingServiceRegistry(applicationContext);
+        val chainingRegistry = new DefaultChainingServiceRegistry(applicationContext);
         if (plan.find(filter).isEmpty()) {
             LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
                 + "Changes that are made to service definitions during runtime WILL be LOST when the CAS server is restarted. "
@@ -230,25 +234,39 @@ public class CasCoreServicesConfiguration {
         servicesManager().load();
     }
 
+    @RefreshScope
+    @Bean
+    @ConditionalOnMissingBean(name = "servicesManagerCache")
+    public Cache<Long, RegisteredService> servicesManagerCache() {
+        val serviceRegistry = casProperties.getServiceRegistry();
+        val duration = Beans.newDuration(serviceRegistry.getCache());
+        return Caffeine.newBuilder()
+            .initialCapacity(serviceRegistry.getCacheCapacity())
+            .maximumSize(serviceRegistry.getCacheSize())
+            .expireAfterWrite(duration)
+            .recordStats()
+            .build();
+    }
+
     @Bean
     @ConditionalOnMissingBean(name = "defaultServicesManagerExecutionPlanConfigurer")
-    @ConditionalOnProperty(prefix = "cas.serviceRegistry", name = "managementType", havingValue = "DEFAULT", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.service-registry", name = "management-type", havingValue = "DEFAULT", matchIfMissing = true)
     public ServicesManagerExecutionPlanConfigurer defaultServicesManagerExecutionPlanConfigurer() {
         return () -> {
             val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
-            return new DefaultServicesManager(serviceRegistry(), applicationContext, activeProfiles);
+            return new DefaultServicesManager(serviceRegistry(), applicationContext, activeProfiles, servicesManagerCache());
         };
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "domainServicesManagerExecutionPlanConfigurer")
-    @ConditionalOnProperty(prefix = "cas.serviceRegistry", name = "managementType", havingValue = "DOMAIN")
+    @ConditionalOnProperty(prefix = "cas.service-registry", name = "management-type", havingValue = "DOMAIN")
     public ServicesManagerExecutionPlanConfigurer domainServicesManagerExecutionPlanConfigurer() {
         return () -> {
             val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
-            return new DomainServicesManager(serviceRegistry(), applicationContext,
+            return new DefaultDomainAwareServicesManager(serviceRegistry(), applicationContext,
                 new DefaultRegisteredServiceDomainExtractor(),
-                activeProfiles);
+                activeProfiles, servicesManagerCache());
         };
     }
 

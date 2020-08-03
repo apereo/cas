@@ -4,10 +4,12 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCred
 
 import lombok.Cleanup;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.io.IOException;
@@ -23,9 +25,25 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @ExtendWith(MockitoExtension.class)
+@Tag("X509")
 public class X509RestMultipartBodyCredentialFactoryTests {
 
     private final X509RestMultipartBodyCredentialFactory factory = new X509RestMultipartBodyCredentialFactory();
+
+    @Test
+    public void emptyRequestBody() {
+        val requestBody = new LinkedMultiValueMap<String, String>();
+        val cred = factory.fromRequest(new MockHttpServletRequest(), requestBody);
+        assertTrue(cred.isEmpty());
+    }
+
+    @Test
+    public void badCredential() {
+        val requestBody = new LinkedMultiValueMap<String, String>();
+        requestBody.add("cert", "bad-certificate");
+        val cred = factory.fromRequest(new MockHttpServletRequest(), requestBody);
+        assertTrue(cred.isEmpty());
+    }
 
     @Test
     public void createX509Credential() throws IOException {
@@ -35,8 +53,7 @@ public class X509RestMultipartBodyCredentialFactoryTests {
         val certStr = scan.useDelimiter("\\Z").next();
         scan.close();
         requestBody.add("cert", certStr);
-
-        val cred = factory.fromRequest(null, requestBody).iterator().next();
+        val cred = factory.fromRequest(new MockHttpServletRequest(), requestBody).iterator().next();
         assertTrue(cred instanceof X509CertificateCredential);
     }
 
@@ -45,7 +62,7 @@ public class X509RestMultipartBodyCredentialFactoryTests {
         val requestBody = new LinkedMultiValueMap<String, String>();
         requestBody.add("username", "name");
         requestBody.add("password", "passwd");
-        val cred = factory.fromRequest(null, requestBody);
+        val cred = factory.fromRequest(new MockHttpServletRequest(), requestBody);
         assertTrue(cred.isEmpty());
     }
 }

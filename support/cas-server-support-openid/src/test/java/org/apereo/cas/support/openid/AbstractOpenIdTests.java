@@ -10,6 +10,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -49,12 +50,8 @@ import org.springframework.context.annotation.Import;
  * @since 4.2
  * @deprecated 6.2
  */
-@SpringBootTest(classes = AbstractOpenIdTests.SharedTestConfiguration.class,
-    properties = {
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
-@Deprecated(since = "6.2")
+@SpringBootTest(classes = AbstractOpenIdTests.SharedTestConfiguration.class)
+@Deprecated(since = "6.2.0")
 public class AbstractOpenIdTests {
 
     @ImportAutoConfiguration({
@@ -63,6 +60,7 @@ public class AbstractOpenIdTests {
     })
     @SpringBootConfiguration
     @Import({
+        CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,

@@ -209,6 +209,12 @@ public class MonitorProperties implements Serializable {
          */
         private LdapSecurity ldap = new LdapSecurity();
 
+        /**
+         * Control whether access to endpoints can be controlled
+         * via form-based login over the web via a special admin login endpoint.
+         */
+        private boolean formLoginEnabled;
+
         @Getter
         @Setter
         public static class JaasSecurity implements Serializable {
@@ -230,11 +236,11 @@ public class MonitorProperties implements Serializable {
              * The login context name should coincide with a given index in the login config specified.
              * This name is used as the index to the configuration specified in the login config property.
              *
-             * <pre>
+             * &lt;pre&gt;
              * JAASTest {
              * org.springframework.security.authentication.jaas.TestLoginModule required;
              * };
-             * </pre>
+             * &lt;/pre&gt;
              * In the above example, {@code JAASTest} should be set as the context name.
              */
             private String loginContextName;

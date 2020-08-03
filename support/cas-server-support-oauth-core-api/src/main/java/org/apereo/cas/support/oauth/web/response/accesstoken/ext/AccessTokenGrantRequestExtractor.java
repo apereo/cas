@@ -48,7 +48,7 @@ public interface AccessTokenGrantRequestExtractor {
     /**
      * Request must be authenticated.
      *
-     * @return the boolean
+     * @return true/false
      */
     default boolean requestMustBeAuthenticated() {
         return false;

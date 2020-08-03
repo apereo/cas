@@ -32,12 +32,14 @@ public class RedisTicketRegistryConfiguration {
 
     @ConditionalOnMissingBean(name = "redisTicketConnectionFactory")
     @Bean
+    @RefreshScope
     public RedisConnectionFactory redisTicketConnectionFactory() {
         val redis = casProperties.getTicket().getRegistry().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "ticketRedisTemplate")
     public RedisTemplate<String, Ticket> ticketRedisTemplate() {
         return RedisObjectFactory.newRedisTemplate(redisTicketConnectionFactory());

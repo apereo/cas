@@ -1,16 +1,9 @@
 package org.apereo.cas.mfa.simple;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.TransientSessionTicket;
-import org.apereo.cas.ticket.TransientSessionTicketFactory;
-import org.apereo.cas.ticket.TransientSessionTicketImpl;
-import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-
-import lombok.RequiredArgsConstructor;
-import lombok.val;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -19,42 +12,42 @@ import java.util.Map;
  * This is {@link CasSimpleMultifactorAuthenticationTicketFactory}.
  *
  * @author Misagh Moayyed
- * @since 6.0.0
+ * @since 6.3.0
  */
-@RequiredArgsConstructor
-public class CasSimpleMultifactorAuthenticationTicketFactory implements TransientSessionTicketFactory {
+public interface CasSimpleMultifactorAuthenticationTicketFactory extends TicketFactory {
     /**
-     * MFA ticket prefix.
+     * Normalize ticket id string.
+     *
+     * @param id the id
+     * @return the string
      */
-    public static final String PREFIX = "CASMFA";
-
-    private final ExpirationPolicyBuilder expirationPolicyBuilder;
-
-    private final UniqueTicketIdGenerator ticketIdGenerator;
+    static String normalizeTicketId(final String id) {
+        return CasSimpleMultifactorAuthenticationTicket.PREFIX + '-' + id;
+    }
 
     /**
-     * Create delegated authentication request ticket.
+     * Build expiration policy expiration policy.
+     *
+     * @param expirationPolicyBuilder the expiration policy builder
+     * @param properties              the properties
+     * @return the expiration policy
+     */
+    static ExpirationPolicy buildExpirationPolicy(final ExpirationPolicyBuilder expirationPolicyBuilder,
+                                                  final Map<String, Serializable> properties) {
+        var expirationPolicy = expirationPolicyBuilder.buildTicketExpirationPolicy();
+        if (properties.containsKey(ExpirationPolicy.class.getName())) {
+            expirationPolicy = ExpirationPolicy.class.cast(properties.remove(ExpirationPolicy.class.getName()));
+        }
+        return expirationPolicy;
+    }
+    
+    /**
+     * Create ticket.
      *
      * @param service    the service
      * @param properties the properties
      * @return the delegated authentication request ticket
      */
-    @Override
-    public TransientSessionTicket create(final Service service, final Map<String, Serializable> properties) {
-        val id = ticketIdGenerator.getNewTicketId(PREFIX);
-        val expirationPolicy = TransientSessionTicketFactory.buildExpirationPolicy(this.expirationPolicyBuilder, properties);
-        return new TransientSessionTicketImpl(id, expirationPolicy, service, properties);
-    }
+    CasSimpleMultifactorAuthenticationTicket create(Service service, Map<String, Serializable> properties);
 
-    @Override
-    public TransientSessionTicket create(final String id, final Map<String, Serializable> properties) {
-        val expirationPolicy = TransientSessionTicketFactory.buildExpirationPolicy(expirationPolicyBuilder, properties);
-        return new TransientSessionTicketImpl(TransientSessionTicketFactory.normalizeTicketId(id),
-            expirationPolicy, null, properties);
-    }
-
-    @Override
-    public TicketFactory get(final Class<? extends Ticket> clazz) {
-        return this;
-    }
 }

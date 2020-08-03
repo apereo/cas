@@ -20,16 +20,19 @@ import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFact
 import org.apereo.cas.rest.plan.DefaultServiceTicketResourceEntityResponseFactoryPlan;
 import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 import org.apereo.cas.rest.plan.ServiceTicketResourceEntityResponseFactoryConfigurer;
+import org.apereo.cas.support.rest.resources.RestProtocolConstants;
 import org.apereo.cas.support.rest.resources.ServiceTicketResource;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.support.rest.resources.TicketStatusResource;
 import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -184,6 +187,10 @@ public class CasRestConfiguration {
         };
     }
 
+    @Bean
+    public ProtocolEndpointConfigurer restProtocolEndpointConfigurer() {
+        return () -> List.of(StringUtils.prependIfMissing(RestProtocolConstants.BASE_ENDPOINT, "/"));
+    }
 
     /**
      * This is {@link CasRestThrottlingConfiguration}.

@@ -6,9 +6,11 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,6 +27,8 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.core.io.Resource;
 
 import javax.xml.namespace.QName;
+
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,7 +41,7 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlRegisteredServiceMetadataResolver {
     /**
      * The Saml idp properties.
@@ -111,7 +115,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
             configureAndInitializeSingleMetadataResolver(metadataResolver, service, metadataFilterList);
             return metadataResolver;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -263,8 +267,9 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      */
     protected void buildRequiredValidUntilFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
         if (service.getMetadataMaxValidity() > 0) {
-            val requiredValidUntilFilter = new RequiredValidUntilFilter(service.getMetadataMaxValidity());
-            metadataFilterList.add(requiredValidUntilFilter);
+            val filter = new RequiredValidUntilFilter();
+            filter.setMaxValidityInterval(Duration.ofSeconds(service.getMetadataMaxValidity()));
+            metadataFilterList.add(filter);
             LOGGER.debug("Added metadata RequiredValidUntilFilter with max validity of [{}]", service.getMetadataMaxValidity());
         } else {
             LOGGER.debug("No metadata maximum validity criteria is defined for [{}], so RequiredValidUntilFilter will not be invoked",

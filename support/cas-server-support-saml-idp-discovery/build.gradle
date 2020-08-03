@@ -22,9 +22,8 @@ dependencies {
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-saml-mdui-core")
     implementation project(":support:cas-server-support-saml-idp-core")
-    
-    implementation libraries.shibidp
-    implementation libraries.shibidpjavasupport
+
+    implementation libraries.shibutiljavasupport
     implementation libraries.opensaml
     implementation libraries.dropwizard
     implementation libraries.pac4jcore
@@ -32,16 +31,16 @@ dependencies {
     implementation libraries.nimbus
 
     testImplementation project(":core:cas-server-core-web")
-    
-    
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-cookie")
-    
     testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":support:cas-server-support-pac4j-webflow")
     testImplementation project(":support:cas-server-support-pac4j")
@@ -53,4 +52,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-pac4j-webflow", configuration: "tests")
 }

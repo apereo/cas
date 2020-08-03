@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MongoDbMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -17,6 +18,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import javax.net.ssl.SSLContext;
+
 /**
  * This is {@link MongoDbMultifactorAuthenticationTrustConfiguration}.
  *
@@ -28,11 +31,19 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 public class MongoDbMultifactorAuthenticationTrustConfiguration {
 
     @Autowired
+    @Qualifier("mfaTrustRecordKeyGenerator")
+    private ObjectProvider<MultifactorAuthenticationTrustRecordKeyGenerator> keyGenerationStrategy;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("mfaTrustCipherExecutor")
     private ObjectProvider<CipherExecutor> mfaTrustCipherExecutor;
+
+    @Autowired
+    @Qualifier("sslContext")
+    private ObjectProvider<SSLContext> sslContext;
 
     @RefreshScope
     @Bean
@@ -44,22 +55,19 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
     @Bean
     public MongoTemplate mongoMfaTrustedAuthnTemplate() {
         val mongo = casProperties.getAuthn().getMfa().getTrusted().getMongo();
-        val factory = new MongoDbConnectionFactory();
+        val factory = new MongoDbConnectionFactory(sslContext.getObject());
 
         val mongoTemplate = factory.buildMongoTemplate(mongo);
-        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
 
     @RefreshScope
     @Bean
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        val mongodb = casProperties.getAuthn().getMfa().getTrusted().getMongo();
-        val m =
-            new MongoDbMultifactorAuthenticationTrustStorage(
-                mongodb.getCollection(),
-                mongoMfaTrustedAuthnTemplate());
-        m.setCipherExecutor(mfaTrustCipherExecutor.getObject());
-        return m;
+        return new MongoDbMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
+            mfaTrustCipherExecutor.getObject(),
+            mongoMfaTrustedAuthnTemplate(),
+            keyGenerationStrategy.getObject());
     }
 }

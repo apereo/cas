@@ -28,7 +28,7 @@ public class RankedMultifactorAuthenticationProviderSelector implements Multifac
     public MultifactorAuthenticationProvider resolve(final Collection<MultifactorAuthenticationProvider> providers,
                                                      final RegisteredService service,
                                                      final Principal principal) {
-        val sorted = new ArrayList<MultifactorAuthenticationProvider>(providers);
+        val sorted = new ArrayList<>(providers);
         if (sorted.isEmpty()) {
             throw new IllegalArgumentException("List of candidate multifactor authentication providers is empty");
         }

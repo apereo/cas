@@ -22,7 +22,7 @@ public class CasThymeleafLoginFormDirector {
      * Is login form viewable?.
      *
      * @param vars the vars
-     * @return the boolean
+     * @return true/false
      */
     public boolean isLoginFormViewable(final WebEngineContext vars) {
         val context = RequestContextHolder.getRequestContext();
@@ -34,7 +34,7 @@ public class CasThymeleafLoginFormDirector {
      * Is login form username editable?.
      *
      * @param vars the vars
-     * @return the boolean
+     * @return true/false
      */
     public boolean isLoginFormUsernameInputVisible(final WebEngineContext vars) {
         val context = RequestContextHolder.getRequestContext();
@@ -47,7 +47,7 @@ public class CasThymeleafLoginFormDirector {
      * Is login form username input disabled boolean.
      *
      * @param vars the vars
-     * @return the boolean
+     * @return true/false
      */
     public boolean isLoginFormUsernameInputDisabled(final WebEngineContext vars) {
         val context = RequestContextHolder.getRequestContext();

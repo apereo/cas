@@ -6,13 +6,13 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataResolver;
 import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataHealthIndicator;
@@ -32,10 +32,12 @@ import org.apereo.cas.support.saml.util.NonInflatingSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlIdPMetadataController;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlRegisteredServiceCachedMetadataEndpoint;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlPostProfileHandlerEndpoint;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHandlerEndpoint;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -56,10 +58,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.io.ResourceLoader;
 
 import java.net.URL;
-import java.util.Optional;
 
 /**
  * This is {@link SamlIdPMetadataConfiguration}.
@@ -71,9 +71,6 @@ import java.util.Optional;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SamlIdPMetadataConfiguration {
-
-    @Autowired
-    private ResourceLoader resourceLoader;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -113,17 +110,17 @@ public class SamlIdPMetadataConfiguration {
     @Bean(initMethod = "initialize", destroyMethod = "destroy")
     @DependsOn("samlIdPMetadataGenerator")
     @SneakyThrows
-    @Autowired
-    public MetadataResolver casSamlIdPMetadataResolver(@Qualifier("samlIdPMetadataLocator") final SamlIdPMetadataLocator samlMetadataLocator) {
+    public MetadataResolver casSamlIdPMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        val resolver = new InMemoryResourceMetadataResolver(samlMetadataLocator.resolveMetadata(Optional.empty()),
-            openSamlConfigBean.getObject());
+        val resolver = new SamlIdPMetadataResolver(samlIdPMetadataLocator(),
+            samlIdPMetadataGenerator(), openSamlConfigBean.getObject());
         resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
         resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
         resolver.setId(idp.getEntityId());
         return resolver;
     }
 
+    @Lazy
     @Bean
     @RefreshScope
     public SamlIdPMetadataController samlIdPMetadataController() {
@@ -137,7 +134,7 @@ public class SamlIdPMetadataConfiguration {
         val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
             .samlIdPMetadataLocator(samlIdPMetadataLocator())
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter())
-            .resourceLoader(resourceLoader)
+            .applicationContext(applicationContext)
             .metadataCipherExecutor(CipherExecutor.noOpOfStringToString())
             .casProperties(casProperties)
             .build();
@@ -160,7 +157,10 @@ public class SamlIdPMetadataConfiguration {
     @SneakyThrows
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new FileSystemSamlIdPMetadataLocator(idp.getMetadata().getLocation());
+        val location = SpringExpressionLanguageValueResolver.getInstance()
+            .resolve(idp.getMetadata().getLocation());
+        val metadataLocation = ResourceUtils.getRawResourceFrom(location);
+        return new FileSystemSamlIdPMetadataLocator(metadataLocation);
     }
 
     @ConditionalOnMissingBean(name = "chainingMetadataResolverCacheLoader")
@@ -224,8 +224,8 @@ public class SamlIdPMetadataConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public SSOSamlPostProfileHandlerEndpoint ssoSamlPostProfileHandlerEndpoint() {
-        return new SSOSamlPostProfileHandlerEndpoint(casProperties,
+    public SSOSamlIdPPostProfileHandlerEndpoint ssoSamlPostProfileHandlerEndpoint() {
+        return new SSOSamlIdPPostProfileHandlerEndpoint(casProperties,
             servicesManager.getObject(),
             authenticationSystemSupport.getObject(),
             samlIdPServiceFactory.getObject(),

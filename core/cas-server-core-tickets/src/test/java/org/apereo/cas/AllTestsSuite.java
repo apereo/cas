@@ -1,13 +1,16 @@
 package org.apereo.cas;
 
+import org.apereo.cas.ticket.DefaultEncodedTicketTests;
 import org.apereo.cas.ticket.DefaultTicketCatalogTests;
 import org.apereo.cas.ticket.InvalidTicketExceptionTests;
 import org.apereo.cas.ticket.ServiceTicketImplTests;
 import org.apereo.cas.ticket.TicketGrantingTicketImplTests;
 import org.apereo.cas.ticket.TicketSerializersTests;
+import org.apereo.cas.ticket.TicketValidationExceptionTests;
 import org.apereo.cas.ticket.TransientSessionTicketImplTests;
 import org.apereo.cas.ticket.UnrecognizableServiceForServiceTicketValidationExceptionTests;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicyTests;
+import org.apereo.cas.ticket.expiration.DelegatingExpirationPolicyTests;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicyTests;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicyTests;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicyTests;
@@ -15,6 +18,8 @@ import org.apereo.cas.ticket.expiration.RememberMeDelegatingExpirationPolicyTest
 import org.apereo.cas.ticket.expiration.ThrottledUseAndTimeoutExpirationPolicyTests;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicyTests;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicyTests;
+import org.apereo.cas.ticket.expiration.builder.TicketGrantingTicketExpirationPolicyBuilderTests;
+import org.apereo.cas.ticket.factory.DefaultProxyGrantingTicketFactoryTests;
 import org.apereo.cas.ticket.factory.DefaultProxyTicketFactoryTests;
 import org.apereo.cas.ticket.factory.DefaultServiceTicketFactoryTests;
 import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactoryTests;
@@ -45,6 +50,7 @@ import org.junit.runner.RunWith;
     DefaultProxyTicketFactoryTests.class,
     InvalidTicketExceptionTests.class,
     ServiceTicketImplTests.class,
+    TicketGrantingTicketExpirationPolicyBuilderTests.class,
     DefaultTicketStringSerializationManagerTests.class,
     TicketGrantingTicketImplTests.class,
     UnrecognizableServiceForServiceTicketValidationExceptionTests.class,
@@ -57,6 +63,10 @@ import org.junit.runner.RunWith;
     CachingTicketRegistryTests.class,
     DistributedTicketRegistryTests.class,
     Cas10ProxyHandlerTests.class,
+    DefaultEncodedTicketTests.class,
+    TicketValidationExceptionTests.class,
+    DefaultProxyGrantingTicketFactoryTests.class,
+    DelegatingExpirationPolicyTests.class,
     TransientSessionTicketImplTests.class,
     DefaultTicketRegistrySupportTests.class,
     DefaultTransientSessionTicketFactoryTests.class,

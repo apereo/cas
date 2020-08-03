@@ -31,7 +31,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
             .getEncryptionCertificate(registeredService).getFile();
         val encKey = getConfigurationContext().getSamlIdPMetadataLocator()
             .resolveEncryptionKey(registeredService).getFile();
-        writeCertificateAndKey(encCert, encKey);
+        writeCertificateAndKey(encCert, encKey, registeredService);
         return Pair.of(FileUtils.readFileToString(encCert, StandardCharsets.UTF_8),
             FileUtils.readFileToString(encKey, StandardCharsets.UTF_8));
     }
@@ -43,7 +43,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
             .resolveSigningCertificate(registeredService).getFile();
         val signingKey = getConfigurationContext().getSamlIdPMetadataLocator()
             .resolveSigningKey(registeredService).getFile();
-        writeCertificateAndKey(signingCert, signingKey);
+        writeCertificateAndKey(signingCert, signingKey, registeredService);
         return Pair.of(FileUtils.readFileToString(signingCert, StandardCharsets.UTF_8),
             FileUtils.readFileToString(signingKey, StandardCharsets.UTF_8));
     }
@@ -57,7 +57,8 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     }
 
     @SneakyThrows
-    private void writeCertificateAndKey(final File certificate, final File key) {
+    protected void writeCertificateAndKey(final File certificate, final File key,
+                                          final Optional<SamlRegisteredService> registeredService) {
         if (certificate.exists()) {
             FileUtils.forceDelete(certificate);
         }

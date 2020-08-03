@@ -25,11 +25,11 @@ public class CookieDeviceFingerprintComponentCipherExecutor extends BaseStringCi
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.authn.mfa.trusted.deviceFingerprint.cookie.crypto.encryption.key";
+        return "cas.authn.mfa.trusted.device-fingerprint.cookie.crypto.encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.authn.mfa.trusted.deviceFingerprint.cookie.crypto.signing.key";
+        return "cas.authn.mfa.trusted.device-fingerprint.cookie.crypto.signing.key";
     }
 }

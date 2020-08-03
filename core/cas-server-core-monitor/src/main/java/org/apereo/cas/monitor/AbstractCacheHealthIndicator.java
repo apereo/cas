@@ -1,5 +1,8 @@
 package org.apereo.cas.monitor;
 
+import org.apereo.cas.util.LoggingUtils;
+
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,13 +22,12 @@ import java.util.stream.Collectors;
  * @since 3.5.1
  */
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicator {
-    /**
-     * CAS settings.
-     */
+
     private final long evictionThreshold;
+
     private final long threshold;
 
     @Override
@@ -58,10 +60,12 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
                 map.put("capacity", s.getCapacity());
                 map.put("evictions", s.getEvictions());
                 map.put("percentFree", s.getPercentFree());
+                map.put("state", s.toString(new StringBuilder()));
+
                 builder.withDetail(s.getName(), map);
             });
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             builder.down(e);
         }
 

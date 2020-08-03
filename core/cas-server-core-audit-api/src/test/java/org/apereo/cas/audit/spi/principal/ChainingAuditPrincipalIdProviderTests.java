@@ -3,6 +3,7 @@ package org.apereo.cas.audit.spi.principal;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Tag("Audits")
 public class ChainingAuditPrincipalIdProviderTests {
     @Test
     public void verifyOperation() {

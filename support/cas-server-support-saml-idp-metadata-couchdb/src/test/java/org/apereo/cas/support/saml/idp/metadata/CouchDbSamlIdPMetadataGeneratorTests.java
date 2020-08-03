@@ -1,19 +1,13 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
-import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.CouchDbSamlIdPFactoryConfiguration;
 import org.apereo.cas.config.CouchDbSamlIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPCouchDbRegisteredServiceMetadataConfiguration;
-import org.apereo.cas.config.SamlIdPMetadataConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.saml.SamlIdPMetadataCouchDbRepository;
+import org.apereo.cas.support.saml.BaseSamlIdPMetadataTests;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -26,11 +20,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.util.Optional;
 
@@ -47,22 +38,14 @@ import static org.junit.jupiter.api.Assertions.*;
     CouchDbSamlIdPMetadataConfiguration.class,
     SamlIdPCouchDbRegisteredServiceMetadataConfiguration.class,
     CasCouchDbCoreConfiguration.class,
-    SamlIdPMetadataConfiguration.class,
-    RefreshAutoConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    MailSenderAutoConfiguration.class,
-    AopAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CoreSamlConfiguration.class
+    BaseSamlIdPMetadataTests.SharedTestConfiguration.class
     },
     properties = {
-        "cas.authn.samlIdp.metadata.couchDb.dbName=saml_generator",
-        "cas.authn.samlIdp.metadata.couchDb.idpMetadataEnabled=true",
-        "cas.authn.samlIdp.metadata.couchDb.username=cas",
-        "cas.authn.samlIdp.metadata.couchdb.password=password"
+        "cas.authn.saml-idp.metadata.couch-db.db-name=saml_generator",
+        "cas.authn.saml-idp.metadata.couch-db.idp-metadata-enabled=true",
+        "cas.authn.saml-idp.metadata.couch-db.username=cas",
+        "cas.authn.saml-idp.metadata.couch-db.caching=false",
+        "cas.authn.saml-idp.metadata.couch-db.password=password"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("CouchDb")
@@ -84,6 +67,7 @@ public class CouchDbSamlIdPMetadataGeneratorTests {
     @Qualifier("samlIdPMetadataCouchDbRepository")
     private SamlIdPMetadataCouchDbRepository couchDbRepository;
 
+    
     @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());

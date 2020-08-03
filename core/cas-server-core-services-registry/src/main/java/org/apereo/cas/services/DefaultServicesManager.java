@@ -1,10 +1,11 @@
 package org.apereo.cas.services;
 
-import org.springframework.context.ApplicationEventPublisher;
+import com.github.benmanes.caffeine.cache.Cache;
+import org.springframework.context.ConfigurableApplicationContext;
 
-import java.util.Collection;
+import java.util.Comparator;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.stream.Stream;
 
 /**
  * Default implementation of the {@link ServicesManager} interface.
@@ -14,33 +15,16 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 public class DefaultServicesManager extends AbstractServicesManager {
 
-    private final Set<RegisteredService> orderedServices = new ConcurrentSkipListSet<>();
-
     public DefaultServicesManager(final ServiceRegistry serviceRegistry,
-                                  final ApplicationEventPublisher eventPublisher,
-                                  final Set<String> environments) {
-        super(serviceRegistry, eventPublisher, environments);
+            final ConfigurableApplicationContext applicationContext,
+            final Set<String> environments,
+            final Cache<Long, RegisteredService> services) {
+        super(serviceRegistry, applicationContext, environments, services);
     }
 
     @Override
-    protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
-        return this.orderedServices;
+    protected Stream<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
+        return getServices().asMap().values().stream().sorted(Comparator.naturalOrder());
     }
 
-    @Override
-    protected void deleteInternal(final RegisteredService service) {
-        this.orderedServices.remove(service);
-    }
-
-    @Override
-    protected void saveInternal(final RegisteredService service) {
-        this.orderedServices.clear();
-        this.orderedServices.addAll(getAllServices());
-    }
-
-    @Override
-    protected void loadInternal() {
-        this.orderedServices.clear();
-        this.orderedServices.addAll(getAllServices());
-    }
 }

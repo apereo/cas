@@ -45,7 +45,7 @@ public interface RegisteredServiceCipherExecutor {
     /**
      * Is enabled?.
      *
-     * @return the boolean
+     * @return true/false
      */
     default boolean isEnabled() {
         return true;
@@ -55,7 +55,7 @@ public interface RegisteredServiceCipherExecutor {
      * Supports boolean.
      *
      * @param registeredService the registered service
-     * @return the boolean
+     * @return true/false
      */
     default boolean supports(final RegisteredService registeredService) {
         return true;

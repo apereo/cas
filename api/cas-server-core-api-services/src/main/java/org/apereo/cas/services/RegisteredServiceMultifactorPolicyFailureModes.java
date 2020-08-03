@@ -11,10 +11,12 @@ public enum RegisteredServiceMultifactorPolicyFailureModes {
      * Disallow MFA, proceed with authentication but don't communicate MFA to the RP.
      */
     OPEN,
+    
     /**
      * Disallow MFA, block with authentication.
      */
     CLOSED,
+
     /**
      * Disallow MFA, proceed with authentication and communicate MFA to the RP.
      */

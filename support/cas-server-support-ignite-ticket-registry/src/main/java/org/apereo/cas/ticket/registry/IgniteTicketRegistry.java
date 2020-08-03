@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -45,21 +46,16 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @ToString(callSuper = true)
+@RequiredArgsConstructor
 public class IgniteTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
+
+    private final TicketCatalog ticketCatalog;
 
     private final IgniteConfiguration igniteConfiguration;
 
     private final IgniteProperties properties;
 
-    private final TicketCatalog ticketCatalog;
-
     private Ignite ignite;
-
-    public IgniteTicketRegistry(final TicketCatalog ticketCatalog, final IgniteConfiguration igniteConfiguration, final IgniteProperties properties) {
-        this.igniteConfiguration = igniteConfiguration;
-        this.properties = properties;
-        this.ticketCatalog = ticketCatalog;
-    }
 
     @Override
     public void addTicket(final Ticket ticket) {
@@ -74,11 +70,16 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
 
     @Override
     public long deleteAll() {
-        return this.ticketCatalog.findAll().stream().map(this::getIgniteCacheFromMetadata).filter(Objects::nonNull).mapToLong(instance -> {
-            val size = instance.size();
-            instance.removeAll();
-            return size;
-        }).sum();
+        return this.ticketCatalog.findAll()
+            .stream()
+            .map(this::getIgniteCacheFromMetadata)
+            .filter(Objects::nonNull)
+            .mapToLong(instance -> {
+                val size = instance.size();
+                instance.removeAll();
+                return size;
+            })
+            .sum();
     }
 
     @Override
@@ -126,7 +127,9 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
 
     @Override
     public Collection<? extends Ticket> getTickets() {
-        return this.ticketCatalog.findAll().stream().map(this::getIgniteCacheFromMetadata)
+        return this.ticketCatalog.findAll()
+            .stream()
+            .map(this::getIgniteCacheFromMetadata)
             .map(cache -> cache.query(new ScanQuery<>()).getAll().stream()).flatMap(Function.identity())
             .map(Cache.Entry::getValue).map(object -> decodeTicket((Ticket) object)).collect(Collectors.toSet());
     }

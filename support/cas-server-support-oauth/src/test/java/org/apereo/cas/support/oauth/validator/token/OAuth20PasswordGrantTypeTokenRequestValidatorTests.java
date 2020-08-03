@@ -84,7 +84,8 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
         profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
         val session = request.getSession(true);
         assertNotNull(session);
-        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        session.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, getGrantType().getType());
         request.setParameter(OAuth20Constants.CLIENT_ID, supportingService.getClientId());
@@ -92,12 +93,14 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
 
         request.setParameter(OAuth20Constants.CLIENT_ID, nonSupportingService.getClientId());
         profile.setId(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
-        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        session.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
         assertFalse(this.validator.validate(new JEEContext(request, response)));
 
         request.setParameter(OAuth20Constants.CLIENT_ID, promiscuousService.getClientId());
         profile.setId(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
-        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        session.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
         assertTrue(this.validator.validate(new JEEContext(request, response)));
     }
 

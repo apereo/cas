@@ -3,41 +3,6 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow.xsd">
-
-    <var name="credential" class="org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential" />
-    <on-start>
-        <evaluate expression="initialFlowSetupAction" />
-    </on-start>
-
-    <action-state id="initializeLoginForm">
-        <evaluate expression="initializeLoginAction" />
-        <transition on="success" to="sendSimpleToken"/>
-    </action-state>
-
-    <action-state id="sendSimpleToken">
-        <evaluate expression="mfaSimpleMultifactorSendTokenAction" />
-        <transition on="success" to="viewLoginForm"/>
-        <transition on="error" to="unavailable"/>
-    </action-state>
-
-    <view-state id="viewLoginForm" view="casSimpleMfaLoginView" model="credential">
-        <binder>
-            <binding property="token" required="true"/>
-        </binder>
-        <on-entry>
-            <set name="viewScope.principal" value="conversationScope.authentication.principal" />
-        </on-entry>
-        <transition on="submit" bind="true" validate="true" to="realSubmit"/>
-        <transition on="resend" bind="false" validate="false" to="sendSimpleToken"/>
-
-    </view-state>
-
-    <action-state id="realSubmit">
-        <evaluate expression="oneTimeTokenAuthenticationWebflowAction" />
-        <transition on="success" to="success" />
-        <transition on="error" to="viewLoginForm" />
-    </action-state>
-
-    <end-state id="success" />
-    <end-state id="unavailable" />
+    <end-state id="success"/>
+    <end-state id="unavailable"/>
 </flow>

@@ -1,8 +1,8 @@
 package org.apereo.cas.oidc.token;
 
-import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.BaseTokenSigningAndEncryptionService;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.EncodingUtils;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -29,12 +29,13 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
      * The default keystore for OIDC tokens.
      */
     protected final LoadingCache<String, Optional<PublicJsonWebKey>> defaultJsonWebKeystoreCache;
+
     /**
      * The service keystore for OIDC tokens.
      */
     protected final LoadingCache<OAuthRegisteredService, Optional<PublicJsonWebKey>> serviceJsonWebKeystoreCache;
 
-    public BaseOidcJsonWebKeyTokenSigningAndEncryptionService(final LoadingCache<String, Optional<PublicJsonWebKey>> defaultJsonWebKeystoreCache,
+    protected BaseOidcJsonWebKeyTokenSigningAndEncryptionService(final LoadingCache<String, Optional<PublicJsonWebKey>> defaultJsonWebKeystoreCache,
                                                               final LoadingCache<OAuthRegisteredService, Optional<PublicJsonWebKey>> serviceJsonWebKeystoreCache,
                                                               final String issuer) {
         super(issuer);
@@ -45,19 +46,16 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     @Override
     @SneakyThrows
     public String encode(final OAuthRegisteredService service, final JwtClaims claims) {
-        LOGGER.trace("Attempting to produce token generated for service [{}]", service);
-        val svc = (OidcRegisteredService) service;
-        LOGGER.debug("Generated claims to put into token are [{}]", claims.toJson());
-
-        var innerJwt = signTokenIfNecessary(claims, svc);
-        if (shouldEncryptToken(svc)) {
-            innerJwt = encryptToken(svc, innerJwt);
+        LOGGER.trace("Attempting to produce token generated for service [{}] with claims [{}]", service, claims.toJson());
+        var innerJwt = signTokenIfNecessary(claims, service);
+        if (shouldEncryptToken(service)) {
+            innerJwt = encryptToken(service, innerJwt);
         }
 
         return innerJwt;
     }
 
-    private String signTokenIfNecessary(final JwtClaims claims, final OidcRegisteredService svc) {
+    private String signTokenIfNecessary(final JwtClaims claims, final OAuthRegisteredService svc) {
         if (shouldSignToken(svc)) {
             LOGGER.debug("Fetching JSON web key to sign the token for : [{}]", svc.getClientId());
             val jsonWebKey = getJsonWebKeySigningKey();
@@ -67,17 +65,18 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
             }
             return signToken(svc, claims, jsonWebKey);
         }
-        return signToken(svc, claims, null);
+        val claimSet = JwtBuilder.parse(claims.toJson());
+        return JwtBuilder.buildPlain(claimSet, Optional.of(svc));
     }
 
     /**
      * Encrypt token.
      *
-     * @param svc      the svc
+     * @param svc   the svc
      * @param token the inner jwt
      * @return the string
      */
-    protected abstract String encryptToken(OidcRegisteredService svc, String token);
+    protected abstract String encryptToken(OAuthRegisteredService svc, String token);
 
     @Override
     protected PublicJsonWebKey getJsonWebKeySigningKey() {
@@ -88,18 +87,21 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
         return jwks.get();
     }
 
-    @SneakyThrows
     @Override
     public JwtClaims decode(final String token, final Optional<OAuthRegisteredService> service) {
-        if (service.isPresent()) {
-            var jwt = JWTParser.parse(token);
-            if (jwt instanceof EncryptedJWT) {
-                val encryptionKey = getJsonWebKeyForEncryption(service.get());
-                val decoded = EncodingUtils.decryptJwtValue(encryptionKey.getPrivateKey(), token);
-                return super.decode(decoded, service);
+        try {
+            if (service.isPresent()) {
+                val jwt = JWTParser.parse(token);
+                if (jwt instanceof EncryptedJWT) {
+                    val encryptionKey = getJsonWebKeyForEncryption(service.get());
+                    val decoded = EncodingUtils.decryptJwtValue(encryptionKey.getPrivateKey(), token);
+                    return super.decode(decoded, service);
+                }
             }
+            return super.decode(token, service);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
         }
-        return super.decode(token, service);
     }
 
     /**

@@ -25,9 +25,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ResourceLoader;
 
 import java.util.Optional;
 
@@ -40,7 +40,7 @@ import java.util.Optional;
 @Configuration("ouchDbSamlIdPMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnProperty(prefix = "cas.authn.samlIdp.metadata.couchDb", name = "idpMetadataEnabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.couch-db", name = "idp-metadata-enabled", havingValue = "true")
 public class CouchDbSamlIdPMetadataConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -50,7 +50,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
     private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
 
     @Autowired
-    private ResourceLoader resourceLoader;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("samlMetadataCouchDbFactory")
@@ -82,6 +82,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
             casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb().isCreateIfNotExists());
         repository.initStandardDesignDocument();
         return repository;
+
     }
 
     @Bean
@@ -102,11 +103,12 @@ public class CouchDbSamlIdPMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbSamlIdPMetadataGenerator")
     @Bean
+    @RefreshScope
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
             .samlIdPMetadataLocator(samlIdPMetadataLocator())
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
-            .resourceLoader(resourceLoader)
+            .applicationContext(applicationContext)
             .casProperties(casProperties)
             .metadataCipherExecutor(couchDbSamlIdPMetadataCipherExecutor())
             .build();
@@ -119,6 +121,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
     @ConditionalOnMissingBean(name = "couchDbSamlIdPMetadataLocator")
     @Bean
     @SneakyThrows
+    @RefreshScope
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         return new CouchDbSamlIdPMetadataLocator(couchDbSamlIdPMetadataCipherExecutor(), samlIdPMetadataRepository.getObject());
     }

@@ -5,17 +5,18 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.MediaType;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -26,36 +27,15 @@ import java.util.Optional;
  */
 @Slf4j
 public class AmazonS3SamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator {
-    private final transient AmazonS3 s3Client;
+    private final transient S3Client s3Client;
 
     private final String bucketName;
 
     public AmazonS3SamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext context,
-                                            final AmazonS3 s3Client, final String bucketName) {
+                                            final S3Client s3Client, final String bucketName) {
         super(context);
         this.s3Client = s3Client;
         this.bucketName = bucketName;
-    }
-
-    @Override
-    protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
-                                                               final Optional<SamlRegisteredService> registeredService) {
-        val bucketNameToUse = AmazonS3SamlIdPMetadataUtils.determineBucketNameFor(registeredService, this.bucketName, s3Client);
-        if (!s3Client.doesBucketExistV2(bucketNameToUse)) {
-            LOGGER.trace("Bucket [{}] does not exist. Creating...", bucketNameToUse);
-            val bucket = s3Client.createBucket(bucketNameToUse);
-            LOGGER.debug("Created bucket [{}]", bucket.getName());
-        }
-        val metadata = new ObjectMetadata();
-        metadata.setContentType(MediaType.TEXT_PLAIN_VALUE);
-        metadata.addUserMetadata("signingCertificate", doc.getSigningCertificate());
-        metadata.addUserMetadata("signingKey", doc.getSigningKey());
-        metadata.addUserMetadata("encryptionCertificate", doc.getEncryptionCertificate());
-        metadata.addUserMetadata("encryptionKey", doc.getEncryptionKey());
-        val request = new PutObjectRequest(bucketNameToUse, String.valueOf(doc.getId()),
-            new ByteArrayInputStream(doc.getMetadata().getBytes(StandardCharsets.UTF_8)), metadata);
-        s3Client.putObject(request);
-        return doc;
     }
 
     @Override
@@ -68,6 +48,30 @@ public class AmazonS3SamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerat
     @SneakyThrows
     public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) {
         return generateCertificateAndKey();
+    }
+
+    @Override
+    protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
+                                                               final Optional<SamlRegisteredService> registeredService) {
+        val bucketNameToUse = AmazonS3SamlIdPMetadataUtils.determineBucketNameFor(registeredService, this.bucketName, s3Client);
+        if (!s3Client.listBuckets(ListBucketsRequest.builder().build())
+            .buckets().stream().anyMatch(b -> b.name().equalsIgnoreCase(bucketNameToUse))) {
+            LOGGER.trace("Bucket [{}] does not exist. Creating...", bucketNameToUse);
+            val bucket = s3Client.createBucket(CreateBucketRequest.builder().bucket(bucketNameToUse).build());
+            LOGGER.debug("Created bucket [{}]", bucket.location());
+        }
+        val request = PutObjectRequest.builder()
+            .key(String.valueOf(doc.getId()))
+            .bucket(bucketNameToUse)
+            .contentType(MediaType.TEXT_PLAIN_VALUE)
+            .metadata(Map.of(
+                "signingCertificate", doc.getSigningCertificate(),
+                "signingKey", doc.getSigningKey(),
+                "encryptionCertificate", doc.getEncryptionCertificate(),
+                "encryptionKey", doc.getEncryptionKey()))
+            .build();
+        s3Client.putObject(request, RequestBody.fromString(doc.getMetadata()));
+        return doc;
     }
 }
 

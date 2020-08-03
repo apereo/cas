@@ -28,9 +28,9 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
     private final List<MultifactorAuthenticationProviderBypassEvaluator> multifactorAuthenticationProviderBypassEvaluators
         = new ArrayList<>(0);
 
-    @Audit(action = "MFA_BYPASS",
-        actionResolverName = "MFA_BYPASS_ACTION_RESOLVER",
-        resourceResolverName = "MFA_BYPASS_RESOURCE_RESOLVER")
+    @Audit(action = "MULTIFACTOR_AUTHENTICATION_BYPASS",
+        actionResolverName = "MULTIFACTOR_AUTHENTICATION_BYPASS_ACTION_RESOLVER",
+        resourceResolverName = "MULTIFACTOR_AUTHENTICATION_BYPASS_RESOURCE_RESOLVER")
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication,
                                                                   final RegisteredService registeredService,
@@ -85,6 +85,7 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
      *
      * @param bypass - the bypass provider
      */
+    @Override
     public void addMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassEvaluator bypass) {
         if (!bypass.isEmpty()) {
             this.multifactorAuthenticationProviderBypassEvaluators.add(bypass);

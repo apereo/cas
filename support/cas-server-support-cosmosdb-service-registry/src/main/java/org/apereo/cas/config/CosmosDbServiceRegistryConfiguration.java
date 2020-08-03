@@ -6,6 +6,7 @@ import org.apereo.cas.services.CosmosDbServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.microsoft.azure.documentdb.ConsistencyLevel;
 import com.microsoft.azure.documentdb.IndexingMode;
@@ -79,7 +80,6 @@ public class CosmosDbServiceRegistryConfiguration {
     public ServiceRegistry cosmosDbServiceRegistry() {
         val cosmosDb = casProperties.getServiceRegistry().getCosmosDb();
         val dbFactory = cosmosDbDocumentDbFactory();
-        val db = cosmosDbDocumentDbTemplate();
 
         if (cosmosDb.isDropCollection()) {
             val collectionLink = CosmosDbObjectFactory.getCollectionLink(cosmosDb.getDatabase(), cosmosDb.getCollection());
@@ -89,12 +89,14 @@ public class CosmosDbServiceRegistryConfiguration {
             try {
                 dbFactory.getDocumentClient().deleteCollection(collectionLink, options);
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                LoggingUtils.error(LOGGER, e);
             }
         }
         val indexingPolicy = new IndexingPolicy();
         indexingPolicy.setAutomatic(true);
         indexingPolicy.setIndexingMode(IndexingMode.valueOf(cosmosDb.getIndexingMode()));
+
+        val db = cosmosDbDocumentDbTemplate();
         db.createCollectionIfNotExists(cosmosDb.getCollection(), PARTITION_KEY_FIELD_NAME,
             cosmosDb.getThroughput(), indexingPolicy);
         return new CosmosDbServiceRegistry(db, dbFactory, cosmosDb.getCollection(),
@@ -103,6 +105,7 @@ public class CosmosDbServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "cosmosDbServiceRegistryExecutionPlanConfigurer")
+    @RefreshScope
     public ServiceRegistryExecutionPlanConfigurer cosmosDbServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(cosmosDbServiceRegistry());
     }

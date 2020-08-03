@@ -1,6 +1,6 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
-import lombok.NonNull;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.OrderComparator;
 import org.springframework.webflow.execution.RequestContext;
@@ -17,13 +17,15 @@ import java.util.stream.Collectors;
  * @since 5.3.0
  */
 @RequiredArgsConstructor
+@Getter
 public class DefaultDeviceFingerprintStrategy implements DeviceFingerprintStrategy {
-    private final @NonNull List<DeviceFingerprintComponentExtractor> componentExtractors;
-    private final @NonNull String componentSeparator;
+    private final List<DeviceFingerprintComponentExtractor> deviceFingerprintComponentExtractors;
+
+    private final String componentSeparator;
 
     @Override
     public String determineFingerprint(final String principal, final RequestContext context, final boolean isNew) {
-        return componentExtractors
+        return deviceFingerprintComponentExtractors
             .stream()
             .sorted(OrderComparator.INSTANCE)
             .map(component -> component.extractComponent(principal, context, isNew))

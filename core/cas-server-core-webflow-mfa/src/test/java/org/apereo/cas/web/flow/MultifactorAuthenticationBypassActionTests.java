@@ -41,12 +41,15 @@ public class MultifactorAuthenticationBypassActionTests extends BaseCasWebflowMu
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
+
+        val service = RegisteredServiceTestUtils.getRegisteredService();
+        servicesManager.save(service);
+        WebUtils.putRegisteredService(context, service);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         provider.setBypassEvaluator(NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance());
-        context.getFlowScope().put(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, provider.getId());
+        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
         
         val transition = mock(Transition.class);
         when(transition.getId()).thenReturn(CasWebflowConstants.TRANSITION_ID_BYPASS);

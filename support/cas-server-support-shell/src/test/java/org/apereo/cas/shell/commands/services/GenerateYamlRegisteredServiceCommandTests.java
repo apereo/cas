@@ -6,6 +6,7 @@ import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @EnableAutoConfiguration
+@Tag("SHELL")
 public class GenerateYamlRegisteredServiceCommandTests extends BaseCasShellCommandTests {
     @Test
     @SneakyThrows
@@ -29,8 +31,11 @@ public class GenerateYamlRegisteredServiceCommandTests extends BaseCasShellComma
         val file = File.createTempFile("service", ".json");
         val yaml = File.createTempFile("service", ".yaml");
         val svc = RegisteredServiceTestUtils.getRegisteredService("example");
-        new RegisteredServiceJsonSerializer().to(Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8), svc);
-        assertTrue(file.exists());
+        try (val writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
+            new RegisteredServiceJsonSerializer().to(writer, svc);
+            writer.flush();
+        }
+        assertTrue(file.exists() && file.length() > 0);
         assertNotNull(shell.evaluate(() -> "generate-yaml --file " + file.getPath() + " --destination " + yaml.getPath()));
         assertTrue(yaml.exists());
     }

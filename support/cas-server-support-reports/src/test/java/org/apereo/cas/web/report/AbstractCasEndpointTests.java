@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.spi.MockAuditTrailManager;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -15,6 +16,8 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -34,6 +37,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,13 +46,13 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.health.HealthEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -59,11 +63,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * @since 6.1.0
  */
 @SpringBootTest(classes = AbstractCasEndpointTests.SharedTestConfiguration.class,
-    properties = {
-        "management.endpoints.web.exposure.include=*",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+    properties = "management.endpoints.web.exposure.include=*")
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @DirtiesContext
 @EnableScheduling
@@ -73,7 +73,12 @@ public abstract class AbstractCasEndpointTests {
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    protected AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
+    
     @TestConfiguration
+    @Lazy(false)
     public static class AuditTestConfiguration implements AuditTrailExecutionPlanConfigurer {
         @Override
         public void configureAuditTrailExecutionPlan(final AuditTrailExecutionPlan plan) {
@@ -84,7 +89,6 @@ public abstract class AbstractCasEndpointTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         HealthEndpointAutoConfiguration.class,
-        MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration
@@ -107,6 +111,8 @@ public abstract class AbstractCasEndpointTests {
         CasCoreAuthenticationMetadataConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreMultifactorAuthenticationConfiguration.class,
+        CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasCoreConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
@@ -119,6 +125,7 @@ public abstract class AbstractCasEndpointTests {
         CasPersonDirectoryTestConfiguration.class,
         CasWebflowContextConfiguration.class,
         CasCoreWebflowConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasCoreValidationConfiguration.class
     })
     public static class SharedTestConfiguration {

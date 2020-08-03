@@ -31,7 +31,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction exten
     }
 
     @Override
-    protected String getRemotePrincipalId(final HttpServletRequest request) {
+    public String getRemotePrincipalId(final HttpServletRequest request) {
         return request.getRemoteUser();
     }
 }

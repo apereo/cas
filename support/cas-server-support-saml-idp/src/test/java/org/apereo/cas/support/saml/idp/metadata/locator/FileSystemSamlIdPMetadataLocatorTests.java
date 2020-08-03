@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.Optional;
 
@@ -18,7 +19,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML")
+@TestPropertySource(properties = {
+    "cas.authn.saml-idp.entityId=https://cas.example.org/idp",
+    "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
+})
 public class FileSystemSamlIdPMetadataLocatorTests extends BaseSamlIdPConfigurationTests {
+
     @Test
     public void verifyOperation() {
         samlIdPMetadataLocator.initialize();

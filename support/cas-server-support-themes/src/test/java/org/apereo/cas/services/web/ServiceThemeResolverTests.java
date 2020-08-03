@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -23,6 +24,7 @@ import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,6 +46,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     CasThemesConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
@@ -62,11 +65,8 @@ import static org.mockito.Mockito.*;
     MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
-    properties = {
-        "cas.theme.defaultThemeName=test",
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+    properties = "cas.theme.default-theme-name=test")
+@Tag("Web")
 public class ServiceThemeResolverTests {
     private static final String MOZILLA = "Mozilla";
 

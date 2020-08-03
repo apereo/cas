@@ -81,6 +81,7 @@ public class SamlIdPWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataUIParserAction")
     @Bean
+    @RefreshScope
     public Action samlIdPMetadataUIParserAction() {
         return new SamlIdPMetadataUIAction(servicesManager.getObject(),
             defaultSamlRegisteredServiceCachingMetadataResolver.getObject(),
@@ -88,6 +89,7 @@ public class SamlIdPWebflowConfiguration {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "samlIdPCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer samlIdPCasWebflowExecutionPlanConfigurer() {
         return plan -> plan.registerWebflowConfigurer(samlIdPMetadataUIWebConfigurer());

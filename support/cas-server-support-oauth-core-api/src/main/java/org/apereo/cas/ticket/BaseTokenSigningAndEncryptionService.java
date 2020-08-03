@@ -2,8 +2,10 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.EncodingUtils;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -25,7 +27,7 @@ import java.util.Optional;
  * @since 6.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class BaseTokenSigningAndEncryptionService implements OAuth20TokenSigningAndEncryptionService {
     private final String issuer;
@@ -77,7 +79,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
             throw new IllegalArgumentException("Unable to verify signature of the token using the JSON web key public key");
         }
         val result = new String(jwt, StandardCharsets.UTF_8);
-        val claims = JwtClaims.parse(result);
+        val claims = JwtBuilder.parse(result);
 
         if (StringUtils.isBlank(claims.getIssuer())) {
             throw new IllegalArgumentException("Claims do not container an issuer");
@@ -88,10 +90,10 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
             throw new IllegalArgumentException("Issuer assigned to claims " + claims.getIssuer() + " does not match " + this.issuer);
         }
 
-        if (StringUtils.isBlank(claims.getStringClaimValue(OAuth20Constants.CLIENT_ID))) {
+        if (StringUtils.isBlank(claims.getStringClaim(OAuth20Constants.CLIENT_ID))) {
             throw new IllegalArgumentException("Claims do not contain a client id claim");
         }
-        return claims;
+        return JwtClaims.parse(claims.toString());
     }
 
     /**

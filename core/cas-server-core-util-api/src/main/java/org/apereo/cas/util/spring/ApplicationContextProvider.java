@@ -1,6 +1,8 @@
 package org.apereo.cas.util.spring;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -17,6 +19,10 @@ import java.util.Optional;
  * @since 3.0.0.
  */
 public class ApplicationContextProvider implements ApplicationContextAware {
+    /**
+     * Bean name for script resource cache manager.
+     */
+    public static final String BEAN_NAME_SCRIPT_RESOURCE_CACHE_MANAGER = "scriptResourceCacheManager";
 
     private static ApplicationContext CONTEXT;
 
@@ -102,7 +108,24 @@ public class ApplicationContextProvider implements ApplicationContextAware {
         return Optional.empty();
     }
 
+    /**
+     * Gets configurable application context.
+     *
+     * @return the configurable application context
+     */
     public static ConfigurableApplicationContext getConfigurableApplicationContext() {
         return (ConfigurableApplicationContext) CONTEXT;
+    }
+
+    /**
+     * Gets script resource cache manager.
+     *
+     * @return the script resource cache manager
+     */
+    public static Optional<ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript>> getScriptResourceCacheManager() {
+        if (CONTEXT != null && CONTEXT.containsBean(BEAN_NAME_SCRIPT_RESOURCE_CACHE_MANAGER)) {
+            return Optional.of(CONTEXT.getBean(BEAN_NAME_SCRIPT_RESOURCE_CACHE_MANAGER, ScriptResourceCacheManager.class));
+        }
+        return Optional.empty();
     }
 }

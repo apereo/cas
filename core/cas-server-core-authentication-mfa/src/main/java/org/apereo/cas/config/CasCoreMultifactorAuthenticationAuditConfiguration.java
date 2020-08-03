@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.bypass.audit.MultifactorAuthenticationProvi
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,11 +21,12 @@ import org.springframework.context.annotation.Configuration;
 public class CasCoreMultifactorAuthenticationAuditConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean(name = "casCoreMfaAuditTrailRecordResolutionPlanConfigurer")
     public AuditTrailRecordResolutionPlanConfigurer casCoreMfaAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
-            plan.registerAuditResourceResolver("MFA_BYPASS_RESOURCE_RESOLVER",
+            plan.registerAuditResourceResolver("MULTIFACTOR_AUTHENTICATION_BYPASS_RESOURCE_RESOLVER",
                 new MultifactorAuthenticationProviderBypassAuditResourceResolver());
-            plan.registerAuditActionResolver("MFA_BYPASS_ACTION_RESOLVER", new DefaultAuditActionResolver());
+            plan.registerAuditActionResolver("MULTIFACTOR_AUTHENTICATION_BYPASS_ACTION_RESOLVER", new DefaultAuditActionResolver());
         };
     }
 }

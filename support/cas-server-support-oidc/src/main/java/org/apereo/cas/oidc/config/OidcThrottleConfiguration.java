@@ -26,15 +26,8 @@ public class OidcThrottleConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
-        authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors().forEach(handler -> {
-            val baseUrl = OidcConstants.BASE_OIDC_URL.concat("/");
-            registry.addInterceptor(handler)
-                .addPathPatterns(baseUrl.concat(OidcConstants.INTROSPECTION_URL).concat("*"))
-                .addPathPatterns(baseUrl.concat(OidcConstants.JWKS_URL).concat("*"))
-                .addPathPatterns(baseUrl.concat(OidcConstants.REGISTRATION_URL).concat("*"))
-                .addPathPatterns(baseUrl.concat(OidcConstants.REVOCATION_URL).concat("*"))
-                .addPathPatterns(baseUrl.concat(OidcConstants.CLIENT_CONFIGURATION_URL).concat("*"));
-        });
+        val interceptors = authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors();
+        interceptors.forEach(handler -> registry.addInterceptor(handler).addPathPatterns(OidcConstants.BASE_OIDC_URL + "/*"));
     }
 
 }

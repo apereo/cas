@@ -599,7 +599,6 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = 7295249577313928465L;
 
         public OpenAthens() {
-            //setMetadata("https://login.openathens.net/saml/2/metadata-sp");
             addAttributes(CommonAttributeNames.EMAIL.getAttributeName(), CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
         }
     }

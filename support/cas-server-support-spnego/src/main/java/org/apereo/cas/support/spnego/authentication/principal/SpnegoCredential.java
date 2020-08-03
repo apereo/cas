@@ -2,6 +2,7 @@ package org.apereo.cas.support.spnego.authentication.principal;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.google.common.io.ByteSource;
 import lombok.AllArgsConstructor;
@@ -50,11 +51,13 @@ public class SpnegoCredential implements Credential {
     /**
      * The SPNEGO Init Token.
      */
+    @ToString.Exclude
     private byte[] initToken;
 
     /**
      * The SPNEGO Next Token.
      */
+    @ToString.Exclude
     private byte[] nextToken;
 
     /**
@@ -103,7 +106,7 @@ public class SpnegoCredential implements Credential {
             }
             return source.read();
         } catch (final IOException e) {
-            LOGGER.warn("Could not consume the byte array source", e);
+            LoggingUtils.warn(LOGGER, "Could not consume the byte array source", e);
             return null;
         }
     }

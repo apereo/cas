@@ -17,4 +17,5 @@ public class AuditActionContextJsonSerializer extends AbstractJacksonBackedStrin
     public Class<AuditActionContext> getTypeToSerialize() {
         return AuditActionContext.class;
     }
+
 }

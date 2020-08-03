@@ -23,6 +23,7 @@ import java.util.function.Function;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.ExpectedCount.manyTimes;
 import static org.springframework.test.web.client.ExpectedCount.once;
+import static org.springframework.test.web.client.ExpectedCount.twice;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
@@ -41,7 +42,9 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 })
 public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
     private static final String CONSENT = "/consent";
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
     private static final Function<Object, String> HANDLER = Unchecked.function(MAPPER::writeValueAsString);
 
     private final Map<String, ConsentRepository> repos = new HashMap<>();
@@ -54,10 +57,6 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
     @Override
     public ConsentRepository getRepository(final String testName) {
         return repos.computeIfAbsent(testName, n -> new RestConsentRepository(new RestTemplate(), CONSENT));
-    }
-
-    private static MockRestServiceServer getNewServer(final RestConsentRepository repository) {
-        return MockRestServiceServer.bindTo(repository.getRestTemplate()).build();
     }
 
     @Test
@@ -74,9 +73,15 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
         assertNotNull(exp);
         exp.andExpect(method(HttpMethod.GET)).andRespond(withServerError());
 
+        server.expect(once(), requestTo("/consent/-1"))
+            .andExpect(method(HttpMethod.DELETE))
+            .andRespond(withServerError());
+
         decision.setId(1);
         repo.storeConsentDecision(decision);
         assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication()));
+        assertFalse(repo.deleteConsentDecision(-1, null));
+        
         server.verify();
     }
 
@@ -88,7 +93,7 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
         val body = HANDLER.apply(decision);
         val repo = getRepository("verifyConsentDecisionIsFound");
         val server = getNewServer((RestConsentRepository) repo);
-        server.expect(once(), requestTo(CONSENT))
+        server.expect(twice(), requestTo(CONSENT))
             .andExpect(method(HttpMethod.POST))
             .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
         server.expect(once(), requestTo(CONSENT))
@@ -105,7 +110,6 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
         super.verifyConsentDecisionIsFound();
         server.verify();
     }
-
 
     @Test
     public void verifyConsentDecisionsFound() {
@@ -137,5 +141,9 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
             .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
         assertFalse(repo.findConsentDecisions("casuser").isEmpty());
         server.verify();
+    }
+
+    private static MockRestServiceServer getNewServer(final RestConsentRepository repository) {
+        return MockRestServiceServer.bindTo(repository.getRestTemplate()).build();
     }
 }

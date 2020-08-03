@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -53,9 +54,10 @@ public class CasVersion {
         val clazz = CasVersion.class;
         val resource = clazz.getResource(clazz.getSimpleName() + ".class");
         try {
-            return DateTimeUtils.zonedDateTimeOf(resource.openConnection().getLastModified());
+            val time = Instant.ofEpochMilli(resource.openConnection().getLastModified());
+            return DateTimeUtils.zonedDateTimeOf(time);
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
         LOGGER.warn("Unhandled url protocol: [{}] resource: [{}]", resource.getProtocol(), resource);
         return ZonedDateTime.now(ZoneOffset.UTC);

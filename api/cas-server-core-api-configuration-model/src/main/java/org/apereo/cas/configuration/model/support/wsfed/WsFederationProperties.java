@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.wsfed;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -87,24 +88,29 @@ public class WsFederationProperties implements Serializable {
          * Set whether the provided token will be signed or not. Default is true.
          */
         private boolean signTokens = true;
+
         /**
          * Set whether client lifetime is accepted.
          */
         private boolean conditionsAcceptClientLifetime = true;
+
         /**
          * If requested lifetime exceeds shall it fail (default)
          * or overwrite with maximum lifetime.
          */
         private boolean conditionsFailLifetimeExceedance;
+
         /**
          * Get how long (in seconds) a client-supplied Created Element is allowed to be in the future.
          * The default is 60 seconds to avoid common problems relating to clock skew.
          */
         private String conditionsFutureTimeToLive = "PT60S";
+
         /**
          * Set the default lifetime in seconds for issued SAML tokens.
          */
         private String conditionsLifetime = "PT30M";
+
         /**
          * Set the maximum lifetime in seconds for issued SAML tokens.
          */
@@ -151,6 +157,11 @@ public class WsFederationProperties implements Serializable {
          * namespace that are expected to be released via attribute release policy.
          */
         private List<String> customClaims = new ArrayList<>(0);
+
+        public SecurityTokenService() {
+            crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+            crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
+        }
 
         @Getter
         @Setter

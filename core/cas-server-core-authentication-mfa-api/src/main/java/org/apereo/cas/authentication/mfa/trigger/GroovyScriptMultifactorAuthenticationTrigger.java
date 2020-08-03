@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
@@ -92,7 +93,7 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
             }
             return MultifactorAuthenticationUtils.resolveProvider(providerMap, provider);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
     }

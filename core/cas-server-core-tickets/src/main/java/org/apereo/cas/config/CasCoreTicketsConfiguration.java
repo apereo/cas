@@ -1,21 +1,21 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
+import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.CasJavaClientProperties;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketCatalogConfigurer;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
-import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.builder.ProxyGrantingTicketExpirationPolicyBuilder;
@@ -29,10 +29,8 @@ import org.apereo.cas.ticket.factory.DefaultServiceTicketFactory;
 import org.apereo.cas.ticket.factory.DefaultTicketFactory;
 import org.apereo.cas.ticket.factory.DefaultTicketGrantingTicketFactory;
 import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
-import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
@@ -82,7 +80,6 @@ import org.springframework.transaction.annotation.TransactionManagementConfigure
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.util.List;
@@ -117,7 +114,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Autowired
     @Qualifier("uniqueIdGeneratorsMap")
     private ObjectProvider<Map<String, UniqueTicketIdGenerator>> uniqueIdGeneratorsMap;
-    
+
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private ObjectProvider<HttpClient> httpClient;
@@ -164,6 +161,13 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
             servicesManager.getObject());
     }
 
+    @ConditionalOnMissingBean(name = "defaultProxyGrantingTicketFactoryConfigurer")
+    @Bean
+    @RefreshScope
+    public TicketFactoryExecutionPlanConfigurer defaultProxyGrantingTicketFactoryConfigurer() {
+        return this::defaultProxyGrantingTicketFactory;
+    }
+
     @ConditionalOnMissingBean(name = "defaultProxyTicketFactory")
     @RefreshScope
     @Bean
@@ -175,6 +179,13 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
             protocolTicketCipherExecutor(),
             onlyTrackMostRecentSession,
             servicesManager.getObject());
+    }
+
+    @ConditionalOnMissingBean(name = "defaultProxyTicketFactoryConfigurer")
+    @Bean
+    @RefreshScope
+    public TicketFactoryExecutionPlanConfigurer defaultProxyTicketFactoryConfigurer() {
+        return this::defaultProxyTicketFactory;
     }
 
     @ConditionalOnMissingBean(name = "proxyGrantingTicketUniqueIdGenerator")
@@ -202,8 +213,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
             casProperties.getTicket().getPgt().getMaxLength(),
             casProperties.getHost().getName());
     }
-
-
+    
     @ConditionalOnMissingBean(name = "defaultTransientSessionTicketFactory")
     @Bean
     @RefreshScope
@@ -211,6 +221,12 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         return new DefaultTransientSessionTicketFactory(transientSessionTicketExpirationPolicy());
     }
 
+    @ConditionalOnMissingBean(name = "defaultTransientSessionTicketFactoryConfigurer")
+    @Bean
+    @RefreshScope
+    public TicketFactoryExecutionPlanConfigurer defaultTransientSessionTicketFactoryConfigurer() {
+        return this::defaultTransientSessionTicketFactory;
+    }
 
     @ConditionalOnMissingBean(name = "transientSessionTicketExpirationPolicy")
     @Bean
@@ -221,7 +237,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
     @ConditionalOnMissingBean(name = "defaultServiceTicketFactory")
     @Bean
-    @Lazy
+    @RefreshScope
     public ServiceTicketFactory defaultServiceTicketFactory() {
         val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
         return new DefaultServiceTicketFactory(serviceTicketExpirationPolicy(),
@@ -229,6 +245,13 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
             onlyTrackMostRecentSession,
             protocolTicketCipherExecutor(),
             servicesManager.getObject());
+    }
+
+    @ConditionalOnMissingBean(name = "defaultServiceTicketFactoryConfigurer")
+    @Bean
+    @RefreshScope
+    public TicketFactoryExecutionPlanConfigurer defaultServiceTicketFactoryConfigurer() {
+        return this::defaultServiceTicketFactory;
     }
 
     @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactory")
@@ -240,30 +263,37 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
             protocolTicketCipherExecutor());
     }
 
+    @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactoryConfigurer")
+    @Bean
+    @RefreshScope
+    public TicketFactoryExecutionPlanConfigurer defaultTicketGrantingTicketFactoryConfigurer() {
+        return this::defaultTicketGrantingTicketFactory;
+    }
+
     @ConditionalOnMissingBean(name = "defaultTicketFactory")
     @Bean
     @RefreshScope
-    public TicketFactory defaultTicketFactory() {
-        val factory = new DefaultTicketFactory();
-        factory
-            .addTicketFactory(TransientSessionTicket.class, defaultTransientSessionTicketFactory())
-            .addTicketFactory(ProxyGrantingTicket.class, defaultProxyGrantingTicketFactory())
-            .addTicketFactory(TicketGrantingTicket.class, defaultTicketGrantingTicketFactory())
-            .addTicketFactory(ServiceTicket.class, defaultServiceTicketFactory())
-            .addTicketFactory(ProxyTicket.class, defaultProxyTicketFactory());
-        return factory;
+    @Autowired
+    public TicketFactory defaultTicketFactory(final List<TicketFactoryExecutionPlanConfigurer> configurers) {
+        val parentFactory = new DefaultTicketFactory();
+        configurers.forEach(configurer -> {
+            val factory = configurer.configureTicketFactory();
+            LOGGER.trace("Registering ticket factory via [{}]", factory.getName());
+            parentFactory.addTicketFactory(factory.getTicketType(), factory);
+        });
+        return parentFactory;
     }
 
     @ConditionalOnMissingBean(name = "proxy10Handler")
     @Bean
-    @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
     public ProxyHandler proxy10Handler() {
         return new Cas10ProxyHandler();
     }
 
     @ConditionalOnMissingBean(name = "proxy20Handler")
     @Bean
-    @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
     public ProxyHandler proxy20Handler() {
         return new Cas20ProxyHandler(httpClient.getObject(), proxy20TicketUniqueIdGenerator());
     }
@@ -275,7 +305,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
             + "Tickets that are issued during runtime will be LOST when the web server is restarted. This MAY impact SSO functionality.");
         val mem = casProperties.getTicket().getRegistry().getInMemory();
-        val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "inMemory");
+        val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "in-memory");
 
         if (mem.isCache()) {
             val logoutManager = applicationContext.getBean("logoutManager", LogoutManager.class);
@@ -358,6 +388,19 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
             c.configureTicketCatalog(plan);
         });
         return plan;
+    }
+
+    @ConditionalOnMissingBean(name = "ticketAuthenticationPolicyExecutionPlanConfigurer")
+    @Bean
+    @RefreshScope
+    public AuthenticationEventExecutionPlanConfigurer ticketAuthenticationPolicyExecutionPlanConfigurer() {
+        return plan -> {
+            val policyProps = casProperties.getAuthn().getPolicy();
+            if (policyProps.getUniquePrincipal().isEnabled()) {
+                LOGGER.trace("Activating authentication policy [{}]", UniquePrincipalAuthenticationPolicy.class.getSimpleName());
+                plan.registerAuthenticationPolicy(new UniquePrincipalAuthenticationPolicy(ticketRegistry()));
+            }
+        };
     }
 
     private AbstractUrlBasedTicketValidator buildCasClientTicketValidator(final String prefix) {

@@ -29,7 +29,7 @@ import java.util.Set;
 @Setter
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 @Slf4j
 public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServiceMultifactorPolicy {
     private static final long serialVersionUID = -3075860754996106437L;

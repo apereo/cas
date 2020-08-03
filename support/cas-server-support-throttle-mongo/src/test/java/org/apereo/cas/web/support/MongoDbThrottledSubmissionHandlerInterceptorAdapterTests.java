@@ -25,14 +25,14 @@ import org.springframework.boot.test.context.SpringBootTest;
     properties = {
         "cas.authn.throttle.usernameParameter=username",
         "cas.authn.throttle.failure.range-seconds=5",
-        "cas.audit.mongo.databaseName=throttle",
+        "cas.audit.mongo.database-name=throttle",
         "cas.audit.mongo.host=localhost",
         "cas.audit.mongo.port=27017",
         "cas.audit.mongo.collection=MongoDbCasThrottleRepository",
-        "cas.audit.mongo.dropCollection=true",
-        "cas.audit.mongo.userId=root",
+        "cas.audit.mongo.drop-collection=true",
+        "cas.audit.mongo.user-id=root",
         "cas.audit.mongo.password=secret",
-        "cas.audit.mongo.authenticationDatabaseName=admin",
+        "cas.audit.mongo.authentication-database-name=admin",
         "cas.audit.mongo.asynchronous=false"
 })
 @Getter

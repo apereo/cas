@@ -65,7 +65,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
 
         when(facade.getSupportedNameIdFormats()).thenReturn(CollectionUtils.wrapList(NameID.TRANSIENT, NameID.EMAIL));
         val result = samlProfileSamlNameIdBuilder.build(authnRequest, new MockHttpServletRequest(), new MockHttpServletResponse(),
-            assertion, service, facade, SAMLConstants.SAML2_POST_BINDING_URI, mock(MessageContext.class));
+            assertion, service, facade, SAMLConstants.SAML2_POST_BINDING_URI, new MessageContext());
         assertNotNull(result);
         assertEquals(NameID.EMAIL, result.getFormat());
         assertEquals("casuser", result.getValue());
@@ -86,7 +86,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
         when(assertion.getValidFromDate()).thenReturn(new Date());
 
         val subject = samlProfileSamlSubjectBuilder.build(authnRequest, new MockHttpServletRequest(), new MockHttpServletResponse(),
-            assertion, service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI, mock(MessageContext.class));
+            assertion, service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI, new MessageContext());
         assertNull(subject.getNameID());
         assertNotNull(subject.getEncryptedID());
         assertFalse(subject.getSubjectConfirmations().isEmpty());

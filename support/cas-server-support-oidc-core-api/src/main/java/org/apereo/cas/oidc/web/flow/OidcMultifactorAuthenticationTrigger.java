@@ -39,7 +39,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
+
     private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
+
     private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
@@ -47,12 +49,8 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
     @Override
     @SneakyThrows
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
-                                                                   final RegisteredService registeredService, final HttpServletRequest request, final Service service) {
-        if (registeredService == null || authentication == null) {
-            LOGGER.debug("No service or authentication is available to determine event for principal");
-            return Optional.empty();
-        }
-
+                                                                   final RegisteredService registeredService,
+                                                                   final HttpServletRequest request, final Service service) {
         var acr = request.getParameter(OAuth20Constants.ACR_VALUES);
         if (StringUtils.isBlank(acr)) {
             val url = request.getRequestURL() + "?" + request.getQueryString();
@@ -75,11 +73,7 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
             return Optional.empty();
         }
         val values = org.springframework.util.StringUtils.commaDelimitedListToSet(acr);
-        if (values.isEmpty()) {
-            LOGGER.trace("No ACR values are provided in the authentication request");
-            return Optional.empty();
-        }
-
+        
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context to handle [{}]", values);

@@ -1,12 +1,15 @@
 package org.apereo.cas.authentication;
 
 
+import org.junit.jupiter.api.Tag;
+
 /**
  * Base class for Active Directory Ldap Unit tests for {@link LdapAuthenticationHandler}.
  *
  * @author Hal Deadman
  * @since 6.1.0
  */
+@Tag("Ldap")
 public abstract class BaseActiveDirectoryLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests{
 
     public static final String AD_TRUST_STORE = "file:/tmp/adcacerts.jks";

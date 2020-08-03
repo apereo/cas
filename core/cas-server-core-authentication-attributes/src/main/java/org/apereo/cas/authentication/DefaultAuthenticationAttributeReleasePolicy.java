@@ -29,26 +29,26 @@ import java.util.Map;
 public class DefaultAuthenticationAttributeReleasePolicy implements AuthenticationAttributeReleasePolicy {
 
     private final Collection<String> onlyReleaseAttributes;
+
     private final Collection<String> neverReleaseAttributes;
+
     private final String authenticationContextAttribute;
 
     public DefaultAuthenticationAttributeReleasePolicy(final String authenticationContextAttribute) {
         this(new ArrayList<>(0), new ArrayList<>(0), authenticationContextAttribute);
     }
 
-
     @Override
     public Map<String, List<Object>> getAuthenticationAttributesForRelease(final Authentication authentication,
                                                                            final Assertion assertion,
                                                                            final Map<String, Object> model,
                                                                            final RegisteredService service) {
-
         if (!service.getAttributeReleasePolicy().isAuthorizedToReleaseAuthenticationAttributes()) {
             LOGGER.debug("Attribute release policy for service [{}] is configured to never release any attributes", service);
             return new LinkedHashMap<>(0);
         }
 
-        val attrs = new LinkedHashMap<String, List<Object>>(authentication.getAttributes());
+        val attrs = new LinkedHashMap<>(authentication.getAttributes());
         attrs.keySet().removeAll(neverReleaseAttributes);
 
         if (onlyReleaseAttributes != null && !onlyReleaseAttributes.isEmpty()) {
@@ -70,10 +70,12 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
         }
 
         if (StringUtils.isNotBlank(authenticationContextAttribute) && model.containsKey(this.authenticationContextAttribute)) {
-            val contextProvider = model.get(this.authenticationContextAttribute).toString();
-            if (StringUtils.isNotBlank(contextProvider) && isAttributeAllowedForRelease(authenticationContextAttribute)) {
-                attrs.put(this.authenticationContextAttribute, CollectionUtils.wrap(contextProvider));
-            }
+            val contextProvider = CollectionUtils.firstElement(model.get(this.authenticationContextAttribute));
+            contextProvider.ifPresent(provider -> {
+                if (isAttributeAllowedForRelease(authenticationContextAttribute)) {
+                    attrs.put(this.authenticationContextAttribute, CollectionUtils.wrap(provider));
+                }
+            });
         }
 
         decideIfCredentialPasswordShouldBeReleasedAsAttribute(attrs, authentication, service);
@@ -86,7 +88,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
      * Is attribute allowed for release?
      *
      * @param attributeName the attribute name
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isAttributeAllowedForRelease(final String attributeName) {
         return !this.neverReleaseAttributes.contains(attributeName);

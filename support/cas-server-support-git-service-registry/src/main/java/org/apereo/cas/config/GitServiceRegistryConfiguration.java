@@ -33,7 +33,7 @@ import java.util.Collection;
  * @since 6.1.0
  */
 @Configuration("gitServiceRegistryConfiguration")
-@ConditionalOnProperty(prefix = "cas.serviceRegistry.git", name = "repositoryUrl")
+@ConditionalOnProperty(prefix = "cas.service-registry.git", name = "repository-url")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class GitServiceRegistryConfiguration {
     @Autowired
@@ -77,6 +77,7 @@ public class GitServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "gitServiceRegistryExecutionPlanConfigurer")
+    @RefreshScope
     public ServiceRegistryExecutionPlanConfigurer gitServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(gitServiceRegistry());
     }

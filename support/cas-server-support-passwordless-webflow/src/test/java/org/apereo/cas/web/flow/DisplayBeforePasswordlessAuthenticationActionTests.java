@@ -26,11 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(properties = {
-    "cas.authn.passwordless.accounts.groovy.location=classpath:PasswordlessAccount.groovy",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
+@TestPropertySource(properties ="cas.authn.passwordless.accounts.groovy.location=classpath:PasswordlessAccount.groovy")
 @Tag("Webflow")
 public class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired

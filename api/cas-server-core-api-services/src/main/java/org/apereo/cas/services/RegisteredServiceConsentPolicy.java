@@ -21,7 +21,7 @@ public interface RegisteredServiceConsentPolicy extends Serializable, Ordered {
     /**
      * Indicate whether consent is enabled.
      *
-     * @return the boolean
+     * @return true/false
      */
     default boolean isEnabled() {
         return true;
@@ -61,7 +61,7 @@ public interface RegisteredServiceConsentPolicy extends Serializable, Ordered {
      */
     @JsonIgnore
     default int size() {
-        return 1;
+        return 0;
     }
 
     @JsonIgnore

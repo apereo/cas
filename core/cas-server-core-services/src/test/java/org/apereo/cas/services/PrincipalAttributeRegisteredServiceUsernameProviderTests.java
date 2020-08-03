@@ -1,13 +1,19 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,9 +27,16 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Tag("RegisteredService")
+@SpringBootTest(classes = {
+    CasCoreUtilConfiguration.class,
+    RefreshAutoConfiguration.class
+})
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "principalAttributeRegisteredServiceUsernameProvider.json");
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Test
@@ -83,6 +96,43 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     }
 
     @Test
+    public void verifyNoAttrRelPolicy() {
+        val provider = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
+
+        val attrs = new HashMap<String, List<Object>>();
+        attrs.put("userid", List.of("u1"));
+        attrs.put("cn", List.of("TheName"));
+
+        val p = mock(Principal.class);
+        when(p.getId()).thenReturn("person");
+        when(p.getAttributes()).thenReturn(attrs);
+
+        val service = RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService");
+        service.setAttributeReleasePolicy(null);
+        val id = provider.resolveUsername(p, RegisteredServiceTestUtils.getService("usernameAttributeProviderService"), service);
+        assertEquals("TheName", id);
+    }
+
+    @Test
+    public void verifyDisabledService() {
+        val provider = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
+
+        val attrs = new HashMap<String, List<Object>>();
+        attrs.put("userid", List.of("u1"));
+        attrs.put("cn", List.of("TheName"));
+
+        val p = mock(Principal.class);
+        when(p.getId()).thenReturn("person");
+        when(p.getAttributes()).thenReturn(attrs);
+
+        val service = RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService");
+        service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(false, false));
+        service.setAttributeReleasePolicy(null);
+        assertThrows(UnauthorizedServiceException.class,
+            () -> provider.resolveUsername(p, RegisteredServiceTestUtils.getService("usernameAttributeProviderService"), service));
+    }
+
+    @Test
     public void verifyUsernameByPrincipalAttributeNotFound() {
         val provider = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
 
@@ -93,6 +143,16 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         when(p.getId()).thenReturn("person");
         when(p.getAttributes()).thenReturn(attrs);
 
+        val id = provider.resolveUsername(p, RegisteredServiceTestUtils.getService("usernameAttributeProviderService"),
+            RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
+        assertEquals(id, p.getId());
+    }
+
+    @Test
+    public void verifyUsernameUndefined() {
+        val provider = new PrincipalAttributeRegisteredServiceUsernameProvider();
+        val p = mock(Principal.class);
+        when(p.getId()).thenReturn("person");
         val id = provider.resolveUsername(p, RegisteredServiceTestUtils.getService("usernameAttributeProviderService"),
             RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
         assertEquals(id, p.getId());

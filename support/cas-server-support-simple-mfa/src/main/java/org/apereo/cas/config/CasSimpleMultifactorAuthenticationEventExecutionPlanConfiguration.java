@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -15,7 +16,6 @@ import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationHandler;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationProvider;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -44,16 +44,16 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    @Qualifier("ticketRegistry")
-    private ObjectProvider<TicketRegistry> ticketRegistry;
-
-    @Autowired
     @Qualifier("casSimpleMultifactorBypassEvaluator")
     private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> casSimpleMultifactorBypassEvaluator;
 
     @Autowired
     @Qualifier("failureModeEvaluator")
     private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationHandler")
     @Bean
@@ -62,7 +62,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         val props = casProperties.getAuthn().getMfa().getSimple();
         return new CasSimpleMultifactorAuthenticationHandler(props.getName(),
             servicesManager.getObject(), casSimpleMultifactorPrincipalFactory(),
-            ticketRegistry.getObject(), props.getOrder());
+            centralAuthenticationService.getObject(), props.getOrder());
     }
 
     @Bean
@@ -80,6 +80,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationMetaDataPopulator")
     public AuthenticationMetaDataPopulator casSimpleMultifactorAuthenticationMetaDataPopulator() {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
@@ -96,6 +97,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer casSimpleMultifactorAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             plan.registerAuthenticationHandler(casSimpleMultifactorAuthenticationHandler());

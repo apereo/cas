@@ -3,6 +3,7 @@ package org.apereo.cas.util.http;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;
@@ -36,7 +37,6 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
-
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -57,6 +57,7 @@ import java.util.stream.IntStream;
  */
 @Setter
 @Getter
+@Slf4j
 public class SimpleHttpClientFactoryBean implements HttpClientFactory {
 
     /**
@@ -69,6 +70,8 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
     private static final int DEFAULT_THREADS_NUMBER = 200;
 
     private static final int DEFAULT_TIMEOUT = 5000;
+
+    private static final int TERMINATION_TIMEOUT_SECONDS = 5;
 
     /**
      * The default status codes we accept.
@@ -286,13 +289,14 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
         return new FutureRequestExecutionService(httpClient, this.executorService);
     }
 
-    /**
-     * Destroy the service if available.
-     */
     @Override
     public void destroy() {
         if (this.executorService != null) {
-            this.executorService.shutdownNow();
+            try {
+                this.executorService.awaitTermination(TERMINATION_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+            } catch (final Exception e) {
+                LOGGER.trace(e.getMessage(), e);
+            }
             this.executorService = null;
         }
     }

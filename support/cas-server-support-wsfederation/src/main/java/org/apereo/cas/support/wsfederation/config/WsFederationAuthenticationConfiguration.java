@@ -9,10 +9,12 @@ import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
+import org.apereo.cas.web.support.ArgumentExtractor;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -53,13 +55,21 @@ public class WsFederationAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+
+    @Autowired
+    @Qualifier("argumentExtractor")
+    private ObjectProvider<ArgumentExtractor> argumentExtractor;
+    
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "wsFederationHelper")
     public WsFederationHelper wsFederationHelper() {
         return new WsFederationHelper(configBean.getObject(), servicesManager.getObject());
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "wsFederationCookieManager")
     public WsFederationCookieManager wsFederationCookieManager() {
         return new WsFederationCookieManager(wsFederationConfigurations,
             casProperties.getTheme().getParamName(), casProperties.getLocale().getParamName());
@@ -67,11 +77,13 @@ public class WsFederationAuthenticationConfiguration {
 
     @Bean
     public WsFederationNavigationController wsFederationNavigationController() {
-        return new WsFederationNavigationController(wsFederationCookieManager(),
+        return new WsFederationNavigationController(
+            wsFederationCookieManager(),
             wsFederationHelper(),
             wsFederationConfigurations,
             authenticationRequestServiceSelectionStrategies.getObject(),
             webApplicationServiceFactory.getObject(),
-            casProperties.getServer().getLoginUrl());
+            casProperties.getServer().getLoginUrl(),
+            argumentExtractor.getObject());
     }
 }

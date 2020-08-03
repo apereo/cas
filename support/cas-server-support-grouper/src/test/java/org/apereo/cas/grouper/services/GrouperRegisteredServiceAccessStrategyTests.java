@@ -6,24 +6,27 @@ import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrat
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.util.io.WatcherService;
 
+import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
+import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assumptions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * The {@link GrouperRegisteredServiceAccessStrategyTests} provides
@@ -32,6 +35,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Tag("RegisteredService")
 public class GrouperRegisteredServiceAccessStrategyTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
@@ -52,8 +56,11 @@ public class GrouperRegisteredServiceAccessStrategyTests {
         val grouper = new GrouperRegisteredServiceAccessStrategy();
         grouper.setRequiredAttributes(attributes);
         service.setAccessStrategy(grouper);
+
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
         val dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
-            mock(ApplicationEventPublisher.class),
+            appCtx,
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
@@ -63,14 +70,26 @@ public class GrouperRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    @Disabled
     public void checkGrouperAttributes() {
-        val resource = new ClassPathResource("grouper.client.properties");
-        assumeTrue(resource.exists(), String.format("[%s] is not configured. Skipping tests", resource.getFilename()));
-        val strategy = new GrouperRegisteredServiceAccessStrategy();
+        val strategy = new GrouperRegisteredServiceAccessStrategy() {
+            private static final long serialVersionUID = 8533229193475808261L;
+
+            @Override
+            protected Collection<WsGetGroupsResult> getWsGetGroupsResults(final String principal) {
+                val group = new WsGroup();
+                group.setExtension("GroupExtension");
+                group.setDescription("Group Desc");
+                group.setName("SampleGroup");
+                group.setUuid(UUID.randomUUID().toString());
+                val result = new WsGetGroupsResult();
+                result.setWsGroups(new WsGroup[]{group});
+                return List.of(result);
+            }
+        };
         val requiredAttributes = new HashMap<String, Set<String>>();
-        requiredAttributes.put("memberOf", Collections.singleton("admin"));
+        requiredAttributes.put(GrouperRegisteredServiceAccessStrategy.GROUPER_GROUPS_ATTRIBUTE_NAME, Collections.singleton("SampleGroup"));
         strategy.setRequiredAttributes(requiredAttributes);
-        assertTrue(strategy.doPrincipalAttributesAllowServiceAccess("banderson", (Map) RegisteredServiceTestUtils.getTestAttributes("banderson")));
+        val attrs = (Map) RegisteredServiceTestUtils.getTestAttributes("banderson");
+        assertTrue(strategy.doPrincipalAttributesAllowServiceAccess("banderson", attrs));
     }
 }

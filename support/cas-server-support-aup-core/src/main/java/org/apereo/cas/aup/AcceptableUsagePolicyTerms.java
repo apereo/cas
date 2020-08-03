@@ -45,7 +45,7 @@ public class AcceptableUsagePolicyTerms implements Serializable {
     /**
      * Indicate if policy terms are defined.
      *
-     * @return the boolean
+     * @return true/false
      */
     @JsonIgnore
     public boolean isDefined() {

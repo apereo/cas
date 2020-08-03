@@ -9,7 +9,11 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +21,16 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.http.MediaType;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 /**
@@ -37,8 +44,12 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class RestEndpointMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
     private final CasConfigurationProperties casProperties;
+
     private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
+
     private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
@@ -48,14 +59,13 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
                                                                    final Service service) {
-        val restEndpoint = casProperties.getAuthn().getMfa().getRestEndpoint();
-
+        val restEndpoint = casProperties.getAuthn().getMfa().getRest();
         if (service == null || authentication == null) {
             LOGGER.trace("No service or authentication is available to determine event for principal");
             return Optional.empty();
         }
         val principal = authentication.getPrincipal();
-        if (StringUtils.isBlank(restEndpoint)) {
+        if (StringUtils.isBlank(restEndpoint.getUrl())) {
             LOGGER.trace("Rest endpoint to determine event is not configured for [{}]", principal.getId());
             return Optional.empty();
         }
@@ -75,24 +85,6 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
     }
 
     /**
-     * Call rest endpoint for multifactor.
-     *
-     * @param principal       the principal
-     * @param resolvedService the resolved service
-     * @return return the rest response, typically the mfa id.
-     */
-    protected String callRestEndpointForMultifactor(final Principal principal, final Service resolvedService) {
-        val restTemplate = new RestTemplate();
-        val restEndpoint = casProperties.getAuthn().getMfa().getRestEndpoint();
-        val entity = new RestEndpointEntity(principal.getId(), resolvedService.getId());
-        val responseEntity = restTemplate.postForEntity(restEndpoint, entity, String.class);
-        if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            return responseEntity.getBody();
-        }
-        return null;
-    }
-
-    /**
      * The Rest endpoint entity passed along to the API.
      */
     @Getter
@@ -101,7 +93,37 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
     @EqualsAndHashCode
     public static class RestEndpointEntity {
         private final String principalId;
+
         private final String serviceId;
+    }
+
+    /**
+     * Call rest endpoint for multifactor.
+     *
+     * @param principal       the principal
+     * @param resolvedService the resolved service
+     * @return return the rest response, typically the mfa id.
+     */
+    protected String callRestEndpointForMultifactor(final Principal principal, final Service resolvedService) {
+        HttpResponse response = null;
+        try {
+            val rest = casProperties.getAuthn().getMfa().getRest();
+            val entity = new RestEndpointEntity(principal.getId(), resolvedService.getId());
+            response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
+                rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
+                CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE),
+                MAPPER.writeValueAsString(entity));
+            val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+            if (status.is2xxSuccessful()) {
+                val content = response.getEntity().getContent();
+                return IOUtils.toString(content, StandardCharsets.UTF_8);
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        } finally {
+            HttpUtils.close(response);
+        }
+        return null;
     }
 
 }

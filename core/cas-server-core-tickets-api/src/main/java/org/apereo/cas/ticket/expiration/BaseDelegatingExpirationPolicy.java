@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.TicketState;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +33,7 @@ import java.util.Optional;
 @Slf4j
 @Getter
 @Setter
-@NoArgsConstructor(force = true)
+@NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirationPolicy {
@@ -66,17 +67,6 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
     public void addPolicy(final String name, final ExpirationPolicy policy) {
         LOGGER.trace("Adding expiration policy [{}] with name [{}]", policy, name);
         this.policies.put(name, policy);
-    }
-
-    /**
-     * Add policy.
-     *
-     * @param name   the name
-     * @param policy the policy
-     */
-    public void addPolicy(final Enum name, final ExpirationPolicy policy) {
-        LOGGER.trace("Adding expiration policy [{}] with name [{}]", policy, name);
-        addPolicy(name.name(), policy);
     }
 
     @Override

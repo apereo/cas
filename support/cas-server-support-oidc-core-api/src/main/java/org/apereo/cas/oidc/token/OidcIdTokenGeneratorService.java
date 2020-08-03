@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.DigestUtils;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -97,6 +98,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
 
         val jwtId = getJwtId(accessToken.getTicketGrantingTicket());
         claims.setJwtId(jwtId);
+        claims.setClaim(OidcConstants.CLAIM_SESSIOND_ID, DigestUtils.sha(jwtId));
 
         claims.setIssuer(oidc.getIssuer());
         claims.setAudience(accessToken.getClientId());

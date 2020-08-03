@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchResponse;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,7 +32,7 @@ import java.util.Objects;
  */
 @Slf4j
 @ToString
-public class LdapServiceRegistry extends AbstractServiceRegistry {
+public class LdapServiceRegistry extends AbstractServiceRegistry implements DisposableBean {
 
     private final ConnectionFactory connectionFactory;
 
@@ -44,9 +46,9 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
                                final String baseDn,
                                final LdapRegisteredServiceMapper ldapServiceMapper,
                                final LdapServiceRegistryProperties ldapProperties,
-                               final ApplicationEventPublisher eventPublisher,
+                               final ConfigurableApplicationContext applicationContext,
                                final Collection<ServiceRegistryListener> serviceRegistryListeners) {
-        super(eventPublisher, serviceRegistryListeners);
+        super(applicationContext, serviceRegistryListeners);
         this.connectionFactory = connectionFactory;
         this.baseDn = baseDn;
         this.ldapProperties = ldapProperties;
@@ -63,7 +65,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
             }
             insert(rs);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return rs;
     }
@@ -73,7 +75,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
             val entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
             LdapUtils.executeAddOperation(this.connectionFactory, entry);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return rs;
     }
@@ -105,7 +107,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
                 return response.getEntry().getDn();
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -119,7 +121,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
                 return LdapUtils.executeDeleteOperation(this.connectionFactory, entry);
             }
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -146,7 +148,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
                     .count();
             }
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return 0;
     }
@@ -169,7 +171,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
                     });
             }
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return list;
     }
@@ -187,7 +189,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
                 return this.ldapServiceMapper.mapToRegisteredService(response.getEntry());
             }
         } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -203,5 +205,10 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
         val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(),
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(id.toString()));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter, ldapProperties.getPageSize());
+    }
+
+    @Override
+    public void destroy() {
+        connectionFactory.close();
     }
 }

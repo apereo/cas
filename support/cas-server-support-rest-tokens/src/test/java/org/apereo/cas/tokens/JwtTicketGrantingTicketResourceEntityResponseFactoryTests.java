@@ -5,6 +5,7 @@ import org.apereo.cas.token.TokenConstants;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -17,9 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("Tickets")
 public class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends BaseTicketResourceEntityResponseFactoryTests {
     @Test
     public void verifyTicketGrantingTicketAsDefault() throws Exception {
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(CoreAuthenticationTestUtils.getService().getId());
+        servicesManager.save(registeredService);
+        
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport);
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
 
@@ -30,6 +35,9 @@ public class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends B
 
     @Test
     public void verifyTicketGrantingTicketAsJwt() throws Exception {
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(CoreAuthenticationTestUtils.getService().getId());
+        servicesManager.save(registeredService);
+        
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
@@ -47,6 +55,8 @@ public class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends B
 
     @Test
     public void verifyTicketGrantingTicketAsJwtWithHeader() throws Exception {
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(CoreAuthenticationTestUtils.getService().getId());
+        servicesManager.save(registeredService);
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);

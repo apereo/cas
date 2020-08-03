@@ -32,11 +32,11 @@ public class MongoDbSamlIdPMetadataCipherExecutor extends BaseStringCipherExecut
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.authn.samlIdp.metadata.mongo.crypto.encryption.key";
+        return "cas.authn.saml-idp.metadata.mongo.crypto.encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.authn.samlIdp.metadata.mongo.crypto.signing.key";
+        return "cas.authn.saml-idp.metadata.mongo.crypto.signing.key";
     }
 }

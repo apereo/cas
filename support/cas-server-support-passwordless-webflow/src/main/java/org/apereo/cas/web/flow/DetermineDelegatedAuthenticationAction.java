@@ -35,9 +35,13 @@ public class DetermineDelegatedAuthenticationAction extends AbstractAction imple
     private final transient WatchableGroovyScriptResource watchableScript;
 
     @Override
+    public void destroy() {
+        this.watchableScript.close();
+    }
+
+    @Override
     protected Event doExecute(final RequestContext requestContext) {
         val user = WebUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
-
         if (user == null) {
             LOGGER.error("Unable to locate passwordless account in the flow");
             return error();
@@ -57,10 +61,10 @@ public class DetermineDelegatedAuthenticationAction extends AbstractAction imple
 
         val providerResult = determineDelegatedIdentityProviderConfiguration(requestContext, user, clients);
         if (providerResult.isPresent()) {
-            val config = providerResult.get();
-            requestContext.getFlashScope().put("delegatedClientIdentityProvider", config);
+            val resolvedId = providerResult.get();
+            requestContext.getFlashScope().put("delegatedClientIdentityProvider", resolvedId);
             return new EventFactorySupport().event(this,
-                CasWebflowConstants.TRANSITION_ID_REDIRECT, "delegatedClientIdentityProvider", config);
+                CasWebflowConstants.TRANSITION_ID_REDIRECT, "delegatedClientIdentityProvider", resolvedId);
         }
         return success();
     }
@@ -86,16 +90,19 @@ public class DetermineDelegatedAuthenticationAction extends AbstractAction imple
      *
      * @param requestContext the request context
      * @param user           the user
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isDelegatedAuthenticationActiveFor(final RequestContext requestContext,
                                                          final PasswordlessUserAccount user) {
-        return casProperties.getAuthn().getPasswordless().isDelegatedAuthenticationActivated()
-            || user.isDelegatedAuthenticationEligible();
-    }
-
-    @Override
-    public void destroy() throws Exception {
-        this.watchableScript.close();
+        val status = user.getDelegatedAuthenticationEligible();
+        if (status.isTrue()) {
+            LOGGER.trace("Passwordless account [{}] is eligible for delegated authentication", user);
+            return true;
+        }
+        if (status.isFalse()) {
+            LOGGER.trace("Passwordless account [{}] is not eligible for delegated authentication", user);
+            return false;
+        }
+        return casProperties.getAuthn().getPasswordless().isDelegatedAuthenticationActivated();
     }
 }

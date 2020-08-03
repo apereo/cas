@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -241,7 +242,7 @@ public class ConfigurationMetadataGenerator {
                     primaryType = cu.getPrimaryType().get();
                 }
 
-                primaryType.getMembers()
+                Objects.requireNonNull(primaryType).getMembers()
                     .stream()
                     .filter(member -> {
                         if (member.isEnumDeclaration()) {

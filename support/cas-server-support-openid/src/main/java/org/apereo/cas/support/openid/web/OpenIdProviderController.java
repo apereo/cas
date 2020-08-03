@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.1
  */
 @Controller("openIdProviderController")
-@Deprecated(since = "6.2")
+@Deprecated(since = "6.2.0")
 public class OpenIdProviderController {
 
     @Autowired

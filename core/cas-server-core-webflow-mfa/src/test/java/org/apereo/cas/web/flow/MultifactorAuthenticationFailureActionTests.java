@@ -45,8 +45,11 @@ public class MultifactorAuthenticationFailureActionTests extends BaseCasWebflowM
         provider.setFailureMode(mode.name());
         provider.setFailureModeEvaluator(new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
 
-        WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
-        context.getFlowScope().put(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, provider.getId());
+        val service = RegisteredServiceTestUtils.getRegisteredService();
+        servicesManager.save(service);
+        WebUtils.putRegisteredService(context, service);
+
+        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
         val event = mfaFailureAction.execute(context);
         assertEquals(transitionId, event.getId());
     }

@@ -7,14 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.wss4j.common.crypto.WSProviderConfig;
 import org.apache.wss4j.common.saml.OpenSAMLUtil;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ReflectionUtils;
-
-import javax.annotation.PostConstruct;
 
 /**
  * This is {@link CoreWsSecuritySecurityTokenServiceSamlConfiguration}.
@@ -26,13 +25,13 @@ import javax.annotation.PostConstruct;
 @Configuration(value = "coreWsSecuritySecurityTokenServiceSamlConfiguration", proxyBeanMethods = false)
 @Slf4j
 @AutoConfigureAfter(CoreSamlConfiguration.class)
-public class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
+public class CoreWsSecuritySecurityTokenServiceSamlConfiguration implements InitializingBean {
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
-    @PostConstruct
+    @Override
     public void afterPropertiesSet() {
         val warningMessage = "The security token service configuration of CAS will try to disable the OpenSAML bootstrapping process by wss4j, "
             + "as it interferes with and prevents CAS' own initialization of OpenSAML. Given the current API limitations of the wss4j library, "
@@ -40,7 +39,7 @@ public class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
             + "Java reflection is used to disable the OpenSAML bootstrapping process. This approach is prone to error, "
             + "and may be revisited in future versions of CAS, "
             + "once the wss4j library opens up its OpenSAML bootstrapping API in more extensible ways";
-        LOGGER.warn(warningMessage);
+        LOGGER.info(warningMessage);
 
         LOGGER.trace("Initializing WS provider configuration...");
         WSProviderConfig.init();

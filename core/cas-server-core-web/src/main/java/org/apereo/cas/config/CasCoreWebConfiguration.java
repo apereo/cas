@@ -1,9 +1,11 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -12,6 +14,7 @@ import org.apereo.cas.web.view.CasReloadableMessageBundle;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -101,5 +104,18 @@ public class CasCoreWebConfiguration {
         val authorityValidationRegEx = httpClient.getAuthorityValidationRegEx();
         val authorityValidationRegExCaseSensitive = httpClient.isAuthorityValidationRegExCaseSensitive();
         return new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx, authorityValidationRegExCaseSensitive);
+    }
+
+    @Bean
+    public ProtocolEndpointConfigurer casProtocolEndpointConfigurer() {
+        return () -> List.of(
+            StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_LOGIN, "/"),
+            StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_LOGOUT, "/"),
+            StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_VALIDATE, "/"),
+            StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE, "/"),
+            StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE_V3, "/"),
+            StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_PROXY_VALIDATE, "/"),
+            StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_PROXY_VALIDATE_V3, "/"),
+            StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_PROXY, "/"));
     }
 }

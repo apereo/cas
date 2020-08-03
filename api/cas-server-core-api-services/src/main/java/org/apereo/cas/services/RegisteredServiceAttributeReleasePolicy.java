@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.Service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,7 +26,7 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
     /**
      * Is authorized to release authentication attributes boolean.
      *
-     * @return the boolean
+     * @return true/false
      */
     default boolean isAuthorizedToReleaseAuthenticationAttributes() {
         return true;
@@ -73,7 +73,7 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
      *
      * @return the principal attribute repository
      */
-    default PrincipalAttributesRepository getPrincipalAttributesRepository() {
+    default RegisteredServicePrincipalAttributesRepository getPrincipalAttributesRepository() {
         return null;
     }
 

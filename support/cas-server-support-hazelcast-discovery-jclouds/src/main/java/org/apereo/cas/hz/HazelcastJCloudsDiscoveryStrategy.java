@@ -22,7 +22,8 @@ import java.util.HashMap;
 public class HazelcastJCloudsDiscoveryStrategy implements HazelcastDiscoveryStrategy {
 
     @Override
-    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig, final Config configuration, final NetworkConfig networkConfig) {
+    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig,
+                                       final Config configuration, final NetworkConfig networkConfig) {
         val jclouds = cluster.getDiscovery().getJclouds();
         val properties = new HashMap<String, Comparable>();
         if (StringUtils.hasText(jclouds.getCredential())) {

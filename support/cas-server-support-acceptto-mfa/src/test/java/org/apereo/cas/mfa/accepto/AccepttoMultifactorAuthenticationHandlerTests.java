@@ -34,15 +34,22 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("RestfulApi")
-@SpringBootTest(classes = BaseAcceptoMultifactorAuthenticationTests.SharedTestConfiguration.class,
+@Tag("MFA")
+@SpringBootTest(classes = BaseAccepttoMultifactorAuthenticationTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.mfa.acceptto.apiUrl=http://localhost:5002",
+        "cas.authn.mfa.acceptto.api-url=http://localhost:5002",
         "cas.authn.mfa.acceptto.application-id=thisisatestid",
         "cas.authn.mfa.acceptto.secret=thisisasecret",
         "cas.authn.mfa.acceptto.organization-id=thisisatestid",
         "cas.authn.mfa.acceptto.organization-secret=thisisasecret",
-        "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
+        "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem",
+
+        "cas.authn.mfa.acceptto.bypass.principal-attribute-name=nothing",
+        "cas.authn.mfa.acceptto.bypass.authentication-attribute-name=nothing",
+        "cas.authn.mfa.acceptto.bypass.credential-class-type=UsernamePasswordCredential",
+        "cas.authn.mfa.acceptto.bypass.http-request-remote-address=1.2.3.4",
+        "cas.authn.mfa.acceptto.bypass.groovy.location=classpath:GroovyBypass.groovy",
+        "cas.authn.mfa.acceptto.bypass.rest.url=http://localhost:8080/bypass"
     })
 public class AccepttoMultifactorAuthenticationHandlerTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
@@ -52,7 +59,7 @@ public class AccepttoMultifactorAuthenticationHandlerTests {
 
     @Test
     public void verifyOperationApproved() throws Exception {
-        val data = MAPPER.writeValueAsString(CollectionUtils.wrap("device_id", "devicid-test", "status", "approved"));
+        val data = MAPPER.writeValueAsString(CollectionUtils.wrap("device_id", "deviceid-test", "status", "approved"));
         try (val webServer = new MockWebServer(5002,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();

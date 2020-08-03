@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -22,7 +23,7 @@ import java.util.Optional;
  * @since 4.2.0
  */
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableUsagePolicyRepository {
     private static final long serialVersionUID = 1883808902502739L;
 

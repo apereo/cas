@@ -19,7 +19,7 @@ public class SocketUtils {
      * Is tcp port available.
      *
      * @param port the port
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isTcpPortAvailable(final int port) {
         try (val serverSocket = new ServerSocket()) {

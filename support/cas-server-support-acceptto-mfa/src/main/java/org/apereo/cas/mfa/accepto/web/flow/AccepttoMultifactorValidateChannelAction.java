@@ -3,6 +3,7 @@ package org.apereo.cas.mfa.accepto.web.flow;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.mfa.accepto.AccepttoMultifactorTokenCredential;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -64,7 +65,7 @@ public class AccepttoMultifactorValidateChannelAction extends AbstractAction {
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);
         } catch (final Exception e) {
             eventAttributes.put("error", e);
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new EventFactorySupport().event(this,
             CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, eventAttributes);

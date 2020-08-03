@@ -115,6 +115,7 @@ public class CasCoreAuthenticationSupportConfiguration {
 
     @ConditionalOnMissingBean(name = "groovyAuthenticationProcessorExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer groovyAuthenticationProcessorExecutionPlanConfigurer() {
         return plan -> {
             val engine = casProperties.getAuthn().getCore().getEngine();

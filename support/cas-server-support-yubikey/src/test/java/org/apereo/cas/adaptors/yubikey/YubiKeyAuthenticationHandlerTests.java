@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
-import org.apereo.cas.adaptors.yubikey.registry.WhitelistYubiKeyAccountRegistry;
+import org.apereo.cas.adaptors.yubikey.registry.PermissiveYubiKeyAccountRegistry;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -13,13 +13,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+
+import java.util.LinkedHashMap;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -66,7 +68,7 @@ public class YubiKeyAuthenticationHandlerTests {
 
     @Test
     public void checkAccountNotFound() {
-        val registry = new WhitelistYubiKeyAccountRegistry(new LinkedMultiValueMap<>(),
+        val registry = new PermissiveYubiKeyAccountRegistry(new LinkedHashMap<>(),
             new DefaultYubiKeyAccountValidator(YubicoClient.getClient(CLIENT_ID, SECRET_KEY)));
         registry.setCipherExecutor(CipherExecutor.noOpOfSerializableToString());
         val handler = new YubiKeyAuthenticationHandler(StringUtils.EMPTY,
@@ -78,11 +80,13 @@ public class YubiKeyAuthenticationHandlerTests {
 
     @Test
     public void checkEncryptedAccount() {
-        val registry = new WhitelistYubiKeyAccountRegistry(new LinkedMultiValueMap<>(), (uid, token) -> true);
+        val registry = new PermissiveYubiKeyAccountRegistry(new LinkedHashMap<>(), (uid, token) -> true);
         registry.setCipherExecutor(new YubikeyAccountCipherExecutor(
             "1PbwSbnHeinpkZOSZjuSJ8yYpUrInm5aaV18J2Ar4rM",
             "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w", 0, 0));
-        assertTrue(registry.registerAccountFor("encrypteduser", OTP));
+
+        val request = YubiKeyDeviceRegistrationRequest.builder().username("encrypteduser").token(OTP).name(UUID.randomUUID().toString()).build();
+        assertTrue(registry.registerAccountFor(request));
         assertTrue(registry.isYubiKeyRegisteredFor("encrypteduser", registry.getAccountValidator().getTokenPublicId(OTP)));
     }
 }

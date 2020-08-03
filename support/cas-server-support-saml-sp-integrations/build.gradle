@@ -1,4 +1,5 @@
 description = "Apereo CAS SAML SP Integrations"
+
 dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
@@ -13,8 +14,7 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
 
     implementation libraries.casclient
-    implementation libraries.shibidp
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
 
     testImplementation project(path: ":support:cas-server-support-saml-idp", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-saml-core", configuration: "tests")
@@ -24,16 +24,16 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
 
+    testImplementation project(":support:cas-server-support-person-directory")
+
     testImplementation project(":core:cas-server-core-util")
-    
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core-validation-api")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-services-authentication")
-    
-    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-services-registry")
@@ -43,7 +43,6 @@ dependencies {
     testImplementation project(":support:cas-server-support-json-service-registry")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-web")
-    
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-tickets-api")
 }

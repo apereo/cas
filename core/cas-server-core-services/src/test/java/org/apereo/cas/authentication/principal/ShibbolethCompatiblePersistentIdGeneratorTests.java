@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -17,6 +18,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Tag("RegisteredService")
 public class ShibbolethCompatiblePersistentIdGeneratorTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "shibbolethCompatiblePersistentIdGenerator.json");
@@ -25,7 +27,7 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
     @Test
     public void verifyGenerator() {
         val generator = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
-
+        assertNotNull(generator.toString());
         val p = mock(Principal.class);
         when(p.getId()).thenReturn("testuser");
         val value = generator.generate(p, RegisteredServiceTestUtils.getService());

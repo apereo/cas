@@ -69,7 +69,7 @@ public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPo
      * Is refresh token expired ?
      *
      * @param ticketState the ticket state
-     * @return the boolean
+     * @return true/false
      */
     @JsonIgnore
     protected boolean isRefreshTokenExpired(final TicketState ticketState) {

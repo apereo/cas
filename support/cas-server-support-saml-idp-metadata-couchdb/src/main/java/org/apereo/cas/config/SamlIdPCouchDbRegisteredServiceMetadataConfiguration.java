@@ -6,7 +6,6 @@ import org.apereo.cas.couchdb.saml.SamlMetadataDocumentCouchDbRepository;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.metadata.resolver.CouchDbSamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
-import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 
 import lombok.val;
@@ -27,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("samlIdPCouchDbRegisteredServiceMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurer {
+public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -45,9 +44,7 @@ public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration implements Sam
     @RefreshScope
     public SamlMetadataDocumentCouchDbRepository samlMetadataDocumentCouchDbRepository() {
         val couch = casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb();
-        val repository = new SamlMetadataDocumentCouchDbRepository(samlMetadataCouchDbFactory.getObject().getCouchDbConnector(), couch.isCreateIfNotExists());
-        repository.initStandardDesignDocument();
-        return repository;
+        return new SamlMetadataDocumentCouchDbRepository(samlMetadataCouchDbFactory.getObject().getCouchDbConnector(), couch.isCreateIfNotExists());
     }
 
     @ConditionalOnMissingBean(name = "couchDbSamlRegisteredServiceMetadataResolver")
@@ -58,8 +55,10 @@ public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration implements Sam
         return new CouchDbSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject(), samlMetadataDocumentCouchDbRepository());
     }
 
-    @Override
-    public void configureMetadataResolutionPlan(final SamlRegisteredServiceMetadataResolutionPlan plan) {
-        plan.registerMetadataResolver(couchDbSamlRegisteredServiceMetadataResolver());
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "couchDbSamlRegisteredServiceMetadataResolutionPlanConfigurer")
+    public SamlRegisteredServiceMetadataResolutionPlanConfigurer couchDbSamlRegisteredServiceMetadataResolutionPlanConfigurer() {
+        return plan -> plan.registerMetadataResolver(couchDbSamlRegisteredServiceMetadataResolver());
     }
 }

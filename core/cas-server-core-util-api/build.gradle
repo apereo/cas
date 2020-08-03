@@ -1,17 +1,16 @@
 description = "Apereo CAS Core Utilities"
 dependencies {
-    implementation libraries.jose4j
     
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-configuration-model")
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-web")
-    
+
+    implementation libraries.jose4j
     implementation libraries.pac4jcore
     implementation libraries.nimbus
     implementation libraries.bouncycastle
-
     implementation libraries.semver
     implementation libraries.oshi
 }

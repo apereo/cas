@@ -15,6 +15,7 @@ import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.config.builders.UserManagedCacheBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -42,6 +43,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  * @since 3.4.76
  */
 @Slf4j
+@Tag("X509")
 public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocationCheckerTests {
 
     /**

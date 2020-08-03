@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0
  */
 @SpringBootTest(classes = AopAutoConfiguration.class)
+@Tag("CasConfiguration")
 public class AdditionalMetadataVerificationTests {
 
     @Autowired
@@ -50,7 +52,7 @@ public class AdditionalMetadataVerificationTests {
             try {
                 ConfigurationPropertyName.of(prop.getName());
             } catch (final InvalidConfigurationPropertyNameException e) {
-                fail(e::getMessage);
+                fail(e.getMessage());
             }
             val deprecation = prop.getDeprecation();
             if (deprecation != null && StringUtils.isNotBlank(deprecation.getReplacement())) {

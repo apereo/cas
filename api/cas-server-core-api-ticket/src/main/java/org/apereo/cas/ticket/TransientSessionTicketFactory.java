@@ -12,7 +12,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public interface TransientSessionTicketFactory extends TicketFactory {
+public interface TransientSessionTicketFactory<T extends TransientSessionTicket> extends TicketFactory {
     /**
      * Normalize ticket id string.
      *
@@ -46,7 +46,7 @@ public interface TransientSessionTicketFactory extends TicketFactory {
      * @param properties the properties
      * @return the delegated authentication request ticket
      */
-    TransientSessionTicket create(Service service, Map<String, Serializable> properties);
+    T create(Service service, Map<String, Serializable> properties);
 
     /**
      * Create transient session ticket.
@@ -55,7 +55,7 @@ public interface TransientSessionTicketFactory extends TicketFactory {
      * @param properties the properties
      * @return the transient session ticket
      */
-    TransientSessionTicket create(String id, Map<String, Serializable> properties);
+    T create(String id, Map<String, Serializable> properties);
 
     /**
      * Create delegated authentication request ticket.
@@ -63,7 +63,7 @@ public interface TransientSessionTicketFactory extends TicketFactory {
      * @param service the service
      * @return the delegated authentication request ticket
      */
-    default TransientSessionTicket create(final Service service) {
+    default T create(final Service service) {
         return create(service, new LinkedHashMap<>(0));
     }
 }

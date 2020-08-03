@@ -6,6 +6,7 @@ import org.apereo.cas.util.EncodingUtils;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @TestPropertySource(properties = "cas.authn.token.crypto.encryptionEnabled=false")
+@Tag("Tickets")
 public class JwtTokenTicketBuilderWithoutEncryptionTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test

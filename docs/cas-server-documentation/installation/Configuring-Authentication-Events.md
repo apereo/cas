@@ -71,6 +71,20 @@ Stores authentication events into a MongoDb NoSQL database.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-events).
 
+### DynamoDb
+
+Stores authentication events into a DynamoDb database.
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-events-dynamodb</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dynamodb-events).
+
 ### CouchDb
 
 Stores authentication events inside a CouchDb instance.

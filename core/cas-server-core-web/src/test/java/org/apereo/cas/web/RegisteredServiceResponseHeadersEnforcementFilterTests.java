@@ -13,12 +13,12 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilter;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -27,7 +27,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RegisteredServiceResponseHeadersEnforcementFilterTests}.
@@ -35,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@Tag("RegisteredService")
 public class RegisteredServiceResponseHeadersEnforcementFilterTests {
 
     @Test
@@ -181,8 +180,10 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     private static RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final Pair<RegisteredServiceProperties, String>... properties) {
-        val servicesManager = new DefaultServicesManager(new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class)),
-            mock(ApplicationEventPublisher.class), new LinkedHashSet<>());
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val servicesManager = new DefaultServicesManager(new InMemoryServiceRegistry(appCtx),
+            appCtx, new LinkedHashSet<>(), Caffeine.newBuilder().build());
         val argumentExtractor = new DefaultArgumentExtractor(new WebApplicationServiceFactory());
 
         val service = RegisteredServiceTestUtils.getRegisteredService("service-0");

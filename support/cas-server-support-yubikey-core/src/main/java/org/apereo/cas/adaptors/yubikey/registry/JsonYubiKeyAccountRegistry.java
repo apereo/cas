@@ -1,15 +1,21 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.util.ResourceUtils;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is {@link JsonYubiKeyAccountRegistry}.
@@ -18,9 +24,11 @@ import org.springframework.util.MultiValueMap;
  * @since 5.2.0
  */
 @Slf4j
-public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry {
+public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
+        .findAndRegisterModules();
 
     private final Resource jsonResource;
 
@@ -29,8 +37,32 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
         this.jsonResource = jsonResource;
     }
 
+    @Override
+    public void delete(final String uid) {
+        super.delete(uid);
+        writeDevicesToFile();
+    }
+
+    @Override
+    public void delete(final String username, final long deviceId) {
+        super.delete(username, deviceId);
+        writeDevicesToFile();
+    }
+
+    @Override
+    public void deleteAll() {
+        super.deleteAll();
+        writeDevicesToFile();
+    }
+
     @SneakyThrows
-    private static MultiValueMap<String, String> getDevicesFromJsonResource(final Resource jsonResource) {
+    private void writeDevicesToFile() {
+        val file = jsonResource.getFile();
+        MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
+    }
+
+    @SneakyThrows
+    private static Map<String, YubiKeyAccount> getDevicesFromJsonResource(final Resource jsonResource) {
         if (!ResourceUtils.doesResourceExist(jsonResource)) {
             val res = jsonResource.getFile().createNewFile();
             if (res) {
@@ -40,40 +72,27 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
         if (ResourceUtils.doesResourceExist(jsonResource)) {
             val file = jsonResource.getFile();
             if (file.canRead() && file.length() > 0) {
-                return MAPPER.readValue(file, LinkedMultiValueMap.class);
+                return MAPPER.readValue(file, new TypeReference<Map<String, YubiKeyAccount>>() {
+                });
             }
         } else {
             LOGGER.warn("JSON resource @ [{}] does not exist", jsonResource);
         }
-        return new LinkedMultiValueMap<>(0);
-    }
-
-    @SneakyThrows
-    @Override
-    public boolean registerAccountFor(final String uid, final String token) {
-        if (getAccountValidator().isValid(uid, token)) {
-            val yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
-            val file = jsonResource.getFile();
-            this.devices.add(uid, getCipherExecutor().encode(yubikeyPublicId));
-            MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
-            return true;
-        }
-        return false;
+        return new HashMap<>(0);
     }
 
     @Override
-    @SneakyThrows
-    public void delete(final String uid) {
-        this.devices.remove(uid);
-        val file = jsonResource.getFile();
-        MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
+    public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request,
+                                  final YubiKeyRegisteredDevice... device) {
+        val acct = super.save(request, device);
+        writeDevicesToFile();
+        return acct;
     }
 
     @Override
-    @SneakyThrows
-    public void deleteAll() {
-        this.devices.clear();
-        val file = jsonResource.getFile();
-        MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
+    public boolean update(final YubiKeyAccount account) {
+        val result = super.update(account);
+        writeDevicesToFile();
+        return result;
     }
 }

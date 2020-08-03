@@ -30,7 +30,7 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
      */
     private final PrincipalNameTransformer principalNameTransformer;
 
-    public AbstractTokenWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    protected AbstractTokenWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                                      final PrincipalFactory principalFactory,
                                                      final Integer order, final PrincipalNameTransformer principalNameTransformer) {
         super(name, servicesManager, principalFactory, order);

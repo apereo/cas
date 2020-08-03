@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @EqualsAndHashCode(of = {"duoApiHost", "duoIntegrationKey", "duoSecretKey", "duoApplicationKey"}, callSuper = true)
+@JsonFilter("DuoSecurityMultifactorProperties")
 public class DuoSecurityMultifactorProperties extends BaseMultifactorProviderProperties {
 
     /**
@@ -44,10 +46,10 @@ public class DuoSecurityMultifactorProperties extends BaseMultifactorProviderPro
      * The duoApplicationKey is a string, at least 40 characters long,
      * that you generate and keep secret from Duo.
      * You can generate a random string in Python with:
-     * <pre>
+     * &lt;pre&gt;
      * import os, hashlib
      * print hashlib.sha1(os.urandom(32)).hexdigest()
-     * </pre>
+     * &lt;/pre&gt;
      */
     @RequiredProperty
     private String duoApplicationKey;

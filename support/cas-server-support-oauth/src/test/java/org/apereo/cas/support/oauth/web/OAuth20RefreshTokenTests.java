@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
+import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;

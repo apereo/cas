@@ -55,6 +55,6 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_FINISH_MFA_TRUSTED_AUTH));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_PREPARE_REGISTER_TRUSTED_DEVICE));
-        assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_REGISTER_DEVICE));
+        assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_REGISTER_DEVICE_VIEW));
     }
 }

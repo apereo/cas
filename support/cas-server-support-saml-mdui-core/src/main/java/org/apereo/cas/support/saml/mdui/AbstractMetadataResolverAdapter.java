@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.mdui;
 
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -54,19 +55,11 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
 
     private ChainingMetadataResolver metadataResolver;
 
-    /**
-     * Instantiates a new abstract metadata resolver adapter.
-     */
-    public AbstractMetadataResolverAdapter() {
-        this.metadataResources = new HashMap<>(0);
+    protected AbstractMetadataResolverAdapter() {
+        this(new HashMap<>(0));
     }
 
-    /**
-     * Instantiates a new static metadata resolver adapter.
-     *
-     * @param metadataResources the metadata resources
-     */
-    public AbstractMetadataResolverAdapter(final Map<Resource, MetadataFilterChain> metadataResources) {
+    protected AbstractMetadataResolverAdapter(final Map<Resource, MetadataFilterChain> metadataResources) {
         this.metadataResources = metadataResources;
     }
 
@@ -136,17 +129,18 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * @param entityId       the entity id
      * @return the list
      */
-    private List<MetadataResolver> loadMetadataFromResource(final MetadataFilter metadataFilter, final Resource resource, final String entityId) {
+    private List<MetadataResolver> loadMetadataFromResource(final MetadataFilter metadataFilter, final Resource resource,
+                                                            final String entityId) {
         LOGGER.debug("Evaluating metadata resource [{}]", resource.getFilename());
         try (val in = getResourceInputStream(resource, entityId)) {
-            if (in.available() > 0 && in.markSupported()) {
+            if (in.available() > 0) {
                 LOGGER.debug("Parsing [{}]", resource.getFilename());
                 val document = this.configBean.getParserPool().parse(in);
                 return buildSingleMetadataResolver(metadataFilter, resource, document);
             }
             LOGGER.warn("Input stream from resource [{}] appears empty. Moving on...", resource.getFilename());
         } catch (final Exception e) {
-            LOGGER.warn("Could not retrieve input stream from resource. Moving on...", e);
+            LoggingUtils.warn(LOGGER, "Could not retrieve input stream from resource. Moving on...", e);
         }
         return new ArrayList<>(0);
     }
@@ -159,7 +153,8 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * @param document            the xml document to parse
      * @return list of resolved metadata from resources.
      */
-    private List<MetadataResolver> buildSingleMetadataResolver(final MetadataFilter metadataFilterChain, final Resource resource, final Document document) {
+    private List<MetadataResolver> buildSingleMetadataResolver(final MetadataFilter metadataFilterChain, final Resource resource,
+                                                               final Document document) {
         try {
             val metadataRoot = document.getDocumentElement();
             val metadataProvider = new DOMMetadataResolver(metadataRoot);
@@ -176,7 +171,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
             resolvers.add(metadataProvider);
             return resolvers;
         } catch (final Exception ex) {
-            LOGGER.warn("Could not initialize metadata resolver. Resource will be ignored", ex);
+            LoggingUtils.warn(LOGGER, ex);
         }
         return new ArrayList<>(0);
     }

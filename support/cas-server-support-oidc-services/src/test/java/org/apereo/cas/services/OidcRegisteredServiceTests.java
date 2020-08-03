@@ -10,7 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
@@ -35,8 +34,10 @@ public class OidcRegisteredServiceTests {
     private final ServiceRegistry dao;
 
     public OidcRegisteredServiceTests() throws Exception {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
         this.dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
-            mock(ApplicationEventPublisher.class),
+            appCtx,
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());

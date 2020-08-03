@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.RandomUtils;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -23,8 +24,8 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @Setter
-@RequiredArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseConsentRepository implements ConsentRepository {
     private static final long serialVersionUID = 1736846688546785564L;
     private transient Set<ConsentDecision> consentDecisions = new LinkedHashSet<>(0);
@@ -52,7 +53,7 @@ public abstract class BaseConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public boolean storeConsentDecision(final ConsentDecision decision) {
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
         val consent = getConsentDecisions()
             .stream()
             .anyMatch(d -> d.getId() == decision.getId());
@@ -62,7 +63,7 @@ public abstract class BaseConsentRepository implements ConsentRepository {
             decision.setId(RandomUtils.getNativeInstance().nextInt());
         }
         getConsentDecisions().add(decision);
-        return true;
+        return decision;
     }
 
 

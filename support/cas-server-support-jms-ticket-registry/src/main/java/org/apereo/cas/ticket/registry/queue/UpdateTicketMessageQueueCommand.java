@@ -1,8 +1,8 @@
 package org.apereo.cas.ticket.registry.queue;
 
-import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.PublisherIdentifier;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -26,7 +26,7 @@ public class UpdateTicketMessageQueueCommand extends BaseMessageQueueCommand {
     private Ticket ticket;
 
     @JsonCreator
-    public UpdateTicketMessageQueueCommand(@JsonProperty("id") final JmsQueueIdentifier id, @JsonProperty("ticket") final Ticket ticket) {
+    public UpdateTicketMessageQueueCommand(@JsonProperty("id") final PublisherIdentifier id, @JsonProperty("ticket") final Ticket ticket) {
         super(id);
         this.ticket = ticket;
     }
