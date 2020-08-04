@@ -2991,6 +2991,7 @@ To learn more about this topic, [please review this guide](../mfa/YubiKey-Authen
 # cas.authn.mfa.yubikey.rank=0
 # cas.authn.mfa.yubikey.api-urls=
 # cas.authn.mfa.yubikey.trusted-device-enabled=false
+# cas.authn.mfa.yubikey.multiple-device-registration-enabled=false
 
 # cas.authn.mfa.yubikey.name=
 # cas.authn.mfa.yubikey.order=
@@ -2998,6 +2999,10 @@ To learn more about this topic, [please review this guide](../mfa/YubiKey-Authen
 
 Multifactor authentication bypass settings for this provider are 
 available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.yubikey`.
+
+#### YubiKey REST Device Store
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.mfa.yubikey.rest`.
 
 #### YubiKey JSON Device Store
 

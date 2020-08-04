@@ -50,7 +50,12 @@ The following items are new improvements and enhancements presented in this rele
 
 ### Amazon SDK v2
 
-CAS is now using the Amazon SDK v2, which effectively upgrades and impacts the functionality for DynamoDb, SNS, SSM, S3 and all other features based on Amazon Web Services.
+CAS is now using the Amazon SDK v2, which effectively upgrades and impacts the functionality for DynamoDb, SNS, SSM, 
+S3 and all other features based on Amazon Web Services.
+
+### YubiKey Device Management via REST
+
+YubiKey devices used for [multifactor authentication](../mfa/YubiKey-Authentication.html) can now be externally managed via a REST API.
 
 ### Test Coverage via CodeCov
 
@@ -58,13 +63,30 @@ CAS test coverage across all modules in the codebase has now reached `83%` and c
 to fail all pull requests that fall below this threshold. This area will be closely monitored and improved
 as progress is made with the goal of hopefully reaching at least `85%` before the final GA release. Of course, this will not be a blocker for the final release.
 
+### YubiKey Multiple Devices
+
+Multiple YubiKey devices can now be registered with CAS for [multifactor authentication](../mfa/YubiKey-Authentication.html). This ability can be controlled via CAS settings.
+
+![image](https://user-images.githubusercontent.com/1205228/88883051-8b9caa80-d248-11ea-9ad5-487c6071fbc5.png)
+
+![image](https://user-images.githubusercontent.com/1205228/88883117-bf77d000-d248-11ea-98c9-e88088fdd975.png)
+
+<div class="alert alert-warning">
+  <strong>WATCH OUT!</strong><br />This may be a breaking change. The underlying data models and repository implementations that manage device records for users are modified to handle a collection of devices per user. This does affect database or filesystem schemas and API calls where a collection is expected instead of a single result.
+</div>
+
 ### Amazon S3 Service Registry
 
 CAS registered service definitions can now be natively stored in [Amazon S3 buckets](../services/AmazonS3-Service-Management.html).
 
+### Okta SDK v2
+
+CAS is now using the Okta SDK v2 mainly used to handle the integration between CAS and Okta for authentication and attribute resolution.
+
 ## Other Stuff
 
 - Adjustments to SAML2 metadata resolution to cache to ensure enough capacity for resolved metadata providers. 
+- SAML2 SLO endpoints are now able to redirect to a final logout url after logout operations, if the url is assigned to the SAML service definition.
 - The expiration of access tokens is now correctly communicated back to OAuth relying parties, specially if the access token expiration policy is defined per application.
 
 ## Library Upgrades
@@ -75,6 +97,8 @@ CAS registered service definitions can now be natively stored in [Amazon S3 buck
 - Spring
 - Spring Boot
 - Amazon SDK
+- Spotbugs
+- Okta
 - Ldaptive
 - Person Directory
 - Azure DocumentDb
