@@ -42,7 +42,7 @@ public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoa
         val body = newSoapObject(Body.class);
         val query = (AttributeQuery) authnRequest;
         val saml2Response = buildSaml2Response(casAssertion, query, service,
-            adaptor, request, SAMLConstants.SAML2_POST_BINDING_URI, messageContext);
+            adaptor, request, response, SAMLConstants.SAML2_POST_BINDING_URI, messageContext);
         body.getUnknownXMLObjects().add(saml2Response);
 
         val envelope = newSoapObject(Envelope.class);

@@ -58,7 +58,7 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
         val header = newSoapObject(Header.class);
         header.getUnknownXMLObjects().add(ecpResponse);
         val body = newSoapObject(Body.class);
-        val saml2Response = buildSaml2Response(casAssertion, authnRequest, service, adaptor, request, binding, messageContext);
+        val saml2Response = buildSaml2Response(casAssertion, authnRequest, service, adaptor, request, response, binding, messageContext);
         body.getUnknownXMLObjects().add(saml2Response);
         val envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
@@ -75,6 +75,7 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
      * @param service        the service
      * @param adaptor        the adaptor
      * @param request        the request
+     * @param response       the response
      * @param binding        the binding
      * @param messageContext the message context
      * @return the org . opensaml . saml . saml 2 . core . response
@@ -84,11 +85,12 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                                           final SamlRegisteredService service,
                                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                           final HttpServletRequest request,
+                                          final HttpServletResponse response,
                                           final String binding,
                                           final MessageContext messageContext) {
         return (Response)
             getSamlResponseBuilderConfigurationContext().getSamlSoapResponseBuilder()
-                .build(authnRequest, request, null, casAssertion, service, adaptor, binding, messageContext);
+                .build(authnRequest, request, response, casAssertion, service, adaptor, binding, messageContext);
     }
 
     @Override
