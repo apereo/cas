@@ -40,14 +40,18 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SamlRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "samlRegisteredService.json");
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
+
     private static final String SAML_SERVICE = "SAMLService";
+
     private static final String METADATA_LOCATION = "classpath:/metadata/idp-metadata.xml";
 
     @BeforeAll
     public static void prepTests() throws Exception {
+        Arrays.stream(FileUtils.getTempDirectory().listFiles()).forEach(File::delete);
         FileUtils.cleanDirectory(RESOURCE.getFile());
     }
 
@@ -82,7 +86,7 @@ public class SamlRegisteredServiceTests {
         val chain = new ChainingAttributeReleasePolicy();
         chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
         service.setAttributeReleasePolicy(chain);
-
+        
         val dao = new JsonServiceRegistry(new FileSystemResource(FileUtils.getTempDirectory()), WatcherService.noOp(),
             appCtx, new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
