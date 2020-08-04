@@ -31,6 +31,7 @@ dependencies {
     implementation project(":support:cas-server-support-saml-idp-metadata")
     implementation project(":support:cas-server-support-saml-idp-web")
     implementation project(":support:cas-server-support-saml-idp-ticket")
+    implementation project(":support:cas-server-support-pac4j-api")
 
     compileOnly project(":support:cas-server-support-consent-api")
 

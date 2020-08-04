@@ -3242,6 +3242,7 @@ To learn more about this topic, [please review this guide](../installation/Confi
 
 ```properties
 # cas.authn.saml-idp.entity-id=https://cas.example.org/idp
+# cas.authn.saml-idp.replicate-sessions=false
 
 # cas.authn.saml-idp.authentication-context-class-mappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
 # cas.authn.saml-idp.authentication-context-class-mappings[1]=https://refeds.org/profile/mfa->mfa-gauth

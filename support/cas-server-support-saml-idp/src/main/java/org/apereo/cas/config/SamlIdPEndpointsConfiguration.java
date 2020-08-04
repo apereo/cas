@@ -1,9 +1,11 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.integration.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
@@ -30,12 +32,14 @@ import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPProfileCallback
 import org.apereo.cas.support.saml.web.idp.profile.sso.UrlDecodingHTTPRedirectDeflateDecoder;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.DefaultSSOSamlHttpRequestExtractor;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -45,6 +49,9 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder;
 import org.opensaml.saml.saml2.core.Response;
+import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -87,6 +94,14 @@ public class SamlIdPEndpointsConfiguration {
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
+
+    @Autowired
+    @Qualifier("defaultTicketFactory")
+    private ObjectProvider<TicketFactory> ticketFactory;
 
     @Autowired
     @Qualifier("samlProfileSamlResponseBuilder")
@@ -334,6 +349,19 @@ public class SamlIdPEndpointsConfiguration {
         };
     }
 
+    @ConditionalOnMissingBean(name = "samlIdPDistributedSessionStore")
+    @Bean
+    public SessionStore<JEEContext> samlIdPDistributedSessionStore() {
+        val replicate = casProperties.getAuthn().getSamlIdp().isReplicateSessions();
+        if (replicate) {
+            val cookie = casProperties.getSessionReplication().getCookie();
+            val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
+            return new DistributedJEESessionStore(centralAuthenticationService.getObject(),
+                ticketFactory.getObject(), cookieGenerator);
+        }
+        return new JEESessionStore();
+    }
+
     private SamlProfileHandlerConfigurationContext.SamlProfileHandlerConfigurationContextBuilder getSamlProfileHandlerConfigurationContextBuilder() {
         return SamlProfileHandlerConfigurationContext.builder()
             .samlObjectSigner(samlObjectSigner.getObject())
@@ -350,6 +378,7 @@ public class SamlIdPEndpointsConfiguration {
             .responseBuilder(samlProfileSamlResponseBuilder.getObject())
             .ticketValidator(casClientTicketValidator.getObject())
             .ticketRegistry(ticketRegistry.getObject())
+            .sessionStore(samlIdPDistributedSessionStore())
             .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getObject())
             .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory.getObject())
             .callbackService(samlIdPCallbackService());

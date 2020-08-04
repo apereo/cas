@@ -68,6 +68,8 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.ecp.Response;
+import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -96,6 +98,10 @@ public class SamlIdPConfiguration {
     @Autowired
     @Qualifier("ticketRegistry")
     private ObjectProvider<TicketRegistry> ticketRegistry;
+
+    @Autowired
+    @Qualifier("samlIdPDistributedSessionStore")
+    private ObjectProvider<SessionStore<JEEContext>> samlIdPDistributedSessionStore;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -429,6 +435,7 @@ public class SamlIdPConfiguration {
             .samlObjectEncrypter(samlObjectEncrypter())
             .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getObject())
             .ticketRegistry(ticketRegistry.getObject())
+            .sessionStore(samlIdPDistributedSessionStore.getObject())
             .samlArtifactTicketFactory(samlArtifactTicketFactory())
             .samlArtifactMap(samlArtifactMap())
             .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory())

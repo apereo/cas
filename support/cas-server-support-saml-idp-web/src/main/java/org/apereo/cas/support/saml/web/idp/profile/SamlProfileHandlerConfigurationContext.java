@@ -24,6 +24,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.opensaml.saml.common.SAMLObject;
+import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.SessionStore;
 
 /**
  * This is {@link SamlProfileHandlerConfigurationContext}.
@@ -74,4 +76,6 @@ public class SamlProfileHandlerConfigurationContext {
     private final SamlArtifactTicketFactory artifactTicketFactory;
 
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
+
+    private final SessionStore<JEEContext> sessionStore;
 }
