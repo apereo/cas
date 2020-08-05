@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlan;
-import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -71,10 +70,6 @@ import org.springframework.webflow.execution.Action;
 public class CasSupportActionsConfiguration {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-    private ObjectProvider<SingleLogoutServiceLogoutUrlBuilder> singleLogoutServiceLogoutUrlBuilder;
 
     @Autowired
     @Qualifier("authenticationEventExecutionPlan")
@@ -211,13 +206,12 @@ public class CasSupportActionsConfiguration {
         return new CreateTicketGrantingTicketAction(context);
     }
 
+    @Autowired
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "logoutAction")
-    public Action logoutAction() {
-        return new LogoutAction(webApplicationServiceFactory.getObject(),
-            casProperties.getLogout(),
-            singleLogoutServiceLogoutUrlBuilder.getObject());
+    public Action logoutAction(@Qualifier("logoutExecutionPlan") final LogoutExecutionPlan logoutExecutionPlan) {
+        return new LogoutAction(logoutExecutionPlan);
     }
 
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)

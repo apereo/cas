@@ -2009,7 +2009,6 @@ ext.libraries = [
                     exclude(group: "xalan", module: "serializer")
                     exclude(group: "org.springframework", module: "spring-expression")
                     exclude(group: "org.apache.velocity", module: "velocity")
-
                 }
         ],
         pac4joidcoauth          : [

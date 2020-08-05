@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.util;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.InetAddressUtils;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Attribute;
@@ -35,6 +37,7 @@ import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.soap.soap11.ActorBearing;
 
+import javax.xml.namespace.QName;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,32 +57,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
     protected AbstractSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {
         super(configBean);
-    }
-
-    private static void configureAttributeNameFormat(final Attribute attribute, final String nameFormat) {
-        LOGGER.trace("Configuring Attribute's: [{}] nameFormat: [{}]", attribute, nameFormat);
-        if (StringUtils.isBlank(nameFormat)) {
-            return;
-        }
-
-        val compareFormat = nameFormat.trim().toLowerCase();
-        switch (compareFormat) {
-            case "basic":
-            case Attribute.BASIC:
-                attribute.setNameFormat(Attribute.BASIC);
-                break;
-            case "uri":
-            case Attribute.URI_REFERENCE:
-                attribute.setNameFormat(Attribute.URI_REFERENCE);
-                break;
-            case "unspecified":
-            case Attribute.UNSPECIFIED:
-                attribute.setNameFormat(Attribute.UNSPECIFIED);
-                break;
-            default:
-                attribute.setNameFormat(nameFormat);
-                break;
-        }
     }
 
     /**
@@ -259,49 +236,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     }
 
     /**
-     * New attribute.
-     *
-     * @param attributeFriendlyName the attribute friendly name
-     * @param attributeName         the attribute name
-     * @param attributeValue        the attribute value
-     * @param configuredNameFormats the configured name formats. If an attribute is found in this collection, the linked name format will be used.
-     * @param defaultNameFormat     the default name format
-     * @param attributeValueTypes   the attribute value types
-     * @return the attribute
-     */
-    protected Attribute newAttribute(final String attributeFriendlyName,
-                                     final String attributeName,
-                                     final Object attributeValue,
-                                     final Map<String, String> configuredNameFormats,
-                                     final String defaultNameFormat,
-                                     final Map<String, String> attributeValueTypes) {
-        val attribute = newSamlObject(Attribute.class);
-        attribute.setName(attributeName);
-
-        if (StringUtils.isNotBlank(attributeFriendlyName)) {
-            attribute.setFriendlyName(attributeFriendlyName);
-        } else {
-            attribute.setFriendlyName(attributeName);
-        }
-
-        val valueType = attributeValueTypes.get(attributeName);
-        addAttributeValuesToSaml2Attribute(attributeName, attributeValue, valueType, attribute.getAttributeValues());
-
-        if (!configuredNameFormats.isEmpty() && configuredNameFormats.containsKey(attribute.getName())) {
-            val nameFormat = configuredNameFormats.get(attribute.getName());
-            LOGGER.debug("Found name format [{}] for attribute [{}]", nameFormat, attribute.getName());
-            configureAttributeNameFormat(attribute, nameFormat);
-            LOGGER.debug("Attribute [{}] is assigned the name format of [{}]", attribute.getName(), attribute.getNameFormat());
-        } else {
-            LOGGER.debug("Skipped name format, as no name formats are defined or none is found for attribute [{}]", attribute.getName());
-            configureAttributeNameFormat(attribute, defaultNameFormat);
-        }
-
-        LOGGER.debug("Attribute [{}] has [{}] value(s)", attribute.getName(), attribute.getAttributeValues().size());
-        return attribute;
-    }
-
-    /**
      * New authn statement.
      *
      * @param contextClassRef the context class ref such as {@link AuthnContext#PASSWORD_AUTHN_CTX}
@@ -449,6 +383,99 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         val decodedBytes = EncodingUtils.decodeBase64(encodedRequestXmlString);
         return inflateAuthnRequest(decodedBytes);
+    }
+
+    private static void configureAttributeNameFormat(final Attribute attribute, final String nameFormat) {
+        LOGGER.trace("Configuring Attribute's: [{}] nameFormat: [{}]", attribute, nameFormat);
+        if (StringUtils.isBlank(nameFormat)) {
+            return;
+        }
+
+        val compareFormat = nameFormat.trim().toLowerCase();
+        switch (compareFormat) {
+            case "basic":
+            case Attribute.BASIC:
+                attribute.setNameFormat(Attribute.BASIC);
+                break;
+            case "uri":
+            case Attribute.URI_REFERENCE:
+                attribute.setNameFormat(Attribute.URI_REFERENCE);
+                break;
+            case "unspecified":
+            case Attribute.UNSPECIFIED:
+                attribute.setNameFormat(Attribute.UNSPECIFIED);
+                break;
+            default:
+                attribute.setNameFormat(nameFormat);
+                break;
+        }
+    }
+
+
+    /**
+     * New saml object.
+     *
+     * @param <T>        the type parameter
+     * @param objectType the name id class
+     * @return the t
+     */
+    protected <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
+        val qName = getSamlObjectQName(objectType);
+        return SamlUtils.newSamlObject(objectType, qName);
+    }
+
+    /**
+     * Gets saml object q name.
+     *
+     * @param objectType the object type
+     * @return the saml object q name
+     */
+    protected QName getSamlObjectQName(final Class objectType) {
+        return SamlUtils.getSamlObjectQName(objectType);
+    }
+
+
+    /**
+     * New attribute.
+     *
+     * @param attributeFriendlyName the attribute friendly name
+     * @param attributeName         the attribute name
+     * @param attributeValue        the attribute value
+     * @param configuredNameFormats the configured name formats. If an attribute is found in this collection, the linked name format will be used.
+     * @param defaultNameFormat     the default name format
+     * @param attributeValueTypes   the attribute value types
+     * @return the attribute
+     */
+    protected Attribute newAttribute(final String attributeFriendlyName,
+                                     final String attributeName,
+                                     final Object attributeValue,
+                                     final Map<String, String> configuredNameFormats,
+                                     final String defaultNameFormat,
+                                     final Map<String, String> attributeValueTypes) {
+        val attribute = newSamlObject(Attribute.class);
+        attribute.setName(attributeName);
+
+        if (StringUtils.isNotBlank(attributeFriendlyName)) {
+            attribute.setFriendlyName(attributeFriendlyName);
+        } else {
+            attribute.setFriendlyName(attributeName);
+        }
+
+        val valueType = attributeValueTypes.get(attributeName);
+        addAttributeValuesToSaml2Attribute(attributeName, attributeValue, valueType, attribute.getAttributeValues());
+
+        if (!configuredNameFormats.isEmpty() && configuredNameFormats.containsKey(attribute.getName())) {
+            val nameFormat = configuredNameFormats.get(attribute.getName());
+            LOGGER.debug("Found name format [{}] for attribute [{}]", nameFormat, attribute.getName());
+            configureAttributeNameFormat(attribute, nameFormat);
+            LOGGER.debug("Attribute [{}] is assigned the name format of [{}]", attribute.getName(), attribute.getNameFormat());
+        } else {
+            LOGGER.debug("Skipped name format, as no name formats are defined or none is found for attribute [{}]", attribute.getName());
+            configureAttributeNameFormat(attribute, defaultNameFormat);
+        }
+
+        LOGGER.debug("Attribute [{}] has [{}] value(s)", attribute.getName(), attribute.getAttributeValues().size());
+        return attribute;
     }
 
     /**

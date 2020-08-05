@@ -20,7 +20,6 @@ import org.jdom2.input.DOMBuilder;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.XMLOutputter;
 import org.opensaml.core.xml.XMLObject;
-import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSBase64Binary;
 import org.opensaml.core.xml.schema.XSBoolean;
 import org.opensaml.core.xml.schema.XSBooleanValue;
@@ -35,11 +34,7 @@ import org.opensaml.core.xml.schema.impl.XSDateTimeBuilder;
 import org.opensaml.core.xml.schema.impl.XSIntegerBuilder;
 import org.opensaml.core.xml.schema.impl.XSStringBuilder;
 import org.opensaml.core.xml.schema.impl.XSURIBuilder;
-import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.soap.common.SOAPObject;
-import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -77,10 +72,6 @@ import java.util.Objects;
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractSamlObjectBuilder implements Serializable {
-    /**
-     * The constant DEFAULT_ELEMENT_NAME_FIELD.
-     */
-    protected static final String DEFAULT_ELEMENT_NAME_FIELD = "DEFAULT_ELEMENT_NAME";
 
     /**
      * The constant DEFAULT_ELEMENT_LOCAL_NAME_FIELD.
@@ -140,6 +131,17 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             LoggingUtils.error(LOGGER, e);
             return null;
         }
+    }
+
+    /**
+     * Generate a secure random id.
+     *
+     * @return the secure id string
+     */
+    public String generateSecureRandomId() {
+        val random = new HexRandomStringGenerator(RANDOM_ID_SIZE);
+        val hex = random.getNewString();
+        return '_' + hex;
     }
 
     /**
@@ -260,59 +262,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     }
 
     /**
-     * Create a new SAML object.
-     *
-     * @param <T>        the generic type
-     * @param objectType the object type
-     * @return the t
-     */
-    @SneakyThrows
-    public <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
-        val qName = getSamlObjectQName(objectType);
-        LOGGER.trace("Attempting to create SAMLObject for type: [{}] and QName: [{}]", objectType, qName);
-        val builder = (SAMLObjectBuilder<T>)
-            XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
-        if (builder == null) {
-            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
-        }
-        return objectType.cast(builder.buildObject(qName));
-    }
-
-    /**
-     * New soap object t.
-     *
-     * @param <T>        the type parameter
-     * @param objectType the object type
-     * @return the t
-     */
-    @SneakyThrows
-    public <T extends SOAPObject> T newSoapObject(final Class<T> objectType) {
-        val qName = getSamlObjectQName(objectType);
-        LOGGER.trace("Attempting to create SOAPObject for type: [{}] and QName: [{}]", objectType, qName);
-        val builder = (SOAPObjectBuilder<T>)
-            XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
-        if (builder == null) {
-            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
-        }
-        return objectType.cast(builder.buildObject(qName));
-    }
-
-    /**
-     * Gets saml object QName indicated by field {@link #DEFAULT_ELEMENT_NAME_FIELD}.
-     *
-     * @param objectType the object type
-     * @return the saml object QName
-     */
-    public QName getSamlObjectQName(final Class objectType) {
-        try {
-            val f = objectType.getField(DEFAULT_ELEMENT_NAME_FIELD);
-            return (QName) f.get(null);
-        } catch (final Exception e) {
-            throw new IllegalStateException("Cannot find/access field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD, e);
-        }
-    }
-
-    /**
      * New attribute value.
      *
      * @param value       the value
@@ -384,17 +333,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         attrValueObj.setTextContent(value.toString());
         LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
         return attrValueObj;
-    }
-
-    /**
-     * Generate a secure random id.
-     *
-     * @return the secure id string
-     */
-    public String generateSecureRandomId() {
-        val random = new HexRandomStringGenerator(RANDOM_ID_SIZE);
-        val hex = random.getNewString();
-        return '_' + hex;
     }
 
     /**

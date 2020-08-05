@@ -17,7 +17,8 @@ import java.util.List;
  */
 @Slf4j
 public class DefaultLogoutExecutionPlan implements LogoutExecutionPlan {
-
+    private final List<LogoutRedirectionStrategy> logoutRedirectionStrategies = new ArrayList<>(0);
+    
     private final List<LogoutPostProcessor> handlers = new ArrayList<>(0);
 
     private final List<SingleLogoutServiceMessageHandler> singleLogoutServiceMessageHandlers = new ArrayList<>(0);
@@ -35,7 +36,13 @@ public class DefaultLogoutExecutionPlan implements LogoutExecutionPlan {
     }
 
     @Override
-    public Collection<LogoutPostProcessor> getLogoutPostProcessor() {
+    public void registerLogoutRedirectionStrategy(final LogoutRedirectionStrategy strategy) {
+        LOGGER.trace("Registering logout redirection strategy [{}]", strategy.getName());
+        logoutRedirectionStrategies.add(strategy);
+    }
+
+    @Override
+    public Collection<LogoutPostProcessor> getLogoutPostProcessors() {
         AnnotationAwareOrderComparator.sort(this.handlers);
         return this.handlers;
     }
@@ -44,5 +51,11 @@ public class DefaultLogoutExecutionPlan implements LogoutExecutionPlan {
     public Collection<SingleLogoutServiceMessageHandler> getSingleLogoutServiceMessageHandlers() {
         AnnotationAwareOrderComparator.sort(this.singleLogoutServiceMessageHandlers);
         return this.singleLogoutServiceMessageHandlers;
+    }
+
+    @Override
+    public Collection<LogoutRedirectionStrategy> getLogoutRedirectionStrategies() {
+        AnnotationAwareOrderComparator.sort(this.logoutRedirectionStrategies);
+        return this.logoutRedirectionStrategies;
     }
 }
