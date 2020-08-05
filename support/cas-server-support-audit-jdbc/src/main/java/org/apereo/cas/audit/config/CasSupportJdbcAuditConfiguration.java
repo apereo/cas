@@ -74,6 +74,9 @@ public class CasSupportJdbcAuditConfiguration {
         t.setAsynchronous(jdbc.isAsynchronous());
         t.setColumnLength(jdbc.getColumnLength());
         t.setTableName(getAuditTableNameFrom(jdbc));
+        if (StringUtils.isNotBlank(jdbc.getSelectSqlQueryTemplate())) {
+            t.setSelectByDateSqlTemplate(jdbc.getSelectSqlQueryTemplate());
+        }
         return t;
     }
 

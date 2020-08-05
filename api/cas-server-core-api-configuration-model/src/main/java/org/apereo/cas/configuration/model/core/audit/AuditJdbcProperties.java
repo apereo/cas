@@ -43,6 +43,13 @@ public class AuditJdbcProperties extends AbstractJpaProperties {
     private int columnLength = 100;
 
     /**
+     * SQL query that provides a template to fetch audit records.
+     * Accepts two parameters using {@code %s} for table name and
+     * audit date.
+     */
+    private String selectSqlQueryTemplate;
+
+    /**
      * Scheduler settings to indicate how often the cleaner is reloaded.
      */
     @NestedConfigurationProperty
