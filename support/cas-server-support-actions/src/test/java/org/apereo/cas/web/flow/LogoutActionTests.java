@@ -2,7 +2,9 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
+import org.apereo.cas.logout.DefaultLogoutRedirectionStrategy;
 import org.apereo.cas.logout.DefaultSingleLogoutRequest;
+import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -16,7 +18,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -175,9 +176,10 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
         assertEquals(logoutRequest, logoutRequests.get(0));
     }
 
-    @NotNull
     private LogoutAction getLogoutAction(final LogoutProperties properties) {
-        return new LogoutAction(getWebApplicationServiceFactory(), properties,
-            new DefaultSingleLogoutServiceLogoutUrlBuilder(serviceManager, SimpleUrlValidator.getInstance()));
+        val plan = mock(LogoutExecutionPlan.class);
+        when(plan.getLogoutRedirectionStrategies()).thenReturn(List.of(new DefaultLogoutRedirectionStrategy(getWebApplicationServiceFactory(), properties,
+            new DefaultSingleLogoutServiceLogoutUrlBuilder(serviceManager, SimpleUrlValidator.getInstance()))));
+        return new LogoutAction(plan);
     }
 }

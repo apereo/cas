@@ -55,12 +55,12 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
         val acs = adaptor.getAssertionConsumerService(binding);
         LOGGER.debug("Located assertion consumer service url [{}]", acs);
         val ecpResponse = newEcpResponse(acs.getLocation());
-        val header = newSoapObject(Header.class);
+        val header = SamlUtils.newSoapObject(Header.class);
         header.getUnknownXMLObjects().add(ecpResponse);
-        val body = newSoapObject(Body.class);
+        val body = SamlUtils.newSoapObject(Body.class);
         val saml2Response = buildSaml2Response(casAssertion, authnRequest, service, adaptor, request, response, binding, messageContext);
         body.getUnknownXMLObjects().add(saml2Response);
-        val envelope = newSoapObject(Envelope.class);
+        val envelope = SamlUtils.newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
         SamlUtils.logSamlObject(this.openSamlConfigBean, envelope);

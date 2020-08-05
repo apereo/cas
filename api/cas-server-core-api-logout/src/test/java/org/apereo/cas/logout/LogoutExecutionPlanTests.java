@@ -22,7 +22,7 @@ public class LogoutExecutionPlanTests {
     public void verifyOperation() {
         val plan = new LogoutExecutionPlan() {
         };
-        assertTrue(plan.getLogoutPostProcessor().isEmpty());
+        assertTrue(plan.getLogoutPostProcessors().isEmpty());
         assertTrue(plan.getSingleLogoutServiceMessageHandlers().isEmpty());
         assertDoesNotThrow(new Executable() {
             @Override
