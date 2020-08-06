@@ -142,8 +142,7 @@ public class CasSupportJdbcAuditConfiguration {
             )
             @Override
             public void clean() {
-                val cleaner = Cleanable.class.cast(jdbcAuditTrailManager());
-                cleaner.clean();
+                jdbcAuditTrailManager().clean();
             }
         };
     }
