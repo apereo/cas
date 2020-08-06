@@ -203,6 +203,17 @@ public class WebUtils {
     }
 
     /**
+     * Gets registered service.
+     *
+     * @param request the request
+     * @return the registered service
+     */
+    public static RegisteredService getRegisteredService(final HttpServletRequest request) {
+        return Optional.ofNullable(request)
+            .map(requestContext -> (RegisteredService) request.getAttribute(PARAMETER_REGISTERED_SERVICE)).orElse(null);
+    }
+
+    /**
      * Put ticket granting ticket in request and flow scopes.
      *
      * @param context the context
@@ -374,6 +385,16 @@ public class WebUtils {
         return Boolean.parseBoolean(val);
     }
 
+    /**
+     * Put registered service.
+     *
+     * @param request           the request
+     * @param registeredService the registered service
+     */
+    public static void putRegisteredService(final HttpServletRequest request, final RegisteredService registeredService) {
+        request.setAttribute(PARAMETER_REGISTERED_SERVICE, registeredService);
+    }
+    
     /**
      * Put registered service into flowscope.
      *
@@ -1440,5 +1461,25 @@ public class WebUtils {
      */
     public static void putYubiKeyMultipleDeviceRegistrationEnabled(final RequestContext requestContext, final boolean enabled) {
         requestContext.getFlowScope().put("yubikeyMultipleDeviceRegistrationEnabled", enabled);
+    }
+
+    /**
+     * Put single logout request.
+     *
+     * @param request       the request
+     * @param logoutRequest the logout request
+     */
+    public static void putSingleLogoutRequest(final HttpServletRequest request, final String logoutRequest) {
+        request.setAttribute("singleLogoutRequest", logoutRequest);
+    }
+
+    /**
+     * Gets single logout request.
+     *
+     * @param request the request
+     * @return the single logout request
+     */
+    public static String getSingleLogoutRequest(final HttpServletRequest request) {
+        return (String) request.getAttribute("singleLogoutRequest");
     }
 }

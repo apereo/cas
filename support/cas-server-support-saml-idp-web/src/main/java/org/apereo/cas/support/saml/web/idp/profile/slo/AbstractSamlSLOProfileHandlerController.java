@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import org.opensaml.saml.saml2.core.LogoutResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link AbstractSamlSLOProfileHandlerController}.
@@ -71,10 +73,15 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
         if (!logoutUrls.isEmpty()) {
             val destination = logoutUrls.iterator().next().getUrl();
             WebUtils.putLogoutRedirectUrl(request, destination);
-            request.getServletContext().getRequestDispatcher(CasProtocolConstants.ENDPOINT_LOGOUT).forward(request, response);
-        } else {
-            response.sendRedirect(getSamlProfileHandlerConfigurationContext().getCasProperties().getServer().getLogoutUrl());
         }
+
+        WebUtils.putRegisteredService(request, registeredService);
+        try (val writer = SamlUtils.transformSamlObject(samlProfileHandlerConfigurationContext.getOpenSamlConfigBean(), logoutRequest)) {
+            val encodedRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
+            WebUtils.putSingleLogoutRequest(request, encodedRequest);
+        }
+
+        request.getServletContext().getRequestDispatcher(CasProtocolConstants.ENDPOINT_LOGOUT).forward(request, response);
     }
 
     /**

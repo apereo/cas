@@ -1,12 +1,17 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.integration.pac4j.DistributedJEESessionStore;
+import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
+import org.apereo.cas.logout.LogoutRedirectionStrategy;
+import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
@@ -26,6 +31,10 @@ import org.apereo.cas.support.saml.web.idp.profile.ecp.ECPSamlIdPProfileHandlerC
 import org.apereo.cas.support.saml.web.idp.profile.query.SamlIdPSaml2AttributeQueryProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLOSamlIdPPostProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLOSamlIdPRedirectProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPLogoutResponseObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPProfileSingleLogoutMessageCreator;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutRedirectionStrategy;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceMessageHandler;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostSimpleSignProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPProfileCallbackHandlerController;
@@ -37,6 +46,7 @@ import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
@@ -44,6 +54,7 @@ import org.apereo.cas.web.support.CookieUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.velocity.app.VelocityEngine;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
@@ -79,6 +90,22 @@ import java.util.List;
 public class SamlIdPEndpointsConfiguration {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
+    
+    @Autowired
+    @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+    private ObjectProvider<SingleLogoutServiceLogoutUrlBuilder> singleLogoutServiceLogoutUrlBuilder;
+
+    @Autowired
+    @Qualifier("noRedirectHttpClient")
+    private ObjectProvider<HttpClient> httpClient;
+
+    @Autowired
+    @Qualifier("shibboleth.VelocityEngine")
+    private ObjectProvider<VelocityEngine> velocityEngineFactory;
+
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
 
     @Autowired
     @Qualifier("casClientTicketValidator")
@@ -110,11 +137,7 @@ public class SamlIdPEndpointsConfiguration {
     @Autowired
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     private ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> defaultSamlRegisteredServiceCachingMetadataResolver;
-
-    @Autowired
-    @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-    private ObjectProvider<SingleLogoutServiceLogoutUrlBuilder> singleLogoutServiceLogoutUrlBuilder;
-
+    
     @Autowired
     @Qualifier("samlIdPServiceFactory")
     private ObjectProvider<ServiceFactory> samlIdPServiceFactory;
@@ -362,6 +385,53 @@ public class SamlIdPEndpointsConfiguration {
         return new JEESessionStore();
     }
 
+    @ConditionalOnMissingBean(name = "samlIdPSingleLogoutRedirectionStrategy")
+    @Bean
+    @RefreshScope
+    public LogoutRedirectionStrategy samlIdPSingleLogoutRedirectionStrategy() {
+        return new SamlIdPSingleLogoutRedirectionStrategy(getSamlProfileHandlerConfigurationContextBuilder().build());
+    }
+
+    @ConditionalOnMissingBean(name = "samlLogoutBuilder")
+    @Bean
+    @RefreshScope
+    public SingleLogoutMessageCreator samlLogoutBuilder() {
+        return new SamlIdPProfileSingleLogoutMessageCreator(
+            openSamlConfigBean.getObject(),
+            servicesManager.getObject(),
+            defaultSamlRegisteredServiceCachingMetadataResolver.getObject(),
+            casProperties.getAuthn().getSamlIdp(),
+            samlObjectSigner.getObject());
+    }
+
+    @ConditionalOnMissingBean(name = "samlSingleLogoutServiceMessageHandler")
+    @Bean
+    public SingleLogoutServiceMessageHandler samlSingleLogoutServiceMessageHandler() {
+        return new SamlIdPSingleLogoutServiceMessageHandler(httpClient.getObject(),
+            samlLogoutBuilder(),
+            servicesManager.getObject(),
+            singleLogoutServiceLogoutUrlBuilder.getObject(),
+            casProperties.getSlo().isAsynchronous(),
+            authenticationServiceSelectionPlan.getObject(),
+            defaultSamlRegisteredServiceCachingMetadataResolver.getObject(),
+            velocityEngineFactory.getObject());
+    }
+    
+    @ConditionalOnMissingBean(name = "casSamlIdPLogoutExecutionPlanConfigurer")
+    @Bean
+    @RefreshScope
+    public LogoutExecutionPlanConfigurer casSamlIdPLogoutExecutionPlanConfigurer() {
+        return plan -> {
+            plan.registerLogoutRedirectionStrategy(samlIdPSingleLogoutRedirectionStrategy());
+            plan.registerSingleLogoutServiceMessageHandler(samlSingleLogoutServiceMessageHandler());
+        };
+    }
+    
+    @Bean
+    public SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder() {
+        return new SamlIdPLogoutResponseObjectBuilder(openSamlConfigBean.getObject());
+    }
+
     private SamlProfileHandlerConfigurationContext.SamlProfileHandlerConfigurationContextBuilder getSamlProfileHandlerConfigurationContextBuilder() {
         return SamlProfileHandlerConfigurationContext.builder()
             .samlObjectSigner(samlObjectSigner.getObject())
@@ -371,6 +441,7 @@ public class SamlIdPEndpointsConfiguration {
             .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver.getObject())
             .openSamlConfigBean(openSamlConfigBean.getObject())
             .casProperties(casProperties)
+            .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder())
             .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder.getObject())
             .artifactTicketFactory(samlArtifactTicketFactory.getObject())
             .samlObjectSignatureValidator(samlObjectSignatureValidator())

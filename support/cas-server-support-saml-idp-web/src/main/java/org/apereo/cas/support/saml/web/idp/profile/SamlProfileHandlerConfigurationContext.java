@@ -12,6 +12,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPLogoutResponseObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
@@ -52,6 +53,8 @@ public class SamlProfileHandlerConfigurationContext {
     private final OpenSamlConfigBean openSamlConfigBean;
 
     private final SamlProfileObjectBuilder<? extends SAMLObject> responseBuilder;
+
+    private final SamlIdPLogoutResponseObjectBuilder logoutResponseBuilder;
 
     private final CasConfigurationProperties casProperties;
 
