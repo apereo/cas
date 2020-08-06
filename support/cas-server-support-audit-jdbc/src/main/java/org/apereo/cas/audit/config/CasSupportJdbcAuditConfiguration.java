@@ -77,6 +77,9 @@ public class CasSupportJdbcAuditConfiguration {
         if (StringUtils.isNotBlank(jdbc.getSelectSqlQueryTemplate())) {
             t.setSelectByDateSqlTemplate(jdbc.getSelectSqlQueryTemplate());
         }
+        if (StringUtils.isNotBlank(jdbc.getDateFormatterPattern())) {
+            t.setDateFormatterPattern(jdbc.getDateFormatterPattern());
+        }
         return t;
     }
 
