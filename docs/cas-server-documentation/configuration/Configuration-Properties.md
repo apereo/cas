@@ -4130,6 +4130,8 @@ under the configuration key `cas.audit.jdbc`.
 # cas.audit.jdbc.asynchronous=true
 # cas.audit.jdbc.max-age-days=180
 # cas.audit.jdbc.column-length=100
+# cas.audit.jdbc.select-sql-query-template=
+# cas.audit.jdbc.date-formatter-pattern=
 ```
 
 Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.audit.jdbc`.

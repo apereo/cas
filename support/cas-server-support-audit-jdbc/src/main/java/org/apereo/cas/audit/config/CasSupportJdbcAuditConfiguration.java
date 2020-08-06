@@ -74,6 +74,12 @@ public class CasSupportJdbcAuditConfiguration {
         t.setAsynchronous(jdbc.isAsynchronous());
         t.setColumnLength(jdbc.getColumnLength());
         t.setTableName(getAuditTableNameFrom(jdbc));
+        if (StringUtils.isNotBlank(jdbc.getSelectSqlQueryTemplate())) {
+            t.setSelectByDateSqlTemplate(jdbc.getSelectSqlQueryTemplate());
+        }
+        if (StringUtils.isNotBlank(jdbc.getDateFormatterPattern())) {
+            t.setDateFormatterPattern(jdbc.getDateFormatterPattern());
+        }
         return t;
     }
 
@@ -136,8 +142,7 @@ public class CasSupportJdbcAuditConfiguration {
             )
             @Override
             public void clean() {
-                val cleaner = Cleanable.class.cast(jdbcAuditTrailManager());
-                cleaner.clean();
+                jdbcAuditTrailManager().clean();
             }
         };
     }
