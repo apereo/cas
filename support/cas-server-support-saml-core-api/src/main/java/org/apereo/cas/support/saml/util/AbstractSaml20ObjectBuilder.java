@@ -25,6 +25,7 @@ import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.LogoutRequest;
+import org.opensaml.saml.saml2.core.LogoutResponse;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.SessionIndex;
@@ -38,6 +39,8 @@ import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.soap.soap11.ActorBearing;
 
 import javax.xml.namespace.QName;
+import java.time.Clock;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -169,6 +172,30 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         assertion.setIssuer(newIssuer(issuer));
         assertion.getStatements().addAll(authnStatement);
         return assertion;
+    }
+
+    /**
+     * New logout response.
+     *
+     * @param id          the id
+     * @param destination the destination
+     * @param issuer      the issuer
+     * @param status      the status
+     * @param recipient   the recipient
+     * @return the logout response
+     */
+    public LogoutResponse newLogoutResponse(final String id, final String destination,
+                                            final Issuer issuer, final Status status,
+                                            final String recipient) {
+        val logoutResponse = newSamlObject(LogoutResponse.class);
+        logoutResponse.setIssuer(issuer);
+        logoutResponse.setIssueInstant(Instant.now(Clock.systemUTC()));
+        logoutResponse.setID(id);
+        logoutResponse.setDestination(destination);
+        logoutResponse.setInResponseTo(recipient);
+        logoutResponse.setStatus(status);
+        logoutResponse.setVersion(SAMLVersion.VERSION_20);
+        return logoutResponse;
     }
 
     /**

@@ -24,9 +24,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
-import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.RequestContextHolder;
+import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.Cookie;
 import java.util.HashSet;
@@ -52,17 +54,16 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
 
     private MockHttpServletRequest request;
 
-    private RequestContext requestContext;
+    private MockRequestContext requestContext;
 
     @BeforeEach
     public void onSetUp() {
         this.request = new MockHttpServletRequest();
-        this.requestContext = mock(RequestContext.class);
-        val servletExternalContext = mock(ServletExternalContext.class);
-        when(this.requestContext.getExternalContext()).thenReturn(servletExternalContext);
-        when(servletExternalContext.getNativeRequest()).thenReturn(request);
-        when(servletExternalContext.getNativeResponse()).thenReturn(new MockHttpServletResponse());
-        when(this.requestContext.getFlowScope()).thenReturn(new LocalAttributeMap<>());
+        this.requestContext = new MockRequestContext();
+        val response = new MockHttpServletResponse();
+        requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(requestContext);
+        ExternalContextHolder.setExternalContext(requestContext.getExternalContext());
 
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
