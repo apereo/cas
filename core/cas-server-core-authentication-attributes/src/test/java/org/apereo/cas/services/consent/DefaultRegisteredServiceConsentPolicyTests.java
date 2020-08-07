@@ -1,6 +1,7 @@
 package org.apereo.cas.services.consent;
 
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.model.TriStateBoolean;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -28,7 +29,7 @@ public class DefaultRegisteredServiceConsentPolicyTests {
     public void verifySerializeToJson() throws IOException {
         val policyWritten = new DefaultRegisteredServiceConsentPolicy(CollectionUtils.wrapSet("attr1", "attr2"),
             CollectionUtils.wrapSet("ex-attr1", "ex-attr2"));
-        policyWritten.setEnabled(true);
+        policyWritten.setStatus(TriStateBoolean.TRUE);
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
         val policyRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceConsentPolicy.class);

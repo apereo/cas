@@ -19,11 +19,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import java.time.LocalDate;
-import java.util.Date;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * This is {@link CasSupportJdbcAuditConfigurationTests}.
  *

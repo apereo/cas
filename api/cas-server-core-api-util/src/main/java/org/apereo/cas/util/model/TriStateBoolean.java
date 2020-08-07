@@ -29,8 +29,8 @@ public enum TriStateBoolean implements Serializable {
 
     private final Boolean state;
 
-    public static TriStateBoolean fromBoolean(final boolean createCookieOnRenewedAuthentication) {
-        return createCookieOnRenewedAuthentication ? TriStateBoolean.TRUE : TriStateBoolean.FALSE;
+    public static TriStateBoolean fromBoolean(final boolean value) {
+        return value ? TriStateBoolean.TRUE : TriStateBoolean.FALSE;
     }
 
     public boolean isTrue() {
