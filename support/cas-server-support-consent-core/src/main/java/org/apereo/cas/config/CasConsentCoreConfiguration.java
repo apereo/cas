@@ -11,6 +11,7 @@ import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.DefaultConsentActivationStrategy;
 import org.apereo.cas.consent.DefaultConsentDecisionBuilder;
 import org.apereo.cas.consent.DefaultConsentEngine;
+import org.apereo.cas.consent.GroovyConsentActivationStrategy;
 import org.apereo.cas.consent.GroovyConsentRepository;
 import org.apereo.cas.consent.InMemoryConsentRepository;
 import org.apereo.cas.consent.JsonConsentRepository;
@@ -84,6 +85,10 @@ public class CasConsentCoreConfiguration {
     @Bean
     @RefreshScope
     public ConsentActivationStrategy consentActivationStrategy() {
+        val location = casProperties.getConsent().getActivationStrategyGroovyScript().getLocation();
+        if (location != null) {
+            return new GroovyConsentActivationStrategy(location, consentEngine(), casProperties);
+        }
         return new DefaultConsentActivationStrategy(consentEngine(), casProperties);
     }
 

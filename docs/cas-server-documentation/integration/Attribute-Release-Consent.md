@@ -113,6 +113,46 @@ of the entire attribute consent policy will be used to determine attribute conse
 }
 ```          
 
+### Activation via Groovy
+
+The default consent activation strategy can be replaced with an external Groovy script to determine whether the request 
+qualifies for consent. Path to the script is defined via CAS configuration properties.
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#attribute-consent). 
+
+The script itself may be designed as such:
+
+```groovy
+import org.apereo.cas.util.model.TriStateBoolean
+
+def run(Object[] args) {
+    def consentEngine = args[0]
+    def casProperties = args[1]
+    def service = args[2]
+    def registeredService = args[3]
+    def authentication = args[4]
+    def requestContext = args[5]
+    def logger = args[6]
+
+    logger.debug("Activating consent for ${registeredService.name}")
+    return true;
+}
+```
+
+The following parameters are passed to the script:
+
+| Parameter             | Description
+|-----------------------------------------------------------------------------------------------------------------
+| `consentEngine`       | A reference to the `ConsentEngine` object.
+| `casProperties`       | A reference to the CAS configuration properties loaded from property sources.
+| `service`             | The `Service` object representing the requesting application.
+| `registeredService`   | The `RegisteredService` object representing the service definition in the registry.
+| `authentication`      | The `Authentication` object representing the active authentication transaction.
+| `requestContext`      | The object representing the Spring Webflow `RequestContext`.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
+The script is expected to return either `true` or `false` to determine whether or not consent is required.
+
 ## Storage
 
 User consent decisions may be stored and remembered using one of the following options.
