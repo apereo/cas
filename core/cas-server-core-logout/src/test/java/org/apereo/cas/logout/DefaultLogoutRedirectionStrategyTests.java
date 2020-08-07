@@ -31,15 +31,6 @@ import static org.mockito.Mockito.*;
 public class DefaultLogoutRedirectionStrategyTests {
 
     @Test
-    public void verifyNoSupport() {
-        val request = new MockHttpServletRequest();
-        val context = getMockRequestContext(request);
-        val props = new LogoutProperties();
-        val strategy = new DefaultLogoutRedirectionStrategy(mock(ServiceFactory.class), props, mock(SingleLogoutServiceLogoutUrlBuilder.class));
-        assertFalse(strategy.supports(context));
-    }
-
-    @Test
     public void verifyNoRedirect() {
         val request = new MockHttpServletRequest();
         val context = getMockRequestContext(request);

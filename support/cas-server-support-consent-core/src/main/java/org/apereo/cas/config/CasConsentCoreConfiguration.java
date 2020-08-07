@@ -4,9 +4,11 @@ import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.AttributeConsentReportEndpoint;
 import org.apereo.cas.consent.AttributeReleaseConsentCipherExecutor;
+import org.apereo.cas.consent.ConsentActivationStrategy;
 import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
+import org.apereo.cas.consent.DefaultConsentActivationStrategy;
 import org.apereo.cas.consent.DefaultConsentDecisionBuilder;
 import org.apereo.cas.consent.DefaultConsentEngine;
 import org.apereo.cas.consent.GroovyConsentRepository;
@@ -78,6 +80,13 @@ public class CasConsentCoreConfiguration {
         return new DefaultConsentDecisionBuilder(consentCipherExecutor());
     }
 
+    @ConditionalOnMissingBean(name = "consentActivationStrategy")
+    @Bean
+    @RefreshScope
+    public ConsentActivationStrategy consentActivationStrategy() {
+        return new DefaultConsentActivationStrategy(consentEngine(), casProperties);
+    }
+
     @ConditionalOnMissingBean(name = "consentRepository")
     @Bean
     @RefreshScope
@@ -99,6 +108,7 @@ public class CasConsentCoreConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "casConsentAuditTrailRecordResolutionPlanConfigurer")
     public AuditTrailRecordResolutionPlanConfigurer casConsentAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
             plan.registerAuditActionResolver("SAVE_CONSENT_ACTION_RESOLVER", authenticationActionResolver.getObject());
