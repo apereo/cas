@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Tag("Simple")
+@Tag("PasswordOps")
 public class DefaultPasswordEncoderTests {
 
     @Test

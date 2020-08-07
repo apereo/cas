@@ -12,7 +12,7 @@ jms,hazelcast,jmx,ehcache,actuator,wsfed,authn,attributes,\
 expiration-policy,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,\
 hazelcast,jmx,ehcache,actuator,wsfed,authn,attributes,\
 oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,\
-cosmosdb,config,sms,util,services,web,audits"
+cosmosdb,config,sms,util,services,web,audits,password-ops"
     echo -e "\nPlease see the test script for details.\n"
 }
 
@@ -117,6 +117,9 @@ while (( "$#" )); do
                 ;;
             expiration-policy|exppolicy|expp)
                 task+="testExpirationPolicy "
+                ;;
+            password-ops|pswd|pswd-ops|psw)
+                task+="testPasswordOps "
                 ;;
             sms)
                 task+="testSMS "

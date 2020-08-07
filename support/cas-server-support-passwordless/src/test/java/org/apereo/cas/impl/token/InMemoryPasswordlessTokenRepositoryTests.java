@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Simple")
+@Tag("PasswordOps")
 public class InMemoryPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {
     private static final String CAS_USER = "casuser";
 
