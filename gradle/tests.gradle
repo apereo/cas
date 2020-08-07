@@ -28,6 +28,16 @@ if (hasTestsOfCategory(project, "Tickets")) {
     }
 }
 
+if (hasTestsOfCategory(project, "PasswordOps")) {
+    task testPasswordOps(type: Test) {
+        enabled = shouldTest(project, "PasswordOps")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "PasswordOps"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "Attributes")) {
     task testAttributes(type: Test) {
         enabled = shouldTest(project, "Attributes")

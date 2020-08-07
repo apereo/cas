@@ -473,6 +473,7 @@ jobs:
           - services
           - expiration-policy
           - rest
+          - password-ops
           - mfa
           - web
           - util
