@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.consent.ConsentActivationStrategy;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -31,14 +32,18 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
      */
     public static final String EVENT_ID_CONSENT_REQUIRED = "consentRequired";
 
+    private final ConsentActivationStrategy consentActivationStrategy;
+
     public CheckConsentRequiredAction(final ServicesManager servicesManager,
                                       final AuthenticationServiceSelectionPlan strategies,
                                       final ConsentEngine consentEngine,
                                       final CasConfigurationProperties casProperties,
                                       final AttributeDefinitionStore attributeDefinitionStore,
-                                      final ConfigurableApplicationContext applicationContext) {
+                                      final ConfigurableApplicationContext applicationContext,
+                                      final ConsentActivationStrategy consentActivationStrategy) {
         super(casProperties, servicesManager, strategies,
             consentEngine, attributeDefinitionStore, applicationContext);
+        this.consentActivationStrategy = consentActivationStrategy;
     }
 
     @Override
@@ -86,29 +91,7 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
                                        final RegisteredService registeredService,
                                        final Authentication authentication,
                                        final RequestContext requestContext) {
-        val consentPolicy = registeredService.getAttributeReleasePolicy().getConsentPolicy();
-        if (consentPolicy != null) {
-            switch (consentPolicy.getStatus()) {
-                case TRUE:
-                    LOGGER.trace("Attribute consent is enabled for registered service [{}]", registeredService.getName());
-                    val required = this.consentEngine.isConsentRequiredFor(service, registeredService, authentication).isRequired();
-                    return required ? EVENT_ID_CONSENT_REQUIRED : null;
-                case FALSE:
-                    LOGGER.trace("Attribute consent will be skipped as the attribute consent policy for service [{}] "
-                        + "is disabled for this request", registeredService.getName());
-                    return null;
-                case UNDEFINED:
-                default:
-                    LOGGER.trace("Attribute consent policy for service [{}] is undefined", registeredService.getName());
-            }
-        }
-        if (casProperties.getConsent().isActive()) {
-            LOGGER.trace("Attribute consent is enabled globally for all requests");
-            val required = this.consentEngine.isConsentRequiredFor(service, registeredService, authentication).isRequired();
-            return required ? EVENT_ID_CONSENT_REQUIRED : null;
-        }
-        LOGGER.trace("Attribute consent will be skipped as neither the attribute consent policy for service [{}] "
-            + "nor the global CAS consent policy are enabled for this request", registeredService.getName());
-        return null;
+        val required = consentActivationStrategy.isConsentRequired(service, registeredService, authentication, requestContext);
+        return required ? EVENT_ID_CONSENT_REQUIRED : null;
     }
 }
