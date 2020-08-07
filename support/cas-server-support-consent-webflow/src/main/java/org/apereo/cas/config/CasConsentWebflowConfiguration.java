@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.consent.ConsentActivationStrategy;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -66,13 +67,18 @@ public class CasConsentWebflowConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("consentActivationStrategy")
+    private ObjectProvider<ConsentActivationStrategy> consentActivationStrategy;
+    
     @ConditionalOnMissingBean(name = "checkConsentRequiredAction")
     @Bean
     public Action checkConsentRequiredAction() {
         return new CheckConsentRequiredAction(servicesManager.getObject(),
             authenticationRequestServiceSelectionStrategies.getObject(),
             consentEngine.getObject(), casProperties,
-            attributeDefinitionStore.getObject(), applicationContext);
+            attributeDefinitionStore.getObject(), applicationContext,
+            consentActivationStrategy.getObject());
     }
 
     @ConditionalOnMissingBean(name = "confirmConsentAction")
