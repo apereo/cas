@@ -3356,8 +3356,9 @@ settings for this feature are available [here](Configuration-Properties-Common.h
 ### SAML Logout
 
 ```properties
-# cas.authn.saml-idp.logout.forceSignedLogoutRequests=true
-# cas.authn.saml-idp.logout.singleLogoutCallbacksDisabled=false
+# cas.authn.saml-idp.logout.force-signed-logout-requests=true
+# cas.authn.saml-idp.logout.single-logout-callbacks-disabled=false
+# cas.authn.saml-idp.logout.sign-logout-response=false
 ```
 
 ### SAML Algorithms & Security
