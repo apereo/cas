@@ -86,6 +86,7 @@ import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.DefaultEncodedTicket;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.validation.ValidationResponseType;
 
 import com.esotericsoftware.kryo.Kryo;
@@ -165,11 +166,54 @@ public class CloseableKryoFactory implements KryoFactory {
     private final CasKryoPool kryoPool;
 
     private Collection<Class> classesToRegister = new ArrayList<>(0);
+
     private boolean warnUnregisteredClasses = true;
+
     private boolean registrationRequired;
+
     private boolean replaceObjectsByReferences;
+
     private boolean autoReset;
 
+    @Override
+    public Kryo create() {
+        val kryo = new CloseableKryo(this.kryoPool);
+        kryo.setInstantiatorStrategy(new Kryo.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+        kryo.setWarnUnregisteredClasses(this.warnUnregisteredClasses);
+        kryo.setAutoReset(this.autoReset);
+        kryo.setReferences(this.replaceObjectsByReferences);
+        kryo.setRegistrationRequired(this.registrationRequired);
+
+        LOGGER.debug("Constructing a kryo instance with the following settings:");
+        LOGGER.debug("warnUnregisteredClasses: [{}]", this.warnUnregisteredClasses);
+        LOGGER.debug("autoReset: [{}]", this.autoReset);
+        LOGGER.debug("replaceObjectsByReferences: [{}]", this.replaceObjectsByReferences);
+        LOGGER.debug("registrationRequired: [{}]", this.registrationRequired);
+
+        registerCasAuthenticationWithKryo(kryo);
+        registerExpirationPoliciesWithKryo(kryo);
+        registerCasTicketsWithKryo(kryo);
+        registerNativeJdkComponentsWithKryo(kryo);
+        registerCasServicesWithKryo(kryo);
+        registerCasServicesAttributeFiltersWithKryo(kryo);
+        registerCasServicesUsernameAttributeProvidersWithKryo(kryo);
+        registerCasServicesAccessStrategyWithKryo(kryo);
+        registerImmutableOrEmptyCollectionsWithKryo(kryo);
+        registerCasServicesProxyPolicyWithKryo(kryo);
+        registerExceptionsWithKryo(kryo);
+        registerMessageDescriptorsWithKryo(kryo);
+        registerCasServicesPrincipalAttributeRepositoryWithKryo(kryo);
+        registerCasServicesMultifactorPolicyWithKryo(kryo);
+        registerCasServicesConsentPolicyWithKryo(kryo);
+        registerCasServicesAttributeReleasePolicyWithKryo(kryo);
+        registerCasUtilitiesWithKryo(kryo);
+
+        classesToRegister.forEach(c -> {
+            LOGGER.trace("Registering serializable class [{}] with Kryo", c.getName());
+            kryo.register(c);
+        });
+        return kryo;
+    }
 
     private static void registerImmutableOrEmptyCollectionsWithKryo(final Kryo kryo) {
         LOGGER.debug("Registering immutable/empty collections with Kryo");
@@ -315,6 +359,10 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(UnauthorizedSsoServiceException.class);
     }
 
+    private static void registerCasUtilitiesWithKryo(final Kryo kryo) {
+        kryo.register(TriStateBoolean.class);
+    }
+    
     private static void registerCasTicketsWithKryo(final Kryo kryo) {
         kryo.register(TicketGrantingTicketImpl.class);
         kryo.register(ServiceTicketImpl.class);
@@ -383,44 +431,5 @@ public class CloseableKryoFactory implements KryoFactory {
     private static void registerMessageDescriptorsWithKryo(final CloseableKryo kryo) {
         kryo.register(DefaultMessageDescriptor.class);
         kryo.register(PasswordExpiringWarningMessageDescriptor.class);
-    }
-
-    @Override
-    public Kryo create() {
-        val kryo = new CloseableKryo(this.kryoPool);
-        kryo.setInstantiatorStrategy(new Kryo.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
-        kryo.setWarnUnregisteredClasses(this.warnUnregisteredClasses);
-        kryo.setAutoReset(this.autoReset);
-        kryo.setReferences(this.replaceObjectsByReferences);
-        kryo.setRegistrationRequired(this.registrationRequired);
-
-        LOGGER.debug("Constructing a kryo instance with the following settings:");
-        LOGGER.debug("warnUnregisteredClasses: [{}]", this.warnUnregisteredClasses);
-        LOGGER.debug("autoReset: [{}]", this.autoReset);
-        LOGGER.debug("replaceObjectsByReferences: [{}]", this.replaceObjectsByReferences);
-        LOGGER.debug("registrationRequired: [{}]", this.registrationRequired);
-
-        registerCasAuthenticationWithKryo(kryo);
-        registerExpirationPoliciesWithKryo(kryo);
-        registerCasTicketsWithKryo(kryo);
-        registerNativeJdkComponentsWithKryo(kryo);
-        registerCasServicesWithKryo(kryo);
-        registerCasServicesAttributeFiltersWithKryo(kryo);
-        registerCasServicesUsernameAttributeProvidersWithKryo(kryo);
-        registerCasServicesAccessStrategyWithKryo(kryo);
-        registerImmutableOrEmptyCollectionsWithKryo(kryo);
-        registerCasServicesProxyPolicyWithKryo(kryo);
-        registerExceptionsWithKryo(kryo);
-        registerMessageDescriptorsWithKryo(kryo);
-        registerCasServicesPrincipalAttributeRepositoryWithKryo(kryo);
-        registerCasServicesMultifactorPolicyWithKryo(kryo);
-        registerCasServicesConsentPolicyWithKryo(kryo);
-        registerCasServicesAttributeReleasePolicyWithKryo(kryo);
-
-        classesToRegister.forEach(c -> {
-            LOGGER.trace("Registering serializable class [{}] with Kryo", c.getName());
-            kryo.register(c);
-        });
-        return kryo;
     }
 }

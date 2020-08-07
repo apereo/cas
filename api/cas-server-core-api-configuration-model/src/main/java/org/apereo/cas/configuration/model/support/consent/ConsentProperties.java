@@ -38,7 +38,7 @@ public class ConsentProperties implements Serializable {
      * transactions.
      */
     @NestedConfigurationProperty
-    private SpringResourceProperties activationStrategyGroovyScript;
+    private SpringResourceProperties activationStrategyGroovyScript = new SpringResourceProperties();
 
     /**
      * Whether consent functionality should be enabled.
