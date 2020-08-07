@@ -30,6 +30,14 @@ public class AcceptAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 2448007503183227617L;
 
     /**
+     * Indicates whether the authentication
+     * strategy is enabled. The strategy
+     * may also be disabled explicitly if
+     * the {@link #users} is left blank.
+     */
+    private boolean enabled = true;
+
+    /**
      * Accepted users for authentication, in the syntax of {@code uid::password}.
      */
     private String users = StringUtils.EMPTY;

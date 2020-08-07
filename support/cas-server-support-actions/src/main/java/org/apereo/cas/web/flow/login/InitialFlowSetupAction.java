@@ -63,13 +63,6 @@ public class InitialFlowSetupAction extends AbstractAction {
 
     private final TicketRegistrySupport ticketRegistrySupport;
 
-    private static void configureWebflowForPostParameters(final RequestContext context) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        if (request.getMethod().equalsIgnoreCase(HttpMethod.POST.name())) {
-            WebUtils.putInitialHttpRequestPostParameters(context);
-        }
-    }
-
     @Override
     public Event doExecute(final RequestContext context) {
         configureCookieGenerators(context);
@@ -83,6 +76,13 @@ public class InitialFlowSetupAction extends AbstractAction {
         configureWebflowForSsoParticipation(context, ticketGrantingTicketId);
 
         return success();
+    }
+
+    private static void configureWebflowForPostParameters(final RequestContext context) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        if (request.getMethod().equalsIgnoreCase(HttpMethod.POST.name())) {
+            WebUtils.putInitialHttpRequestPostParameters(context);
+        }
     }
 
     private String configureWebflowForTicketGrantingTicket(final RequestContext context) {
@@ -154,9 +154,11 @@ public class InitialFlowSetupAction extends AbstractAction {
 
         WebUtils.putGeoLocationTrackingIntoFlowScope(context, casProperties.getEvents().isTrackGeolocation());
         WebUtils.putRememberMeAuthenticationEnabled(context, casProperties.getTicket().getTgt().getRememberMe().isEnabled());
-        WebUtils.putStaticAuthenticationIntoFlowScope(context,
-            StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())
-                || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers()));
+
+        val staticAuthEnabled = (casProperties.getAuthn().getAccept().isEnabled()
+            && StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers()))
+            || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers());
+        WebUtils.putStaticAuthenticationIntoFlowScope(context, staticAuthEnabled);
 
         if (casProperties.getAuthn().getPolicy().isSourceSelectionEnabled()) {
             val availableHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()

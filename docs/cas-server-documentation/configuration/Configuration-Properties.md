@@ -2486,6 +2486,7 @@ Password encoding settings for this feature are available [here](Configuration-P
 ```properties
 # cas.authn.accept.users=
 # cas.authn.accept.name=
+# cas.authn.accept.enabled=true
 # cas.authn.accept.credential-criteria=
 ```
 

@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.principal.resolvers.ProxyingPrincipalResolv
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 
@@ -148,8 +149,9 @@ public class CasCoreAuthenticationHandlersConfiguration {
     }
 
     private Map<String, String> getParsedUsers() {
-        val usersProperty = casProperties.getAuthn().getAccept().getUsers();
-        if (StringUtils.isNotBlank(usersProperty) && usersProperty.contains("::")) {
+        val accept = casProperties.getAuthn().getAccept();
+        val usersProperty = accept.getUsers();
+        if (accept.isEnabled() && StringUtils.isNotBlank(usersProperty) && usersProperty.contains("::")) {
             val pattern = Pattern.compile("::");
             return Stream.of(usersProperty.split(","))
                 .map(pattern::split)
