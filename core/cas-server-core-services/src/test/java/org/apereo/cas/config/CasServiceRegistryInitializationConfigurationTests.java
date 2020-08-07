@@ -5,8 +5,6 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServicesManager;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +28,9 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasServiceRegistryInitializationConfiguration.class
-}, properties = "cas.service-registry.init-from-json=true")
+},
+    properties = "cas.service-registry.init-from-json=true"
+)
 public class CasServiceRegistryInitializationConfigurationTests {
     @Autowired
     @Qualifier("serviceRegistryInitializer")
@@ -51,15 +51,5 @@ public class CasServiceRegistryInitializationConfigurationTests {
         assertEquals(1, servicesManager.count());
         assertNotNull(servicesManager.findServiceBy(12345));
         assertNotNull(servicesManager.findServiceBy("https://init.cas.org"));
-    }
-
-    @BeforeEach
-    public void beforeEach() {
-
-    }
-
-    @AfterEach
-    public void afterEach() {
-
     }
 }

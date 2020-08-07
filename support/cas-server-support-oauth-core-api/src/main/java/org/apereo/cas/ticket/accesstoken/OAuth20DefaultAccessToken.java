@@ -65,4 +65,9 @@ public class OAuth20DefaultAccessToken extends OAuth20DefaultCode implements OAu
     public String getPrefix() {
         return OAuth20AccessToken.PREFIX;
     }
+
+    @Override
+    public long getExpiresIn() {
+        return getExpirationPolicy().getTimeToLive();
+    }
 }

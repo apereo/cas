@@ -154,6 +154,14 @@ Google Authenticator for multifactor authentication is now allowed to accept and
 | ------------- | ------------- |
 | ![image](https://user-images.githubusercontent.com/1205228/85271898-ad0fb700-b490-11ea-9f69-60ae4aa59bd2.png) | ![image](https://user-images.githubusercontent.com/1205228/85271811-8a7d9e00-b490-11ea-9d49-5689f7f539f2.png) |
 
+### DynamoDb Storage for YubiKey Devices
+
+[YubiKey Devices](../mfa/YubiKey-Authentication.html) can now be stored in DynamoDb instances.
+
+### Swagger Integration
+
+[Swagger Integration](../integration/Swagger-Integration.html) can is upgraded to use Swagger v2 via [SpringDoc](https://springdoc.org/).
+
 ## Other Stuff
 
 - Attribute definitions mapped to an external Groovy script are corrected to handle caching in more resource-friendly ways.
@@ -164,6 +172,7 @@ Google Authenticator for multifactor authentication is now allowed to accept and
 - When working with Git integrations, username and email attributes used for commit operations are now resolved via local, global and system git configuration before falling back onto default CAS-controlled values.
 - Service management `findServiceBy()` operations are now delegated to the service registry directly with a modest cache layer in between to improve and preserve performance as much as possible.
 - Test improvements to reduce the number of duplicate configuration classes required to bootstrap the runtime context.
+- OpenID Connect ID tokens can now be correctly signed using the algorithm fetched from the keystore, and the `iss` field should properly reflect the configured issuer in CAS configuration.
 - [Locust performance tests](../high_availability/Performance-Testing-Locust.html) are now upgraded to use locust `1.1`.
 - Generation of id tokens or user-info payloads for OAuth or OpenID Connect are now hardenized to prevent the `none` algorithm if undefined in discovery settings.
  
@@ -176,6 +185,7 @@ Google Authenticator for multifactor authentication is now allowed to accept and
 - Spring Data
 - Spring Boot Admin
 - Nimbus
+- Swagger
 - Swagger
 - Amazon SDK
 - Apache Tomcat

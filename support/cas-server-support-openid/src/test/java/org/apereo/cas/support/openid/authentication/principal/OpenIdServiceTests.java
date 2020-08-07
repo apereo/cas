@@ -20,7 +20,7 @@ import org.openid4java.association.Association;
 import org.openid4java.server.ServerManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.File;
@@ -49,6 +49,9 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
 
     private final MockHttpServletRequest request = new MockHttpServletRequest();
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Autowired
     @Qualifier("serverManager")
     private ServerManager serverManager;
@@ -103,7 +106,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
 
             val response = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL,
                 serverManager, centralAuthenticationService,
-                new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>(),
+                new DefaultServicesManager(mock(ServiceRegistry.class), applicationContext, new HashSet<>(),
                     Caffeine.newBuilder().build()))
                 .build(openIdService, "something", CoreAuthenticationTestUtils.getAuthentication());
             assertNotNull(response);
@@ -114,7 +117,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
 
             val response2 = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL, serverManager,
                 centralAuthenticationService,
-                new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>(),
+                new DefaultServicesManager(mock(ServiceRegistry.class), applicationContext, new HashSet<>(),
                     Caffeine.newBuilder().build()))
                 .build(openIdService, null, CoreAuthenticationTestUtils.getAuthentication());
             assertEquals("cancel", response2.getAttributes().get(OpenIdProtocolConstants.OPENID_MODE));
@@ -144,7 +147,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             }
             val response = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL, serverManager,
                 centralAuthenticationService,
-                new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>(),
+                new DefaultServicesManager(mock(ServiceRegistry.class), applicationContext, new HashSet<>(),
                     Caffeine.newBuilder().build()))
                 .build(openIdService, st, CoreAuthenticationTestUtils.getAuthentication()); 
             assertNotNull(response);

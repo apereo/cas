@@ -6,20 +6,21 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @author battags
  * @since 3.0.0
  */
 @Tag("RegisteredService")
-public class DefaultServicesManagerByEnvironmentTests extends AbstractServicesManagerTests {
+public class DefaultServicesManagerByEnvironmentTests extends AbstractServicesManagerTests<DefaultServicesManager> {
     @Override
     protected ServicesManager getServicesManagerInstance() {
-        return new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class),
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        return new DefaultServicesManager(serviceRegistry, applicationContext,
             CollectionUtils.wrapSet("prod1", "qa1"), Caffeine.newBuilder().build());
     }
 

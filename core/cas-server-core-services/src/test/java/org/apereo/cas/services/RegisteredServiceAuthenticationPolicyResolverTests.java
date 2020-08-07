@@ -155,6 +155,15 @@ public class RegisteredServiceAuthenticationPolicyResolverTests {
     }
 
     @Test
+    public void checkDisabledPolicy() {
+        val resolver = new RegisteredServiceAuthenticationPolicyResolver(this.servicesManager,
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
+        val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("not-found-service"),
+            RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+        assertThrows(UnauthorizedSsoServiceException.class, () -> resolver.supports(transaction));
+    }
+
+    @Test
     public void checkRestPolicy() {
         val resolver = new RegisteredServiceAuthenticationPolicyResolver(this.servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));

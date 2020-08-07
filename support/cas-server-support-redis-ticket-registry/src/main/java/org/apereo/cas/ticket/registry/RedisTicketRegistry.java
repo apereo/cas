@@ -6,10 +6,10 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Spliterator;
@@ -32,30 +32,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     private static final String CAS_TICKET_PREFIX = "CAS_TICKET:";
 
     private final RedisTemplate<String, Ticket> client;
-
-    /**
-     * If not time out value is specified, expire the ticket immediately.
-     *
-     * @param ticket the ticket
-     * @return timeout
-     */
-    private static Long getTimeout(final Ticket ticket) {
-        val ttl = ticket.getExpirationPolicy().getTimeToLive();
-        if (ttl > Integer.MAX_VALUE) {
-            return (long) Integer.MAX_VALUE;
-        } else if (ttl <= 0) {
-            return 1L;
-        }
-        return ttl;
-    }
-
-    private static String getTicketRedisKey(final String ticketId) {
-        return CAS_TICKET_PREFIX + ticketId;
-    }
-
-    private static String getPatternTicketRedisKey() {
-        return CAS_TICKET_PREFIX + '*';
-    }
 
     @Override
     @SuppressWarnings("java:S2583")
@@ -108,7 +84,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
                     return result;
                 }
                 LOGGER.debug("The condition enforced by the predicate [{}] cannot successfully accept/test the ticket id [{}]", ticketId,
-                        predicate.getClass().getSimpleName());
+                    predicate.getClass().getSimpleName());
                 return null;
             }
         } catch (final Exception e) {
@@ -137,8 +113,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
                 return ticket;
             })
             .filter(Objects::nonNull)
-            .map(this::decodeTicket);
-
+            .map(this::decodeTicket)
+            .filter(Objects::nonNull);
     }
 
     @Override
@@ -160,25 +136,43 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     }
 
     /**
+     * If not time out value is specified, expire the ticket immediately.
+     *
+     * @param ticket the ticket
+     * @return timeout
+     */
+    private static Long getTimeout(final Ticket ticket) {
+        val ttl = ticket.getExpirationPolicy().getTimeToLive();
+        if (ttl > Integer.MAX_VALUE) {
+            return (long) Integer.MAX_VALUE;
+        } else if (ttl <= 0) {
+            return 1L;
+        }
+        return ttl;
+    }
+
+    private static String getTicketRedisKey(final String ticketId) {
+        return CAS_TICKET_PREFIX + ticketId;
+    }
+
+    private static String getPatternTicketRedisKey() {
+        return CAS_TICKET_PREFIX + '*';
+    }
+
+    /**
      * Get a stream of all CAS-related keys from Redis DB.
      *
      * @return stream of all CAS-related keys from Redis DB
      */
     private Stream<String> getKeysStream() {
-        val cursor = client.getConnectionFactory().getConnection()
-                .scan(ScanOptions.scanOptions().match(getPatternTicketRedisKey())
+        val cursor = Objects.requireNonNull(client.getConnectionFactory()).getConnection()
+            .scan(ScanOptions.scanOptions().match(getPatternTicketRedisKey())
                 .build());
         return StreamSupport
             .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
             .map(key -> (String) client.getKeySerializer().deserialize(key))
             .collect(Collectors.toSet())
             .stream()
-            .onClose(() -> {
-                try {
-                    cursor.close();
-                } catch (final IOException e) {
-                    LoggingUtils.error(LOGGER, e);
-                }
-            });
+        .onClose(() -> IOUtils.closeQuietly(cursor));
     }
 }

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class WebApplicationServiceFactoryTests {
 
     @Test

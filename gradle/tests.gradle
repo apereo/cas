@@ -18,6 +18,36 @@ if (hasTestsOfCategory(project, "Tickets")) {
     }
 }
 
+if (hasTestsOfCategory(project, "Attributes")) {
+    task testAttributes(type: Test) {
+        enabled = shouldTest(project, "Attributes")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "Attributes"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "Audits")) {
+    task testAudits(type: Test) {
+        enabled = shouldTest(project, "Audits")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "Audits"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "Web")) {
+    task testWeb(type: Test) {
+        enabled = shouldTest(project, "Web")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "Web"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "Infinispan")) {
     task testInfinispan(type: Test) {
         enabled = shouldTest(project, "Infinispan")

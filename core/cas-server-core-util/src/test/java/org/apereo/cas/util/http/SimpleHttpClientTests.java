@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Tag("Simple")
+@Tag("Web")
 public class SimpleHttpClientTests {
 
     private static SimpleHttpClient getHttpClient() {

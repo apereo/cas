@@ -58,18 +58,24 @@ public class LogoutAction extends AbstractLogoutAction {
         val service = request.getParameter(paramName);
         LOGGER.trace("Located target service [{}] for redirection after logout", service);
 
-        if (logoutProperties.isFollowServiceRedirects() && StringUtils.isNotBlank(service)) {
-            val webAppService = webApplicationServiceFactory.createService(service);
-
-            if (singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(webAppService, Optional.of(request))) {
-                LOGGER.debug("Redirecting to logout URL [{}]", service);
-                WebUtils.putLogoutRedirectUrl(context, service);
+        if (logoutProperties.isFollowServiceRedirects()) {
+            val authorizedRedirectUrlFromRequest = WebUtils.getLogoutRedirectUrl(request, String.class);
+            if (StringUtils.isNotBlank(service)) {
+                val webAppService = webApplicationServiceFactory.createService(service);
+                if (singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(webAppService, Optional.of(request))) {
+                    LOGGER.debug("Redirecting to logout URL [{}]", service);
+                    WebUtils.putLogoutRedirectUrl(context, service);
+                } else {
+                    LOGGER.warn("Cannot redirect to [{}] given the service is unauthorized to use CAS. "
+                        + "Ensure the service is registered with CAS and is enabled to allow access", service);
+                }
+            } else if (StringUtils.isNotBlank(authorizedRedirectUrlFromRequest)) {
+                WebUtils.putLogoutRedirectUrl(context, authorizedRedirectUrlFromRequest);
             } else {
-                LOGGER.warn("Cannot redirect to [{}] given the service is unauthorized to use CAS. "
-                    + "Ensure the service is registered with CAS and is enabled to allow access", service);
+                LOGGER.debug("No target service is located for redirection after logout");
             }
         } else {
-            LOGGER.debug("No target service is located for redirection after logout, or CAS is not allowed to follow redirects after logout");
+            LOGGER.trace("CAS is not allowed to follow redirects after logout");
         }
 
         if (needFrontSlo) {

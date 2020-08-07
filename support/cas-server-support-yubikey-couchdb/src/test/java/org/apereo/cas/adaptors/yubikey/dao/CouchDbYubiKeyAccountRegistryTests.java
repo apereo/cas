@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CouchDbYubiKeyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.yubikey.YubiKeyAccountCouchDbRepository;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
@@ -59,10 +60,15 @@ public class CouchDbYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRe
     @Qualifier("couchDbYubiKeyAccountRepository")
     private YubiKeyAccountCouchDbRepository couchDbRepository;
 
+    @Autowired
+    @Qualifier("yubikeyAccountCipherExecutor")
+    private CipherExecutor yubikeyAccountCipherExecutor;
+
     @BeforeEach
     public void setUp() {
         couchDbInstance.createDatabaseIfNotExists(couchDbConnector.getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
+        super.setUp();
     }
 
     @AfterEach

@@ -54,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.aggregation=merge",
     "cas.authn.attribute-repository.merger=multivalued"
 })
-@Tag("Simple")
+@Tag("Attributes")
 public class PersonDirectoryPrincipalResolverConcurrencyTests {
 
     private static final int NUM_USERS = 100;

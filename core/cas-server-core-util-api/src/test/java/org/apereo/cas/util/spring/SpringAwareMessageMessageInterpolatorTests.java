@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Simple")
+@Tag("Web")
 public class SpringAwareMessageMessageInterpolatorTests {
 
     @Test

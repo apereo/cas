@@ -297,6 +297,14 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         assertEquals(strategyWritten, strategyRead);
     }
 
+    @Test
+    public void verifyRejectedAttributesMoreThanPrincipal() {
+        val authz = new DefaultRegisteredServiceAccessStrategy();
+        authz.setRejectedAttributes(getRejectedAttributes());
+        authz.setRequiredAttributes(Map.of(CN, Set.of(CAS)));
+        assertFalse(authz.doPrincipalAttributesAllowServiceAccess(TEST, Map.of(CN, CAS)));
+    }
+
     private static Map<String, Set<String>> getRequiredAttributes() {
         val map = new HashMap<String, Set<String>>();
         map.put(CN, Stream.of(CAS, "SSO").collect(Collectors.toSet()));

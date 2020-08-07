@@ -1,10 +1,12 @@
 package org.apereo.cas.ticket.factory;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
@@ -55,5 +57,31 @@ public class DefaultProxyTicketFactoryTests extends BaseTicketFactoryTests {
         val ticket = factory.create(pgt, service, ProxyTicket.class);
         assertNotNull(ticket);
         assertEquals(10, ticket.getExpirationPolicy().getTimeToLive());
+    }
+
+    @Test
+    public void verifyMismatchedClass() {
+        val defaultSvc = RegisteredServiceTestUtils.getRegisteredService("defaultExpirationPolicy", RegexRegisteredService.class);
+        servicesManager.save(defaultSvc);
+        val tgt = new MockTicketGrantingTicket("casuser");
+        val service = RegisteredServiceTestUtils.getService("defaultExpirationPolicy");
+        val pgtFactory = (ProxyGrantingTicketFactory) this.ticketFactory.get(ProxyGrantingTicket.class);
+        val pgt = pgtFactory.create(new MockServiceTicket("123456", service, tgt),
+            RegisteredServiceTestUtils.getAuthentication(), ProxyGrantingTicket.class);
+        val factory = (ProxyTicketFactory) this.ticketFactory.get(ProxyTicket.class);
+        assertThrows(ClassCastException.class, () -> factory.create(pgt, service, TransientSessionTicket.class));
+    }
+
+    @Test
+    public void verifyDefaultTicketIdGenerator() {
+        val defaultSvc = RegisteredServiceTestUtils.getRegisteredService("defaultExpirationPolicy", RegexRegisteredService.class);
+        servicesManager.save(defaultSvc);
+        val tgt = new MockTicketGrantingTicket("casuser");
+        val service = CoreAuthenticationTestUtils.getService("defaultExpirationPolicy");
+        val pgtFactory = (ProxyGrantingTicketFactory) this.ticketFactory.get(ProxyGrantingTicket.class);
+        val pgt = pgtFactory.create(new MockServiceTicket("123456", service, tgt),
+            RegisteredServiceTestUtils.getAuthentication(), ProxyGrantingTicket.class);
+        val factory = (ProxyTicketFactory) this.ticketFactory.get(ProxyTicket.class);
+        assertNotNull(factory.create(pgt, service, ProxyTicket.class));
     }
 }

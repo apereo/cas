@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.services;
 
 import org.apereo.cas.configuration.model.BaseRestEndpointProperties;
+import org.apereo.cas.configuration.model.support.aws.AmazonS3ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.cassandra.serviceregistry.CassandraServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
@@ -119,6 +120,12 @@ public class ServiceRegistryProperties implements Serializable {
     private DynamoDbServiceRegistryProperties dynamoDb = new DynamoDbServiceRegistryProperties();
 
     /**
+     * Properties pertaining to amazon s3 service registry.
+     */
+    @NestedConfigurationProperty
+    private AmazonS3ServiceRegistryProperties amazonS3 = new AmazonS3ServiceRegistryProperties();
+
+    /**
      * Properties pertaining to streaming service registry content over the wire.
      */
     @NestedConfigurationProperty
@@ -178,13 +185,12 @@ public class ServiceRegistryProperties implements Serializable {
     /**
      * Services cache capacity sets the minimum total size for the internal data structures.
     */
-    private int cachCapacity = 1000;
+    private int cacheCapacity = 1000;
     
     /**
      * Types of service managers that one can control.
      */
     public enum ServiceManagementTypes {
-
         /**
          * Group service definitions by their domain.
          */

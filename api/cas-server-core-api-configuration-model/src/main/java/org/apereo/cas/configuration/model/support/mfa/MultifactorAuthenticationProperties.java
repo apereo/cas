@@ -3,8 +3,10 @@ package org.apereo.cas.configuration.model.support.mfa;
 import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.configuration.model.support.mfa.u2f.U2FMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.yubikey.YubiKeyMultifactorProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -25,6 +27,7 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("MultifactorAuthenticationProperties")
 public class MultifactorAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 7416521468929733907L;

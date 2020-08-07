@@ -14,7 +14,6 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.ArrayList;
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RegisteredServiceAuthenticationHandlerResolverTests}.
@@ -56,8 +54,11 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         appCtx.refresh();
         val dao = new InMemoryServiceRegistry(appCtx, list, new ArrayList<>());
 
-        this.defaultServicesManager = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>(), Caffeine.newBuilder().build());
-        this.defaultServicesManager.load();
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
+        defaultServicesManager = new DefaultServicesManager(dao, applicationContext, new HashSet<>(), Caffeine.newBuilder().build());
+        defaultServicesManager.load();
 
         val handler1 = new AcceptUsersAuthenticationHandler("handler1");
         val handler2 = new AcceptUsersAuthenticationHandler("handler2");

@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import lombok.experimental.UtilityClass;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
 /**
@@ -34,11 +35,7 @@ public class LoggingUtils {
      * @param throwable the throwable
      */
     public void error(final Logger logger, final Throwable throwable) {
-        if (logger.isDebugEnabled()) {
-            logger.error(throwable.getMessage(), throwable);
-        } else {
-            logger.error(throwable.getMessage());
-        }
+        error(logger, StringUtils.defaultIfEmpty(throwable.getMessage(), throwable.getClass().getSimpleName()), throwable);
     }
 
     /**

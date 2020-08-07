@@ -2991,12 +2991,18 @@ To learn more about this topic, [please review this guide](../mfa/YubiKey-Authen
 # cas.authn.mfa.yubikey.rank=0
 # cas.authn.mfa.yubikey.api-urls=
 # cas.authn.mfa.yubikey.trusted-device-enabled=false
+# cas.authn.mfa.yubikey.multiple-device-registration-enabled=false
 
 # cas.authn.mfa.yubikey.name=
 # cas.authn.mfa.yubikey.order=
 ```
 
-Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.yubikey`.
+Multifactor authentication bypass settings for this provider are 
+available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.yubikey`.
+
+#### YubiKey REST Device Store
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.mfa.yubikey.rest`.
 
 #### YubiKey JSON Device Store
 
@@ -3030,6 +3036,10 @@ Configuration settings for this feature are available [here](Configuration-Prope
 ### YubiKey MongoDb Device Store
 
 Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
+
+### YubiKey DynamoDb Device Store
+
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
 
 ### YubiKey Redis Device Store
 
@@ -3257,6 +3267,7 @@ A given attribute that is to be encoded in the final SAML response may contain a
 
 ```properties
 # cas.authn.saml-idp.metadata.location=file:/etc/cas/saml
+# cas.authn.saml-idp.metadata.metadata-backup-location=
 
 # cas.authn.saml-idp.metadata.cache-expiration-minutes=30
 # cas.authn.saml-idp.metadata.fail-fast=true
@@ -4376,9 +4387,13 @@ See [this guide](../services/Service-Management.html) to learn more.
 # cas.service-registry.init-from-json=false
 
 # cas.service-registry.management-type=DEFAULT|DOMAIN
+# cas.service-registry.cache=PT5M
+# cas.service-registry.cache-size=1000
+# cas.service-registry.cache-capacity=1000
 ```
 
-Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.service-registry`.
+Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under
+ the configuration key `cas.service-registry`.
 
 ### Service Registry Notifications
 
@@ -4448,6 +4463,13 @@ To learn more about this topic, [please review this guide](../services/CosmosDb-
 # cas.service-registry.cosmos-db.drop-collection=true
 # cas.service-registry.cosmos-db.consistency-level=Session
 ```
+
+### Amazon S3 Service Registry
+
+To learn more about this topic, [please review this guide](../services/AmazonS3-Service-Management.html).
+
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.service-registry.amazon-s3`.
 
 ### DynamoDb Service Registry
 

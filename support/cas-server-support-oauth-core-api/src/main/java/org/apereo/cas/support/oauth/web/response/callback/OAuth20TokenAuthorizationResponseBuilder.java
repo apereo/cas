@@ -7,7 +7,6 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
-import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.token.JwtBuilder;
@@ -38,7 +37,6 @@ import java.util.List;
 @Getter
 public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20AuthorizationResponseBuilder {
     private final OAuth20TokenGenerator accessTokenGenerator;
-    private final ExpirationPolicyBuilder<OAuth20AccessToken> accessTokenExpirationPolicy;
     private final ServicesManager servicesManager;
     private final JwtBuilder accessTokenJwtBuilder;
     private final CasConfigurationProperties casProperties;
@@ -95,8 +93,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
             .build()
             .encode();
 
-        val expiration = accessTokenExpirationPolicy.buildTicketExpirationPolicy();
-        val timeToLive = expiration.getTimeToLive();
+        val expiresIn = accessToken.getExpiresIn();
         stringBuilder.append(OAuth20Constants.ACCESS_TOKEN)
             .append('=')
             .append(encodedAccessToken)
@@ -107,7 +104,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
             .append('&')
             .append(OAuth20Constants.EXPIRES_IN)
             .append('=')
-            .append(timeToLive);
+            .append(expiresIn);
 
         if (refreshToken != null) {
             stringBuilder.append('&')
@@ -142,7 +139,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
         if (refreshToken != null) {
             parameters.put(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
         }
-        parameters.put(OAuth20Constants.EXPIRES_IN, timeToLive.toString());
+        parameters.put(OAuth20Constants.EXPIRES_IN, String.valueOf(expiresIn));
         parameters.put(OAuth20Constants.STATE, state);
         parameters.put(OAuth20Constants.NONCE, nonce);
         parameters.put(OAuth20Constants.CLIENT_ID, accessToken.getClientId());

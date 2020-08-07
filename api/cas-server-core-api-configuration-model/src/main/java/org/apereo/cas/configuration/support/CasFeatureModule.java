@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,7 @@ public interface CasFeatureModule {
      * @return true/false
      */
     @SneakyThrows
+    @JsonIgnore
     default boolean isDefined() {
         return Arrays.stream(getClass().getDeclaredFields())
             .filter(field -> field.getAnnotation(RequiredProperty.class) != null)
@@ -48,6 +50,7 @@ public interface CasFeatureModule {
      *
      * @return true/false
      */
+    @JsonIgnore
     default boolean isUndefined() {
         return !isDefined();
     }

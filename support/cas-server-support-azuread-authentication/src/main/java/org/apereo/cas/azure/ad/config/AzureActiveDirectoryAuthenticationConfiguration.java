@@ -118,6 +118,7 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "microsoftAzureActiveDirectoryAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer microsoftAzureActiveDirectoryAuthenticationEventExecutionPlanConfigurer() {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(
             microsoftAzureActiveDirectoryAuthenticationHandler(), defaultPrincipalResolver.getObject());

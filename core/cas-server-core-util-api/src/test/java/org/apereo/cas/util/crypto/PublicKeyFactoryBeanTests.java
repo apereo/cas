@@ -24,4 +24,11 @@ public class PublicKeyFactoryBeanTests {
         val object = factory.getObject();
         assertNotNull(object);
     }
+
+    @Test
+    public void verifyFails() {
+        val factory = new PublicKeyFactoryBean(new ClassPathResource("badkey.pem"), RsaKeyUtil.RSA);
+        factory.setSingleton(false);
+        assertNull(factory.toCipher());
+    }
 }

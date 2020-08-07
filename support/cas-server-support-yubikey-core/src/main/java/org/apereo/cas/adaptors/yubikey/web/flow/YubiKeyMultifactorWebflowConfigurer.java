@@ -41,6 +41,7 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
 
     @Override
     protected void doInitialize() {
+        val yubiProps = casProperties.getAuthn().getMfa().getYubikey();
         multifactorAuthenticationFlowDefinitionRegistries.forEach(registry -> {
             val flow = getFlow(registry, MFA_YUBIKEY_EVENT_ID);
             createFlowVariable(flow, CasWebflowConstants.VAR_ID_CREDENTIAL, YubiKeyCredential.class);
@@ -48,6 +49,7 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
             flow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
 
             val initLoginFormState = createActionState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM,
+                createEvaluateAction("prepareYubiKeyAuthenticationLoginAction"),
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
             createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "accountRegistrationCheck");
             setStartState(flow, initLoginFormState);
@@ -72,18 +74,22 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
             val viewRegState = createViewState(flow, "viewRegistration", "casYubiKeyRegistrationView");
             viewRegState.getEntryActionList().addAll(setPrincipalAction);
             createTransitionForState(viewRegState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "saveRegistration");
-            
+
             val loginProperties = CollectionUtils.wrapList("token");
             val loginBinder = createStateBinderConfiguration(loginProperties);
-            val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM,
-                "casYubiKeyLoginView", loginBinder);
+            val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, "casYubiKeyLoginView", loginBinder);
             createStateModelBinding(viewLoginFormState, CasWebflowConstants.VAR_ID_CREDENTIAL, YubiKeyCredential.class);
             viewLoginFormState.getEntryActionList().addAll(setPrincipalAction);
+
+            if (yubiProps.isMultipleDeviceRegistrationEnabled()) {
+                createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_REGISTER, "viewRegistration",
+                    Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
+            }
+            
             createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
                 CasWebflowConstants.STATE_ID_REAL_SUBMIT, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
         });
 
-        registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_YUBIKEY_EVENT_ID,
-            casProperties.getAuthn().getMfa().getYubikey().getId());
+        registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_YUBIKEY_EVENT_ID, yubiProps.getId());
     }
 }

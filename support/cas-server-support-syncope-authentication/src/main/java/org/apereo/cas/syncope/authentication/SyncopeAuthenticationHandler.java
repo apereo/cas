@@ -58,50 +58,43 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     private static Map<String, List<Object>> buildSyncopeUserAttributes(final JsonNode user) {
         val attributes = new HashMap<String, List<Object>>();
 
+        if (user.has("securityQuestion") && !user.get("securityQuestion").isNull()) {
+            attributes.put("syncopeUserSecurityQuestion", List.of(user.get("securityQuestion").asText()));
+        }
+
+        attributes.put("syncopeUserStatus", List.of(user.get("status").asText()));
+
+        attributes.put("syncopeUserRealm", List.of(user.get("realm").asText()));
+
+        attributes.put("syncopeUserCreator", List.of(user.get("creator").asText()));
+
+        attributes.put("syncopeUserCreationDate", List.of(user.get("creationDate").asText()));
+
+        if (user.has("changePwdDate") && !user.get("changePwdDate").isNull()) {
+            attributes.put("syncopeUserChangePwdDate", List.of(user.get("changePwdDate").asText()));
+        }
+
+        if (user.has("lastLoginDate") && !user.get("lastLoginDate").isNull()) {
+            attributes.put("syncopeUserLastLoginDate", List.of(user.get("lastLoginDate").asText()));
+        }
+
         val roles = user.has("roles")
-            ? MAPPER.convertValue(user.get("roles"), ArrayList.class)
-            : new ArrayList<>(0);
+                ? MAPPER.convertValue(user.get("roles"), ArrayList.class)
+                : new ArrayList<>(0);
         if (!roles.isEmpty()) {
             attributes.put("syncopeUserRoles", roles);
         }
 
-        if (user.has("securityQuestion")) {
-            attributes.put("syncopeUserSecurityQuestion", List.of(user.get("securityQuestion").asText()));
-        }
-
-        if (user.has("status")) {
-            attributes.put("syncopeUserStatus", List.of(user.get("status").asText()));
-        }
-        if (user.has("realm")) {
-            attributes.put("syncopeUserRealm", List.of(user.get("realm").asText()));
-        }
-
-        if (user.has("creator")) {
-            attributes.put("syncopeUserCreator", List.of(user.get("creator").asText()));
-        }
-
-        if (user.has("creationDate")) {
-            attributes.put("syncopeUserCreationDate", List.of(user.get("creationDate").asText()));
-        }
-
-        if (user.has("changePwdDate")) {
-            attributes.put("syncopeUserChangePwdDate", List.of(user.get("changePwdDate").asText()));
-        }
-
-        if (user.has("lastLoginDate")) {
-            attributes.put("syncopeUserLastLoginDate", List.of(user.get("lastLoginDate").asText()));
-        }
-
         val dynRoles = user.has("dynRoles")
-            ? MAPPER.convertValue(user.get("dynRoles"), ArrayList.class)
-            : new ArrayList<>(0);
+                ? MAPPER.convertValue(user.get("dynRoles"), ArrayList.class)
+                : new ArrayList<>(0);
         if (!dynRoles.isEmpty()) {
             attributes.put("syncopeUserDynRoles", dynRoles);
         }
 
         val dynRealms = user.has("dynRealms")
-            ? MAPPER.convertValue(user.get("dynRealms"), ArrayList.class)
-            : new ArrayList<>(0);
+                ? MAPPER.convertValue(user.get("dynRealms"), ArrayList.class)
+                : new ArrayList<>(0);
         if (!dynRealms.isEmpty()) {
             attributes.put("syncopeUserDynRealms", dynRealms);
         }
@@ -124,14 +117,24 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
 
         if (user.has("relationships")) {
             user.get("relationships").forEach(r -> attributes.put(
-                "syncopeUserRelationships" + r.get("type").asText(),
-                List.of(r.get("otherEndName").asText())));
+                    "syncopeUserRelationships" + r.get("type").asText(),
+                    List.of(r.get("otherEndName").asText())));
         }
 
         if (user.has("plainAttrs")) {
             user.get("plainAttrs").forEach(a -> attributes.put(
-                "syncopeUserAttr" + a.get("schema").asText(),
-                MAPPER.convertValue(a.get("values"), ArrayList.class)));
+                    "syncopeUserAttr_" + a.get("schema").asText(),
+                    MAPPER.convertValue(a.get("values"), ArrayList.class)));
+        }
+        if (user.has("derAttrs")) {
+            user.get("derAttrs").forEach(a -> attributes.put(
+                    "syncopeUserAttr_" + a.get("schema").asText(),
+                    MAPPER.convertValue(a.get("values"), ArrayList.class)));
+        }
+        if (user.has("virAttrs")) {
+            user.get("virAttrs").forEach(a -> attributes.put(
+                    "syncopeUserAttr_" + a.get("schema").asText(),
+                    MAPPER.convertValue(a.get("values"), ArrayList.class)));
         }
 
         return attributes;

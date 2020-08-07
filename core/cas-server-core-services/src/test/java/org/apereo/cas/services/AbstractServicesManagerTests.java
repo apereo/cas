@@ -4,7 +4,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.support.StaticApplicationContext;
 
 import java.time.Duration;
@@ -15,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link AbstractServicesManagerTests}.
@@ -43,14 +41,20 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
 
     @BeforeEach
     public void initialize() {
-        this.serviceRegistry = getServiceRegistryInstance();
+        serviceRegistry = getServiceRegistryInstance();
         this.servicesManager = getServicesManagerInstance();
         this.servicesManager.load();
     }
 
     protected ServicesManager getServicesManagerInstance() {
-        return new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class), new HashSet<>(), 
-                Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(5)).build());
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        return new DefaultServicesManager(serviceRegistry,
+            applicationContext,
+            new HashSet<>(),
+                Caffeine.newBuilder()
+                    .expireAfterWrite(Duration.ofSeconds(2))
+                    .build());
     }
 
     protected ServiceRegistry getServiceRegistryInstance() {
@@ -80,9 +84,9 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         service.setName(TEST);
         service.setServiceId(TEST);
         assertFalse(isServiceInCache(null, 2100));
-        this.serviceRegistry.save(service);
-        assertNotNull(this.serviceRegistry.findServiceById(2100));
-        assertNotNull(this.servicesManager.findServiceBy(2100));
+        serviceRegistry.save(service);
+        assertNotNull(serviceRegistry.findServiceById(2100));
+        assertNotNull(servicesManager.findServiceBy(2100));
         assertTrue(isServiceInCache(null, 2100));
     }
 
@@ -145,7 +149,8 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     protected boolean isServiceInCache(final String serviceId, final long id) {
-        return servicesManager.getAllServices().stream().filter(r -> serviceId != null
-                ? r.getServiceId().equals(serviceId) : r.getId() == id).findFirst().isPresent();
+        return servicesManager.getAllServices()
+            .stream()
+            .anyMatch(r -> serviceId != null ? r.getServiceId().equals(serviceId) : r.getId() == id);
     }
 }

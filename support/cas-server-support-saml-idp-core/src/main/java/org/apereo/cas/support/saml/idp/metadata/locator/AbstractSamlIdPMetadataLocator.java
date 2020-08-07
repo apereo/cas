@@ -14,10 +14,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
-import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Optional;
@@ -48,7 +47,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
             LOGGER.warn("Cannot determine resource based on blank/empty data");
             return ResourceUtils.EMPTY_RESOURCE;
         }
-        return new InputStreamResource(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
+        return new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8));
     }
 
     private static String buildCacheKey(final Optional<SamlRegisteredService> registeredService) {
@@ -124,20 +123,18 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     public final SamlIdPMetadataDocument fetch(final Optional<SamlRegisteredService> registeredService) {
         initializeCache();
 
-        val map = metadataCache.asMap();
         val key = buildCacheKey(registeredService);
 
-        if (map.containsKey(key)) {
-            LOGGER.trace("Found SAML IdP metadata document from cache key [{}]", key);
-            return map.get(key);
-        }
-        val metadataDocument = fetchInternal(registeredService);
-        if (metadataDocument != null && metadataDocument.isValid()) {
-            LOGGER.trace("Fetched and cached SAML IdP metadata document [{}] under key [{}]", metadataDocument, key);
-            map.put(key, metadataDocument);
-        }
-        LOGGER.trace("SAML IdP metadata document [{}] is considered invalid", metadataDocument);
-        return metadataDocument;
+        return metadataCache.get(key, k -> {
+            val metadataDocument = fetchInternal(registeredService);
+            if (metadataDocument != null && metadataDocument.isValid()) {
+                LOGGER.trace("Fetched and cached SAML IdP metadata document [{}] under key [{}]", metadataDocument, key);
+                return metadataDocument;
+            }
+
+            LOGGER.trace("SAML IdP metadata document [{}] is considered invalid", metadataDocument);
+            return null;
+        });
     }
 
     /**
@@ -152,7 +149,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
         if (metadataCache == null) {
             metadataCache = Caffeine.newBuilder()
                 .initialCapacity(1)
-                .maximumSize(1)
+                .maximumSize(100)
                 .expireAfterAccess(Duration.ofHours(1))
                 .build();
         }

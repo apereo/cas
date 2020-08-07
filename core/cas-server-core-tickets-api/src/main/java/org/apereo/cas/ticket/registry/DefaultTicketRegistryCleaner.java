@@ -26,7 +26,9 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
     private static final long serialVersionUID = -8581398063126547772L;
 
     private final transient LockingStrategy lockingStrategy;
+
     private final transient LogoutManager logoutManager;
+
     private final transient TicketRegistry ticketRegistry;
 
     @Override
@@ -54,6 +56,16 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
         return 0;
     }
 
+    @Override
+    public int cleanTicket(final Ticket ticket) {
+        if (ticket instanceof TicketGrantingTicket) {
+            LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
+            logoutManager.performLogout((TicketGrantingTicket) ticket);
+        }
+        LOGGER.debug("Cleaning up expired ticket [{}]", ticket.getId());
+        return ticketRegistry.deleteTicket(ticket);
+    }
+
     /**
      * Clean tickets.
      *
@@ -67,16 +79,6 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
             LOGGER.info("[{}] expired tickets removed.", ticketsDeleted);
             return ticketsDeleted;
         }
-    }
-
-    @Override
-    public int cleanTicket(final Ticket ticket) {
-        if (ticket instanceof TicketGrantingTicket) {
-            LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
-            logoutManager.performLogout((TicketGrantingTicket) ticket);
-        }
-        LOGGER.debug("Cleaning up expired ticket [{}]", ticket.getId());
-        return ticketRegistry.deleteTicket(ticket);
     }
 
     /**

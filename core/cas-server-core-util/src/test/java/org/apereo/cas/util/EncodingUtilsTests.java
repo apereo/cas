@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.DecryptionException;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
@@ -8,6 +9,7 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.RsaKeyUtil;
 import org.junit.jupiter.api.Tag;
@@ -17,6 +19,7 @@ import org.springframework.core.io.ClassPathResource;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,6 +51,20 @@ public class EncodingUtilsTests {
         val jwt = EncodingUtils.verifyJwsSignature(getPublicKey(), signed);
         val result = new String(jwt, StandardCharsets.UTF_8);
         assertTrue(result.equals(value));
+    }
+
+    @Test
+    public void verifyKeyForJwtEncryption() {
+        val secret = EncodingUtils.generateJsonWebKey(256);
+        val key = EncodingUtils.generateJsonWebKey(secret);
+        val value = "ThisValue";
+        val found = EncodingUtils.encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.DIRECT,
+            CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, "kidValue", new HashMap<>(0));
+        val jwt = EncodingUtils.decryptJwtValue(key, found);
+        assertTrue(jwt.equals(value));
+        assertThrows(IllegalArgumentException.class, () ->
+            EncodingUtils.encryptValueAsJwt(key, null, KeyManagementAlgorithmIdentifiers.DIRECT,
+                CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, "kidValue", new HashMap<>(0)));
     }
 
     @Test

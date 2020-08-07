@@ -29,26 +29,32 @@ if [ $retVal == 0 ]; then
     keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
       -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
     echo "Launching CAS web application ${webAppServerType} server..."
-    casOutput="/tmp/logs/cas.log"
+    casOutput="/tmp/cas.log"
     cmd="java -jar webapp/cas-server-webapp-${webAppServerType}/build/libs/cas.war \\
       --server.ssl.key-store=${keystore} --cas.service-registry.init-from-json=true --logging.level.org.apereo.cas=info"
-#    exec $cmd > ${casOutput} 2>&1 &
-    exec $cmd &
+    exec $cmd > ${casOutput} 2>&1 &
     pid=$!
     echo "Launched CAS with pid ${pid}. Waiting for CAS server to come online..."
     sleep 60
-    
-    mkdir -p /etc/cas/config/loadtests/jmeter/
-    cp etc/loadtests/jmeter/cas-users.csv /etc/cas/config/loadtests/jmeter/
+    echo "CAS server output before tests have started:"
+    cat ${casOutput}
+
+    sudo mkdir -p /etc/cas/config/loadtests/jmeter/
+    sudo cp etc/loadtests/jmeter/cas-users.csv /etc/cas/config/loadtests/jmeter/
+    sudo chmod -R ugo+r /etc/cas/config/loadtests
     echo "Copied users file" && cat /etc/cas/config/loadtests/jmeter/cas-users.csv
 
     curl -LO https://downloads.apache.org/jmeter/binaries/apache-jmeter-${jmeterVersion}.zip
-    unzip apache-jmeter-${jmeterVersion}.zip
+    unzip -q apache-jmeter-${jmeterVersion}.zip
+    echo Unzipped apache-jmeter-${jmeterVersion}.zip rc=$?
     chmod +x apache-jmeter-${jmeterVersion}/bin/jmeter
 
     echo "Running JMeter tests..."
     apache-jmeter-${jmeterVersion}/bin/jmeter -n -t etc/loadtests/jmeter/CAS_CAS.jmx > results.log
 #    ~/Workspace/Portal/apache-jmeter/bin/jmeter -n -t etc/loadtests/jmeter/CAS_CAS.jmx > results.log
+    echo CAS server warnings and errors:
+    grep -E WARN\|ERROR\|FATAL ${casOutput}
+
     java ci/tests/perf/EvalJMeterTestResults.java ./results.log
 
     retVal=$?

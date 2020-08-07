@@ -192,7 +192,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
             .registeredService(registeredService)
             .service(accessToken.getService())
             .casProperties(casProperties)
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
+            .accessTokenJwtBuilder(oidcAccessTokenJwtBuilder)
             .build()
             .encode();
         val newHash = OAuth20AccessTokenAtHashGenerator.builder()

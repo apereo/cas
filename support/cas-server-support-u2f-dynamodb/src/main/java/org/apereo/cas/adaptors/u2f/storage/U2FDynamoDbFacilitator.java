@@ -2,30 +2,32 @@ package org.apereo.cas.adaptors.u2f.storage;
 
 import org.apereo.cas.configuration.model.support.mfa.u2f.U2FDynamoDbMultifactorProperties;
 import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
+import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
-import com.amazonaws.services.dynamodbv2.model.Condition;
-import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
-import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
-import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
-import com.amazonaws.services.dynamodbv2.model.DescribeTableRequest;
-import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
-import com.amazonaws.services.dynamodbv2.model.KeyType;
-import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
-import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
-import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
-import com.amazonaws.services.dynamodbv2.model.ScanRequest;
-import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
+import software.amazon.awssdk.services.dynamodb.model.Condition;
+import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
+import software.amazon.awssdk.services.dynamodb.model.KeyType;
+import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
+import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -50,10 +52,10 @@ import java.util.stream.Collectors;
 public class U2FDynamoDbFacilitator {
     private final U2FDynamoDbMultifactorProperties dynamoDbProperties;
 
-    private final AmazonDynamoDB amazonDynamoDBClient;
+    private final DynamoDbClient amazonDynamoDBClient;
 
     public U2FDynamoDbFacilitator(final U2FDynamoDbMultifactorProperties dynamoDbProperties,
-                                  final AmazonDynamoDB amazonDynamoDBClient) {
+                                  final DynamoDbClient amazonDynamoDBClient) {
         this.dynamoDbProperties = dynamoDbProperties;
         this.amazonDynamoDBClient = amazonDynamoDBClient;
         if (!dynamoDbProperties.isPreventTableCreationOnStartup()) {
@@ -69,23 +71,33 @@ public class U2FDynamoDbFacilitator {
     @SneakyThrows
     public void createTable(final boolean deleteTables) {
         LOGGER.debug("Attempting to create DynamoDb table");
-        val request = new CreateTableRequest().withAttributeDefinitions(
-            new AttributeDefinition(ColumnNames.ID.getColumnName(), ScalarAttributeType.N))
-            .withKeySchema(new KeySchemaElement(ColumnNames.ID.getColumnName(), KeyType.HASH))
-            .withProvisionedThroughput(new ProvisionedThroughput(dynamoDbProperties.getReadCapacity(),
-                dynamoDbProperties.getWriteCapacity())).withTableName(dynamoDbProperties.getTableName());
+
+        val throughput = ProvisionedThroughput.builder()
+            .readCapacityUnits(dynamoDbProperties.getReadCapacity())
+            .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
+            .build();
+        
+        val request = CreateTableRequest.builder()
+            .attributeDefinitions(AttributeDefinition.builder()
+                .attributeName(ColumnNames.ID.getColumnName())
+                .attributeType(ScalarAttributeType.N).build())
+            .keySchema(KeySchemaElement.builder().attributeName(ColumnNames.ID.getColumnName()).keyType(KeyType.HASH).build())
+            .provisionedThroughput(throughput)
+            .tableName(dynamoDbProperties.getTableName())
+            .build();
+
         if (deleteTables) {
-            val delete = new DeleteTableRequest(request.getTableName());
+            val delete = DeleteTableRequest.builder().tableName(request.tableName()).build();
             LOGGER.debug("Sending delete request [{}] to remove table if necessary", delete);
-            TableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
+            DynamoDbTableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
         }
-        LOGGER.debug("Sending delete request [{}] to create table", request);
-        TableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
-        LOGGER.debug("Waiting until table [{}] becomes active...", request.getTableName());
-        TableUtils.waitUntilActive(amazonDynamoDBClient, request.getTableName());
-        val describeTableRequest = new DescribeTableRequest().withTableName(request.getTableName());
+        LOGGER.debug("Sending create request [{}] to create table", request);
+        DynamoDbTableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
+        LOGGER.debug("Waiting until table [{}] becomes active...", request.tableName());
+        DynamoDbTableUtils.waitUntilActive(amazonDynamoDBClient, request.tableName());
+        val describeTableRequest = DescribeTableRequest.builder().tableName(request.tableName()).build();
         LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
-        val tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
+        val tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).table();
         LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
     }
 
@@ -99,7 +111,7 @@ public class U2FDynamoDbFacilitator {
         val time = expirationDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli();
         return getRecordsByKeys(DynamoDbQueryBuilder.builder()
             .operator(ComparisonOperator.GE)
-            .attributeValue(List.of(new AttributeValue().withN(String.valueOf(time))))
+            .attributeValue(List.of(AttributeValue.builder().n(String.valueOf(time)).build()))
             .key(ColumnNames.CREATED_DATE.getColumnName())
             .build());
     }
@@ -116,12 +128,12 @@ public class U2FDynamoDbFacilitator {
         return getRecordsByKeys(
             DynamoDbQueryBuilder.builder()
                 .operator(ComparisonOperator.GE)
-                .attributeValue(List.of(new AttributeValue().withN(String.valueOf(time))))
+                .attributeValue(List.of(AttributeValue.builder().n(String.valueOf(time)).build()))
                 .key(ColumnNames.CREATED_DATE.getColumnName())
                 .build(),
             DynamoDbQueryBuilder.builder()
                 .operator(ComparisonOperator.EQ)
-                .attributeValue(List.of(new AttributeValue(username)))
+                .attributeValue(List.of(AttributeValue.builder().s(username).build()))
                 .key(ColumnNames.USERNAME.getColumnName())
                 .build());
     }
@@ -134,7 +146,7 @@ public class U2FDynamoDbFacilitator {
      */
     public U2FDeviceRegistration save(final U2FDeviceRegistration registration) {
         val values = buildTableAttributeValuesMap(registration);
-        val putItemRequest = new PutItemRequest(dynamoDbProperties.getTableName(), values);
+        val putItemRequest = PutItemRequest.builder().tableName(dynamoDbProperties.getTableName()).item(values).build();
         LOGGER.debug("Submitting put request [{}] for record [{}]", putItemRequest, registration);
         val putItemResult = amazonDynamoDBClient.putItem(putItemRequest);
         LOGGER.debug("Record added with result [{}]", putItemResult);
@@ -150,12 +162,15 @@ public class U2FDynamoDbFacilitator {
         val time = expirationDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli();
         val items = getRecordsByKeys(DynamoDbQueryBuilder.builder()
             .operator(ComparisonOperator.LE)
-            .attributeValue(List.of(new AttributeValue().withN(String.valueOf(time))))
+            .attributeValue(List.of(AttributeValue.builder().n(String.valueOf(time)).build()))
             .key(ColumnNames.CREATED_DATE.getColumnName())
             .build());
         items.forEach(item -> {
-            val del = new DeleteItemRequest().withTableName(dynamoDbProperties.getTableName())
-                .withKey(CollectionUtils.wrap(ColumnNames.ID.getColumnName(), new AttributeValue().withN(String.valueOf(item.getId()))));
+            val del = DeleteItemRequest.builder()
+                .tableName(dynamoDbProperties.getTableName())
+                .key(CollectionUtils.wrap(ColumnNames.ID.getColumnName(),
+                    AttributeValue.builder().n(String.valueOf(item.getId())).build()))
+                .build();
             amazonDynamoDBClient.deleteItem(del);
         });
     }
@@ -177,17 +192,19 @@ public class U2FDynamoDbFacilitator {
         val items = getRecordsByKeys(
             DynamoDbQueryBuilder.builder()
                 .operator(ComparisonOperator.EQ)
-                .attributeValue(List.of(new AttributeValue().withN(String.valueOf(id))))
+                .attributeValue(List.of(AttributeValue.builder().n(String.valueOf(id)).build()))
                 .key(ColumnNames.ID.getColumnName())
                 .build(),
             DynamoDbQueryBuilder.builder()
                 .operator(ComparisonOperator.EQ)
-                .attributeValue(List.of(new AttributeValue(username)))
+                .attributeValue(List.of(AttributeValue.builder().s(username).build()))
                 .key(ColumnNames.USERNAME.getColumnName())
                 .build());
         items.forEach(item -> {
-            val del = new DeleteItemRequest().withTableName(dynamoDbProperties.getTableName())
-                .withKey(CollectionUtils.wrap(ColumnNames.ID.getColumnName(), new AttributeValue().withN(String.valueOf(item.getId()))));
+            val del = DeleteItemRequest.builder()
+                .tableName(dynamoDbProperties.getTableName())
+                .key(CollectionUtils.wrap(ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(item.getId())).build()))
+                .build();
             amazonDynamoDBClient.deleteItem(del);
         });
     }
@@ -200,11 +217,11 @@ public class U2FDynamoDbFacilitator {
      */
     private static Map<String, AttributeValue> buildTableAttributeValuesMap(final U2FDeviceRegistration record) {
         val values = new HashMap<String, AttributeValue>();
-        values.put(ColumnNames.ID.getColumnName(), new AttributeValue().withN(String.valueOf(record.getId())));
-        values.put(ColumnNames.USERNAME.getColumnName(), new AttributeValue(record.getUsername()));
-        values.put(ColumnNames.RECORD.getColumnName(), new AttributeValue(record.getRecord()));
+        values.put(ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getId())).build());
+        values.put(ColumnNames.USERNAME.getColumnName(), AttributeValue.builder().s(record.getUsername()).build());
+        values.put(ColumnNames.RECORD.getColumnName(), AttributeValue.builder().s(record.getRecord()).build());
         val time = record.getCreatedDate().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli();
-        values.put(ColumnNames.CREATED_DATE.getColumnName(), new AttributeValue().withN(String.valueOf(time)));
+        values.put(ColumnNames.CREATED_DATE.getColumnName(), AttributeValue.builder().n(String.valueOf(time)).build());
         LOGGER.debug("Created attribute values [{}] based on [{}]", values, record);
         return values;
     }
@@ -212,22 +229,25 @@ public class U2FDynamoDbFacilitator {
     @SneakyThrows
     private Set<U2FDeviceRegistration> getRecordsByKeys(final DynamoDbQueryBuilder... queries) {
         try {
-            val scanRequest = new ScanRequest(dynamoDbProperties.getTableName());
-            Arrays.stream(queries).forEach(query -> {
-                val cond = new Condition();
-                cond.setComparisonOperator(query.getOperator());
-                cond.setAttributeValueList(query.getAttributeValue());
-                scanRequest.addScanFilterEntry(query.getKey(), cond);
-            });
+            var scanRequest = ScanRequest.builder()
+                .tableName(dynamoDbProperties.getTableName())
+                .scanFilter(Arrays.stream(queries)
+                    .map(query -> {
+                        val cond = Condition.builder().comparisonOperator(query.getOperator()).attributeValueList(query.getAttributeValue()).build();
+                        return Pair.of(query.getKey(), cond);
+                    })
+                    .collect(Collectors.toMap(Pair::getKey, Pair::getValue)))
+                .build();
+
             LOGGER.debug("Submitting request [{}] to get record with keys [{}]", scanRequest, queries);
-            val items = amazonDynamoDBClient.scan(scanRequest).getItems();
+            val items = amazonDynamoDBClient.scan(scanRequest).items();
             return items
                 .stream()
                 .map(item -> {
-                    val id = Long.parseLong(item.get(ColumnNames.ID.getColumnName()).getN());
-                    val username = item.get(ColumnNames.USERNAME.getColumnName()).getS();
-                    val record = item.get(ColumnNames.RECORD.getColumnName()).getS();
-                    val time = Long.parseLong(item.get(ColumnNames.CREATED_DATE.getColumnName()).getN());
+                    val id = Long.parseLong(item.get(ColumnNames.ID.getColumnName()).n());
+                    val username = item.get(ColumnNames.USERNAME.getColumnName()).s();
+                    val record = item.get(ColumnNames.RECORD.getColumnName()).s();
+                    val time = Long.parseLong(item.get(ColumnNames.CREATED_DATE.getColumnName()).n());
                     return U2FDeviceRegistration.builder()
                         .id(id)
                         .username(username)
@@ -244,14 +264,11 @@ public class U2FDynamoDbFacilitator {
     }
 
     @Getter
+    @RequiredArgsConstructor
     private enum ColumnNames {
         ID("id"), USERNAME("username"), RECORD("record"), CREATED_DATE("createdDate");
 
         private final String columnName;
-
-        ColumnNames(final String columnName) {
-            this.columnName = columnName;
-        }
     }
 
 }

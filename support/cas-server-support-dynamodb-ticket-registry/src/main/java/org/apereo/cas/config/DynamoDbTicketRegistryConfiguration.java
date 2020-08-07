@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.registry.DynamoDbTicketRegistryFacilitator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
  * This is {@link DynamoDbTicketRegistryConfiguration}.
@@ -57,7 +57,7 @@ public class DynamoDbTicketRegistryConfiguration {
     @Bean
     @SneakyThrows
     @ConditionalOnMissingBean(name = "amazonDynamoDbTicketRegistryClient")
-    public AmazonDynamoDB amazonDynamoDbTicketRegistryClient() {
+    public DynamoDbClient amazonDynamoDbTicketRegistryClient() {
         val dynamoDbProperties = casProperties.getTicket().getRegistry().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(dynamoDbProperties);

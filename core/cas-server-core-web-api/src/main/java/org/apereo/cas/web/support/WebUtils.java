@@ -65,11 +65,14 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class WebUtils {
     /**
+     * Flow attribute or request parameter indicating public workstation.
+     */
+    public static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
+
+    /**
      * Ticket-granting ticket id parameter used in various flow scopes.
      */
     public static final String PARAMETER_TICKET_GRANTING_TICKET_ID = "ticketGrantingTicketId";
-
-    private static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
 
     private static final String PARAMETER_AUTHENTICATION = "authentication";
 
@@ -733,6 +736,41 @@ public class WebUtils {
     }
 
     /**
+     * Put logout redirect url.
+     *
+     * @param context the context
+     * @param service the service
+     */
+    public static void putLogoutRedirectUrl(final HttpServletRequest context, final String service) {
+        context.setAttribute("logoutRedirectUrl", service);
+    }
+
+    /**
+     * Gets logout redirect url.
+     *
+     * @param <T>     the type parameter
+     * @param request the request
+     * @param clazz   the clazz
+     * @return the logout redirect url
+     */
+    public static <T> T getLogoutRedirectUrl(final HttpServletRequest request, final Class<T> clazz) {
+        val value = request.getAttribute("logoutRedirectUrl");
+        return value != null ? clazz.cast(value) : null;
+    }
+
+    /**
+     * Gets logout redirect url.
+     *
+     * @param <T>     the type parameter
+     * @param context the context
+     * @param clazz   the clazz
+     * @return the logout redirect url
+     */
+    public static <T> T getLogoutRedirectUrl(final RequestContext context, final Class<T> clazz) {
+        return context.getFlowScope().get("logoutRedirectUrl", clazz);
+    }
+
+    /**
      * Put remember me authentication enabled.
      *
      * @param context the context
@@ -1381,7 +1419,7 @@ public class WebUtils {
      */
     public static void putGoogleAuthenticatorMultipleDeviceRegistrationEnabled(final RequestContext requestContext,
                                                                                final boolean enabled) {
-        requestContext.getFlowScope().put("multipleDeviceRegistrationEnabled", enabled);
+        requestContext.getFlowScope().put("gauthMultipleDeviceRegistrationEnabled", enabled);
     }
 
     /**
@@ -1391,6 +1429,16 @@ public class WebUtils {
      * @return true/false
      */
     public static Boolean isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("multipleDeviceRegistrationEnabled", Boolean.class);
+        return requestContext.getFlowScope().get("gauthMultipleDeviceRegistrationEnabled", Boolean.class);
+    }
+
+    /**
+     * Put yubikey multiple device registration enabled.
+     *
+     * @param requestContext the request context
+     * @param enabled        the enabled
+     */
+    public static void putYubiKeyMultipleDeviceRegistrationEnabled(final RequestContext requestContext, final boolean enabled) {
+        requestContext.getFlowScope().put("yubikeyMultipleDeviceRegistrationEnabled", enabled);
     }
 }

@@ -238,11 +238,13 @@ public class CasCoreServicesConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "servicesManagerCache")
     public Cache<Long, RegisteredService> servicesManagerCache() {
-        var duration = Beans.newDuration(casProperties.getServiceRegistry().getCache());
+        val serviceRegistry = casProperties.getServiceRegistry();
+        val duration = Beans.newDuration(serviceRegistry.getCache());
         return Caffeine.newBuilder()
-            .initialCapacity(casProperties.getServiceRegistry().getCachCapacity())
-            .maximumSize(casProperties.getServiceRegistry().getCacheSize())
+            .initialCapacity(serviceRegistry.getCacheCapacity())
+            .maximumSize(serviceRegistry.getCacheSize())
             .expireAfterWrite(duration)
+            .recordStats()
             .build();
     }
 

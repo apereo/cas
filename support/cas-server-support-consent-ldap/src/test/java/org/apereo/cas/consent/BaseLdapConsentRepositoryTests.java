@@ -3,6 +3,7 @@ package org.apereo.cas.consent;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasConsentLdapConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
@@ -13,7 +14,6 @@ import com.unboundid.ldap.sdk.ModificationType;
 import com.unboundid.ldap.sdk.ResultCode;
 import com.unboundid.ldap.sdk.SearchScope;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
@@ -21,12 +21,14 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link BaseLdapConsentRepositoryTests}.
@@ -41,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Ldap")
 @Getter
 @Slf4j
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseLdapConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
@@ -61,6 +64,9 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
 
     private static final String DEF_FILTER = "(objectClass=*)";
 
+    @Autowired
+    protected CasConfigurationProperties casProperties;
+    
     @Autowired
     @Qualifier("consentRepository")
     protected ConsentRepository repository;
@@ -89,8 +95,7 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     }
 
     @Test
-    @SneakyThrows
-    public void verifyConsentDecisionIsNotMistaken() {
+    public void verifyConsentDecisionIsNotMistaken() throws Exception {
         val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
         val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
@@ -105,8 +110,7 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     }
 
     @Test
-    @SneakyThrows
-    public void verifyAllConsentDecisionsAreFoundForSingleUser() {
+    public void verifyAllConsentDecisionsAreFoundForSingleUser() throws Exception {
         val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
         val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
@@ -123,8 +127,7 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     }
 
     @Test
-    @SneakyThrows
-    public void verifyAllConsentDecisionsAreFoundForAllUsers() {
+    public void verifyAllConsentDecisionsAreFoundForAllUsers() throws Exception {
         val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
         val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
@@ -141,8 +144,7 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     }
 
     @Test
-    @SneakyThrows
-    public void verifyConsentDecisionIsStored() {
+    public void verifyConsentDecisionIsStored() throws Exception {
         val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         assertNotNull(this.repository.storeConsentDecision(decision));
         val r = getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
@@ -153,8 +155,7 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     }
 
     @Test
-    @SneakyThrows
-    public void verifyConsentDecisionIsUpdated() {
+    public void verifyConsentDecisionIsUpdated() throws Exception {
         val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
         val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
@@ -174,8 +175,7 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     }
 
     @Test
-    @SneakyThrows
-    public void verifyConsentDecisionIsDeleted() {
+    public void verifyConsentDecisionIsDeleted() throws Exception {
         val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
         val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));

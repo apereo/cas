@@ -985,34 +985,25 @@ The following options are shared and apply when CAS is configured to integrate w
 Amazon Web Service features, given the provider's *configuration key*:
 
 ```properties
-# Path to an external properties file that contains 'accessKey' and 'secretKey' fields.
-# ${configurationKey}.credentials-properties-file=file:/path/to/file.properties
-
 # ${configurationKey}.credential-access-key=
 # ${configurationKey}.credential-secret-key=
 
 # ${configurationKey}.endpoint=http://localhost:8000
 # ${configurationKey}.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
-# ${configurationKey}.region-override=
 # ${configurationKey}.local-address=
+# ${configurationKey}.retry-mode=STANDARD|LEGACY
 
-# ${configurationKey}.max-error-retry=-1
 # ${configurationKey}.proxy-host=
 # ${configurationKey}.proxy-password=
-# ${configurationKey}.proxy-port=-1
+# ${configurationKey}.proxy-username=
 
 # ${configurationKey}.read-capacity=10
 # ${configurationKey}.write-capacity=10
 # ${configurationKey}.connection-timeout=5000
-# ${configurationKey}.request-timeout=5000
 # ${configurationKey}.socket-timeout=5000
-# ${configurationKey}.use-gzip=false
 # ${configurationKey}.use-reaper=false
-# ${configurationKey}.use-throttle-retries=false
-# ${configurationKey}.use-tcp-keep-alive=false
-# ${configurationKey}.protocol=HTTPS
+
 # ${configurationKey}.client-execution-timeout=10000
-# ${configurationKey}.cache-response-metadata=false
 # ${configurationKey}.max-connections=10
 ```
 

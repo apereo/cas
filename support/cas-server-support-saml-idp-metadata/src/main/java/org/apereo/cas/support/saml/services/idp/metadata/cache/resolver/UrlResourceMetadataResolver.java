@@ -66,7 +66,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         super(samlIdPProperties, configBean);
 
         val md = samlIdPProperties.getMetadata();
-        val location = SpringExpressionLanguageValueResolver.getInstance().resolve(md.getLocation());
+        val backupLocation = StringUtils.defaultIfBlank(md.getMetadataBackupLocation(), md.getLocation());
+        val location = SpringExpressionLanguageValueResolver.getInstance().resolve(backupLocation);
         this.metadataBackupDirectory = new File(ResourceUtils.getRawResourceFrom(location).getFile(), DIRNAME_METADATA_BACKUPS);
         try {
             LOGGER.trace("Creating metadata backup directory at [{}]", this.metadataBackupDirectory);

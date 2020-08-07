@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflowEventResolver implements CasDelegatingWebflowEventResolver {
 
     private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>(0);
+
     private final CasWebflowEventResolver selectiveResolver;
 
     public DefaultCasDelegatingWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext,
@@ -76,7 +77,8 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
 
             val builder = WebUtils.getAuthenticationResultBuilder(context);
             if (builder == null) {
-                throw new IllegalArgumentException("No authentication result builder can be located in the context");
+                val msg = "Unable to locate authentication object in the webflow context";
+                throw new IllegalArgumentException(new AuthenticationException(msg));
             }
             return CollectionUtils.wrapSet(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
@@ -92,6 +94,20 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         }
     }
 
+    @Override
+    public void addDelegate(final CasWebflowEventResolver r) {
+        if (r != null) {
+            orderedResolvers.add(r);
+        }
+    }
+
+    @Override
+    public void addDelegate(final CasWebflowEventResolver r, final int index) {
+        if (r != null) {
+            orderedResolvers.add(index, r);
+        }
+    }
+
     private RegisteredService determineRegisteredServiceForEvent(final RequestContext context, final Service service) {
         if (service == null) {
             return null;
@@ -102,7 +118,8 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         LOGGER.trace("Locating authentication event in the request context...");
         val authn = WebUtils.getAuthentication(context);
         if (authn == null) {
-            throw new IllegalArgumentException("Unable to locate authentication object in the webflow context");
+            val msg = "Unable to locate authentication object in the webflow context";
+            throw new IllegalArgumentException(new AuthenticationException(msg));
         }
         LOGGER.trace("Enforcing access strategy policies for registered service [{}] and principal [{}]",
             registeredService, authn.getPrincipal());
@@ -120,6 +137,22 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         val result = getWebflowEventResolutionConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         result.throwExceptionIfNeeded();
         return registeredService;
+    }
+
+    private Event returnAuthenticationExceptionEventIfNeeded(final Exception e) {
+        if (e instanceof AuthenticationException || e instanceof AbstractTicketException) {
+            LOGGER.warn("{}: {}", e.getClass(), e.getMessage());
+            LOGGER.debug(e.getMessage(), e);
+            return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
+        }
+
+        if (e.getCause() instanceof AuthenticationException || e.getCause() instanceof AbstractTicketException) {
+            val ex = e.getCause();
+            LOGGER.warn("{}: {}", ex.getClass(), ex.getMessage());
+            LOGGER.debug(ex.getMessage(), ex);
+            return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
+        }
+        return null;
     }
 
     /**
@@ -142,35 +175,5 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             .filter(Objects::nonNull)
             .sorted(Comparator.comparing(Event::getId))
             .collect(Collectors.toList());
-    }
-
-    @Override
-    public void addDelegate(final CasWebflowEventResolver r) {
-        if (r != null) {
-            orderedResolvers.add(r);
-        }
-    }
-
-    @Override
-    public void addDelegate(final CasWebflowEventResolver r, final int index) {
-        if (r != null) {
-            orderedResolvers.add(index, r);
-        }
-    }
-
-    private Event returnAuthenticationExceptionEventIfNeeded(final Exception e) {
-        if (e instanceof AuthenticationException || e instanceof AbstractTicketException) {
-            LOGGER.warn("{}: {}", e.getClass(), e.getMessage());
-            LOGGER.debug(e.getMessage(), e);
-            return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
-        }
-
-        if (e.getCause() instanceof AuthenticationException || e.getCause() instanceof AbstractTicketException) {
-            val ex = e.getCause();
-            LOGGER.warn("{}: {}", ex.getClass(), ex.getMessage());
-            LOGGER.debug(ex.getMessage(), ex);
-            return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
-        }
-        return null;
     }
 }

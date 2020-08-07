@@ -469,9 +469,11 @@ jobs:
           - groovy
           - filesystem
           - webflow
+          - attributes
           - services
           - rest
           - mfa
+          - web
           - util
           - authentication
           - tickets
@@ -484,6 +486,7 @@ jobs:
           - wsfed
           - uma
           - oidc
+          - audit
           - saml
           - infinispan
           - spnego
@@ -534,9 +537,9 @@ jobs:
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate@v2
       - name: Run Tests
-        run: ./testcas.sh --info --with-coverage --category ${{ matrix.category }}
+        run: ./testcas.sh --with-coverage --category ${{ matrix.category }}
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v1.0.12
         with:
           flags: ${{ matrix.category }}
           fail_ci_if_error: true

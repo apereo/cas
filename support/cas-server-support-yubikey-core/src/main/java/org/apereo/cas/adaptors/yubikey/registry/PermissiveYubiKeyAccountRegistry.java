@@ -2,14 +2,16 @@ package org.apereo.cas.adaptors.yubikey.registry;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.springframework.util.MultiValueMap;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * This is {@link PermissiveYubiKeyAccountRegistry}.
@@ -21,9 +23,9 @@ public class PermissiveYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry
     /**
      * Device registrations.
      */
-    protected final MultiValueMap<String, String> devices;
+    protected final Map<String, YubiKeyAccount> devices;
 
-    public PermissiveYubiKeyAccountRegistry(final MultiValueMap<String, String> devices,
+    public PermissiveYubiKeyAccountRegistry(final Map<String, YubiKeyAccount> devices,
                                             final YubiKeyAccountValidator validator) {
         super(validator);
         this.devices = devices;
@@ -31,54 +33,69 @@ public class PermissiveYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry
 
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid) {
-        return devices.containsKey(uid);
+        val account = getAccount(uid);
+        return account.isPresent() && !account.get().getDevices().isEmpty();
     }
 
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
         if (devices.containsKey(uid)) {
-            val pubIds = devices.get(uid);
-            return pubIds.stream()
-                .anyMatch(pubId -> getCipherExecutor().decode(pubId).equals(yubikeyPublicId));
+            val account = devices.get(uid);
+            return account.getDevices()
+                .stream()
+                .map(device -> decodeYubikeyRegisteredDevice(device.getPublicId()))
+                .filter(Objects::nonNull)
+                .anyMatch(publicId -> publicId.equals(yubikeyPublicId));
         }
         return false;
     }
 
     @Override
-    public boolean registerAccountFor(final String uid, final String token) {
-        val accountValidator = getAccountValidator();
-        if (accountValidator.isValid(uid, token)) {
-            val yubikeyPublicId = accountValidator.getTokenPublicId(token);
-            val pubId = getCipherExecutor().encode(yubikeyPublicId);
-            devices.add(uid, pubId);
-            return isYubiKeyRegisteredFor(uid, yubikeyPublicId);
-        }
-        return false;
+    public Collection<? extends YubiKeyAccount> getAccountsInternal() {
+        return new ArrayList<>(this.devices.values());
     }
 
     @Override
-    public Collection<? extends YubiKeyAccount> getAccounts() {
-        return this.devices.entrySet().stream()
-            .map(entry -> {
-                val values = entry.getValue()
-                    .stream()
-                    .map(value -> getCipherExecutor().decode(value))
-                    .collect(Collectors.toCollection(ArrayList::new));
-                return new YubiKeyAccount(System.currentTimeMillis(), values, entry.getKey());
-            })
-            .collect(Collectors.toSet());
+    public void delete(final String username, final long deviceId) {
+        if (devices.containsKey(username)) {
+            devices.get(username).getDevices().removeIf(device -> device.getId() == deviceId);
+        }
     }
 
     @Override
-    public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
-        if (devices.containsKey(uid)) {
-            val pubIds = devices.get(uid);
+    public void delete(final String uid) {
+        this.devices.remove(uid);
+    }
 
-            val values = pubIds.stream()
-                .map(value -> getCipherExecutor().decode(value))
-                .collect(Collectors.toCollection(ArrayList::new));
-            return Optional.of(new YubiKeyAccount(System.currentTimeMillis(), values, uid));
+    @Override
+    public void deleteAll() {
+        this.devices.clear();
+    }
+
+    @Override
+    public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request,
+                               final YubiKeyRegisteredDevice... device) {
+        val yubiAccount = YubiKeyAccount.builder()
+            .username(request.getUsername())
+            .id(System.currentTimeMillis())
+            .devices(CollectionUtils.wrapList(device))
+            .build();
+        devices.put(request.getUsername(), yubiAccount);
+        return yubiAccount;
+    }
+
+    @Override
+    public boolean update(final YubiKeyAccount account) {
+        devices.put(account.getUsername(), account);
+        return true;
+    }
+
+    @Override
+    protected YubiKeyAccount getAccountInternal(final String username) {
+        if (devices.containsKey(username)) {
+            val account = devices.get(username);
+            return account.clone();
         }
-        return Optional.empty();
+        return null;
     }
 }

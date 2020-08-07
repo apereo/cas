@@ -46,8 +46,20 @@ public class DefaultMultifactorAuthenticationProviderResolverTests {
 
         val resolver = new DefaultMultifactorAuthenticationProviderResolver();
         val trigger = new PrincipalAttributeMultifactorAuthenticationTrigger(casProperties, resolver, applicationContext);
-        assertProviderResolutionFromManyProviders(trigger, applicationContext);
+        assertProviderResolutionFromManyProviders(trigger, applicationContext, true);
     }
+
+    @Test
+    public void verifyInvalidPrincipalAttributes() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        val casProperties = new CasConfigurationProperties();
+        casProperties.getAuthn().getMfa().setGlobalPrincipalAttributeNameTriggers("does-not-exist");
+        val resolver = new DefaultMultifactorAuthenticationProviderResolver();
+        val trigger = new PrincipalAttributeMultifactorAuthenticationTrigger(casProperties, resolver, applicationContext);
+        assertProviderResolutionFromManyProviders(trigger, applicationContext, false);
+    }
+
 
     @Test
     public void verifyMultipleProvidersWithAuthenticationAttributes() {
@@ -59,7 +71,7 @@ public class DefaultMultifactorAuthenticationProviderResolverTests {
 
         val resolver = new DefaultMultifactorAuthenticationProviderResolver();
         val trigger = new AuthenticationAttributeMultifactorAuthenticationTrigger(casProperties, resolver, applicationContext);
-        assertProviderResolutionFromManyProviders(trigger, applicationContext);
+        assertProviderResolutionFromManyProviders(trigger, applicationContext, true);
     }
 
 
@@ -151,7 +163,8 @@ public class DefaultMultifactorAuthenticationProviderResolverTests {
     }
 
     private static void assertProviderResolutionFromManyProviders(final MultifactorAuthenticationTrigger trigger,
-                                                                  final ConfigurableApplicationContext applicationContext) {
+                                                                  final ConfigurableApplicationContext applicationContext,
+                                                                  final boolean assertPresence) {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -170,8 +183,12 @@ public class DefaultMultifactorAuthenticationProviderResolverTests {
         val result = trigger.isActivated(CoreAuthenticationTestUtils.getAuthentication(principal,
             CollectionUtils.wrap("mfa-authn", List.of(provider2.getId()))),
             CoreAuthenticationTestUtils.getRegisteredService(), request, CoreAuthenticationTestUtils.getService());
-        assertTrue(result.isPresent());
-        assertEquals(provider2.getId(), result.get().getId());
+        if (assertPresence) {
+            assertTrue(result.isPresent());
+            assertEquals(provider2.getId(), result.get().getId());
+        } else {
+            assertTrue(result.isEmpty());
+        }
     }
 
     private static TestMultifactorAuthenticationProvider registerProviderInApplicationContext(final ConfigurableApplicationContext applicationContext,

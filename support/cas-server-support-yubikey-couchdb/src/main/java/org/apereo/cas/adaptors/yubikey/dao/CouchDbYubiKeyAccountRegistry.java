@@ -2,16 +2,16 @@ package org.apereo.cas.adaptors.yubikey.dao;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
 import org.apereo.cas.couchdb.yubikey.CouchDbYubiKeyAccount;
 import org.apereo.cas.couchdb.yubikey.YubiKeyAccountCouchDbRepository;
 
 import lombok.val;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -30,45 +30,47 @@ public class CouchDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public boolean registerAccountFor(final String uid, final String token) {
-        val accountValidator = getAccountValidator();
-        if (accountValidator.isValid(uid, token)) {
-            val publicKeyId = getCipherExecutor().encode(accountValidator.getTokenPublicId(token));
-            var account = couchDb.findByUsername(uid);
-            if (account == null) {
-                couchDb.add(new CouchDbYubiKeyAccount(List.of(publicKeyId), uid));
-            } else {
-                account.registerDevice(publicKeyId);
-                couchDb.update(account);
-            }
-            return true;
-        }
-        return false;
+    public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request,
+                               final YubiKeyRegisteredDevice... device) {
+        val account = CouchDbYubiKeyAccount.builder()
+            .username(request.getUsername())
+            .devices(Arrays.stream(device).collect(Collectors.toList()))
+            .build();
+        couchDb.add(account);
+        return account;
     }
 
     @Override
-    public Collection<YubiKeyAccount> getAccounts() {
-        return couchDb.getAll()
-            .stream()
-            .peek(it -> {
-                val devices = it.getDeviceIdentifiers().stream()
-                    .map(pubId -> getCipherExecutor().decode(pubId))
-                    .collect(Collectors.toCollection(ArrayList::new));
-                it.setDeviceIdentifiers(devices);
-            })
-            .collect(Collectors.toCollection(ArrayList::new));
+    public boolean update(final YubiKeyAccount account) {
+        couchDb.update(CouchDbYubiKeyAccount.class.cast(account));
+        return true;
     }
 
     @Override
-    public Optional<YubiKeyAccount> getAccount(final String uid) {
+    public Collection<? extends YubiKeyAccount> getAccountsInternal() {
+        return couchDb.getAll();
+    }
+
+    @Override
+    public YubiKeyAccount getAccountInternal(final String uid) {
+        return couchDb.findByUsername(uid);
+    }
+
+    @Override
+    public void delete(final String uid) {
         val account = couchDb.findByUsername(uid);
         if (account != null) {
-            val devices = account.getDeviceIdentifiers().stream()
-                .map(pubId -> getCipherExecutor().decode(pubId))
-                .collect(Collectors.toCollection(ArrayList::new));
-            val yubiKeyAccount = new YubiKeyAccount(account.getId(), devices, account.getUsername());
-            return Optional.of(yubiKeyAccount);
+            couchDb.remove(account);
         }
-        return Optional.empty();
+    }
+
+    @Override
+    public void delete(final String username, final long deviceId) {
+        couchDb.remove(username, deviceId);
+    }
+
+    @Override
+    public void deleteAll() {
+        couchDb.removeAll();
     }
 }
