@@ -67,6 +67,6 @@ public class SLOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, logoutRequest).toString();
         request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
         controller.handleSaml2ProfileSLOPostRequest(response, request);
-        assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
     }
 }
