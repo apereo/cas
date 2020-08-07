@@ -72,6 +72,10 @@ aside, section, main {
     z-index: 7;
 }
 
+.mdc-card-content {
+    padding: 8px;
+}
+
 /* widgets */
 
 .notifications-count {
