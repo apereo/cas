@@ -5420,6 +5420,8 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 ```properties
 # cas.consent.reminder=30
 # cas.consent.reminder-time-unit=HOURS|DAYS|MONTHS
+# cas.consent.enabled=true
+# cas.consent.active=true
 ```
 
 Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.consent`. The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.

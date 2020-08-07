@@ -78,7 +78,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
     }
 
     @SneakyThrows
-    private static void postSamlLogoutResponse(final SingleLogoutService sloService, final LogoutResponse logoutResponse) {
+    protected void postSamlLogoutResponse(final SingleLogoutService sloService, final LogoutResponse logoutResponse) {
         val payload = SerializeSupport.nodeToString(XMLObjectSupport.marshall(logoutResponse));
         LOGGER.trace("Logout request payload is [{}]", payload);
 
@@ -88,7 +88,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
         val location = StringUtils.isBlank(sloService.getResponseLocation())
             ? sloService.getLocation()
             : sloService.getResponseLocation();
-        LOGGER.debug("Sending logout response using [{}} binding to [{}]", sloService.getBinding(), location)
+        LOGGER.debug("Sending logout response using [{}} binding to [{}]", sloService.getBinding(), location);
         HttpUtils.executePost(location,
             CollectionUtils.wrap(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, message),
             CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_XML_VALUE));
