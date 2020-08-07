@@ -2486,6 +2486,7 @@ Password encoding settings for this feature are available [here](Configuration-P
 ```properties
 # cas.authn.accept.users=
 # cas.authn.accept.name=
+# cas.authn.accept.enabled=true
 # cas.authn.accept.credential-criteria=
 ```
 
@@ -3242,6 +3243,7 @@ To learn more about this topic, [please review this guide](../installation/Confi
 
 ```properties
 # cas.authn.saml-idp.entity-id=https://cas.example.org/idp
+# cas.authn.saml-idp.replicate-sessions=false
 
 # cas.authn.saml-idp.authentication-context-class-mappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
 # cas.authn.saml-idp.authentication-context-class-mappings[1]=https://refeds.org/profile/mfa->mfa-gauth
@@ -3354,8 +3356,9 @@ settings for this feature are available [here](Configuration-Properties-Common.h
 ### SAML Logout
 
 ```properties
-# cas.authn.saml-idp.logout.forceSignedLogoutRequests=true
-# cas.authn.saml-idp.logout.singleLogoutCallbacksDisabled=false
+# cas.authn.saml-idp.logout.force-signed-logout-requests=true
+# cas.authn.saml-idp.logout.single-logout-callbacks-disabled=false
+# cas.authn.saml-idp.logout.sign-logout-response=false
 ```
 
 ### SAML Algorithms & Security
@@ -4129,6 +4132,8 @@ under the configuration key `cas.audit.jdbc`.
 # cas.audit.jdbc.asynchronous=true
 # cas.audit.jdbc.max-age-days=180
 # cas.audit.jdbc.column-length=100
+# cas.audit.jdbc.select-sql-query-template=
+# cas.audit.jdbc.date-formatter-pattern=
 ```
 
 Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.audit.jdbc`.
@@ -5417,6 +5422,10 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 ```properties
 # cas.consent.reminder=30
 # cas.consent.reminder-time-unit=HOURS|DAYS|MONTHS
+# cas.consent.enabled=true
+# cas.consent.active=true
+
+# cas.consent.activation-strategy-groovy-script.location=
 ```
 
 Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.consent`. The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.

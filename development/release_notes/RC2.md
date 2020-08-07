@@ -83,11 +83,25 @@ CAS registered service definitions can now be natively stored in [Amazon S3 buck
 
 CAS is now using the Okta SDK v2 mainly used to handle the integration between CAS and Okta for authentication and attribute resolution.
 
+### Attribute Consent Activation
+
+Activation rules for [Attribute Consent](../integration/Attribute-Release-Consent.html) are re-design to allow per-application overrides of the global policy activation rules. Additional documentation
+updates are now present to demonstrate how multiple attribute consent policies may be chained together.
+
+<div class="alert alert-warning">
+  <strong>WATCH OUT!</strong><br />This may be a breaking change since the data model for the <code>DefaultRegisteredServiceConsentPolicy</code> has remove the <code>enabled</code>
+  field, replacing it with <code>status</code>. Review the documentation to adjust for proper syntax.
+</div>
+
 ## Other Stuff
 
 - Adjustments to SAML2 metadata resolution to cache to ensure enough capacity for resolved metadata providers. 
+- Minor fixes to SQL query execution when pushing CAS audit logs to Oracle databases.
 - SAML2 SLO endpoints are now able to redirect to a final logout url after logout operations, if the url is assigned to the SAML service definition.
 - The expiration of access tokens is now correctly communicated back to OAuth relying parties, specially if the access token expiration policy is defined per application.
+- The handling of authentication requests, set to force CAS to challenge the user credentials, is reviewed and adjusted to ensure such requests can properly honor multifactor authentication flows for qualifying requests per configured triggers. 
+- The logout handling strategy is slightly broken apart to introduce a `LogoutRedirectionStrategy`, mainly responsible for handling follow-up redirects to authorized applications/endpoints as appropriate for each authentication protocol.
+- Signed SAML authentication requests that embed the signature in URLs are reviewed and adjusted to avoid creating long URLs exceeding browser limits.
 
 ## Library Upgrades
 
@@ -100,6 +114,7 @@ CAS is now using the Okta SDK v2 mainly used to handle the integration between C
 - Spotbugs
 - Okta
 - Ldaptive
+- Inspektr
 - Person Directory
 - Azure DocumentDb
 - Grouper Client
