@@ -23,6 +23,11 @@ public class SamlIdPLogoutProperties implements Serializable {
     private static final long serialVersionUID = -4608824149569614549L;
 
     /**
+     * Whether SLO logout responses are required to be signed.
+     */
+    private boolean signLogoutResponse;
+
+    /**
      * Whether SLO logout requests are required to be signed.
      */
     private boolean forceSignedLogoutRequests = true;

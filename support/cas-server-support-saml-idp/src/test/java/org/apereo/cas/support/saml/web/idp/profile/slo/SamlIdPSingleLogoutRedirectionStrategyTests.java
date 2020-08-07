@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("SAML")
+@TestPropertySource(properties = "cas.authn.saml-idp.logout.sign-logout-response=true")
 public class SamlIdPSingleLogoutRedirectionStrategyTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlIdPLogoutResponseObjectBuilder")

@@ -31,11 +31,7 @@ public class DefaultLogoutRedirectionStrategy implements LogoutRedirectionStrate
 
     @Override
     public boolean supports(final RequestContext context) {
-        if (context != null && logoutProperties.isFollowServiceRedirects()) {
-            LOGGER.trace("CAS is not allowed to follow redirects after logout");
-            return true;
-        }
-        return false;
+        return context != null;
     }
 
     @Override
@@ -48,7 +44,7 @@ public class DefaultLogoutRedirectionStrategy implements LogoutRedirectionStrate
         LOGGER.trace("Located target service [{}] for redirection after logout", service);
 
         val authorizedRedirectUrlFromRequest = WebUtils.getLogoutRedirectUrl(request, String.class);
-        if (StringUtils.isNotBlank(service)) {
+        if (StringUtils.isNotBlank(service) && logoutProperties.isFollowServiceRedirects()) {
             val webAppService = webApplicationServiceFactory.createService(service);
             if (singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(webAppService, Optional.of(request))) {
                 LOGGER.debug("Redirecting to logout URL [{}]", service);
@@ -60,7 +56,7 @@ public class DefaultLogoutRedirectionStrategy implements LogoutRedirectionStrate
         } else if (StringUtils.isNotBlank(authorizedRedirectUrlFromRequest)) {
             WebUtils.putLogoutRedirectUrl(requestContext, authorizedRedirectUrlFromRequest);
         } else {
-            LOGGER.debug("No target service is located for redirection after logout");
+            LOGGER.debug("No target service is located for redirection after logout, or following service redirects is disabled");
         }
     }
 }
