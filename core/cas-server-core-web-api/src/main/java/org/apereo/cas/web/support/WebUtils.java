@@ -759,11 +759,11 @@ public class WebUtils {
     /**
      * Put logout redirect url.
      *
-     * @param context the context
+     * @param request the context
      * @param service the service
      */
-    public static void putLogoutRedirectUrl(final HttpServletRequest context, final String service) {
-        context.setAttribute("logoutRedirectUrl", service);
+    public static void putLogoutRedirectUrl(final HttpServletRequest request, final String service) {
+        request.setAttribute("logoutRedirectUrl", service);
     }
 
     /**

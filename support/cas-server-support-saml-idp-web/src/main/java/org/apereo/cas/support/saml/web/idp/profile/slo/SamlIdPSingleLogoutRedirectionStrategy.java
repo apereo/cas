@@ -69,16 +69,57 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
             LOGGER.warn("Cannot find metadata linked to [{}]", logoutRequestIssuer);
         } else {
             val adaptor = adaptorRes.get();
-            val sloService = adaptor.getSingleLogoutService(SAMLConstants.SAML2_POST_BINDING_URI);
+
+            var sloService = adaptor.getSingleLogoutService(SAMLConstants.SAML2_POST_BINDING_URI);
             if (sloService != null) {
-                val logoutResponse = buildSamlLogoutResponse(logoutRequestIssuer, adaptor, sloService);
-                postSamlLogoutResponse(sloService, logoutResponse);
+                val logoutResponse = buildSamlLogoutResponse(logoutRequestIssuer, adaptor, sloService, context);
+                postSamlLogoutResponse(sloService, logoutResponse, context);
+                return;
+            }
+
+            sloService = adaptor.getSingleLogoutService(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+            if (sloService != null) {
+                produceSamlLogoutResponseRedirect(logoutRequestIssuer, adaptor, sloService, context);
             }
         }
     }
 
+    /**
+     * Produce saml logout response redirect.
+     *
+     * @param logoutRequestIssuer the logout request issuer
+     * @param adaptor             the adaptor
+     * @param sloService          the slo service
+     * @param context             the context
+     */
     @SneakyThrows
-    protected void postSamlLogoutResponse(final SingleLogoutService sloService, final LogoutResponse logoutResponse) {
+    protected void produceSamlLogoutResponseRedirect(final String logoutRequestIssuer,
+                                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                     final SingleLogoutService sloService,
+                                                     final RequestContext context) {
+        val logoutResponse = buildSamlLogoutResponse(logoutRequestIssuer, adaptor, sloService, context);
+        val location = StringUtils.isBlank(sloService.getResponseLocation())
+            ? sloService.getLocation()
+            : sloService.getResponseLocation();
+        val encoder = new SamlIdPHttpRedirectDeflateEncoder(location, logoutResponse);
+        encoder.doEncode();
+        val redirectUrl = encoder.getRedirectUrl();
+        LOGGER.trace("Final logout redirect URL is [{}]", redirectUrl);
+
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        WebUtils.putLogoutRedirectUrl(request, redirectUrl);
+    }
+
+    /**
+     * Post saml logout response.
+     *
+     * @param sloService     the slo service
+     * @param logoutResponse the logout response
+     * @param context        the context
+     */
+    @SneakyThrows
+    protected void postSamlLogoutResponse(final SingleLogoutService sloService, final LogoutResponse logoutResponse,
+                                          final RequestContext context) {
         val payload = SerializeSupport.nodeToString(XMLObjectSupport.marshall(logoutResponse));
         LOGGER.trace("Logout request payload is [{}]", payload);
 
@@ -100,11 +141,13 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
      * @param logoutRequestIssuer the logout request issuer
      * @param adaptor             the adaptor
      * @param sloService          the slo service
+     * @param context             the context
      * @return the logout response
      */
     protected LogoutResponse buildSamlLogoutResponse(final String logoutRequestIssuer,
                                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                     final SingleLogoutService sloService) {
+                                                     final SingleLogoutService sloService,
+                                                     final RequestContext context) {
         val id = '_' + String.valueOf(RandomUtils.nextLong());
         val builder = configurationContext.getLogoutResponseBuilder();
         val status = builder.newStatus(StatusCode.SUCCESS, "Success");

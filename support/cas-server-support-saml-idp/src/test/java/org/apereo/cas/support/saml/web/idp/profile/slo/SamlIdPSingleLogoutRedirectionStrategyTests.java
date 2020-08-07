@@ -9,7 +9,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,7 +44,7 @@ public class SamlIdPSingleLogoutRedirectionStrategyTests extends BaseSamlIdPConf
     private LogoutRedirectionStrategy samlIdPSingleLogoutRedirectionStrategy;
 
     @Test
-    public void verifyOperation() throws Exception {
+    public void verifyOperationForPostBinding() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val registeredService = getSamlRegisteredServiceForTestShib();
@@ -71,13 +70,37 @@ public class SamlIdPSingleLogoutRedirectionStrategyTests extends BaseSamlIdPConf
         assertTrue(samlIdPSingleLogoutRedirectionStrategy.supports(context));
         assertNotNull(samlIdPSingleLogoutRedirectionStrategy.getName());
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                samlIdPSingleLogoutRedirectionStrategy.handle(context);
-            }
-        });
+        samlIdPSingleLogoutRedirectionStrategy.handle(context);
+        assertNull(WebUtils.getLogoutRedirectUrl(request, String.class));
+    }
 
+    @Test
+    public void verifyOperationForRedirectBinding() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val registeredService = getSamlRegisteredServiceFor(false, false,
+            false, "https://mocky.io");
+        WebUtils.putRegisteredService(request, registeredService);
+
+        val logoutRequest = samlIdPLogoutResponseObjectBuilder.newLogoutRequest(
+            UUID.randomUUID().toString(),
+            ZonedDateTime.now(Clock.systemUTC()),
+            "https://github.com/apereo/cas",
+            samlIdPLogoutResponseObjectBuilder.newIssuer(registeredService.getServiceId()),
+            UUID.randomUUID().toString(),
+            samlIdPLogoutResponseObjectBuilder.getNameID(NameID.EMAIL, "cas@example.org"));
+        try (val writer = SamlUtils.transformSamlObject(openSamlConfigBean, logoutRequest)) {
+            val encodedRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
+            WebUtils.putSingleLogoutRequest(request, encodedRequest);
+        }
+
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+
+        samlIdPSingleLogoutRedirectionStrategy.handle(context);
+        assertNotNull(WebUtils.getLogoutRedirectUrl(request, String.class));
     }
 
 }
