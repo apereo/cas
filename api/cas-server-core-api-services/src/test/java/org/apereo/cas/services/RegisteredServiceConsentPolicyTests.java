@@ -22,7 +22,7 @@ public class RegisteredServiceConsentPolicyTests {
         };
         assertEquals(0, input.size());
         assertEquals(0, input.getOrder());
-        assertTrue(input.isEnabled());
+        assertTrue(input.getStatus().isUndefined());
         assertTrue(input.getExcludedAttributes().isEmpty());
         assertTrue(input.getIncludeOnlyAttributes().isEmpty());
     }

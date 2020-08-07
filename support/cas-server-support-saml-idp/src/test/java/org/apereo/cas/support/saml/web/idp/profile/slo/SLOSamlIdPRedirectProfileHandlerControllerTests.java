@@ -72,7 +72,7 @@ public class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdP
         val service = getSamlRegisteredServiceFor(false, false, false, "https://cassp.example.org");
         executeTest(request, response, service);
 
-        assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
         assertNull(WebUtils.getLogoutRedirectUrl(request, String.class));
     }
 

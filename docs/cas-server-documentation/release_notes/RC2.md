@@ -83,6 +83,16 @@ CAS registered service definitions can now be natively stored in [Amazon S3 buck
 
 CAS is now using the Okta SDK v2 mainly used to handle the integration between CAS and Okta for authentication and attribute resolution.
 
+### Attribute Consent Activation
+
+Activation rules for [Attribute Consent](../integration/Attribute-Release-Consent.html) are re-design to allow per-application overrides of the global policy activation rules. Additional documentation
+updates are now present to demonstrate how multiple attribute consent policies may be chained together.
+
+<div class="alert alert-warning">
+  <strong>WATCH OUT!</strong><br />This may be a breaking change since the data model for the <code>DefaultRegisteredServiceConsentPolicy</code> has remove the <code>enabled</code>
+  field, replacing it with <code>status</code>. Review the documentation to adjust for proper syntax.
+</div>
+
 ## Other Stuff
 
 - Adjustments to SAML2 metadata resolution to cache to ensure enough capacity for resolved metadata providers. 

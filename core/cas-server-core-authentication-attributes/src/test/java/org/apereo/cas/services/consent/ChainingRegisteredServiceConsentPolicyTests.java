@@ -1,5 +1,7 @@
 package org.apereo.cas.services.consent;
 
+import org.apereo.cas.util.model.TriStateBoolean;
+
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,8 +25,35 @@ public class ChainingRegisteredServiceConsentPolicyTests {
         val chain = new ChainingRegisteredServiceConsentPolicy();
         chain.addPolicies(List.of(new DefaultRegisteredServiceConsentPolicy(Set.of("cn"), Set.of("givenName"))));
         chain.addPolicy(new DefaultRegisteredServiceConsentPolicy(Set.of("mail"), Set.of("address")));
-        assertTrue(chain.isEnabled());
+        assertTrue(chain.getStatus().isUndefined());
         assertEquals(Set.of("cn", "mail"), chain.getExcludedAttributes());
         assertEquals(Set.of("givenName", "address"), chain.getIncludeOnlyAttributes());
+    }
+
+    @Test
+    public void verifyStatusEnabled() {
+        val chain = new ChainingRegisteredServiceConsentPolicy();
+        chain.addPolicies(List.of(
+            new DefaultRegisteredServiceConsentPolicy().setStatus(TriStateBoolean.FALSE),
+            new DefaultRegisteredServiceConsentPolicy().setStatus(TriStateBoolean.TRUE)));
+        assertTrue(chain.getStatus().isTrue());
+    }
+
+    @Test
+    public void verifyStatusDisabled() {
+        val chain = new ChainingRegisteredServiceConsentPolicy();
+        chain.addPolicies(List.of(
+            new DefaultRegisteredServiceConsentPolicy().setStatus(TriStateBoolean.FALSE),
+            new DefaultRegisteredServiceConsentPolicy().setStatus(TriStateBoolean.FALSE)));
+        assertTrue(chain.getStatus().isFalse());
+    }
+
+    @Test
+    public void verifyStatusUndefined() {
+        val chain = new ChainingRegisteredServiceConsentPolicy();
+        chain.addPolicies(List.of(
+            new DefaultRegisteredServiceConsentPolicy(),
+            new DefaultRegisteredServiceConsentPolicy()));
+        assertTrue(chain.getStatus().isUndefined());
     }
 }

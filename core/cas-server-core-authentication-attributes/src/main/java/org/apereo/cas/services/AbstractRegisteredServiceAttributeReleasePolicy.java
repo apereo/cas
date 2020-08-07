@@ -23,8 +23,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.PostLoad;
-
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -133,10 +131,6 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
 
     @Override
     public Map<String, List<Object>> getConsentableAttributes(final Principal p, final Service selectedService, final RegisteredService service) {
-        if (this.consentPolicy != null && !this.consentPolicy.isEnabled()) {
-            LOGGER.debug("Consent is disabled for service [{}]", service);
-            return new LinkedHashMap<>(0);
-        }
         val attributes = getAttributes(p, selectedService, service);
         LOGGER.debug("Initial set of consentable attributes are [{}]", attributes);
         if (this.consentPolicy != null) {

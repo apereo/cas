@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +35,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("casConsentWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnBean(name = "consentRepository")
+@ConditionalOnProperty(prefix = "cas.consent", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasConsentWebflowConfiguration {
     @Autowired
     @Qualifier("attributeDefinitionStore")

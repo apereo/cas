@@ -10,6 +10,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -23,6 +24,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class CheckConsentRequiredAction extends AbstractConsentAction {
     /**
      * Indicates that webflow should proceed with consent.
@@ -63,7 +65,6 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
         }
 
         val registeredService = getRegisteredServiceForConsent(requestContext, service);
-
         val authentication = WebUtils.getAuthentication(requestContext);
         if (authentication == null) {
             return null;
@@ -81,10 +82,33 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
      * @param requestContext    the request context
      * @return the event id.
      */
-    protected String isConsentRequired(final Service service, final RegisteredService registeredService,
+    protected String isConsentRequired(final Service service,
+                                       final RegisteredService registeredService,
                                        final Authentication authentication,
                                        final RequestContext requestContext) {
-        val required = this.consentEngine.isConsentRequiredFor(service, registeredService, authentication).isRequired();
-        return required ? EVENT_ID_CONSENT_REQUIRED : null;
+        val consentPolicy = registeredService.getAttributeReleasePolicy().getConsentPolicy();
+        if (consentPolicy != null) {
+            switch (consentPolicy.getStatus()) {
+                case TRUE:
+                    LOGGER.trace("Attribute consent is enabled for registered service [{}]", registeredService.getName());
+                    val required = this.consentEngine.isConsentRequiredFor(service, registeredService, authentication).isRequired();
+                    return required ? EVENT_ID_CONSENT_REQUIRED : null;
+                case FALSE:
+                    LOGGER.trace("Attribute consent will be skipped as the attribute consent policy for service [{}] "
+                        + "is disabled for this request", registeredService.getName());
+                    return null;
+                case UNDEFINED:
+                default:
+                    LOGGER.trace("Attribute consent policy for service [{}] is undefined", registeredService.getName());
+            }
+        }
+        if (casProperties.getConsent().isActive()) {
+            LOGGER.trace("Attribute consent is enabled globally for all requests");
+            val required = this.consentEngine.isConsentRequiredFor(service, registeredService, authentication).isRequired();
+            return required ? EVENT_ID_CONSENT_REQUIRED : null;
+        }
+        LOGGER.trace("Attribute consent will be skipped as neither the attribute consent policy for service [{}] "
+            + "nor the global CAS consent policy are enabled for this request", registeredService.getName());
+        return null;
     }
 }
