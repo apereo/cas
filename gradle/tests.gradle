@@ -8,6 +8,16 @@ if (hasTestsOfCategory(project, "Kafka")) {
     }
 }
 
+if (hasTestsOfCategory(project, "ExpirationPolicy")) {
+    task testExpirationPolicy(type: Test) {
+        enabled = shouldTest(project, "ExpirationPolicy")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "ExpirationPolicy"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "Tickets")) {
     task testTickets(type: Test) {
         enabled = shouldTest(project, "Tickets")

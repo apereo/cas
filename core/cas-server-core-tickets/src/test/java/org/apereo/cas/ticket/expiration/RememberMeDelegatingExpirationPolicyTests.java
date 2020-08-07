@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.2.1
  */
-@Tag("Simple")
+@Tag("ExpirationPolicy")
 public class RememberMeDelegatingExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "rememberMeDelegatingExpirationPolicy.json");
