@@ -1,8 +1,10 @@
-package org.apereo.cas.validation;
+package org.apereo.cas;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.validation.Assertion;
+import org.apereo.cas.validation.ImmutableAssertion;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;

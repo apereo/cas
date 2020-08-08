@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Tag("Simple")
+@Tag("Logout")
 public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     private ServicesManager servicesManager;
 

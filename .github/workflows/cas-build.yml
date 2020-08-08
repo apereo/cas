@@ -476,6 +476,9 @@ jobs:
           - password-ops
           - mfa
           - web
+          - metrics
+          - cas
+          - logout
           - util
           - authentication
           - tickets

@@ -8,12 +8,42 @@ if (hasTestsOfCategory(project, "Kafka")) {
     }
 }
 
+if (hasTestsOfCategory(project, "Logout")) {
+    task testLogout(type: Test) {
+        enabled = shouldTest(project, "Logout")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "Logout"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "CAS")) {
+    task testCAS(type: Test) {
+        enabled = shouldTest(project, "CAS")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "CAS"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "ExpirationPolicy")) {
     task testExpirationPolicy(type: Test) {
         enabled = shouldTest(project, "ExpirationPolicy")
         //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "ExpirationPolicy"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "Metrics")) {
+    task testMetrics(type: Test) {
+        enabled = shouldTest(project, "Metrics")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "Metrics"
         }
     }
 }

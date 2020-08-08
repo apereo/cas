@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @ExtendWith(MockitoExtension.class)
-@Tag("Simple")
+@Tag("CAS")
 public class Cas10ProtocolValidationSpecificationTests {
     @Mock
     private ServicesManager servicesManager;

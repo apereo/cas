@@ -98,7 +98,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
-@Tag("Simple")
+@Tag("Authentication")
 public class TokenWebApplicationServiceResponseBuilderTests {
     @Autowired
     @Qualifier("webApplicationServiceResponseBuilder")
