@@ -1,5 +1,6 @@
 package org.apereo.cas.validation;
 
+import org.apereo.cas.CoreValidationTestUtils;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
