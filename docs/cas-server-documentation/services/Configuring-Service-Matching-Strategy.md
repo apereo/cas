@@ -18,7 +18,7 @@ See below for details on matching strategies.
 
 This is the default option that treats the `serviceId` as a regular expression. With this option,
 CAS tries to match the expression against the entire requested service identifier and implicitly 
-adds a `^` at the start and `$` at the end of the defined pattern, meaning it will not look for a substring matches.
+adds a `^` at the start and `$` at the end of the defined pattern, meaning it will not look for substring matches.
 
 A sample JSON file follows:
 
@@ -52,7 +52,7 @@ A sample JSON file follows:
 }
 ```
 
-For example, the above pattern will match against both `https://example123.com`.
+For example, the above pattern will match against `https://example123.com`.
 
 ## Literal
 
