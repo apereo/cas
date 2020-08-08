@@ -204,7 +204,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      *
      * @param assertion the assertion
      */
-    protected void logCasValidationAssertion(final Assertion assertion) {
+    protected static void logCasValidationAssertion(final Assertion assertion) {
         LOGGER.debug("CAS Assertion Valid: [{}]", assertion.isValid());
         LOGGER.debug("CAS Assertion Principal: [{}]", assertion.getPrincipal().getName());
         LOGGER.debug("CAS Assertion authentication Date: [{}]", assertion.getAuthenticationDate());

@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @since 5.3.0
  */
-@TestPropertySource(properties = "cas.logout.removeDescendantTickets=true")
+@TestPropertySource(properties = "cas.logout.remove-descendant-tickets=true")
 @Tag("OAuth")
 public class OAuth20RefreshTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
     @Test
