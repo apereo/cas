@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
-@Tag("Simple")
+@Tag("Metrics")
 public class SessionHealthIndicatorTests {
 
     private static final ExpirationPolicy TEST_EXP_POLICY = new HardTimeoutExpirationPolicy(10000);

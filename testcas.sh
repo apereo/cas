@@ -8,9 +8,9 @@ printHelp() {
     echo -e "simple,memcached,cassandra,groovy,kafka,ldap,rest,\
 mfa,jdbc,mssql,oracle,radius,couchdb,webapp,tickets,\
 mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,\
-jms,hazelcast,jmx,ehcache,actuator,wsfed,authn,attributes,\
+jms,hazelcast,jmx,ehcache,actuator,wsfed,authn,attributes,cas,logout,\
 expiration-policy,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,\
-hazelcast,jmx,ehcache,actuator,wsfed,authn,attributes,\
+hazelcast,jmx,ehcache,actuator,wsfed,authn,attributes,metrics,\
 oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,\
 cosmosdb,config,sms,util,services,web,audits,password-ops"
     echo -e "\nPlease see the test script for details.\n"
@@ -99,6 +99,15 @@ while (( "$#" )); do
                 ;;
             web)
                 task+="testWeb "
+                ;;
+            logout|slo)
+                task+="testLogout "
+                ;;
+            cas)
+                task+="testCAS "
+                ;;
+            metrics|stats)
+                task+="testMetrics "
                 ;;
             services|regsvc)
                 task+="testRegisteredService "

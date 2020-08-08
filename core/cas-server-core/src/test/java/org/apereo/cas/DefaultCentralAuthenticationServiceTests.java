@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Tag("Simple")
+@Tag("CAS")
 public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthenticationServiceTests {
 
     @Test
