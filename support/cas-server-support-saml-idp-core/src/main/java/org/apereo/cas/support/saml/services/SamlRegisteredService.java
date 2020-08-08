@@ -218,4 +218,6 @@ public class SamlRegisteredService extends RegexRegisteredService {
     public String getFriendlyName() {
         return "SAML2 Service Provider";
     }
+
+
 }

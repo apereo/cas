@@ -43,10 +43,13 @@ import org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPoli
 import org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
+import org.apereo.cas.services.FullRegexRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.GroovyRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.GroovyScriptAttributeReleasePolicy;
+import org.apereo.cas.services.LiteralRegisteredServiceMatchingStrategy;
+import org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
@@ -272,6 +275,9 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(DefaultRegisteredServiceAcceptableUsagePolicy.class);
         kryo.register(DefaultRegisteredServiceAuthenticationPolicy.class);
         kryo.register(ShibbolethCompatiblePersistentIdGenerator.class);
+        kryo.register(FullRegexRegisteredServiceMatchingStrategy.class);
+        kryo.register(PartialRegexRegisteredServiceMatchingStrategy.class);
+        kryo.register(LiteralRegisteredServiceMatchingStrategy.class);
     }
 
     private static void registerCasServicesProxyPolicyWithKryo(final Kryo kryo) {
@@ -362,7 +368,7 @@ public class CloseableKryoFactory implements KryoFactory {
     private static void registerCasUtilitiesWithKryo(final Kryo kryo) {
         kryo.register(TriStateBoolean.class);
     }
-    
+
     private static void registerCasTicketsWithKryo(final Kryo kryo) {
         kryo.register(TicketGrantingTicketImpl.class);
         kryo.register(ServiceTicketImpl.class);

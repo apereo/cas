@@ -165,14 +165,13 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public <T extends RegisteredService> T findServiceBy(final long id, final Class<T> clazz) {
-        var service = getService(null, id);
+        var service = getService(registeredService -> registeredService.getId() == id);
         if (service != null && service.getClass().equals(clazz)) {
             return (T) service;
-        } else {
-            LOGGER.trace("The service with id [{}] and type [{}] is not found in the cache; trying to find it from [{}]",
-                id, clazz, serviceRegistry.getName());
-            service = services.get(id, k -> this.serviceRegistry.findServiceById(id, clazz));
         }
+        LOGGER.trace("The service with id [{}] and type [{}] is not found in the cache; trying to find it from [{}]",
+            id, clazz, serviceRegistry.getName());
+        service = services.get(id, k -> this.serviceRegistry.findServiceById(id, clazz));
         return (T) validateRegisteredService(service);
     }
 
@@ -182,10 +181,9 @@ public abstract class AbstractServicesManager implements ServicesManager {
             return null;
         }
 
-        var service = getService(name, 0);
+        var service = getService(registeredService -> registeredService.getName().equals(name));
         if (service == null) {
-            LOGGER.trace("The service with name [{}] is not found in the cache; trying to find it from [{}]",
-                name, serviceRegistry.getName());
+            LOGGER.trace("The service with name [{}] is not found in the cache; trying to find it from [{}]", name, serviceRegistry.getName());
             service = serviceRegistry.findServiceByExactServiceName(name);
             if (service != null) {
                 services.put(service.getId(), service);
@@ -205,18 +203,16 @@ public abstract class AbstractServicesManager implements ServicesManager {
         if (StringUtils.isBlank(name)) {
             return null;
         }
-        var service = getService(name, 0);
+        var service = getService(registeredService -> registeredService.getName().equals(name));
         if (service != null && service.getClass().equals(clazz)) {
             return (T) service;
-        } else {
-            LOGGER.trace("The service with name [{}] and type [{}] is not found in the cache; trying to find it from [{}]",
-                name, clazz, serviceRegistry.getName());
-            service = this.serviceRegistry.findServiceByExactServiceName(name, clazz);
-            if (service != null) {
-                services.put(service.getId(), service);
-                LOGGER.trace("The service is found in [{}] and populated to the cache [{}]  ",
-                    serviceRegistry.getName(), service);
-            }
+        }
+        LOGGER.trace("The service with name [{}] and type [{}] is not found in the cache; trying to find it from [{}]",
+            name, clazz, serviceRegistry.getName());
+        service = this.serviceRegistry.findServiceByExactServiceName(name, clazz);
+        if (service != null) {
+            services.put(service.getId(), service);
+            LOGGER.trace("The service is found in [{}] and populated to the cache [{}]", serviceRegistry.getName(), service);
         }
         return (T) validateRegisteredService(service);
     }
@@ -362,9 +358,13 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .anyMatch(this.environments::contains);
     }
 
-    private RegisteredService getService(final String name, final long id) {
-        return services.asMap().values().stream().filter(r -> name != null
-            ? r.getServiceId().equals(name) : r.getId() == id).findFirst().orElse(null);
+    private RegisteredService getService(final Predicate<RegisteredService> filter) {
+        return services.asMap()
+            .values()
+            .stream()
+            .filter(filter)
+            .findFirst()
+            .orElse(null);
     }
 
     /**

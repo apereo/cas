@@ -49,6 +49,13 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     RegisteredServiceAuthenticationPolicy getAuthenticationPolicy();
 
     /**
+     * Get service matching strategy used to evaluate
+     * given service identifiers against this service.
+     * @return the strategy
+     */
+    RegisteredServiceMatchingStrategy getMatchingStrategy();
+
+    /**
      * The unique identifier for this service.
      *
      * @return the unique identifier for this service.
