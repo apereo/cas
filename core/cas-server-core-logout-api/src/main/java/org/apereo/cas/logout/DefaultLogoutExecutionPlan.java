@@ -27,35 +27,35 @@ public class DefaultLogoutExecutionPlan implements LogoutExecutionPlan {
     public void registerLogoutPostProcessor(final LogoutPostProcessor handler) {
         LOGGER.debug("Registering logout handler [{}]", handler.getName());
         handlers.add(handler);
+        AnnotationAwareOrderComparator.sort(this.handlers);
     }
 
     @Override
     public void registerSingleLogoutServiceMessageHandler(final SingleLogoutServiceMessageHandler handler) {
         LOGGER.trace("Registering single logout service message handler [{}]", handler.getName());
         singleLogoutServiceMessageHandlers.add(handler);
+        AnnotationAwareOrderComparator.sort(this.singleLogoutServiceMessageHandlers);
     }
 
     @Override
     public void registerLogoutRedirectionStrategy(final LogoutRedirectionStrategy strategy) {
         LOGGER.trace("Registering logout redirection strategy [{}]", strategy.getName());
         logoutRedirectionStrategies.add(strategy);
+        AnnotationAwareOrderComparator.sort(this.logoutRedirectionStrategies);
     }
 
     @Override
     public Collection<LogoutPostProcessor> getLogoutPostProcessors() {
-        AnnotationAwareOrderComparator.sort(this.handlers);
         return this.handlers;
     }
 
     @Override
     public Collection<SingleLogoutServiceMessageHandler> getSingleLogoutServiceMessageHandlers() {
-        AnnotationAwareOrderComparator.sort(this.singleLogoutServiceMessageHandlers);
         return this.singleLogoutServiceMessageHandlers;
     }
 
     @Override
     public Collection<LogoutRedirectionStrategy> getLogoutRedirectionStrategies() {
-        AnnotationAwareOrderComparator.sort(this.logoutRedirectionStrategies);
         return this.logoutRedirectionStrategies;
     }
 }

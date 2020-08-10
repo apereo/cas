@@ -352,24 +352,35 @@
       </hashTree>
       <TestFragmentController guiclass="TestFragmentControllerGui" testclass="TestFragmentController" testname="GET - User Info with Service Ticket" enabled="true"/>
       <hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="CAS GET Ticket Info" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments"/>
-          </elementProp>
-          <stringProp name="HTTPSampler.domain"></stringProp>
-          <stringProp name="HTTPSampler.port"></stringProp>
-          <stringProp name="HTTPSampler.protocol"></stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">${IdPHost}/cas/serviceValidate?ticket=${st}&amp;service=${__urlencode(${CasSP})}</stringProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-          <stringProp name="HTTPSampler.response_timeout"></stringProp>
-        </HTTPSamplerProxy>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Out-of-band Validate Service Ticket" enabled="true">
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+
+String host = vars.get(&quot;IdPHost&quot;)
+String st = vars.get(&quot;st&quot;)
+String service = vars.get(&quot;CasSP&quot;)
+
+String urlString = host + &quot;/cas/serviceValidate?ticket=&quot; + st + &quot;&amp;service=&quot; + URLEncoder.encode(service, &quot;UTF-8&quot;)
+URL url = new URL(urlString);
+HttpURLConnection request = (HttpURLConnection) url.openConnection();
+request.connect();
+BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
+StringBuilder output = new StringBuilder();
+while ((inputLine = reader.readLine()) != null) {
+	output.append(inputLine)
+	output.append(&quot;\n&quot;)
+}
+reader.close()
+request.disconnect()
+return output.toString()</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+        </JSR223Sampler>
         <hashTree/>
         <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Verify User Info Returned" enabled="true">
           <collectionProp name="Asserion.test_strings">
