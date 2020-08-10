@@ -49,6 +49,7 @@ public class JsonResourceMetadataResolverTests extends BaseSamlIdPServicesTests 
         val metadataResolver = results.iterator().next();
         val resolved = metadataResolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("https://example.org/saml")));
         assertNotNull(resolved);
+        resolver.destroy();
     }
 
     /**
