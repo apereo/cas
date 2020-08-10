@@ -37,4 +37,5 @@ public class HazelcastDockerSwarmDiscoveryStrategyTests {
         val result = hz.get(cluster, mock(JoinConfig.class), mock(Config.class), networkConfig);
         assertNotNull(result);
     }
+
 }

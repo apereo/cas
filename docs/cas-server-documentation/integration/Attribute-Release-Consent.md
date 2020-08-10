@@ -71,7 +71,7 @@ the service definition may override the global rules using the `status` field wh
 
 | Value       | Description
 |-------------|---------------------------------------------------------------------------------------
-| `FALSE      | Consent policy is disabled, overriding the global configuration.
+| `FALSE`     | Consent policy is disabled, overriding the global configuration.
 | `TRUE`      | Consent policy is enabled, overriding the global configuration.
 | `UNDEFINED` | Consent policy is undefined, delegating the decision to the global configuration.
 

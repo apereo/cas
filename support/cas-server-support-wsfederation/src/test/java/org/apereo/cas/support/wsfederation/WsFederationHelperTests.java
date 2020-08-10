@@ -5,8 +5,11 @@ import org.apereo.cas.support.wsfederation.authentication.principal.WsFederation
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.opensaml.saml.saml1.core.Assertion;
+import org.opensaml.xmlsec.signature.Signature;
 import org.springframework.core.io.ClassPathResource;
 
 import java.nio.charset.StandardCharsets;
@@ -14,6 +17,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Test cases for {@link WsFederationHelper}.
@@ -71,6 +75,17 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
         assertTrue(result);
     }
 
+    @Test
+    public void verifyValidateSignatureBadInput() {
+        assertFalse(wsFederationHelper.validateSignature(null));
+        assertFalse(wsFederationHelper.validateSignature(Pair.of(null, null)));
+        val config = wsFederationConfigurations.iterator().next();
+        val assertion = mock(Assertion.class);
+        assertFalse(wsFederationHelper.validateSignature(Pair.of(assertion, config)));
+        when(assertion.getSignature()).thenReturn(mock(Signature.class));
+        assertFalse(wsFederationHelper.validateSignature(Pair.of(assertion, config)));
+    }
+    
     @Test
     public void verifyValidateSignatureModifiedAttribute() throws Exception {
         val wresult = IOUtils.toString(new ClassPathResource("badTokenResponse.txt").getInputStream(), StandardCharsets.UTF_8);

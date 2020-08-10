@@ -27,13 +27,7 @@ public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcess
                                              final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
-
-    /**
-     * Determines if this handler can support the credentials provided.
-     *
-     * @param credentials the credentials to test
-     * @return true if supported, otherwise false
-     */
+    
     @Override
     public boolean supports(final Credential credentials) {
         return credentials != null && WsFederationCredential.class.isAssignableFrom(credentials.getClass());
