@@ -28,6 +28,18 @@ public class GroovyResourceMetadataResolverTests extends BaseSamlIdPServicesTest
         val service = new SamlRegisteredService();
         service.setMetadataLocation("classpath:GroovyMetadataResolver.groovy");
         assertTrue(resolver.supports(service));
+        assertTrue(resolver.isAvailable(service));
+    }
+
+    @Test
+    public void verifyResolverMissingResource() throws Exception {
+        val props = new SamlIdPProperties();
+        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
+        val resolver = new GroovyResourceMetadataResolver(props, openSamlConfigBean);
+        val service = new SamlRegisteredService();
+        service.setMetadataLocation("file:/tmp/UnknownScript.groovy");
+        val results = resolver.resolve(service);
+        assertTrue(results.isEmpty());
     }
 
     @Test
