@@ -66,6 +66,7 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
     @Test
     public void verifyList() {
         assertFalse(getService().getEligibleAccountsForSurrogateToProxy(CASUSER).isEmpty());
+        assertTrue(getService().getEligibleAccountsForSurrogateToProxy("unknown-user").isEmpty());
     }
 
     @Test
