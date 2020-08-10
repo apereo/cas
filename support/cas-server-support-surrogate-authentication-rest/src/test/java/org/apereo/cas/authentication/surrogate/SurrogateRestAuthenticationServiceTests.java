@@ -6,12 +6,10 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,33 +50,34 @@ public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthen
 
     @Override
     @Test
-    public void verifyList() {
-        var data = StringUtils.EMPTY;
-        try {
-            data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
-        } catch (final JsonProcessingException e) {
-            throw new AssertionError(e);
-        }
+    public void verifyUserAllowedToProxy() throws Exception {
+        var data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
         try (val webServer = new MockWebServer(9301,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             this.webServer = webServer;
             this.webServer.start();
             assertTrue(this.webServer.isRunning());
-            super.verifyList();
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
+            super.verifyUserAllowedToProxy();
         }
     }
 
     @Override
     @Test
-    public void verifyProxying() {
-        var data = StringUtils.EMPTY;
-        try {
-            data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
-        } catch (final JsonProcessingException e) {
-            throw new AssertionError(e);
+    public void verifyUserNotAllowedToProxy() throws Exception {
+        var data = MAPPER.writeValueAsString(CollectionUtils.wrapList());
+        try (val webServer = new MockWebServer(9301,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            this.webServer = webServer;
+            this.webServer.start();
+            assertTrue(this.webServer.isRunning());
+            super.verifyUserNotAllowedToProxy();
         }
+    }
+
+    @Override
+    @Test
+    public void verifyProxying() throws Exception {
+        var data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
         try (val webServer = new MockWebServer(9310,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
@@ -95,8 +94,6 @@ public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthen
              * completely refactored and don't need an actual server to connect to.
              */
             assertTrue(result);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 }
