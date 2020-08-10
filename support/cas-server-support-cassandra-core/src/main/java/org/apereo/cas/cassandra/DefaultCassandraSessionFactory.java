@@ -27,8 +27,11 @@ import java.net.InetSocketAddress;
 public class DefaultCassandraSessionFactory implements CassandraSessionFactory, AutoCloseable, DisposableBean {
 
     private final CqlSession session;
+
     private final CassandraTemplate cassandraTemplate;
+
     private final CqlTemplate cqlTemplate;
+
     private final SSLContext sslContext;
 
     public DefaultCassandraSessionFactory(final BaseCassandraProperties cassandra,
