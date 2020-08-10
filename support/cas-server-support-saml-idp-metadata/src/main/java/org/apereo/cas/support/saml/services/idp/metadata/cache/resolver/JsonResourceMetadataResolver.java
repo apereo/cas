@@ -95,13 +95,8 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
 
     @Override
     public boolean supports(final SamlRegisteredService service) {
-        try {
-            val metadataLocation = service.getMetadataLocation();
-            return metadataLocation.trim().startsWith("json://");
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return false;
+        val metadataLocation = service.getMetadataLocation();
+        return metadataLocation.trim().startsWith("json://");
     }
 
     @Override
