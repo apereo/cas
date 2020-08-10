@@ -64,13 +64,17 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
     public abstract SurrogateAuthenticationService getService();
 
     @Test
-    public void verifyList() {
+    public void verifyUserAllowedToProxy() throws Exception {
         assertFalse(getService().getEligibleAccountsForSurrogateToProxy(CASUSER).isEmpty());
+    }
+
+    @Test
+    public void verifyUserNotAllowedToProxy() throws Exception {
         assertTrue(getService().getEligibleAccountsForSurrogateToProxy("unknown-user").isEmpty());
     }
 
     @Test
-    public void verifyProxying() {
+    public void verifyProxying() throws Exception {
         val service = Optional.of(CoreAuthenticationTestUtils.getService());
         val surrogateService = getService();
         assertTrue(surrogateService.canAuthenticateAs(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(CASUSER), service));
@@ -78,7 +82,7 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
         assertFalse(surrogateService.canAuthenticateAs("XXXX", CoreAuthenticationTestUtils.getPrincipal(CASUSER), service));
         assertFalse(surrogateService.canAuthenticateAs(CASUSER, CoreAuthenticationTestUtils.getPrincipal(BANDERSON), service));
     }
-    
+
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
