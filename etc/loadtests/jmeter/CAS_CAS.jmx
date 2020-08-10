@@ -356,22 +356,22 @@
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="filename"></stringProp>
           <stringProp name="parameters"></stringProp>
-          <stringProp name="script">import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
+          <stringProp name="script">import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
+import java.net.URLEncoder
 
 String host = vars.get(&quot;IdPHost&quot;)
 String st = vars.get(&quot;st&quot;)
 String service = vars.get(&quot;CasSP&quot;)
 
 String urlString = host + &quot;/cas/serviceValidate?ticket=&quot; + st + &quot;&amp;service=&quot; + URLEncoder.encode(service, &quot;UTF-8&quot;)
-URL url = new URL(urlString);
-HttpURLConnection request = (HttpURLConnection) url.openConnection();
-request.connect();
-BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-StringBuilder output = new StringBuilder();
+URL url = new URL(urlString)
+HttpURLConnection request = (HttpURLConnection) url.openConnection()
+request.connect()
+BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()))
+StringBuilder output = new StringBuilder()
 while ((inputLine = reader.readLine()) != null) {
 	output.append(inputLine)
 	output.append(&quot;\n&quot;)
