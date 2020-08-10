@@ -70,6 +70,7 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
         Thread.sleep(500);
 
         BaseCRLRevocationCheckerTests.checkCertificate(checker, certFiles, expected);
+        checker.close();
     }
 
     private static UserManagedCache<URI, byte[]> getCache(final int entries) {
