@@ -158,7 +158,7 @@ public class GitRepositoryBuilder {
             .setTransportConfigCallback(transportCallback)
             .setCredentialsProvider(new ChainingCredentialsProvider(providers));
 
-        if (StringUtils.hasText(this.branchesToClone) || "*".equals(branchesToClone)) {
+        if (!StringUtils.hasText(this.branchesToClone) || "*".equals(branchesToClone)) {
             cloneCommand.setCloneAllBranches(true);
         } else {
             cloneCommand.setBranchesToClone(StringUtils.commaDelimitedListToSet(this.branchesToClone)
