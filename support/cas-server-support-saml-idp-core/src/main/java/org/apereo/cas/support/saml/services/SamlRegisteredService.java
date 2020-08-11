@@ -68,6 +68,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private String metadataSignatureLocation;
 
     @Column
+    private String logoutResponseBinding;
+    
+    @Column
     private boolean requireSignedRoot = true;
 
     @Column(name = "spNameIdQualifier")
