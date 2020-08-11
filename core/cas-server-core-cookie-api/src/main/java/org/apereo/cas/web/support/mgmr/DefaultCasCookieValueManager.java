@@ -56,6 +56,11 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
         return builder.toString();
     }
 
+
+    /**
+     * Make sure cookie is used from same IP and with same user-agent as when cookie created.
+     * Client info (with original client ip) may be null if cluster failover occurs and session replication not working.
+     */
     @Override
     protected String obtainValueFromCompoundCookie(final String cookieValue, final HttpServletRequest request) {
         val cookieParts = Splitter.on(String.valueOf(COOKIE_FIELD_SEPARATOR)).splitToList(cookieValue);
@@ -76,9 +81,14 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
         }
 
         val clientInfo = ClientInfoHolder.getClientInfo();
+        if (clientInfo == null) {
+            throw new InvalidCookieException("Unable to match required remote address "
+                    + remoteAddr + " because client ip at time of cookie creation unknown");
+        }
+
         if (!remoteAddr.equals(clientInfo.getClientIpAddress())) {
             throw new InvalidCookieException("Invalid cookie. Required remote address "
-                + remoteAddr + " does not match " + clientInfo.getClientIpAddress());
+                    + remoteAddr + " does not match " + clientInfo.getClientIpAddress());
         }
 
         val agent = HttpRequestUtils.getHttpServletRequestUserAgent(request);

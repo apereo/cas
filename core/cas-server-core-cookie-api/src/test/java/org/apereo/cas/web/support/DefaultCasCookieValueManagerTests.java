@@ -105,4 +105,14 @@ public class DefaultCasCookieValueManagerTests {
         assertThrows(InvalidCookieException.class, () -> mgr.obtainCookieValue("something@"
             + ClientInfoHolder.getClientInfo().getClientIpAddress() + "@agent", new MockHttpServletRequest()));
     }
+
+    @Test
+    public void verifyMissingClientInfo() {
+        val props = new TicketGrantingCookieProperties();
+        val mgr = new DefaultCasCookieValueManager(CipherExecutor.noOp(), props);
+        ClientInfoHolder.clear();
+        assertThrows(InvalidCookieException.class, () -> mgr.obtainCookieValue("something@"
+                + CLIENT_IP + "@" + USER_AGENT, new MockHttpServletRequest()));
+    }
+
 }
