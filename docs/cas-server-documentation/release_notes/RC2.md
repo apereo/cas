@@ -79,6 +79,10 @@ Multiple YubiKey devices can now be registered with CAS for [multifactor authent
 
 CAS registered service definitions can now be natively stored in [Amazon S3 buckets](../services/AmazonS3-Service-Management.html).
 
+### SAML2 Logout Responses
+
+SAML2 single logout handling handling, when CAS is running as a [SAML2 identity provider](../installation/Configuring-SAML2-Authentication.html), is now able to produce a logout response for the service provider once the single logout sequence has completed. 
+
 ### Okta SDK v2
 
 CAS is now using the Okta SDK v2 mainly used to handle the integration between CAS and Okta for authentication and attribute resolution.
@@ -118,6 +122,7 @@ a few [additional options](../services/Configuring-Service-Matching-Strategy.htm
 - Spring Boot
 - Amazon SDK
 - Spotbugs
+- Gradle
 - Okta
 - Ldaptive
 - Inspektr

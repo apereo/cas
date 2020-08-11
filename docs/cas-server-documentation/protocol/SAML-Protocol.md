@@ -11,9 +11,14 @@ This document deals with CAS-specific concerns.
 
 ## SAML2
 
-CAS provides support for [SAML2 Authentication](../installation/Configuring-SAML2-Authentication.html).
+CAS provides support for [SAML2 Authentication](../installation/Configuring-SAML2-Authentication.html), allowing CAS to act
+as a SAML2 identity provider.
 
 ## Google Apps
+
+<div class="alert alert-warning"><strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
+</div>
 
 CAS provides support for [Google Apps Integration](../integration/Google-Apps-Integration.html).
 
