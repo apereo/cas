@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.slo;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.encoder.MessageEncodingException;
@@ -21,6 +22,7 @@ import java.util.Objects;
  */
 @RequiredArgsConstructor
 @Getter
+@Slf4j
 public class SamlIdPHttpRedirectDeflateEncoder extends HTTPRedirectDeflateEncoder {
     private final String endpointUrl;
 
@@ -36,6 +38,7 @@ public class SamlIdPHttpRedirectDeflateEncoder extends HTTPRedirectDeflateEncode
     public void doEncode() throws MessageEncodingException {
         this.messageContext = new MessageContext();
         if (request.isSigned()) {
+            LOGGER.trace("Request is signed for [{}]", request.getElementQName());
             val signingContext = messageContext.getSubcontext(SecurityParametersContext.class, true);
             val signingParams = new SignatureSigningParameters();
             val signature = request.getSignature();
@@ -50,6 +53,7 @@ public class SamlIdPHttpRedirectDeflateEncoder extends HTTPRedirectDeflateEncode
         messageContext.setMessage(request);
 
         this.redirectUrl = buildRedirectURL(messageContext, endpointUrl, encodedRequest);
+        LOGGER.debug("Created redirect URL [{}] based on endpoint [{}]", this.redirectUrl, endpointUrl);
     }
 
     @Override
