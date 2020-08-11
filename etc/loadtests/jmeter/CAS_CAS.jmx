@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.1.1 r1855137">
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.3">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="CAS SSO Tests" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
@@ -67,6 +67,7 @@
       <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
         <collectionProp name="CookieManager.cookies"/>
         <boolProp name="CookieManager.clearEachIteration">true</boolProp>
+        <boolProp name="CookieManager.controlledByThreadGroup">false</boolProp>
       </CookieManager>
       <hashTree/>
       <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
@@ -163,6 +164,7 @@
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
         <stringProp name="ThreadGroup.duration">${Duration}</stringProp>
         <stringProp name="ThreadGroup.delay">${StartupDelay}</stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
         <ModuleController guiclass="ModuleControllerGui" testclass="ModuleController" testname="GET - CAS Login Page" enabled="true">
@@ -356,7 +358,17 @@
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="filename"></stringProp>
           <stringProp name="parameters"></stringProp>
-          <stringProp name="script">import java.io.BufferedReader
+          <stringProp name="script">/**
+ * If running this test against a cluster it is important not to send cookies
+ * when validating the service ticket which is done server-side by an application
+ * (not the browser). The load balancer in front of the CAS cluster
+ * may use sticky session cookies which the application (service) won&apos;t have access to.
+ * If the CAS ticket registry involves replication, handling validation requests
+ * on a different server than the server that created the service ticket
+ * may expose problems.
+ */
+
+import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
@@ -380,6 +392,7 @@ reader.close()
 request.disconnect()
 return output.toString()</stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="TestPlan.comments">Groovy script to validate the service ticket without sending cookies (in particular, sticky session cookies)</stringProp>
         </JSR223Sampler>
         <hashTree/>
         <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Verify User Info Returned" enabled="true">
