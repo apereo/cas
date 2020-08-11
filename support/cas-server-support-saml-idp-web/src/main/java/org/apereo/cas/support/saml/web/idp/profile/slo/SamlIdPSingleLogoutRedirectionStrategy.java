@@ -74,7 +74,6 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
             if (sloService != null) {
                 val logoutResponse = buildSamlLogoutResponse(adaptor, sloService, context, samlRegisteredService, samlLogoutRequest);
                 postSamlLogoutResponse(sloService, logoutResponse, context);
-                return;
             }
 
             sloService = adaptor.getSingleLogoutService(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
@@ -103,10 +102,11 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
         val location = StringUtils.isBlank(sloService.getResponseLocation())
             ? sloService.getLocation()
             : sloService.getResponseLocation();
+        LOGGER.trace("Encoding logout response given endpoint [{}] for binding [{}]", location, sloService.getBinding());
         val encoder = new SamlIdPHttpRedirectDeflateEncoder(location, logoutResponse);
         encoder.doEncode();
         val redirectUrl = encoder.getRedirectUrl();
-        LOGGER.trace("Final logout redirect URL is [{}]", redirectUrl);
+        LOGGER.debug("Final logout redirect URL is [{}]", redirectUrl);
 
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         WebUtils.putLogoutRedirectUrl(request, redirectUrl);
@@ -117,7 +117,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
      *
      * @param sloService     the slo service
      * @param logoutResponse the logout response
-     * @param requestContext        the context
+     * @param requestContext the context
      */
     @SneakyThrows
     protected void postSamlLogoutResponse(final SingleLogoutService sloService, final LogoutResponse logoutResponse,
@@ -163,9 +163,12 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
         val location = StringUtils.isBlank(sloService.getResponseLocation())
             ? sloService.getLocation()
             : sloService.getResponseLocation();
+        LOGGER.trace("Creating logout response for binding [{}] with issuer [{}], location [{}] and service provider [{}]",
+            sloService.getBinding(), issuer, location, adaptor.getEntityId());
         val logoutResponse = builder.newLogoutResponse(id, location, issuer, status, adaptor.getEntityId());
 
         if (configurationContext.getCasProperties().getAuthn().getSamlIdp().getLogout().isSignLogoutResponse()) {
+            LOGGER.trace("Signing logout request for service provider [{}]", adaptor.getEntityId());
             val logoutResponseSigned = configurationContext.getSamlObjectSigner()
                 .encode(logoutResponse, registeredService, adaptor, response, request, sloService.getBinding(), logoutRequest);
             SamlUtils.logSamlObject(configurationContext.getOpenSamlConfigBean(), logoutResponseSigned);
