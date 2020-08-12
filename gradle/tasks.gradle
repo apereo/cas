@@ -97,10 +97,4 @@ task outputDependenciesWithoutLicense(description: "Output dependencies without 
     }
 }
 
-
-
-gradle.buildFinished { buildResult ->
-    cleanLogs
-}
-
 clean.dependsOn("cleanLogs")

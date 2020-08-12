@@ -117,7 +117,8 @@ public class OAuthJpaTicketRegistryTests {
     public void verifyLogoutCascades() {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
-        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(), TicketGrantingTicket.class);
+        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
+            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
         this.ticketRegistry.addTicket(tgt);
 
         val oAuthCode = oAuthCodeFactory.create(RegisteredServiceTestUtils.getService(),

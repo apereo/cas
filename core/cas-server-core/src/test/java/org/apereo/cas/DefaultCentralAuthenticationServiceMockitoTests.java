@@ -195,7 +195,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
                 null, CipherExecutor.noOpOfStringToString(), mock(ServicesManager.class)));
         factory.addTicketFactory(TicketGrantingTicket.class,
             new DefaultTicketGrantingTicketFactory(null,
-                null, CipherExecutor.noOpOfSerializableToString()));
+                null, CipherExecutor.noOpOfSerializableToString(), mock(ServicesManager.class)));
         factory.addTicketFactory(ServiceTicket.class,
             new DefaultServiceTicketFactory(neverExpiresExpirationPolicyBuilder(),
                 new HashMap<>(0), false,
