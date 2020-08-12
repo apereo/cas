@@ -342,18 +342,18 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         throws AuthenticationException, AbstractTicketException {
 
         val authentication = authenticationResult.getAuthentication();
-        val service = authenticationResult.getService();
+        var service = authenticationResult.getService();
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
 
         if (service != null) {
-            val selectedService = resolveServiceFromAuthenticationRequest(service);
-            LOGGER.debug("Resolved service [{}] from the authentication request", selectedService);
-            val registeredService = this.servicesManager.findServiceBy(selectedService);
+            service = resolveServiceFromAuthenticationRequest(service);
+            LOGGER.debug("Resolved service [{}] from the authentication request", service);
+            val registeredService = this.servicesManager.findServiceBy(service);
             enforceRegisteredServiceAccess(authentication, service, registeredService);
         }
 
         val factory = (TicketGrantingTicketFactory) this.ticketFactory.get(TicketGrantingTicket.class);
-        val ticketGrantingTicket = factory.create(authentication, TicketGrantingTicket.class);
+        val ticketGrantingTicket = factory.create(authentication, service, TicketGrantingTicket.class);
 
         this.ticketRegistry.addTicket(ticketGrantingTicket);
         doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket));

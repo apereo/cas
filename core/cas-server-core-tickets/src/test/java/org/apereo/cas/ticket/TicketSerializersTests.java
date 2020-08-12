@@ -53,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("Tickets")
 public class TicketSerializersTests {
+
     @Autowired
     @Qualifier("defaultTicketFactory")
     private TicketFactory defaultTicketFactory;
@@ -64,7 +65,8 @@ public class TicketSerializersTests {
     @Test
     public void verifyTicketGrantingTicketSerialization() {
         val factory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
-        val ticket = factory.create(RegisteredServiceTestUtils.getAuthentication(), TicketGrantingTicket.class);
+        val ticket = factory.create(RegisteredServiceTestUtils.getAuthentication(),
+            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
         verifySerialization(ticket);
     }
 
@@ -78,7 +80,8 @@ public class TicketSerializersTests {
     @Test
     public void verifyServiceTicketSerialization() {
         val tgtFactory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
-        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(), TicketGrantingTicket.class);
+        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
+            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
 
         val factory = (ServiceTicketFactory) this.defaultTicketFactory.get(ServiceTicket.class);
         val ticket = factory.create(tgt, RegisteredServiceTestUtils.getService(), true, ServiceTicket.class);
@@ -88,7 +91,8 @@ public class TicketSerializersTests {
     @Test
     public void verifyProxyGrantingTicketSerialization() {
         val tgtFactory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
-        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(), TicketGrantingTicket.class);
+        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
+            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
 
         val stFactory = (ServiceTicketFactory) this.defaultTicketFactory.get(ServiceTicket.class);
         val st = stFactory.create(tgt, RegisteredServiceTestUtils.getService(), true, ServiceTicket.class);
@@ -102,7 +106,8 @@ public class TicketSerializersTests {
     @Test
     public void verifyProxyTicketSerialization() {
         val tgtFactory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
-        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(), TicketGrantingTicket.class);
+        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
+            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
 
         val stFactory = (ServiceTicketFactory) this.defaultTicketFactory.get(ServiceTicket.class);
         val st = stFactory.create(tgt, RegisteredServiceTestUtils.getService(), true, ServiceTicket.class);
