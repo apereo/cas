@@ -49,6 +49,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends Bas
         assertFalse(adaptor.isAuthnRequestsSigned());
         assertFalse(adaptor.isSupportedProtocol("example"));
         assertFalse(adaptor.isSupportedProtocol("example"));
+        assertTrue(adaptor.getAssertionConsumerServiceLocations(SAMLConstants.SAML2_POST_BINDING_URI).size() > 1);
     }
 
     @Test

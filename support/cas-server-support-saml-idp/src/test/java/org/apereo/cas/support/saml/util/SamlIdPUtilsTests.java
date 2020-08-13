@@ -135,4 +135,22 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         assertNotNull(acs);
         assertEquals(acsUrl, acs.getLocation());
     }
+
+    @Test
+    public void verifyUnsignedRequestWithAssertionConsumerServiceUrlMatchingAlternateMetadataAcsUrl() {
+        val service = getSamlRegisteredServiceForTestShib();
+        servicesManager.save(service);
+        val authnRequest = mock(AuthnRequest.class);
+        val issuer = mock(Issuer.class);
+        when(issuer.getValue()).thenReturn(service.getServiceId());
+        when(authnRequest.getIssuer()).thenReturn(issuer);
+        when(authnRequest.getProtocolBinding()).thenReturn(SAMLConstants.SAML2_POST_BINDING_URI);
+        val acsUrl = "https://www.testshib.org/Shibboleth.sso/SAML2/POST";
+        when(authnRequest.getAssertionConsumerServiceURL()).thenReturn(acsUrl);
+
+        val adapter = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
+        val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
+        assertNotNull(acs);
+        assertEquals(acsUrl, acs.getLocation());
+    }
 }
