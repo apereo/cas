@@ -28,8 +28,6 @@ import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.springframework.http.MediaType;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.nio.charset.StandardCharsets;
-
 /**
  * This is {@link SamlIdPSingleLogoutRedirectionStrategy}.
  *

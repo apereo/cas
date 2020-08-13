@@ -15,7 +15,6 @@ import org.springframework.orm.jpa.persistenceunit.SmartPersistenceUnitInfo;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceUnitInfo;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
