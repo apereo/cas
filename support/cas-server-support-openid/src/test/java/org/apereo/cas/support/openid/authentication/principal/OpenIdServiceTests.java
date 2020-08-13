@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 
@@ -13,6 +14,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -51,7 +53,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-    
+
     @Autowired
     @Qualifier("serverManager")
     private ServerManager serverManager;
@@ -106,8 +108,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
 
             val response = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL,
                 serverManager, centralAuthenticationService,
-                new DefaultServicesManager(mock(ServiceRegistry.class), applicationContext, new HashSet<>(),
-                    Caffeine.newBuilder().build()))
+                getServicesManager())
                 .build(openIdService, "something", CoreAuthenticationTestUtils.getAuthentication());
             assertNotNull(response);
 
@@ -117,8 +118,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
 
             val response2 = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL, serverManager,
                 centralAuthenticationService,
-                new DefaultServicesManager(mock(ServiceRegistry.class), applicationContext, new HashSet<>(),
-                    Caffeine.newBuilder().build()))
+                getServicesManager())
                 .build(openIdService, null, CoreAuthenticationTestUtils.getAuthentication());
             assertEquals("cancel", response2.getAttributes().get(OpenIdProtocolConstants.OPENID_MODE));
         } catch (final Exception e) {
@@ -147,9 +147,8 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             }
             val response = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL, serverManager,
                 centralAuthenticationService,
-                new DefaultServicesManager(mock(ServiceRegistry.class), applicationContext, new HashSet<>(),
-                    Caffeine.newBuilder().build()))
-                .build(openIdService, st, CoreAuthenticationTestUtils.getAuthentication()); 
+                getServicesManager())
+                .build(openIdService, st, CoreAuthenticationTestUtils.getAuthentication());
             assertNotNull(response);
 
             assertEquals(2, response.getAttributes().size());
@@ -175,5 +174,16 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
 
         assertTrue(o1.equals(o2));
         assertFalse(o1.equals(new Object()));
+    }
+
+    @NotNull
+    private DefaultServicesManager getServicesManager() {
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(mock(ServiceRegistry.class))
+            .applicationContext(applicationContext)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .build();
+        return new DefaultServicesManager(context);
     }
 }

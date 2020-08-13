@@ -9,6 +9,7 @@ import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 
@@ -22,7 +23,7 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.net.URL;
-import java.util.Set;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -58,10 +59,13 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     public void beforeEach() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
-        this.servicesManager = new DefaultServicesManager(
-            new InMemoryServiceRegistry(appCtx),
-            appCtx, Set.of(),
-            Caffeine.newBuilder().build());
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(new InMemoryServiceRegistry(appCtx))
+            .applicationContext(appCtx)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .build();
+        this.servicesManager = new DefaultServicesManager(context);
     }
 
     @Test

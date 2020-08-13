@@ -28,6 +28,7 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.ServicesManagerExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManagerScheduledLoader;
 import org.apereo.cas.services.domain.DefaultDomainAwareServicesManager;
@@ -254,7 +255,13 @@ public class CasCoreServicesConfiguration {
     public ServicesManagerExecutionPlanConfigurer defaultServicesManagerExecutionPlanConfigurer() {
         return () -> {
             val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
-            return new DefaultServicesManager(serviceRegistry(), applicationContext, activeProfiles, servicesManagerCache());
+            val context = ServicesManagerConfigurationContext.builder()
+                .serviceRegistry(serviceRegistry())
+                .applicationContext(applicationContext)
+                .environments(activeProfiles)
+                .servicesCache(servicesManagerCache())
+                .build();
+            return new DefaultServicesManager(context);
         };
     }
 
@@ -264,9 +271,13 @@ public class CasCoreServicesConfiguration {
     public ServicesManagerExecutionPlanConfigurer domainServicesManagerExecutionPlanConfigurer() {
         return () -> {
             val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
-            return new DefaultDomainAwareServicesManager(serviceRegistry(), applicationContext,
-                new DefaultRegisteredServiceDomainExtractor(),
-                activeProfiles, servicesManagerCache());
+            val context = ServicesManagerConfigurationContext.builder()
+                .serviceRegistry(serviceRegistry())
+                .applicationContext(applicationContext)
+                .environments(activeProfiles)
+                .servicesCache(servicesManagerCache())
+                .build();
+            return new DefaultDomainAwareServicesManager(context, new DefaultRegisteredServiceDomainExtractor());
         };
     }
 

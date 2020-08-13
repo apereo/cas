@@ -24,10 +24,20 @@ public class SamlIdPTestUtils {
      * @return the saml registered service
      */
     public static SamlRegisteredService getSamlRegisteredService() {
+        return getSamlRegisteredService("https://sp.testshib.org/shibboleth-sp");
+    }
+
+    /**
+     * Gets saml registered service.
+     *
+     * @param serviceId the service id
+     * @return the saml registered service
+     */
+    public static SamlRegisteredService getSamlRegisteredService(final String serviceId) {
         val registeredService = new SamlRegisteredService();
         registeredService.setId(100);
         registeredService.setName("SAML");
-        registeredService.setServiceId("https://sp.testshib.org/shibboleth-sp");
+        registeredService.setServiceId(serviceId);
         registeredService.setMetadataLocation("classpath:metadata/testshib-providers.xml");
 
         val request = new MockHttpServletRequest();
