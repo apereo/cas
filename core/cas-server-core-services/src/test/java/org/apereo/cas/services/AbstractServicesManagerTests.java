@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -138,7 +139,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
             .serviceRegistry(serviceRegistry)
             .applicationContext(applicationContext)
             .environments(new HashSet<>(0))
-            .servicesCache(Caffeine.newBuilder().build())
+            .servicesCache(Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(2)).build())
             .build();
         return new DefaultServicesManager(context);
     }
