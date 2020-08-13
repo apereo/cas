@@ -14,6 +14,7 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.reflections.Reflections;
@@ -135,12 +136,17 @@ public class JpaServiceRegistryConfiguration {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "jpaServicePersistenceProviderConfigurer")
     public JpaPersistenceProviderConfigurer jpaServicePersistenceProviderConfigurer() {
-        return context -> context.getIncludeEntityClasses().addAll(List.of(
-            AbstractRegisteredService.class.getName(),
-            DefaultRegisteredServiceContact.class.getName(),
-            DefaultRegisteredServiceProperty.class.getName(),
-            RegexRegisteredService.class.getName()));
+        return context -> {
+            val entities = CollectionUtils.wrapList(
+                AbstractRegisteredService.class.getName(),
+                DefaultRegisteredServiceContact.class.getName(),
+                DefaultRegisteredServiceProperty.class.getName(),
+                RegexRegisteredService.class.getName());
+            entities.addAll(casProperties.getServiceRegistry().getJpa().getManagedEntities());
+            context.getIncludeEntityClasses().addAll(entities);
+        };
     }
 }

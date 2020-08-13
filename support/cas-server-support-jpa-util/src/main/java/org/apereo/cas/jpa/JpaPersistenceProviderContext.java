@@ -3,9 +3,7 @@ package org.apereo.cas.jpa;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
