@@ -72,6 +72,7 @@ public class JpaServiceRegistryConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "jpaServicePackagesToScan")
     public List<String> jpaServicePackagesToScan() {
         val reflections =
             new Reflections(new ConfigurationBuilder()

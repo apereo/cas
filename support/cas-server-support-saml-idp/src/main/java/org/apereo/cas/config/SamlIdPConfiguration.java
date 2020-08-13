@@ -8,6 +8,8 @@ import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilderConfigurer;
+import org.apereo.cas.services.ChainingServiceRegistry;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
@@ -48,6 +50,7 @@ import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
@@ -68,6 +71,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -96,11 +100,22 @@ public class SamlIdPConfiguration {
     private ObjectProvider<SessionStore<JEEContext>> samlIdPDistributedSessionStore;
 
     @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     private ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> defaultSamlRegisteredServiceCachingMetadataResolver;
+
+    @Autowired
+    @Qualifier("servicesManagerCache")
+    private ObjectProvider<Cache<Long, RegisteredService>> servicesManagerCache;
+
+    @Autowired
+    @Qualifier("serviceRegistry")
+    private ObjectProvider<ChainingServiceRegistry> serviceRegistry;
 
     @Autowired
     @Qualifier("casSamlIdPMetadataResolver")
@@ -363,6 +378,7 @@ public class SamlIdPConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "casSamlIdPAuditTrailRecordResolutionPlanConfigurer")
     public AuditTrailRecordResolutionPlanConfigurer casSamlIdPAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
             plan.registerAuditResourceResolver("SAML2_RESPONSE_RESOURCE_RESOLVER", new SamlResponseAuditResourceResolver());
@@ -374,6 +390,7 @@ public class SamlIdPConfiguration {
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
         };
     }
+
 
     private SamlProfileSamlResponseBuilderConfigurationContext.
         SamlProfileSamlResponseBuilderConfigurationContextBuilder getSamlResponseBuilderConfigurationContextBuilder() {

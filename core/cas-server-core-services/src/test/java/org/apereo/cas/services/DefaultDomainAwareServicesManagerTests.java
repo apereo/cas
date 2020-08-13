@@ -45,11 +45,14 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
     protected ServicesManager getServicesManagerInstance() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
-        defaultDomainAwareServicesManager = new DefaultDomainAwareServicesManager(serviceRegistry,
-            applicationContext,
-            new DefaultRegisteredServiceDomainExtractor(),
-            new HashSet<>(),
-            Caffeine.newBuilder().build());
+
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(serviceRegistry)
+            .applicationContext(applicationContext)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .build();
+        defaultDomainAwareServicesManager = new DefaultDomainAwareServicesManager(context, new DefaultRegisteredServiceDomainExtractor());
         return defaultDomainAwareServicesManager;
     }
 }

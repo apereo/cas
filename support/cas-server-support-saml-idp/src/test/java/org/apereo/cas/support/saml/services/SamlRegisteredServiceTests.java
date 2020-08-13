@@ -6,6 +6,7 @@ import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.JsonServiceRegistry;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.util.io.WatcherService;
@@ -104,7 +105,13 @@ public class SamlRegisteredServiceTests {
         service.setServiceId("^http://.+");
         service.setMetadataLocation(METADATA_LOCATION);
         val dao = new InMemoryServiceRegistry(appCtx, List.of(service), new ArrayList<>());
-        val impl = new DefaultServicesManager(dao, appCtx, new HashSet<>(), Caffeine.newBuilder().build());
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(dao)
+            .applicationContext(appCtx)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .build();
+        val impl = new DefaultServicesManager(context);
         impl.load();
 
         val s = impl.findServiceBy(new WebApplicationServiceFactory()

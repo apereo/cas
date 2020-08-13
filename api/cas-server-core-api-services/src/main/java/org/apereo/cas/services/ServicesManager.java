@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Service;
 
 import lombok.val;
+import org.springframework.core.Ordered;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,7 +17,7 @@ import java.util.stream.Stream;
  * @author Scott Battaglia
  * @since 3.1
  */
-public interface ServicesManager {
+public interface ServicesManager extends Ordered {
 
     /**
      * Register a service with CAS, or update an existing an entry.
@@ -242,5 +243,10 @@ public interface ServicesManager {
      */
     default boolean supports(final Class clazz) {
         return true;
+    }
+
+    @Override
+    default int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
     }
 }

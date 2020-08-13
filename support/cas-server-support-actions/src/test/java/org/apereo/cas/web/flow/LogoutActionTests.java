@@ -12,6 +12,7 @@ import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.web.SimpleUrlValidator;
 import org.apereo.cas.web.flow.logout.LogoutAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -67,7 +68,13 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
 
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
-        this.serviceManager = new DefaultServicesManager(new InMemoryServiceRegistry(appCtx), appCtx, new HashSet<>(), Caffeine.newBuilder().build());
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(new InMemoryServiceRegistry(appCtx))
+            .applicationContext(appCtx)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .build();
+        this.serviceManager = new DefaultServicesManager(context);
         this.serviceManager.load();
     }
 

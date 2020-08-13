@@ -189,7 +189,7 @@ public class SamlIdPEndpointsConfiguration {
     @Autowired
     @Qualifier("ticketRegistry")
     private ObjectProvider<TicketRegistry> ticketRegistry;
-
+    
     @Autowired
     @Qualifier("samlArtifactTicketFactory")
     private ObjectProvider<SamlArtifactTicketFactory> samlArtifactTicketFactory;
