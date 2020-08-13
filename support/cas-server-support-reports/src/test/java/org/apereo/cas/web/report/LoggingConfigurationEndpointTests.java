@@ -37,7 +37,7 @@ public class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests 
     @BeforeAll
     public static void setup() throws Exception {
         val content = IOUtils.toString(new ClassPathResource("log4j2-test.xml").getInputStream(), StandardCharsets.UTF_8);
-        try (val writer = new FileWriter(new File("/tmp/log4j2.xml"))) {
+        try (val writer = new FileWriter(new File("/tmp/log4j2.xml"), StandardCharsets.UTF_8)) {
             IOUtils.write(content, writer);
             writer.flush();
         }
