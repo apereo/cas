@@ -88,11 +88,12 @@ public class JpaYubiKeyConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory() {
         val factory = jpaBeanFactory.getObject();
-        val ctx = new JpaConfigurationContext(
-            jpaYubiKeyVendorAdapter(),
-            "jpaYubiKeyRegistryContext",
-            jpaYubiKeyPackagesToScan(),
-            dataSourceYubiKey());
+        val ctx = JpaConfigurationContext.builder()
+            .dataSource(dataSourceYubiKey())
+            .packagesToScan(jpaYubiKeyPackagesToScan())
+            .persistenceUnitName("jpaYubiKeyRegistryContext")
+            .jpaVendorAdapter(jpaYubiKeyVendorAdapter())
+            .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getYubikey().getJpa());
     }
 

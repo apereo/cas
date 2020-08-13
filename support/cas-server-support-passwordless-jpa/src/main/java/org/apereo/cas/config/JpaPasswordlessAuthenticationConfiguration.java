@@ -67,11 +67,12 @@ public class JpaPasswordlessAuthenticationConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean passwordlessEntityManagerFactory() {
         val factory = jpaBeanFactory.getObject();
-        val ctx = new JpaConfigurationContext(
-            jpaPasswordlessVendorAdapter(),
-            "jpaPasswordlessAuthNContext",
-            jpaPasswordlessPackagesToScan(),
-            passwordlessDataSource());
+        val ctx = JpaConfigurationContext.builder()
+            .jpaVendorAdapter(jpaPasswordlessVendorAdapter())
+            .persistenceUnitName("jpaPasswordlessAuthNContext")
+            .dataSource(passwordlessDataSource())
+            .packagesToScan(jpaPasswordlessPackagesToScan())
+            .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getPasswordless().getTokens().getJpa());
     }
 

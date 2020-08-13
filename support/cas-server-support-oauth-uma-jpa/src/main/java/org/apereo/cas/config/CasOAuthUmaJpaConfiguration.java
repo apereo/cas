@@ -66,11 +66,12 @@ public class CasOAuthUmaJpaConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean umaEntityManagerFactory() {
         val factory = jpaBeanFactory.getObject();
-        val ctx = new JpaConfigurationContext(
-            jpaUmaVendorAdapter(),
-            getClass().getSimpleName(),
-            jpaUmaPackagesToScan(),
-            dataSourceUma());
+        val ctx = JpaConfigurationContext.builder()
+            .jpaVendorAdapter(jpaUmaVendorAdapter())
+            .persistenceUnitName(getClass().getSimpleName())
+            .dataSource(dataSourceUma())
+            .packagesToScan(jpaUmaPackagesToScan())
+            .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getUma().getResourceSet().getJpa());
     }
 
