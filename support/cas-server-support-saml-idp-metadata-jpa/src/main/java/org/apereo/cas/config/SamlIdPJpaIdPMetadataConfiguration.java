@@ -96,11 +96,12 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     public LocalContainerEntityManagerFactoryBean samlMetadataIdPEntityManagerFactory() {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
         val factory = jpaBeanFactory.getObject();
-        val ctx = new JpaConfigurationContext(
-            jpaSamlMetadataIdPVendorAdapter(),
-            "jpaSamlMetadataIdPContext",
-            jpaSamlMetadataIdPPackagesToScan(),
-            dataSourceSamlMetadataIdP());
+        val ctx = JpaConfigurationContext.builder()
+            .jpaVendorAdapter(jpaSamlMetadataIdPVendorAdapter())
+            .persistenceUnitName("jpaSamlMetadataIdPContext")
+            .dataSource(dataSourceSamlMetadataIdP())
+            .packagesToScan(jpaSamlMetadataIdPPackagesToScan())
+            .build();
         return factory.newEntityManagerFactoryBean(ctx, idp.getJpa());
     }
 

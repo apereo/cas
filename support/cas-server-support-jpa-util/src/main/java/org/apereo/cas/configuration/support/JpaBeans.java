@@ -16,7 +16,6 @@ import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import javax.sql.DataSource;
-
 import java.sql.Driver;
 
 /**
@@ -120,10 +119,15 @@ public class JpaBeans {
         val bean = new LocalContainerEntityManagerFactoryBean();
         bean.setJpaVendorAdapter(config.getJpaVendorAdapter());
 
+        if (config.getPersistenceProvider() != null) {
+            bean.setPersistenceProvider(config.getPersistenceProvider());
+        }
         if (StringUtils.isNotBlank(config.getPersistenceUnitName())) {
             bean.setPersistenceUnitName(config.getPersistenceUnitName());
         }
-        bean.setPackagesToScan(config.getPackagesToScan().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+        if (!config.getPackagesToScan().isEmpty()) {
+            bean.setPackagesToScan(config.getPackagesToScan().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+        }
         if (config.getDataSource() != null) {
             bean.setDataSource(config.getDataSource());
         }

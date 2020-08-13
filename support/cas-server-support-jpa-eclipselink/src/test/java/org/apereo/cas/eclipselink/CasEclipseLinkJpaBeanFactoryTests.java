@@ -58,11 +58,12 @@ public class CasEclipseLinkJpaBeanFactoryTests {
         val adapter = jpaBeanFactory.newJpaVendorAdapter();
         assertNotNull(adapter);
 
-        val ctx = new JpaConfigurationContext(
-            adapter,
-            "sampleContext",
-            CollectionUtils.wrap(SampleEntity.class.getPackage().getName()),
-            dataSource());
+        val ctx = JpaConfigurationContext.builder()
+            .dataSource(dataSource())
+            .packagesToScan(CollectionUtils.wrap(SampleEntity.class.getPackage().getName()))
+            .persistenceUnitName("sampleContext")
+            .jpaVendorAdapter(adapter)
+            .build();
         val bean = jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc());
         assertNotNull(bean);
     }

@@ -5,6 +5,8 @@ import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.jpa.JpaPersistenceProviderConfigurer;
+import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -16,10 +18,12 @@ import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.cfg.Environment;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
+import javax.persistence.spi.PersistenceProvider;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
@@ -82,4 +86,12 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
         return bean;
     }
 
+    @Override
+    public PersistenceProvider newPersistenceProvider(final AbstractJpaProperties jpa) {
+        val configurers = applicationContext.getBeansOfType(JpaPersistenceProviderConfigurer.class, false, true).values();
+        AnnotationAwareOrderComparator.sortIfNecessary(configurers);
+        val context = new JpaPersistenceProviderContext();
+        configurers.forEach(cfg -> cfg.configure(context));
+        return new CasHibernatePersistenceProvider(context);
+    }
 }

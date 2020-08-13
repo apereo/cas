@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.jpa.JpaPersistenceProviderConfigurer;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
@@ -74,6 +75,7 @@ import org.apereo.cas.oidc.web.controllers.token.OidcRevocationEndpointControlle
 import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTrigger;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIAction;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurer;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
@@ -153,6 +155,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -961,6 +964,19 @@ public class OidcConfiguration implements WebMvcConfigurer {
             casProperties);
     }
 
+    @ConditionalOnClass(value = JpaPersistenceProviderConfigurer.class)
+    @Configuration("oidcJpaServiceRegistryConfiguration")
+    public static class OidcJpaServiceRegistryConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "oidcJpaServicePersistenceProviderConfigurer")
+        public JpaPersistenceProviderConfigurer oidcJpaServicePersistenceProviderConfigurer() {
+            return context -> context.getIncludeEntityClasses().addAll(List.of(
+                OidcRegisteredService.class.getName(),
+                OAuthRegisteredService.class.getName()));
+        }
+    }
+
+    
     private OAuth20ConfigurationContext buildConfigurationContext() {
         return OAuth20ConfigurationContext.builder()
             .applicationContext(applicationContext)

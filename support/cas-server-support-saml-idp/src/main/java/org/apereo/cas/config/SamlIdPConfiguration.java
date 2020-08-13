@@ -7,10 +7,12 @@ import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.jpa.JpaPersistenceProviderConfigurer;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilderConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.audit.SamlRequestAuditResourceResolver;
 import org.apereo.cas.support.saml.web.idp.audit.SamlResponseAuditPrincipalIdProvider;
@@ -65,6 +67,7 @@ import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -72,6 +75,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.Duration;
+import java.util.List;
 
 /**
  * The {@link SamlIdPConfiguration}.
@@ -376,6 +380,15 @@ public class SamlIdPConfiguration {
         };
     }
 
+    @ConditionalOnClass(value = JpaPersistenceProviderConfigurer.class)
+    @Configuration("samlIdPJpaServiceRegistryConfiguration")
+    public static class SamlIdPJpaServiceRegistryConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "samlIdPJpaServicePersistenceProviderConfigurer")
+        public JpaPersistenceProviderConfigurer samlIdPJpaServicePersistenceProviderConfigurer() {
+            return context -> context.getIncludeEntityClasses().addAll(List.of(SamlRegisteredService.class.getName()));
+        }
+    }
 
     private SamlProfileSamlResponseBuilderConfigurationContext.
         SamlProfileSamlResponseBuilderConfigurationContextBuilder getSamlResponseBuilderConfigurationContextBuilder() {

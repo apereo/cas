@@ -94,8 +94,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
 
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
         if (StringUtils.isBlank(ticket)) {
-            LOGGER.error("Can not validate the request because no [{}] is provided via the request",
-                CasProtocolConstants.PARAMETER_TICKET);
+            LOGGER.error("Can not validate the request because no [{}] is provided via the request", CasProtocolConstants.PARAMETER_TICKET);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
@@ -103,7 +102,11 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         val authenticationContext = buildAuthenticationContextPair(request, response, authnRequest);
         val assertion = validateRequestAndBuildCasAssertion(response, request, authenticationContext);
         val binding = determineProfileBinding(authenticationContext, assertion);
-        buildSamlResponse(response, request, authenticationContext, assertion, binding);
+        if (StringUtils.isBlank(binding)) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        } else {
+            buildSamlResponse(response, request, authenticationContext, assertion, binding);
+        }
     }
 
     /**
@@ -127,7 +130,11 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         val entityId = facade.getEntityId();
         LOGGER.debug("Checking metadata for [{}] to see if binding [{}] is supported", entityId, binding);
         val svc = facade.getAssertionConsumerService(binding);
-        LOGGER.debug("Binding [{}] is supported by [{}]", svc.getBinding(), entityId);
-        return binding;
+        if (svc != null) {
+            LOGGER.debug("Binding [{}] is supported by [{}]", svc.getBinding(), entityId);
+            return binding;
+        }
+        LOGGER.warn("Checking determine profile binding for [{}]", entityId);
+        return null;
     }
 }

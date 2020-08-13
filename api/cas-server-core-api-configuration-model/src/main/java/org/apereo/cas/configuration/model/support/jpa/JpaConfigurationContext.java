@@ -1,13 +1,14 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 
+import javax.persistence.spi.PersistenceProvider;
 import javax.sql.DataSource;
-
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,25 +22,19 @@ import java.util.Map;
  */
 @Getter
 @Setter
-@RequiredArgsConstructor
-public class JpaConfigurationContext implements Serializable {
-
-    private static final long serialVersionUID = -3940423575751579622L;
-
-    private final transient JpaVendorAdapter jpaVendorAdapter;
+@SuperBuilder
+public class JpaConfigurationContext {
+    private final JpaVendorAdapter jpaVendorAdapter;
 
     private final String persistenceUnitName;
 
-    private final List<String> packagesToScan;
+    private final DataSource dataSource;
 
-    private final transient DataSource dataSource;
+    private final PersistenceProvider persistenceProvider;
 
-    private final Map<String, Object> jpaProperties = new LinkedHashMap<>();
-    
-    public JpaConfigurationContext(final JpaVendorAdapter jpaVendorAdapter,
-                                   final String persistenceUnitName,
-                                   final List<String> packagesToScan) {
-        this(jpaVendorAdapter, persistenceUnitName, packagesToScan, null);
-    }
+    @Builder.Default
+    private final Map<String, Object> jpaProperties = new LinkedHashMap<>(0);
 
+    @Builder.Default
+    private final List<String> packagesToScan = new ArrayList<>(0);
 }
