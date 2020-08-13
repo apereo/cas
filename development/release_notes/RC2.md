@@ -79,6 +79,34 @@ Multiple YubiKey devices can now be registered with CAS for [multifactor authent
 
 CAS registered service definitions can now be natively stored in [Amazon S3 buckets](../services/AmazonS3-Service-Management.html).
 
+### Dynamic JPA Service Management
+
+CAS registered service definitions that are managed by the [JPA Service Registry](../services/JPA-Service-Management.html)
+are now put through a more fine-tuned dynamic registration process at runtime. Previously, database schemas were created automatically
+if appropriate entity classes, representing each client application type, were found on the classpath. In this release, entity classes 
+are required to be explicitly registered with the CAS service management facility and each appropriate auto-configuration module should
+correctly nominate the relevant entities when declared in the [WAR Overlay](../installation/WAR-Overlay-Installation.html). 
+
+<div class="alert alert-warning">
+  <strong>Remember</strong><br />If you are not using a relational database to manage application definitions,
+  there is nothing for you to do here. Carry on!
+</div>
+
+The main motivation for this change is to avoid conflicts between the CAS web application server and 
+the CAS management application, specially when both are configured to use JPA to manage service definitions. The management
+application requires compile-time access to the CAS service definition APIs to handle data mappings, yet doing so interferes
+with the JPA Service Registry expectations of database schemas and tables that should be there, again, given the classpath
+automatic discovery process. For example, a CAS server deployment could declare support for CAS and SAML application types
+allowing it to create appropriate schemas automatically based on those two. When the CAS management application 
+is next deployed, it might complain about missing schemas for OAUTH and OIDC applications since the type 
+is found on the classpath but the definition is not actually used/supported by the deployment.
+
+Using this new strategy, database tables and schemas are not automatically expected or created by the CAS management
+ application, allowing the codebase to declare use entity classes on the classpath for data mapping operations. 
+ To handle the registration, the management application is given the ability to register entity classes for each 
+ application type with the CAS JPA Service Registry using a simple property, allowing the operator to explicitly 
+ declare the set of services supported by the deployment.
+
 ### SAML2 Logout Responses
 
 SAML2 single logout handling handling, when CAS is running as a [SAML2 identity provider](../installation/Configuring-SAML2-Authentication.html), is now able to produce a logout response for the service provider once the single logout sequence has completed. 
