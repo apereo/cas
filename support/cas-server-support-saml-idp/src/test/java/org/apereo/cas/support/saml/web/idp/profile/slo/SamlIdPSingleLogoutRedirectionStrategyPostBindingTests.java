@@ -55,7 +55,7 @@ public class SamlIdPSingleLogoutRedirectionStrategyPostBindingTests extends Base
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val registeredService = getSamlRegisteredServiceFor(false, false,
-            false, "https://mocky.io");
+            false, "https://mockypost.io");
         WebUtils.putRegisteredService(request, registeredService);
 
         val logoutRequest = samlIdPLogoutResponseObjectBuilder.newLogoutRequest(
