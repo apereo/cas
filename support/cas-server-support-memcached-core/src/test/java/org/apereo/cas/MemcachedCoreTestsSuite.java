@@ -1,5 +1,7 @@
-package org.apereo.cas.memcached;
+package org.apereo.cas;
 
+import org.apereo.cas.memcached.MemcachedPooledClientConnectionFactoryTests;
+import org.apereo.cas.memcached.MemcachedUtilsTests;
 import org.apereo.cas.memcached.kryo.CasKryoTranscoderTests;
 import org.apereo.cas.memcached.kryo.ZonedDateTimeSerializerTests;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaListSerializerTests;

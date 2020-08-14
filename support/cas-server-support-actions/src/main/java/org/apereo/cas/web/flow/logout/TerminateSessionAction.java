@@ -43,33 +43,26 @@ public class TerminateSessionAction extends AbstractAction {
      * The event factory.
      */
     protected final EventFactorySupport eventFactorySupport = new EventFactorySupport();
+
     /**
      * The authentication service.
      */
     protected final CentralAuthenticationService centralAuthenticationService;
+
     /**
      * The TGT cookie generator.
      */
     protected final CasCookieBuilder ticketGrantingTicketCookieGenerator;
+
     /**
      * The warn cookie generator.
      */
     protected final CasCookieBuilder warnCookieGenerator;
+
     /**
      * The logout properties.
      */
     protected final LogoutProperties logoutProperties;
-
-    /**
-     * Check if the logout must be confirmed.
-     *
-     * @param requestContext the request context
-     * @return if the logout must be confirmed
-     */
-    protected static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        return request.getParameterMap().containsKey(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED);
-    }
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
@@ -123,6 +116,17 @@ public class TerminateSessionAction extends AbstractAction {
             return this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         }
         return tgtId;
+    }
+
+    /**
+     * Check if the logout must be confirmed.
+     *
+     * @param requestContext the request context
+     * @return if the logout must be confirmed
+     */
+    protected static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        return request.getParameterMap().containsKey(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED);
     }
 
     /**
