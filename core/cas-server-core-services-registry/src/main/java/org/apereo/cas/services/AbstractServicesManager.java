@@ -48,7 +48,8 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     @Override
-    public synchronized RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
+    public synchronized RegisteredService save(final RegisteredService registeredService,
+                                               final boolean publishEvent) {
         publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService));
         val r = configurationContext.getServiceRegistry().save(registeredService);
         configurationContext.getServicesCache().put(r.getId(), r);
