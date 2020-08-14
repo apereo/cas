@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreAuthenticationComponentSerializationConfiguration;
+import org.apereo.cas.config.CasCoreServicesComponentSerializationConfiguration;
 import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
@@ -40,6 +42,8 @@ import static org.junit.jupiter.api.Assertions.*;
     MemcachedTicketRegistryConfiguration.class,
     CasCoreUtilSerializationConfiguration.class,
     CasCoreTicketComponentSerializationConfiguration.class,
+    CasCoreAuthenticationComponentSerializationConfiguration.class,
+    CasCoreServicesComponentSerializationConfiguration.class,
     CasOAuth20ComponentSerializationConfiguration.class,
     MemcachedTicketRegistryTests.MemcachedTicketRegistryTestConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
