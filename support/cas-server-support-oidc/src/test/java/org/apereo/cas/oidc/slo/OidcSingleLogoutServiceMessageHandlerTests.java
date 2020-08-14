@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.logout.slo.SingleLogoutRequest;
+import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.logout.slo.SingleLogoutUrl;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
@@ -73,7 +73,7 @@ public class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTest
                 Collections.singleton(singleLogoutUrl), tgt);
 
         assertEquals(1, requests.size());
-        val request = ((List<SingleLogoutRequest>) requests).get(0);
+        val request = ((List<SingleLogoutRequestContext>) requests).get(0);
         assertEquals(url, request.getLogoutUrl().toString());
     }
 }

@@ -16,7 +16,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public interface SingleLogoutRequest extends Serializable {
+public interface SingleLogoutRequestContext extends Serializable {
     /**
      * Gets status of the request.
      *

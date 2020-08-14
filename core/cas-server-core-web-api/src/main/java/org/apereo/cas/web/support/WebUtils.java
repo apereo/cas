@@ -13,7 +13,7 @@ import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
-import org.apereo.cas.logout.slo.SingleLogoutRequest;
+import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -320,7 +320,7 @@ public class WebUtils {
      * @param context  the context
      * @param requests the requests
      */
-    public static void putLogoutRequests(final RequestContext context, final List<SingleLogoutRequest> requests) {
+    public static void putLogoutRequests(final RequestContext context, final List<SingleLogoutRequestContext> requests) {
         context.getFlowScope().put(PARAMETER_LOGOUT_REQUESTS, requests);
     }
 
@@ -340,8 +340,8 @@ public class WebUtils {
      * @param context the context
      * @return the logout requests
      */
-    public static List<SingleLogoutRequest> getLogoutRequests(final RequestContext context) {
-        return (List<SingleLogoutRequest>) context.getFlowScope().get(PARAMETER_LOGOUT_REQUESTS);
+    public static List<SingleLogoutRequestContext> getLogoutRequests(final RequestContext context) {
+        return (List<SingleLogoutRequestContext>) context.getFlowScope().get(PARAMETER_LOGOUT_REQUESTS);
     }
 
     /**

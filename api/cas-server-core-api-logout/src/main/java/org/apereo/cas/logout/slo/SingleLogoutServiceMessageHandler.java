@@ -24,7 +24,7 @@ public interface SingleLogoutServiceMessageHandler extends Ordered {
      * @param ticketGrantingTicket the ticket granting ticket
      * @return the logout request
      */
-    Collection<SingleLogoutRequest> handle(WebApplicationService singleLogoutService, String ticketId, TicketGrantingTicket ticketGrantingTicket);
+    Collection<SingleLogoutRequestContext> handle(WebApplicationService singleLogoutService, String ticketId, TicketGrantingTicket ticketGrantingTicket);
 
     /**
      * Gets name.
@@ -51,7 +51,7 @@ public interface SingleLogoutServiceMessageHandler extends Ordered {
      * @param request the logout request.
      * @return if the logout has been performed.
      */
-    boolean performBackChannelLogout(SingleLogoutRequest request);
+    boolean performBackChannelLogout(SingleLogoutRequestContext request);
 
     /**
      * Create a logout message typically for front channel logout.
@@ -59,7 +59,7 @@ public interface SingleLogoutServiceMessageHandler extends Ordered {
      * @param logoutRequest the logout request.
      * @return the single logout message payload
      */
-    SingleLogoutMessage createSingleLogoutMessage(SingleLogoutRequest logoutRequest);
+    SingleLogoutMessage createSingleLogoutMessage(SingleLogoutRequestContext logoutRequest);
 
     @Override
     default int getOrder() {

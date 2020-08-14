@@ -1,6 +1,6 @@
 package org.apereo.cas.logout;
 
-import org.apereo.cas.logout.slo.SingleLogoutRequest;
+import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import java.util.List;
@@ -20,5 +20,5 @@ public interface LogoutManager {
      * @param ticket a given ticket granting ticket.
      * @return all logout requests.
      */
-    List<SingleLogoutRequest> performLogout(TicketGrantingTicket ticket);
+    List<SingleLogoutRequestContext> performLogout(TicketGrantingTicket ticket);
 }

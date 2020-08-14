@@ -15,7 +15,6 @@ import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
@@ -178,7 +177,6 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
             mock(ApplicationEventPublisher.class),
             ticketRegMock,
             smMock,
-            mock(LogoutManager.class),
             factory,
             authenticationRequestServiceSelectionStrategies,
             new AcceptAnyAuthenticationPolicyFactory(),

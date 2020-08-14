@@ -1,7 +1,7 @@
 package org.apereo.cas.logout;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.logout.slo.SingleLogoutRequest;
+import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -27,7 +27,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Builder
-public class DefaultSingleLogoutRequest implements SingleLogoutRequest {
+public class DefaultSingleLogoutRequestContext implements SingleLogoutRequestContext {
 
     /**
      * Generated serialVersionUID.

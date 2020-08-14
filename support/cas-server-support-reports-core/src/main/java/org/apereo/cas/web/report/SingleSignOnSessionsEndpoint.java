@@ -155,7 +155,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
 
         val sessionsMap = new HashMap<String, Object>(1);
         try {
-            this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
+            this.centralAuthenticationService.deleteTicket(ticketGrantingTicket);
             sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
             sessionsMap.put(TICKET_GRANTING_TICKET, ticketGrantingTicket);
         } catch (final Exception e) {
@@ -198,7 +198,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
             .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString()).toString())
             .forEach(ticketGrantingTicket -> {
                 try {
-                    this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
+                    centralAuthenticationService.deleteTicket(ticketGrantingTicket);
                 } catch (final Exception e) {
                     LoggingUtils.error(LOGGER, e);
                     failedTickets.put(ticketGrantingTicket, e.getMessage());

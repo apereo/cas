@@ -145,7 +145,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
         val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), SERVICE, ctx);
 
-        getCentralAuthenticationService().getObject().destroyTicketGrantingTicket(tId.getId());
+        getCentralAuthenticationService().getObject().deleteTicket(tId.getId());
 
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());
