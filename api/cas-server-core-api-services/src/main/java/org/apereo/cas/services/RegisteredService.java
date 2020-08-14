@@ -155,6 +155,13 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     RegisteredServiceProxyTicketExpirationPolicy getProxyTicketExpirationPolicy();
 
     /**
+     * Gets ticket granting ticket expiration policy.
+     *
+     * @return the ticket granting ticket expiration policy
+     */
+    RegisteredServiceTicketGrantingTicketExpirationPolicy getTicketGrantingTicketExpirationPolicy();
+
+    /**
      * Gets proxy granting ticket expiration policy.
      *
      * @return the proxy granting ticket expiration policy

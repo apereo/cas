@@ -568,6 +568,10 @@ button.close {
     box-sizing: border-box;
 }
 
+.text-justify {
+text-align: justify;
+}
+
 /* legacy */
 
 #duo_iframe {

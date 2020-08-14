@@ -3,12 +3,14 @@ package org.apereo.cas.ticket.factory;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.RequiredArgsConstructor;
@@ -74,7 +76,7 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
                                                                final String tgtId,
                                                                final Service service,
                                                                final Class<T> clazz) {
-        val expirationPolicy = ticketGrantingTicketExpirationPolicy.buildTicketExpirationPolicy();
+        val expirationPolicy = getTicketGrantingTicketExpirationPolicy(service);
         val result = new TicketGrantingTicketImpl(tgtId, authentication, expirationPolicy);
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [" + result
@@ -82,6 +84,23 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
                 + " when we were expecting " + clazz);
         }
         return (T) result;
+    }
+
+    /**
+     * Retrieve the ticket granting ticket expiration policy of the service.
+     *
+     * @param service the service
+     * @return the expiration policy
+     */
+    protected ExpirationPolicy getTicketGrantingTicketExpirationPolicy(final Service service) {
+        val registeredService = servicesManager.findServiceBy(service);
+        if (registeredService != null) {
+            val policy = registeredService.getTicketGrantingTicketExpirationPolicy();
+            if (policy != null && policy.getMaxTimeToLiveInSeconds() > 0) {
+                return new HardTimeoutExpirationPolicy(policy.getMaxTimeToLiveInSeconds());
+            }
+        }
+        return ticketGrantingTicketExpirationPolicy.buildTicketExpirationPolicy();
     }
 
     /**

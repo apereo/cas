@@ -23,6 +23,24 @@ This is the default option, which provides a hard-time out as well as a sliding 
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#tgt-expiration-policy).
 
+### Per Service
+
+The expiration policy of ticket granting tickets can be conditionally decided on a per-application basis. The candidate service
+whose ticket granting ticket expiration policy is to deviate from the default configuration must be designed as such:
+
+```json
+{
+    "@class" : "org.apereo.cas.services.RegexRegisteredService",
+    "serviceId" : "^https://.*",
+    "name" : "Sample",
+    "id" : 10,
+    "ticketGrantingTicketExpirationPolicy": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy",
+      "maxTimeToLiveInSeconds": 5
+    }
+}
+```
+
 ### Timeout
 
 The expiration policy applied to TGTs provides for most-recently-used expiration policy, similar to a Web server session timeout.
