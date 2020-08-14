@@ -87,7 +87,7 @@ if appropriate entity classes, representing each client application type, were f
 are required to be explicitly registered with the CAS service management facility and each appropriate auto-configuration module should
 correctly nominate the relevant entities when declared in the [WAR Overlay](../installation/WAR-Overlay-Installation.html). 
 
-<div class="alert alert-warning">
+<div class="alert alert-info">
   <strong>Remember</strong><br />If you are not using a relational database to manage application definitions,
   there is nothing for you to do here. Carry on!
 </div>
@@ -95,14 +95,14 @@ correctly nominate the relevant entities when declared in the [WAR Overlay](../i
 The main motivation for this change is to avoid conflicts between the CAS web application server and 
 the CAS management application, specially when both are configured to use JPA to manage service definitions. The management
 application requires compile-time access to the CAS service definition APIs to handle data mappings, yet doing so interferes
-with the JPA Service Registry expectations of database schemas and tables that should be there, again, given the classpath
+with the JPA Service Registry expectations of database schemas and tables that should be there, given the classpath
 automatic discovery process. For example, a CAS server deployment could declare support for CAS and SAML application types
-allowing it to create appropriate schemas automatically based on those two. When the CAS management application 
+allowing it to create appropriate schemas automatically based on those two definition types. When the CAS management application 
 is next deployed, it might complain about missing schemas for OAUTH and OIDC applications since the type 
 is found on the classpath but the definition is not actually used/supported by the deployment.
 
 Using this new strategy, database tables and schemas are not automatically expected or created by the CAS management
- application, allowing the codebase to declare use entity classes on the classpath for data mapping operations. 
+ application, allowing the codebase to use entity classes on the classpath for data mapping operations. 
  To handle the registration, the management application is given the ability to register entity classes for each 
  application type with the CAS JPA Service Registry using a simple property, allowing the operator to explicitly 
  declare the set of services supported by the deployment.
@@ -117,7 +117,7 @@ CAS is now using the Okta SDK v2 mainly used to handle the integration between C
 
 ### Attribute Consent Activation
 
-Activation rules for [Attribute Consent](../integration/Attribute-Release-Consent.html) are re-design to allow per-application 
+Activation rules for [Attribute Consent](../integration/Attribute-Release-Consent.html) are re-designed to allow per-application 
 overrides of the global policy activation rules. Additional documentation updates are now present to demonstrate how multiple attribute consent policies may be chained together.
 
 Furthermore, activation rules can also be outsourced to external Groovy scripts. 
@@ -134,7 +134,7 @@ a few [additional options](../services/Configuring-Service-Matching-Strategy.htm
 
 ## Other Stuff
 
-- Adjustments to SAML2 metadata resolution to cache to ensure enough capacity for resolved metadata providers. 
+- Adjustments to SAML2 metadata resolution cache to ensure enough capacity for resolved metadata providers. 
 - Minor fixes to SQL query execution when pushing CAS audit logs to Oracle databases.
 - The expiration of access tokens is now correctly communicated back to OAuth relying parties, specially if the access token expiration policy is defined per application.
 - The handling of authentication requests, set to force CAS to challenge the user credentials, is reviewed and adjusted to ensure such requests can properly honor multifactor authentication flows for qualifying requests per configured triggers. 
@@ -154,6 +154,7 @@ a few [additional options](../services/Configuring-Service-Matching-Strategy.htm
 - Okta
 - Ldaptive
 - Inspektr
+- Spring Data
 - Person Directory
 - Azure DocumentDb
 - Grouper Client
