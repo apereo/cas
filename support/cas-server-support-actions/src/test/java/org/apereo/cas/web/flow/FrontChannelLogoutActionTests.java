@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrate
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.logout.DefaultLogoutExecutionPlan;
 import org.apereo.cas.logout.DefaultSingleLogoutMessageCreator;
-import org.apereo.cas.logout.DefaultSingleLogoutRequest;
+import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
@@ -89,7 +89,7 @@ public class FrontChannelLogoutActionTests {
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         val id = UUID.randomUUID().toString();
-        val sloReq = DefaultSingleLogoutRequest.builder()
+        val sloReq = DefaultSingleLogoutRequestContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
             .service(RegisteredServiceTestUtils.getService())
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
@@ -115,7 +115,7 @@ public class FrontChannelLogoutActionTests {
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         val id = UUID.randomUUID().toString();
-        val sloReq = DefaultSingleLogoutRequest.builder()
+        val sloReq = DefaultSingleLogoutRequestContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
             .service(RegisteredServiceTestUtils.getService())
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))

@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
-import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.ServicesManager;
@@ -29,6 +28,7 @@ import lombok.Setter;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -69,11 +69,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * Implementation of Service Manager.
      */
     protected final ServicesManager servicesManager;
-
-    /**
-     * The logout manager.
-     **/
-    protected final LogoutManager logoutManager;
 
     /**
      * The ticket factory.
@@ -157,6 +152,11 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         }
     }
 
+
+    @Audit(
+        action = "TICKET_DESTROYED",
+        actionResolverName = "DESTROY_TICKET_RESOLVER",
+        resourceResolverName = "DESTROY_TICKET_RESOURCE_RESOLVER")
     @Transactional(transactionManager = "ticketTransactionManager")
     @Override
     public void deleteTicket(final String ticketId) {

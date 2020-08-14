@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlan;
+import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -71,6 +72,10 @@ public class CasSupportActionsConfiguration {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    @Autowired
+    @Qualifier("logoutManager")
+    private ObjectProvider<LogoutManager> logoutManager;
+    
     @Autowired
     @Qualifier("authenticationEventExecutionPlan")
     private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
@@ -326,7 +331,9 @@ public class CasSupportActionsConfiguration {
         return new TerminateSessionAction(centralAuthenticationService.getObject(),
             ticketGrantingTicketCookieGenerator.getObject(),
             warnCookieGenerator.getObject(),
-            casProperties.getLogout());
+            casProperties.getLogout(),
+            logoutManager.getObject(),
+            applicationContext);
     }
 
     @Bean

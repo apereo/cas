@@ -279,7 +279,7 @@ public class CasCoreAuditConfiguration {
                 AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED));
 
         val defResolver = new DefaultAuditActionResolver();
-        plan.registerAuditActionResolver("DESTROY_TICKET_GRANTING_TICKET_RESOLVER", defResolver);
+        plan.registerAuditActionResolver("DESTROY_TICKET_RESOLVER", defResolver);
         plan.registerAuditActionResolver("DESTROY_PROXY_GRANTING_TICKET_RESOLVER", defResolver);
 
         val cResolver = ticketCreationActionResolver();
@@ -305,7 +305,7 @@ public class CasCoreAuditConfiguration {
         plan.registerAuditResourceResolver("CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER", messageBundleAwareResourceResolver);
 
         val ticketResourceResolver = ticketResourceResolver();
-        plan.registerAuditResourceResolver("DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", ticketResourceResolver);
+        plan.registerAuditResourceResolver("DESTROY_TICKET_RESOURCE_RESOLVER", ticketResourceResolver);
         plan.registerAuditResourceResolver("DESTROY_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER", ticketResourceResolver);
 
         plan.registerAuditResourceResolver("GRANT_SERVICE_TICKET_RESOURCE_RESOLVER", new ServiceAuditResourceResolver());

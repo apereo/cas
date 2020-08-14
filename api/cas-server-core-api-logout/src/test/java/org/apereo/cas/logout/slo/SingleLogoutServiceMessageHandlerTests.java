@@ -27,19 +27,19 @@ public class SingleLogoutServiceMessageHandlerTests {
     public void verifyOperation() {
         val handler = new SingleLogoutServiceMessageHandler() {
             @Override
-            public Collection<SingleLogoutRequest> handle(final WebApplicationService singleLogoutService,
-                                                          final String ticketId,
-                                                          final TicketGrantingTicket ticketGrantingTicket) {
+            public Collection<SingleLogoutRequestContext> handle(final WebApplicationService singleLogoutService,
+                                                                 final String ticketId,
+                                                                 final TicketGrantingTicket ticketGrantingTicket) {
                 return List.of();
             }
 
             @Override
-            public boolean performBackChannelLogout(final SingleLogoutRequest request) {
+            public boolean performBackChannelLogout(final SingleLogoutRequestContext request) {
                 return false;
             }
 
             @Override
-            public SingleLogoutMessage createSingleLogoutMessage(final SingleLogoutRequest logoutRequest) {
+            public SingleLogoutMessage createSingleLogoutMessage(final SingleLogoutRequestContext logoutRequest) {
                 return null;
             }
         };

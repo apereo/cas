@@ -1,7 +1,7 @@
 package org.apereo.cas.logout;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.logout.slo.SingleLogoutRequest;
+import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.Getter;
@@ -30,10 +30,11 @@ import java.util.stream.Stream;
 @Getter
 public class DefaultLogoutManager implements LogoutManager {
     private final boolean singleLogoutCallbacksDisabled;
+
     private final LogoutExecutionPlan logoutExecutionPlan;
 
     @Override
-    public List<SingleLogoutRequest> performLogout(final TicketGrantingTicket ticket) {
+    public List<SingleLogoutRequestContext> performLogout(final TicketGrantingTicket ticket) {
         LOGGER.info("Performing logout operations for [{}]", ticket.getId());
         if (this.singleLogoutCallbacksDisabled) {
             LOGGER.info("Single logout callbacks are disabled");
@@ -48,7 +49,7 @@ public class DefaultLogoutManager implements LogoutManager {
         return logoutRequests;
     }
 
-    private List<SingleLogoutRequest> performLogoutForTicket(final TicketGrantingTicket ticketToBeLoggedOut) {
+    private List<SingleLogoutRequestContext> performLogoutForTicket(final TicketGrantingTicket ticketToBeLoggedOut) {
         val streamServices = Stream.concat(Stream.of(ticketToBeLoggedOut.getServices()), Stream.of(ticketToBeLoggedOut.getProxyGrantingTickets()));
         val logoutServices = streamServices
             .map(Map::entrySet)

@@ -2,7 +2,7 @@ package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.logout.DefaultSingleLogoutRequest;
+import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
 import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.services.RegisteredService;
@@ -48,9 +48,9 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @Override
-    public Collection<SingleLogoutRequest> handle(final WebApplicationService singleLogoutService,
-                                                  final String ticketId,
-                                                  final TicketGrantingTicket ticketGrantingTicket) {
+    public Collection<SingleLogoutRequestContext> handle(final WebApplicationService singleLogoutService,
+                                                         final String ticketId,
+                                                         final TicketGrantingTicket ticketGrantingTicket) {
         if (singleLogoutService.isLoggedOutAlready()) {
             LOGGER.debug("Service [{}] is already logged out.", singleLogoutService);
             return new ArrayList<>(0);
@@ -88,7 +88,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
     }
 
     @Override
-    public boolean performBackChannelLogout(final SingleLogoutRequest request) {
+    public boolean performBackChannelLogout(final SingleLogoutRequestContext request) {
         try {
             LOGGER.trace("Creating back-channel logout request based on [{}]", request);
             val logoutRequest = createSingleLogoutMessage(request);
@@ -100,7 +100,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
     }
 
     @Override
-    public SingleLogoutMessage createSingleLogoutMessage(final SingleLogoutRequest logoutRequest) {
+    public SingleLogoutMessage createSingleLogoutMessage(final SingleLogoutRequestContext logoutRequest) {
         return this.logoutMessageBuilder.create(logoutRequest);
     }
 
@@ -125,11 +125,11 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
      * @param ticketGrantingTicket the ticket granting ticket
      * @return the collection
      */
-    protected Collection<SingleLogoutRequest> createLogoutRequests(final String ticketId,
-                                                                   final WebApplicationService selectedService,
-                                                                   final RegisteredService registeredService,
-                                                                   final Collection<SingleLogoutUrl> logoutUrls,
-                                                                   final TicketGrantingTicket ticketGrantingTicket) {
+    protected Collection<SingleLogoutRequestContext> createLogoutRequests(final String ticketId,
+                                                                          final WebApplicationService selectedService,
+                                                                          final RegisteredService registeredService,
+                                                                          final Collection<SingleLogoutUrl> logoutUrls,
+                                                                          final TicketGrantingTicket ticketGrantingTicket) {
         return logoutUrls
             .stream()
             .map(url -> createLogoutRequest(ticketId, selectedService, registeredService, url, ticketGrantingTicket))
@@ -148,12 +148,12 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
      * @return the logout request
      */
     @SneakyThrows
-    protected SingleLogoutRequest createLogoutRequest(final String ticketId,
-                                                      final WebApplicationService selectedService,
-                                                      final RegisteredService registeredService,
-                                                      final SingleLogoutUrl logoutUrl,
-                                                      final TicketGrantingTicket ticketGrantingTicket) {
-        val logoutRequest = DefaultSingleLogoutRequest.builder()
+    protected SingleLogoutRequestContext createLogoutRequest(final String ticketId,
+                                                             final WebApplicationService selectedService,
+                                                             final RegisteredService registeredService,
+                                                             final SingleLogoutUrl logoutUrl,
+                                                             final TicketGrantingTicket ticketGrantingTicket) {
+        val logoutRequest = DefaultSingleLogoutRequestContext.builder()
             .ticketId(ticketId)
             .service(selectedService)
             .logoutUrl(new URL(logoutUrl.getUrl()))
@@ -185,7 +185,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
      * @param logoutMessage the logout request
      * @return true if the message was successfully sent.
      */
-    protected boolean sendSingleLogoutMessage(final SingleLogoutRequest request, final SingleLogoutMessage logoutMessage) {
+    protected boolean sendSingleLogoutMessage(final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
         val logoutService = request.getService();
         LOGGER.trace("Preparing logout request for [{}] to [{}]", logoutService.getId(), request.getLogoutUrl());
         val msg = getLogoutHttpMessageToSend(request, logoutMessage);
@@ -203,7 +203,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
      * @param logoutMessage the logout message
      * @return true/false
      */
-    protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg, final SingleLogoutRequest request, final SingleLogoutMessage logoutMessage) {
+    protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg, final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
         return this.httpClient.sendMessageToEndPoint(msg);
     }
 
@@ -214,7 +214,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
      * @param logoutMessage the logout message
      * @return the logout http message to send
      */
-    protected LogoutHttpMessage getLogoutHttpMessageToSend(final SingleLogoutRequest request, final SingleLogoutMessage logoutMessage) {
+    protected LogoutHttpMessage getLogoutHttpMessageToSend(final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
         return new LogoutHttpMessage(request.getLogoutUrl(), logoutMessage.getPayload(), this.asynchronous);
     }
 }

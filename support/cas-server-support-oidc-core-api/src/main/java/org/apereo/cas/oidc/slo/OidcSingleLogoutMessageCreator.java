@@ -2,7 +2,7 @@ package org.apereo.cas.oidc.slo;
 
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
-import org.apereo.cas.logout.slo.SingleLogoutRequest;
+import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
@@ -31,7 +31,7 @@ public class OidcSingleLogoutMessageCreator implements SingleLogoutMessageCreato
     private final OAuth20ConfigurationContext configurationContext;
 
     @Override
-    public SingleLogoutMessage create(final SingleLogoutRequest request) {
+    public SingleLogoutMessage create(final SingleLogoutRequestContext request) {
         val builder = SingleLogoutMessage.builder();
         if (request.getLogoutType() == RegisteredServiceLogoutType.BACK_CHANNEL) {
             LOGGER.trace("Building logout token for [{}]", request.getRegisteredService());
@@ -44,7 +44,7 @@ public class OidcSingleLogoutMessageCreator implements SingleLogoutMessageCreato
         return builder.payload(StringUtils.EMPTY).build();
     }
 
-    protected JwtClaims buildJwtClaims(final SingleLogoutRequest request) {
+    protected JwtClaims buildJwtClaims(final SingleLogoutRequestContext request) {
 
         val oidc = configurationContext.getCasProperties().getAuthn().getOidc();
 

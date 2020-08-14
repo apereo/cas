@@ -6,7 +6,7 @@ import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.logout.slo.BaseSingleLogoutServiceMessageHandler;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
-import org.apereo.cas.logout.slo.SingleLogoutRequest;
+import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -78,7 +78,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
     }
 
     @Override
-    protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg, final SingleLogoutRequest request, final SingleLogoutMessage logoutMessage) {
+    protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg, final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
         val binding = request.getProperties().get(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING);
 
         if (SAMLConstants.SAML2_SOAP11_BINDING_URI.equalsIgnoreCase(binding)) {
@@ -102,7 +102,8 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
                 val message = EncodingUtils.encodeBase64(payload.getBytes(StandardCharsets.UTF_8), false);
                 LOGGER.trace("Logout message encoded in base64 is [{}]", message);
 
-                response = HttpUtils.executePost(msg.getUrl().toExternalForm(), CollectionUtils.wrap(SamlProtocolConstants.PARAMETER_SAML_REQUEST, message),
+                response = HttpUtils.executePost(msg.getUrl().toExternalForm(),
+                    CollectionUtils.wrap(SamlProtocolConstants.PARAMETER_SAML_REQUEST, message),
                     CollectionUtils.wrap("Content-Type", msg.getContentType()));
             }
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {

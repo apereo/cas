@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.slo;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.logout.DefaultSingleLogoutRequest;
+import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
@@ -47,7 +47,7 @@ public class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
         val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn(TGT_ID);
         when(tgt.getAuthentication()).thenReturn(authentication);
-        val logoutRequest = DefaultSingleLogoutRequest.builder()
+        val logoutRequest = DefaultSingleLogoutRequestContext.builder()
                 .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
                 .registeredService(service)
                 .ticketGrantingTicket(tgt)
@@ -75,7 +75,7 @@ public class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
     public void verifyFrontChannelLogout() {
 
         val context = OAuth20ConfigurationContext.builder().build();
-        val logoutRequest = DefaultSingleLogoutRequest.builder()
+        val logoutRequest = DefaultSingleLogoutRequestContext.builder()
                 .logoutType(RegisteredServiceLogoutType.FRONT_CHANNEL)
                 .build();
 

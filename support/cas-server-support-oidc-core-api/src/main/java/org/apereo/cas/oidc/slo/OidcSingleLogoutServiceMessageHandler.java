@@ -6,7 +6,7 @@ import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.logout.slo.BaseSingleLogoutServiceMessageHandler;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
-import org.apereo.cas.logout.slo.SingleLogoutRequest;
+import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.SingleLogoutUrl;
 import org.apereo.cas.oidc.OidcConstants;
@@ -77,11 +77,11 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
      * @return the logout requests
      */
     @Override
-    protected Collection<SingleLogoutRequest> createLogoutRequests(final String ticketId,
-                                                                   final WebApplicationService selectedService,
-                                                                   final RegisteredService registeredService,
-                                                                   final Collection<SingleLogoutUrl> logoutUrls,
-                                                                   final TicketGrantingTicket ticketGrantingTicket) {
+    protected Collection<SingleLogoutRequestContext> createLogoutRequests(final String ticketId,
+                                                                          final WebApplicationService selectedService,
+                                                                          final RegisteredService registeredService,
+                                                                          final Collection<SingleLogoutUrl> logoutUrls,
+                                                                          final TicketGrantingTicket ticketGrantingTicket) {
         return logoutUrls
                 .stream()
                 .map(url -> {
@@ -99,7 +99,7 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
     }
 
     @Override
-    protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg, final SingleLogoutRequest request, final SingleLogoutMessage logoutMessage) {
+    protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg, final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
 
         val payload = logoutMessage.getPayload();
 

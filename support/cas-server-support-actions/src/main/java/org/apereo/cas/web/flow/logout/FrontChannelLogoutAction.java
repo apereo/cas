@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow.logout;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.logout.LogoutRequestStatus;
-import org.apereo.cas.logout.slo.SingleLogoutRequest;
+import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -47,7 +47,7 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
             return getFinishLogoutEvent();
         }
 
-        val logoutUrls = new HashMap<SingleLogoutRequest, LogoutHttpMessage>();
+        val logoutUrls = new HashMap<SingleLogoutRequestContext, LogoutHttpMessage>();
         logoutRequests
             .stream()
             .filter(r -> r.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED)
