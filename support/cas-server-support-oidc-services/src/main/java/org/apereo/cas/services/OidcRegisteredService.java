@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.Ordered;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -160,6 +161,12 @@ public class OidcRegisteredService extends OAuthRegisteredService {
         return new OidcRegisteredService();
     }
 
+    @JsonIgnore
+    @Override
+    public int getEvaluationPriority() {
+        return 2;
+    }
+    
     @JsonIgnore
     @Override
     public String getFriendlyName() {

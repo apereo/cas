@@ -324,6 +324,16 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      */
     List<RegisteredServiceContact> getContacts();
 
+    /**
+     * Indicates the evaluation priority of this service definition.
+     * Works in combination with {@code #getEvaluationOrder()}, allowing
+     * registered services of the same category/type to be sorted and grouped
+     * first before evaluation order for each category. In other words,
+     * it acts as the first sort key for evaluating services.
+     *
+     * @return the evaluation priority
+     */
+    @JsonIgnore
     default int getEvaluationPriority() {
         return Ordered.LOWEST_PRECEDENCE;
     }
