@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreUtilConfiguration.class,
-    CasCoreServicesConfiguration.class,
+    CasCoreServicesConfiguration.class
 })
 public class DefaultServicesManagerRegisteredServiceLocatorTests {
     @Autowired
