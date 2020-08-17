@@ -67,7 +67,7 @@ public class DefaultDomainAwareServicesManager extends AbstractServicesManager i
     }
 
     @Override
-    protected Stream<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
+    protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
         val mappedDomain = StringUtils.isNotBlank(serviceId) ? registeredServiceDomainExtractor.extract(serviceId) : StringUtils.EMPTY;
         LOGGER.trace("Domain mapped to the service identifier is [{}]", mappedDomain);
 
@@ -77,9 +77,9 @@ public class DefaultDomainAwareServicesManager extends AbstractServicesManager i
         val registeredServices = getServicesForDomain(domain);
         if (registeredServices == null || registeredServices.isEmpty()) {
             LOGGER.debug("No services could be located for domain [{}]", domain);
-            return Stream.empty();
+            return new ArrayList<>(0);
         }
-        return registeredServices.stream();
+        return registeredServices;
     }
 
     @Override

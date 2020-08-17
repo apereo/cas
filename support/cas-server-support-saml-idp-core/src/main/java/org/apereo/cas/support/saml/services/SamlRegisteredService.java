@@ -222,5 +222,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
         return "SAML2 Service Provider";
     }
 
-
+    @Override
+    @JsonIgnore
+    public int getEvaluationPriority() {
+        return 0;
+    }
 }

@@ -11,6 +11,7 @@ import org.apereo.cas.jpa.JpaPersistenceProviderConfigurer;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -26,6 +27,7 @@ import org.apereo.cas.ws.idp.services.DefaultRelyingPartyTokenProducer;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
 import org.apereo.cas.ws.idp.services.WSFederationServiceRegistry;
+import org.apereo.cas.ws.idp.services.WsFederationServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.ws.idp.web.WSFederationRequestConfigurationContext;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestCallbackController;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestController;
@@ -180,16 +182,12 @@ public class CoreWsSecurityIdentityProviderConfiguration {
             StringUtils.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_STS, "/"));
     }
 
-    @ConditionalOnClass(value = JpaPersistenceProviderConfigurer.class)
-    @Configuration("coreWsSecurityJpaServiceRegistryConfiguration")
-    public static class CoreWsSecurityJpaServiceRegistryConfiguration {
-        @Bean
-        @ConditionalOnMissingBean(name = "wsFederationJpaServicePersistenceProviderConfigurer")
-        public JpaPersistenceProviderConfigurer wsFederationJpaServicePersistenceProviderConfigurer() {
-            return context -> context.getIncludeEntityClasses().addAll(List.of(WSFederationRegisteredService.class.getName()));
-        }
+    @Bean
+    @ConditionalOnMissingBean(name = "wsFederationServicesManagerRegisteredServiceLocator")
+    public ServicesManagerRegisteredServiceLocator wsFederationServicesManagerRegisteredServiceLocator() {
+        return new WsFederationServicesManagerRegisteredServiceLocator();
     }
-    
+
     private WSFederationRequestConfigurationContext.WSFederationRequestConfigurationContextBuilder getConfigurationContext() {
         return WSFederationRequestConfigurationContext.builder()
             .servicesManager(servicesManager.getObject())
@@ -204,5 +202,15 @@ public class CoreWsSecurityIdentityProviderConfiguration {
             .ticketRegistry(ticketRegistry.getObject())
             .ticketRegistrySupport(ticketRegistrySupport.getObject())
             .callbackService(wsFederationCallbackService());
+    }
+
+    @ConditionalOnClass(value = JpaPersistenceProviderConfigurer.class)
+    @Configuration("coreWsSecurityJpaServiceRegistryConfiguration")
+    public static class CoreWsSecurityJpaServiceRegistryConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "wsFederationJpaServicePersistenceProviderConfigurer")
+        public JpaPersistenceProviderConfigurer wsFederationJpaServicePersistenceProviderConfigurer() {
+            return context -> context.getIncludeEntityClasses().addAll(List.of(WSFederationRegisteredService.class.getName()));
+        }
     }
 }

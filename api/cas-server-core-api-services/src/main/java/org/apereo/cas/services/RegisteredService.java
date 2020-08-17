@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.Ordered;
 
 import java.io.Serializable;
 import java.util.List;
@@ -322,6 +323,10 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @since 5.2
      */
     List<RegisteredServiceContact> getContacts();
+
+    default int getEvaluationPriority() {
+        return Ordered.LOWEST_PRECEDENCE;
+    }
 
     /**
      * Gets friendly name of this service.

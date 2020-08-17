@@ -12,6 +12,7 @@ import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicyTest
 import org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.RefedsRSAttributeReleasePolicyTests;
+import org.apereo.cas.support.saml.services.SamlIdPServicesManagerRegisteredServiceLocatorTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaMicrosoftSqlServerTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaPostgresTests;
@@ -107,6 +108,7 @@ import org.junit.runner.RunWith;
     SamlResponseArtifactEncoderTests.class,
     SamlIdPSingleLogoutRedirectionStrategyTests.class,
     SamlIdPMetadataUIActionTests.class,
+    SamlIdPServicesManagerRegisteredServiceLocatorTests.class,
     SamlIdPSingleLogoutRedirectionStrategyPostBindingTests.class,
     SamlIdPSingleLogoutRedirectionStrategyRedirectBindingTests.class,
     SamlIdPLogoutResponseObjectBuilderTests.class,

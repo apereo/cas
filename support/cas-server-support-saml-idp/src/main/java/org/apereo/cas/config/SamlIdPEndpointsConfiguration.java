@@ -15,9 +15,11 @@ import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.services.SamlIdPServiceRegistry;
+import org.apereo.cas.support.saml.services.SamlIdPServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.HttpServletRequestXMLMessageDecodersMap;
 import org.apereo.cas.support.saml.web.idp.profile.SamlIdPInitiatedProfileHandlerController;
@@ -370,6 +372,12 @@ public class SamlIdPEndpointsConfiguration {
             service.setServiceId(callbackService);
             plan.registerServiceRegistry(new SamlIdPServiceRegistry(applicationContext, service));
         };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "samlIdPServicesManagerRegisteredServiceLocator")
+    public ServicesManagerRegisteredServiceLocator samlIdPServicesManagerRegisteredServiceLocator() {
+        return new SamlIdPServicesManagerRegisteredServiceLocator(defaultSamlRegisteredServiceCachingMetadataResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlIdPDistributedSessionStore")

@@ -1,7 +1,8 @@
 package org.apereo.cas.services;
 
+import java.util.Collection;
 import java.util.Comparator;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 /**
  * Default implementation of the {@link ServicesManager} interface.
@@ -16,9 +17,13 @@ public class DefaultServicesManager extends AbstractServicesManager {
     }
 
     @Override
-    protected Stream<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
+    protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
         return getConfigurationContext().getServicesCache()
-            .asMap().values().stream().sorted(Comparator.naturalOrder());
+            .asMap()
+            .values()
+            .stream()
+            .sorted(Comparator.naturalOrder())
+            .collect(Collectors.toList());
     }
 
 }

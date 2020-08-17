@@ -92,19 +92,20 @@ public abstract class AbstractServicesManager implements ServicesManager {
             return null;
         }
 
-        var service = getCandidateServicesToMatch(serviceId)
-            .filter(r -> r.matches(serviceId))
+        var service = configurationContext.getRegisteredServiceLocators()
+            .stream()
+            .map(locator -> locator.locate(getCandidateServicesToMatch(serviceId), serviceId, entry -> entry.matches(serviceId)))
+            .filter(Objects::nonNull)
             .findFirst()
             .orElse(null);
 
         if (service == null) {
-            LOGGER.trace("The service that matches the serviceId [{}] is not found in the cache, trying to find it from [{}]",
-                serviceId, configurationContext.getServiceRegistry().getName());
-            service = configurationContext.getServiceRegistry().findServiceBy(serviceId);
+            val serviceRegistry = configurationContext.getServiceRegistry();
+            LOGGER.trace("Service [{}] is not cached; Searching [{}]", serviceId, serviceRegistry.getName());
+            service = serviceRegistry.findServiceBy(serviceId);
             if (service != null) {
                 configurationContext.getServicesCache().put(service.getId(), service);
-                LOGGER.trace("The service is found in [{}] and populated to the cache [{}]",
-                    configurationContext.getServiceRegistry().getName(), service);
+                LOGGER.trace("Service [{}] is found in [{}] and cached", service, serviceRegistry.getName());
             }
         }
 
@@ -219,11 +220,13 @@ public abstract class AbstractServicesManager implements ServicesManager {
             return null;
         }
 
-        var service = getCandidateServicesToMatch(serviceId)
-            .filter(r -> r.getServiceId().equals(serviceId))
-            .findAny()
+        var service = configurationContext.getRegisteredServiceLocators()
+            .stream()
+            .map(locator -> locator.locate(getCandidateServicesToMatch(serviceId), serviceId, entry -> entry.getServiceId().equals(serviceId)))
+            .filter(Objects::nonNull)
+            .findFirst()
             .orElse(null);
-
+        
         if (service == null) {
             LOGGER.trace("The service with service id [{}] is not found in the cache; trying to find it from [{}]",
                 serviceId, configurationContext.getServiceRegistry().getName());
@@ -369,7 +372,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
      * @param serviceId the service id
      * @return the candidate services to match
      */
-    protected abstract Stream<RegisteredService> getCandidateServicesToMatch(String serviceId);
+    protected abstract Collection<RegisteredService> getCandidateServicesToMatch(String serviceId);
 
     /**
      * Delete internal.

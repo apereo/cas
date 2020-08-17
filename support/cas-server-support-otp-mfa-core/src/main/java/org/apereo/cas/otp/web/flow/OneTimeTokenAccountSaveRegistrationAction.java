@@ -36,7 +36,13 @@ public class OneTimeTokenAccountSaveRegistrationAction extends AbstractAction {
 
     private final CasConfigurationProperties casProperties;
 
-    private OneTimeTokenAccount buildOneTimeTokenAccount(final RequestContext requestContext) {
+    /**
+     * Build one time token account.
+     *
+     * @param requestContext the request context
+     * @return the one time token account
+     */
+    protected OneTimeTokenAccount buildOneTimeTokenAccount(final RequestContext requestContext) {
         val currentAcct = getCandidateAccountFrom(requestContext);
         val accountName = requestContext.getRequestParameters().getRequired(REQUEST_PARAMETER_ACCOUNT_NAME);
         return OneTimeTokenAccount.builder()

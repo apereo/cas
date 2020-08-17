@@ -32,6 +32,7 @@ import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyCon
 import org.apereo.cas.config.CasOAuth20ComponentSerializationConfiguration;
 import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
+import org.apereo.cas.config.CasOAuth20ServicesConfiguration;
 import org.apereo.cas.config.CasOAuth20ThrottleConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
@@ -374,6 +375,7 @@ public abstract class AbstractOAuth20Tests {
         CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
         CasOAuth20ComponentSerializationConfiguration.class,
         CasOAuth20Configuration.class,
+        CasOAuth20ServicesConfiguration.class,
         CasOAuth20EndpointsConfiguration.class,
         CasOAuth20ThrottleConfiguration.class
     })

@@ -7,8 +7,10 @@ import org.apereo.cas.jpa.JpaPersistenceProviderConfigurer;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuth20ServiceRegistry;
+import org.apereo.cas.support.oauth.services.OAuth20ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.RandomUtils;
 
@@ -50,6 +52,12 @@ public class CasOAuth20ServicesConfiguration {
         val oAuthCallbackUrl = casProperties.getServer().getPrefix()
             + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
         return webApplicationServiceFactory.getObject().createService(oAuthCallbackUrl);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "oauthServicesManagerRegisteredServiceLocator")
+    public ServicesManagerRegisteredServiceLocator oauthServicesManagerRegisteredServiceLocator() {
+        return new OAuth20ServicesManagerRegisteredServiceLocator();
     }
 
     @Bean
