@@ -47,6 +47,7 @@ import org.apereo.cas.oidc.profile.OidcUserProfileDataCreator;
 import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionService;
 import org.apereo.cas.oidc.profile.OidcUserProfileViewRenderer;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
+import org.apereo.cas.oidc.services.OidcServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.oidc.slo.OidcSingleLogoutMessageCreator;
 import org.apereo.cas.oidc.slo.OidcSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.oidc.slo.OidcSingleLogoutServiceMessageHandler;
@@ -79,6 +80,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
@@ -354,7 +356,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Autowired
     @Qualifier("defaultRefreshTokenFactory")
     private ObjectProvider<OAuth20RefreshTokenFactory> defaultRefreshTokenFactory;
-    
+
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(oauthInterceptor()).addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
@@ -467,6 +469,12 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(name = "oidcServiceRegistryListener")
     public ServiceRegistryListener oidcServiceRegistryListener() {
         return new OidcServiceRegistryListener(userDefinedScopeBasedAttributeReleasePolicies());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "oidcServicesManagerRegisteredServiceLocator")
+    public ServicesManagerRegisteredServiceLocator oidcServicesManagerRegisteredServiceLocator() {
+        return new OidcServicesManagerRegisteredServiceLocator();
     }
 
     @RefreshScope
@@ -964,19 +972,6 @@ public class OidcConfiguration implements WebMvcConfigurer {
             casProperties);
     }
 
-    @ConditionalOnClass(value = JpaPersistenceProviderConfigurer.class)
-    @Configuration("oidcJpaServiceRegistryConfiguration")
-    public static class OidcJpaServiceRegistryConfiguration {
-        @Bean
-        @ConditionalOnMissingBean(name = "oidcJpaServicePersistenceProviderConfigurer")
-        public JpaPersistenceProviderConfigurer oidcJpaServicePersistenceProviderConfigurer() {
-            return context -> context.getIncludeEntityClasses().addAll(List.of(
-                OidcRegisteredService.class.getName(),
-                OAuthRegisteredService.class.getName()));
-        }
-    }
-
-    
     private OAuth20ConfigurationContext buildConfigurationContext() {
         return OAuth20ConfigurationContext.builder()
             .applicationContext(applicationContext)
@@ -1014,5 +1009,17 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService())
             .accessTokenJwtBuilder(oidcAccessTokenJwtBuilder())
             .build();
+    }
+
+    @ConditionalOnClass(value = JpaPersistenceProviderConfigurer.class)
+    @Configuration("oidcJpaServiceRegistryConfiguration")
+    public static class OidcJpaServiceRegistryConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "oidcJpaServicePersistenceProviderConfigurer")
+        public JpaPersistenceProviderConfigurer oidcJpaServicePersistenceProviderConfigurer() {
+            return context -> context.getIncludeEntityClasses().addAll(List.of(
+                OidcRegisteredService.class.getName(),
+                OAuthRegisteredService.class.getName()));
+        }
     }
 }

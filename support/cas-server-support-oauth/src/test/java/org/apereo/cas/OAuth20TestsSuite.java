@@ -6,6 +6,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20ProofKeyCodeExchangeAut
 import org.apereo.cas.support.oauth.authenticator.OAuth20RefreshTokenAuthenticatorTests;
 import org.apereo.cas.support.oauth.authenticator.OAuth20UsernamePasswordAuthenticatorTests;
 import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutorTests;
+import org.apereo.cas.support.oauth.services.OAuth20ServicesManagerRegisteredServiceLocatorTests;
 import org.apereo.cas.support.oauth.services.OAuth20WebApplicationServiceTests;
 import org.apereo.cas.support.oauth.util.OAuth20UtilsTests;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests;
@@ -96,6 +97,7 @@ import org.junit.runner.RunWith;
     OAuth20UserProfileDataAuditResourceResolverTests.class,
     OAuth20DefaultAccessTokenResponseGeneratorTests.class,
     OAuth20RefreshTokenTests.class,
+    OAuth20ServicesManagerRegisteredServiceLocatorTests.class,
     OAuth20AccessTokenResponseAuditResourceResolverTests.class,
     OAuth20CodeResponseAuditResourceResolverTests.class,
     OAuth20AuthorizationCodeAuthorizationResponseBuilderTests.class,

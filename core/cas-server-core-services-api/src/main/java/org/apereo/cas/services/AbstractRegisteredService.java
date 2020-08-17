@@ -189,6 +189,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Override
     public int compareTo(final RegisteredService other) {
         return new CompareToBuilder()
+            .append(getEvaluationPriority(), other.getEvaluationPriority())
             .append(getEvaluationOrder(), other.getEvaluationOrder())
             .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(),
                 StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())

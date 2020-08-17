@@ -147,6 +147,7 @@ a few [additional options](../services/Configuring-Service-Matching-Strategy.htm
 - The logout handling strategy is slightly broken apart to introduce a `LogoutRedirectionStrategy`, mainly responsible for handling follow-up redirects to authorized applications/endpoints as appropriate for each authentication protocol.
 - Component registration with the Memcached serialization engine is now broken apart and delegated to appropriate modules owning said components.
 - Signed SAML authentication requests that embed the signature in URLs are reviewed and adjusted to avoid creating long URLs exceeding browser limits.
+- The naming strategy for JSON/YAML service definition files is relaxed to allow multiple words in the file name.
 
 ## Library Upgrades
 
@@ -159,6 +160,7 @@ a few [additional options](../services/Configuring-Service-Matching-Strategy.htm
 - Spotbugs
 - Gradle
 - Okta
+- Spring Boot Admin
 - Ldaptive
 - Inspektr
 - Spring Data
