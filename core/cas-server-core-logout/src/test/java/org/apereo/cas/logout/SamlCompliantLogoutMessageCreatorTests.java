@@ -39,7 +39,9 @@ public class SamlCompliantLogoutMessageCreatorTests {
             .service(service)
             .logoutUrl(logoutUrl)
             .registeredService(mock(RegisteredService.class))
-            .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+            .executionRequest(SingleLogoutExecutionRequest.builder()
+                .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+                .build())
             .build();
 
         val msg = builder.create(request);

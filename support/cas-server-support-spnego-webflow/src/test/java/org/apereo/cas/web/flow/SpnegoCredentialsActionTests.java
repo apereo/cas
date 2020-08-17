@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Import(SpnegoCredentialsActionTests.SpnegoAuthenticationTestConfiguration.class)
-@Tag("Webflow")
+@Tag("Spnego")
 public class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
     @Test
     public void verifyOperation() throws Exception {

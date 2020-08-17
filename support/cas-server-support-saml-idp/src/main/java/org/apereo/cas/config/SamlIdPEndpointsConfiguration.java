@@ -422,7 +422,8 @@ public class SamlIdPEndpointsConfiguration {
             casProperties.getSlo().isAsynchronous(),
             authenticationServiceSelectionPlan.getObject(),
             defaultSamlRegisteredServiceCachingMetadataResolver.getObject(),
-            velocityEngineFactory.getObject());
+            velocityEngineFactory.getObject(),
+            openSamlConfigBean.getObject());
     }
     
     @ConditionalOnMissingBean(name = "casSamlIdPLogoutExecutionPlanConfigurer")

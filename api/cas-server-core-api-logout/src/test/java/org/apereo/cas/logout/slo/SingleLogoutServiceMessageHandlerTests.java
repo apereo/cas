@@ -1,7 +1,7 @@
 package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -29,7 +29,7 @@ public class SingleLogoutServiceMessageHandlerTests {
             @Override
             public Collection<SingleLogoutRequestContext> handle(final WebApplicationService singleLogoutService,
                                                                  final String ticketId,
-                                                                 final TicketGrantingTicket ticketGrantingTicket) {
+                                                                 final SingleLogoutExecutionRequest context) {
                 return List.of();
             }
 
@@ -44,7 +44,7 @@ public class SingleLogoutServiceMessageHandlerTests {
             }
         };
         assertEquals(Ordered.LOWEST_PRECEDENCE, handler.getOrder());
-        assertTrue(handler.supports(mock(WebApplicationService.class)));
+        assertTrue(handler.supports(SingleLogoutExecutionRequest.builder().build(), mock(WebApplicationService.class)));
 
     }
 

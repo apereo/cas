@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
+import java.net.InetAddress;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -22,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     GoogleMapsGeoCodingConfiguration.class
-}, properties = "cas.googleMaps.apiKey=AIzaSyCea6zDOkwJVIOm0vZyAI5eHYrz9Vzlhi9")
+}, properties = "cas.google-maps.api-key=AIzaSyCea6zDOkwJVIOm0vZyAI5eHYrz9Vzlhi9")
 @Tag("Simple")
 public class GoogleMapsGeoLocationServiceTests {
     @Autowired
@@ -30,11 +32,13 @@ public class GoogleMapsGeoLocationServiceTests {
     private GeoLocationService geoLocationService;
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         assertNotNull(geoLocationService);
+        assertNull(geoLocationService.locate(null, 12.123));
         val resp = geoLocationService.locate(40.689060, -74.044636);
         assertEquals(40.689060, resp.getLatitude());
         assertEquals(-74.044636, resp.getLongitude());
         assertTrue(resp.getAddresses().isEmpty());
+        assertNotNull(geoLocationService.locate(InetAddress.getByName("www.github.com")));
     }
 }

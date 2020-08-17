@@ -376,7 +376,7 @@ Attribute filtering and release policies are defined per SAML service. See [this
 ### Name ID Selection
 
 Each service may specify a required Name ID format. If left undefined, the metadata will be consulted to find the right format.
-The Name ID value is always simply the authenticated user that is designed to be returned to this service. In other words, if you
+The Name ID value is always the authenticated user that is designed to be returned to this service. In other words, if you
 decide to configure CAS to return a particular attribute as
 [the authenticated user name for this service](../integration/Attribute-Release-PrincipalId.html),
 that value will then be used to construct the Name ID along with the right format.
@@ -507,7 +507,7 @@ The service providers are registered with the CAS service registry as such:
 }
 ```
  
-<div class="alert alert-info"><strong>Metadata Location</strong><p>The metadata location in the registration record above simply needs to be specified as <code>json://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from the designated JSON file.</p></div>
+<div class="alert alert-info"><strong>Metadata Location</strong><p>The metadata location in the registration record above needs to be specified as <code>json://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from the designated JSON file.</p></div>
  
 ## Client Libraries
 

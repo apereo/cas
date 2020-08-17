@@ -46,7 +46,7 @@ logout protocol may notice extra requests in their access logs that appear not t
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Single Logout is turned on by default.</p></div>
 
 When a CAS session ends, it notifies each of the services that the SSO session is no longer valid, and that relying parties
-need to invalidate their own session. Remember that the callback submitted to each CAS-protected application is simply
+need to invalidate their own session. Remember that the callback submitted to each CAS-protected application is 
 a notification; nothing more. It is the **responsibility of the application** to intercept that notification and properly
 destroy the user authentication session, either manually, via a specific endpoint or more commonly via a CAS client library that supports SLO.
 

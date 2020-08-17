@@ -63,7 +63,7 @@ Use the below snippet as an example to fetch metadata from REST endpoints:
 ```
 
 <div class="alert alert-info"><strong>Metadata Location</strong><p>
-The metadata location in the registration record above simply needs to be specified as <code>rest://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from REST endpoints defined in CAS configuration.
+The metadata location in the registration record above needs to be specified as <code>rest://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from REST endpoints defined in CAS configuration.
 </p></div>
 
 Requests are submitted to REST endpoints with `entityId` as the parameter and `Content-Type: application/xml` as the header. Upon 

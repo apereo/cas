@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.slo;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.LogoutHttpMessage;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.BaseSingleLogoutServiceMessageHandler;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
@@ -14,7 +15,6 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.HttpUtils;
@@ -51,13 +51,8 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
                                                  final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
                                                  final String issuer) {
         super(httpClient, logoutMessageBuilder, servicesManager, singleLogoutServiceLogoutUrlBuilder,
-                asynchronous, authenticationRequestServiceSelectionStrategies);
+            asynchronous, authenticationRequestServiceSelectionStrategies);
         this.issuer = issuer;
-    }
-
-    @Override
-    protected boolean supportsInternal(final WebApplicationService singleLogoutService, final RegisteredService registeredService) {
-        return registeredService instanceof OidcRegisteredService;
     }
 
     @Override
@@ -65,37 +60,33 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
         return 0;
     }
 
-    /**
-     * Compute the logout requests.
-     * For a front channel logout, the logout URL is supplemented with the issuer and session identifier.
-     *
-     * @param ticketId             the ticket id
-     * @param selectedService      the selected service
-     * @param registeredService    the registered service
-     * @param logoutUrls           the logout urls
-     * @param ticketGrantingTicket the ticket granting ticket
-     * @return the logout requests
-     */
+    @Override
+    protected boolean supportsInternal(final WebApplicationService singleLogoutService, final RegisteredService registeredService,
+                                       final SingleLogoutExecutionRequest context) {
+        return registeredService instanceof OidcRegisteredService;
+    }
+
     @Override
     protected Collection<SingleLogoutRequestContext> createLogoutRequests(final String ticketId,
                                                                           final WebApplicationService selectedService,
                                                                           final RegisteredService registeredService,
                                                                           final Collection<SingleLogoutUrl> logoutUrls,
-                                                                          final TicketGrantingTicket ticketGrantingTicket) {
+                                                                          final SingleLogoutExecutionRequest context) {
         return logoutUrls
-                .stream()
-                .map(url -> {
-                    var newSloUrl = url;
-                    val logoutType = url.getLogoutType();
-                    if (logoutType == RegisteredServiceLogoutType.FRONT_CHANNEL) {
-                        var newUrl = CommonHelper.addParameter(url.getUrl(), ReservedClaimNames.ISSUER, issuer);
-                        newUrl = CommonHelper.addParameter(newUrl, OidcConstants.CLAIM_SESSIOND_ID, DigestUtils.sha(ticketGrantingTicket.getId()));
-                        newSloUrl = new SingleLogoutUrl(newUrl, logoutType);
-                    }
-                    return createLogoutRequest(ticketId, selectedService, registeredService, newSloUrl, ticketGrantingTicket);
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+            .stream()
+            .map(url -> {
+                var newSloUrl = url;
+                val logoutType = url.getLogoutType();
+                if (logoutType == RegisteredServiceLogoutType.FRONT_CHANNEL) {
+                    var newUrl = CommonHelper.addParameter(url.getUrl(), ReservedClaimNames.ISSUER, issuer);
+                    newUrl = CommonHelper.addParameter(newUrl, OidcConstants.CLAIM_SESSIOND_ID,
+                        DigestUtils.sha(context.getTicketGrantingTicket().getId()));
+                    newSloUrl = new SingleLogoutUrl(newUrl, logoutType);
+                }
+                return createLogoutRequest(ticketId, selectedService, registeredService, newSloUrl, context);
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -106,7 +97,7 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
         HttpResponse response = null;
         try {
             response = HttpUtils.executePost(msg.getUrl().toExternalForm(), CollectionUtils.wrap("logout_token", payload),
-                    CollectionUtils.wrap("Content-Type", msg.getContentType()));
+                CollectionUtils.wrap("Content-Type", msg.getContentType()));
 
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 LOGGER.trace("Received OK logout response");

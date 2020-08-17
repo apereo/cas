@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile.slo;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.LogoutHttpMessage;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.BaseSingleLogoutServiceMessageHandler;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
@@ -10,7 +11,10 @@ import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
@@ -18,6 +22,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +57,11 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
      */
     protected final VelocityEngine velocityEngineFactory;
 
+    /**
+     * The opensaml configuration bean.
+     */
+    protected final OpenSamlConfigBean openSamlConfigBean;
+
     public SamlIdPSingleLogoutServiceMessageHandler(final HttpClient httpClient,
                                                     final SingleLogoutMessageCreator logoutMessageBuilder,
                                                     final ServicesManager servicesManager,
@@ -59,17 +69,14 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
                                                     final boolean asynchronous,
                                                     final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
                                                     final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
-                                                    final VelocityEngine velocityEngineFactory) {
+                                                    final VelocityEngine velocityEngineFactory,
+                                                    final OpenSamlConfigBean openSamlConfigBean) {
         super(httpClient, logoutMessageBuilder, servicesManager,
             singleLogoutServiceLogoutUrlBuilder, asynchronous,
             authenticationRequestServiceSelectionStrategies);
         this.samlRegisteredServiceCachingMetadataResolver = samlRegisteredServiceCachingMetadataResolver;
         this.velocityEngineFactory = velocityEngineFactory;
-    }
-
-    @Override
-    protected boolean supportsInternal(final WebApplicationService singleLogoutService, final RegisteredService registeredService) {
-        return registeredService instanceof SamlRegisteredService;
+        this.openSamlConfigBean = openSamlConfigBean;
     }
 
     @Override
@@ -78,7 +85,27 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
     }
 
     @Override
-    protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg, final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
+    protected boolean supportsInternal(final WebApplicationService singleLogoutService,
+                                       final RegisteredService registeredService,
+                                       final SingleLogoutExecutionRequest context) {
+        return registeredService instanceof SamlRegisteredService;
+    }
+
+    @Override
+    protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg,
+                                            final SingleLogoutRequestContext request,
+                                            final SingleLogoutMessage logoutMessage) {
+        if (request.getExecutionRequest().getHttpServletRequest().isPresent()) {
+            val logoutRequest = WebUtils.getSingleLogoutRequest(request.getExecutionRequest().getHttpServletRequest().get());
+            val decodedRequest = EncodingUtils.decodeBase64(logoutRequest);
+            val samlLogoutRequest = SamlUtils.transformSamlObject(openSamlConfigBean, decodedRequest, LogoutRequest.class);
+            val logoutRequestIssuer = SamlIdPUtils.getIssuerFromSamlObject(samlLogoutRequest);
+            if (request.getService().getId().equalsIgnoreCase(logoutRequestIssuer)) {
+                LOGGER.trace("Skipping single logout request for [{}] as the request initiator", logoutRequestIssuer);
+                return true;
+            }
+        }
+        
         val binding = request.getProperties().get(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING);
 
         if (SAMLConstants.SAML2_SOAP11_BINDING_URI.equalsIgnoreCase(binding)) {
@@ -88,7 +115,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
         HttpResponse response = null;
         try {
             val logoutRequest = (LogoutRequest) logoutMessage.getMessage();
-            LOGGER.trace("Sending logout response for binding [{}]", binding);
+            LOGGER.trace("Sending logout request for binding [{}]", binding);
             if (SAMLConstants.SAML2_REDIRECT_BINDING_URI.equalsIgnoreCase(binding)) {
                 val encoder = new SamlIdPHttpRedirectDeflateEncoder(msg.getUrl().toExternalForm(), logoutRequest);
                 encoder.doEncode();

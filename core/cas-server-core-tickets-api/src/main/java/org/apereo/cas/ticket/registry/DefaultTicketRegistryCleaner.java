@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
@@ -60,7 +61,9 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
     public int cleanTicket(final Ticket ticket) {
         if (ticket instanceof TicketGrantingTicket) {
             LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
-            logoutManager.performLogout((TicketGrantingTicket) ticket);
+            logoutManager.performLogout(SingleLogoutExecutionRequest.builder()
+                .ticketGrantingTicket((TicketGrantingTicket) ticket)
+                .build());
         }
         LOGGER.debug("Cleaning up expired ticket [{}]", ticket.getId());
         return ticketRegistry.deleteTicket(ticket);
