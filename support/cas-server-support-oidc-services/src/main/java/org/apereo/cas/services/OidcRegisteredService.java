@@ -9,14 +9,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.Ordered;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Transient;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
