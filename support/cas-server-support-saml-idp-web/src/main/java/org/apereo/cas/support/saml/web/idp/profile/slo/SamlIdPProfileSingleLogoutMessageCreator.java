@@ -95,7 +95,8 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
 
         val issueInstant = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(skewAllowance);
 
-        val principalName = request.getTicketGrantingTicket().getAuthentication().getPrincipal().getId();
+        val principalName = request.getExecutionRequest().getTicketGrantingTicket()
+            .getAuthentication().getPrincipal().getId();
         LOGGER.trace("Preparing NameID attribute for principal [{}]", principalName);
 
         val nameFormat = StringUtils.defaultIfBlank(samlService.getRequiredNameIdFormat(), NameID.UNSPECIFIED);

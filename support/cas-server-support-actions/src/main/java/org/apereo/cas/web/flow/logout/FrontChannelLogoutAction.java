@@ -29,7 +29,12 @@ import java.util.HashMap;
 public class FrontChannelLogoutAction extends AbstractLogoutAction {
 
     private final LogoutExecutionPlan logoutExecutionPlan;
+
     private final boolean singleLogoutCallbacksDisabled;
+
+    private Event getFinishLogoutEvent() {
+        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINISH);
+    }
 
     @Override
     protected Event doInternalExecute(final HttpServletRequest request,
@@ -55,7 +60,7 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
                 LOGGER.debug("Using logout url [{}] for front-channel logout requests", r.getLogoutUrl().toExternalForm());
                 logoutExecutionPlan.getSingleLogoutServiceMessageHandlers()
                     .stream()
-                    .filter(handler -> handler.supports(r.getService()))
+                    .filter(handler -> handler.supports(r.getExecutionRequest(), r.getService()))
                     .forEach(handler -> {
                         val logoutMessage = handler.createSingleLogoutMessage(r);
                         LOGGER.debug("Front-channel logout message to send to [{}] is [{}]", r.getLogoutUrl(), logoutMessage);
@@ -72,9 +77,5 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
         }
 
         return getFinishLogoutEvent();
-    }
-
-    private Event getFinishLogoutEvent() {
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINISH);
     }
 }

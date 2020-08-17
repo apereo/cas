@@ -20,8 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(properties = "cas.authn.x509.extractCert=true")
-@Tag("Webflow")
+@TestPropertySource(properties = "cas.authn.x509.extract-cert=true")
+@Tag("X509")
 public class X509CertificateCredentialsRequestHeaderActionTests extends BaseCertificateCredentialActionTests {
 
     @Test

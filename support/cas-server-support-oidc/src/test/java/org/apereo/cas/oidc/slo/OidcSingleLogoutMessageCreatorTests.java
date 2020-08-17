@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.slo;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
@@ -39,19 +40,19 @@ public class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
         val service = getOidcRegisteredService(true, false);
 
         val context = OAuth20ConfigurationContext.builder()
-                .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService)
-                .casProperties(casProperties)
-                .build();
+            .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService)
+            .casProperties(casProperties)
+            .build();
         val principal = RegisteredServiceTestUtils.getPrincipal(PRINCIPAL_ID);
         var authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn(TGT_ID);
         when(tgt.getAuthentication()).thenReturn(authentication);
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
-                .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
-                .registeredService(service)
-                .ticketGrantingTicket(tgt)
-                .build();
+            .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
+            .registeredService(service)
+            .executionRequest(SingleLogoutExecutionRequest.builder().ticketGrantingTicket(tgt).build())
+            .build();
 
         val creator = new OidcSingleLogoutMessageCreator(context);
         val message = creator.create(logoutRequest);
@@ -76,8 +77,8 @@ public class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
 
         val context = OAuth20ConfigurationContext.builder().build();
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
-                .logoutType(RegisteredServiceLogoutType.FRONT_CHANNEL)
-                .build();
+            .logoutType(RegisteredServiceLogoutType.FRONT_CHANNEL)
+            .build();
 
         val creator = new OidcSingleLogoutMessageCreator(context);
         val message = creator.create(logoutRequest);

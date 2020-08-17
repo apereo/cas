@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Tag("Webflow")
+@Tag("X509")
 public class X509CertificateCredentialsNonInteractiveActionTests extends BaseCertificateCredentialActionTests {
 
     @Test

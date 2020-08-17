@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -95,7 +96,9 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
             if (cause == RemovalCause.EXPIRED) {
                 LOGGER.warn("Received removal notification for ticket [{}] with cause [{}]. Cleaning...", key, cause);
                 if (value instanceof TicketGrantingTicket) {
-                    logoutManager.performLogout(TicketGrantingTicket.class.cast(value));
+                    logoutManager.performLogout(SingleLogoutExecutionRequest.builder()
+                        .ticketGrantingTicket(TicketGrantingTicket.class.cast(value))
+                        .build());
                 }
             }
         }

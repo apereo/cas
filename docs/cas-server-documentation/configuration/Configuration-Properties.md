@@ -20,7 +20,7 @@ to a specific CAS module that is expected to be included in the final CAS distri
 and deployment process.
 
 <div class="alert alert-info"><strong>YAGNI</strong><p>Note that for nearly ALL use cases,
-simply declaring and configuring properties listed below is sufficient. You should NOT have to
+ declaring and configuring properties listed below is sufficient. You should NOT have to
 explicitly massage a CAS XML configuration file to design an authentication handler,
 create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.</p></div>
 
@@ -2136,7 +2136,7 @@ There are numerous directory architectures and we provide configuration for four
 
 Note that CAS will automatically create the appropriate components internally
 based on the settings specified below. If you wish to authenticate against more than one LDAP
-server, simply increment the index and specify the settings for the next LDAP server.
+server, increment the index and specify the settings for the next LDAP server.
 
 **Note:** Attributes retrieved as part of LDAP authentication are merged with all attributes
 retrieved from [other attribute repository sources](#authentication-attributes), if any.

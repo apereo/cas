@@ -5,10 +5,10 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
 import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.logout.LogoutRequestStatus;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
 
@@ -50,7 +50,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
     @Override
     public Collection<SingleLogoutRequestContext> handle(final WebApplicationService singleLogoutService,
                                                          final String ticketId,
-                                                         final TicketGrantingTicket ticketGrantingTicket) {
+                                                         final SingleLogoutExecutionRequest context) {
         if (singleLogoutService.isLoggedOutAlready()) {
             LOGGER.debug("Service [{}] is already logged out.", singleLogoutService);
             return new ArrayList<>(0);
@@ -71,18 +71,18 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
         }
 
         LOGGER.trace("Creating logout request for [{}] and ticket id [{}]", selectedService, ticketId);
-        return createLogoutRequests(ticketId, selectedService, registeredService, logoutUrls, ticketGrantingTicket);
+        return createLogoutRequests(ticketId, selectedService, registeredService, logoutUrls, context);
     }
 
     @Override
-    public boolean supports(final WebApplicationService singleLogoutService) {
+    public boolean supports(final SingleLogoutExecutionRequest context, final WebApplicationService singleLogoutService) {
         val selectedService = (WebApplicationService) authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService);
         val registeredService = this.servicesManager.findServiceBy(selectedService);
 
         if (registeredService != null
             && registeredService.getAccessStrategy().isServiceAccessAllowed()
             && registeredService.getLogoutType() != RegisteredServiceLogoutType.NONE) {
-            return supportsInternal(singleLogoutService, registeredService);
+            return supportsInternal(singleLogoutService, registeredService, context);
         }
         return false;
     }
@@ -109,30 +109,33 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
      *
      * @param singleLogoutService the single logout service
      * @param registeredService   the registered service
-     * @return true/false
+     * @param context             the context
+     * @return true /false
      */
-    protected boolean supportsInternal(final WebApplicationService singleLogoutService, final RegisteredService registeredService) {
+    protected boolean supportsInternal(final WebApplicationService singleLogoutService,
+                                       final RegisteredService registeredService,
+                                       final SingleLogoutExecutionRequest context) {
         return true;
     }
 
     /**
      * Create logout requests collection.
      *
-     * @param ticketId             the ticket id
-     * @param selectedService      the selected service
-     * @param registeredService    the registered service
-     * @param logoutUrls           the logout urls
-     * @param ticketGrantingTicket the ticket granting ticket
+     * @param ticketId          the ticket id
+     * @param selectedService   the selected service
+     * @param registeredService the registered service
+     * @param logoutUrls        the logout urls
+     * @param context           the context
      * @return the collection
      */
     protected Collection<SingleLogoutRequestContext> createLogoutRequests(final String ticketId,
                                                                           final WebApplicationService selectedService,
                                                                           final RegisteredService registeredService,
                                                                           final Collection<SingleLogoutUrl> logoutUrls,
-                                                                          final TicketGrantingTicket ticketGrantingTicket) {
+                                                                          final SingleLogoutExecutionRequest context) {
         return logoutUrls
             .stream()
-            .map(url -> createLogoutRequest(ticketId, selectedService, registeredService, url, ticketGrantingTicket))
+            .map(url -> createLogoutRequest(ticketId, selectedService, registeredService, url, context))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
@@ -140,11 +143,11 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
     /**
      * Create logout request logout request.
      *
-     * @param ticketId             the ticket id
-     * @param selectedService      the selected service
-     * @param registeredService    the registered service
-     * @param logoutUrl            the logout url
-     * @param ticketGrantingTicket the ticket granting ticket
+     * @param ticketId          the ticket id
+     * @param selectedService   the selected service
+     * @param registeredService the registered service
+     * @param logoutUrl         the logout url
+     * @param context           the context
      * @return the logout request
      */
     @SneakyThrows
@@ -152,14 +155,14 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
                                                              final WebApplicationService selectedService,
                                                              final RegisteredService registeredService,
                                                              final SingleLogoutUrl logoutUrl,
-                                                             final TicketGrantingTicket ticketGrantingTicket) {
+                                                             final SingleLogoutExecutionRequest context) {
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
             .ticketId(ticketId)
             .service(selectedService)
             .logoutUrl(new URL(logoutUrl.getUrl()))
             .logoutType(logoutUrl.getLogoutType())
             .registeredService(registeredService)
-            .ticketGrantingTicket(ticketGrantingTicket)
+            .executionRequest(context)
             .properties(logoutUrl.getProperties())
             .build();
 
@@ -203,7 +206,9 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
      * @param logoutMessage the logout message
      * @return true/false
      */
-    protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg, final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
+    protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg,
+                                            final SingleLogoutRequestContext request,
+                                            final SingleLogoutMessage logoutMessage) {
         return this.httpClient.sendMessageToEndPoint(msg);
     }
 

@@ -36,7 +36,7 @@ public class DefaultSingleLogoutMessageCreator implements SingleLogoutMessageCre
                 + "</saml:NameID><samlp:SessionIndex>%s</samlp:SessionIndex></samlp:LogoutRequest>",
             GENERATOR.getNewTicketId("LR"),
             new ISOStandardDateFormat().getCurrentDateAndTime(),
-            request.getTicketGrantingTicket().getAuthentication().getPrincipal().getId(),
+            request.getExecutionRequest().getTicketGrantingTicket().getAuthentication().getPrincipal().getId(),
             request.getTicketId());
 
         val builder = SingleLogoutMessage.builder();

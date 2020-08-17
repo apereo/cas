@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -32,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Terminates the CAS SSO session by destroying all SSO state data (i.e. TGT, cookies).
@@ -189,9 +191,13 @@ public class TerminateSessionAction extends AbstractAction {
             LOGGER.debug("Ticket [{}] found. Processing logout requests and then deleting the ticket...", ticket.getId());
 
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(ticket.getAuthentication());
-            val logoutRequests = logoutManager.performLogout(ticket);
+            val logoutRequests = logoutManager.performLogout(
+                SingleLogoutExecutionRequest.builder()
+                    .ticketGrantingTicket(ticket)
+                    .httpServletRequest(Optional.of(request))
+                    .httpServletResponse(Optional.of(response))
+                    .build());
             centralAuthenticationService.deleteTicket(ticketGrantingTicketId);
-
             applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, ticket));
             return logoutRequests;
         } catch (final InvalidTicketException e) {
