@@ -252,7 +252,7 @@ public class MongoDbConnectionFactory {
     }
 
     private Set<Class<?>> scanForEntities(final String basePackage) {
-        if (!StringUtils.isBlank(basePackage)) {
+        if (StringUtils.isBlank(basePackage)) {
             return new HashSet<>(0);
         }
 
