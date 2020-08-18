@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Webflow")
+@Tag("WebflowConfig")
 @TestPropertySource(properties = "cas.ticket.tgt.remember-me.enabled=true")
 public class DefaultLoginWebflowConfigurerRememberMeTests extends BaseWebflowConfigurerTests {
     @Test

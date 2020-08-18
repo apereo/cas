@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As="
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Webflow")
+@Tag("WebflowEvents")
 public class YubiKeyAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("yubikeyAuthenticationWebflowEventResolver")
