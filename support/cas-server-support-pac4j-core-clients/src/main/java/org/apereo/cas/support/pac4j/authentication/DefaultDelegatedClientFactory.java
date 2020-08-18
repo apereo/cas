@@ -423,6 +423,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                     cfg.setAttributeAsId(saml.getPrincipalIdAttribute());
                 }
                 cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
+                cfg.setWantsResponsesSigned(saml.isWantsResponsesSigned());
                 cfg.setAllSignatureValidationDisabled(saml.isAllSignatureValidationDisabled());
                 cfg.setUseNameQualifier(saml.isUseNameQualifier());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
