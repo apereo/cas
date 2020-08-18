@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,6 +20,7 @@ import java.util.Set;
 @Getter
 @EqualsAndHashCode
 @Setter
+@Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DefaultRegisteredServiceAuthenticationPolicy implements RegisteredServiceAuthenticationPolicy {
     private static final long serialVersionUID = -6777133646772207331L;
