@@ -42,40 +42,41 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
             return error();
         }
 
-        val tst = this.centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
-        if (tst == null) {
-            LOGGER.error("Unable to locate token [{}] in the ticket registry", transientTicket);
-            return error();
-        }
+        try {
+            val tst = this.centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
 
-        val token = tst.getProperties().get(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN).toString();
-        val username = passwordManagementService.parseToken(token);
-        if (StringUtils.isBlank(username)) {
-            LOGGER.error("Password reset token could not be verified");
-            return error();
-        }
-        this.centralAuthenticationService.deleteTicket(tst.getId());
-
-        PasswordManagementWebflowUtils.putPasswordResetToken(requestContext, token);
-        val pm = casProperties.getAuthn().getPm();
-        if (pm.getReset().isSecurityQuestionsEnabled()) {
-            val questions = BasePasswordManagementService
-                .canonicalizeSecurityQuestions(passwordManagementService.getSecurityQuestions(username));
-            if (questions.isEmpty()) {
-                LOGGER.warn("No security questions could be found for [{}]", username);
+            val token = tst.getProperties().get(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN).toString();
+            val username = passwordManagementService.parseToken(token);
+            if (StringUtils.isBlank(username)) {
+                LOGGER.error("Password reset token could not be verified");
                 return error();
             }
-            PasswordManagementWebflowUtils.putPasswordResetSecurityQuestions(requestContext, questions);
-        } else {
-            LOGGER.debug("Security questions are not enabled");
-        }
+            this.centralAuthenticationService.deleteTicket(tst.getId());
 
-        PasswordManagementWebflowUtils.putPasswordResetUsername(requestContext, username);
-        PasswordManagementWebflowUtils.putPasswordResetSecurityQuestionsEnabled(requestContext, pm.getReset().isSecurityQuestionsEnabled());
+            PasswordManagementWebflowUtils.putPasswordResetToken(requestContext, token);
+            val pm = casProperties.getAuthn().getPm();
+            if (pm.getReset().isSecurityQuestionsEnabled()) {
+                val questions = BasePasswordManagementService
+                    .canonicalizeSecurityQuestions(passwordManagementService.getSecurityQuestions(username));
+                if (questions.isEmpty()) {
+                    LOGGER.warn("No security questions could be found for [{}]", username);
+                    return error();
+                }
+                PasswordManagementWebflowUtils.putPasswordResetSecurityQuestions(requestContext, questions);
+            } else {
+                LOGGER.debug("Security questions are not enabled");
+            }
 
-        if (pm.getReset().isSecurityQuestionsEnabled()) {
-            return success();
+            PasswordManagementWebflowUtils.putPasswordResetUsername(requestContext, username);
+            PasswordManagementWebflowUtils.putPasswordResetSecurityQuestionsEnabled(requestContext, pm.getReset().isSecurityQuestionsEnabled());
+
+            if (pm.getReset().isSecurityQuestionsEnabled()) {
+                return success();
+            }
+            return new EventFactorySupport().event(this, "questionsDisabled");
+        } catch (final Exception e) {
+            LOGGER.error("Unable to locate token [{}] in the ticket registry", transientTicket);
         }
-        return new EventFactorySupport().event(this, "questionsDisabled");
+        return error();
     }
 }
