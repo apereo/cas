@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasAcceptableUsagePolicyWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
-@Tag("Webflow")
+@Tag("WebflowConfig")
 public class AcceptableUsagePolicyWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

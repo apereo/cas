@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Webflow")
+@Tag("WebflowConfig")
 public class CasWebflowConfigurerTests {
     @Test
     public void verifyNoAutoConfig() {

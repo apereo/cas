@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Webflow")
+@Tag("WebflowConfig")
 @TestPropertySource(properties = "cas.view.custom-login-form-fields.field1.required=false")
 public class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
