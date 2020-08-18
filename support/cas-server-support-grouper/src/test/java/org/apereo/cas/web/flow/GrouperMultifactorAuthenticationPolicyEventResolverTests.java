@@ -91,7 +91,7 @@ import static org.mockito.Mockito.*;
     GrouperMultifactorAuthenticationPolicyEventResolverTests.GrouperTestConfiguration.class,
     GrouperMultifactorAuthenticationConfiguration.class
 }, properties = "cas.authn.mfa.grouper-group-field=name")
-@Tag("Webflow")
+@Tag("WebflowEvents")
 public class GrouperMultifactorAuthenticationPolicyEventResolverTests {
     @Autowired
     @Qualifier("grouperMultifactorAuthenticationWebflowEventResolver")

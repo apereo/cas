@@ -7,7 +7,7 @@ printHelp() {
     echo -e "Available test categories are:\n"
     echo -e "simple,memcached,cassandra,groovy,kafka,ldap,rest,\
 mfa,jdbc,mssql,oracle,radius,couchdb,webapp,tickets,webflowconfig,\
-mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,\
+mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,webflowevents,\
 jms,hazelcast,jmx,ehcache,actuator,wsfed,authn,attributes,cas,logout,\
 expiration-policy,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,\
 hazelcast,jmx,ehcache,actuator,wsfed,authn,attributes,metrics,\
@@ -168,6 +168,9 @@ while (( "$#" )); do
                 ;;
             rest|restful|restapi)
                 task+="testRestfulApi "
+                ;;
+            webflowevents)
+                task+="testWebflowEvents "
                 ;;
             webflowconfig|swfcfg|webflowcfg)
                 task+="testWebflowConfig "
