@@ -1,5 +1,6 @@
 package org.apereo.cas.validation;
 
+import org.apereo.cas.CoreValidationTestUtils;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
@@ -15,7 +16,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Tag("Simple")
+@Tag("CAS")
 public class Cas20WithoutProxyingValidationSpecificationTests {
 
     private Cas20WithoutProxyingValidationSpecification validationSpecification;

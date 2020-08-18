@@ -68,6 +68,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private String metadataSignatureLocation;
 
     @Column
+    private String logoutResponseBinding;
+    
+    @Column
     private boolean requireSignedRoot = true;
 
     @Column(name = "spNameIdQualifier")
@@ -217,5 +220,11 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Override
     public String getFriendlyName() {
         return "SAML2 Service Provider";
+    }
+
+    @Override
+    @JsonIgnore
+    public int getEvaluationPriority() {
+        return 0;
     }
 }

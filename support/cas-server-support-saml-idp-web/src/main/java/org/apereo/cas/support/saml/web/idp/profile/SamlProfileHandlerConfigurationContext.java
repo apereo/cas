@@ -12,6 +12,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPLogoutResponseObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
@@ -24,6 +25,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.opensaml.saml.common.SAMLObject;
+import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.SessionStore;
 
 /**
  * This is {@link SamlProfileHandlerConfigurationContext}.
@@ -51,6 +54,8 @@ public class SamlProfileHandlerConfigurationContext {
 
     private final SamlProfileObjectBuilder<? extends SAMLObject> responseBuilder;
 
+    private final SamlIdPLogoutResponseObjectBuilder logoutResponseBuilder;
+
     private final CasConfigurationProperties casProperties;
 
     private final SamlObjectSignatureValidator samlObjectSignatureValidator;
@@ -74,4 +79,6 @@ public class SamlProfileHandlerConfigurationContext {
     private final SamlArtifactTicketFactory artifactTicketFactory;
 
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
+
+    private final SessionStore<JEEContext> sessionStore;
 }

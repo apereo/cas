@@ -5,7 +5,12 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20ClientIdClientSecretAut
 import org.apereo.cas.support.oauth.authenticator.OAuth20ProofKeyCodeExchangeAuthenticatorTests;
 import org.apereo.cas.support.oauth.authenticator.OAuth20RefreshTokenAuthenticatorTests;
 import org.apereo.cas.support.oauth.authenticator.OAuth20UsernamePasswordAuthenticatorTests;
+import org.apereo.cas.support.oauth.profile.CasServerApiBasedTicketValidatorTests;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilterTests;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreatorTests;
+import org.apereo.cas.support.oauth.services.OAuth20AuthenticationServiceSelectionStrategyTests;
 import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutorTests;
+import org.apereo.cas.support.oauth.services.OAuth20ServicesManagerRegisteredServiceLocatorTests;
 import org.apereo.cas.support.oauth.services.OAuth20WebApplicationServiceTests;
 import org.apereo.cas.support.oauth.util.OAuth20UtilsTests;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests;
@@ -14,6 +19,7 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20ClientCredentialsGran
 import org.apereo.cas.support.oauth.validator.token.OAuth20PasswordGrantTypeTokenRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20RevocationRequestValidatorTests;
+import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolverTests;
 import org.apereo.cas.support.oauth.web.OAuth20RefreshTokenTests;
 import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenGrantRequestAuditResourceResolverTests;
 import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenResponseAuditResourceResolverTests;
@@ -95,7 +101,13 @@ import org.junit.runner.RunWith;
     OAuth20AccessTokenGrantRequestAuditResourceResolverTests.class,
     OAuth20UserProfileDataAuditResourceResolverTests.class,
     OAuth20DefaultAccessTokenResponseGeneratorTests.class,
+    OAuth20CasCallbackUrlResolverTests.class,
     OAuth20RefreshTokenTests.class,
+    DefaultOAuth20UserProfileDataCreatorTests.class,
+    CasServerApiBasedTicketValidatorTests.class,
+    DefaultOAuth20ProfileScopeToAttributesFilterTests.class,
+    OAuth20AuthenticationServiceSelectionStrategyTests.class,
+    OAuth20ServicesManagerRegisteredServiceLocatorTests.class,
     OAuth20AccessTokenResponseAuditResourceResolverTests.class,
     OAuth20CodeResponseAuditResourceResolverTests.class,
     OAuth20AuthorizationCodeAuthorizationResponseBuilderTests.class,

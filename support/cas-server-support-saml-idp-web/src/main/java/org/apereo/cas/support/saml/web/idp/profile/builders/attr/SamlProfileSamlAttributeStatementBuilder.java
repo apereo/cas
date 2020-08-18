@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
@@ -96,7 +97,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
     public AttributeStatement newAttributeStatement(final Map<String, Object> attributes,
                                                     final Saml20AttributeBuilder builder,
                                                     final SamlRegisteredService samlRegisteredService) {
-        val attrStatement = newSamlObject(AttributeStatement.class);
+        val attrStatement = SamlUtils.newSamlObject(AttributeStatement.class);
 
         val resp = samlIdPProperties.getResponse();
         val nameFormats = new HashMap<String, String>(resp.configureAttributeNameFormats());

@@ -26,6 +26,7 @@ The following endpoints are provided by CAS:
 |--------------------------|------------------------------------------------
 | `registeredServices`     | Provides a JSON representation of the [CAS service registry](Service-Management.html). The endpoint can also accept a mime-type of `application/vnd.cas.services+yaml` to produce YAML output. A `GET` operation with a parameter selector of `/{id}` will fetch a specific service definition. A `DELETE` operation with a parameter selector of `/{id}` will delete the specific service definition by its id.
 | `exportRegisteredServices`    | Provides a ZIP-file representation of the [CAS service registry](Service-Management.html).
+| `importRegisteredServices`    | Import service definitions into the [CAS service registry](Service-Management.html).
 
 ## Service Management Web Application
 
@@ -62,16 +63,17 @@ Registered services present the following metadata:
 | `properties`                      | Extra metadata associated with this service in form of key/value pairs. This is used to inject custom fields into the service definition, to be used later by extension modules to define additional behavior on a per-service basis. [See this guide](Configuring-Service-Custom-Properties.html) for more info please.
 | `multifactorPolicy`               | The policy that describes the configuration required for this service authentication, typically for [multifactor authentication](../mfa/Configuring-Multifactor-Authentication.html).
 | `contacts`               | Specify the collection of contacts associated with service that own the application. See [this guide](Configuring-Service-Contacts.html) for more info.
+| `matchingStrategy`        | Specify the strategy used to match the service definition against an authentication request. See [this guide](Configuring-Service-Matching-Strategy.html) for more info.
 
 <div class="alert alert-info"><strong>Service Types</strong><p>Note that while the above properties apply to all <strong>generic</strong> service definitions, there are additional service types in CAS that may be activated and required depending on the protocol used and the nature of the client application. Always check the dedicated guide for the capability you have in mind (i.e. OAuth, SAML, etc).</p></div>
 
 ### Service Access Strategy
 
-[See this guide](Configuring-Service-Access-Strategy.html) for more info please.
+[See this guide](Configuring-Service-Access-Strategy.html) for more info.
 
 ### Proxy Authentication Policy
 
-[See this guide](Configuring-Service-Proxy-Policy.html) for more info please.
+[See this guide](Configuring-Service-Proxy-Policy.html) for more info.
 
 ### Required Authentication
 
@@ -79,15 +81,19 @@ Registered services present the following metadata:
 
 ### Tags & Properties
 
-[See this guide](Configuring-Service-Custom-Properties.html) for more info please.
+[See this guide](Configuring-Service-Custom-Properties.html) for more info.
 
 ### Contacts & Owners
 
-[See this guide](Configuring-Service-Contacts.html) for more info please.
+[See this guide](Configuring-Service-Contacts.html) for more info.
 
 ### Expiration Policy
 
-[See this guide](Configuring-Service-Expiration-Policy.html) for more info please.
+[See this guide](Configuring-Service-Expiration-Policy.html) for more info.
+
+### Matching Strategy
+
+See [this guide](Configuring-Service-Matching-Strategy.html) for more info.
 
 ## Storage
 

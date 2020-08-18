@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SpnegoWebflowActionsConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
-@Tag("Webflow")
+@Tag("Spnego")
 public class SpengoWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

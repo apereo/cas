@@ -1,9 +1,5 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.config.CasConsentCoreConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -13,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.util.List;
 
@@ -25,13 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@SpringBootTest(classes = {
-    CasConsentCoreConfiguration.class,
-    CasCoreAuditConfiguration.class,
-    RefreshAutoConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreUtilConfiguration.class
-})
+@SpringBootTest(classes = BaseConsentRepositoryTests.SharedTestConfiguration.class)
 @Tag("Simple")
 public class DefaultConsentDecisionBuilderTests {
     @Autowired

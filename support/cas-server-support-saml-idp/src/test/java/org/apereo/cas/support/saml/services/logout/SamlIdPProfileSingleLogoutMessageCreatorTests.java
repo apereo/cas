@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services.logout;
 
-import org.apereo.cas.logout.DefaultSingleLogoutRequest;
+import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -35,12 +36,14 @@ public class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPCo
             casProperties.getAuthn().getSamlIdp(),
             samlIdPObjectSigner);
 
-        val logoutRequest = DefaultSingleLogoutRequest.builder()
+        val logoutRequest = DefaultSingleLogoutRequestContext.builder()
             .logoutUrl(new URL("https://sp.example.org/slo"))
             .registeredService(SamlIdPTestUtils.getSamlRegisteredService())
             .service(RegisteredServiceTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
             .ticketId("ST-123456789")
-            .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+            .executionRequest(SingleLogoutExecutionRequest.builder()
+                .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+                .build())
             .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
             .properties(CollectionUtils.wrap(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING,
                 SAMLConstants.SAML2_POST_BINDING_URI))

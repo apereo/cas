@@ -18,6 +18,7 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.ContactPerson;
+import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.Extensions;
 import org.opensaml.saml.saml2.metadata.KeyDescriptor;
@@ -99,7 +100,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
 
         val entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
         if (entityDescriptor == null) {
-            LOGGER.warn("Cannot find entity [{}] in metadata provider Ensure the metadata is valid and has not expired.", entityID);
+            LOGGER.warn("Cannot find entity [{}] in metadata provider. Ensure the metadata is valid and has not expired.", entityID);
             return Optional.empty();
         }
         LOGGER.trace("Located entity descriptor in metadata for [{}]", entityID);
@@ -114,30 +115,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         }
         return getServiceProviderSsoDescriptor(entityID, chainingMetadataResolver, entityDescriptor);
     }
-
-    private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade>
-        getServiceProviderSsoDescriptor(final String entityID,
-                                    final MetadataResolver chainingMetadataResolver,
-                                    final EntityDescriptor entityDescriptor) {
-        val ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
-        if (ssoDescriptor != null) {
-            LOGGER.debug("Located SP SSODescriptor in metadata for [{}]. Metadata is valid until [{}]", entityID,
-                ObjectUtils.defaultIfNull(ssoDescriptor.getValidUntil(), "forever"));
-            if (ssoDescriptor.getValidUntil() != null) {
-                val validUntil = DateTimeUtils.zonedDateTimeOf(ssoDescriptor.getValidUntil());
-                val expired = validUntil.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
-                if (expired) {
-                    LOGGER.warn("SP SSODescriptor in the metadata has expired at [{}]", ssoDescriptor.getValidUntil());
-                    return Optional.empty();
-                }
-            }
-            return Optional.of(new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor, entityDescriptor,
-                chainingMetadataResolver));
-        }
-        LOGGER.warn("Could not locate SP SSODescriptor in the metadata for [{}]", entityID);
-        return Optional.empty();
-    }
-
+    
     public ZonedDateTime getValidUntil() {
         return DateTimeUtils.zonedDateTimeOf(this.ssoDescriptor.getValidUntil());
     }
@@ -212,10 +190,6 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         return nameIdFormats;
     }
 
-    private List<AssertionConsumerService> getAssertionConsumerServices() {
-        return (List) this.ssoDescriptor.getEndpoints(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
-    }
-
     public List<SingleLogoutService> getSingleLogoutServices() {
         return (List) this.ssoDescriptor.getEndpoints(SingleLogoutService.DEFAULT_ELEMENT_NAME);
     }
@@ -245,6 +219,20 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
     }
 
     /**
+     * Get locations of all assertion consumer services for the given binding.
+     *
+     * @param binding the binding
+     * @return the assertion consumer service
+     */
+    public List<String> getAssertionConsumerServiceLocations(final String binding) {
+        return getAssertionConsumerServices()
+            .stream()
+            .filter(acs -> acs.getBinding().equalsIgnoreCase(binding))
+            .map(Endpoint::getLocation)
+            .collect(Collectors.toList());
+    }
+
+    /**
      * Gets assertion consumer service for paos binding.
      *
      * @return the assertion consumer service for paos binding
@@ -271,7 +259,6 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         return getAssertionConsumerService(SAMLConstants.SAML2_ARTIFACT_BINDING_URI);
     }
 
-
     /**
      * Contains assertion consumer services ?
      *
@@ -288,5 +275,31 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
      */
     public int assertionConsumerServicesSize() {
         return getAssertionConsumerServices().size();
+    }
+
+    private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getServiceProviderSsoDescriptor(final String entityID,
+                                                                                                                final MetadataResolver chainingMetadataResolver,
+                                                                                                                final EntityDescriptor entityDescriptor) {
+        val ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
+        if (ssoDescriptor != null) {
+            LOGGER.debug("Located SP SSODescriptor in metadata for [{}]. Metadata is valid until [{}]", entityID,
+                ObjectUtils.defaultIfNull(ssoDescriptor.getValidUntil(), "forever"));
+            if (ssoDescriptor.getValidUntil() != null) {
+                val validUntil = DateTimeUtils.zonedDateTimeOf(ssoDescriptor.getValidUntil());
+                val expired = validUntil.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
+                if (expired) {
+                    LOGGER.warn("SP SSODescriptor in the metadata has expired at [{}]", ssoDescriptor.getValidUntil());
+                    return Optional.empty();
+                }
+            }
+            return Optional.of(new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor, entityDescriptor,
+                chainingMetadataResolver));
+        }
+        LOGGER.warn("Could not locate SP SSODescriptor in the metadata for [{}]", entityID);
+        return Optional.empty();
+    }
+
+    private List<AssertionConsumerService> getAssertionConsumerServices() {
+        return (List) this.ssoDescriptor.getEndpoints(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
     }
 }

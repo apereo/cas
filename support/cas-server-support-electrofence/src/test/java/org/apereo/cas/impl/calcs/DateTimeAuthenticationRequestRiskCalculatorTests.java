@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @TestPropertySource(properties = {"cas.authn.adaptive.risk.date-time.enabled=true", "cas.authn.adaptive.risk.date-time.window-in-hours=4"})
-@Tag("Simple")
+@Tag("Authentication")
 public class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
     @Test
     public void verifyTestWhenNoAuthnEventsFoundForUser() {

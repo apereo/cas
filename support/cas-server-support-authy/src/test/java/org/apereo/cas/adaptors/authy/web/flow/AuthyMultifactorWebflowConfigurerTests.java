@@ -23,7 +23,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
         "cas.authn.mfa.authy.api-key=example",
         "cas.authn.mfa.authy.api-url=http://localhost:8080/authy"
     })
-@Tag("Webflow")
+@Tag("WebflowConfig")
 @Getter
 public class AuthyMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired

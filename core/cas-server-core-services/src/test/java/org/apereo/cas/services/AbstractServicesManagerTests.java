@@ -46,23 +46,6 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         this.servicesManager.load();
     }
 
-    protected ServicesManager getServicesManagerInstance() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        return new DefaultServicesManager(serviceRegistry,
-            applicationContext,
-            new HashSet<>(),
-                Caffeine.newBuilder()
-                    .expireAfterWrite(Duration.ofSeconds(2))
-                    .build());
-    }
-
-    protected ServiceRegistry getServiceRegistryInstance() {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-        return new InMemoryServiceRegistry(appCtx, listOfDefaultServices, new ArrayList<>());
-    }
-
     @Test
     public void verifySaveAndGet() {
         val services = new RegexRegisteredService();
@@ -103,7 +86,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         assertNotNull(servicesManager.findServiceBy(TEST, RegexRegisteredService.class));
         assertTrue(isServiceInCache(TEST, 0));
     }
-    
+
     @Test
     public void verifyDelete() {
         val r = new RegexRegisteredService();
@@ -146,6 +129,25 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         r.setExpirationPolicy(expirationPolicy);
         this.servicesManager.save(r);
         assertNull(this.servicesManager.findServiceBy(r.getServiceId()));
+    }
+
+    protected ServicesManager getServicesManagerInstance() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(serviceRegistry)
+            .applicationContext(applicationContext)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(2)).build())
+            .build();
+        return new DefaultServicesManager(context);
+    }
+
+    protected ServiceRegistry getServiceRegistryInstance() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        return new InMemoryServiceRegistry(appCtx, listOfDefaultServices, new ArrayList<>());
     }
 
     protected boolean isServiceInCache(final String serviceId, final long id) {

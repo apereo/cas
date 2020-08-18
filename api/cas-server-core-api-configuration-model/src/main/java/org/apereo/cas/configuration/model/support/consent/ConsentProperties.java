@@ -34,6 +34,24 @@ public class ConsentProperties implements Serializable {
     private static final long serialVersionUID = 5201308051524438384L;
 
     /**
+     * Path to script that determines the activation rules for consent-enabled
+     * transactions.
+     */
+    @NestedConfigurationProperty
+    private SpringResourceProperties activationStrategyGroovyScript = new SpringResourceProperties();
+
+    /**
+     * Whether consent functionality should be enabled.
+     */
+    private boolean enabled = true;
+
+    /**
+     * Whether consent functionality should be globally
+     * applicapable to all applications and requests.
+     */
+    private boolean active = true;
+
+    /**
      * Global reminder time unit, to reconfirm consent
      * in cases no changes are detected.
      */

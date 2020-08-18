@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Tag("Simple")
+@Tag("ExpirationPolicy")
 public class NeverExpiresExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "neverExpiresExpirationPolicy.json");

@@ -1,8 +1,7 @@
 package org.apereo.cas.logout;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.logout.slo.SingleLogoutRequest;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -30,17 +29,19 @@ import java.util.stream.Stream;
 @Getter
 public class DefaultLogoutManager implements LogoutManager {
     private final boolean singleLogoutCallbacksDisabled;
+
     private final LogoutExecutionPlan logoutExecutionPlan;
 
     @Override
-    public List<SingleLogoutRequest> performLogout(final TicketGrantingTicket ticket) {
+    public List<SingleLogoutRequestContext> performLogout(final SingleLogoutExecutionRequest context) {
+        val ticket = context.getTicketGrantingTicket();
         LOGGER.info("Performing logout operations for [{}]", ticket.getId());
         if (this.singleLogoutCallbacksDisabled) {
             LOGGER.info("Single logout callbacks are disabled");
             return new ArrayList<>(0);
         }
-        val logoutRequests = performLogoutForTicket(ticket);
-        this.logoutExecutionPlan.getLogoutPostProcessor().forEach(h -> {
+        val logoutRequests = performLogoutForTicket(context);
+        logoutExecutionPlan.getLogoutPostProcessors().forEach(h -> {
             LOGGER.debug("Invoking logout handler [{}] to process ticket [{}]", h.getClass().getSimpleName(), ticket.getId());
             h.handle(ticket);
         });
@@ -48,7 +49,8 @@ public class DefaultLogoutManager implements LogoutManager {
         return logoutRequests;
     }
 
-    private List<SingleLogoutRequest> performLogoutForTicket(final TicketGrantingTicket ticketToBeLoggedOut) {
+    private List<SingleLogoutRequestContext> performLogoutForTicket(final SingleLogoutExecutionRequest context) {
+        val ticketToBeLoggedOut = context.getTicketGrantingTicket();
         val streamServices = Stream.concat(Stream.of(ticketToBeLoggedOut.getServices()), Stream.of(ticketToBeLoggedOut.getProxyGrantingTickets()));
         val logoutServices = streamServices
             .map(Map::entrySet)
@@ -62,11 +64,11 @@ public class DefaultLogoutManager implements LogoutManager {
         return logoutServices.stream()
             .map(entry -> sloHandlers
                 .stream()
-                .filter(handler -> handler.supports(entry.getValue()))
+                .filter(handler -> handler.supports(context, entry.getValue()))
                 .map(handler -> {
                     val service = entry.getValue();
                     LOGGER.trace("Handling single logout callback for [{}]", service.getId());
-                    return handler.handle(service, entry.getKey(), ticketToBeLoggedOut);
+                    return handler.handle(service, entry.getKey(), context);
                 })
                 .flatMap(Collection::stream)
                 .filter(Objects::nonNull)

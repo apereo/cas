@@ -74,11 +74,12 @@ public class CasConsentJdbcConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean consentEntityManagerFactory() {
         val factory = jpaBeanFactory.getObject();
-        val ctx = new JpaConfigurationContext(
-            jpaConsentVendorAdapter(),
-            "jpaConsentContext",
-            jpaConsentPackagesToScan(),
-            dataSourceConsent());
+        val ctx = JpaConfigurationContext.builder()
+            .jpaVendorAdapter(jpaConsentVendorAdapter())
+            .persistenceUnitName("jpaConsentContext")
+            .dataSource(dataSourceConsent())
+            .packagesToScan(jpaConsentPackagesToScan())
+            .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getConsent().getJpa());
     }
 

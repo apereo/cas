@@ -148,8 +148,9 @@ public class CasCoreAuthenticationHandlersConfiguration {
     }
 
     private Map<String, String> getParsedUsers() {
-        val usersProperty = casProperties.getAuthn().getAccept().getUsers();
-        if (StringUtils.isNotBlank(usersProperty) && usersProperty.contains("::")) {
+        val accept = casProperties.getAuthn().getAccept();
+        val usersProperty = accept.getUsers();
+        if (accept.isEnabled() && StringUtils.isNotBlank(usersProperty) && usersProperty.contains("::")) {
             val pattern = Pattern.compile("::");
             return Stream.of(usersProperty.split(","))
                 .map(pattern::split)

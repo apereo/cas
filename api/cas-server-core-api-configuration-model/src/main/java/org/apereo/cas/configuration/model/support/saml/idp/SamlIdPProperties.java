@@ -35,6 +35,14 @@ public class SamlIdPProperties implements Serializable {
     private boolean attributeQueryProfileEnabled;
 
     /**
+     * Indicates whether saml requests, and other session data,
+     * collected as part of SAML flows and requests
+     * that are kept by the container session, should be replicated
+     * across the cluster.
+     */
+    private boolean replicateSessions;
+
+    /**
      * The SAML entity id for the deployment.
      */
     @RequiredProperty

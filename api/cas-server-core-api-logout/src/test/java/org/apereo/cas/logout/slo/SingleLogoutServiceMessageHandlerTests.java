@@ -1,7 +1,7 @@
 package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -20,31 +20,31 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Authentication")
+@Tag("Logout")
 public class SingleLogoutServiceMessageHandlerTests {
 
     @Test
     public void verifyOperation() {
         val handler = new SingleLogoutServiceMessageHandler() {
             @Override
-            public Collection<SingleLogoutRequest> handle(final WebApplicationService singleLogoutService,
-                                                          final String ticketId,
-                                                          final TicketGrantingTicket ticketGrantingTicket) {
+            public Collection<SingleLogoutRequestContext> handle(final WebApplicationService singleLogoutService,
+                                                                 final String ticketId,
+                                                                 final SingleLogoutExecutionRequest context) {
                 return List.of();
             }
 
             @Override
-            public boolean performBackChannelLogout(final SingleLogoutRequest request) {
+            public boolean performBackChannelLogout(final SingleLogoutRequestContext request) {
                 return false;
             }
 
             @Override
-            public SingleLogoutMessage createSingleLogoutMessage(final SingleLogoutRequest logoutRequest) {
+            public SingleLogoutMessage createSingleLogoutMessage(final SingleLogoutRequestContext logoutRequest) {
                 return null;
             }
         };
         assertEquals(Ordered.LOWEST_PRECEDENCE, handler.getOrder());
-        assertTrue(handler.supports(mock(WebApplicationService.class)));
+        assertTrue(handler.supports(SingleLogoutExecutionRequest.builder().build(), mock(WebApplicationService.class)));
 
     }
 

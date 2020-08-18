@@ -10,6 +10,7 @@ import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilter;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
@@ -23,8 +24,8 @@ import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -182,8 +183,15 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
     private static RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final Pair<RegisteredServiceProperties, String>... properties) {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
-        val servicesManager = new DefaultServicesManager(new InMemoryServiceRegistry(appCtx),
-            appCtx, new LinkedHashSet<>(), Caffeine.newBuilder().build());
+
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(new InMemoryServiceRegistry(appCtx))
+            .applicationContext(appCtx)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .build();
+
+        val servicesManager = new DefaultServicesManager(context);
         val argumentExtractor = new DefaultArgumentExtractor(new WebApplicationServiceFactory());
 
         val service = RegisteredServiceTestUtils.getRegisteredService("service-0");

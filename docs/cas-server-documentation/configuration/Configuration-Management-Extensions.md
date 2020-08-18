@@ -10,7 +10,7 @@ Being a [Spring Boot](https://github.com/spring-projects/spring-boot) applicatio
 
 ## Configuration Components
 
-This is the recommended approach to create additional Spring beans, override existing ones and simply inject your own custom behavior into the CAS application runtime.
+This is the recommended approach to create additional Spring beans, override existing ones and inject your own custom behavior into the CAS application runtime.
 
 Given CAS’ adoption of Spring Boot, most if not all of the old XML configuration is transformed into `@Configuration` components. These are classes declared by each relevant module that are automatically picked up at runtime whose job is to declare and configure beans and register them into the application context. Another way of thinking about it is, components that are decorated with `@Configuration` are loose equivalents of old XML configuration files that are highly organized where `<bean>` tags are translated to java methods tagged with `@Bean` and configured dynamically.
 

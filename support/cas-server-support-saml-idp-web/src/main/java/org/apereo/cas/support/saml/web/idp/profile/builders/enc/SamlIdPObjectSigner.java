@@ -124,7 +124,6 @@ public class SamlIdPObjectSigner {
         prepareSamlOutboundDestinationHandler(outboundContext);
         prepareSamlOutboundProtocolMessageSigningHandler(outboundContext);
         return samlObject;
-
     }
 
     /**

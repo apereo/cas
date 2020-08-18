@@ -41,6 +41,7 @@ import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -74,6 +75,18 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * SAML profile configuration context.
      */
     protected final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext;
+
+    /**
+     * Handle unauthorized service exception.
+     *
+     * @param req the req
+     * @param ex  the ex
+     * @return the model and view
+     */
+    @ExceptionHandler(UnauthorizedServiceException.class)
+    public ModelAndView handleUnauthorizedServiceException(final HttpServletRequest req, final Exception ex) {
+        return WebUtils.produceUnauthorizedErrorView();
+    }
 
     /**
      * Gets saml metadata adaptor for service.
@@ -127,13 +140,17 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     /**
      * Retrieve authn request authn request.
      *
-     * @param request the request
+     * @param request  the request
+     * @param response the response
      * @return the authn request
      * @throws Exception the exception
      */
-    protected AuthnRequest retrieveSamlAuthenticationRequestFromHttpRequest(final HttpServletRequest request) throws Exception {
+    protected AuthnRequest retrieveSamlAuthenticationRequestFromHttpRequest(final HttpServletRequest request,
+                                                                            final HttpServletResponse response) throws Exception {
         LOGGER.debug("Retrieving authentication request from scope");
-        val requestValue = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
+        val context = new JEEContext(request, response);
+        val requestValue = samlProfileHandlerConfigurationContext.getSessionStore()
+            .get(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST).orElse(StringUtils.EMPTY).toString();
         if (StringUtils.isBlank(requestValue)) {
             throw new IllegalArgumentException("SAML request could not be determined from the authentication request");
         }
@@ -182,13 +199,12 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             null, DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC)), attributes);
     }
 
-
     /**
      * Log cas validation assertion.
      *
      * @param assertion the assertion
      */
-    protected void logCasValidationAssertion(final Assertion assertion) {
+    protected static void logCasValidationAssertion(final Assertion assertion) {
         LOGGER.debug("CAS Assertion Valid: [{}]", assertion.isValid());
         LOGGER.debug("CAS Assertion Principal: [{}]", assertion.getPrincipal().getName());
         LOGGER.debug("CAS Assertion authentication Date: [{}]", assertion.getAuthenticationDate());
@@ -287,17 +303,17 @@ public abstract class AbstractSamlIdPProfileHandlerController {
 
         try (val writer = SamlUtils.transformSamlObject(samlProfileHandlerConfigurationContext.getOpenSamlConfigBean(), authnRequest)) {
             val builder = new URLBuilder(samlProfileHandlerConfigurationContext.getCallbackService().getId());
+
             builder.getQueryParams().add(
                 new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,
                     SamlIdPUtils.getIssuerFromSamlObject(authnRequest)));
 
             val samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
-            builder.getQueryParams().add(
-                new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_SAML_REQUEST,
-                    samlRequest));
-            builder.getQueryParams().add(
-                new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE,
-                    SAMLBindingSupport.getRelayState(messageContext)));
+            val context = new JEEContext(request, response);
+            samlProfileHandlerConfigurationContext.getSessionStore()
+                .set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
+            samlProfileHandlerConfigurationContext.getSessionStore()
+                .set(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, SAMLBindingSupport.getRelayState(messageContext));
             val url = builder.buildURL();
 
             LOGGER.trace("Built service callback url [{}]", url);
@@ -445,7 +461,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         return Pair.of(registeredService, facade);
     }
 
-
     /**
      * Decode soap 11 context.
      *
@@ -472,18 +487,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             LoggingUtils.error(LOGGER, e);
         }
         return null;
-    }
-
-    /**
-     * Handle unauthorized service exception.
-     *
-     * @param req the req
-     * @param ex  the ex
-     * @return the model and view
-     */
-    @ExceptionHandler(UnauthorizedServiceException.class)
-    public ModelAndView handleUnauthorizedServiceException(final HttpServletRequest req, final Exception ex) {
-        return WebUtils.produceUnauthorizedErrorView();
     }
 }
 

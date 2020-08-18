@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCaptchaConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
-@Tag("Webflow")
+@Tag("WebflowConfig")
 public class CasCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

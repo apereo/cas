@@ -23,7 +23,7 @@ Bypass rules allow for the following options for each provider:
 - Skip multifactor authentication depending on method/form of primary authentication execution.
 - Skip multifactor authentication depending on the properties of the http request such as remote addr/host and/or header names.
 
-A few simple examples follow:
+A few examples follow:
 
 - Trigger MFA except when the principal carries an `affiliation` attribute whose value is either `alum` or `member`.
 - Trigger MFA except when the principal carries a `superAdmin` attribute.

@@ -8,6 +8,8 @@ import lombok.val;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
+import javax.persistence.spi.PersistenceProvider;
+
 /**
  * This is {@link JpaBeanFactory}.
  *
@@ -46,4 +48,12 @@ public interface JpaBeanFactory {
      */
     LocalContainerEntityManagerFactoryBean newEntityManagerFactoryBean(JpaConfigurationContext config,
                                                                        AbstractJpaProperties jpaProperties);
+
+    /**
+     * New persistence provider.
+     *
+     * @param jpa the jpa
+     * @return the persistence provider
+     */
+    PersistenceProvider newPersistenceProvider(AbstractJpaProperties jpa);
 }

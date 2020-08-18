@@ -8,6 +8,9 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
 import org.apereo.cas.web.support.WebUtils;
@@ -41,18 +44,14 @@ import static org.mockito.Mockito.*;
 public class RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTests {
     @Test
     public void verifyNoServiceOrSso() {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
+
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        val svc = CoreAuthenticationTestUtils.getRegisteredService("serviceid1");
-        val dao = new InMemoryServiceRegistry(appCtx, List.of(svc), new ArrayList<>());
-
-        val defaultServicesManager = new DefaultServicesManager(dao, appCtx, new HashSet<>(), Caffeine.newBuilder().build());
+        val defaultServicesManager = getServicesManager(CoreAuthenticationTestUtils.getRegisteredService("serviceid1"));
         defaultServicesManager.load();
 
         val strategy = new RequiredAuthenticationHandlersSingleSignOnParticipationStrategy(defaultServicesManager,
@@ -66,9 +65,6 @@ public class RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTest
 
     @Test
     public void verifySsoWithMismatchedHandlers() {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -80,11 +76,7 @@ public class RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTest
         when(svc.getAuthenticationPolicy()).thenReturn(policy);
         when(svc.matches(anyString())).thenReturn(Boolean.TRUE);
 
-        val dao = new InMemoryServiceRegistry(appCtx,
-            List.of(svc), new ArrayList<>());
-
-        val servicesManager = new DefaultServicesManager(dao,
-            appCtx, new HashSet<>(), Caffeine.newBuilder().build());
+        val servicesManager = getServicesManager(svc);
         servicesManager.load();
 
         val ticketRegistry = new DefaultTicketRegistry();
@@ -102,8 +94,6 @@ public class RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTest
 
     @Test
     public void verifySsoWithHandlers() {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -116,12 +106,7 @@ public class RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTest
             Set.of(SimpleTestUsernamePasswordAuthenticationHandler.class.getSimpleName()));
         when(svc.getAuthenticationPolicy()).thenReturn(policy);
         when(svc.matches(anyString())).thenReturn(Boolean.TRUE);
-
-        val dao = new InMemoryServiceRegistry(appCtx,
-            List.of(svc), new ArrayList<>());
-
-        val servicesManager = new DefaultServicesManager(dao,
-            appCtx, new HashSet<>(), Caffeine.newBuilder().build());
+        val servicesManager = getServicesManager(svc);
         servicesManager.load();
 
         val ticketRegistry = new DefaultTicketRegistry();
@@ -135,5 +120,18 @@ public class RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTest
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         assertTrue(strategy.supports(context));
         assertTrue(strategy.isParticipating(context));
+    }
+
+    private static ServicesManager getServicesManager(final RegisteredService svc) {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val dao = new InMemoryServiceRegistry(appCtx, List.of(svc), new ArrayList<>());
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(dao)
+            .applicationContext(appCtx)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .build();
+        return new DefaultServicesManager(context);
     }
 }

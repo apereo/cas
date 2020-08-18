@@ -20,7 +20,7 @@ to a specific CAS module that is expected to be included in the final CAS distri
 and deployment process.
 
 <div class="alert alert-info"><strong>YAGNI</strong><p>Note that for nearly ALL use cases,
-simply declaring and configuring properties listed below is sufficient. You should NOT have to
+ declaring and configuring properties listed below is sufficient. You should NOT have to
 explicitly massage a CAS XML configuration file to design an authentication handler,
 create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.</p></div>
 
@@ -605,9 +605,9 @@ Enable in-memory session replication to replicate web application session deltas
 
 | `CLOUD` Membership Providers   | Description
 |----------------------|-------------------------------------------------------
-| `kubernetes`         | Uses [Kubernetes API](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/membership/cloud/KubernetesMembershipProvider.java) to find other pods in a deployment. API is discovered and accessed via information in environment variables set in the container.  
-| `dns`                | Uses [DNS lookups](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/membership/cloud/DNSMembershipProvider.java) to find addresses of the pods behind a service specified by DNS_MEMBERSHIP_SERVICE_NAME environment variable.  
-| [MembershipProvider impl classname](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/MembershipProvider.java) | Use a membership provider implementation of your choice.   
+| `kubernetes`         | Uses [Kubernetes API](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/membership/cloud/KubernetesMembershipProvider.java) to find other pods in a deployment. API is discovered and accessed via information in environment variables set in the container. The KUBERNETES_NAMESPACE environment variable is used to query the pods in the namespace and it will treat other pods in that namespace as potential cluster members but they can be filtered using the KUBERNETES_LABELS environment variable which are used as a [label selector](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#api).
+| `dns`                | Uses [DNS lookups](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/membership/cloud/DNSMembershipProvider.java) to find addresses of the cluster members behind a DNS name specified by DNS_MEMBERSHIP_SERVICE_NAME environment variable. Works in Kubernetes but doesn't rely on Kubernetes.
+| [MembershipProvider impl classname](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/MembershipProvider.java) | Use a membership provider implementation of your choice.
 
 Most settings apply to the `DEFAULT` clustering type, which requires members to be defined via `clusterMembers` if multicast discovery doesn't work. The `cloudMembershipProvider` setting applies to the `CLOUD` type.
 
@@ -2136,7 +2136,7 @@ There are numerous directory architectures and we provide configuration for four
 
 Note that CAS will automatically create the appropriate components internally
 based on the settings specified below. If you wish to authenticate against more than one LDAP
-server, simply increment the index and specify the settings for the next LDAP server.
+server, increment the index and specify the settings for the next LDAP server.
 
 **Note:** Attributes retrieved as part of LDAP authentication are merged with all attributes
 retrieved from [other attribute repository sources](#authentication-attributes), if any.
@@ -2486,6 +2486,7 @@ Password encoding settings for this feature are available [here](Configuration-P
 ```properties
 # cas.authn.accept.users=
 # cas.authn.accept.name=
+# cas.authn.accept.enabled=true
 # cas.authn.accept.credential-criteria=
 ```
 
@@ -3242,6 +3243,7 @@ To learn more about this topic, [please review this guide](../installation/Confi
 
 ```properties
 # cas.authn.saml-idp.entity-id=https://cas.example.org/idp
+# cas.authn.saml-idp.replicate-sessions=false
 
 # cas.authn.saml-idp.authentication-context-class-mappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
 # cas.authn.saml-idp.authentication-context-class-mappings[1]=https://refeds.org/profile/mfa->mfa-gauth
@@ -3354,8 +3356,11 @@ settings for this feature are available [here](Configuration-Properties-Common.h
 ### SAML Logout
 
 ```properties
-# cas.authn.saml-idp.logout.forceSignedLogoutRequests=true
-# cas.authn.saml-idp.logout.singleLogoutCallbacksDisabled=false
+# cas.authn.saml-idp.logout.force-signed-logout-requests=true
+# cas.authn.saml-idp.logout.single-logout-callbacks-disabled=false
+# cas.authn.saml-idp.logout.sign-logout-response=false
+# cas.authn.saml-idp.logout.send-logout-response=true
+# cas.authn.saml-idp.logout.logout-response-binding=
 ```
 
 ### SAML Algorithms & Security
@@ -4129,6 +4134,8 @@ under the configuration key `cas.audit.jdbc`.
 # cas.audit.jdbc.asynchronous=true
 # cas.audit.jdbc.max-age-days=180
 # cas.audit.jdbc.column-length=100
+# cas.audit.jdbc.select-sql-query-template=
+# cas.audit.jdbc.date-formatter-pattern=
 ```
 
 Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.audit.jdbc`.
@@ -5417,6 +5424,10 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 ```properties
 # cas.consent.reminder=30
 # cas.consent.reminder-time-unit=HOURS|DAYS|MONTHS
+# cas.consent.enabled=true
+# cas.consent.active=true
+
+# cas.consent.activation-strategy-groovy-script.location=
 ```
 
 Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.consent`. The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.

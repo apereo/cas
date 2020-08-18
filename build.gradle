@@ -56,8 +56,8 @@ ext {
     publishSnapshots = Boolean.getBoolean("publishSnapshots")
     publishReleases = Boolean.getBoolean("publishReleases")
     
-    skipBootifulArtifact = System.getProperty("skipBootifulArtifact")
-    skipErrorProneCompiler = System.getProperty("skipErrorProneCompiler")
+    skipBootifulArtifact = providers.systemProperty("skipBootifulArtifact").forUseAtConfigurationTime().present
+    skipErrorProneCompiler = providers.systemProperty("skipErrorProneCompiler").forUseAtConfigurationTime().present
 
     forceBom = Boolean.getBoolean("forceBom")
 

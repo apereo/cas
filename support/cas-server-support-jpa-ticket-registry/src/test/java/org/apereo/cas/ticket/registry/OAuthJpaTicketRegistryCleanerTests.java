@@ -95,7 +95,8 @@ public class OAuthJpaTicketRegistryCleanerTests {
     @Test
     public void verifyOperation() {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
-        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(), TicketGrantingTicket.class);
+        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
+            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
         ticketRegistry.addTicket(tgt);
 
         val at = accessTokenFactory.create(RegisteredServiceTestUtils.getService(),
@@ -122,7 +123,8 @@ public class OAuthJpaTicketRegistryCleanerTests {
     @Test
     public void verifyDeviceCodeAndUserCleaning() {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
-        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(), TicketGrantingTicket.class);
+        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
+            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
         ticketRegistry.addTicket(tgt);
 
         val deviceCodeFactory = (OAuth20DeviceTokenFactory) ticketFactory.get(OAuth20DeviceToken.class);

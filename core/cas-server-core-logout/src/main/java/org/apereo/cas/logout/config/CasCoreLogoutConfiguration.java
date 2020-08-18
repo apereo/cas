@@ -1,13 +1,16 @@
 package org.apereo.cas.logout.config;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.DefaultLogoutExecutionPlan;
 import org.apereo.cas.logout.DefaultLogoutManager;
+import org.apereo.cas.logout.DefaultLogoutRedirectionStrategy;
 import org.apereo.cas.logout.DefaultSingleLogoutMessageCreator;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.logout.LogoutRedirectionStrategy;
 import org.apereo.cas.logout.slo.ChainingSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
@@ -47,6 +50,14 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreLogoutConfiguration {
+
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
+
+    @Autowired
+    @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+    private ObjectProvider<SingleLogoutServiceLogoutUrlBuilder> singleLogoutServiceLogoutUrlBuilder;
 
     @Autowired
     @Qualifier("ticketRegistry")
@@ -142,10 +153,19 @@ public class CasCoreLogoutConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "defaultLogoutRedirectionStrategy")
+    public LogoutRedirectionStrategy defaultLogoutRedirectionStrategy() {
+        return new DefaultLogoutRedirectionStrategy(webApplicationServiceFactory.getObject(),
+            casProperties.getLogout(), singleLogoutServiceLogoutUrlBuilder.getObject());
+    }
+
+    @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "casCoreLogoutExecutionPlanConfigurer")
     public LogoutExecutionPlanConfigurer casCoreLogoutExecutionPlanConfigurer() {
         return plan -> {
             plan.registerSingleLogoutServiceMessageHandler(defaultSingleLogoutServiceMessageHandler());
+            plan.registerLogoutRedirectionStrategy(defaultLogoutRedirectionStrategy());
 
             if (casProperties.getLogout().isRemoveDescendantTickets()) {
                 LOGGER.debug("CAS is configured to remove descendant tickets of the ticket-granting tickets");

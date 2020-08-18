@@ -12,9 +12,14 @@ import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.cryptacular.util.CertUtil;
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
 import org.opensaml.security.credential.BasicCredential;
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
+import org.opensaml.soap.common.SOAPObject;
+import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.opensaml.xmlsec.SecurityConfigurationSupport;
 import org.opensaml.xmlsec.SignatureValidationConfiguration;
 import org.opensaml.xmlsec.criterion.SignatureValidationConfigurationCriterion;
@@ -32,6 +37,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.w3c.dom.Element;
 
 import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -52,7 +58,69 @@ import java.util.ArrayList;
 @Slf4j
 @UtilityClass
 public class SamlUtils {
+    /**
+     * The constant DEFAULT_ELEMENT_NAME_FIELD.
+     */
+    private static final String DEFAULT_ELEMENT_NAME_FIELD = "DEFAULT_ELEMENT_NAME";
+
     private static final int SAML_OBJECT_LOG_ASTERIXLINE_LENGTH = 80;
+
+    /**
+     * Gets saml object QName indicated by field {@link #DEFAULT_ELEMENT_NAME_FIELD}.
+     *
+     * @param objectType the object type
+     * @return the saml object QName
+     */
+    public QName getSamlObjectQName(final Class objectType) {
+        try {
+            val f = objectType.getField(DEFAULT_ELEMENT_NAME_FIELD);
+            return (QName) f.get(null);
+        } catch (final Exception e) {
+            throw new IllegalStateException("Cannot find/access field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD, e);
+        }
+    }
+
+    /**
+     * New soap object t.
+     *
+     * @param <T>        the type parameter
+     * @param objectType the object type
+     * @return the t
+     */
+    @SneakyThrows
+    public <T extends SOAPObject> T newSoapObject(final Class<T> objectType) {
+        val qName = getSamlObjectQName(objectType);
+        LOGGER.trace("Attempting to create SOAPObject for type: [{}] and QName: [{}]", objectType, qName);
+        val builder = (SOAPObjectBuilder<T>)
+            XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
+        if (builder == null) {
+            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
+        }
+        return objectType.cast(builder.buildObject(qName));
+    }
+
+    /**
+     * Create a new SAML object.
+     *
+     * @param <T>        the generic type
+     * @param objectType the object type
+     * @return the t
+     */
+    @SneakyThrows
+    public static <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
+        val qName = getSamlObjectQName(objectType);
+        return newSamlObject(objectType, qName);
+    }
+
+    public static <T extends SAMLObject> T newSamlObject(final Class<T> objectType, final QName qName) {
+        LOGGER.trace("Attempting to create SAMLObject for type: [{}] and QName: [{}]", objectType, qName);
+        val builder = (SAMLObjectBuilder<T>)
+            XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
+        if (builder == null) {
+            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
+        }
+        return objectType.cast(builder.buildObject(qName));
+    }
 
     /**
      * Gets root element from resource.
@@ -236,6 +304,36 @@ public class SamlUtils {
     }
 
     /**
+     * Log saml object.
+     *
+     * @param configBean the config bean
+     * @param samlObject the saml object
+     * @return the string
+     * @throws SamlException the saml exception
+     */
+    public static String logSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject) throws SamlException {
+        val repeat = "*".repeat(SAML_OBJECT_LOG_ASTERIXLINE_LENGTH);
+        LOGGER.debug(repeat);
+        try (val writer = transformSamlObject(configBean, samlObject, true)) {
+            LOGGER.debug("Logging [{}]\n\n[{}]\n\n", samlObject.getClass().getName(), writer);
+            LOGGER.debug(repeat);
+            return writer.toString();
+        } catch (final Exception e) {
+            throw new SamlException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Is dynamic metadata query configured ?
+     *
+     * @param metadataLocation - the location of the metadata to resolve
+     * @return true/false
+     */
+    public static boolean isDynamicMetadataQueryConfigured(final String metadataLocation) {
+        return metadataLocation.trim().endsWith("/entities/{0}");
+    }
+
+    /**
      * Build credential for metadata signature validation basic credential.
      *
      * @param resource the resource
@@ -273,35 +371,5 @@ public class SamlUtils {
             }
         }
         return criteriaSet;
-    }
-
-    /**
-     * Log saml object.
-     *
-     * @param configBean the config bean
-     * @param samlObject the saml object
-     * @return the string
-     * @throws SamlException the saml exception
-     */
-    public static String logSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject) throws SamlException {
-        val repeat = "*".repeat(SAML_OBJECT_LOG_ASTERIXLINE_LENGTH);
-        LOGGER.debug(repeat);
-        try (val writer = transformSamlObject(configBean, samlObject, true)) {
-            LOGGER.debug("Logging [{}]\n\n[{}]\n\n", samlObject.getClass().getName(), writer);
-            LOGGER.debug(repeat);
-            return writer.toString();
-        } catch (final Exception e) {
-            throw new SamlException(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Is dynamic metadata query configured ?
-     *
-     * @param metadataLocation - the location of the metadata to resolve
-     * @return true/false
-     */
-    public static boolean isDynamicMetadataQueryConfigured(final String metadataLocation) {
-        return metadataLocation.trim().endsWith("/entities/{0}");
     }
 }

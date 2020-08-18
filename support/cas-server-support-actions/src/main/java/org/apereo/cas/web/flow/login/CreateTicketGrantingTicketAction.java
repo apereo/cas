@@ -187,7 +187,7 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
 
         if (authenticationFromTgt == null) {
             LOGGER.debug("Authentication session associated with [{}] is no longer valid", ticketGrantingTicket);
-            webflowEventResolutionConfigurationContext.getCentralAuthenticationService().destroyTicketGrantingTicket(ticketGrantingTicket);
+            webflowEventResolutionConfigurationContext.getCentralAuthenticationService().deleteTicket(ticketGrantingTicket);
             return true;
         }
 

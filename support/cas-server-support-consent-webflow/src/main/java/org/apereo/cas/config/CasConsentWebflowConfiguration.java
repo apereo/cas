@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.consent.ConsentActivationStrategy;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +36,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("casConsentWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnBean(name = "consentRepository")
+@ConditionalOnProperty(prefix = "cas.consent", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasConsentWebflowConfiguration {
     @Autowired
     @Qualifier("attributeDefinitionStore")
@@ -64,13 +67,18 @@ public class CasConsentWebflowConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("consentActivationStrategy")
+    private ObjectProvider<ConsentActivationStrategy> consentActivationStrategy;
+    
     @ConditionalOnMissingBean(name = "checkConsentRequiredAction")
     @Bean
     public Action checkConsentRequiredAction() {
         return new CheckConsentRequiredAction(servicesManager.getObject(),
             authenticationRequestServiceSelectionStrategies.getObject(),
             consentEngine.getObject(), casProperties,
-            attributeDefinitionStore.getObject(), applicationContext);
+            attributeDefinitionStore.getObject(), applicationContext,
+            consentActivationStrategy.getObject());
     }
 
     @ConditionalOnMissingBean(name = "confirmConsentAction")

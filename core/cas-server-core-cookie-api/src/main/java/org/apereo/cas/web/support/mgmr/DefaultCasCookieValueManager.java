@@ -19,6 +19,10 @@ import java.util.stream.Stream;
  * The {@link DefaultCasCookieValueManager} is responsible for creating
  * the CAS SSO cookie and encrypting and signing its value.
  *
+ * This class by default ({@code CookieProperties.isPinToSession=true}) ensures the cookie is used on a
+ * request from same IP and with the same user-agent as when cookie was created.
+ * The client info (with original client ip) may be null if cluster failover occurs and session replication not working.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
@@ -76,9 +80,14 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
         }
 
         val clientInfo = ClientInfoHolder.getClientInfo();
+        if (clientInfo == null) {
+            throw new InvalidCookieException("Unable to match required remote address "
+                    + remoteAddr + " because client ip at time of cookie creation is unknown");
+        }
+
         if (!remoteAddr.equals(clientInfo.getClientIpAddress())) {
             throw new InvalidCookieException("Invalid cookie. Required remote address "
-                + remoteAddr + " does not match " + clientInfo.getClientIpAddress());
+                    + remoteAddr + " does not match " + clientInfo.getClientIpAddress());
         }
 
         val agent = HttpRequestUtils.getHttpServletRequestUserAgent(request);

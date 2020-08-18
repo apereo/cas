@@ -13,7 +13,7 @@ import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
-import org.apereo.cas.logout.slo.SingleLogoutRequest;
+import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -203,6 +203,17 @@ public class WebUtils {
     }
 
     /**
+     * Gets registered service.
+     *
+     * @param request the request
+     * @return the registered service
+     */
+    public static RegisteredService getRegisteredService(final HttpServletRequest request) {
+        return Optional.ofNullable(request)
+            .map(requestContext -> (RegisteredService) request.getAttribute(PARAMETER_REGISTERED_SERVICE)).orElse(null);
+    }
+
+    /**
      * Put ticket granting ticket in request and flow scopes.
      *
      * @param context the context
@@ -309,7 +320,7 @@ public class WebUtils {
      * @param context  the context
      * @param requests the requests
      */
-    public static void putLogoutRequests(final RequestContext context, final List<SingleLogoutRequest> requests) {
+    public static void putLogoutRequests(final RequestContext context, final List<SingleLogoutRequestContext> requests) {
         context.getFlowScope().put(PARAMETER_LOGOUT_REQUESTS, requests);
     }
 
@@ -329,8 +340,8 @@ public class WebUtils {
      * @param context the context
      * @return the logout requests
      */
-    public static List<SingleLogoutRequest> getLogoutRequests(final RequestContext context) {
-        return (List<SingleLogoutRequest>) context.getFlowScope().get(PARAMETER_LOGOUT_REQUESTS);
+    public static List<SingleLogoutRequestContext> getLogoutRequests(final RequestContext context) {
+        return (List<SingleLogoutRequestContext>) context.getFlowScope().get(PARAMETER_LOGOUT_REQUESTS);
     }
 
     /**
@@ -374,6 +385,16 @@ public class WebUtils {
         return Boolean.parseBoolean(val);
     }
 
+    /**
+     * Put registered service.
+     *
+     * @param request           the request
+     * @param registeredService the registered service
+     */
+    public static void putRegisteredService(final HttpServletRequest request, final RegisteredService registeredService) {
+        request.setAttribute(PARAMETER_REGISTERED_SERVICE, registeredService);
+    }
+    
     /**
      * Put registered service into flowscope.
      *
@@ -738,11 +759,11 @@ public class WebUtils {
     /**
      * Put logout redirect url.
      *
-     * @param context the context
+     * @param request the context
      * @param service the service
      */
-    public static void putLogoutRedirectUrl(final HttpServletRequest context, final String service) {
-        context.setAttribute("logoutRedirectUrl", service);
+    public static void putLogoutRedirectUrl(final HttpServletRequest request, final String service) {
+        request.setAttribute("logoutRedirectUrl", service);
     }
 
     /**
@@ -1440,5 +1461,25 @@ public class WebUtils {
      */
     public static void putYubiKeyMultipleDeviceRegistrationEnabled(final RequestContext requestContext, final boolean enabled) {
         requestContext.getFlowScope().put("yubikeyMultipleDeviceRegistrationEnabled", enabled);
+    }
+
+    /**
+     * Put single logout request.
+     *
+     * @param request       the request
+     * @param logoutRequest the logout request
+     */
+    public static void putSingleLogoutRequest(final HttpServletRequest request, final String logoutRequest) {
+        request.setAttribute("singleLogoutRequest", logoutRequest);
+    }
+
+    /**
+     * Gets single logout request.
+     *
+     * @param request the request
+     * @return the single logout request
+     */
+    public static String getSingleLogoutRequest(final HttpServletRequest request) {
+        return (String) request.getAttribute("singleLogoutRequest");
     }
 }

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasMultifactorAuthenticationWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
-@Tag("Webflow")
+@Tag("X509")
 public class X509WebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

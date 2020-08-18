@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "management.endpoint.health.enabled=true"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("Metrics")
 public class CasCoreMonitorConfigurationTests {
     @Autowired
     @Qualifier("memoryHealthIndicator")

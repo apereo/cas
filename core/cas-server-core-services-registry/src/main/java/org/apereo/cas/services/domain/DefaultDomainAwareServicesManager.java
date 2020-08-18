@@ -3,19 +3,16 @@ package org.apereo.cas.services.domain;
 import org.apereo.cas.services.AbstractServicesManager;
 import org.apereo.cas.services.DomainAwareServicesManager;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
@@ -33,12 +30,9 @@ public class DefaultDomainAwareServicesManager extends AbstractServicesManager i
 
     private final RegisteredServiceDomainExtractor registeredServiceDomainExtractor;
 
-    public DefaultDomainAwareServicesManager(final ServiceRegistry serviceRegistry,
-                                             final ConfigurableApplicationContext applicationContext,
-                                             final RegisteredServiceDomainExtractor registeredServiceDomainExtractor,
-                                             final Set<String> environments,
-                                             final Cache<Long, RegisteredService> services) {
-        super(serviceRegistry, applicationContext, environments, services);
+    public DefaultDomainAwareServicesManager(final ServicesManagerConfigurationContext context,
+                                             final RegisteredServiceDomainExtractor registeredServiceDomainExtractor) {
+        super(context);
         this.registeredServiceDomainExtractor = registeredServiceDomainExtractor;
     }
 
@@ -73,7 +67,7 @@ public class DefaultDomainAwareServicesManager extends AbstractServicesManager i
     }
 
     @Override
-    protected Stream<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
+    protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
         val mappedDomain = StringUtils.isNotBlank(serviceId) ? registeredServiceDomainExtractor.extract(serviceId) : StringUtils.EMPTY;
         LOGGER.trace("Domain mapped to the service identifier is [{}]", mappedDomain);
 
@@ -83,9 +77,9 @@ public class DefaultDomainAwareServicesManager extends AbstractServicesManager i
         val registeredServices = getServicesForDomain(domain);
         if (registeredServices == null || registeredServices.isEmpty()) {
             LOGGER.debug("No services could be located for domain [{}]", domain);
-            return Stream.empty();
+            return new ArrayList<>(0);
         }
-        return registeredServices.stream();
+        return registeredServices;
     }
 
     @Override

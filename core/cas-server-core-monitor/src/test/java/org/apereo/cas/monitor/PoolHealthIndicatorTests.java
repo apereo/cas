@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
-@Tag("Simple")
+@Tag("Metrics")
 public class PoolHealthIndicatorTests {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 

@@ -79,7 +79,7 @@ import static org.junit.jupiter.api.Assertions.*;
         CasThymeleafConfiguration.class,
         CasValidationConfiguration.class
     })
-@Tag("Web")
+@Tag("CAS")
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired

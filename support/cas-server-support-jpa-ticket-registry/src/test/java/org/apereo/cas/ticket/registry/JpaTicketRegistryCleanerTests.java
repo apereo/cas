@@ -109,7 +109,8 @@ public class JpaTicketRegistryCleanerTests {
     @Test
     public void verifyOperation() {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
-        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(), TicketGrantingTicket.class);
+        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
+            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
         ticketRegistry.addTicket(tgt);
 
         val stFactory = (ServiceTicketFactory) ticketFactory.get(ServiceTicket.class);
@@ -136,7 +137,8 @@ public class JpaTicketRegistryCleanerTests {
     @Test
     public void verifyTransientTicketCleaning() {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
-        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(), TicketGrantingTicket.class);
+        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
+            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
         ticketRegistry.addTicket(tgt);
         
         val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);

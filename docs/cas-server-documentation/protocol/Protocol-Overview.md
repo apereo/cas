@@ -25,7 +25,7 @@ It all starts with something rather trivial: The Bridge.
 
 ### The Bridge
 
-The bridge *design pattern* is simply an approach where an intermediary sits between the client and the server, translating requests back and forth. It simply acts as a link between the two sides allowing authentication requests from the client to be translated, massaged and transformed and then routed "invisibly" to CAS and then back.
+The bridge *design pattern* is an approach where an intermediary sits between the client and the server, translating requests back and forth. It simply acts as a link between the two sides allowing authentication requests from the client to be translated, massaged and transformed and then routed "invisibly" to CAS and then back.
 
 This is a neat trick because the client does not care how the authentication request is processes once it's submitted. The *thing* that receives that request, acting as a bridge can do anything required to process that request and ultimately submitting some sort of response back to the client. The bridge also does not care what external authentication system handles and honors that request and how all that processing internally works. All the bridge cares about is, "I routed the request to X. As long as X gives me back the right stuff, I should be fine to resume".
 

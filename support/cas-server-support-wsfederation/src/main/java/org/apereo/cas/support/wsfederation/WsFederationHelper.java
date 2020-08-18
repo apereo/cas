@@ -40,7 +40,6 @@ import org.opensaml.saml.saml2.encryption.Decrypter;
 import org.opensaml.saml.saml2.encryption.EncryptedElementTypeEncryptedKeyResolver;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.security.impl.SAMLSignatureProfileValidator;
-import org.opensaml.security.SecurityException;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
@@ -54,7 +53,6 @@ import org.opensaml.xmlsec.encryption.support.EncryptedKeyResolver;
 import org.opensaml.xmlsec.encryption.support.InlineEncryptedKeyResolver;
 import org.opensaml.xmlsec.encryption.support.SimpleRetrievalMethodEncryptedKeyResolver;
 import org.opensaml.xmlsec.keyinfo.impl.StaticKeyInfoCredentialResolver;
-import org.opensaml.xmlsec.signature.support.SignatureException;
 import org.opensaml.xmlsec.signature.support.SignatureTrustEngine;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 
@@ -245,19 +243,13 @@ public class WsFederationHelper {
             criteriaSet.add(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
             criteriaSet.add(new ProtocolCriterion(SAMLConstants.SAML20P_NS));
             criteriaSet.add(new EntityIdCriterion(configuration.getIdentityProviderIdentifier()));
-            try {
-                val engine = buildSignatureTrustEngine(configuration);
-                LOGGER.debug("Validating signature via trust engine for [{}]", configuration.getIdentityProviderIdentifier());
-                return engine.validate(signature, criteriaSet);
-            } catch (final SecurityException e) {
-                LoggingUtils.warn(LOGGER, e);
-            }
-        } catch (final SignatureException e) {
+            val engine = buildSignatureTrustEngine(configuration);
+            LOGGER.debug("Validating signature via trust engine for [{}]", configuration.getIdentityProviderIdentifier());
+            return engine.validate(signature, criteriaSet);
+        } catch (final Exception e) {
             LoggingUtils.error(LOGGER, "Failed to validate assertion signature", e);
         }
-
         SamlUtils.logSamlObject(this.configBean, assertion);
-
         LOGGER.error("Signature doesn't match any signing credential and cannot be validated.");
         return false;
     }

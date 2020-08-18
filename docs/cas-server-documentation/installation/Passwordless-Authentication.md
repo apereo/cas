@@ -7,7 +7,7 @@ category: Authentication
 # Passwordless Authentication
 
 Passwordless Authentication is a form of authentication in CAS where passwords take the form of tokens that expire after a configurable period of time. 
-Using this strategy, users are simply asked for an identifier (i.e. username) which is used to locate the user record that contains forms of contact such as email and phone
+Using this strategy, users are asked for an identifier (i.e. username) which is used to locate the user record that contains forms of contact such as email and phone
 number. Once located, the CAS-generated token is sent to the user via the configured notification strategies (i.e. email, sms, etc) where the user is then expected to 
 provide the token back to CAS in order to proceed. 
 
@@ -45,7 +45,7 @@ address or phone number that would be used to contact the user with issued token
 
 ### MongoDb
 
-This strategy simply allows one to locate a user record in MongoDb. The designated MongoDb collection is expectd to carry objects of type `PasswordlessUserAccount` in JSON format. To see the relevant list of CAS 
+This strategy allows one to locate a user record in MongoDb. The designated MongoDb collection is expectd to carry objects of type `PasswordlessUserAccount` in JSON format. To see the relevant list of CAS 
 properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).
 
 Support is enabled by including the following module in the overlay:
@@ -60,7 +60,7 @@ Support is enabled by including the following module in the overlay:
 
 ### LDAP
 
-This strategy simply allows one to locate a user record in an LDAP directory. The record is expected to carry the user's phone number
+This strategy allows one to locate a user record in an LDAP directory. The record is expected to carry the user's phone number
 or email address via configurable attributes. To see the relevant list of CAS 
 properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).
 

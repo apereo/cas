@@ -85,7 +85,13 @@ public class RegisteredServiceAuthenticationPolicyResolverTests {
 
         val dao = new InMemoryServiceRegistry(appCtx, list, new ArrayList<>());
 
-        this.servicesManager = new DefaultServicesManager(dao, appCtx, new HashSet<>(), Caffeine.newBuilder().build());
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(dao)
+            .applicationContext(appCtx)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .build();
+        this.servicesManager = new DefaultServicesManager(context);
         this.servicesManager.load();
     }
 

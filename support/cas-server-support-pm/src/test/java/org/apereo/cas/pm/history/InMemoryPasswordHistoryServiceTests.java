@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.enabled=true",
     "cas.authn.pm.history.enabled=true"
 })
-@Tag("Simple")
+@Tag("PasswordOps")
 public class InMemoryPasswordHistoryServiceTests {
     @Autowired
     @Qualifier("passwordHistoryService")

@@ -2,9 +2,9 @@ package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.LogoutRequestStatus;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -16,7 +16,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public interface SingleLogoutRequest extends Serializable {
+public interface SingleLogoutRequestContext extends Serializable {
     /**
      * Gets status of the request.
      *
@@ -60,11 +60,11 @@ public interface SingleLogoutRequest extends Serializable {
     RegisteredService getRegisteredService();
 
     /**
-     * Ticket instance that is being destroyed, initiating the logout request.
+     * The execution context in which logout request is being handled.
      *
      * @return the ticket-granting ticket.
      */
-    TicketGrantingTicket getTicketGrantingTicket();
+    SingleLogoutExecutionRequest getExecutionRequest();
 
     /**
      * The http-logoutType or binding that should be used to send the message to the url.

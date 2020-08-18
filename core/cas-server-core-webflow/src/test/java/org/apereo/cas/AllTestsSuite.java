@@ -16,7 +16,7 @@ import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAbstractTicketExc
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAuthenticationExceptionHandlerTests;
 import org.apereo.cas.web.flow.authentication.GenericCasWebflowExceptionHandlerTests;
 import org.apereo.cas.web.flow.authentication.RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTests;
-import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurerTests;
+import org.apereo.cas.web.flow.configurer.CasWebflowConfigurerTests;
 import org.apereo.cas.web.flow.executor.ClientFlowExecutionKeyTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
     CheckWebAuthenticationRequestActionTests.class,
     ClientFlowExecutionKeyTests.class,
     ClearWebflowCredentialActionTests.class,
-    AbstractCasWebflowConfigurerTests.class,
+    CasWebflowConfigurerTests.class,
     DefaultCasWebflowAbstractTicketExceptionHandlerTests.class,
     DefaultCasWebflowAuthenticationExceptionHandlerTests.class,
     GenericCasWebflowExceptionHandlerTests.class,

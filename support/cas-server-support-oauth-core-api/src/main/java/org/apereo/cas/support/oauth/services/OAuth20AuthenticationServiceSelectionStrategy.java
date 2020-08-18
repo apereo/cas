@@ -36,50 +36,12 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
     private static final long serialVersionUID = 8517547235465666978L;
 
     private final transient ServicesManager servicesManager;
+
     private final transient ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
     private final String callbackUrl;
 
     private final int order = Ordered.HIGHEST_PRECEDENCE;
-
-    private static Optional<NameValuePair> resolveClientIdFromService(final Service service) {
-        try {
-            val builder = new URIBuilder(service.getId());
-            return builder.getQueryParams()
-                .stream()
-                .filter(p -> p.getName().equals(OAuth20Constants.CLIENT_ID))
-                .findFirst();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return Optional.empty();
-    }
-
-    private static Optional<NameValuePair> resolveRedirectUri(final Service service) {
-        try {
-            val builder = new URIBuilder(service.getId());
-            return builder.getQueryParams()
-                .stream()
-                .filter(p -> p.getName().equals(OAuth20Constants.REDIRECT_URI))
-                .findFirst();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return Optional.empty();
-    }
-
-    private static Optional<NameValuePair> resolveGrantType(final Service service) {
-        try {
-            val builder = new URIBuilder(service.getId());
-            return builder.getQueryParams()
-                .stream()
-                .filter(p -> p.getName()
-                    .equals(OAuth20Constants.GRANT_TYPE))
-                .findFirst();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return Optional.empty();
-    }
 
     @Override
     public Service resolveServiceFrom(final Service service) {
@@ -116,5 +78,44 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
         LOGGER.trace("Authentication request is{} identified as an OAuth request",
             BooleanUtils.toString(res, StringUtils.EMPTY, " not"));
         return res;
+    }
+
+    private static Optional<NameValuePair> resolveClientIdFromService(final Service service) {
+        try {
+            val builder = new URIBuilder(service.getId());
+            return builder.getQueryParams()
+                .stream()
+                .filter(p -> p.getName().equals(OAuth20Constants.CLIENT_ID))
+                .findFirst();
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<NameValuePair> resolveRedirectUri(final Service service) {
+        try {
+            val builder = new URIBuilder(service.getId());
+            return builder.getQueryParams()
+                .stream()
+                .filter(p -> p.getName().equals(OAuth20Constants.REDIRECT_URI))
+                .findFirst();
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<NameValuePair> resolveGrantType(final Service service) {
+        try {
+            val builder = new URIBuilder(service.getId());
+            return builder.getQueryParams()
+                .stream()
+                .filter(p -> p.getName().equals(OAuth20Constants.GRANT_TYPE))
+                .findFirst();
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return Optional.empty();
     }
 }

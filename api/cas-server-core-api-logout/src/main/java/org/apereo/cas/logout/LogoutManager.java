@@ -1,7 +1,6 @@
 package org.apereo.cas.logout;
 
-import org.apereo.cas.logout.slo.SingleLogoutRequest;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 
 import java.util.List;
 
@@ -15,10 +14,11 @@ import java.util.List;
 public interface LogoutManager {
 
     /**
-     * Perform a back channel logout for a given ticket granting ticket and returns all the logout requests.
+     * Perform a back channel logout for a given ticket granting
+     * ticket and returns all the logout requests.
      *
-     * @param ticket a given ticket granting ticket.
+     * @param context the context
      * @return all logout requests.
      */
-    List<SingleLogoutRequest> performLogout(TicketGrantingTicket ticket);
+    List<SingleLogoutRequestContext> performLogout(SingleLogoutExecutionRequest context);
 }

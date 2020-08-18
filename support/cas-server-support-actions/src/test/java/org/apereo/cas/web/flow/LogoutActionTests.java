@@ -2,30 +2,35 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
-import org.apereo.cas.logout.DefaultSingleLogoutRequest;
+import org.apereo.cas.logout.DefaultLogoutRedirectionStrategy;
+import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
+import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutRequestStatus;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.web.SimpleUrlValidator;
 import org.apereo.cas.web.flow.logout.LogoutAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
-import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.RequestContextHolder;
+import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.Cookie;
 import java.util.HashSet;
@@ -51,21 +56,26 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
 
     private MockHttpServletRequest request;
 
-    private RequestContext requestContext;
+    private MockRequestContext requestContext;
 
     @BeforeEach
     public void onSetUp() {
         this.request = new MockHttpServletRequest();
-        this.requestContext = mock(RequestContext.class);
-        val servletExternalContext = mock(ServletExternalContext.class);
-        when(this.requestContext.getExternalContext()).thenReturn(servletExternalContext);
-        when(servletExternalContext.getNativeRequest()).thenReturn(request);
-        when(servletExternalContext.getNativeResponse()).thenReturn(new MockHttpServletResponse());
-        when(this.requestContext.getFlowScope()).thenReturn(new LocalAttributeMap<>());
+        this.requestContext = new MockRequestContext();
+        val response = new MockHttpServletResponse();
+        requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(requestContext);
+        ExternalContextHolder.setExternalContext(requestContext.getExternalContext());
 
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
-        this.serviceManager = new DefaultServicesManager(new InMemoryServiceRegistry(appCtx), appCtx, new HashSet<>(), Caffeine.newBuilder().build());
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(new InMemoryServiceRegistry(appCtx))
+            .applicationContext(appCtx)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .build();
+        this.serviceManager = new DefaultServicesManager(context);
         this.serviceManager.load();
     }
 
@@ -145,9 +155,11 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
     public void verifyLogoutRequestBack() {
         val cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
-        val logoutRequest = DefaultSingleLogoutRequest.builder()
+        val logoutRequest = DefaultSingleLogoutRequestContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
-            .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+            .executionRequest(SingleLogoutExecutionRequest.builder()
+                .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+                .build())
             .build();
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
         WebUtils.putLogoutRequests(this.requestContext, List.of(logoutRequest));
@@ -161,9 +173,11 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
     public void verifyLogoutRequestFront() {
         val cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
-        val logoutRequest = DefaultSingleLogoutRequest.builder()
+        val logoutRequest = DefaultSingleLogoutRequestContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
-            .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+            .executionRequest(SingleLogoutExecutionRequest.builder()
+                .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+                .build())
             .build();
         WebUtils.putLogoutRequests(this.requestContext, List.of(logoutRequest));
         val properties = new LogoutProperties();
@@ -175,9 +189,10 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
         assertEquals(logoutRequest, logoutRequests.get(0));
     }
 
-    @NotNull
     private LogoutAction getLogoutAction(final LogoutProperties properties) {
-        return new LogoutAction(getWebApplicationServiceFactory(), properties,
-            new DefaultSingleLogoutServiceLogoutUrlBuilder(serviceManager, SimpleUrlValidator.getInstance()));
+        val plan = mock(LogoutExecutionPlan.class);
+        when(plan.getLogoutRedirectionStrategies()).thenReturn(List.of(new DefaultLogoutRedirectionStrategy(getWebApplicationServiceFactory(), properties,
+            new DefaultSingleLogoutServiceLogoutUrlBuilder(serviceManager, SimpleUrlValidator.getInstance()))));
+        return new LogoutAction(plan);
     }
 }

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Tag("Simple")
+@Tag("ExpirationPolicy")
 public class HardTimeoutExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "hardTimeoutExpirationPolicy.json");

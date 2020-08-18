@@ -145,7 +145,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
         val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), SERVICE, ctx);
 
-        getCentralAuthenticationService().getObject().destroyTicketGrantingTicket(tId.getId());
+        getCentralAuthenticationService().getObject().deleteTicket(tId.getId());
 
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());
@@ -195,7 +195,6 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
         val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
-
         val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), svc, ctx);
 
         val request = new MockHttpServletRequest();
@@ -226,12 +225,36 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
+    public void verifyUnknownService() throws Exception {
+        val svc = RegisteredServiceTestUtils.getService("unknown-service");
+        val request = new MockHttpServletRequest();
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, svc.getId());
+        request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ST-123456");
+        request.addParameter(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, GITHUB_URL);
+
+        val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        assertFalse(Objects.requireNonNull(modelAndView.getView()).toString().contains("Success"));
+    }
+
+    @Test
+    public void verifyDisabledService() throws Exception {
+        val svc = RegisteredServiceTestUtils.getService("cas-access-disabled");
+        val request = new MockHttpServletRequest();
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, svc.getId());
+        request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ST-123456");
+        request.addParameter(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, GITHUB_URL);
+
+        val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        assertFalse(Objects.requireNonNull(modelAndView.getView()).toString().contains("Success"));
+    }
+
+
+    @Test
     public void verifyValidServiceTicketAndBadFormat() throws Exception {
         val svc = RegisteredServiceTestUtils.getService("proxyService");
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
         val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
-
         val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), svc, ctx);
 
         val request = new MockHttpServletRequest();
