@@ -656,7 +656,7 @@ Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.
 }
 
 def shouldTest(Project project, String category) {
-    def foundTest = gradle.startParameter.taskNames.any {task -> task.toLowerCase().contains(category.toLowerCase())}
+    def foundTest = gradle.startParameter.taskNames.any {task -> task.matches(/^test${category}$/) }
     if (!foundTest) {
         logger.debug "No tests with category ${category} found for ${project.name}"
     }
