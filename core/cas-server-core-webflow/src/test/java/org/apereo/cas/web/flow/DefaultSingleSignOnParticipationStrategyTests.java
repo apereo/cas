@@ -7,6 +7,8 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.DefaultRegisteredServiceSingleSignOnParticipationPolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.model.TriStateBoolean;
@@ -123,6 +125,34 @@ public class DefaultSingleSignOnParticipationStrategyTests {
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("casuser"), context);
 
         assertFalse(strategy.isParticipating(context));
+
+    }
+
+    @Test
+    public void verifyRegisteredServiceWithValidSso() {
+        val mgr = mock(ServicesManager.class);
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        when(registeredService.getAccessStrategy().isServiceAccessAllowedForSso()).thenReturn(true);
+        when(registeredService.getSingleSignOnParticipationPolicy()).thenReturn(new DefaultRegisteredServiceSingleSignOnParticipationPolicy());
+        when(mgr.findServiceBy(any(Service.class))).thenReturn(registeredService);
+
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+
+        val tgt = new MockTicketGrantingTicket("casuser");
+        val sso = new SingleSignOnProperties();
+        val ticketRegistrySupport = mock(TicketRegistrySupport.class);
+        when(ticketRegistrySupport.getTicketState(anyString())).thenReturn(tgt);
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, sso,
+            ticketRegistrySupport, mock(AuthenticationServiceSelectionPlan.class));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        WebUtils.putRegisteredService(context, registeredService);
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("casuser"), context);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        assertTrue(strategy.isParticipating(context));
 
     }
 }

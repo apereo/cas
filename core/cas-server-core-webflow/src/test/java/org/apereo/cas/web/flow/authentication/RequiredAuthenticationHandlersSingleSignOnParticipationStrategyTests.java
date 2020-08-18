@@ -9,6 +9,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
@@ -43,9 +44,29 @@ import static org.mockito.Mockito.*;
 @Tag("Webflow")
 public class RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTests {
     @Test
+    public void verifyInputFails() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        val regService = RegisteredServiceTestUtils.getRegisteredService("serviceid1");
+        val defaultServicesManager = getServicesManager(regService);
+        defaultServicesManager.load();
+
+        val strategy = new RequiredAuthenticationHandlersSingleSignOnParticipationStrategy(defaultServicesManager,
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
+            new DefaultTicketRegistrySupport(new DefaultTicketRegistry()));
+        assertTrue(strategy.isParticipating(context));
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService("serviceid1"));
+        assertTrue(strategy.isParticipating(context));
+        regService.setAuthenticationPolicy(new DefaultRegisteredServiceAuthenticationPolicy()
+            .setRequiredAuthenticationHandlers(Set.of("Handler1")));
+        assertTrue(strategy.isParticipating(context));
+    }
+
+    @Test
     public void verifyNoServiceOrSso() {
-
-
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -61,6 +82,7 @@ public class RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTest
         assertFalse(strategy.supports(context));
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService("serviceid1"));
         assertFalse(strategy.supports(context));
+        assertEquals(0, strategy.getOrder());
     }
 
     @Test

@@ -205,15 +205,11 @@ public class MultifactorAuthenticationUtils {
      * @return the registered service multifactor authentication provider
      */
     public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(final String providerId) {
-        try {
-            LOGGER.trace("Locating bean definition for [{}]", providerId);
-            return MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(ApplicationContextProvider.getApplicationContext()).values().stream()
-                .filter(p -> p.matches(providerId))
-                .findFirst();
-        } catch (final Exception e) {
-            LOGGER.trace("Could not locate [{}] bean id in the application context as an authentication provider.", providerId);
-        }
-        return Optional.empty();
+        LOGGER.trace("Locating bean definition for [{}]", providerId);
+        val applicationContext = ApplicationContextProvider.getApplicationContext();
+        return getAvailableMultifactorAuthenticationProviders(applicationContext).values().stream()
+            .filter(p -> p.matches(providerId))
+            .findFirst();
     }
 
     /**
