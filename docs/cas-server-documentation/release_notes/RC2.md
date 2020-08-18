@@ -107,9 +107,11 @@ Using this new strategy, database tables and schemas are not automatically expec
  application type with the CAS JPA Service Registry using a simple property, allowing the operator to explicitly 
  declare the set of services supported by the deployment.
 
-### SAML2 Logout Responses
+### SAML2 Logout Requests & Responses
 
-SAML2 single logout handling handling, when CAS is running as a [SAML2 identity provider](../installation/Configuring-SAML2-Authentication.html), is now able to produce a logout response for the service provider once the single logout sequence has completed. 
+SAML2 single logout handling handling, when CAS is running as a [SAML2 identity provider](../installation/Configuring-SAML2-Authentication.html), is now 
+able to produce a logout response for the service provider once the single logout sequence has completed. Additionally, logout requests
+are no longer sent to the original service provider which initiated the single logout flow. 
 
 ### Okta SDK v2
 
@@ -138,6 +140,41 @@ the expiration policy [assigned to the service definition](../ticketing/Configur
 Service identifiers defined for applications in the CAS service registry have always been defined as patterns. This release exposes 
 a few [additional options](../services/Configuring-Service-Matching-Strategy.html) while also allowing the matching strategy to be externalized to custom components. 
 
+### Wildcarded Service Definitions
+
+Consider a SAML service provider definition registered with CAS that authorizes 
+all service providers found in an XML metadata aggregate file:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": ".+",
+  "name": "SAML",
+  "id": 2,
+  "evaluationOrder": 10,
+  "metadataLocation": "https://example.org/md-aggregate.xml"
+}
+```
+
+Then, suppose the same CAS deployment wishes to authorize all CAS-enabled web applications:
+
+```json
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": ".+",
+  "name": "ALL",
+  "id": 1,
+  "evaluationOrder": 9
+}
+```
+
+The issue here is that depending on how the `evaluationOrder` is set up, the wrong service definition might get matched and processed
+for SAML or CAS protocol authentication requests. The root cause is that the CAS matching engine attempts to locate service definitions
+by their `serviceId` (which might correlate to an entity id or a redirect URI, etc) without taking into account the 
+authentication protocol itself. In this release, a few additional improvements are put in place to allow grouping of 
+application definitions by both type and evaluation order, and the matching engine is enhanced process such groups while considering
+both the group's evaluation priority as well as each individual service's evaluation order.
+
 ## Other Stuff
 
 - Adjustments to SAML2 metadata resolution cache to ensure enough capacity for resolved metadata providers. 
@@ -160,6 +197,7 @@ a few [additional options](../services/Configuring-Service-Matching-Strategy.htm
 - Spotbugs
 - Gradle
 - Okta
+- Shiro
 - Spring Boot Admin
 - Ldaptive
 - Inspektr
@@ -167,3 +205,4 @@ a few [additional options](../services/Configuring-Service-Matching-Strategy.htm
 - Person Directory
 - Azure DocumentDb
 - Grouper Client
+- InfluxDb
