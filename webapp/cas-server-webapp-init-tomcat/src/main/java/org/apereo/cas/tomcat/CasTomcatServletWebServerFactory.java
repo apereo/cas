@@ -134,22 +134,6 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
 
         val cluster = new SimpleTcpCluster();
         val groupChannel = new GroupChannel();
-        if ("CLOUD".equalsIgnoreCase(clusteringProperties.getClusteringType())) {
-            val membershipService = new CloudMembershipService();
-            membershipService.setMembershipProviderClassName(clusteringProperties.getCloudMembershipProvider());
-            groupChannel.setMembershipService(membershipService);
-            cluster.setChannel(groupChannel);
-            tomcat.getEngine().setCluster(cluster);
-            LOGGER.trace("Tomcat session clustering/replication configured using cloud membership provider [{}]",
-                clusteringProperties.getCloudMembershipProvider());
-            return;
-        }
-
-        cluster.setChannelSendOptions(clusteringProperties.getChannelSendOptions());
-
-        val manager = getClusteringManagerInstance();
-        cluster.setManagerTemplate(manager);
-
         val receiver = new NioReceiver();
         receiver.setPort(clusteringProperties.getReceiverPort());
         receiver.setTimeout(clusteringProperties.getReceiverTimeout());
@@ -157,16 +141,6 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         receiver.setAddress(clusteringProperties.getReceiverAddress());
         receiver.setAutoBind(clusteringProperties.getReceiverAutoBind());
         groupChannel.setChannelReceiver(receiver);
-
-        val membershipService = new McastService();
-        membershipService.setPort(clusteringProperties.getMembershipPort());
-        membershipService.setAddress(clusteringProperties.getMembershipAddress());
-        membershipService.setFrequency(clusteringProperties.getMembershipFrequency());
-        membershipService.setDropTime(clusteringProperties.getMembershipDropTime());
-        membershipService.setRecoveryEnabled(clusteringProperties.isMembershipRecoveryEnabled());
-        membershipService.setRecoveryCounter(clusteringProperties.getMembershipRecoveryCounter());
-        membershipService.setLocalLoopbackDisabled(clusteringProperties.isMembershipLocalLoopbackDisabled());
-        groupChannel.setMembershipService(membershipService);
 
         val sender = new ReplicationTransmitter();
         sender.setTransport(new PooledParallelSender());
@@ -176,26 +150,49 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         groupChannel.addInterceptor(new TcpFailureDetector());
         groupChannel.addInterceptor(new MessageDispatchInterceptor());
 
-        val clusterMembers = clusteringProperties.getClusterMembers();
-        if (StringUtils.isNotBlank(clusterMembers)) {
-            val membership = new StaticMembershipInterceptor();
-            val memberSpecs = clusterMembers.split(",", -1);
-            for (val spec : memberSpecs) {
-                val memberDesc = new ClusterMemberDesc(spec);
-                val member = new StaticMember();
-                member.setHost(memberDesc.getAddress());
-                member.setPort(memberDesc.getPort());
-                member.setDomain("CAS");
-                member.setUniqueId(memberDesc.getUniqueId());
-                membership.addStaticMember(member);
-                groupChannel.addInterceptor(membership);
-                cluster.setChannel(groupChannel);
-            }
-        }
+        cluster.setChannelSendOptions(clusteringProperties.getChannelSendOptions());
+
+        val manager = getClusteringManagerInstance();
+        cluster.setManagerTemplate(manager);
+
         cluster.addValve(new ReplicationValve());
         cluster.addValve(new JvmRouteBinderValve());
         cluster.addClusterListener(new ClusterSessionListener());
 
+        if ("CLOUD".equalsIgnoreCase(clusteringProperties.getClusteringType())) {
+            val membershipService = new CloudMembershipService();
+            membershipService.setMembershipProviderClassName(clusteringProperties.getCloudMembershipProvider());
+            groupChannel.setMembershipService(membershipService);
+            LOGGER.trace("Tomcat session clustering/replication configured using cloud membership provider [{}]",
+                clusteringProperties.getCloudMembershipProvider());
+        } else {
+            val membershipService = new McastService();
+            membershipService.setPort(clusteringProperties.getMembershipPort());
+            membershipService.setAddress(clusteringProperties.getMembershipAddress());
+            membershipService.setFrequency(clusteringProperties.getMembershipFrequency());
+            membershipService.setDropTime(clusteringProperties.getMembershipDropTime());
+            membershipService.setRecoveryEnabled(clusteringProperties.isMembershipRecoveryEnabled());
+            membershipService.setRecoveryCounter(clusteringProperties.getMembershipRecoveryCounter());
+            membershipService.setLocalLoopbackDisabled(clusteringProperties.isMembershipLocalLoopbackDisabled());
+            groupChannel.setMembershipService(membershipService);
+
+            val clusterMembers = clusteringProperties.getClusterMembers();
+            if (StringUtils.isNotBlank(clusterMembers)) {
+                val membership = new StaticMembershipInterceptor();
+                val memberSpecs = clusterMembers.split(",", -1);
+                for (val spec : memberSpecs) {
+                    val memberDesc = new ClusterMemberDesc(spec);
+                    val member = new StaticMember();
+                    member.setHost(memberDesc.getAddress());
+                    member.setPort(memberDesc.getPort());
+                    member.setDomain("CAS");
+                    member.setUniqueId(memberDesc.getUniqueId());
+                    membership.addStaticMember(member);
+                    groupChannel.addInterceptor(membership);
+                }
+            }
+        }
+        cluster.setChannel(groupChannel);
         tomcat.getEngine().setCluster(cluster);
     }
 
