@@ -140,7 +140,7 @@ needed for REFEDS Research and Scholarship service providers using the entity at
 }
 ```
 
-This policy is simply an extension of `InCommonRSAttributeReleasePolicy` that operates based on different entity attribute value.
+This policy is an extension of `InCommonRSAttributeReleasePolicy` that operates based on different entity attribute value.
 
 ## Releasing `eduPersonTargetedID`
 

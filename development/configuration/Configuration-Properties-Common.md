@@ -34,7 +34,7 @@ The index `[0]` is meant to be incremented by the adopter to allow for distinct 
 
 ## Trust But Verify
 
-If you are unsure about the meaning of a given CAS setting, do **NOT** simply turn it on without hesitation.
+If you are unsure about the meaning of a given CAS setting, do **NOT** turn it on without hesitation.
 Review the codebase or better yet, [ask questions](/cas/Mailing-Lists.html) to clarify the intended behavior.
 
 <div class="alert alert-info"><strong>Keep It Simple</strong><p>If you do not know or cannot tell what a setting does, you do not need it.</p></div>

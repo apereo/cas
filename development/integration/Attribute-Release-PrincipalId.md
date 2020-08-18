@@ -19,7 +19,7 @@ into uppercase/lowercase. This is noted by the `canonicalizationMode` whose allo
 
 ## Default
 
-The default configuration which need not explicitly be defined, simply returns the resolved
+The default configuration which need not explicitly be defined, returns the resolved
 principal id as the username for this service.
 
 ```json

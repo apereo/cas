@@ -14,7 +14,7 @@ services. A principal also contains optional [attributes that may be released](.
 to services to support authorization and personalization. Principal resolution is a requisite part of the
 authentication process that happens after credential authentication.
 
-CAS `AuthenticationHandler` components provide simple principal resolution machinery by default. For example,
+CAS `AuthenticationHandler` components provide basic principal resolution machinery by default. For example,
 the `LdapAuthenticationHandler` component supports fetching attributes and setting the principal ID attribute from
 an LDAP query. In all cases principals are resolved from the same store as that which provides authentication.
 

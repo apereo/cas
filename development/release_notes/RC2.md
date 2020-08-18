@@ -7,7 +7,7 @@ category: Planning
 # RC2 Release Notes
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set 
-you up for unpleasant surprises. A `GA` is simply [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS 
+you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS 
 releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks, statistics or completion of features. To gain 
 confidence in a particular release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.
 
@@ -118,14 +118,20 @@ CAS is now using the Okta SDK v2 mainly used to handle the integration between C
 ### Attribute Consent Activation
 
 Activation rules for [Attribute Consent](../integration/Attribute-Release-Consent.html) are re-designed to allow per-application 
-overrides of the global policy activation rules. Additional documentation updates are now present to demonstrate how multiple attribute consent policies may be chained together.
+overrides of the global policy activation rules. Additional documentation updates are now present to demonstrate how multiple 
+attribute consent policies may be chained together.
 
 Furthermore, activation rules can also be outsourced to external Groovy scripts. 
 
 <div class="alert alert-warning">
-  <strong>WATCH OUT!</strong><br />This may be a breaking change since the data model for the <code>DefaultRegisteredServiceConsentPolicy</code> has remove the <code>enabled</code>
-  field, replacing it with <code>status</code>. Review the documentation to adjust for proper syntax.
+  <strong>WATCH OUT!</strong><br />This may be a breaking change since the data model for the <code>DefaultRegisteredServiceConsentPolicy</code> 
+  has remove the <code>enabled</code> field, replacing it with <code>status</code>. Review the documentation to adjust for proper syntax.
 </div>
+
+### Ticket-Granting Ticket Expiration Policy Per Service
+
+The ticket-granting ticket expiration policy can be overridden on a per-service using 
+the expiration policy [assigned to the service definition](../ticketing/Configuring-Ticket-Expiration-Policy.html).
 
 ### Service Matching Strategy
 
@@ -139,7 +145,9 @@ a few [additional options](../services/Configuring-Service-Matching-Strategy.htm
 - The expiration of access tokens is now correctly communicated back to OAuth relying parties, specially if the access token expiration policy is defined per application.
 - The handling of authentication requests, set to force CAS to challenge the user credentials, is reviewed and adjusted to ensure such requests can properly honor multifactor authentication flows for qualifying requests per configured triggers. 
 - The logout handling strategy is slightly broken apart to introduce a `LogoutRedirectionStrategy`, mainly responsible for handling follow-up redirects to authorized applications/endpoints as appropriate for each authentication protocol.
+- Component registration with the Memcached serialization engine is now broken apart and delegated to appropriate modules owning said components.
 - Signed SAML authentication requests that embed the signature in URLs are reviewed and adjusted to avoid creating long URLs exceeding browser limits.
+- The naming strategy for JSON/YAML service definition files is relaxed to allow multiple words in the file name.
 
 ## Library Upgrades
 
@@ -152,6 +160,7 @@ a few [additional options](../services/Configuring-Service-Matching-Strategy.htm
 - Spotbugs
 - Gradle
 - Okta
+- Spring Boot Admin
 - Ldaptive
 - Inspektr
 - Spring Data

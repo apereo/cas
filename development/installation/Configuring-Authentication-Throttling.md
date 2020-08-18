@@ -151,4 +151,4 @@ same CAS server node for successive authentication attempts. A distributed attac
 request would be routed indeterminately, would cause haphazard tracking for in-memory CAS components since attempts
 would be split across N systems. However, since the source varies, accurate accounting would be pointless since the
 throttling components themselves assume a constant source IP for tracking purposes. The login throttling components
-are simply not sufficient for detecting or preventing a distributed password brute force attack.
+are not sufficient for detecting or preventing a distributed password brute force attack.
