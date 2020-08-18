@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     PasswordlessAuthenticationConfiguration.class,
     PasswordlessAuthenticationWebflowConfiguration.class
 })
-@Tag("Webflow")
+@Tag("WebflowConfig")
 public class PasswordlessAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Test

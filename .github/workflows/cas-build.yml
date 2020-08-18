@@ -469,6 +469,7 @@ jobs:
           - groovy
           - filesystem
           - webflow
+          - webflowconfig
           - attributes
           - services
           - expiration-policy
