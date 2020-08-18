@@ -387,12 +387,12 @@ public abstract class AbstractOAuth20Tests {
         val service = RegisteredServiceTestUtils.getService();
 
         val accessToken = mock(OAuth20AccessToken.class);
-        when(accessToken.getId()).thenReturn("ABCD");
+        when(accessToken.getId()).thenReturn(OAuth20AccessToken.PREFIX + "-123456");
         when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
         when(accessToken.getAuthentication()).thenReturn(tgt.getAuthentication());
         when(accessToken.getService()).thenReturn(service);
+        when(accessToken.getClientId()).thenReturn(CLIENT_ID);
         when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
-
         return accessToken;
     }
 
