@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -94,6 +96,8 @@ public abstract class BaseConsentRepositoryTests {
     @SpringBootConfiguration
     @Import({
         CasConsentCoreConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasCoreAuditConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasCoreUtilConfiguration.class

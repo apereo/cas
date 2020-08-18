@@ -60,12 +60,12 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
         val samlResponse = SamlUtils.transformSamlObject(openSamlConfigBean, ticket.getObject(), SAMLObject.class);
         artifactResponse.setMessage(samlResponse);
 
-        val header = newSoapObject(Header.class);
+        val header = SamlUtils.newSoapObject(Header.class);
 
-        val body = newSoapObject(Body.class);
+        val body = SamlUtils.newSoapObject(Body.class);
         body.getUnknownXMLObjects().add(artifactResponse);
 
-        val envelope = newSoapObject(Envelope.class);
+        val envelope = SamlUtils.newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
         SamlUtils.logSamlObject(this.openSamlConfigBean, envelope);

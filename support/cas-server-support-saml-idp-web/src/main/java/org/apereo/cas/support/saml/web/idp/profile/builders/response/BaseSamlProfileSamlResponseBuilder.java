@@ -20,11 +20,12 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.pac4j.core.context.JEEContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * The {@link BaseSamlProfileSamlResponseBuilder} is responsible for
@@ -91,11 +92,13 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
                                     final MessageContext messageContext) {
 
         val scratch = messageContext.getSubcontext(ScratchContext.class, true);
-        val map = (Map) scratch.getMap();
+        val map = (Map) Objects.requireNonNull(scratch).getMap();
         val encodeResponse = (Boolean) map.getOrDefault(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.TRUE);
 
         if (encodeResponse) {
-            val relayState = request != null ? request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE) : StringUtils.EMPTY;
+            val context = new JEEContext(request, response);
+            val relayState = samlResponseBuilderConfigurationContext.getSessionStore()
+                .get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE).orElse(StringUtils.EMPTY).toString();
             LOGGER.trace("RelayState is [{}]", relayState);
             return encode(service, finalResponse, response, request, adaptor, relayState, binding, authnRequest, assertion);
         }

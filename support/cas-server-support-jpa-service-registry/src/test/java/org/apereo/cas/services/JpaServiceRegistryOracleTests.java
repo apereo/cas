@@ -12,6 +12,8 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.0.0
  */
 @TestPropertySource(properties = {
+    "cas.jdbc.show-sql=true",
+    "cas.service-registry.jpa.ddl-auto=create",
     "cas.service-registry.jpa.user=system",
     "cas.service-registry.jpa.password=Oradoc_db1",
     "cas.service-registry.jpa.driver-class=oracle.jdbc.driver.OracleDriver",

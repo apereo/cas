@@ -5,9 +5,14 @@ clear
 printHelp() {
     echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--no-parallel] [--dry-run] [--info] [--with-coverage] \n"
     echo -e "Available test categories are:\n"
-    echo -e "simple,memcached,cassandra,groovy,kafka,ldap,rest,mfa,jdbc,mssql,oracle,radius,couchdb,webapp,tickets,\
-mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,hazelcast,jmx,ehcache,actuator,wsfed,authn,attributes,\
-oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,cosmosdb,config,sms,util,services,web,audits"
+    echo -e "simple,memcached,cassandra,groovy,kafka,ldap,rest,\
+mfa,jdbc,mssql,oracle,radius,couchdb,webapp,tickets,webflowconfig,\
+mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,\
+jms,hazelcast,jmx,ehcache,actuator,wsfed,authn,attributes,cas,logout,\
+expiration-policy,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,\
+hazelcast,jmx,ehcache,actuator,wsfed,authn,attributes,metrics,\
+oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,\
+cosmosdb,config,sms,util,services,web,audits,password-ops"
     echo -e "\nPlease see the test script for details.\n"
 }
 
@@ -95,6 +100,15 @@ while (( "$#" )); do
             web)
                 task+="testWeb "
                 ;;
+            logout|slo)
+                task+="testLogout "
+                ;;
+            cas)
+                task+="testCAS "
+                ;;
+            metrics|stats)
+                task+="testMetrics "
+                ;;
             services|regsvc)
                 task+="testRegisteredService "
                 ;;
@@ -109,6 +123,12 @@ while (( "$#" )); do
                 ;;
             attrs|attr|attributes)
                 task+="testAttributes "
+                ;;
+            expiration-policy|exppolicy|expp)
+                task+="testExpirationPolicy "
+                ;;
+            password-ops|pswd|pswd-ops|psw)
+                task+="testPasswordOps "
                 ;;
             sms)
                 task+="testSMS "
@@ -148,6 +168,9 @@ while (( "$#" )); do
                 ;;
             rest|restful|restapi)
                 task+="testRestfulApi "
+                ;;
+            webflowconfig|swfcfg|webflowcfg)
+                task+="testWebflowConfig "
                 ;;
             webflow|swf)
                 task+="testWebflow "

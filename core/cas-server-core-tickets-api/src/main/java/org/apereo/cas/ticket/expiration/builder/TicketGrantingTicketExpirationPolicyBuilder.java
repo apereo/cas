@@ -60,7 +60,7 @@ public class TicketGrantingTicketExpirationPolicyBuilder implements ExpirationPo
      *
      * @return the expiration policy
      */
-    public ExpirationPolicy toTicketGrantingTicketExpirationPolicy() {
+    protected ExpirationPolicy toTicketGrantingTicketExpirationPolicy() {
         val tgt = casProperties.getTicket().getTgt();
         if (tgt.getMaxTimeToLiveInSeconds() <= 0 && tgt.getTimeToKillInSeconds() <= 0) {
             LOGGER.warn("Ticket-granting ticket expiration policy is set to NEVER expire tickets.");

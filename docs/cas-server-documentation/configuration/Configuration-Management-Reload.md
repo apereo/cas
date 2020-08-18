@@ -14,7 +14,7 @@ server* expecting change notifications to quietly reload its configuration.
 
 Therefore, in order to broadcast such `change` events CAS
 presents [various endpoints](../monitoring/Monitoring-Statistics.html) that allow the adopter
-to **refresh** the configuration as needed. This means that an adopter would simply
+to **refresh** the configuration as needed. This means that an adopter would 
 change a required CAS settings and then would submit
 a request to CAS to refresh its current state. All CAS internal components that are affected
 by the external change are quietly reloaded

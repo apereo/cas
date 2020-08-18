@@ -7,6 +7,12 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.config.CasCoreAuthenticationComponentSerializationConfiguration;
+import org.apereo.cas.config.CasCoreServicesComponentSerializationConfiguration;
+import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
+import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
+import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
+import org.apereo.cas.memcached.MemcachedUtils;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -17,17 +23,23 @@ import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 
 import com.esotericsoftware.kryo.KryoException;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.spy.memcached.transcoders.Transcoder;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import javax.security.auth.login.AccountNotFoundException;
-
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -48,6 +60,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @Tag("Memcached")
 @EnabledIfPortOpen(port = 11211)
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    CasCoreServicesComponentSerializationConfiguration.class,
+    CasCoreTicketComponentSerializationConfiguration.class,
+    CasCoreAuthenticationComponentSerializationConfiguration.class,
+    CasCoreUtilSerializationConfiguration.class
+})
 public class CasKryoTranscoderTests {
     private static final String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";
 
@@ -65,15 +84,23 @@ public class CasKryoTranscoderTests {
 
     private static final String NICKNAME_VALUE = "bob";
 
-    private final CasKryoTranscoder transcoder;
+    private Transcoder transcoder;
 
-    private final Map<String, List<Object>> principalAttributes;
+    private Map<String, List<Object>> principalAttributes;
 
-    public CasKryoTranscoderTests() {
+    @Autowired
+    @Qualifier("componentSerializationPlan")
+    private ComponentSerializationPlan componentSerializationPlan;
+
+    @BeforeEach
+    public void beforeEach() {
         val classesToRegister = new ArrayList<Class>();
         classesToRegister.add(MockServiceTicket.class);
         classesToRegister.add(MockTicketGrantingTicket.class);
-        this.transcoder = new CasKryoTranscoder(new CasKryoPool(classesToRegister));
+        classesToRegister.addAll(componentSerializationPlan.getRegisteredClasses());
+
+        val props = new BaseMemcachedProperties();
+        this.transcoder = MemcachedUtils.newTranscoder(props, classesToRegister);
         this.principalAttributes = new HashMap<>();
         this.principalAttributes.put(NICKNAME_KEY, List.of(NICKNAME_VALUE));
     }
@@ -125,12 +152,14 @@ public class CasKryoTranscoderTests {
         decoded = transcoder.decode(encoded);
         assertEquals(serviceTicket, decoded);
 
-        val pgt = serviceTicket.grantProxyGrantingTicket(PGT_ID, authentication, new HardTimeoutExpirationPolicy(100));
+        val pgt = serviceTicket.grantProxyGrantingTicket(PGT_ID, authentication,
+            new HardTimeoutExpirationPolicy(100));
         encoded = transcoder.encode(pgt);
         decoded = transcoder.decode(encoded);
         assertEquals(pgt, decoded);
 
-        val pt = pgt.grantProxyTicket(PT_ID, RegisteredServiceTestUtils.getService(), new HardTimeoutExpirationPolicy(100), true);
+        val pt = pgt.grantProxyTicket(PT_ID, RegisteredServiceTestUtils.getService(),
+            new HardTimeoutExpirationPolicy(100), true);
         encoded = transcoder.encode(pt);
         decoded = transcoder.decode(encoded);
         assertEquals(pt, decoded);
@@ -149,14 +178,6 @@ public class CasKryoTranscoderTests {
         assertEquals(expectedTGT, transcoder.decode(result));
 
         internalProxyTest();
-    }
-
-    private void internalProxyTest() {
-        val expectedTGT = new MockTicketGrantingTicket(USERNAME);
-        expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
-        val result = transcoder.encode(expectedTGT);
-        assertEquals(expectedTGT, transcoder.decode(result));
-        assertEquals(expectedTGT, transcoder.decode(result));
     }
 
     @Test
@@ -250,7 +271,6 @@ public class CasKryoTranscoderTests {
 
     @Test
     public void verifySTWithServiceTicketExpirationPolicy() {
-        transcoder.getKryo().getClassResolver().reset();
         val tgt = new MockTicketGrantingTicket(USERNAME);
         val expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
         val step = new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(1, 600);
@@ -275,6 +295,14 @@ public class CasKryoTranscoderTests {
         } catch (final Exception e) {
             throw new AssertionError("Not resetting Kryo between de-serializations with unregistered class.");
         }
+    }
+
+    private void internalProxyTest() {
+        val expectedTGT = new MockTicketGrantingTicket(USERNAME);
+        expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
+        val result = transcoder.encode(expectedTGT);
+        assertEquals(expectedTGT, transcoder.decode(result));
+        assertEquals(expectedTGT, transcoder.decode(result));
     }
 
     /**

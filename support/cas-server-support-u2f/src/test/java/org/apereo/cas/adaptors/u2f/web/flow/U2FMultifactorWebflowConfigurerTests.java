@@ -22,7 +22,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
     "cas.authn.mfa.u2f.trusted-device-enabled=true",
     "cas.authn.mfa.trusted.device-registration-enabled=true"
 })
-@Tag("Webflow")
+@Tag("WebflowConfig")
 @Getter
 public class U2FMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired

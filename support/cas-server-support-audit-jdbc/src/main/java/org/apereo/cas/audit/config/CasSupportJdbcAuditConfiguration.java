@@ -53,17 +53,6 @@ public class CasSupportJdbcAuditConfiguration {
     @Qualifier("jpaBeanFactory")
     private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
 
-    private static String getAuditTableNameFrom(final AuditJdbcProperties jdbc) {
-        var tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
-        if (StringUtils.isNotBlank(jdbc.getDefaultSchema())) {
-            tableName = jdbc.getDefaultSchema().concat(".").concat(tableName);
-        }
-        if (StringUtils.isNotBlank(jdbc.getDefaultCatalog())) {
-            tableName = jdbc.getDefaultCatalog().concat(".").concat(tableName);
-        }
-        return tableName;
-    }
-
     @Bean
     @RefreshScope
     public AuditTrailManager jdbcAuditTrailManager() {
@@ -74,6 +63,12 @@ public class CasSupportJdbcAuditConfiguration {
         t.setAsynchronous(jdbc.isAsynchronous());
         t.setColumnLength(jdbc.getColumnLength());
         t.setTableName(getAuditTableNameFrom(jdbc));
+        if (StringUtils.isNotBlank(jdbc.getSelectSqlQueryTemplate())) {
+            t.setSelectByDateSqlTemplate(jdbc.getSelectSqlQueryTemplate());
+        }
+        if (StringUtils.isNotBlank(jdbc.getDateFormatterPattern())) {
+            t.setDateFormatterPattern(jdbc.getDateFormatterPattern());
+        }
         return t;
     }
 
@@ -87,11 +82,12 @@ public class CasSupportJdbcAuditConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory() {
         val factory = jpaBeanFactory.getObject();
-        val ctx = new JpaConfigurationContext(
-            factory.newJpaVendorAdapter(casProperties.getJdbc()),
-            "jpaInspektrAuditContext",
-            CollectionUtils.wrap(AuditTrailEntity.class.getPackage().getName()),
-            inspektrAuditTrailDataSource());
+        val ctx = JpaConfigurationContext.builder()
+            .jpaVendorAdapter(factory.newJpaVendorAdapter(casProperties.getJdbc()))
+            .persistenceUnitName("jpaInspektrAuditContext")
+            .dataSource(inspektrAuditTrailDataSource())
+            .packagesToScan(CollectionUtils.wrap(AuditTrailEntity.class.getPackage().getName()))
+            .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc());
     }
 
@@ -136,9 +132,19 @@ public class CasSupportJdbcAuditConfiguration {
             )
             @Override
             public void clean() {
-                val cleaner = Cleanable.class.cast(jdbcAuditTrailManager());
-                cleaner.clean();
+                jdbcAuditTrailManager().clean();
             }
         };
+    }
+
+    private static String getAuditTableNameFrom(final AuditJdbcProperties jdbc) {
+        var tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
+        if (StringUtils.isNotBlank(jdbc.getDefaultSchema())) {
+            tableName = jdbc.getDefaultSchema().concat(".").concat(tableName);
+        }
+        if (StringUtils.isNotBlank(jdbc.getDefaultCatalog())) {
+            tableName = jdbc.getDefaultCatalog().concat(".").concat(tableName);
+        }
+        return tableName;
     }
 }

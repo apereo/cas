@@ -78,8 +78,8 @@ public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint implem
     }
 
     @SneakyThrows
-    private static Optional<Pair<Resource, LoggerContext>> buildLoggerContext(final Environment environment, final ResourceLoader
-        resourceLoader) {
+    private static Optional<Pair<Resource, LoggerContext>> buildLoggerContext(final Environment environment,
+                                                                              final ResourceLoader resourceLoader) {
         val logFile = environment.getProperty("logging.config", "classpath:/log4j2.xml");
         LOGGER.info("Located logging configuration reference in the environment as [{}]", logFile);
 

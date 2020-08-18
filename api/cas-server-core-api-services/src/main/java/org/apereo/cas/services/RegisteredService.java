@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.Ordered;
 
 import java.io.Serializable;
 import java.util.List;
@@ -47,6 +48,13 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @return the policy
      */
     RegisteredServiceAuthenticationPolicy getAuthenticationPolicy();
+
+    /**
+     * Get service matching strategy used to evaluate
+     * given service identifiers against this service.
+     * @return the strategy
+     */
+    RegisteredServiceMatchingStrategy getMatchingStrategy();
 
     /**
      * The unique identifier for this service.
@@ -146,6 +154,13 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @return the proxy ticket expiration policy
      */
     RegisteredServiceProxyTicketExpirationPolicy getProxyTicketExpirationPolicy();
+
+    /**
+     * Gets ticket granting ticket expiration policy.
+     *
+     * @return the ticket granting ticket expiration policy
+     */
+    RegisteredServiceTicketGrantingTicketExpirationPolicy getTicketGrantingTicketExpirationPolicy();
 
     /**
      * Gets proxy granting ticket expiration policy.
@@ -308,6 +323,20 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @since 5.2
      */
     List<RegisteredServiceContact> getContacts();
+
+    /**
+     * Indicates the evaluation priority of this service definition.
+     * Works in combination with {@code #getEvaluationOrder()}, allowing
+     * registered services of the same category/type to be sorted and grouped
+     * first before evaluation order for each category. In other words,
+     * it acts as the first sort key for evaluating services.
+     *
+     * @return the evaluation priority
+     */
+    @JsonIgnore
+    default int getEvaluationPriority() {
+        return Ordered.LOWEST_PRECEDENCE;
+    }
 
     /**
      * Gets friendly name of this service.

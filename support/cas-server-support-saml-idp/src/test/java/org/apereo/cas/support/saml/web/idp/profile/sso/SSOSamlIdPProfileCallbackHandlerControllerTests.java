@@ -80,7 +80,7 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
 
         val authnRequest = signAuthnRequest(request, response, getAuthnRequest());
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
-        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
+        request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
 
         controller.handleCallbackProfileRequest(response, request);
         assertEquals(HttpStatus.SC_FORBIDDEN, response.getStatus());
@@ -96,9 +96,9 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
         authn.setProtocolBinding(SAMLConstants.SAML2_POST_BINDING_URI);
         val authnRequest = signAuthnRequest(request, response, authn);
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
-        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
+        request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
+        request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, UUID.randomUUID().toString());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ST-1234567890");
-        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, UUID.randomUUID().toString());
         controller.handleCallbackProfileRequest(response, request);
         assertEquals(HttpStatus.SC_OK, response.getStatus());
     }
@@ -113,9 +113,9 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
         authn.setProtocolBinding(SAMLConstants.SAML2_POST_SIMPLE_SIGN_BINDING_URI);
         val authnRequest = signAuthnRequest(request, response, authn);
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
-        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
+        request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
+        request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, UUID.randomUUID().toString());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ST-1234567890");
-        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, UUID.randomUUID().toString());
         controller.handleCallbackProfileRequest(response, request);
         assertEquals(HttpStatus.SC_OK, response.getStatus());
     }

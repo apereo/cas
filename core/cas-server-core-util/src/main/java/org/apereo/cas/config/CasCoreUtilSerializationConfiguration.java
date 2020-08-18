@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.serialization.DefaultComponentSerializationPlan;
@@ -22,7 +23,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casCoreUtilSerializationConfiguration", proxyBeanMethods = true)
+@Configuration(value = "casCoreUtilSerializationConfiguration", proxyBeanMethods = false)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
 public class CasCoreUtilSerializationConfiguration {
@@ -34,6 +35,8 @@ public class CasCoreUtilSerializationConfiguration {
     @Bean
     public ComponentSerializationPlan componentSerializationPlan() {
         val plan = new DefaultComponentSerializationPlan();
+        plan.registerSerializableClass(TriStateBoolean.class);
+
         configurers.ifAvailable(cfgs -> {
             cfgs.forEach(c -> {
                 LOGGER.trace("Configuring component serialization plan [{}]", c.getName());

@@ -16,13 +16,13 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Simple")
+@Tag("Logout")
 public class LogoutExecutionPlanTests {
     @Test
     public void verifyOperation() {
         val plan = new LogoutExecutionPlan() {
         };
-        assertTrue(plan.getLogoutPostProcessor().isEmpty());
+        assertTrue(plan.getLogoutPostProcessors().isEmpty());
         assertTrue(plan.getSingleLogoutServiceMessageHandlers().isEmpty());
         assertDoesNotThrow(new Executable() {
             @Override

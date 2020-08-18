@@ -5,9 +5,10 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrate
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.logout.DefaultLogoutExecutionPlan;
 import org.apereo.cas.logout.DefaultSingleLogoutMessageCreator;
-import org.apereo.cas.logout.DefaultSingleLogoutRequest;
+import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutRequestStatus;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -89,10 +90,12 @@ public class FrontChannelLogoutActionTests {
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         val id = UUID.randomUUID().toString();
-        val sloReq = DefaultSingleLogoutRequest.builder()
+        val sloReq = DefaultSingleLogoutRequestContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
             .service(RegisteredServiceTestUtils.getService())
-            .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+            .executionRequest(SingleLogoutExecutionRequest.builder()
+                .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+                .build())
             .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
             .ticketId(id)
             .status(LogoutRequestStatus.NOT_ATTEMPTED)
@@ -115,10 +118,12 @@ public class FrontChannelLogoutActionTests {
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         val id = UUID.randomUUID().toString();
-        val sloReq = DefaultSingleLogoutRequest.builder()
+        val sloReq = DefaultSingleLogoutRequestContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
             .service(RegisteredServiceTestUtils.getService())
-            .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+            .executionRequest(SingleLogoutExecutionRequest.builder()
+                .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+                .build())
             .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
             .ticketId(id)
             .logoutUrl(new URL("https://apereo.org/cas"))

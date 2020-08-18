@@ -132,9 +132,7 @@ public class CasWebflowContextConfiguration {
     @Bean
     @Lazy(false)
     public FlowUrlHandler logoutFlowUrlHandler() {
-        val handler = new CasDefaultFlowUrlHandler();
-        handler.setFlowExecutionKeyParameter("RelayState");
-        return handler;
+        return new CasDefaultFlowUrlHandler();
     }
 
     @RefreshScope

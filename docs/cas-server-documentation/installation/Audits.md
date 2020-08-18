@@ -23,12 +23,10 @@ The following endpoints are provided by CAS:
 |--------------------------|------------------------------------------------
 | `auditLog`               | Provides a JSON representation of all the audit log.
 
-Navigating to `/actuator/auditLog` displays the complete audit for the past number of days determined by `cas.audit.numberOfDaysInHistory`(default is 30 days);
+You can specify an interval of log entries to return by adding a Duration Syntax to the navigated path. This interval will be subtracted from the current 
+date and time when the query is executed. For instance `/actuator/auditLog/PT1H` will return only entries for the past hour.
 
-You can specify an interval of log entries to return by adding a Duration Syntax to the navigated path.  This interval will be subtracted from the current 
-date and time when the query is executed.  For instance `/actuator/auditLog/PT1H` will return only entries for the past our.  
-
-`/actuator/auditLog` can also accept a JSON object through a POST method containing criteria to filter log entries by.
+The actuator endpoint can also accept a JSON object through a POST method containing criteria to filter log entries by.
 
 The following filters that can be applied:
 
@@ -41,7 +39,6 @@ The following filters that can be applied:
 | `resourceOperatedOn`      | `ST-1.*`, `TGT-1-.*`
 
 Each filter other than `interval` can accept a regular expression to match against.
-
 
 ## File-based Audits
 

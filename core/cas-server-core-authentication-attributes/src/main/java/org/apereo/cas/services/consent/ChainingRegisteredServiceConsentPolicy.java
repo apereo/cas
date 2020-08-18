@@ -1,6 +1,7 @@
 package org.apereo.cas.services.consent;
 
 import org.apereo.cas.services.RegisteredServiceConsentPolicy;
+import org.apereo.cas.util.model.TriStateBoolean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -57,8 +58,14 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
 
     @Override
     @JsonIgnore
-    public boolean isEnabled() {
-        return this.policies.stream().anyMatch(RegisteredServiceConsentPolicy::isEnabled);
+    public TriStateBoolean getStatus() {
+        if (this.policies.stream().anyMatch(policy -> policy.getStatus().isTrue())) {
+            return TriStateBoolean.TRUE;
+        }
+        if (this.policies.stream().allMatch(policy -> policy.getStatus().isFalse())) {
+            return TriStateBoolean.FALSE;
+        }
+        return TriStateBoolean.UNDEFINED;
     }
 
     @JsonIgnore

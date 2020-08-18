@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Simple")
+@Tag("X509")
 public class CompositeX509TrustManagerTests {
     @Test
     public void verifyIssuers() throws Exception {

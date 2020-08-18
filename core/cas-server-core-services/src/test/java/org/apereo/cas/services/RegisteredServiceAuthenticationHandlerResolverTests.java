@@ -57,7 +57,13 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
-        defaultServicesManager = new DefaultServicesManager(dao, applicationContext, new HashSet<>(), Caffeine.newBuilder().build());
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(dao)
+            .applicationContext(applicationContext)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .build();
+        defaultServicesManager = new DefaultServicesManager(context);
         defaultServicesManager.load();
 
         val handler1 = new AcceptUsersAuthenticationHandler("handler1");

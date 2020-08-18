@@ -34,12 +34,14 @@ public class SamlCompliantLogoutMessageCreatorTests {
         when(service.getOriginalUrl()).thenReturn(CONST_TEST_URL);
 
         val logoutUrl = new URL(service.getOriginalUrl());
-        val request = DefaultSingleLogoutRequest.builder()
+        val request = DefaultSingleLogoutRequestContext.builder()
             .ticketId("TICKET-ID")
             .service(service)
             .logoutUrl(logoutUrl)
             .registeredService(mock(RegisteredService.class))
-            .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+            .executionRequest(SingleLogoutExecutionRequest.builder()
+                .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+                .build())
             .build();
 
         val msg = builder.create(request);

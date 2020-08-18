@@ -1,11 +1,8 @@
 package org.apereo.cas.services;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import org.springframework.context.ConfigurableApplicationContext;
-
+import java.util.Collection;
 import java.util.Comparator;
-import java.util.Set;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 /**
  * Default implementation of the {@link ServicesManager} interface.
@@ -15,16 +12,18 @@ import java.util.stream.Stream;
  */
 public class DefaultServicesManager extends AbstractServicesManager {
 
-    public DefaultServicesManager(final ServiceRegistry serviceRegistry,
-            final ConfigurableApplicationContext applicationContext,
-            final Set<String> environments,
-            final Cache<Long, RegisteredService> services) {
-        super(serviceRegistry, applicationContext, environments, services);
+    public DefaultServicesManager(final ServicesManagerConfigurationContext context) {
+        super(context);
     }
 
     @Override
-    protected Stream<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
-        return getServices().asMap().values().stream().sorted(Comparator.naturalOrder());
+    protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
+        return getConfigurationContext().getServicesCache()
+            .asMap()
+            .values()
+            .stream()
+            .sorted(Comparator.naturalOrder())
+            .collect(Collectors.toList());
     }
 
 }

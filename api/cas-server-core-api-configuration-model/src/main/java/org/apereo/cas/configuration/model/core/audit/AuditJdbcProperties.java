@@ -43,6 +43,20 @@ public class AuditJdbcProperties extends AbstractJpaProperties {
     private int columnLength = 100;
 
     /**
+     * SQL query that provides a template to fetch audit records.
+     * Accepts two parameters using {@code %s} for table name and
+     * audit date.
+     */
+    private String selectSqlQueryTemplate;
+
+    /**
+     * Indicate the date formatter pattern used to fetch
+     * audit records from the database based on the record date.
+     * Default value is {@code yyyy-MM-dd 00:00:00.000000}.
+     */
+    private String dateFormatterPattern;
+    
+    /**
      * Scheduler settings to indicate how often the cleaner is reloaded.
      */
     @NestedConfigurationProperty

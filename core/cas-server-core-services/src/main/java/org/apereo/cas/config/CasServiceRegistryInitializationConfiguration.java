@@ -133,7 +133,7 @@ public class CasServiceRegistryInitializationConfiguration {
             .getResources("classpath*:/services/*.json");
         Arrays.stream(resources)
             .forEach(resource -> ResourceUtils.exportClasspathResourceToFile(parent, resource));
-        LOGGER.debug("Using JSON service registry location [{}] for embedded service definitions", registry.getLocation());
+        LOGGER.debug("Using service registry location [{}] for embedded service definitions", parent);
         return new FileSystemResource(parent);
     }
 

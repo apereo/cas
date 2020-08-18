@@ -20,8 +20,14 @@ public class DefaultServicesManagerByEnvironmentTests extends AbstractServicesMa
     protected ServicesManager getServicesManagerInstance() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
-        return new DefaultServicesManager(serviceRegistry, applicationContext,
-            CollectionUtils.wrapSet("prod1", "qa1"), Caffeine.newBuilder().build());
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(serviceRegistry)
+            .applicationContext(applicationContext)
+            .environments(CollectionUtils.wrapSet("prod1", "qa1"))
+            .servicesCache(Caffeine.newBuilder().build())
+            .build();
+
+        return new DefaultServicesManager(context);
     }
 
     @Test

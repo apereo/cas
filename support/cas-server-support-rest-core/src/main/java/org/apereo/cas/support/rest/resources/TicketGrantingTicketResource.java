@@ -102,7 +102,7 @@ public class TicketGrantingTicketResource {
      */
     @DeleteMapping(value = RestProtocolConstants.ENDPOINT_TICKETS + "/{tgtId:.+}")
     public ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
-        this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
+        this.centralAuthenticationService.deleteTicket(tgtId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

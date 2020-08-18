@@ -83,11 +83,12 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean mfaTrustedAuthnEntityManagerFactory() {
         val factory = jpaBeanFactory.getObject();
-        val ctx = new JpaConfigurationContext(
-            jpaMfaTrustedAuthnVendorAdapter(),
-            "jpaMfaTrustedAuthnContext",
-            jpaMfaTrustedAuthnPackagesToScan(),
-            dataSourceMfaTrustedAuthn());
+        val ctx = JpaConfigurationContext.builder()
+            .dataSource(dataSourceMfaTrustedAuthn())
+            .packagesToScan(jpaMfaTrustedAuthnPackagesToScan())
+            .persistenceUnitName("jpaMfaTrustedAuthnContext")
+            .jpaVendorAdapter(jpaMfaTrustedAuthnVendorAdapter())
+            .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getTrusted().getJpa());
     }
 

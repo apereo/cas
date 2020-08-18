@@ -8,12 +8,62 @@ if (hasTestsOfCategory(project, "Kafka")) {
     }
 }
 
+if (hasTestsOfCategory(project, "Logout")) {
+    task testLogout(type: Test) {
+        enabled = shouldTest(project, "Logout")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "Logout"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "CAS")) {
+    task testCAS(type: Test) {
+        enabled = shouldTest(project, "CAS")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "CAS"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "ExpirationPolicy")) {
+    task testExpirationPolicy(type: Test) {
+        enabled = shouldTest(project, "ExpirationPolicy")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "ExpirationPolicy"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "Metrics")) {
+    task testMetrics(type: Test) {
+        enabled = shouldTest(project, "Metrics")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "Metrics"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "Tickets")) {
     task testTickets(type: Test) {
         enabled = shouldTest(project, "Tickets")
         //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "Tickets"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "PasswordOps")) {
+    task testPasswordOps(type: Test) {
+        enabled = shouldTest(project, "PasswordOps")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "PasswordOps"
         }
     }
 }
@@ -224,6 +274,16 @@ if (hasTestsOfCategory(project, "Webflow")) {
         //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags "Webflow"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "WebflowConfig")) {
+    task testWebflowConfig(type: Test) {
+        enabled = shouldTest(project, "WebflowConfig")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "WebflowConfig"
         }
     }
 }
@@ -596,7 +656,7 @@ Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.
 }
 
 def shouldTest(Project project, String category) {
-    def foundTest = gradle.startParameter.taskNames.any {task -> task.toLowerCase().contains(category.toLowerCase())}
+    def foundTest = gradle.startParameter.taskNames.any {task -> task.matches(/^test${category}$/) }
     if (!foundTest) {
         logger.debug "No tests with category ${category} found for ${project.name}"
     }

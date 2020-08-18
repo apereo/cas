@@ -2,6 +2,7 @@ package org.apereo.cas.gauth.web.flow;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
@@ -62,5 +63,19 @@ public class GoogleAuthenticatorSaveRegistrationAction extends OneTimeTokenAccou
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         return error();
+    }
+
+    @Override
+    protected OneTimeTokenAccount buildOneTimeTokenAccount(final RequestContext requestContext) {
+        val acct = super.buildOneTimeTokenAccount(requestContext);
+        return GoogleAuthenticatorAccount.builder()
+            .id(acct.getId())
+            .name(acct.getName())
+            .username(acct.getUsername())
+            .secretKey(acct.getSecretKey())
+            .validationCode(acct.getValidationCode())
+            .scratchCodes(acct.getScratchCodes())
+            .registrationDate(acct.getRegistrationDate())
+            .build();
     }
 }

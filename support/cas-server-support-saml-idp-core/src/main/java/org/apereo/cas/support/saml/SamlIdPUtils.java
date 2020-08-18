@@ -103,9 +103,9 @@ public class SamlIdPUtils {
                     endpoint = acsEndpointFromReq;
                 } else {
                     if (acsEndpointFromMetadata == null
-                        || !acsEndpointFromReq.getLocation().equals(adaptor.getAssertionConsumerService(binding).getLocation())) {
+                        || !adaptor.getAssertionConsumerServiceLocations(binding).contains(acsEndpointFromReq.getLocation())) {
                         throw new SamlException(String.format("Assertion consumer service from unsigned request [%s], does not match ACS from SP metadata [%s]",
-                            acsEndpointFromReq.getLocation(), adaptor.getAssertionConsumerService(binding).getLocation()));
+                            acsEndpointFromReq.getLocation(), adaptor.getAssertionConsumerServiceLocations(binding)));
                     }
                     endpoint = acsEndpointFromReq;
                 }
@@ -126,23 +126,6 @@ public class SamlIdPUtils {
                 + " does not define a target location for " + binding);
         }
         return endpoint;
-    }
-
-    private static AssertionConsumerService getAssertionConsumerServiceFromRequest(final RequestAbstractType authnRequest, final String binding) {
-        if (authnRequest instanceof AuthnRequest) {
-            val acsUrl = AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceURL();
-            if (StringUtils.isBlank(acsUrl)) {
-                return null;
-            }
-            LOGGER.debug("Fetched assertion consumer service url [{}] with binding [{}] from authentication request", acsUrl, binding);
-            val builder = new AssertionConsumerServiceBuilder();
-            val endpoint = builder.buildObject(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
-            endpoint.setBinding(binding);
-            endpoint.setResponseLocation(acsUrl);
-            endpoint.setLocation(acsUrl);
-            return endpoint;
-        }
-        return null;
     }
 
     /**
@@ -239,16 +222,6 @@ public class SamlIdPUtils {
     }
 
     /**
-     * Gets issuer from saml request.
-     *
-     * @param request the request
-     * @return the issuer from saml request
-     */
-    private static String getIssuerFromSamlRequest(final RequestAbstractType request) {
-        return request.getIssuer().getValue();
-    }
-
-    /**
      * Gets issuer from saml object.
      *
      * @param object the object
@@ -306,6 +279,33 @@ public class SamlIdPUtils {
             return Optional.ofNullable(AuthnRequest.class.cast(authnRequest).getNameIDPolicy());
         }
         return Optional.empty();
+    }
+
+    private static AssertionConsumerService getAssertionConsumerServiceFromRequest(final RequestAbstractType authnRequest, final String binding) {
+        if (authnRequest instanceof AuthnRequest) {
+            val acsUrl = AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceURL();
+            if (StringUtils.isBlank(acsUrl)) {
+                return null;
+            }
+            LOGGER.debug("Fetched assertion consumer service url [{}] with binding [{}] from authentication request", acsUrl, binding);
+            val builder = new AssertionConsumerServiceBuilder();
+            val endpoint = builder.buildObject(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
+            endpoint.setBinding(binding);
+            endpoint.setResponseLocation(acsUrl);
+            endpoint.setLocation(acsUrl);
+            return endpoint;
+        }
+        return null;
+    }
+
+    /**
+     * Gets issuer from saml request.
+     *
+     * @param request the request
+     * @return the issuer from saml request
+     */
+    private static String getIssuerFromSamlRequest(final RequestAbstractType request) {
+        return request.getIssuer().getValue();
     }
 }
 

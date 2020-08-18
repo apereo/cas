@@ -260,7 +260,8 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     public TicketGrantingTicketFactory defaultTicketGrantingTicketFactory() {
         return new DefaultTicketGrantingTicketFactory(ticketGrantingTicketUniqueIdGenerator(),
             grantingTicketExpirationPolicy(),
-            protocolTicketCipherExecutor());
+            protocolTicketCipherExecutor(),
+            servicesManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactoryConfigurer")

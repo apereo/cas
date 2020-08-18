@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
     AopAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("Metrics")
 public class CacheHealthIndicatorTests {
 
     @Autowired

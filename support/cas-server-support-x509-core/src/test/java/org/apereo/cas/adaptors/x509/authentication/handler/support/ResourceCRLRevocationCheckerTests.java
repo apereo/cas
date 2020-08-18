@@ -35,6 +35,7 @@ public class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerT
     public void checkCertificate(final ResourceCRLRevocationChecker checker, final String[] certFiles, final GeneralSecurityException expected) {
         checker.init();
         BaseCRLRevocationCheckerTests.checkCertificate(checker, certFiles, expected);
+        checker.destroy();
     }
 
     /**

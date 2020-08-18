@@ -3,8 +3,9 @@ package org.apereo.cas.oidc.slo;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.logout.slo.SingleLogoutRequest;
+import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.logout.slo.SingleLogoutUrl;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
@@ -41,7 +42,7 @@ public class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTest
     public void verifyCreateLogoutRequestsFrontChannel() {
 
         verifyCreateLogoutRequests(RegisteredServiceLogoutType.FRONT_CHANNEL,
-                LOGOUT_URL + "?iss=https%3A%2F%2Fsso.example.org%2Fcas%2Foidc&sid=" + DigestUtils.sha(TGT_ID));
+            LOGOUT_URL + "?iss=https%3A%2F%2Fsso.example.org%2Fcas%2Foidc&sid=" + DigestUtils.sha(TGT_ID));
     }
 
     @Test
@@ -54,13 +55,13 @@ public class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTest
 
     private void verifyCreateLogoutRequests(final RegisteredServiceLogoutType type, final String url) {
         val context = OAuth20ConfigurationContext.builder()
-                .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService)
-                .casProperties(casProperties)
-                .build();
+            .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService)
+            .casProperties(casProperties)
+            .build();
         val creator = new OidcSingleLogoutMessageCreator(context);
         val handler = new OidcSingleLogoutServiceMessageHandler(mock(HttpClient.class),
-                creator, servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(servicesManager, mock(UrlValidator.class)),
-                true, mock(AuthenticationServiceSelectionPlan.class), casProperties.getAuthn().getOidc().getIssuer());
+            creator, servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(servicesManager, mock(UrlValidator.class)),
+            true, mock(AuthenticationServiceSelectionPlan.class), casProperties.getAuthn().getOidc().getIssuer());
 
         val singleLogoutUrl = new SingleLogoutUrl(LOGOUT_URL, type);
         val tgt = mock(TicketGrantingTicket.class);
@@ -69,11 +70,13 @@ public class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTest
         var authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         when(tgt.getAuthentication()).thenReturn(authentication);
 
-        val requests = handler.createLogoutRequests(TGT_ID, new SimpleWebApplicationServiceImpl(), getOidcRegisteredService(),
-                Collections.singleton(singleLogoutUrl), tgt);
+        val requests = handler.createLogoutRequests(TGT_ID, new SimpleWebApplicationServiceImpl(),
+            getOidcRegisteredService(),
+            Collections.singleton(singleLogoutUrl),
+            SingleLogoutExecutionRequest.builder().ticketGrantingTicket(tgt).build());
 
         assertEquals(1, requests.size());
-        val request = ((List<SingleLogoutRequest>) requests).get(0);
+        val request = ((List<SingleLogoutRequestContext>) requests).get(0);
         assertEquals(url, request.getLogoutUrl().toString());
     }
 }

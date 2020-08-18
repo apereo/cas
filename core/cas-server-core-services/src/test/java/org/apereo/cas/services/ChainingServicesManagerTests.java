@@ -47,7 +47,13 @@ public class ChainingServicesManagerTests extends AbstractServicesManagerTests<C
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val chain = new ChainingServicesManager();
-        val manager = new DefaultServicesManager(serviceRegistry, applicationContext, new HashSet<>(), Caffeine.newBuilder().build());
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(serviceRegistry)
+            .applicationContext(applicationContext)
+            .environments(new HashSet<>())
+            .servicesCache(Caffeine.newBuilder().build())
+            .build();
+        val manager = new DefaultServicesManager(context);
         chain.registerServiceManager(manager);
         return chain;
     }

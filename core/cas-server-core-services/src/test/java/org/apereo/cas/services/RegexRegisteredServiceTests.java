@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.model.TriStateBoolean;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,6 +33,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 public class RegexRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "regexRegisteredService.json");
+
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .setSerializationInclusion(JsonInclude.Include.NON_NULL)
         .findAndRegisterModules();
@@ -84,30 +86,6 @@ public class RegexRegisteredServiceTests {
         );
     }
 
-    private static RegexRegisteredService newService(final String id) {
-        val service = new RegexRegisteredService();
-        service.setServiceId(id);
-        service.setLogoutType(RegisteredServiceLogoutType.FRONT_CHANNEL);
-        service.setServiceTicketExpirationPolicy(
-            new DefaultRegisteredServiceServiceTicketExpirationPolicy(100, "100"));
-        service.setProxyTicketExpirationPolicy(
-            new DefaultRegisteredServiceProxyTicketExpirationPolicy(100, "100"));
-        val policy = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
-        policy.addPolicies(Arrays.asList(
-            new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1),
-            new AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1)));
-        service.setSingleSignOnParticipationPolicy(policy);
-
-        val consent = new DefaultRegisteredServiceConsentPolicy(CollectionUtils.wrapSet("attr1", "attr2"),
-            CollectionUtils.wrapSet("ex-attr1", "ex-attr2"));
-        consent.setEnabled(true);
-
-        val attrPolicy = new ReturnAllowedAttributeReleasePolicy();
-        attrPolicy.setConsentPolicy(consent);
-        service.setAttributeReleasePolicy(attrPolicy);
-        return service;
-    }
-
     @ParameterizedTest
     @MethodSource("getParameters")
     public void verifyMatches(final RegexRegisteredService service,
@@ -127,6 +105,30 @@ public class RegexRegisteredServiceTests {
         assertEquals(service, serviceRead);
         val testService = Optional.ofNullable(serviceToMatch).map(RegisteredServiceTestUtils::getService).orElse(null);
         assertEquals(expectedResult, serviceRead.matches(testService));
+    }
+
+    private static RegexRegisteredService newService(final String id) {
+        val service = new RegexRegisteredService();
+        service.setServiceId(id);
+        service.setLogoutType(RegisteredServiceLogoutType.FRONT_CHANNEL);
+        service.setServiceTicketExpirationPolicy(
+            new DefaultRegisteredServiceServiceTicketExpirationPolicy(100, "100"));
+        service.setProxyTicketExpirationPolicy(
+            new DefaultRegisteredServiceProxyTicketExpirationPolicy(100, "100"));
+        val policy = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
+        policy.addPolicies(Arrays.asList(
+            new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1),
+            new AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1)));
+        service.setSingleSignOnParticipationPolicy(policy);
+
+        val consent = new DefaultRegisteredServiceConsentPolicy(CollectionUtils.wrapSet("attr1", "attr2"),
+            CollectionUtils.wrapSet("ex-attr1", "ex-attr2"));
+        consent.setStatus(TriStateBoolean.TRUE);
+
+        val attrPolicy = new ReturnAllowedAttributeReleasePolicy();
+        attrPolicy.setConsentPolicy(consent);
+        service.setAttributeReleasePolicy(attrPolicy);
+        return service;
     }
 
 }

@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.wsfed-idp.sts.realm.key-password=realma",
     "cas.authn.wsfed-idp.sts.realm.issuer=CAS"
 })
-@Tag("Webflow")
+@Tag("WebflowConfig")
 public class WSFederationIdentityProviderWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

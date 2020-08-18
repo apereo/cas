@@ -40,7 +40,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -84,11 +83,12 @@ public class JpaTicketRegistryConfiguration {
     public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         val factory = jpaBeanFactory.getObject();
-        val ctx = new JpaConfigurationContext(
-            jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc()),
-            "jpaTicketRegistryContext",
-            ticketPackagesToScan(),
-            dataSourceTicket());
+        val ctx = JpaConfigurationContext.builder()
+            .jpaVendorAdapter(jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc()))
+            .persistenceUnitName("jpaTicketRegistryContext")
+            .dataSource(dataSourceTicket())
+            .packagesToScan(ticketPackagesToScan())
+            .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getTicket().getRegistry().getJpa());
     }
 

@@ -9,7 +9,7 @@ category: Installation
 The CAS command-line shell provides the ability to query the CAS server for help on available settings/modules and
 various other utility functions. 
 
-To invoke and work with the utility, simply execute:
+To invoke and work with the utility, execute:
 
 ```bash
 java -jar /path/to/cas-server-support-shell-$casVersion.jar

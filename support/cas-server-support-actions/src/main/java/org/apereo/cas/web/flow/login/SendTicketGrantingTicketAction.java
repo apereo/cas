@@ -61,8 +61,8 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
         }
 
         if (ticketGrantingTicketValueFromCookie != null && !ticketGrantingTicketId.equals(ticketGrantingTicketValueFromCookie)) {
-            LOGGER.debug("Ticket-granting ticket from TGC does not match the ticket-granting ticket from context");
-            this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketValueFromCookie);
+            LOGGER.debug("Ticket-granting ticket from ticket-granting cookie does not match the ticket-granting ticket from context");
+            this.centralAuthenticationService.deleteTicket(ticketGrantingTicketValueFromCookie);
         }
 
         return success();

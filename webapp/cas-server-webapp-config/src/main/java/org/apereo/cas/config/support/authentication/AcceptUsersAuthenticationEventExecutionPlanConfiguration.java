@@ -45,12 +45,13 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer acceptUsersAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            if (StringUtils.isNotBlank(this.casProperties.getAuthn().getAccept().getUsers())) {
+            val accept = casProperties.getAuthn().getAccept();
+            if (accept.isEnabled() && StringUtils.isNotBlank(accept.getUsers())) {
                 val header =
                     "\nCAS is configured to accept a static list of credentials for authentication. "
                         + "While this is generally useful for demo purposes, it is STRONGLY recommended "
-                        + "that you DISABLE this authentication method (by setting 'cas.authn.accept.users' "
-                        + "to a blank value) and switch to a mode that is more suitable for production.";
+                        + "that you DISABLE this authentication method by setting 'cas.authn.accept.enabled=false' "
+                        + "and switch to a mode that is more suitable for production.";
                 AsciiArtUtils.printAsciiArtWarning(LOGGER, header);
                 plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler.getObject(), defaultPrincipalResolver.getObject());
             }

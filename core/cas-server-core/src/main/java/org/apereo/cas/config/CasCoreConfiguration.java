@@ -13,7 +13,6 @@ import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
@@ -65,10 +64,6 @@ public class CasCoreConfiguration {
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    @Qualifier("logoutManager")
-    private ObjectProvider<LogoutManager> logoutManager;
-
-    @Autowired
     @Qualifier("defaultTicketFactory")
     private ObjectProvider<TicketFactory> ticketFactory;
 
@@ -84,10 +79,10 @@ public class CasCoreConfiguration {
     @ConditionalOnMissingBean(name = "authenticationPolicyFactory")
     public ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory() {
         if (casProperties.getAuthn().getPolicy().isRequiredHandlerAuthenticationPolicyEnabled()) {
-            LOGGER.debug("Applying configuration for Required Handler Authentication Policy");
+            LOGGER.trace("Applying configuration for Required Handler Authentication Policy");
             return new RequiredHandlerAuthenticationPolicyFactory();
         }
-        LOGGER.debug("Applying configuration for Accept Any Authentication Policy");
+        LOGGER.trace("Applying configuration for Accept Any Authentication Policy");
         return new AcceptAnyAuthenticationPolicyFactory();
     }
 
@@ -109,7 +104,7 @@ public class CasCoreConfiguration {
     public ServiceMatchingStrategy serviceMatchingStrategy() {
         return new DefaultServiceMatchingStrategy(servicesManager.getObject());
     }
-    
+
     @Bean
     @Autowired
     @ConditionalOnMissingBean(name = "centralAuthenticationService")
@@ -118,7 +113,6 @@ public class CasCoreConfiguration {
         return new DefaultCentralAuthenticationService(applicationContext,
             ticketRegistry.getObject(),
             servicesManager.getObject(),
-            logoutManager.getObject(),
             ticketFactory.getObject(),
             authenticationServiceSelectionPlan,
             authenticationPolicyFactory(),

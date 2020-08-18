@@ -3,23 +3,30 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.jpa.JpaPersistenceProviderConfigurer;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuth20ServiceRegistry;
+import org.apereo.cas.support.oauth.services.OAuth20ServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+
+import java.util.List;
 
 /**
  * This is {@link CasOAuth20ServicesConfiguration}.
@@ -48,6 +55,12 @@ public class CasOAuth20ServicesConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "oauthServicesManagerRegisteredServiceLocator")
+    public ServicesManagerRegisteredServiceLocator oauthServicesManagerRegisteredServiceLocator() {
+        return new OAuth20ServicesManagerRegisteredServiceLocator();
+    }
+
+    @Bean
     @ConditionalOnMissingBean(name = "oauthServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer oauthServiceRegistryExecutionPlanConfigurer() {
         return plan -> {
@@ -60,5 +73,15 @@ public class CasOAuth20ServicesConfiguration {
             service.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
             plan.registerServiceRegistry(new OAuth20ServiceRegistry(applicationContext, service));
         };
+    }
+
+    @ConditionalOnClass(value = JpaPersistenceProviderConfigurer.class)
+    @Configuration("oauth20JpaServiceRegistryConfiguration")
+    public static class OAuth20JpaServiceRegistryConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "oauthJpaServicePersistenceProviderConfigurer")
+        public JpaPersistenceProviderConfigurer oauthJpaServicePersistenceProviderConfigurer() {
+            return context -> context.getIncludeEntityClasses().addAll(List.of(OAuthRegisteredService.class.getName()));
+        }
     }
 }

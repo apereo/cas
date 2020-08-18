@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.Service;
 
 /**
  * The {@link TicketGrantingTicketFactory} is responsible for
@@ -16,8 +17,9 @@ public interface TicketGrantingTicketFactory extends TicketFactory {
      *
      * @param <T>            the type parameter
      * @param authentication the authentication
+     * @param service        the service
      * @param clazz          the clazz
      * @return the t
      */
-    <T extends TicketGrantingTicket> T create(Authentication authentication, Class<T> clazz);
+    <T extends TicketGrantingTicket> T create(Authentication authentication, Service service, Class<T> clazz);
 }

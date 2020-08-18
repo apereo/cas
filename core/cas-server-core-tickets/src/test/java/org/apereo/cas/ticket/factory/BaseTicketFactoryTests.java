@@ -49,4 +49,7 @@ public abstract class BaseTicketFactoryTests {
     @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
+
+    @Autowired
+    protected CasConfigurationProperties casProperties;
 }

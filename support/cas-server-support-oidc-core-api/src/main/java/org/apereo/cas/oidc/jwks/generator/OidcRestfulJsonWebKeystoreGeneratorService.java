@@ -33,7 +33,7 @@ public class OidcRestfulJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         val response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
             rest.getBasicAuthUsername(), rest.getBasicAuthPassword());
 
-        if (!HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
+        if (response == null || !HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
             LOGGER.warn("Unable to successfully fetch JWKS resource from [{}]", rest.getUrl());
             return null;
         }

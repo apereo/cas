@@ -78,11 +78,12 @@ public class U2FJpaConfiguration {
     @ConditionalOnMissingBean(name = "u2fEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean u2fEntityManagerFactory() {
         val factory = jpaBeanFactory.getObject();
-        val ctx = new JpaConfigurationContext(
-            jpaU2fVendorAdapter(),
-            "jpaU2fRegistryContext",
-            jpaU2fPackagesToScan(),
-            dataSourceU2f());
+        val ctx = JpaConfigurationContext.builder()
+            .dataSource(dataSourceU2f())
+            .packagesToScan(jpaU2fPackagesToScan())
+            .persistenceUnitName("jpaU2fRegistryContext")
+            .jpaVendorAdapter(jpaU2fVendorAdapter())
+            .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getU2f().getJpa());
     }
 

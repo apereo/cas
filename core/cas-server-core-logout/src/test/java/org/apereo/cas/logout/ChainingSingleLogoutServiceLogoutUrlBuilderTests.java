@@ -7,6 +7,7 @@ import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.web.SimpleUrlValidator;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -16,9 +17,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Simple")
+@Tag("Logout")
 public class ChainingSingleLogoutServiceLogoutUrlBuilderTests {
     private ServicesManager servicesManager;
 
@@ -37,10 +38,13 @@ public class ChainingSingleLogoutServiceLogoutUrlBuilderTests {
     public void beforeEach() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
-        this.servicesManager = new DefaultServicesManager(
-            new InMemoryServiceRegistry(appCtx),
-            appCtx, Set.of(),
-            Caffeine.newBuilder().build());
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(new InMemoryServiceRegistry(appCtx))
+            .applicationContext(appCtx)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .build();
+        this.servicesManager = new DefaultServicesManager(context);
     }
 
     @Test

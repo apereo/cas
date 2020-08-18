@@ -16,6 +16,7 @@ import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.DefaultChainingServiceRegistry;
 import org.apereo.cas.services.DefaultServiceRegistryExecutionPlan;
 import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.ImmutableServiceRegistry;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
@@ -28,7 +29,9 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.ServicesManagerExecutionPlanConfigurer;
+import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.ServicesManagerScheduledLoader;
 import org.apereo.cas.services.domain.DefaultDomainAwareServicesManager;
 import org.apereo.cas.services.domain.DefaultRegisteredServiceDomainExtractor;
@@ -254,8 +257,30 @@ public class CasCoreServicesConfiguration {
     public ServicesManagerExecutionPlanConfigurer defaultServicesManagerExecutionPlanConfigurer() {
         return () -> {
             val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
-            return new DefaultServicesManager(serviceRegistry(), applicationContext, activeProfiles, servicesManagerCache());
+            val context = ServicesManagerConfigurationContext.builder()
+                .serviceRegistry(serviceRegistry())
+                .applicationContext(applicationContext)
+                .environments(activeProfiles)
+                .servicesCache(servicesManagerCache())
+                .registeredServiceLocators(servicesManagerRegisteredServiceLocators())
+                .build();
+            return new DefaultServicesManager(context);
         };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "servicesManagerRegisteredServiceLocators")
+    public List<ServicesManagerRegisteredServiceLocator> servicesManagerRegisteredServiceLocators() {
+        val locators = applicationContext.getBeansOfType(ServicesManagerRegisteredServiceLocator.class, false, true);
+        val sortedLocators = new ArrayList<>(locators.values());
+        AnnotationAwareOrderComparator.sortIfNecessary(sortedLocators);
+        return sortedLocators;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "defaultServicesManagerRegisteredServiceLocator")
+    public ServicesManagerRegisteredServiceLocator defaultServicesManagerRegisteredServiceLocator() {
+        return new DefaultServicesManagerRegisteredServiceLocator();
     }
 
     @Bean
@@ -264,9 +289,13 @@ public class CasCoreServicesConfiguration {
     public ServicesManagerExecutionPlanConfigurer domainServicesManagerExecutionPlanConfigurer() {
         return () -> {
             val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
-            return new DefaultDomainAwareServicesManager(serviceRegistry(), applicationContext,
-                new DefaultRegisteredServiceDomainExtractor(),
-                activeProfiles, servicesManagerCache());
+            val context = ServicesManagerConfigurationContext.builder()
+                .serviceRegistry(serviceRegistry())
+                .applicationContext(applicationContext)
+                .environments(activeProfiles)
+                .servicesCache(servicesManagerCache())
+                .build();
+            return new DefaultDomainAwareServicesManager(context, new DefaultRegisteredServiceDomainExtractor());
         };
     }
 

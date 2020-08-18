@@ -33,7 +33,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
 import java.util.List;
 
 /**
@@ -80,11 +79,13 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean googleAuthenticatorEntityManagerFactory() {
         val factory = jpaBeanFactory.getObject();
-        val ctx = new JpaConfigurationContext(
-            jpaGoogleAuthenticatorVendorAdapter(),
-            "jpaGoogleAuthenticatorContext",
-            jpaPackagesToScanGoogleAuthenticator(),
-            dataSourceGoogleAuthenticator());
+
+        val ctx = JpaConfigurationContext.builder()
+            .jpaVendorAdapter(jpaGoogleAuthenticatorVendorAdapter())
+            .persistenceUnitName("jpaGoogleAuthenticatorContext")
+            .dataSource(dataSourceGoogleAuthenticator())
+            .packagesToScan(jpaPackagesToScanGoogleAuthenticator())
+            .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getGauth().getJpa());
     }
 
@@ -102,7 +103,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(@Qualifier("googleAuthenticatorInstance")
-                                                                               final IGoogleAuthenticator googleAuthenticatorInstance,
+                                                                                   final IGoogleAuthenticator googleAuthenticatorInstance,
                                                                                @Qualifier("googleAuthenticatorAccountCipherExecutor")
                                                                                final CipherExecutor googleAuthenticatorAccountCipherExecutor) {
         return new JpaGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorAccountCipherExecutor, googleAuthenticatorInstance);

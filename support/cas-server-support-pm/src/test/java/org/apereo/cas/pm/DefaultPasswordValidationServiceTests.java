@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.history.enabled=true",
     "cas.authn.pm.policy-pattern=^Th!.+{8,10}"
 })
-@Tag("Simple")
+@Tag("PasswordOps")
 public class DefaultPasswordValidationServiceTests {
     @Autowired
     @Qualifier("passwordValidationService")

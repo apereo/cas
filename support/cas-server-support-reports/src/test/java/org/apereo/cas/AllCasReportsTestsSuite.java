@@ -5,6 +5,7 @@ import org.apereo.cas.web.report.CasInfoEndpointContributorTests;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpointTests;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpointTests;
 import org.apereo.cas.web.report.ExportRegisteredServicesEndpointTests;
+import org.apereo.cas.web.report.ImportRegisteredServicesEndpointTests;
 import org.apereo.cas.web.report.LoggingConfigurationEndpointTests;
 import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpointTests;
 import org.apereo.cas.web.report.RegisteredAuthenticationPoliciesEndpointTests;
@@ -32,6 +33,7 @@ import org.junit.runner.RunWith;
     RegisteredServicesEndpointTests.class,
     RegisteredAuthenticationHandlersEndpointTests.class,
     StatusEndpointTests.class,
+    ImportRegisteredServicesEndpointTests.class,
     StatusEndpointWithHealthTests.class,
     StatisticsEndpointTests.class,
     SingleSignOnSessionsEndpointTests.class,

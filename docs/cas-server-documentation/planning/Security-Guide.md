@@ -104,7 +104,7 @@ alternative to replaying end-user credentials to a service.
 However, proxy tickets carry risk in that services accepting proxy tickets are responsible for validating the
 proxy chain (the list of services through which the end-user's authentication have been delegated to arrive at
 the ticket validating service). Services can opt out of accepting proxy tickets entirely (and avoid
-responsibility for validating proxy chains) by simply validating tickets against the /serviceValidate
+responsibility for validating proxy chains) by validating tickets against the /serviceValidate
 validation endpoint, but experience has shown it's easy to be confused about this and configure to
 unintentionally use the /proxyValidate endpoint yet not scrutinize any proxy chains that appear in the
 ticket validation response. Thus proxy authentication requires careful configuration for proper security controls;

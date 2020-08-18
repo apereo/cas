@@ -37,13 +37,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link AbstractCasWebflowConfigurerTests}.
+ * This is {@link CasWebflowConfigurerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Webflow")
-public class AbstractCasWebflowConfigurerTests {
+@Tag("WebflowConfig")
+public class CasWebflowConfigurerTests {
     @Test
     public void verifyNoAutoConfig() {
         val props = new CasConfigurationProperties();

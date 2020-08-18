@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Tag("Web")
+@Tag("CAS")
 public class Cas10ResponseViewTests {
 
     private Map<String, Object> model;

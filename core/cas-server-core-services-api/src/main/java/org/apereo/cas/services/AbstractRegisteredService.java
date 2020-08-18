@@ -110,6 +110,10 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     private RegisteredServiceProxyGrantingTicketExpirationPolicy proxyGrantingTicketExpirationPolicy;
 
     @Lob
+    @Column(name = "ticket_granting_ticket_expiration_policy", length = Integer.MAX_VALUE)
+    private RegisteredServiceTicketGrantingTicketExpirationPolicy ticketGrantingTicketExpirationPolicy;
+
+    @Lob
     @Column(name = "service_ticket_expiration_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceServiceTicketExpirationPolicy serviceTicketExpirationPolicy;
 
@@ -138,6 +142,10 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Lob
     @Column(name = "mfa_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceMultifactorPolicy multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
+
+    @Lob
+    @Column(name = "matching_strategy", length = Integer.MAX_VALUE)
+    private RegisteredServiceMatchingStrategy matchingStrategy = new FullRegexRegisteredServiceMatchingStrategy();
 
     @Column
     private String logo;
@@ -181,6 +189,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Override
     public int compareTo(final RegisteredService other) {
         return new CompareToBuilder()
+            .append(getEvaluationPriority(), other.getEvaluationPriority())
             .append(getEvaluationOrder(), other.getEvaluationOrder())
             .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(),
                 StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())
@@ -241,6 +250,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         this.expirationPolicy = ObjectUtils.defaultIfNull(this.expirationPolicy, new DefaultRegisteredServiceExpirationPolicy());
         this.acceptableUsagePolicy = ObjectUtils.defaultIfNull(this.acceptableUsagePolicy, new DefaultRegisteredServiceAcceptableUsagePolicy());
         this.authenticationPolicy = ObjectUtils.defaultIfNull(this.authenticationPolicy, new DefaultRegisteredServiceAuthenticationPolicy());
+        this.matchingStrategy = ObjectUtils.defaultIfNull(this.matchingStrategy, new FullRegexRegisteredServiceMatchingStrategy());
     }
 
     public void setContacts(final List<RegisteredServiceContact> contacts) {

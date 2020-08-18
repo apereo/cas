@@ -12,7 +12,7 @@ layouts for day time and night time. This document could help you go through the
 
 ## Static Themes
 
-CAS is configured to decorate views based on the `theme` property of a given registered service in the Service Registry. The theme that is activated via this method will still preserve the default views for CAS but will simply apply decorations such as CSS and Javascript to the views. The physical structure of views cannot be modified via this method.
+CAS is configured to decorate views based on the `theme` property of a given registered service in the Service Registry. The theme that is activated via this method will still preserve the default views for CAS but will apply decorations such as CSS and Javascript to the views. The physical structure of views cannot be modified via this method.
 
 ### Configuration
 
@@ -38,7 +38,7 @@ cas.standard.js.file=/themes/[theme_name]/js/cas.js
 
 ## Themed Views
 
-CAS can also utilize a service's associated theme to selectively choose which set of UI views will be used to generate the standard views (`casLoginView.html`, etc). This is specially useful in cases where the set of pages for a theme that are targeted for a different type of audience are entirely different structurally that simply using a simple theme is not practical to augment the default views. In such cases, new view pages may be required.
+CAS can also utilize a service's associated theme to selectively choose which set of UI views will be used to generate the standard views (`casLoginView.html`, etc). This is specially useful in cases where the set of pages for a theme that are targeted for a different type of audience are entirely different structurally that using a simple theme is not practical to augment the default views. In such cases, new view pages may be required.
 
 Views associated with a particular theme by default are expected to be found at: `src/main/resources/templates/<theme-id>`. Note that CAS views and theme-based views may both be externalized out of the web application context. When externalized, themed views are expected to be found at the specified path via CAS properties under a directory named after the theme. For instance, if the external path for CAS views is `/etc/cas/templates`, view template files for theme `sample` may be located `/etc/cas/templates/sample/`.
 
