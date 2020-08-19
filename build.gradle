@@ -50,9 +50,6 @@ ext {
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
 
-    githubPackagesUsername = System.getProperty("githubPackagesUsername")
-    githubPackagesToken = System.getProperty("githubPackagesToken")
-
     publishSnapshots = Boolean.getBoolean("publishSnapshots")
     publishReleases = Boolean.getBoolean("publishReleases")
     
