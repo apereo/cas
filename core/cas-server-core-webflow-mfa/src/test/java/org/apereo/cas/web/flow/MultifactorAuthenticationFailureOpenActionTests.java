@@ -6,13 +6,13 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
- * This is {@link MultifactorAuthenticationFailureActionOpenTests}.
+ * This is {@link MultifactorAuthenticationFailureOpenActionTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Webflow")
-public class MultifactorAuthenticationFailureActionOpenTests extends MultifactorAuthenticationFailureActionTests {
+@Tag("WebflowActions")
+public class MultifactorAuthenticationFailureOpenActionTests extends MultifactorAuthenticationFailureActionTests {
     @Override
     @Test
     public void verifyOperations() throws Exception {

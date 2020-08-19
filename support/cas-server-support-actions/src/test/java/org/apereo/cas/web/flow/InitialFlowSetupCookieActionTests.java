@@ -34,13 +34,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link InitialFlowSetupActionCookieTests}.
+ * This is {@link InitialFlowSetupCookieActionTests}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Tag("Webflow")
-public class InitialFlowSetupActionCookieTests extends AbstractWebflowActionsTests {
+@Tag("WebflowActions")
+public class InitialFlowSetupCookieActionTests extends AbstractWebflowActionsTests {
 
     private static final String CONST_CONTEXT_PATH = "/test";
 

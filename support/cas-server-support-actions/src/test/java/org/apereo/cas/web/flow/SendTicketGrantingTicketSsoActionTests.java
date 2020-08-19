@@ -32,9 +32,9 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.4.0
  */
-@TestPropertySource(properties = "cas.sso.createSsoCookieOnRenewAuthn=false")
-@Tag("Webflow")
-public class SendTicketGrantingTicketActionSsoTests extends AbstractWebflowActionsTests {
+@TestPropertySource(properties = "cas.sso.create-sso-cookie-on-renew-authn=false")
+@Tag("WebflowActions")
+public class SendTicketGrantingTicketSsoActionTests extends AbstractWebflowActionsTests {
 
     private static final String LOCALHOST_IP = "127.0.0.1";
     private static final String TEST_STRING = "test";

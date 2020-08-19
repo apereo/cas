@@ -27,12 +27,16 @@ import static org.mockito.Mockito.*;
  * @author Dmitriy Kopylenko
  * @since 3.5.0
  */
-@Tag("Webflow")
-public class ServiceAuthorizationCheckActionMockitoTests {
+@Tag("WebflowActions")
+public class ServiceAuthorizationCheckMockitoActionTests {
     private final WebApplicationService authorizedService = mock(WebApplicationService.class);
+
     private final WebApplicationService unauthorizedService = mock(WebApplicationService.class);
+
     private final WebApplicationService undefinedService = mock(WebApplicationService.class);
+
     private final ServicesManager servicesManager = mock(ServicesManager.class);
+
     private ServiceAuthorizationCheckAction serviceAuthorizationCheck;
 
     @BeforeEach
