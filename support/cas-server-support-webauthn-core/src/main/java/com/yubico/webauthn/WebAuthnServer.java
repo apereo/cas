@@ -1,5 +1,15 @@
 package com.yubico.webauthn;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.yubico.internal.util.CertificateParser;
+import com.yubico.internal.util.JacksonCodecs;
+import com.yubico.util.Either;
 import com.yubico.webauthn.attestation.Attestation;
 import com.yubico.webauthn.data.AssertionRequestWrapper;
 import com.yubico.webauthn.data.AssertionResponse;
@@ -12,17 +22,7 @@ import com.yubico.webauthn.data.RegistrationResponse;
 import com.yubico.webauthn.data.UserIdentity;
 import com.yubico.webauthn.exception.AssertionFailedException;
 import com.yubico.webauthn.exception.RegistrationFailedException;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.yubico.internal.util.CertificateParser;
-import com.yubico.internal.util.JacksonCodecs;
-import com.yubico.util.Either;
+import com.yubico.webauthn.storage.RegistrationStorage;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

@@ -1,5 +1,8 @@
-package com.yubico.webauthn;
+package com.yubico.webauthn.storage;
 
+import com.yubico.webauthn.AssertionResult;
+import com.yubico.webauthn.CredentialRepository;
+import com.yubico.webauthn.RegisteredCredential;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.CredentialRegistration;
 import com.yubico.webauthn.data.PublicKeyCredentialDescriptor;

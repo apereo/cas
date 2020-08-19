@@ -27,20 +27,16 @@
 
             <p id="status"></p>
             <div id="messages"></div>
-            <button id="logoutButton" disabled="disabled" onClick="javascript:logout()">Log out</button>
+<!--            <button id="logoutButton" disabled="disabled" onClick="javascript:logout()">Log out</button>-->
             
             <div id="device-info">
                 <img id="device-icon"/>
                 <b>Device: </b><span id="device-name"></span>
                 <b>Nickname: </b><span id="device-nickname"></span>
             </div>
-
             <input type="hidden" id="username" th:value="${principal.id}" />
-            <input type="hidden" id="displayName" />
-            <input type="hidden" id="credentialNickname"/>
-            <input type="checkbox" id="useU2f" style="display: none"/>
 
-            <p>
+            <p style="display: none">
                 <button class="btn btn-primary" type="button" data-toggle="collapse"
                         data-target="#serverResponse" aria-expanded="false" aria-controls="serverResponse">
                     Server Response
@@ -51,13 +47,13 @@
                 </button>
             </p>
 
-            <div class="collapse" id="serverResponse">
+            <div style="display: none" class="collapse" id="serverResponse">
                 <div class="card card-body">
                     <p id="session">Not logged in.</p>
                     <pre id="server-response"></pre>
                 </div>
             </div>
-            <div class="collapse" id="authenticatorResponse">
+            <div style="display: none" class="collapse" id="authenticatorResponse">
                 <div class="card card-body">
                     <pre id="authenticator-response"></pre>
                 </div>

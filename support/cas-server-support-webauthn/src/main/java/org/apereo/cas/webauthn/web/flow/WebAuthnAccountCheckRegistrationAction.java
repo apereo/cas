@@ -2,7 +2,7 @@ package org.apereo.cas.webauthn.web.flow;
 
 import org.apereo.cas.web.support.WebUtils;
 
-import com.yubico.webauthn.RegistrationStorage;
+import com.yubico.webauthn.storage.RegistrationStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
