@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     JpaConsentRepositoryTests.class,
+    OracleJpaConsentRepositoryTests.class,
     MySQLJpaConsentRepositoryTests.class
 })
 @RunWith(JUnitPlatform.class)
