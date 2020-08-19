@@ -3746,6 +3746,7 @@ Delegate authentication to an external SAML2 IdP.
 # cas.authn.pac4j.saml[0].passive=false
 
 # cas.authn.pac4j.saml[0].wants-assertions-signed=
+# cas.authn.pac4j.saml[0].wants-responses-signed=
 # cas.authn.pac4j.saml[0].all-signature-validation-disabled=false
 # cas.authn.pac4j.saml[0].sign-service-provider-metadata=false
 # cas.authn.pac4j.saml[0].principal-id-attribute=eduPersonPrincipalName

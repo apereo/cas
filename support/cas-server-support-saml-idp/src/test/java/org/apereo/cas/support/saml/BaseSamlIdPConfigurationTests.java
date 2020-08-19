@@ -63,7 +63,6 @@ import org.apache.velocity.app.VelocityEngine;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
-import org.junit.jupiter.api.Tag;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -101,7 +100,6 @@ import static org.mockito.Mockito.*;
         "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("SAML")
 public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")

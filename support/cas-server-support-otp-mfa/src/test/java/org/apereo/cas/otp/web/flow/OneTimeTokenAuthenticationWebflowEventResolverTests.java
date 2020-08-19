@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Webflow")
+@Tag("WebflowEvents")
 @SpringBootTest(classes = BaseOneTimeTokenRepositoryTests.SharedTestConfiguration.class)
 public class OneTimeTokenAuthenticationWebflowEventResolverTests {
     @Autowired

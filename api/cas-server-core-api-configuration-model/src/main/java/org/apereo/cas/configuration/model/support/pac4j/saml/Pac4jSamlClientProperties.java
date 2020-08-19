@@ -153,6 +153,11 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
      * Whether metadata should be marked to request sign assertions.
      */
     private boolean wantsAssertionsSigned;
+    
+    /**
+     * Whether a response has to be mandatory signed.
+     */
+    private boolean wantsResponsesSigned;
 
     /**
      * Whether the signature validation should be disabled.

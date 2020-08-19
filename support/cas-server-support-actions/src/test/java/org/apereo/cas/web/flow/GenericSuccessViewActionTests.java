@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class GenericSuccessViewActionTests {
 
     @Test

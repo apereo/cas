@@ -9,7 +9,6 @@ import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.ServiceRegistry;
 
 import lombok.Getter;
-import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,7 +31,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 })
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Redis")
 @Getter
 public abstract class BaseRedisSentinelServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired

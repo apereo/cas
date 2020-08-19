@@ -296,20 +296,15 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public ViewState createViewState(final Flow flow, final String id, final Expression expression,
                                      final BinderConfiguration binder) {
-        try {
-            if (containsFlowState(flow, id)) {
-                LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
-                return getTransitionableState(flow, id, ViewState.class);
-            }
-            val viewFactory = this.flowBuilderServices.getViewFactoryCreator()
-                .createViewFactory(expression, this.flowBuilderServices.getExpressionParser(),
-                    this.flowBuilderServices.getConversionService(), binder, this.flowBuilderServices.getValidator(),
-                    this.flowBuilderServices.getValidationHintResolver());
-            return createViewState(flow, id, viewFactory);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+        if (containsFlowState(flow, id)) {
+            LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
+            return getTransitionableState(flow, id, ViewState.class);
         }
-        return null;
+        val viewFactory = this.flowBuilderServices.getViewFactoryCreator()
+            .createViewFactory(expression, this.flowBuilderServices.getExpressionParser(),
+                this.flowBuilderServices.getConversionService(), binder, this.flowBuilderServices.getValidator(),
+                this.flowBuilderServices.getValidationHintResolver());
+        return createViewState(flow, id, viewFactory);
     }
 
     @Override
@@ -665,7 +660,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         target.setDescription(source.getDescription());
         target.setCaption(source.getCaption());
     }
-    
+
     @Override
     public List<TransitionCriteria> getTransitionExecutionCriteriaChainForTransition(final Transition def) {
         if (def.getExecutionCriteria() instanceof TransitionCriteriaChain) {

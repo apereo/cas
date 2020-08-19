@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.scim.username=casuser",
     "cas.scim.password=Mellon"
 })
-@Tag("Webflow")
+@Tag("WebflowActions")
 @SuppressWarnings("JdkObsolete")
 public class PrincipalScimV1ProvisionerActionTests extends BaseScimProvisionerActionTests {
     @Test

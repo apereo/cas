@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 @TestPropertySource(properties = "cas.authn.pm.policy-pattern=P@ss.+")
 public class PasswordChangeActionTests extends BasePasswordManagementActionTests {
     @Autowired

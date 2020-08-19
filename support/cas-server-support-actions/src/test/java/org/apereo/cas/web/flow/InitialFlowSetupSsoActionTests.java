@@ -28,8 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.policy.source-selection-enabled=true",
     "cas.authn.accept.users=casuser::Mellon"
 })
-@Tag("Webflow")
-public class InitialFlowSetupActionSsoTests extends AbstractWebflowActionsTests {
+@Tag("WebflowActions")
+public class InitialFlowSetupSsoActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier("initialFlowSetupAction")
     private Action action;

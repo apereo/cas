@@ -48,6 +48,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20DefaultAccessTokenFactoryTests;
 import org.apereo.cas.ticket.accesstoken.OAuth20JwtBuilderTests;
 import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactoryTests;
 import org.apereo.cas.ticket.device.OAuth20DefaultDeviceTokenFactoryTests;
+import org.apereo.cas.ticket.device.OAuth20DeviceTokenUtilsTests;
 import org.apereo.cas.ticket.refreshtoken.OAuth20DefaultRefreshTokenFactoryTests;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenExpirationPolicyTests;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenSovereignExpirationPolicyTests;
@@ -103,6 +104,7 @@ import org.junit.runner.RunWith;
     OAuth20DefaultAccessTokenResponseGeneratorTests.class,
     OAuth20CasCallbackUrlResolverTests.class,
     OAuth20RefreshTokenTests.class,
+    OAuth20DeviceTokenUtilsTests.class,
     DefaultOAuth20UserProfileDataCreatorTests.class,
     CasServerApiBasedTicketValidatorTests.class,
     DefaultOAuth20ProfileScopeToAttributesFilterTests.class,

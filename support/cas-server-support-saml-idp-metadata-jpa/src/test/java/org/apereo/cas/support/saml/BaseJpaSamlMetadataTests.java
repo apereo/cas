@@ -8,7 +8,6 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 
-import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,7 +29,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-@Tag("SAML")
 @TestPropertySource(properties = {
     "cas.jdbc.show-sql=true",
     "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/saml"

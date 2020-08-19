@@ -62,6 +62,21 @@ public class MultifactorAuthenticationUtilsTests {
     }
 
     @Test
+    public void verifyProviders() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        ApplicationContextProvider.holdApplicationContext(null);
+        val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        assertFalse(MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderFromApplicationContext(provider.getId()).isPresent());
+    }
+
+    @Test
     public void verifyResolveBySingleAttribute() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();

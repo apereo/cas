@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.adaptive.requireTimedMultifactor[0].onOrAfterHour=-1",
     "cas.authn.adaptive.requireTimedMultifactor[0].onDays=Saturday,Sunday,Monday,Tuesday,Wednesday,Thursday,Friday"
 })
-@Tag("Webflow")
+@Tag("WebflowEvents")
 public class TimedMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     @Autowired

@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @TestPropertySource(properties ="cas.authn.passwordless.accounts.groovy.location=classpath:PasswordlessAccount.groovy")
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
     @Qualifier("displayBeforePasswordlessAuthenticationAction")

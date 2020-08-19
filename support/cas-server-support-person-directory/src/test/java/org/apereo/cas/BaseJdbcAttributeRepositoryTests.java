@@ -10,7 +10,6 @@ import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,7 +29,6 @@ import java.sql.Statement;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@Tag("JDBC")
 public abstract class BaseJdbcAttributeRepositoryTests {
     @Autowired
     @Qualifier("attributeRepository")

@@ -22,7 +22,6 @@ import org.apereo.cas.config.CouchbasePersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
-import org.junit.jupiter.api.Tag;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -36,7 +35,6 @@ import org.springframework.context.annotation.Import;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Couchbase")
 public abstract class AbstractCouchbaseTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,

@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mfa.globalAuthenticationAttributeNameTriggers=authn-method-dummy",
     "cas.authn.mfa.globalAuthenticationAttributeValueRegex=mfa.*"
 })
-@Tag("Webflow")
+@Tag("WebflowEvents")
 public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("authenticationAttributeAuthenticationPolicyWebflowEventResolver")

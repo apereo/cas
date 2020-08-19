@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
 @TestPropertySource(properties = "cas.authn.pm.enabled=false")
-@Tag("Webflow")
+@Tag("WebflowConfig")
 public class PasswordManagementWebflowConfigurerDisabledTests extends BaseWebflowConfigurerTests {
 
     @Test

@@ -30,7 +30,7 @@ import static org.springframework.http.HttpStatus.OK;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class RenderLoginActionTests extends AbstractWebflowActionsTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
