@@ -81,7 +81,7 @@ ext.libraries = [
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-
+                    exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
                 },
                 dependencies.create("com.yubico:webauthn-server-attestation:$yubicoWebauthnVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -91,12 +91,13 @@ ext.libraries = [
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-
+                    exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
                 },
                 dependencies.create("com.yubico:yubico-util:$yubicoWebauthnVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
                 },
                 dependencies.create("com.upokecenter:cbor:4.0.1") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
