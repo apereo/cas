@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class WSFederationMetadataUIActionTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     @Qualifier("wsFederationMetadataUIAction")

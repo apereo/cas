@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class FrontChannelLogoutActionTests {
 
     private LogoutExecutionPlan logoutExecutionPlan;

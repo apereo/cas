@@ -298,6 +298,16 @@ if (hasTestsOfCategory(project, "WebflowEvents")) {
     }
 }
 
+if (hasTestsOfCategory(project, "WebflowActions")) {
+    task testWebflowActions(type: Test) {
+        enabled = shouldTest(project, "WebflowActions")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "WebflowActions"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "CosmosDb")) {
     task testCosmosDb(type: Test) {
         enabled = shouldTest(project, "CosmosDb")

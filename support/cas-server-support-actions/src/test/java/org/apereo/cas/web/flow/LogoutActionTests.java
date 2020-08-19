@@ -43,7 +43,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class LogoutActionTests extends AbstractWebflowActionsTests {
 
     private static final String COOKIE_TGC_ID = "CASTGC";

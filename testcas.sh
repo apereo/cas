@@ -10,7 +10,7 @@ mfa,jdbc,mssql,oracle,radius,couchdb,webapp,tickets,webflowconfig,\
 mariadb,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,webflowevents,\
 jms,hazelcast,jmx,ehcache,actuator,wsfed,authn,attributes,cas,logout,\
 expiration-policy,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,\
-hazelcast,jmx,ehcache,actuator,wsfed,authn,attributes,metrics,\
+hazelcast,jmx,ehcache,actuator,wsfed,authn,attributes,metrics,webflowactions,\
 oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,\
 cosmosdb,config,sms,util,services,web,audits,password-ops"
     echo -e "\nPlease see the test script for details.\n"
@@ -169,10 +169,13 @@ while (( "$#" )); do
             rest|restful|restapi)
                 task+="testRestfulApi "
                 ;;
-            webflowevents)
+            webflowactions|swfactions|webflow-actions)
+                task+="testWebflowActions "
+                ;;
+            webflowevents|webflow-events)
                 task+="testWebflowEvents "
                 ;;
-            webflowconfig|swfcfg|webflowcfg)
+            webflowconfig|swfcfg|webflowcfg|webflow-config)
                 task+="testWebflowConfig "
                 ;;
             webflow|swf)

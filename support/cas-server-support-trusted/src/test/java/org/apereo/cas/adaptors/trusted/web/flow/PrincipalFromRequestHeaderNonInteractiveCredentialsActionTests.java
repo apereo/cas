@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 @TestPropertySource(properties = " cas.authn.adaptive.reject-ip-addresses=1.2.3.4")
 public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
     @Autowired

@@ -33,7 +33,7 @@ import static org.springframework.webflow.execution.RequestContextHolder.setRequ
         "cas.google-recaptcha.version=V3"
     }
 )
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class InitializeCaptchaActionTests {
     @Autowired
     @Qualifier("initializeCaptchaAction")

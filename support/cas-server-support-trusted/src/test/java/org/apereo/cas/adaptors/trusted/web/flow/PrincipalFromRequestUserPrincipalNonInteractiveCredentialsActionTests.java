@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.5
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
 
     @Autowired

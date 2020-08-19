@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @DirtiesContext
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class AcceptableUsagePolicySubmitActionTests extends BaseAcceptableUsagePolicyActionTests {
 
     @Autowired
