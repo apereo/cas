@@ -9,7 +9,6 @@ import org.apereo.cas.support.wsfederation.config.support.authentication.WsFedAu
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 
 import lombok.val;
-import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -46,7 +45,6 @@ import java.util.Map;
         "cas.authn.wsfed[0].auto-redirect=false",
         "cas.authn.wsfed[0].name=Test ADFS1"
     })
-@Tag("WSFederation")
 public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
     protected static final String ISSUER = "http://adfs.example.com/adfs/services/trust";
 

@@ -7,7 +7,6 @@ import org.apereo.cas.util.LdapTestUtils;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.Tag;
 import org.ldaptive.LdapAttribute;
 import org.springframework.core.io.ClassPathResource;
 
@@ -17,7 +16,6 @@ import org.springframework.core.io.ClassPathResource;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Tag("Ldap")
 public abstract class AbstractX509LdapTests extends LdapIntegrationTestsOperations {
 
     private static final String DN = "CN=x509,ou=people,dc=example,dc=org";

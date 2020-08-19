@@ -8,7 +8,6 @@ import org.apereo.cas.util.http.HttpClient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,7 +40,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mfa.duo[0].duo-api-host=http://localhost:6556"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("MFA")
 public class BaseDuoSecurityAuthenticationServiceTests {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

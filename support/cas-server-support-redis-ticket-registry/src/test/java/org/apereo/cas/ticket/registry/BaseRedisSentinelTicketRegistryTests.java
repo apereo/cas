@@ -4,7 +4,6 @@ import org.apereo.cas.config.RedisTicketRegistryConfiguration;
 import org.apereo.cas.ticket.Ticket;
 
 import lombok.Getter;
-import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author Julien Gribonvald
  * @since 6.1.0
  */
-@Tag("Redis")
 @SpringBootTest(classes = {
     RedisTicketRegistryConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class

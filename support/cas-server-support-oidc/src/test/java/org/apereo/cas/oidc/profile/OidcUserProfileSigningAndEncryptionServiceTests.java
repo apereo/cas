@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,8 +26,10 @@ public class OidcUserProfileSigningAndEncryptionServiceTests extends AbstractOid
         val service = getOidcRegisteredService();
         service.setUserInfoEncryptedResponseEncoding(OidcUserProfileSigningAndEncryptionService.USER_INFO_RESPONSE_ENCRYPTION_ENCODING_DEFAULT);
         service.setUserInfoEncryptedResponseAlg("RSA-OAEP-256");
+        service.setUserInfoSigningAlg("RS256");
         val input = oidcUserProfileSigningAndEncryptionService.encode(service, getClaims());
         assertFalse(input.isEmpty());
+        oidcUserProfileSigningAndEncryptionService.decode(input, Optional.of(service));
     }
 
     @Test

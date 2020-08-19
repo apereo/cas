@@ -40,7 +40,6 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import com.yubico.u2f.U2F;
 import com.yubico.u2f.data.DeviceRegistration;
 import lombok.val;
-import org.junit.jupiter.api.Tag;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +64,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Webflow")
 public abstract class BaseU2FWebflowActionTests {
     @Autowired
     @Qualifier("u2fSaveAccountRegistrationAction")
