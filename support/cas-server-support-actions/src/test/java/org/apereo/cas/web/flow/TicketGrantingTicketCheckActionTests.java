@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class TicketGrantingTicketCheckActionTests extends AbstractWebflowActionsTests {
 
     @Test

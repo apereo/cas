@@ -469,8 +469,9 @@ jobs:
           - groovy
           - filesystem
           - webflow
-          - webflowconfig
-          - webflowevents
+          - webflow-config
+          - webflow-actions
+          - webflow-events
           - attributes
           - services
           - expiration-policy

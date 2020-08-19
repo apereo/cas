@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @DirtiesContext
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptableUsagePolicyActionTests {
     @Autowired
     @Qualifier("servicesManager")

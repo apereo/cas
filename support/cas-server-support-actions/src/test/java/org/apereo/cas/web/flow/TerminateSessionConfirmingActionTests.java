@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @TestPropertySource(properties = {"cas.tgc.crypto.enabled=false", "cas.logout.confirmLogout=true"})
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class TerminateSessionConfirmingActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier("terminateSessionAction")

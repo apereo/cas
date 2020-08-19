@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class InquireInterruptActionTests {
     @Test
     public void verifyInterrupted() {

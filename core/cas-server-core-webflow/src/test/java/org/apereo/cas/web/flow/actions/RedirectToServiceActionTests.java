@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class RedirectToServiceActionTests {
     @Autowired
     @Qualifier("servicesManager")

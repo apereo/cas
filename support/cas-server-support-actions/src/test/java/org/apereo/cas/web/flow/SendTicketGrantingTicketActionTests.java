@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.4.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class SendTicketGrantingTicketActionTests extends AbstractWebflowActionsTests {
 
     private static final String LOCALHOST_IP = "127.0.0.1";
