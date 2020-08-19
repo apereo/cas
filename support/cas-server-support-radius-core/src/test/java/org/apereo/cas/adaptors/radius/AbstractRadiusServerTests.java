@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.radius;
 import lombok.val;
 import net.jradius.dictionary.vsa_microsoft.Attr_MSCHAP2Success;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.security.Security;
@@ -16,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("Radius")
 public abstract class AbstractRadiusServerTests {
     public static final int ACCOUNTING_PORT = 1813;
 

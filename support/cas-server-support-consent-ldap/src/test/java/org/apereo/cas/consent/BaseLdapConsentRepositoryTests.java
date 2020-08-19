@@ -17,7 +17,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasConsentLdapConfiguration.class,
     BaseConsentRepositoryTests.SharedTestConfiguration.class
 })
-@Tag("Ldap")
 @Getter
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)

@@ -10,7 +10,6 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,7 +26,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("Ldap")
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = {
         "cas.monitor.endpoints.ldap.ldap-url=ldap://localhost:10389",

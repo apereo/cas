@@ -91,7 +91,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.Tag;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.InitializingBean;
@@ -144,7 +143,6 @@ import static org.mockito.Mockito.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@Tag("OAuth")
 @Slf4j
 public abstract class AbstractOAuth20Tests {
 
