@@ -44,7 +44,7 @@ The following CAS releases will transition into a security-patch mode (SPM) only
 
 | Release        | SPM Starting Date    | Full EOL  |
 | -------------- |:--------------------:| ----------------------:|
-| `6.3.x`        | July 1st, 2021       | Dcember 31st, 2021     |
+| `6.3.x`        | July 1st, 2021       | December 31st, 2021    |
 | `6.2.x`        | December 31st, 2020  | June 30th, 2021        |
 | `6.1.x`        | July 1st, 2020       | December 31st, 2020    |
 | `5.3.x`        | October 29th, 2019   | October 29th, 2020     |
