@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.ticket.st.timeToKillInSeconds=30"
 })
 @Import(CasMultifactorTestAuthenticationEventExecutionPlanConfiguration.class)
-@Tag("Webflow")
+@Tag("MFA")
 public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     private static final Service NORMAL_SERVICE = newService("https://example.com/normal/");

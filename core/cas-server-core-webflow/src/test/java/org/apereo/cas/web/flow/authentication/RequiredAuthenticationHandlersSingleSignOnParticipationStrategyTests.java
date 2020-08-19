@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Webflow")
+@Tag("Authentication")
 public class RequiredAuthenticationHandlersSingleSignOnParticipationStrategyTests {
     @Test
     public void verifyInputFails() {
