@@ -39,7 +39,6 @@ import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.SpringBootConfiguration;
@@ -63,7 +62,6 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Getter
-@Tag("MFA")
 public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     public static final String PLAIN_SECRET = "plain_secret";
 

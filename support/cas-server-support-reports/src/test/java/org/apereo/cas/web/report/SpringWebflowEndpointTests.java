@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Webflow")
+@Tag("ActuatorEndpoint")
 @TestPropertySource(properties = "management.endpoint.springWebflow.enabled=true")
 public class SpringWebflowEndpointTests extends AbstractCasEndpointTests {
     @Autowired

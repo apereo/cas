@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class InjectResponseHeadersActionTests {
     @Autowired
     @Qualifier("servicesManager")

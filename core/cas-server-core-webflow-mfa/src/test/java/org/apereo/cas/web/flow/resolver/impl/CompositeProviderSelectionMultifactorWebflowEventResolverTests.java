@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Webflow")
+@Tag("WebflowEvents")
 public class CompositeProviderSelectionMultifactorWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("compositeProviderSelectionMultifactorWebflowEventResolver")

@@ -25,7 +25,6 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.UncheckedException;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -69,7 +68,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreConfiguration.class,
     LdapAuthenticationConfiguration.class
 })
-@Tag("Ldap")
 public abstract class BaseLdapAuthenticationHandlerTests {
     @Autowired
     @Qualifier("ldapAuthenticationHandlers")

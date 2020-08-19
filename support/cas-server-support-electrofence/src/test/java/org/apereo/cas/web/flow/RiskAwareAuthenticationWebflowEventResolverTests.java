@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
     ElectronicFenceWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
-@Tag("Webflow")
+@Tag("WebflowEvents")
 @TestPropertySource(properties = {
     "cas.authn.adaptive.risk.response.sms.text=Message",
     "cas.authn.adaptive.risk.response.sms.from=3487244312"

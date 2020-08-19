@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.AbstractGraphicalAuthenticationTests;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -14,19 +15,22 @@ import org.springframework.webflow.test.MockRequestContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link PrepareForGraphicalAuthenticationTests}.
+ * This is {@link DisplayUserGraphicsBeforeAuthenticationActionTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Webflow")
-public class PrepareForGraphicalAuthenticationTests extends AbstractGraphicalAuthenticationTests {
+@Tag("WebflowActions")
+public class DisplayUserGraphicsBeforeAuthenticationActionTests extends AbstractGraphicalAuthenticationTests {
     @Test
     public void verifyAction() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
+        request.addParameter("username", "casuser");
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        val event = initializeLoginAction.execute(context);
-        assertEquals(GraphicalUserAuthenticationWebflowConfigurer.TRANSITION_ID_GUA_GET_USERID, event.getId());
+        val event = displayUserGraphicsBeforeAuthenticationAction.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+        assertTrue(WebUtils.containsGraphicalUserAuthenticationImage(context));
+        assertTrue(WebUtils.containsGraphicalUserAuthenticationUsername(context));
     }
 }

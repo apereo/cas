@@ -7,16 +7,16 @@ import org.apereo.cas.web.flow.FrontChannelLogoutActionTests;
 import org.apereo.cas.web.flow.GatewayServicesManagementCheckActionTests;
 import org.apereo.cas.web.flow.GenerateServiceTicketActionTests;
 import org.apereo.cas.web.flow.GenericSuccessViewActionTests;
-import org.apereo.cas.web.flow.InitialFlowSetupActionCookieTests;
-import org.apereo.cas.web.flow.InitialFlowSetupActionSsoTests;
 import org.apereo.cas.web.flow.InitialFlowSetupActionTests;
+import org.apereo.cas.web.flow.InitialFlowSetupCookieActionTests;
+import org.apereo.cas.web.flow.InitialFlowSetupSsoActionTests;
 import org.apereo.cas.web.flow.LogoutActionTests;
 import org.apereo.cas.web.flow.RedirectUnauthorizedServiceUrlActionTests;
 import org.apereo.cas.web.flow.RenderLoginActionTests;
-import org.apereo.cas.web.flow.SendTicketGrantingTicketActionSsoTests;
 import org.apereo.cas.web.flow.SendTicketGrantingTicketActionTests;
-import org.apereo.cas.web.flow.ServiceAuthorizationCheckActionMockitoTests;
+import org.apereo.cas.web.flow.SendTicketGrantingTicketSsoActionTests;
 import org.apereo.cas.web.flow.ServiceAuthorizationCheckActionTests;
+import org.apereo.cas.web.flow.ServiceAuthorizationCheckMockitoActionTests;
 import org.apereo.cas.web.flow.ServiceWarningActionTests;
 import org.apereo.cas.web.flow.SetServiceUnauthorizedRedirectUrlActionTests;
 import org.apereo.cas.web.flow.TerminateSessionActionTests;
@@ -44,11 +44,11 @@ import org.junit.runner.RunWith;
     RedirectUnauthorizedServiceUrlActionTests.class,
     RenderLoginActionTests.class,
     FlowExecutionExceptionResolverTests.class,
-    InitialFlowSetupActionSsoTests.class,
-    InitialFlowSetupActionCookieTests.class,
+    InitialFlowSetupSsoActionTests.class,
+    InitialFlowSetupCookieActionTests.class,
     SendTicketGrantingTicketActionTests.class,
-    SendTicketGrantingTicketActionSsoTests.class,
-    ServiceAuthorizationCheckActionMockitoTests.class,
+    SendTicketGrantingTicketSsoActionTests.class,
+    ServiceAuthorizationCheckMockitoActionTests.class,
     CreateTicketGrantingTicketActionTests.class,
     TicketGrantingTicketCheckActionTests.class,
     ServiceWarningActionTests.class,

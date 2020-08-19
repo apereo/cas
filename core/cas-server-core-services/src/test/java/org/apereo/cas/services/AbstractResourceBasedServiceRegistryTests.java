@@ -5,7 +5,6 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomUtils;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -23,7 +22,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Tag("FileSystem")
 @Getter
 public abstract class AbstractResourceBasedServiceRegistryTests extends AbstractServiceRegistryTests {
     public static final ClassPathResource RESOURCE = new ClassPathResource("services");

@@ -7,7 +7,6 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     BaseSamlIdPConfigurationTests.SharedTestConfiguration.class,

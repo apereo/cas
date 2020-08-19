@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class AuthyAuthenticationRegistrationWebflowActionTests {
     @Test
     public void verifyOperation() throws Exception {

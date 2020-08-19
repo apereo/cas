@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
 
     private static final String SERVICE_PARAM = "service";

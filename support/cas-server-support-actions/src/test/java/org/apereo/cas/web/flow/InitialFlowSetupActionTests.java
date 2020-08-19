@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 @TestPropertySource(properties = {
     "cas.sso.sso-enabled=false",
     "cas.tgc.crypto.enabled=false"

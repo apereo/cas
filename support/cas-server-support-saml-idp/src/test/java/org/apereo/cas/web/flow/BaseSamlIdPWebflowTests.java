@@ -12,7 +12,6 @@ import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.Tag;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -36,7 +35,6 @@ import org.springframework.core.io.FileSystemResource;
     SamlIdPWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
-@Tag("SAML")
 public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests {
 
     @TestConfiguration

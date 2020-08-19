@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class YubiKeyAccountSaveRegistrationActionTests {
     @Test
     public void verifyActionSuccess() throws Exception {

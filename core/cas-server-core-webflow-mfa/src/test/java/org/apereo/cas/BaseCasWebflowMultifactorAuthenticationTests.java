@@ -36,7 +36,6 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
-import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -97,7 +96,6 @@ import org.springframework.test.annotation.DirtiesContext;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @DirtiesContext
 @EnableScheduling
-@Tag("Webflow")
 public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     protected CasConfigurationProperties casProperties;

@@ -26,11 +26,16 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class ClearWebflowCredentialActionTests {
 
     @Test
     public void verifyOperation() throws Exception {
+        verifyAction(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
+        verifyAction(CasWebflowConstants.TRANSITION_ID_ERROR);
+    }
+
+    private void verifyAction(final String currentEvent) throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -49,7 +54,7 @@ public class ClearWebflowCredentialActionTests {
         when(factory.createInitialValue(any())).thenReturn(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         val variable = new FlowVariable(CasWebflowConstants.VAR_ID_CREDENTIAL, factory);
         flow.addVariable(variable);
-        context.setCurrentEvent(new Event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE));
+        context.setCurrentEvent(new Event(this, currentEvent));
         assertNull(action.execute(context));
         assertNotNull(WebUtils.getCredential(context));
     }

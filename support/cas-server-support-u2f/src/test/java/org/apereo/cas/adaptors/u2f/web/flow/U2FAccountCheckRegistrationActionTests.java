@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseU2FWebflowActionTests.U2FTestConfiguration.class,
     BaseU2FWebflowActionTests.SharedTestConfiguration.class
 })
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class U2FAccountCheckRegistrationActionTests extends BaseU2FWebflowActionTests {
     @Test
     public void verifyOperation() throws Exception {
