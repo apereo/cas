@@ -199,9 +199,9 @@ levels:
 
 ```xml
 ...
-<AsyncLogger name="org.pac4j" level="debug" additivity="false">
+<Logger name="org.pac4j" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
+</Logger>
 ...
 ```

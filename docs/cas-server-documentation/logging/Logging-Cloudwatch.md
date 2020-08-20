@@ -34,9 +34,9 @@ With the above module, you may then declare a specific appender to communicate w
     </PatternLayout>
 </CloudWatchAppender>
 ...
-<AsyncLogger name="org.apereo" additivity="true" level="debug">
+<Logger name="org.apereo" additivity="true" level="debug">
     <appender-ref ref="cloudWatch" />
-</AsyncLogger>
+</Logger>
 ```
 
 AWS credentials are fetched from the following sources automatically, where relevant and made possible via CAS configuration:
