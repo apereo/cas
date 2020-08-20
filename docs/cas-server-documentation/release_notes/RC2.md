@@ -201,6 +201,9 @@ both the group's evaluation priority as well as each individual service's evalua
 - Spring Boot Admin
 - Ldaptive
 - Inspektr
+- Nexmo
+- Twilio
+- Bootstrap
 - Spring Data
 - Person Directory
 - Azure DocumentDb
