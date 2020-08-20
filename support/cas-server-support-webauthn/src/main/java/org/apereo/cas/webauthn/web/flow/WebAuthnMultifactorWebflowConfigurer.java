@@ -21,7 +21,7 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
     /**
      * Webflow event id.
      */
-    public static final String MFA_WEBAUTHN_EVENT_ID = "mfa-webauthn";
+    public static final String MFA_WEB_AUTHN_EVENT_ID = "mfa-webauthn";
 
     public WebAuthnMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                 final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -36,7 +36,7 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
     @Override
     protected void doInitialize() {
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(),
-            MFA_WEBAUTHN_EVENT_ID,
+            MFA_WEB_AUTHN_EVENT_ID,
             casProperties.getAuthn().getMfa().getWebAuthn().getId());
     }
 }

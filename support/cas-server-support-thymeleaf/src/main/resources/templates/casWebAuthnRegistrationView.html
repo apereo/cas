@@ -8,51 +8,24 @@
     <title>Web AuthN Registration View</title>
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
 
-    <script th:src="@{/js/u2f/u2f-api.js}"></script>
-
-    <script type="text/javascript" th:src="@{/webjars/text-encoding/0.7.0/lib/encoding.js}"></script>
-    <script type="text/javascript" th:src="@{/webjars/text-encoding/0.7.0/lib/encoding-indexes.js}"></script>
-    <script type="text/javascript" th:src="@{/webjars/whatwg-fetch/3.0.0/fetch.js}"></script>
-    <script type="text/javascript" th:src="@{/webjars/base64-js/1.3.0/base64js.min.js}"></script>
+    <script type="text/javascript" th:src="@{#{webjars.text-encoding.js}}"></script>
+    <script type="text/javascript" th:src="@{#{webjars.text-encoding-indexes.js}}"></script>
+    <script type="text/javascript" th:src="@{#{webjars.whatwg-fetch.js}}"></script>
+    <script type="text/javascript" th:src="@{#{webjars.base64.js}}"></script>
 
     <script type="text/javascript" th:inline="javascript">
-    /*<![CDATA[*/
-    var appId = /*[[${webauthnApplicationId}]]*/ ;
-    /*]]>*/
+        /*<![CDATA[*/
+        var appId = /*[[${webauthnApplicationId}]]*/;
+        /*]]>*/
     </script>
-
-    <script th:src="@{/js/webauthn/base64url.js}"></script>
     <script th:src="@{/js/webauthn/webauthn.js}"></script>
-    <script th:src="@{/js/webauthn/webauthnhelper.js}"></script>
-
 </head>
 
-<body onload="javascript:register()">
+<body>
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" id="login">
 
-        <p id="status" style="display: none"></p>
-        <div id="messages" style="display: none"></div>
-        <button style="display: none" id="logoutButton" disabled="disabled" onClick="javascript:logout()">Log out</button>
-
-        <div id="device-info" style="display: none">
-            <img id="device-icon"/>
-
-            <div>
-                <b>Device:</b>
-                <p id="device-name"></p>
-
-                <b>Nickname:</b>
-                <p id="device-nickname"></p>
-            </div>
-        </div>
-
-        <form method="POST" id="form" th:action="@{/login}">
-            <input type="hidden" id="username" th:value="${principal.id}"/>
-            <input type="hidden" id="displayName"/>
-            <input type="hidden" id="credentialNickname"/>
-            <input type="checkbox" id="useU2f" style="display: none"/>
-
+        <div style="display: none" id="diagnostics">
             <p>
                 <button class="btn btn-primary" type="button" data-toggle="collapse"
                         data-target="#serverResponse" aria-expanded="false" aria-controls="serverResponse">
@@ -86,7 +59,58 @@
                     <pre id="request"></pre>
                 </div>
             </div>
-            
+        </div>
+
+        <div class="d-flex justify-content-center flex-column align-items-center">
+            <h2 id="status">Register Device</h2>
+            <div id="messages">
+                <p>Register your FIDO2-enabled device with CAS for multifactor authentication...</p>
+            </div>
+
+            <hr width="25%">
+            <div id="device-info">
+                <div class="d-flex justify-content-center flex-column align-items-center">
+                    <br>
+                    <img id="device-icon"/>
+                    <br>
+                    <span id="device-name"></span>
+                </div>
+                <br>
+                <p>Your FIDO2-enabled device is now registered with CAS.</p>
+            </div>
+
+            <div>
+                <p/>
+                <br>
+                <button class="mdc-button mdc-button--raised mr-2"
+                        name="registerButton" id="registerButton" accesskey="r" type="button"
+                        onclick="javascript:register();">
+                <span class="mdc-button__label"
+                      th:text="#{screen.welcome.button.register}">Register Device</span>
+                </button>
+                <!--
+                <button class="mdc-button mdc-button--raised mr-2"
+                        id="logoutButton" disabled="disabled" name="logout"
+                        accesskey="l" type="button" onclick="javascript:logout();">
+                <span class="mdc-button__label"
+                      th:text="#{screen.welcome.button.logout}">Logout</span>
+                </button>
+                <button class="mdc-button mdc-button--raised mr-2"
+                        id="deregisterButton" name="deregister"
+                        accesskey="d" type="button" onclick="javascript:deregister();">
+                <span class="mdc-button__label"
+                      th:text="#{screen.welcome.button.deregister}">Deregister</span>
+                </button>
+                -->
+            </div>
+        </div>
+
+        <form method="POST" id="form" th:action="@{/login}">
+            <input type="hidden" id="username" th:value="${principal.id}"/>
+            <input type="hidden" id="displayName"/>
+            <input type="hidden" id="credentialNickname"/>
+
+
             <input type="hidden" name="_eventId" value="submit"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         </form>

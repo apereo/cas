@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn.web.flow;
 
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.yubico.webauthn.storage.RegistrationStorage;
@@ -21,13 +22,13 @@ public class WebAuthnAccountCheckRegistrationAction extends AbstractAction {
     private final RegistrationStorage webAuthnCredentialRepository;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = authentication.getPrincipal();
         val registrations = webAuthnCredentialRepository.getRegistrationsByUsername(principal.getId());
         if (!registrations.isEmpty()) {
             return success();
         }
-        return new EventFactorySupport().event(this, "register");
+        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
     }
 }

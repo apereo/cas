@@ -19,7 +19,7 @@ public class WebAuthnAccountSaveRegistrationAction extends AbstractAction {
     private final RegistrationStorage webAuthnCredentialRepository;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         return success();
     }
 }
