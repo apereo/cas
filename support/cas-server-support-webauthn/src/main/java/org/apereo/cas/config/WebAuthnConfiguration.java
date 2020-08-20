@@ -11,8 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.yubico.internal.util.JacksonCodecs;
-import com.yubico.webauthn.storage.InMemoryRegistrationStorage;
-import com.yubico.webauthn.storage.RegistrationStorage;
 import com.yubico.webauthn.RelyingParty;
 import com.yubico.webauthn.WebAuthnRestResource;
 import com.yubico.webauthn.WebAuthnServer;
@@ -28,7 +26,8 @@ import com.yubico.webauthn.attestation.resolver.SimpleTrustResolverWithEquality;
 import com.yubico.webauthn.data.AttestationConveyancePreference;
 import com.yubico.webauthn.data.RelyingPartyIdentity;
 import com.yubico.webauthn.extension.appid.AppId;
-import lombok.SneakyThrows;
+import com.yubico.webauthn.storage.InMemoryRegistrationStorage;
+import com.yubico.webauthn.storage.RegistrationStorage;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
@@ -37,7 +36,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -63,7 +62,7 @@ public class WebAuthnConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("failureModeEvaluator")
@@ -73,18 +72,9 @@ public class WebAuthnConfiguration {
     @Qualifier("webAuthnBypassEvaluator")
     private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> webAuthnBypassEvaluator;
 
-    private static <K, V> Cache<K, V> newCache() {
-        return Caffeine.newBuilder()
-            .maximumSize(CACHE_MAX_SIZE)
-            .expireAfterAccess(Duration.ofMinutes(5))
-            .recordStats()
-            .build();
-    }
-
     @ConditionalOnMissingBean(name = "webAuthnRestResource")
     @Bean
-    @SneakyThrows
-    public WebAuthnRestResource webAuthnRestResource() {
+    public WebAuthnRestResource webAuthnRestResource() throws Exception {
         return new WebAuthnRestResource(webAuthnOperations(), casProperties);
     }
 
@@ -101,9 +91,9 @@ public class WebAuthnConfiguration {
     public MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider() {
         val u2f = casProperties.getAuthn().getMfa().getWebAuthn();
         val p = new WebAuthnMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(webAuthnBypassEvaluator.getIfAvailable());
+        p.setBypassEvaluator(webAuthnBypassEvaluator.getObject());
         p.setFailureMode(u2f.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
+        p.setFailureModeEvaluator(failureModeEvaluator.getObject());
         p.setOrder(u2f.getRank());
         p.setId(u2f.getId());
         return p;
@@ -144,11 +134,12 @@ public class WebAuthnConfiguration {
     @ConditionalOnMissingBean(name = "webAuthnOperations")
     public WebAuthnServer webAuthnOperations() throws Exception {
         val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn();
+        val serverName = casProperties.getServer().getName();
+        val appId = new AppId(StringUtils.defaultString(webAuthn.getApplicationId(), serverName));
 
-        val appId = new AppId(StringUtils.defaultString(webAuthn.getApplicationId(), casProperties.getServer().getName()));
         val defaultRelyingPartyId = RelyingPartyIdentity
             .builder()
-            .id(StringUtils.defaultString(webAuthn.getRelyingPartyId(), new URL(casProperties.getServer().getName()).getHost()))
+            .id(StringUtils.defaultString(webAuthn.getRelyingPartyId(), new URL(serverName).getHost()))
             .name(StringUtils.defaultString(webAuthn.getRelyingPartyName(), "CAS"))
             .build();
 
@@ -156,7 +147,7 @@ public class WebAuthnConfiguration {
         if (StringUtils.isNotBlank(webAuthn.getAllowedOrigins())) {
             origins.addAll(org.springframework.util.StringUtils.commaDelimitedListToSet(webAuthn.getAllowedOrigins()));
         } else {
-            origins.add(casProperties.getServer().getName());
+            origins.add(serverName);
         }
 
         val conveyance = AttestationConveyancePreference.valueOf(webAuthn.getAttestationConveyancePreference().toUpperCase());
@@ -173,5 +164,13 @@ public class WebAuthnConfiguration {
             .build();
 
         return new WebAuthnServer(webAuthnCredentialRepository(), newCache(), newCache(), relyingParty);
+    }
+
+    private static <K, V> Cache<K, V> newCache() {
+        return Caffeine.newBuilder()
+            .maximumSize(CACHE_MAX_SIZE)
+            .expireAfterAccess(Duration.ofMinutes(5))
+            .recordStats()
+            .build();
     }
 }

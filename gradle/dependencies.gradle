@@ -99,16 +99,16 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
                 },
-                dependencies.create("com.upokecenter:cbor:4.0.1") {
+                dependencies.create("com.upokecenter:cbor:$cborVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
-                dependencies.create("org.webjars.npm:text-encoding:0.7.0") {
+                dependencies.create("org.webjars.npm:text-encoding:$textEncodingVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
-                dependencies.create("org.webjars.npm:whatwg-fetch:3.0.0") {
+                dependencies.create("org.webjars.npm:whatwg-fetch:$whatWgFetchVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
-                dependencies.create("org.webjars.npm:base64-js:1.3.0") {
+                dependencies.create("org.webjars.npm:base64-js:$base64JsVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],

@@ -18,12 +18,19 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 @Getter
 public class WebAuthnStartRegistrationAction extends AbstractAction {
+
+    /**
+     * Attribute name that points to the web application id put into the webflow.
+     */
+    public static final String FLOW_SCOPE_WEB_AUTHN_APPLICATION_ID = "webauthnApplicationId";
+
     private final RegistrationStorage webAuthnCredentialRepository;
+
     private final CasConfigurationProperties casProperties;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
-        requestContext.getFlowScope().put("webauthnApplicationId",
+    protected Event doExecute(final RequestContext requestContext) {
+        requestContext.getFlowScope().put(FLOW_SCOPE_WEB_AUTHN_APPLICATION_ID,
             casProperties.getAuthn().getMfa().getWebAuthn().getApplicationId());
         return null;
     }

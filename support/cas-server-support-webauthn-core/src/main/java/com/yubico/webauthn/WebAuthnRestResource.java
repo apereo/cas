@@ -315,5 +315,4 @@ public class WebAuthnRestResource {
             register = casProperties.getServer().buildContextRelativeUrl(API_VERSION + "/register");
         }
     }
-
 }

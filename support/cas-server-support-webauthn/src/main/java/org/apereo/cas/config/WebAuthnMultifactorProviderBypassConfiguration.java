@@ -120,6 +120,7 @@ public class WebAuthnMultifactorProviderBypassConfiguration {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "webAuthnPrincipalMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator webAuthnPrincipalMultifactorAuthenticationProviderBypass() {
         val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn();
