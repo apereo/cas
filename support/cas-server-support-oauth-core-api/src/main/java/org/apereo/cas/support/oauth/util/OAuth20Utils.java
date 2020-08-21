@@ -384,9 +384,7 @@ public class OAuth20Utils {
      * @return whether the callback url is valid
      */
     public static boolean checkCallbackValid(final @NonNull RegisteredService registeredService, final String redirectUri) {
-
         val registeredServiceId = registeredService.getServiceId();
-        LOGGER.debug("Found: [{}] vs redirectUri: [{}]", registeredService, redirectUri);
         if (!redirectUri.matches(registeredServiceId)) {
             LOGGER.error("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
                     + "Service is considered unauthorized. Verify the service definition in the registry is correct "

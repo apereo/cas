@@ -13,8 +13,10 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.CookieUtils;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -176,7 +178,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         if (modelAndView != null && modelAndView.hasView()) {
             return modelAndView;
         }
-        LOGGER.debug("No explicit view was defined as part of the authorization response");
+        LOGGER.trace("No explicit view was defined as part of the authorization response");
         return null;
     }
 
@@ -197,19 +199,25 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                                         final Service service,
                                                         final Authentication authentication) {
         val configContext = getOAuthConfigurationContext();
-        
+
         val builder = configContext.getOauthAuthorizationResponseBuilders()
             .stream()
             .filter(b -> b.supports(context))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Could not build the callback url. Response type likely not supported"));
 
-        val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
+        var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
             configContext.getTicketGrantingTicketCookieGenerator(),
             configContext.getTicketRegistry(), context.getNativeRequest());
 
         if (ticketGrantingTicket == null) {
-            val message = String.format("Unable to determine ticket-granting-ticket for client id [%s] and service [%s}", clientId, service.getId());
+            ticketGrantingTicket = configContext.getSessionStore()
+                .get(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
+                .map(ticketId -> configContext.getCentralAuthenticationService().getTicket(ticketId.toString(), TicketGrantingTicket.class))
+                .orElse(null);
+        }
+        if (ticketGrantingTicket == null) {
+            val message = String.format("Unable to determine ticket-granting-ticket for client id [%s] and service [%s]", clientId, registeredService.getName());
             LOGGER.error(message);
             return OAuth20Utils.produceErrorView(new PreventedException(message));
         }

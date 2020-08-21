@@ -62,7 +62,6 @@ import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolver;
 import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapter;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilder;
-import org.apereo.cas.oidc.web.OidcSecurityInterceptor;
 import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointController;
 import org.apereo.cas.oidc.web.controllers.discovery.OidcWellKnownEndpointController;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientConfigurationEndpointController;
@@ -142,7 +141,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.PublicJsonWebKey;
-import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
@@ -239,6 +237,10 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Autowired
     @Qualifier("requiresAuthenticationAccessTokenInterceptor")
     private ObjectProvider<SecurityInterceptor> requiresAuthenticationAccessTokenInterceptor;
+
+    @Autowired
+    @Qualifier("requiresAuthenticationAuthorizeInterceptor")
+    private ObjectProvider<SecurityInterceptor> requiresAuthenticationAuthorizeInterceptor;
 
     @Autowired
     @Qualifier("oauthCasAuthenticationBuilder")
@@ -400,18 +402,6 @@ public class OidcConfiguration implements WebMvcConfigurer {
         val interceptor = new SecurityInterceptor(oauthSecConfig.getObject(), clients, JEEHttpActionAdapter.INSTANCE);
         interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
         return interceptor;
-    }
-
-    @Bean
-    public HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor() {
-        val name = oauthSecConfig.getObject().getClients()
-            .findClient(CasClient.class)
-            .orElseThrow()
-            .getName();
-
-        return new OidcSecurityInterceptor(oauthSecConfig.getObject(), name,
-            oidcAuthorizationRequestSupport(),
-            oauthDistributedSessionStore.getObject());
     }
 
     @Bean
@@ -729,7 +719,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
             OidcConstants.DynamicClientRegistrationMode.PROTECTED.name()));
 
         return new OidcHandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor.getObject(),
-            requiresAuthenticationAuthorizeInterceptor(),
+            requiresAuthenticationAuthorizeInterceptor.getObject(),
             requiresAuthenticationDynamicRegistrationInterceptor(),
             requiresAuthenticationClientConfigurationInterceptor(),
             mode,

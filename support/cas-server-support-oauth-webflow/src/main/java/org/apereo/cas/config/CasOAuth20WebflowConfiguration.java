@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.web.flow.OAuth20CreateTicketGrantingTicketExitAction;
 import org.apereo.cas.support.oauth.web.flow.OAuth20RegisteredServiceUIAction;
 import org.apereo.cas.support.oauth.web.flow.OAuth20WebflowConfigurer;
 import org.apereo.cas.validation.CasProtocolViewFactory;
@@ -10,6 +11,8 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import lombok.val;
+import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -62,13 +65,18 @@ public class CasOAuth20WebflowConfiguration {
     @Autowired
     private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
+    @Autowired
+    @Qualifier("oauthDistributedSessionStore")
+    private ObjectProvider<SessionStore<JEEContext>> oauthDistributedSessionStore;
+
+
     @ConditionalOnMissingBean(name = "oauth20LogoutWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer oauth20LogoutWebflowConfigurer() {
         val c = new OAuth20WebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
-            oauth20RegisteredServiceUIAction(), applicationContext, casProperties);
+            applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry.getObject());
         return c;
     }
@@ -80,6 +88,12 @@ public class CasOAuth20WebflowConfiguration {
             oauth20AuthenticationServiceSelectionStrategy.getObject());
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "oauth20CreateTicketGrantingTicketExitAction")
+    public Action oauth20CreateTicketGrantingTicketExitAction() {
+        return new OAuth20CreateTicketGrantingTicketExitAction(oauthDistributedSessionStore.getObject());
+    }
+    
     @Bean
     public View oauthConfirmView() {
         return casProtocolViewFactory.getObject().create(applicationContext, "protocol/oauth/confirm");
