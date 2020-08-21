@@ -32,7 +32,7 @@ import java.security.PublicKey;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"location", "algorithm"})
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @AllArgsConstructor
 public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKey {
 

@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
 @Getter
 @EqualsAndHashCode
 @Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Accessors(chain = true)
 public class GroovyRegisteredServiceAuthenticationPolicyCriteria implements RegisteredServiceAuthenticationPolicyCriteria {
     private static final long serialVersionUID = -1905826778096374574L;

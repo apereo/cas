@@ -23,7 +23,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode
 @Setter
 @Accessors(chain = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class NotPreventedRegisteredServiceAuthenticationPolicyCriteria implements RegisteredServiceAuthenticationPolicyCriteria {
     private static final long serialVersionUID = -4905826778096374574L;
 

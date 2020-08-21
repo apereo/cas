@@ -24,7 +24,7 @@ import javax.persistence.Table;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"name", "email"})
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceContact implements RegisteredServiceContact {
 
     private static final long serialVersionUID = 1324660891900737066L;

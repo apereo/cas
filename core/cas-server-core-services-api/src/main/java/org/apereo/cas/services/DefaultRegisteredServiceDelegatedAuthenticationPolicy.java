@@ -26,7 +26,7 @@ import java.util.LinkedHashSet;
 @EqualsAndHashCode(exclude = "allowedProviders")
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceDelegatedAuthenticationPolicy implements RegisteredServiceDelegatedAuthenticationPolicy {
     private static final long serialVersionUID = -784106970642770923L;
 

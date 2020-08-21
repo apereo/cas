@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode(of = {"pattern", "order"})
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 403015306984610128L;

@@ -21,7 +21,7 @@ import java.util.Set;
 @EqualsAndHashCode
 @Setter
 @Accessors(chain = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceAuthenticationPolicy implements RegisteredServiceAuthenticationPolicy {
     private static final long serialVersionUID = -6777133646772207331L;
 
