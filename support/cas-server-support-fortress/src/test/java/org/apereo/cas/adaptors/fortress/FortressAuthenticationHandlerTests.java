@@ -42,8 +42,8 @@ public class FortressAuthenticationHandlerTests {
     private FortressAuthenticationHandler fortressAuthenticationHandler;
 
     @BeforeEach
-    public void initializeTest() {
-        MockitoAnnotations.initMocks(this);
+    public void initializeTest() throws Exception {
+        MockitoAnnotations.openMocks(this).close();
         fortressAuthenticationHandler.setAccessManager(accessManager);
     }
 

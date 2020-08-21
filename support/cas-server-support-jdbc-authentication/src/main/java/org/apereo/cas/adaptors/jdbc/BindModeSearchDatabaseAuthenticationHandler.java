@@ -45,7 +45,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
         } catch (final SQLException e) {
             throw new FailedLoginException(e.getMessage());
         } catch (final Exception e) {
-            throw new PreventedException("Unexpected SQL connection error", e);
+            throw new PreventedException(e);
         }
     }
 }

@@ -78,7 +78,7 @@ public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
             u2FDeviceRepository.verifyRegisteredDevice(record);
             return createHandlerResult(tokenCredential, principal);
         } catch (final Exception e) {
-            throw new PreventedException("Could not authenticate device: " + e.getMessage(), e);
+            throw new PreventedException(e);
         }
     }
 

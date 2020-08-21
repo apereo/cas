@@ -59,7 +59,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
             }
             return createHandlerResult(credential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));
         } catch (final DataAccessException e) {
-            throw new PreventedException("SQL exception while executing query for " + username, e);
+            throw new PreventedException(e);
         }
     }
 }
