@@ -5,7 +5,9 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesReposit
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
+import org.apereo.cas.services.AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -23,10 +25,12 @@ import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.FullRegexRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.GroovyRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.GroovyRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.GroovyScriptAttributeReleasePolicy;
 import org.apereo.cas.services.LiteralRegisteredServiceMatchingStrategy;
+import org.apereo.cas.services.NotPreventedRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
@@ -36,6 +40,7 @@ import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.RemoteEndpointServiceAccessStrategy;
+import org.apereo.cas.services.RestfulRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
@@ -125,6 +130,12 @@ public class CasCoreServicesComponentSerializationConfiguration {
             plan.registerSerializableClass(AttributeMergingStrategy.class);
 
             plan.registerSerializableClass(DefaultRegisteredServiceConsentPolicy.class);
+
+            plan.registerSerializableClass(AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria.class);
+            plan.registerSerializableClass(AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria.class);
+            plan.registerSerializableClass(GroovyRegisteredServiceAuthenticationPolicyCriteria.class);
+            plan.registerSerializableClass(NotPreventedRegisteredServiceAuthenticationPolicyCriteria.class);
+            plan.registerSerializableClass(RestfulRegisteredServiceAuthenticationPolicyCriteria.class);
         };
     }
 }
