@@ -151,6 +151,7 @@ layout: null
     *   [Proxy Policy](/$version/services/Configuring-Service-Proxy-Policy.html)
     *   [Custom Properties](/$version/services/Configuring-Service-Custom-Properties.html)
     *   [Response Type](/$version/services/Configuring-Service-Response-Type.html)
+    *   [SSO Policy](/$version/services/Configuring-Service-SSO-Policy.html)
     *   [Matching Strategy](/$version/services/Configuring-Service-Matching-Strategy.html)
     *   [HTTP Security Headers](/$version/services/Configuring-Service-Http-Security-Headers.html)
     *   [Contacts & Owners](/$version/services/Configuring-Service-Contacts.html)
