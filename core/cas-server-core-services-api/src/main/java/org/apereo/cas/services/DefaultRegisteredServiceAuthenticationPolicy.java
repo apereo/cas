@@ -27,5 +27,5 @@ public class DefaultRegisteredServiceAuthenticationPolicy implements RegisteredS
 
     private Set<String> requiredAuthenticationHandlers = new HashSet<>();
 
-    private RegisteredServiceAuthenticationPolicyCriteria criteria = new AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria();
+    private RegisteredServiceAuthenticationPolicyCriteria criteria = new AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria();
 }
