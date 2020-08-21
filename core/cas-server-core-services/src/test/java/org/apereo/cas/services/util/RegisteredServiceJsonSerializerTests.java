@@ -79,4 +79,24 @@ public class RegisteredServiceJsonSerializerTests {
         val read = zer.from(results);
         assertEquals(s, read);
     }
+
+    @Test
+    public void verifyEmptyStringAsNull() {
+        val zer = new RegisteredServiceJsonSerializer();
+        val json = "    {\n"
+            + "        \"@class\" : \"org.apereo.cas.services.RegexRegisteredService\",\n"
+            + "            \"serviceId\" : \"^https://xyz.*\",\n"
+            + "            \"name\" : \"XYZ\",\n"
+            + "            \"id\" : \"20161214\"\n"
+            + "  \"authenticationPolicy\" : {\n"
+            + "    \"@class\" : \"org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy\",\n"
+            + "    \"criteria\":\"\""
+            + "  }"
+            + "    }";
+
+        val s = zer.from(json);
+        assertNotNull(s);
+        assertNotNull(s.getAuthenticationPolicy());
+        assertNull(s.getAuthenticationPolicy().getCriteria());
+    }
 }
