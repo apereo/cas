@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
@@ -39,7 +40,7 @@ import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAbstractTicketExceptionHandler;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAuthenticationExceptionHandler;
 import org.apereo.cas.web.flow.authentication.GenericCasWebflowExceptionHandler;
-import org.apereo.cas.web.flow.authentication.RequiredAuthenticationHandlersSingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.authentication.RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -99,6 +100,10 @@ public class CasCoreWebflowConfiguration {
     @Autowired
     @Qualifier("webApplicationResponseBuilderLocator")
     private ObjectProvider<ResponseBuilderLocator> responseBuilderLocator;
+
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -299,17 +304,18 @@ public class CasCoreWebflowConfiguration {
 
     @Bean
     @RefreshScope
-    @ConditionalOnMissingBean(name = "requiredAuthenticationHandlersSingleSignOnParticipationStrategy")
-    public SingleSignOnParticipationStrategy requiredAuthenticationHandlersSingleSignOnParticipationStrategy() {
-        return new RequiredAuthenticationHandlersSingleSignOnParticipationStrategy(servicesManager.getObject(),
-            authenticationServiceSelectionPlan.getObject(), ticketRegistrySupport.getObject());
+    @ConditionalOnMissingBean(name = "registeredServiceAuthenticationPolicySingleSignOnParticipationStrategy")
+    public SingleSignOnParticipationStrategy registeredServiceAuthenticationPolicySingleSignOnParticipationStrategy() {
+        return new RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy(servicesManager.getObject(),
+            authenticationServiceSelectionPlan.getObject(), ticketRegistrySupport.getObject(),
+            applicationContext, authenticationEventExecutionPlan.getObject());
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "requiredAuthenticationHandlersSingleSignOnParticipationStrategyConfigurer")
+    @ConditionalOnMissingBean(name = "registeredServiceAuthenticationPolicySingleSignOnParticipationStrategyConfigurer")
     @RefreshScope
-    public SingleSignOnParticipationStrategyConfigurer requiredAuthenticationHandlersSingleSignOnParticipationStrategyConfigurer() {
-        return chain -> chain.addStrategy(requiredAuthenticationHandlersSingleSignOnParticipationStrategy());
+    public SingleSignOnParticipationStrategyConfigurer registeredServiceAuthenticationPolicySingleSignOnParticipationStrategyConfigurer() {
+        return chain -> chain.addStrategy(registeredServiceAuthenticationPolicySingleSignOnParticipationStrategy());
     }
 
     @Bean
