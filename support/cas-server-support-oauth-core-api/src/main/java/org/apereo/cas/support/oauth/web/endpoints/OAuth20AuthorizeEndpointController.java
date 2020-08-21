@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
+import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
@@ -40,11 +41,6 @@ import javax.servlet.http.HttpServletResponse;
 public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
     public OAuth20AuthorizeEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
-    }
-
-    private static boolean isRequestAuthenticated(final ProfileManager manager) {
-        val opt = manager.get(true);
-        return opt.isPresent();
     }
 
     /**
@@ -98,6 +94,30 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
     @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
     public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return handleRequest(request, response);
+    }
+
+    private static boolean isRequestAuthenticated(final ProfileManager manager) {
+        val opt = manager.get(true);
+        return opt.isPresent();
+    }
+
+    /**
+     * Verify the authorize request.
+     *
+     * @param context the context
+     * @return whether the authorize request is valid
+     */
+    private boolean verifyAuthorizeRequest(final JEEContext context) {
+        val validator = getOAuthConfigurationContext().getOauthRequestValidators()
+            .stream()
+            .filter(b -> b.supports(context))
+            .findFirst()
+            .orElse(null);
+        if (validator == null) {
+            LOGGER.warn("Ignoring malformed request [{}] since it cannot be validated/recognized.", context.getFullRequestURL());
+            return false;
+        }
+        return validator.validate(context);
     }
 
     /**
@@ -176,16 +196,23 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                                         final String clientId,
                                                         final Service service,
                                                         final Authentication authentication) {
-        val builder = getOAuthConfigurationContext().getOauthAuthorizationResponseBuilders()
+        val configContext = getOAuthConfigurationContext();
+        
+        val builder = configContext.getOauthAuthorizationResponseBuilders()
             .stream()
             .filter(b -> b.supports(context))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Could not build the callback url. Response type likely not supported"));
 
         val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
-            getOAuthConfigurationContext().getTicketGrantingTicketCookieGenerator(),
-            getOAuthConfigurationContext().getTicketRegistry(), context.getNativeRequest());
+            configContext.getTicketGrantingTicketCookieGenerator(),
+            configContext.getTicketRegistry(), context.getNativeRequest());
 
+        if (ticketGrantingTicket == null) {
+            val message = String.format("Unable to determine ticket-granting-ticket for client id [%s] and service [%s}", clientId, service.getId());
+            LOGGER.error(message);
+            return OAuth20Utils.produceErrorView(new PreventedException(message));
+        }
         val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf)
             .orElseGet(OAuth20GrantTypes.AUTHORIZATION_CODE::getType)
@@ -199,7 +226,6 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             .toUpperCase();
 
         val claims = OAuth20Utils.parseRequestClaims(context);
-
         val holder = AccessTokenRequestDataHolder.builder()
             .service(service)
             .authentication(authentication)
@@ -215,25 +241,6 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
 
         LOGGER.debug("Building authorization response for grant type [{}] with scopes [{}] for client id [{}]", grantType, scopes, clientId);
         return builder.build(context, clientId, holder);
-    }
-
-    /**
-     * Verify the authorize request.
-     *
-     * @param context the context
-     * @return whether the authorize request is valid
-     */
-    private boolean verifyAuthorizeRequest(final JEEContext context) {
-        val validator = getOAuthConfigurationContext().getOauthRequestValidators()
-            .stream()
-            .filter(b -> b.supports(context))
-            .findFirst()
-            .orElse(null);
-        if (validator == null) {
-            LOGGER.warn("Ignoring malformed request [{}] as no OAuth20 validator could declare support for its syntax", context.getFullRequestURL());
-            return false;
-        }
-        return validator.validate(context);
     }
 }
 
