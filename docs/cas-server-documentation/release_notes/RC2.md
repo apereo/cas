@@ -140,6 +140,13 @@ the expiration policy [assigned to the service definition](../ticketing/Configur
 Service identifiers defined for applications in the CAS service registry have always been defined as patterns. This release exposes 
 a few [additional options](../services/Configuring-Service-Matching-Strategy.html) while also allowing the matching strategy to be externalized to custom components. 
 
+### SSO Participation Policy
+
+Adjustments are put in place to correctly locate and reconstruct the authentication transaction, in the 
+event that [single sign-on participation](../services/Configuring-Service-SSO-Policy.html) is disabled for a 
+particular service, specially in Open ID Connect authentication flows. Furthermore, the authentication policy criteria
+for a service definition is now defaulted to match the global and default authentication policies for the CAS.  
+
 ### Wildcarded Service Definitions
 
 Consider a SAML service provider definition registered with CAS that authorizes 
@@ -185,6 +192,7 @@ both the group's evaluation priority as well as each individual service's evalua
 - Component registration with the Memcached serialization engine is now broken apart and delegated to appropriate modules owning said components.
 - Signed SAML authentication requests that embed the signature in URLs are reviewed and adjusted to avoid creating long URLs exceeding browser limits.
 - The naming strategy for JSON/YAML service definition files is relaxed to allow multiple words in the file name.
+- Transformation of service definitions to JSON or YAML is adjusted to exclude fields with default values to produce leaner payloads.
 
 ## Library Upgrades
 

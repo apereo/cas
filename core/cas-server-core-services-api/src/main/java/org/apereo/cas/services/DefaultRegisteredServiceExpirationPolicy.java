@@ -31,7 +31,7 @@ import java.time.ZoneId;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Slf4j
 public class DefaultRegisteredServiceExpirationPolicy implements RegisteredServiceExpirationPolicy {
 
