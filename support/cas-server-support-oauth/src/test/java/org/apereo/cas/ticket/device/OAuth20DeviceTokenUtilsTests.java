@@ -6,8 +6,11 @@ import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthDevice
 import org.apereo.cas.ticket.expiration.builder.TicketGrantingTicketExpirationPolicyBuilder;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,10 +23,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuth")
 public class OAuth20DeviceTokenUtilsTests extends AbstractOAuth20Tests {
 
+    @BeforeEach
+    public void setup() {
+        this.servicesManager.deleteAll();
+    }
+    
     @Test
     public void verifyDefault() {
-        val service = RegisteredServiceTestUtils.getService();
-        val registeredService = getRegisteredService(service.getId(), CLIENT_ID, CLIENT_SECRET);
+        val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+        val registeredService = getRegisteredService(service.getId(), UUID.randomUUID().toString(), CLIENT_SECRET);
         registeredService.setDeviceTokenExpirationPolicy(null);
         servicesManager.save(registeredService);
         val builder = new TicketGrantingTicketExpirationPolicyBuilder(casProperties);
@@ -35,12 +43,12 @@ public class OAuth20DeviceTokenUtilsTests extends AbstractOAuth20Tests {
     @Test
     public void verifyCustom() {
         val service = RegisteredServiceTestUtils.getService();
-        val registeredService = getRegisteredService(service.getId(), CLIENT_ID, CLIENT_SECRET);
-        registeredService.setDeviceTokenExpirationPolicy(new DefaultRegisteredServiceOAuthDeviceTokenExpirationPolicy("PT10S"));
+        val registeredService = getRegisteredService(service.getId(), UUID.randomUUID().toString(), CLIENT_SECRET);
+        registeredService.setDeviceTokenExpirationPolicy(new DefaultRegisteredServiceOAuthDeviceTokenExpirationPolicy("PT60S"));
         servicesManager.save(registeredService);
         val builder = new TicketGrantingTicketExpirationPolicyBuilder(casProperties);
         val policy = OAuth20DeviceTokenUtils.determineExpirationPolicyForService(servicesManager, builder, service);
-        assertEquals(10, policy.getTimeToLive());
+        assertEquals(60, policy.getTimeToLive());
 
     }
 

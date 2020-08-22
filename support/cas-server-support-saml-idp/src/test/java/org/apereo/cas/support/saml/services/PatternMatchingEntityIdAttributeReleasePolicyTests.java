@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML")
 public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
-
+    
+    @BeforeEach
+    public void setup() {
+        this.servicesManager.deleteAll();
+    }
+    
     @Test
     public void verifyPatternDoesNotMatch() {
         val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
