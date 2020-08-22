@@ -117,14 +117,14 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                         try {
                             addURL(urls, DERIA5String.getInstance(name.getName()).getString());
                         } catch (final Exception e) {
-                            LOGGER.warn("[{}] not supported. String or GeneralNameList expected.", pointName);
+                            LOGGER.warn("[{}] not supported: [{}].", pointName, e.getMessage());
                         }
                     });
                 });
             }
             return urls.toArray(URI[]::new);
         } catch (final Exception e) {
-            LOGGER.error("Error reading CRLDistributionPoints extension field on [{}]", CertUtils.toString(cert));
+            LOGGER.debug("Error reading CRLDistributionPoints extension field on [{}]", CertUtils.toString(cert));
             LoggingUtils.error(LOGGER, e);
             return new URI[0];
         }

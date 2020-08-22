@@ -11,7 +11,6 @@ import org.springframework.beans.factory.DisposableBean;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 /**
  * This is {@link AbstractAuditTrailManager}.
@@ -31,12 +30,7 @@ public abstract class AbstractAuditTrailManager implements AuditTrailManager, Di
     protected boolean asynchronous;
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor(
-        new ThreadFactory() {
-            @Override
-            public Thread newThread(final Runnable r) {
-                return new Thread(r, "AuditTrailManagerThread");
-            }
-        });
+        r -> new Thread(r, "AuditTrailManagerThread"));
 
     @Override
     public void record(final AuditActionContext audit) {

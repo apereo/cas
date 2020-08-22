@@ -150,30 +150,17 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
             }
         };
 
-        this.scheduler.scheduleAtFixedRate(
+        scheduler.scheduleAtFixedRate(
             scheduledFetcher,
             this.refreshInterval,
             this.refreshInterval,
             TimeUnit.SECONDS);
-
     }
 
     private boolean validateConfiguration() {
         if (this.resources == null || this.resources.isEmpty()) {
             LOGGER.debug("[{}] is not configured with resources. Skipping configuration...",
                 this.getClass().getSimpleName());
-            return false;
-        }
-        if (this.fetcher == null) {
-            LOGGER.debug("[{}] is not configured with a CRL fetcher. Skipping configuration...", getClass().getSimpleName());
-            return false;
-        }
-        if (getExpiredCRLPolicy() == null) {
-            LOGGER.debug("[{}] is not configured with a CRL expiration policy. Skipping configuration...", getClass().getSimpleName());
-            return false;
-        }
-        if (getUnavailableCRLPolicy() == null) {
-            LOGGER.debug("[{}] is not configured with a CRL unavailable policy. Skipping configuration...", getClass().getSimpleName());
             return false;
         }
         return true;

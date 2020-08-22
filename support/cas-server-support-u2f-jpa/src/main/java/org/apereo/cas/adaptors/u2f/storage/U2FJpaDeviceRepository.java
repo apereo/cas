@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -12,12 +11,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -54,43 +51,29 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public Collection<? extends U2FDeviceRegistration> getRegisteredDevices() {
-        try {
-            val expirationDate = LocalDate.now(ZoneId.systemDefault())
-                .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
-            return this.entityManager.createQuery(SELECT_QUERY.concat("WHERE r.createdDate >= :expdate"), U2FJpaDeviceRegistration.class)
-                .setParameter("expdate", expirationDate)
-                .getResultList()
-                .stream()
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        } catch (final NoResultException e) {
-            LOGGER.debug("No device registration was found");
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return new ArrayList<>(0);
+        val expirationDate = LocalDate.now(ZoneId.systemDefault())
+            .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+        return entityManager.createQuery(SELECT_QUERY.concat("WHERE r.createdDate >= :expdate"), U2FJpaDeviceRegistration.class)
+            .setParameter("expdate", expirationDate)
+            .getResultList()
+            .stream()
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     @Override
     public Collection<? extends U2FDeviceRegistration> getRegisteredDevices(final String username) {
-        try {
-            val expirationDate = LocalDate.now(ZoneId.systemDefault())
-                .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
-            return this.entityManager.createQuery(
-                SELECT_QUERY.concat("WHERE r.username = :username AND r.createdDate >= :expdate"),
-                U2FJpaDeviceRegistration.class)
-                .setParameter("username", username)
-                .setParameter("expdate", expirationDate)
-                .getResultList()
-                .stream()
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        } catch (final NoResultException e) {
-            LOGGER.debug("No device registration was found for [{}]", username);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return new ArrayList<>(0);
+        val expirationDate = LocalDate.now(ZoneId.systemDefault())
+            .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+        return this.entityManager.createQuery(
+            SELECT_QUERY.concat("WHERE r.username = :username AND r.createdDate >= :expdate"),
+            U2FJpaDeviceRegistration.class)
+            .setParameter("username", username)
+            .setParameter("expdate", expirationDate)
+            .getResultList()
+            .stream()
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -110,35 +93,23 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public void clean() {
-        try {
-            val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(expirationTime, DateTimeUtils.toChronoUnit(expirationTimeUnit));
-            LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
-            val query = entityManager.createQuery(DELETE_QUERY.concat("WHERE r.createdDate <= :expdate"))
-                .setParameter("expdate", expirationDate);
-            query.executeUpdate();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
+        val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(expirationTime, DateTimeUtils.toChronoUnit(expirationTimeUnit));
+        LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
+        val query = entityManager.createQuery(DELETE_QUERY.concat("WHERE r.createdDate <= :expdate"))
+            .setParameter("expdate", expirationDate);
+        query.executeUpdate();
     }
 
     @Override
     public void deleteRegisteredDevice(final U2FDeviceRegistration registration) {
-        try {
-            val query = entityManager.createQuery(DELETE_QUERY.concat("WHERE r.username <= :username AND r.id=:id"))
-                .setParameter("username", registration.getUsername())
-                .setParameter("id", registration.getId());
-            query.executeUpdate();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
+        val query = entityManager.createQuery(DELETE_QUERY.concat("WHERE r.username <= :username AND r.id=:id"))
+            .setParameter("username", registration.getUsername())
+            .setParameter("id", registration.getId());
+        query.executeUpdate();
     }
 
     @Override
     public void removeAll() {
-        try {
-            this.entityManager.createQuery(DELETE_QUERY).executeUpdate();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
+        this.entityManager.createQuery(DELETE_QUERY).executeUpdate();
     }
 }

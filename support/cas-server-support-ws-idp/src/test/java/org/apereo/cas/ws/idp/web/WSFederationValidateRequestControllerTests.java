@@ -15,7 +15,6 @@ import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -72,11 +71,9 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
         request.addParameter(WSFederationConstants.WREPLY, registeredService.getServiceId());
         request.addParameter(WSFederationConstants.WA, WSFederationConstants.WSIGNOUT10);
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                federationValidateRequestController.handleFederationRequest(response, request);
-            }
+        assertDoesNotThrow(() -> {
+            federationValidateRequestController.handleFederationRequest(response, request);
+            return null;
         });
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
         assertEquals("https://cas.example.org:8443/cas/logout?service=http://app.example5.org/wsfed-idp",
@@ -90,11 +87,9 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
 
         request.addParameter(WSFederationConstants.WA, WSFederationConstants.WSIGNOUT10);
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                federationValidateRequestController.handleFederationRequest(response, request);
-            }
+        assertDoesNotThrow(() -> {
+            federationValidateRequestController.handleFederationRequest(response, request);
+            return null;
         });
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
         assertEquals("https://cas.example.org:8443/cas/logout", response.getHeader("Location"));
@@ -110,11 +105,9 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
         request.addParameter(WSFederationConstants.WREPLY, registeredService.getServiceId());
         request.addParameter(WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                federationValidateRequestController.handleFederationRequest(response, request);
-            }
+        assertDoesNotThrow(() -> {
+            federationValidateRequestController.handleFederationRequest(response, request);
+            return null;
         });
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
         assertEquals("https://cas.example.org:8443/cas/login?"
@@ -137,11 +130,9 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                federationValidateRequestController.handleFederationRequest(response, request);
-            }
+        assertDoesNotThrow(() -> {
+            federationValidateRequestController.handleFederationRequest(response, request);
+            return null;
         });
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
         assertEquals("https://cas.example.org:8443/cas/login?service="
@@ -180,11 +171,9 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
         ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
         request.setCookies(response.getCookies());
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                federationValidateRequestController.handleFederationRequest(response, request);
-            }
+        assertDoesNotThrow(() -> {
+            federationValidateRequestController.handleFederationRequest(response, request);
+            return null;
         });
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
         assertEquals("https://cas.example.org:8443/cas/login?service="

@@ -4,7 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.experimental.Accessors;
 
 /**
  * This is {@link DefaultTicketDefinitionProperties}.
@@ -16,7 +15,6 @@ import lombok.experimental.Accessors;
 @Getter
 @EqualsAndHashCode
 @Setter
-@Accessors(chain = true)
 public class DefaultTicketDefinitionProperties implements TicketDefinitionProperties {
 
     /**

@@ -34,4 +34,9 @@ public class OAuth20JwtBuilderTests extends AbstractOAuth20Tests {
         val jwt = accessTokenJwtBuilder.build(request);
         assertNotNull(jwt);
     }
+
+    @Test
+    public void verifyBadJwt() {
+        assertThrows(IllegalArgumentException.class, () -> JwtBuilder.parse("badly-formatted-jwt"));
+    }
 }
