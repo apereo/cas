@@ -42,6 +42,7 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
      * @param onOrAfterDate cutoff date
      * @return records created on or after date
      */
+    @View(name = "by_recordDate", map = "function(doc) { if (doc.principal && doc.deviceFingerprint && doc.recordDate) { emit(doc.recordDate, doc) } }")
     public List<CouchDbMultifactorAuthenticationTrustRecord> findOnOrAfterDate(final ZonedDateTime onOrAfterDate) {
         return db.queryView(createQuery("by_recordDate").startKey(onOrAfterDate), CouchDbMultifactorAuthenticationTrustRecord.class);
     }
