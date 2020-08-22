@@ -179,7 +179,7 @@ The issue here is that depending on how the `evaluationOrder` is set up, the wro
 for SAML or CAS protocol authentication requests. The root cause is that the CAS matching engine attempts to locate service definitions
 by their `serviceId` (which might correlate to an entity id or a redirect URI, etc) without taking into account the 
 authentication protocol itself. In this release, a few additional improvements are put in place to allow grouping of 
-application definitions by both type and evaluation order, and the matching engine is enhanced process such groups while considering
+application definitions by both type and evaluation order, and the matching engine is enhanced to process such groups while considering
 both the group's evaluation priority as well as each individual service's evaluation order.
 
 ## Other Stuff

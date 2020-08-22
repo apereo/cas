@@ -437,6 +437,7 @@ jobs:
 
   publish-docs:
     runs-on: ubuntu-latest
+    needs: [validate-docs]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
