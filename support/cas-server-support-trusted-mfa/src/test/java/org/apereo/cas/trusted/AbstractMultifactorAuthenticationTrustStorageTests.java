@@ -77,7 +77,6 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         record.setPrincipal(UUID.randomUUID().toString());
         record.setId(1000);
         record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusDays(1));
-        record.setRecordKey(UUID.randomUUID().toString());
         record.setExpirationDate(DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1)));
         return record;
     }

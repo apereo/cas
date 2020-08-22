@@ -103,7 +103,7 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
         }
     }
 
-    private void removeFile(final File metadataFile) throws IOException {
+    private static void removeFile(final File metadataFile) throws IOException {
         val result = !metadataFile.exists() || metadataFile.delete();
         if (!result) {
             LOGGER.warn("Failed to delete service definition file [{}]", metadataFile.getCanonicalPath());

@@ -59,7 +59,7 @@ public class CredentialTests {
         });
     }
 
-    private AbstractCredential getCredential() {
+    private static AbstractCredential getCredential() {
         return new AbstractCredential() {
             private static final long serialVersionUID = -1746359565306558329L;
 
