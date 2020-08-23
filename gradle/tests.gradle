@@ -659,9 +659,6 @@ tasks.withType(Test) {
 Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.util.Date()} 
 (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)
 """
-                if (result.failedTestCount > 0 && !Boolean.getBoolean("ignoreTestFailures")) {
-                    throw new GradleException("${desc.displayName} failed with ${result.failedTestCount} failures.")
-                }
             }
         }
     }
