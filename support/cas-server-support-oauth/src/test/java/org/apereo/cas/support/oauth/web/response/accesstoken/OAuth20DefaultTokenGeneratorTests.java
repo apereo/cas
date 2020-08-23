@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.LinkedHashSet;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,7 +44,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyAccessTokenAsJwt() throws Exception {
-        val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
+        val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
         registeredService.setJwtAccessToken(true);
         servicesManager.save(registeredService);
 
@@ -98,7 +99,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyAccessTokenIsRefreshed() throws Exception {
-        val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
+        val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
         registeredService.setJwtAccessToken(true);
         servicesManager.save(registeredService);
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");

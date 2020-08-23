@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.git.services.BaseGitProperties
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 
 import com.jcraft.jsch.JSch;
@@ -72,9 +73,10 @@ public class GitRepositoryBuilder {
      */
     @SneakyThrows
     public static GitRepositoryBuilder newInstance(final BaseGitProperties props) {
+        val resolver = SpringExpressionLanguageValueResolver.getInstance();
         val builder = GitRepositoryBuilder.builder()
-            .repositoryUri(props.getRepositoryUrl())
-            .activeBranch(props.getActiveBranch())
+            .repositoryUri(resolver.resolve(props.getRepositoryUrl()))
+            .activeBranch(resolver.resolve(props.getActiveBranch()))
             .branchesToClone(props.getBranchesToClone())
             .repositoryDirectory(props.getCloneDirectory())
             .privateKeyPassphrase(props.getPrivateKeyPassphrase())

@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @TestPropertySource(properties = {
-    "cas.authn.saml.idp.metadata.git.sign-commits=false",
-    "cas.authn.saml.idp.metadata.git.repository-url=file:/tmp/cas-metadata-data.git"
+    "cas.authn.saml-idp.metadata.git.sign-commits=false",
+    "cas.authn.saml-idp.metadata.git.repository-url=file:/tmp/cas-metadata-data.git"
 })
 @Slf4j
 @Tag("FileSystem")
@@ -43,6 +43,9 @@ public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMe
             val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
             if (gitDir.exists()) {
                 FileUtils.deleteDirectory(gitDir);
+            }
+            if (!gitDir.mkdir()) {
+                throw new IllegalArgumentException("Git repository directory location " + gitDir + " cannot be located/created");
             }
             val git = Git.init().setDirectory(gitDir).setBare(false).call();
             FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
