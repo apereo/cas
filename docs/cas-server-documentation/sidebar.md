@@ -71,6 +71,7 @@ layout: null
         *   [SOAP](/$version/installation/SOAP-Authentication.html)
         *   [Custom](/$version/installation/Configuring-Custom-Authentication.html)
     *   [Delegation](/$version/integration/Delegate-Authentication.html)
+        *   [SAML2](/$version/integration/Delegate-Authentication-SAML.html)
         *   [ADFS](/$version/integration/ADFS-Integration.html)
     *   [Throttling](/$version/installation/Configuring-Authentication-Throttling.html)
     *   [GeoLocation Tracking](/$version/installation/GeoTracking-Authentication-Requests.html)
