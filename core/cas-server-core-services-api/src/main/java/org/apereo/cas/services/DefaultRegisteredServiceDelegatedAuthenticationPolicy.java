@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
@@ -26,6 +27,7 @@ import java.util.LinkedHashSet;
 @EqualsAndHashCode(exclude = "allowedProviders")
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceDelegatedAuthenticationPolicy implements RegisteredServiceDelegatedAuthenticationPolicy {
     private static final long serialVersionUID = -784106970642770923L;

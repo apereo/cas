@@ -16,7 +16,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link Bucket4jThrottledRequestExecutorTests}.
+ * This is {@link Bucket4jBlockingThrottledRequestExecutorTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
@@ -24,9 +24,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasBucket4jThrottlingConfiguration.class
+}, properties = {
+    "cas.authn.throttle.bucket4j.overdraft=1",
+    "cas.authn.throttle.bucket4j.capacity=1",
+    "cas.authn.throttle.bucket4j.blocking=false"
 })
 @Tag("Simple")
-public class Bucket4jThrottledRequestExecutorTests {
+public class Bucket4jBlockingThrottledRequestExecutorTests {
     @Autowired
     @Qualifier("throttledRequestExecutor")
     private ThrottledRequestExecutor throttledRequestExecutor;
@@ -37,6 +41,9 @@ public class Bucket4jThrottledRequestExecutorTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         assertFalse(this.throttledRequestExecutor.throttle(request, response));
-        assertTrue(response.containsHeader(Bucket4jThrottledRequestExecutor.HEADER_NAME_X_RATE_LIMIT_REMAINING));
+        assertNotNull(response.getHeader(Bucket4jThrottledRequestExecutor.HEADER_NAME_X_RATE_LIMIT_REMAINING));
+
+        assertTrue(this.throttledRequestExecutor.throttle(request, response));
+        assertNotNull(response.getHeader(Bucket4jThrottledRequestExecutor.HEADER_NAME_X_RATE_LIMIT_RETRY_AFTER_SECONDS));
     }
 }

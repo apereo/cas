@@ -1,5 +1,8 @@
-package org.apereo.cas.adaptors.yubikey;
+package org.apereo.cas.adaptors.yubikey.registry;
 
+import org.apereo.cas.adaptors.yubikey.AbstractYubiKeyAccountRegistryTests;
+import org.apereo.cas.adaptors.yubikey.BaseYubiKeyTests;
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -25,7 +28,6 @@ import org.springframework.boot.test.context.SpringBootTest;
         "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As=",
         "cas.authn.mfa.yubikey.json-file=file:/tmp/yubikey.json"
     })
-@Tag("MFA")
 public class JsonYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTests {
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")

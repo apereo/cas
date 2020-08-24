@@ -45,4 +45,18 @@ public class GeoLocationDeviceFingerprintComponentExtractorTests {
         assertTrue(result.isPresent());
     }
 
+    @Test
+    public void verifyNoGeoLocationDevice() {
+        val request = new MockHttpServletRequest();
+        val geoResp = new GeoLocationResponse();
+        val geoLocationService = mock(GeoLocationService.class);
+        when(geoLocationService.locate(anyDouble(), anyDouble())).thenReturn(geoResp);
+        when(geoLocationService.locate(any(GeoLocationRequest.class))).thenReturn(geoResp);
+        val ex = new GeoLocationDeviceFingerprintComponentExtractor(geoLocationService);
+        val context = new MockRequestContext();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val result = ex.extractComponent("casuser", context, true);
+        assertFalse(result.isPresent());
+    }
+
 }
