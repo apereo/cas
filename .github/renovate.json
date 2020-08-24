@@ -18,7 +18,8 @@
     "net.jradius:jradius-extended",
     "net.jradius:jradius-core",
     "net.jradius:jradius-server",
-    "com.mebigfatguy.fb-contrib:fb-contrib"
+    "com.mebigfatguy.fb-contrib:fb-contrib",
+    "xml-apis:xml-apis"
   ],
   "packageRules": [
     {
