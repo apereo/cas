@@ -546,7 +546,6 @@ jobs:
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate@v2
       - name: Run Tests
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./testcas.sh --with-coverage --category ${{ matrix.category }}
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1.0.13
