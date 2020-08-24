@@ -1,6 +1,7 @@
 package com.yubico.webauthn;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -11,13 +12,13 @@ import com.yubico.webauthn.data.AssertionRequestWrapper;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.RegistrationRequest;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,10 +29,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,7 +47,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RequestMapping(WebAuthnRestResource.BASE_ENDPOINT_WEBAUTHN)
 public class WebAuthnRestResource {
+    /**
+     * Base endpoint for all webauthn web resources.
+     */
     public static final String BASE_ENDPOINT_WEBAUTHN = "/webauthn";
+
+    public static final String WEBAUTHN_ENDPOINT_REGISTER = "/register";
+
+    public static final String WEBAUTHN_ENDPOINT_AUTHENTICATE = "/authenticate";
 
     private static final ObjectMapper MAPPER = JacksonCodecs.json().findAndRegisterModules();
 
@@ -57,70 +65,61 @@ public class WebAuthnRestResource {
     private final JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
 
     @GetMapping
-    public ResponseEntity<Object> index() {
-        return new ResponseEntity<>(writeJson(new IndexResponse()), HttpStatus.OK);
+    public ResponseEntity<String> root() {
+        val casServer = casProperties.getServer();
+        val authenticate = casServer.buildContextRelativeUrl(BASE_ENDPOINT_WEBAUTHN + WEBAUTHN_ENDPOINT_AUTHENTICATE);
+        val deleteAccount = casServer.buildContextRelativeUrl(BASE_ENDPOINT_WEBAUTHN + "/delete-account");
+        val deregister = casServer.buildContextRelativeUrl(BASE_ENDPOINT_WEBAUTHN + "/action/deregister");
+        val register = casServer.buildContextRelativeUrl(BASE_ENDPOINT_WEBAUTHN + WEBAUTHN_ENDPOINT_REGISTER);
+        val endpoints = Map.of("actions", Map.of(
+            "authenticate", authenticate,
+            "deleteAccount", deleteAccount,
+            "deregister", deregister,
+            "register", register));
+        return new ResponseEntity<>(writeJson(endpoints), HttpStatus.OK);
     }
 
-    @PostMapping("/register")
+    @PostMapping(WEBAUTHN_ENDPOINT_REGISTER)
     public ResponseEntity<Object> startRegistration(
         @NonNull @RequestParam("username") final String username,
         @NonNull @RequestParam("displayName") final String displayName,
-        @RequestParam(value = "credentialNickname", required = false, defaultValue = "true") final String credentialNickname,
+        @RequestParam(value = "credentialNickname", required = false, defaultValue = StringUtils.EMPTY) final String credentialNickname,
         @RequestParam(value = "requireResidentKey", required = false) final boolean requireResidentKey,
-        @RequestParam(value = "sessionToken", required = false, defaultValue = StringUtils.EMPTY) final String sessionTokenBase64) throws Exception {
+        @RequestParam(value = "sessionToken", required = false, defaultValue = StringUtils.EMPTY) final String sessionTokenBase64)
+        throws Exception {
+
         val result = server.startRegistration(
             username,
             Optional.of(displayName),
             Optional.ofNullable(credentialNickname),
             requireResidentKey,
-            Optional.ofNullable(sessionTokenBase64).map(base64 -> {
-                try {
-                    return ByteArray.fromBase64Url(base64);
-                } catch (final Exception e) {
-                    throw new RuntimeException(e);
-                }
-            })
-        );
+            Optional.ofNullable(sessionTokenBase64).map(Unchecked.function(ByteArray::fromBase64Url)));
 
         if (result.isRight()) {
-            return startResponse("startRegistration", new StartRegistrationResponse(result.right().get()));
+            return startResponse(new StartRegistrationResponse(result.right().get()));
         }
-        return messagesJson(
-            ResponseEntity.badRequest(),
-            result.left().get()
-        );
-
+        return messagesJson(ResponseEntity.badRequest(), result.left().get());
     }
 
     @PostMapping("/register/finish")
     public ResponseEntity finishRegistration(@RequestBody final String responseJson) throws Exception {
         val result = server.finishRegistration(responseJson);
-        return finishResponse(
-            result,
-            "Attestation verification failed",
-            responseJson
-        );
+        return finishResponse(result, "Attestation verification failed", responseJson);
     }
 
-    @PostMapping("/authenticate")
-    public ResponseEntity startAuthentication(@RequestParam("username") final String username) throws MalformedURLException {
+    @PostMapping(WEBAUTHN_ENDPOINT_AUTHENTICATE)
+    public ResponseEntity<Object> startAuthentication(@RequestParam("username") final String username) {
         val request = server.startAuthentication(Optional.ofNullable(username));
         if (request.isRight()) {
-            return startResponse("startAuthentication", new StartAuthenticationResponse(request.right().get()));
+            return startResponse(new StartAuthenticationResponse(request.right().get()));
         }
         return messagesJson(ResponseEntity.badRequest(), request.left().get());
-
     }
 
     @PostMapping("/authenticate/finish")
     public ResponseEntity finishAuthentication(@NonNull final String responseJson) {
         val result = server.finishAuthentication(responseJson);
-
-        return finishResponse(
-            result,
-            "Authentication verification failed",
-            responseJson
-        );
+        return finishResponse(result, "Authentication verification failed", responseJson);
     }
 
     @PostMapping("/action/deregister")
@@ -129,33 +128,17 @@ public class WebAuthnRestResource {
         @NonNull @RequestParam("credentialId") final String credentialIdBase64) {
         try {
             val credentialId = ByteArray.fromBase64Url(credentialIdBase64);
-
-            val result = server.deregisterCredential(
-                ByteArray.fromBase64Url(sessionTokenBase64),
-                credentialId
-            );
+            val result = server.deregisterCredential(ByteArray.fromBase64Url(sessionTokenBase64), credentialId);
 
             if (result.isRight()) {
-                return finishResponse(
-                    result,
-                    "Failed to deregister credential.",
-                    StringUtils.EMPTY
-                );
+                return finishResponse(result, "Failed to deregister credential", StringUtils.EMPTY);
             }
-            return messagesJson(
-                ResponseEntity.badRequest(),
-                result.left().get()
-            );
+            return messagesJson(ResponseEntity.badRequest(), result.left().get());
 
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            return messagesJson(
-                ResponseEntity.badRequest(),
-                "Credential ID is not valid Base64Url data: " + credentialIdBase64
-            );
+            LoggingUtils.error(LOGGER, e);
+            return messagesJson(ResponseEntity.badRequest(), "Invalid credential id" + credentialIdBase64);
         }
-
-
     }
 
     @DeleteMapping("/delete-account")
@@ -169,10 +152,7 @@ public class WebAuthnRestResource {
         if (result.isRight()) {
             return ResponseEntity.ok(writeJson(result.right().get().toString()));
         }
-        return messagesJson(
-            ResponseEntity.badRequest(),
-            result.left().get()
-        );
+        return messagesJson(ResponseEntity.badRequest(), result.left().get());
     }
 
     private static ResponseEntity<Object> jsonFail() {
@@ -180,12 +160,11 @@ public class WebAuthnRestResource {
             .body("{\"messages\":[\"Failed to encode response as JSON\"]}");
     }
 
-    private static ResponseEntity<Object> startResponse(final String operationName, final Object request) {
+    private static ResponseEntity<Object> startResponse(final Object request) {
         try {
-            LOGGER.trace("Operation: {}", operationName);
             return ResponseEntity.ok(writeJson(request));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             return jsonFail();
         }
     }
@@ -202,17 +181,11 @@ public class WebAuthnRestResource {
                 LOGGER.trace("Response: [{}]", responseJson);
                 return ResponseEntity.ok(writeJson(result.right().get()));
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
-                return messagesJson(
-                    ResponseEntity.ok(),
-                    jsonFailMessage
-                );
+                LoggingUtils.error(LOGGER, e);
+                return messagesJson(ResponseEntity.ok(), jsonFailMessage);
             }
         }
-        return messagesJson(
-            ResponseEntity.badRequest(),
-            result.left().get()
-        );
+        return messagesJson(ResponseEntity.badRequest(), result.left().get());
     }
 
     private ResponseEntity<Object> messagesJson(final ResponseEntity.BodyBuilder response, final String message) {
@@ -228,7 +201,7 @@ public class WebAuthnRestResource {
                     )
                 ));
         } catch (final Exception e) {
-            LOGGER.error("Failed to encode messages as JSON: {}", messages, e);
+            LoggingUtils.error(LOGGER, e);
             return jsonFail();
         }
     }
@@ -261,29 +234,5 @@ public class WebAuthnRestResource {
     @Getter
     private class StartAuthenticationActions {
         private final URL finish = casProperties.getServer().buildContextRelativeUrl(BASE_ENDPOINT_WEBAUTHN + "/authenticate/finish");
-    }
-
-    @NoArgsConstructor
-    @Getter
-    private class IndexResponse {
-        private final Index actions = new Index();
-    }
-
-    @Getter
-    private class Index {
-        private final URL authenticate;
-
-        private final URL deleteAccount;
-
-        private final URL deregister;
-
-        private final URL register;
-
-        Index() {
-            authenticate = casProperties.getServer().buildContextRelativeUrl(BASE_ENDPOINT_WEBAUTHN + "/authenticate");
-            deleteAccount = casProperties.getServer().buildContextRelativeUrl(BASE_ENDPOINT_WEBAUTHN + "/delete-account");
-            deregister = casProperties.getServer().buildContextRelativeUrl(BASE_ENDPOINT_WEBAUTHN + "/action/deregister");
-            register = casProperties.getServer().buildContextRelativeUrl(BASE_ENDPOINT_WEBAUTHN + "/register");
-        }
     }
 }
