@@ -1,5 +1,7 @@
-
 package org.apereo.cas.authentication.soap.generated;
+
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -31,34 +33,11 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "username"
 })
+@Getter
+@Setter
 @XmlRootElement(name = "getSoapAuthenticationRequest")
 public class GetSoapAuthenticationRequest {
 
     @XmlElement(required = true)
     protected String username;
-
-    /**
-     * Gets the value of the username property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getUsername() {
-        return username;
-    }
-
-    /**
-     * Sets the value of the username property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setUsername(String value) {
-        this.username = value;
-    }
-
 }

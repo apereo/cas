@@ -36,7 +36,7 @@ while (( "$#" )); do
                 coverageTask="jacocoTestReport "
                 ;;
             *)
-                coverageTask="jacocoRootReport "
+                coverageTask="sonarqube jacocoRootReport "
                 ;;
         esac
         shift
