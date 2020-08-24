@@ -5,7 +5,7 @@ In order to make all loggers asynchronous, run CAS with the following system pro
 Do not use <asyncRoot> or <asyncLogger> if using AsyncLoggerContextSelector to make all loggers async
 -->
 <!-- Specify the refresh internal in seconds. -->
-<Configuration monitorInterval="5" packages="org.apereo.cas.logging">
+<Configuration monitorInterval="5" status="info" packages="org.apereo.cas.logging">
     <Properties>
         <Property name="baseDir">/tmp/logs</Property>
         <Property name="cas.log.level">info</Property>
@@ -91,6 +91,7 @@ Do not use <asyncRoot> or <asyncLogger> if using AsyncLoggerContextSelector to m
         </CasAppender>
         <CasAppender name="casStackTraceFile">
             <AppenderRef ref="stacktracefile" />
+            <ExceptionOnlyFilter/>
         </CasAppender>
         <CasAppender name="casConsole">
             <AppenderRef ref="console" />
@@ -153,7 +154,7 @@ Do not use <asyncRoot> or <asyncLogger> if using AsyncLoggerContextSelector to m
         <Logger name="org.jasig.spring" level="warn" includeLocation="${sys:log.include.location}"/>
         <Logger name="org.apache.cxf" level="warn" includeLocation="${sys:log.include.location}"/>
         <Logger name="org.apache.http" level="warn" includeLocation="${sys:log.include.location}"/>
-
+b
         <Root level="warn">
             <AppenderRef ref="casFile"/>
             <AppenderRef ref="casConsole"/>

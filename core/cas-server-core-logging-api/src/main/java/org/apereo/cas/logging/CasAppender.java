@@ -40,18 +40,34 @@ public class CasAppender extends AbstractAppender {
     }
 
     /**
+     * Instantiates a new CAS appender.
+     *
+     * @param name                the name
+     * @param config              the config
+     * @param appenderRef         the appender ref
+     * @param exceptionOnlyFilter the exception only filter
+     */
+    public CasAppender(final String name, final Configuration config, final AppenderRef appenderRef, final ExceptionOnlyFilter exceptionOnlyFilter) {
+        super(name, exceptionOnlyFilter, PatternLayout.createDefaultLayout(), false, Property.EMPTY_ARRAY);
+        this.config = config;
+        this.appenderRef = appenderRef;
+    }
+
+    /**
      * Create appender cas appender.
      *
-     * @param name        the name
-     * @param appenderRef the appender ref
-     * @param config      the config
+     * @param name                the name
+     * @param appenderRef         the appender ref
+     * @param exceptionOnlyFilter the optional ExceptionOnlyFilter
+     * @param config              the config
      * @return the cas appender
      */
     @PluginFactory
     public static CasAppender build(@PluginAttribute("name") final String name,
                                     @PluginElement("AppenderRef") final AppenderRef appenderRef,
+                                    @PluginElement("ExceptionOnlyFilter") final ExceptionOnlyFilter exceptionOnlyFilter,
                                     @PluginConfiguration final Configuration config) {
-        return new CasAppender(name, config, appenderRef);
+        return new CasAppender(name, config, appenderRef, exceptionOnlyFilter);
     }
 
     @Override
