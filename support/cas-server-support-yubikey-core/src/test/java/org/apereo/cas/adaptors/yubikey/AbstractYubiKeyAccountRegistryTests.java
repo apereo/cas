@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 public abstract class AbstractYubiKeyAccountRegistryTests {
-    protected static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
+    public static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
 
     private static final String BAD_TOKEN = "123456";
 

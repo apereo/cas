@@ -83,8 +83,9 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Test
     public void verifyTrustEngine() {
-        val record = getMultifactorAuthenticationTrustRecord();
-        getMfaTrustEngine().save(record);
+        var record = getMultifactorAuthenticationTrustRecord();
+        record = getMfaTrustEngine().save(record);
+        assertNotNull(getMfaTrustEngine().get(record.getId()));
         assertFalse(getMfaTrustEngine().getAll().isEmpty());
         assertFalse(getMfaTrustEngine().get(record.getPrincipal()).isEmpty());
         val now = ZonedDateTime.now(ZoneOffset.UTC).minusDays(2);
@@ -92,6 +93,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         assertFalse(getMfaTrustEngine().get(record.getPrincipal(), now).isEmpty());
 
         getMfaTrustEngine().remove(DateTimeUtils.zonedDateTimeOf(record.getExpirationDate()).plusDays(1));
+        getMfaTrustEngine().remove(record.getRecordKey());
         assertTrue(getMfaTrustEngine().getAll().isEmpty());
     }
 

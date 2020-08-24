@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +35,7 @@ import java.security.PublicKey;
 @EqualsAndHashCode(of = {"location", "algorithm"})
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @AllArgsConstructor
+@Accessors(chain = true)
 public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKey {
 
     private static final long serialVersionUID = -8497658523695695863L;

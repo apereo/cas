@@ -12,6 +12,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,7 @@ import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -70,6 +72,13 @@ public class MultifactorAuthenticationSetTrustActionTests extends AbstractMultif
     }
 
     @Test
+    public void verifySetDeviceWithNoName() throws Exception {
+        val bean = new MultifactorAuthenticationTrustBean().setDeviceName(StringUtils.EMPTY);
+        WebUtils.putMultifactorAuthenticationTrustRecord(context, bean);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaSetTrustAction.execute(context).getId());
+    }
+
+    @Test
     public void verifySetDevice() throws Exception {
         val bean = new MultifactorAuthenticationTrustBean().setDeviceName("ApereoCAS");
         WebUtils.putMultifactorAuthenticationTrustRecord(context, bean);
@@ -78,6 +87,20 @@ public class MultifactorAuthenticationSetTrustActionTests extends AbstractMultif
         assertTrue(authn.getAttributes().containsKey(
             casProperties.getAuthn().getMfa().getTrusted().getAuthenticationContextAttribute()));
     }
+
+    @Test
+    public void verifySetDeviceWithExp() throws Exception {
+        val bean = new MultifactorAuthenticationTrustBean()
+            .setTimeUnit(ChronoUnit.MONTHS)
+            .setExpiration(2)
+            .setDeviceName("ApereoCAS-Device");
+        WebUtils.putMultifactorAuthenticationTrustRecord(context, bean);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaSetTrustAction.execute(context).getId());
+        val authn = WebUtils.getAuthentication(context);
+        assertTrue(authn.getAttributes().containsKey(
+            casProperties.getAuthn().getMfa().getTrusted().getAuthenticationContextAttribute()));
+    }
+
 
     @Test
     public void verifyNoAuthN() throws Exception {
