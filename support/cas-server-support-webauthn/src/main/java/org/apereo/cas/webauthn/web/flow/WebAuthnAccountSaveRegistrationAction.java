@@ -11,7 +11,7 @@ import org.springframework.webflow.execution.RequestContext;
  * This is {@link WebAuthnAccountSaveRegistrationAction}.
  *
  * @author Misagh Moayyed
- * @since 6.1.0
+ * @since 6.3.0
  */
 @RequiredArgsConstructor
 @Getter

@@ -1,7 +1,7 @@
 /**********************************
  * Base64 Core
  **********************************/
-(function(root, factory) {
+(function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define(['base64js'], factory);
     } else if (typeof module === 'object' && module.exports) {
@@ -9,7 +9,7 @@
     } else {
         root.base64url = factory(root.base64js);
     }
-})(this, function(base64js) {
+})(this, function (base64js) {
 
     function ensureUint8Array(arg) {
         if (arg instanceof ArrayBuffer) {
@@ -47,7 +47,7 @@
  * WebAuthN Core
  *******************************************************/
 
-(function(root, factory) {
+(function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define(['base64url'], factory);
     } else if (typeof module === 'object' && module.exports) {
@@ -55,7 +55,7 @@
     } else {
         root.webauthn = factory(root.base64url);
     }
-})(this, function(base64url) {
+})(this, function (base64url) {
 
     function extend(obj, more) {
         return Object.assign({}, obj, more);
@@ -248,20 +248,16 @@ function setStatus(statusText) {
 }
 
 function addMessage(message) {
-    $('#messages').append("<p>" + message + "</p><br>");
+    $('#messages').html("<p>" + message + "</p>");
 }
 
 function addMessages(messages) {
     messages.forEach(addMessage);
 }
 
-function clearMessages() {
-    $('#messages').empty();
-}
-
 function showJson(name, data) {
     if (data != null) {
-        document.getElementById(name).textContent = JSON.stringify(data, false, 4);
+        $('#' + name).text(JSON.stringify(data, false, 4));
     }
 }
 
@@ -276,13 +272,13 @@ function showAuthenticatorResponse(data) {
             _clientDataJson: data && JSON.parse(new TextDecoder('utf-8').decode(base64url.toByteArray(clientDataJson))),
         }));
 }
+
 function showServerResponse(data) {
     if (data && data.messages) {
         addMessages(data.messages);
     }
     return showJson('server-response', data);
 }
-
 
 function hideDeviceInfo() {
     $("#device-info").hide();
@@ -295,6 +291,7 @@ function showDeviceInfo(params) {
     // $("#nickname").val(params.nickname);
     $("#device-icon").attr("src", params.imageUrl);
     $("#registerButton").hide();
+    $("#deviceNamePanel").hide();
 }
 
 function resetDisplays() {
@@ -303,12 +300,11 @@ function resetDisplays() {
     showAuthenticatorResponse(null);
     showServerResponse(null);
      */
-    clearMessages();
     hideDeviceInfo();
 }
 
 function getIndexActions() {
-    return fetch('api/v1/')
+    return fetch('webauthn/')
         .then(response => response.json())
         .then(data => data.actions);
 }
@@ -371,7 +367,7 @@ function performCeremony(params) {
             const urls = params.actions;
             setStatus(statusStrings.authenticatorRequest);
             if (callbacks.authenticatorRequest) {
-                callbacks.authenticatorRequest({ request, urls });
+                callbacks.authenticatorRequest({request, urls});
             }
             showRequest(request);
             ceremonyState = {
@@ -394,7 +390,7 @@ function finishCeremony(response) {
 
     setStatus(statusStrings.serverRequest || 'Sending response to server...');
     if (callbacks.serverRequest) {
-        callbacks.serverRequest({ urls, request, response });
+        callbacks.serverRequest({urls, request, response});
     }
     showAuthenticatorResponse(response);
 
@@ -410,13 +406,8 @@ function finishCeremony(response) {
         });
 }
 
-function register(requireResidentKey = false, getRequest = getRegisterRequest) {
-    const username = $('#username').value;
-    const displayName = "Misagh";
-    const credentialNickname = "MisaghMoayyed";
-
+function register(username, displayName, credentialNickname, requireResidentKey = false, getRequest = getRegisterRequest) {
     var request;
-
     return performCeremony({
         getIndexActions,
         getRequest: urls => getRequest(urls, username, displayName, credentialNickname, requireResidentKey),
@@ -431,11 +422,8 @@ function register(requireResidentKey = false, getRequest = getRegisterRequest) {
         }
     })
         .then(data => {
-            clearMessages();
             if (data.registration) {
-                const nicknameInfo = {
-                    nickname: data.registration.credentialNickname,
-                };
+                const nicknameInfo = {nickname: data.registration.credentialNickname};
 
                 if (data.registration && data.registration.attestationMetadata) {
                     showDeviceInfo(extend(
@@ -447,12 +435,16 @@ function register(requireResidentKey = false, getRequest = getRegisterRequest) {
                 }
 
                 if (!data.attestationTrusted) {
-                    addMessage("Warning: Attestation cannot be trusted.");
+                    addMessage("Attestation cannot be trusted.");
+                } else {
+                    setTimeout(function () {
+                        $('#sessionToken').val(session.sessionToken);
+                        $('#form').submit();
+                    }, 1500);
                 }
             }
         })
         .catch((err) => {
-            clearMessages();
             setStatus('Registration failed.');
             console.error('Registration failed', err);
 
@@ -467,7 +459,7 @@ function register(requireResidentKey = false, getRequest = getRegisterRequest) {
             } else if (err.name === 'InvalidStateError') {
                 addMessage(`This authenticator is already registered for the account "${username}".`)
             } else if (err.message) {
-                addMessage(`${err.name}: ${err.message}`);
+                addMessage(`${err.message}`);
             } else if (err.messages) {
                 addMessages(err.messages);
             }
@@ -477,7 +469,7 @@ function register(requireResidentKey = false, getRequest = getRegisterRequest) {
 
 function getAuthenticateRequest(urls, username) {
     return fetch(urls.authenticate, {
-        body: new URLSearchParams(username ? { username } : {}),
+        body: new URLSearchParams(username ? {username} : {}),
         method: 'POST',
     })
         .then(response => response.json())
@@ -537,7 +529,6 @@ function deregister() {
         .then(updateSession)
         .then(rejectIfNotSuccess)
         .then(data => {
-            clearMessages();
             if (data.success) {
                 if (data.droppedRegistration) {
                     addMessage(`Successfully de-registered credential: ${data.droppedRegistration.credentialNickname || credentialId}`);
@@ -553,7 +544,6 @@ function deregister() {
             }
         })
         .catch((err) => {
-            clearMessages();
             setStatus('Credential de-registration failed.');
             if (err.message) {
                 addMessage(`${err.name}: ${err.message}`);

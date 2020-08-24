@@ -27,6 +27,12 @@ public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProper
     private static final long serialVersionUID = 4211350313777066398L;
 
     /**
+     * Name of the principal attribute that indicates the principal's
+     * display name, primarily used for device registration.
+     */
+    private String displayNameAttribute = "displayName";
+
+    /**
      * Indicates whether this provider should support trusted devices.
      */
     private boolean trustedDeviceEnabled;
