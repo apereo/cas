@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.web.controllers.logout;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -8,9 +9,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.web.servlet.view.RedirectView;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,14 +31,11 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
     public void verifyOidcLogoutWithoutParams() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-
         val result = oidcLogoutEndpointController.handleRequestInternal(StringUtils.EMPTY, StringUtils.EMPTY,
             StringUtils.EMPTY, request, response);
-        assertTrue(result instanceof RedirectView);
-
-        val redirectView = (RedirectView) result;
-        val redirectUrl = redirectView.getUrl();
-        assertEquals("https://cas.example.org:8443/cas/logout", redirectUrl);
+        assertEquals(HttpStatus.PERMANENT_REDIRECT, result);
+        val redirectUrl = WebUtils.getLogoutRedirectUrl(request, String.class);
+        assertNull(redirectUrl);
     }
 
     @Test
@@ -47,11 +45,9 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
 
         val result = oidcLogoutEndpointController.handleRequestInternal(StringUtils.EMPTY, "abcd1234",
             StringUtils.EMPTY, request, response);
-        assertTrue(result instanceof RedirectView);
-
-        val redirectView = (RedirectView) result;
-        val redirectUrl = redirectView.getUrl();
-        assertEquals("https://cas.example.org:8443/cas/logout?state=abcd1234", redirectUrl);
+        assertEquals(HttpStatus.PERMANENT_REDIRECT, result);
+        val redirectUrl = WebUtils.getLogoutRedirectUrl(request, String.class);
+        assertNull(redirectUrl);
     }
 
     @Test
@@ -65,11 +61,9 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
 
         val result = oidcLogoutEndpointController.handleRequestInternal(StringUtils.EMPTY, StringUtils.EMPTY,
             idToken, request, response);
-        assertTrue(result instanceof RedirectView);
-
-        val redirectView = (RedirectView) result;
-        val redirectUrl = redirectView.getUrl();
-        assertEquals("https://cas.example.org:8443/cas/logout?service=https%3A%2F%2Foauth.example.org%2Flogout&client_id=clientid", redirectUrl);
+        assertEquals(HttpStatus.PERMANENT_REDIRECT, result);
+        val redirectUrl = WebUtils.getLogoutRedirectUrl(request, String.class);
+        assertEquals("https://oauth.example.org/logout?client_id=clientid", redirectUrl);
     }
 
     @Test
@@ -83,12 +77,9 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
 
         val result = oidcLogoutEndpointController.handleRequestInternal(StringUtils.EMPTY, "abcd1234",
             idToken, request, response);
-        assertTrue(result instanceof RedirectView);
-
-        val redirectView = (RedirectView) result;
-        val redirectUrl = redirectView.getUrl();
-        assertEquals("https://cas.example.org:8443/cas/logout?service=https%3A%2F%2Foauth.example.org%2Flogout%3Fstate%3Dabcd1234&state=abcd1234&client_id=clientid",
-            redirectUrl);
+        assertEquals(HttpStatus.PERMANENT_REDIRECT, result);
+        val redirectUrl = WebUtils.getLogoutRedirectUrl(request, String.class);
+        assertEquals("https://oauth.example.org/logout?state=abcd1234&client_id=clientid", redirectUrl);
     }
 
     @Test
@@ -101,11 +92,9 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
         val idToken = oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims);
 
         val result = oidcLogoutEndpointController.handleRequestInternal("https://logout", "abcd1234", idToken, request, response);
-        assertTrue(result instanceof RedirectView);
-
-        val redirectView = (RedirectView) result;
-        val redirectUrl = redirectView.getUrl();
-        assertEquals("https://cas.example.org:8443/cas/logout?service=https%3A%2F%2Flogout%3Fstate%3Dabcd1234&state=abcd1234&client_id=clientid", redirectUrl);
+        assertEquals(HttpStatus.PERMANENT_REDIRECT, result);
+        val redirectUrl = WebUtils.getLogoutRedirectUrl(request, String.class);
+        assertEquals("https://logout?state=abcd1234&client_id=clientid", redirectUrl);
     }
 
     @Test
@@ -118,11 +107,8 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
         val idToken = oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims);
 
         val result = oidcLogoutEndpointController.handleRequestInternal("https://invalidlogouturl", "abcd1234", idToken, request, response);
-        assertTrue(result instanceof RedirectView);
-
-        val redirectView = (RedirectView) result;
-        val redirectUrl = redirectView.getUrl();
-        assertEquals("https://cas.example.org:8443/cas/logout?service=https%3A%2F%2Foauth.example.org%2Flogout%3Fstate%3Dabcd1234&state=abcd1234&client_id=clientid",
-            redirectUrl);
+        assertEquals(HttpStatus.PERMANENT_REDIRECT, result);
+        val redirectUrl = WebUtils.getLogoutRedirectUrl(request, String.class);
+        assertEquals("https://oauth.example.org/logout?state=abcd1234&client_id=clientid", redirectUrl);
     }
 }
