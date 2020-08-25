@@ -48,10 +48,11 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
      */
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.LOGOUT_URL)
     @SneakyThrows
-    public ResponseEntity<HttpStatus> handleRequestInternal(@RequestParam(value = "post_logout_redirect_uri", required = false) final String postLogoutRedirectUrl,
-                                                @RequestParam(value = "state", required = false) final String state,
-                                                @RequestParam(value = "id_token_hint", required = false) final String idToken,
-                                                final HttpServletRequest request, final HttpServletResponse response) {
+    public ResponseEntity<HttpStatus> handleRequestInternal(
+        @RequestParam(value = "post_logout_redirect_uri", required = false) final String postLogoutRedirectUrl,
+        @RequestParam(value = "state", required = false) final String state,
+        @RequestParam(value = "id_token_hint", required = false) final String idToken,
+        final HttpServletRequest request, final HttpServletResponse response) {
 
         if (StringUtils.isNotBlank(idToken)) {
             LOGGER.trace("Decoding logout id token [{}]", idToken);

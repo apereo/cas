@@ -59,7 +59,7 @@ YubiKey devices used for [multifactor authentication](../mfa/YubiKey-Authenticat
 
 ### Test Coverage via CodeCov
 
-CAS test coverage across all modules in the codebase has now reached `83%` and continues to climb. Additional validation rules are also applied 
+CAS test coverage across all modules in the codebase has now reached `84%` and continues to climb. Additional validation rules are also applied 
 to fail all pull requests that fall below this threshold. This area will be closely monitored and improved
 as progress is made with the goal of hopefully reaching at least `85%` before the final GA release. Of course, this will not be a blocker for the final release.
 
