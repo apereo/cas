@@ -2,6 +2,7 @@ package org.apereo.cas.web.report;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
@@ -155,7 +156,9 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
 
         val sessionsMap = new HashMap<String, Object>(1);
         try {
-            this.centralAuthenticationService.deleteTicket(ticketGrantingTicket);
+            if (centralAuthenticationService.deleteTicket(ticketGrantingTicket) == 0) {
+                throw new InvalidTicketException(ticketGrantingTicket);
+            }
             sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
             sessionsMap.put(TICKET_GRANTING_TICKET, ticketGrantingTicket);
         } catch (final Exception e) {
@@ -176,7 +179,6 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      */
     @DeleteOperation
     public Map<String, Object> destroySsoSessions(@Nullable final String type, @Nullable final String username) {
-
         if (StringUtils.isBlank(username) && StringUtils.isBlank(type)) {
             return Map.of(STATUS, HttpServletResponse.SC_BAD_REQUEST);
         }
