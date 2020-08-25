@@ -124,7 +124,9 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
      * @param record record to be deleted
      */
     public void deleteRecord(final CouchDbMultifactorAuthenticationTrustRecord record) {
-        remove(record);
+        if (record != null) {
+            remove(record);
+        }
     }
 
     /**
