@@ -23,6 +23,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
     private static final int MAX_CACHE_SIZE = 10_000;
 
     private final SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
+
     private final LoadingCache<SamlRegisteredServiceCacheKey, MetadataResolver> cache;
 
     public SamlRegisteredServiceDefaultCachingMetadataResolver(final long metadataCacheExpirationMinutes,

@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.query;
+package org.apereo.cas.ticket.artifact;
 
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
@@ -10,31 +10,33 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link DefaultSamlAttributeQueryTicketFactoryTests}.
+ * This is {@link DefaultSamlArtifactTicketFactoryTests}.
  *
  * @author Misagh Moayyed
- * @since 6.1.0
+ * @since 6.3.0
  */
 @Tag("SAML")
-public class DefaultSamlAttributeQueryTicketFactoryTests extends BaseSamlIdPConfigurationTests {
+public class DefaultSamlArtifactTicketFactoryTests extends BaseSamlIdPConfigurationTests {
     @Autowired
-    @Qualifier("samlAttributeQueryTicketFactory")
-    private SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory;
+    @Qualifier("samlArtifactTicketFactory")
+    private SamlArtifactTicketFactory samlArtifactTicketFactory;
 
     @Test
     public void verifyOperation() {
-
         val tgt = new MockTicketGrantingTicket("casuser");
-        val ticketId = samlAttributeQueryTicketFactory.create("ATTR_QUERY",
-            getAuthnRequestFor("helloworld"), "https://www.example.org", tgt);
+        val ticketId = samlArtifactTicketFactory.create(UUID.randomUUID().toString(), tgt.getAuthentication(),
+            tgt, casProperties.getAuthn().getSamlIdp().getEntityId(),
+            "https://www.example.org", getAuthnRequestFor("helloworld"));
         assertNotNull(ticketId);
         assertNotNull(ticketId.getPrefix());
         assertNotNull(ticketId.getTicketGrantingTicket());
         assertNotNull(ticketId.getObject());
-        assertNotNull(ticketId.getRelyingParty());
+        assertNotNull(ticketId.getRelyingPartyId());
         assertNotNull(ticketId.getExpirationPolicy());
         assertTrue(ticketId.isFromNewLogin());
         assertThrows(UnsupportedOperationException.class,
