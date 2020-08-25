@@ -96,7 +96,8 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
 
         HttpResponse response = null;
         try {
-            response = HttpUtils.executePost(msg.getUrl().toExternalForm(), CollectionUtils.wrap("logout_token", payload),
+            response = HttpUtils.executePost(msg.getUrl().toExternalForm(),
+                CollectionUtils.wrap("logout_token", payload),
                 CollectionUtils.wrap("Content-Type", msg.getContentType()));
 
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {

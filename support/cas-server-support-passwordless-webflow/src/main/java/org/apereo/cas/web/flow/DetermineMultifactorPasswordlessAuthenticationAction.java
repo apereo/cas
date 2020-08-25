@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderAbsentException;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -102,11 +101,11 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends Abstra
 
     protected Optional<String> resolveMultifactorAuthenticationProvider(final RequestContext requestContext, final Authentication auth,
                                                                         final WebApplicationService service) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val registeredService = WebUtils.getRegisteredService(requestContext);
         try {
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val registeredService = WebUtils.getRegisteredService(requestContext);
             return multifactorTriggerSelectionStrategy.resolve(request, registeredService, auth, service);
-        } catch (final MultifactorAuthenticationProviderAbsentException e) {
+        } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
