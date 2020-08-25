@@ -73,6 +73,23 @@ public class DetermineDelegatedAuthenticationActionTests extends BasePasswordles
     }
 
     @Test
+    public void verifyActionByUser() throws Exception {
+        val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
+        val context = new MockRequestContext(exec);
+        val request = new MockHttpServletRequest();
+        val account = PasswordlessUserAccount.builder()
+            .email("email")
+            .phone("phone")
+            .delegatedAuthenticationEligible(TriStateBoolean.TRUE)
+            .username("casuser")
+            .name("casuser")
+            .build();
+        WebUtils.putPasswordlessAuthenticationAccount(context, account);
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_REDIRECT, determineDelegatedAuthenticationAction.execute(context).getId());
+    }
+
+    @Test
     public void verifyAuthInactive() throws Exception {
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
         val context = new MockRequestContext(exec);
