@@ -289,6 +289,10 @@ subprojects {
             mavenContent { releasesOnly() }
         }
         maven {
+            url "https://repo.terracotta.org/maven2"
+            mavenContent { releasesOnly() }
+        }
+        maven {
             url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
             mavenContent { snapshotsOnly() }
         }
