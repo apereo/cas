@@ -1,6 +1,6 @@
-package org.apereo.cas.adaptors.swivel;
+package org.apereo.cas.adaptors.swivel.web.flow;
 
-import org.apereo.cas.adaptors.swivel.web.flow.SwivelMultifactorWebflowConfigurer;
+import org.apereo.cas.adaptors.swivel.BaseSwivelAuthenticationTests;
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;
 
 import lombok.Getter;
@@ -36,4 +36,3 @@ public class SwivelMultifactorWebflowConfigurerTests extends BaseMultifactorWebf
         return SwivelMultifactorWebflowConfigurer.MFA_SWIVEL_EVENT_ID;
     }
 }
-
