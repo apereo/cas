@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 
 /**
  * This is {@link SamlIdPSaml2AttributeQueryProfileHandlerController}.
@@ -27,8 +28,6 @@ import java.util.LinkedHashMap;
  */
 @Slf4j
 public class SamlIdPSaml2AttributeQueryProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
-
-
     public SamlIdPSaml2AttributeQueryProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
         super(samlProfileHandlerConfigurationContext);
     }
@@ -46,11 +45,12 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
         val query = (AttributeQuery) ctx.getMessage();
         val config = getSamlProfileHandlerConfigurationContext();
         try {
-            val issuer = query.getIssuer().getValue();
+            val issuer = Objects.requireNonNull(query).getIssuer().getValue();
             val service = verifySamlRegisteredService(issuer);
             val adaptor = getSamlMetadataFacadeFor(service, query);
             if (adaptor.isEmpty()) {
-                throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
+                throw new UnauthorizedServiceException(
+                    UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
             }
 
             val facade = adaptor.get();
@@ -59,7 +59,9 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
             val availableAttributes = new LinkedHashMap<String, Object>();
             val finalAttributes = new LinkedHashMap<String, Object>();
             if (!query.getAttributes().isEmpty()) {
-                val id = config.getSamlAttributeQueryTicketFactory().createTicketIdFor(query.getSubject().getNameID().getValue());
+                val id = config.getSamlAttributeQueryTicketFactory()
+                    .createTicketIdFor(query.getSubject().getNameID().getValue());
+                LOGGER.debug("Created ticket id for attribute query [{}]", id);
                 val ticket = config.getTicketRegistry().getTicket(id, SamlAttributeQueryTicket.class);
                 if (ticket == null) {
                     throw new InvalidTicketException(id);
