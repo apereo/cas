@@ -113,6 +113,11 @@ SAML2 single logout handling handling, when CAS is running as a [SAML2 identity 
 able to produce a logout response for the service provider once the single logout sequence has completed. Additionally, logout requests
 are no longer sent to the original service provider which initiated the single logout flow. 
 
+### OpenID Connect Logout
+
+Logout requests handled by OpenID Connect authentication flows can now properly redirect to a requested URL via `post_logout_redirect_uri`
+provided `id_token_hint` is specified, and the logout URL is authorized for the relying party.
+
 ### Okta SDK v2
 
 CAS is now using the Okta SDK v2 mainly used to handle the integration between CAS and Okta for authentication and attribute resolution.
@@ -206,6 +211,10 @@ both the group's evaluation priority as well as each individual service's evalua
 - Gradle
 - Okta
 - Shiro
+- Hazelcast AWS
+- Hazelcast Kubernetes
+- Hazelcast Azure
+- EhCache
 - Spring Boot Admin
 - Ldaptive
 - Inspektr

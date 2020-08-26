@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.val;
 
 import java.io.Serializable;
@@ -28,6 +29,7 @@ import java.util.TreeMap;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@Accessors(chain = true)
 public class DistributedCacheObject<V extends Serializable> implements Serializable {
     private static final long serialVersionUID = -6776499291439952013L;
 

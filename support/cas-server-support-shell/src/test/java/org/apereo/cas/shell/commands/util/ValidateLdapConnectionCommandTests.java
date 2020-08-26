@@ -33,7 +33,6 @@ public class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests
     public void verifyOperation() {
         val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
             + "--bindCredential_password_--searchFilter_cn=admin_--userPassword_password_--userAttributes_cn";
-
         val result = shell.evaluate(new Input() {
             @Override
             public String rawText() {
@@ -46,5 +45,45 @@ public class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests
             }
         });
         assertTrue((Boolean) result);
+    }
+
+    @Test
+    public void verifyFailsOperation() {
+        val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
+            + "--bindCredential_password_--searchFilter_badfilter_--userPassword_password_--userAttributes_cn";
+
+        val input = new Input() {
+            @Override
+            public String rawText() {
+                return StringUtils.replace(cmd, "_", " ");
+            }
+
+            @Override
+            public List<String> words() {
+                return Arrays.asList(cmd.split("_"));
+            }
+        };
+        val result = shell.evaluate(input);
+        assertFalse((Boolean) result);
+    }
+
+    @Test
+    public void verifyNoResult() {
+        val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
+            + "--bindCredential_password_--searchFilter_cn=123456_--userPassword_password_--userAttributes_cn";
+
+        val input = new Input() {
+            @Override
+            public String rawText() {
+                return StringUtils.replace(cmd, "_", " ");
+            }
+
+            @Override
+            public List<String> words() {
+                return Arrays.asList(cmd.split("_"));
+            }
+        };
+        val result = shell.evaluate(input);
+        assertFalse((Boolean) result);
     }
 }

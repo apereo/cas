@@ -49,17 +49,6 @@ public class GenerateJwtCommand {
     /**
      * Generate.
      *
-     * @param subject the subject
-     */
-    public static void generate(final String subject) {
-        generate(DEFAULT_SIGNING_SECRET_SIZE, DEFAULT_ENCRYPTION_SECRET_SIZE,
-            DEFAULT_SIGNING_ALGORITHM, DEFAULT_ENCRYPTION_ALGORITHM,
-            DEFAULT_ENCRYPTION_METHOD, subject);
-    }
-
-    /**
-     * Generate.
-     *
      * @param signingSecretSize    the signing secret size
      * @param encryptionSecretSize the encryption secret size
      * @param signingAlgorithm     the signing algorithm
