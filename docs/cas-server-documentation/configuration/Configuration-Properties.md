@@ -2648,7 +2648,9 @@ Principal resolution and Person Directory settings for this feature are availabl
 
 ### X509 LDAP Integration
 
-LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.x509.ldap`.
+LDAP settings for the X509 feature (used if fetching CRLs from LDAP) are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.x509.ldap`.
+
+See LDAP attribute repositories [here](Configuration-Properties.html#ldap) to fetch additional LDAP attributes using the principal extracted from the X509 certificate. 
 
 ## Syncope Authentication
 
