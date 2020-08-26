@@ -6,7 +6,6 @@ import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 import org.apereo.cas.util.cache.MappableDistributedCacheManager;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -21,7 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Getter
 @Slf4j
 public class RegisteredServiceKafkaDistributedCacheManager extends
     MappableDistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> {
@@ -79,6 +77,6 @@ public class RegisteredServiceKafkaDistributedCacheManager extends
                 LoggingUtils.error(LOGGER, e);
             }
         });
-        
+
     }
 }
