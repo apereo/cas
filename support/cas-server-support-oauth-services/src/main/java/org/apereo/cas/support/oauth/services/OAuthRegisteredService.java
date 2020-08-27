@@ -99,6 +99,6 @@ public class OAuthRegisteredService extends RegexRegisteredService {
     @JsonIgnore
     @Override
     public int getEvaluationPriority() {
-        return 1;
+        return 2;
     }
 }
