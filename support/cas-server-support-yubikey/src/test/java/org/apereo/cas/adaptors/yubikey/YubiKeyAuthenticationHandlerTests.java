@@ -7,24 +7,32 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.support.WebUtils;
 
+import com.yubico.client.v2.ResponseStatus;
+import com.yubico.client.v2.VerificationResponse;
 import com.yubico.client.v2.YubicoClient;
+import com.yubico.client.v2.exceptions.YubicoVerificationException;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.webflow.context.ExternalContextHolder;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.RequestContextHolder;
+import org.springframework.webflow.test.MockRequestContext;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.webflow.execution.RequestContextHolder.setRequestContext;
 
 /**
  * Test cases for {@link YubiKeyAuthenticationHandler}.
@@ -36,7 +44,9 @@ import static org.mockito.Mockito.*;
 public class YubiKeyAuthenticationHandlerTests {
 
     private static final Integer CLIENT_ID = 18421;
+
     private static final String SECRET_KEY = EncodingUtils.encodeBase64("iBIehjui12aK8x82oe5qzGeb0As=");
+
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
 
     @BeforeEach
@@ -44,7 +54,20 @@ public class YubiKeyAuthenticationHandlerTests {
         val ctx = mock(RequestContext.class);
         when(ctx.getConversationScope()).thenReturn(new LocalAttributeMap<>());
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), ctx);
-        RequestContextHolder.setRequestContext(ctx);
+        setRequestContext(ctx);
+    }
+
+    @Test
+    public void checkNoAuthN() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+
+        val handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(123456, EncodingUtils.encodeBase64("123456")));
+        assertThrows(IllegalArgumentException.class, () -> handler.authenticate(new YubiKeyCredential(OTP)));
     }
 
     @Test
@@ -54,9 +77,28 @@ public class YubiKeyAuthenticationHandlerTests {
     }
 
     @Test
+    public void checkSuccessAuthn() throws Exception {
+        val client = mock(YubicoClient.class);
+        val response = mock(VerificationResponse.class);
+        when(response.getStatus()).thenReturn(ResponseStatus.OK);
+        when(client.verify(anyString())).thenReturn(response);
+        val handler = new YubiKeyAuthenticationHandler(client);
+        val result = handler.authenticate(new YubiKeyCredential(OTP));
+        assertNotNull(result);
+    }
+
+    @Test
+    public void checkFailsVerificationAuthn() throws Exception {
+        val client = mock(YubicoClient.class);
+        when(client.verify(anyString())).thenThrow(new YubicoVerificationException("fails"));
+        val handler = new YubiKeyAuthenticationHandler(client);
+        assertThrows(FailedLoginException.class, () -> handler.authenticate(new YubiKeyCredential(OTP)));
+    }
+
+
+    @Test
     public void checkReplayedAuthn() {
         val handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));
-
         assertThrows(FailedLoginException.class, () -> handler.authenticate(new YubiKeyCredential(OTP)));
     }
 

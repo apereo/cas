@@ -18,13 +18,11 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.NoResultException;
 import java.io.Serializable;
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,8 +56,6 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
                     .stream()
                     .anyMatch(device -> device.getPublicId().equals(yubikeyPublicId));
             }
-        } catch (final NoSuchElementException | NoResultException e) {
-            LOGGER.debug("No registration record could be found for id [{}] and public id [{}]", uid, yubikeyPublicId);
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
         }
@@ -71,8 +67,6 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
         try {
             val account = getAccount(uid);
             return account.isPresent() && !account.get().getDevices().isEmpty();
-        } catch (final NoResultException e) {
-            LOGGER.debug("No registration record could be found for id [{}]", uid);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
