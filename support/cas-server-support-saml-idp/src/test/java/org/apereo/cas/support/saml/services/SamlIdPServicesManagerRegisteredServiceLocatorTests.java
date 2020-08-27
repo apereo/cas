@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,11 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
     @Qualifier("samlIdPServicesManagerRegisteredServiceLocator")
     private ServicesManagerRegisteredServiceLocator samlIdPServicesManagerRegisteredServiceLocator;
 
+    @BeforeEach
+    public void setup() {
+        servicesManager.deleteAll();
+    }
+
     @Test
     public void verifyOperation() {
         assertNotNull(samlIdPServicesManagerRegisteredServiceLocator);
@@ -47,5 +53,19 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
             "https://sp.testshib.org/shibboleth-sp",
             r -> r.matches("https://sp.testshib.org/shibboleth-sp"));
         assertNotNull(result);
+    }
+
+    @Test
+    public void verifyReverseOperation() {
+        val service1 = RegisteredServiceTestUtils.getRegisteredService(".+");
+        service1.setEvaluationOrder(9);
+
+        val service2 = getSamlRegisteredServiceFor(false, false, false, ".+");
+        service2.setEvaluationOrder(10);
+
+        servicesManager.save(service1, service2);
+        val result = servicesManager.findServiceBy("https://sp.testshib.org/shibboleth-sp");
+        assertNotNull(result);
+        assertTrue(result instanceof SamlRegisteredService);
     }
 }

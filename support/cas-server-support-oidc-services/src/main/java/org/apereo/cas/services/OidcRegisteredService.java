@@ -162,7 +162,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @JsonIgnore
     @Override
     public int getEvaluationPriority() {
-        return 2;
+        return 1;
     }
     
     @JsonIgnore
