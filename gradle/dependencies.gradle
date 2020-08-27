@@ -382,10 +382,10 @@ ext.libraries = [
                 dependencies.create("org.ehcache:ehcache-clustered:$ehcache3Version") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
-                dependencies.create("org.ehcache.modules.clustered:ehcache-client:$ehcache3Version") {
+                dependencies.create("org.ehcache.modules:ehcache-client:$ehcache3Version") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
-                dependencies.create("org.ehcache.modules.clustered:ehcache-common:$ehcache3Version") {
+                dependencies.create("org.ehcache.modules:ehcache-common:$ehcache3Version") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
                 dependencies.create("org.ehcache.modules:ehcache-107:$ehcache3Version") {
