@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
@@ -59,7 +58,7 @@ public class WsFederationResponseValidator {
         }
         LOGGER.debug("Attempting to create an assertion from the token parameter");
         val rsToken = wsFederationHelper.getRequestSecurityTokenFromResult(wResult);
-        val assertion = wsFederationHelper.buildAndVerifyAssertion(rsToken, configurations);
+        val assertion = wsFederationHelper.buildAndVerifyAssertion(rsToken, configurations, service);
         if (assertion == null) {
             LOGGER.error("Could not validate assertion via parsing the token from [{}]", WRESULT);
             throw new IllegalArgumentException("Could not validate assertion via the provided token");
@@ -102,7 +101,7 @@ public class WsFederationResponseValidator {
                     rpId, configuration.getIdentityProviderIdentifier());
                 throw new IllegalArgumentException("Could not validate the provided assertion");
             }
-            context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
+            WebUtils.putServiceIntoFlowScope(context, service);
             LOGGER.debug("Creating final authentication result based on the given credential");
             val authenticationResult = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
             WebUtils.putAuthenticationResult(authenticationResult, context);
