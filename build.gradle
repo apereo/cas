@@ -85,6 +85,20 @@ apply from: rootProject.file("gradle/dependencyUpdates.gradle")
 
 if (!Boolean.getBoolean("skipSonarqube")) {
     apply plugin: "org.sonarqube"
+
+    sonarqube {
+        def token = providers.systemProperty("SONARCLOUD_TOKEN").forUseAtConfigurationTime().getOrElse(System.getenv("SONARCLOUD_TOKEN"))
+        properties {
+            property "sonar.host.url", "https://sonarcloud.io"
+            property "sonar.projectName", "cas"
+            property "sonar.sourceEncoding", "UTF-8"
+            property "sonar.java.source", project.targetCompatibility
+            property "sonar.organization", "apereo"
+            property "sonar.login", token
+            property "sonar.java.coveragePlugin", "jacoco"
+            property "sonar.coverage.jacoco.xmlReportPaths", "${rootProject.buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+        }
+    }
 }
 
 apply plugin: "org.owasp.dependencycheck"
@@ -270,6 +284,13 @@ subprojects {
         maven {
             url "https://dl.bintray.com/uniconiam/maven"
             mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://repo.terracotta.org/maven2"
+            mavenContent { releasesOnly() }
+            content {
+                includeGroup "org.terracotta"
+            }
         }
         maven {
             url "https://oss.jfrog.org/artifactory/oss-snapshot-local"

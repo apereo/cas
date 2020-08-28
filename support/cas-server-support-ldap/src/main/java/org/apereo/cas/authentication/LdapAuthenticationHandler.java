@@ -141,7 +141,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             return authenticator.authenticate(request);
         } catch (final LdapException e) {
             LOGGER.trace(e.getMessage(), e);
-            throw new PreventedException("Unexpected LDAP error", e);
+            throw new PreventedException(e);
         }
     }
 

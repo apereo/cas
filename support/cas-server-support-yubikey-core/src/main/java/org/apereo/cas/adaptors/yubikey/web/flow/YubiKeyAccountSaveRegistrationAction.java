@@ -2,9 +2,11 @@ package org.apereo.cas.adaptors.yubikey.web.flow;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
@@ -19,6 +21,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.2.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class YubiKeyAccountSaveRegistrationAction extends AbstractAction {
 
     /**
@@ -37,18 +40,22 @@ public class YubiKeyAccountSaveRegistrationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
-        val token = requestContext.getRequestParameters().getRequired(PARAMETER_NAME_TOKEN);
-        val accountName = requestContext.getRequestParameters().getRequired(PARAMETER_NAME_ACCOUNT);
+        try {
+            val uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
+            val token = requestContext.getRequestParameters().getRequired(PARAMETER_NAME_TOKEN);
+            val accountName = requestContext.getRequestParameters().getRequired(PARAMETER_NAME_ACCOUNT);
 
-        val regRequest = YubiKeyDeviceRegistrationRequest.builder()
-            .username(uid)
-            .name(accountName)
-            .token(token)
-            .build();
+            val regRequest = YubiKeyDeviceRegistrationRequest.builder()
+                .username(uid)
+                .name(accountName)
+                .token(token)
+                .build();
 
-        if (StringUtils.isNotBlank(token) && registry.registerAccountFor(regRequest)) {
-            return success();
+            if (StringUtils.isNotBlank(token) && registry.registerAccountFor(regRequest)) {
+                return success();
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
         }
         val messageContext = requestContext.getMessageContext();
         messageContext.addMessage(new MessageBuilder()

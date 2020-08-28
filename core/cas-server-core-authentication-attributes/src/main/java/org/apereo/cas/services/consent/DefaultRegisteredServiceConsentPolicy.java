@@ -24,7 +24,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Accessors(chain = true)
 public class DefaultRegisteredServiceConsentPolicy implements RegisteredServiceConsentPolicy {
 

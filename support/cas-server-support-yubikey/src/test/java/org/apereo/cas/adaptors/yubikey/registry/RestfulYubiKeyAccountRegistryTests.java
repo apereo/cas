@@ -1,5 +1,11 @@
-package org.apereo.cas.adaptors.yubikey;
+package org.apereo.cas.adaptors.yubikey.registry;
 
+import org.apereo.cas.adaptors.yubikey.AbstractYubiKeyAccountRegistryTests;
+import org.apereo.cas.adaptors.yubikey.BaseYubiKeyTests;
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
+import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;

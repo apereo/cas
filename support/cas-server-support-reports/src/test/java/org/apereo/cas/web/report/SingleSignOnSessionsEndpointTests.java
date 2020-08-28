@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
@@ -43,8 +44,15 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
 
     @Test
     public void verifyDelete() {
-        val results = singleSignOnSessionsEndpoint.destroySsoSessions(null, CoreAuthenticationTestUtils.CONST_USERNAME);
+        var results = singleSignOnSessionsEndpoint.destroySsoSessions(null, null);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), results.get("status"));
+        results = singleSignOnSessionsEndpoint.destroySsoSessions(null, CoreAuthenticationTestUtils.CONST_USERNAME);
         assertEquals(1, results.size());
+
+        results = singleSignOnSessionsEndpoint.destroySsoSession("unknown-ticket");
+        assertTrue(results.containsKey("status"));
+        assertTrue(results.containsKey("message"));
+        assertTrue(results.containsKey("ticketGrantingTicket"));
     }
 
     @Test

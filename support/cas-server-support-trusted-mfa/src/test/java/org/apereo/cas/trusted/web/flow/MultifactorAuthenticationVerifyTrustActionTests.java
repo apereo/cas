@@ -2,10 +2,12 @@ package org.apereo.cas.trusted.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
@@ -61,7 +63,7 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
         context.setExternalContext(new ServletExternalContext(new MockServletContext(),
             new MockHttpServletRequest(), new MockHttpServletResponse()));
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(r.getPrincipal()), context);
-        assertEquals("no", mfaVerifyTrustAction.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_NO, mfaVerifyTrustAction.execute(context).getId());
     }
 
     @Test
@@ -96,6 +98,28 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
 
         assertTrue(MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(context));
         assertTrue(authn.getAttributes().containsKey(casProperties.getAuthn().getMfa().getTrusted().getAuthenticationContextAttribute()));
+    }
+
+    @Test
+    @Order(3)
+    public void verifySkipVerify() throws Exception {
+        val r = getMultifactorAuthenticationTrustRecord();
+        r.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(5));
+
+        val context = new MockRequestContext();
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(),
+            new MockHttpServletRequest(), new MockHttpServletResponse()));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_NO, mfaVerifyTrustAction.execute(context).getId());
+
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("bad-principal"), context);
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.EMPTY_MAP);
+        registeredService.setMultifactorPolicy(new DefaultRegisteredServiceMultifactorPolicy().setBypassTrustedDeviceEnabled(true));
+        WebUtils.putRegisteredService(context, registeredService);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SKIP, mfaVerifyTrustAction.execute(context).getId());
+
+        registeredService.setMultifactorPolicy(new DefaultRegisteredServiceMultifactorPolicy());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_NO, mfaVerifyTrustAction.execute(context).getId());
     }
 
     @BeforeEach

@@ -3,7 +3,6 @@ package org.apereo.cas.u2f.redis;
 import org.apereo.cas.adaptors.u2f.storage.BaseU2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -53,30 +52,22 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public Collection<? extends U2FDeviceRegistration> getRegisteredDevices() {
-        try {
-            val expirationDate = LocalDate.now(ZoneId.systemDefault())
-                .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
-            val keys = (Set<String>) this.redisTemplate.keys(getPatternRedisKey());
-            if (keys != null) {
-                return queryDeviceRegistrations(expirationDate, keys);
-            }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+        val expirationDate = LocalDate.now(ZoneId.systemDefault())
+            .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+        val keys = (Set<String>) this.redisTemplate.keys(getPatternRedisKey());
+        if (keys != null) {
+            return queryDeviceRegistrations(expirationDate, keys);
         }
         return new ArrayList<>(0);
     }
 
     @Override
     public Collection<? extends U2FDeviceRegistration> getRegisteredDevices(final String username) {
-        try {
-            val expirationDate = LocalDate.now(ZoneId.systemDefault())
-                .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
-            val keys = (Set<String>) this.redisTemplate.keys(buildRedisKeyForUser(username));
-            if (keys != null) {
-                return queryDeviceRegistrations(expirationDate, keys);
-            }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+        val expirationDate = LocalDate.now(ZoneId.systemDefault())
+            .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+        val keys = (Set<String>) this.redisTemplate.keys(buildRedisKeyForUser(username));
+        if (keys != null) {
+            return queryDeviceRegistrations(expirationDate, keys);
         }
         return new ArrayList<>(0);
     }
@@ -95,21 +86,17 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public void clean() {
-        try {
-            val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
-            LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
-            val expiredKeys = getRedisKeys()
-                .stream()
-                .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
-                .filter(Objects::nonNull)
-                .map(U2FDeviceRegistration.class::cast)
-                .filter(audit -> audit.getCreatedDate().compareTo(expirationDate) <= 0)
-                .map(U2FRedisDeviceRepository::buildRedisKeyForRecord)
-                .collect(Collectors.toList());
-            this.redisTemplate.delete(expiredKeys);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
+        val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+        LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
+        val expiredKeys = getRedisKeys()
+            .stream()
+            .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
+            .filter(Objects::nonNull)
+            .map(U2FDeviceRegistration.class::cast)
+            .filter(audit -> audit.getCreatedDate().compareTo(expirationDate) <= 0)
+            .map(U2FRedisDeviceRepository::buildRedisKeyForRecord)
+            .collect(Collectors.toList());
+        this.redisTemplate.delete(expiredKeys);
     }
 
     @Override

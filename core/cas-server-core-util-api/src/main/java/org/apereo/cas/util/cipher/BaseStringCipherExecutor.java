@@ -200,12 +200,12 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     private String decryptAndVerify(final Serializable value) {
         var encodedObj = value.toString();
         if (isEncryptionPossible()) {
-            LOGGER.debug("Attempting to decrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
+            LOGGER.trace("Attempting to decrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
             encodedObj = EncodingUtils.decryptJwtValue(this.secretKeyEncryptionKey, encodedObj);
         }
         val currentValue = encodedObj.getBytes(StandardCharsets.UTF_8);
         val encoded = FunctionUtils.doIf(this.signingEnabled, () -> {
-            LOGGER.debug("Attempting to verify signature based on signing key defined by [{}]", getSigningKeySetting());
+            LOGGER.trace("Attempting to verify signature based on signing key defined by [{}]", getSigningKeySetting());
             return verifySignature(currentValue);
         }, () -> currentValue).get();
         return new String(encoded, StandardCharsets.UTF_8);
@@ -214,7 +214,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     private String verifyAndDecrypt(final Serializable value) {
         val currentValue = value.toString().getBytes(StandardCharsets.UTF_8);
         val encoded = FunctionUtils.doIf(this.signingEnabled, () -> {
-            LOGGER.debug("Attempting to verify signature based on signing key defined by [{}]", getSigningKeySetting());
+            LOGGER.trace("Attempting to verify signature based on signing key defined by [{}]", getSigningKeySetting());
             return verifySignature(currentValue);
         }, () -> currentValue).get();
 
@@ -222,7 +222,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             val encodedObj = new String(encoded, StandardCharsets.UTF_8);
 
             if (isEncryptionPossible()) {
-                LOGGER.debug("Attempting to decrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
+                LOGGER.trace("Attempting to decrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
                 return EncodingUtils.decryptJwtValue(this.secretKeyEncryptionKey, encodedObj);
             }
             return encodedObj;
@@ -233,14 +233,14 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     private String encryptAndSign(final Serializable value) {
         val encoded = FunctionUtils.doIf(isEncryptionPossible(),
             () -> {
-                LOGGER.debug("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
+                LOGGER.trace("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
                 return EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value,
                     this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier, getCustomHeaders());
             },
             value::toString).get();
 
         if (this.signingEnabled) {
-            LOGGER.debug("Attempting to sign value based on signing key defined by [{}]", getSigningKeySetting());
+            LOGGER.trace("Attempting to sign value based on signing key defined by [{}]", getSigningKeySetting());
             val signed = sign(encoded.getBytes(StandardCharsets.UTF_8));
             return new String(signed, StandardCharsets.UTF_8);
         }
@@ -250,7 +250,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     private String signAndEncrypt(final Serializable value) {
         val encoded = FunctionUtils.doIf(this.signingEnabled,
             () -> {
-                LOGGER.debug("Attempting to sign value based on signing key defined by [{}]", getSigningKeySetting());
+                LOGGER.trace("Attempting to sign value based on signing key defined by [{}]", getSigningKeySetting());
                 val signed = sign(value.toString().getBytes(StandardCharsets.UTF_8));
                 return new String(signed, StandardCharsets.UTF_8);
             },
@@ -259,7 +259,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         
         return FunctionUtils.doIf(isEncryptionPossible(),
             () -> {
-                LOGGER.debug("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
+                LOGGER.trace("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
                 return EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value,
                     this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier, getCustomHeaders());
             },

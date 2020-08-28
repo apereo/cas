@@ -1,13 +1,11 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
-import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.DefaultAdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceService;
-import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
@@ -57,12 +55,6 @@ public class CasCoreAuthenticationPolicyConfiguration {
     public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy() {
         return new DefaultAdaptiveAuthenticationPolicy(this.geoLocationService.getIfAvailable(),
             ipAddressIntelligenceService(), casProperties.getAuthn().getAdaptive());
-    }
-
-    @ConditionalOnMissingBean(name = "requiredHandlerAuthenticationPolicyFactory")
-    @Bean
-    public ContextualAuthenticationPolicyFactory requiredHandlerAuthenticationPolicyFactory() {
-        return new RequiredHandlerAuthenticationPolicyFactory();
     }
 
     @ConditionalOnMissingBean(name = "ipAddressIntelligenceService")

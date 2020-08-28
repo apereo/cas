@@ -144,7 +144,7 @@ public class OAuth20RevocationEndpointController extends BaseOAuth20Controller {
      * @param token the token
      * @return whether the token type is a RefreshToken
      */
-    private boolean isRefreshToken(final OAuth20Token token) {
+    private static boolean isRefreshToken(final OAuth20Token token) {
         return token instanceof OAuth20RefreshToken;
     }
 
@@ -154,7 +154,7 @@ public class OAuth20RevocationEndpointController extends BaseOAuth20Controller {
      * @param token the token
      * @return whether the token type is a RefreshToken
      */
-    private boolean isAccessToken(final OAuth20Token token) {
+    private static boolean isAccessToken(final OAuth20Token token) {
         return token instanceof OAuth20AccessToken;
     }
 

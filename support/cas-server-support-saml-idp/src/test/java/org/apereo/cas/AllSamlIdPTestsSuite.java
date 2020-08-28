@@ -50,6 +50,7 @@ import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostSimpleSignP
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPProfileCallbackHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.DefaultSSOSamlHttpRequestExtractorTests;
 import org.apereo.cas.support.saml.web.velocity.SamlTemplatesVelocityEngineTests;
+import org.apereo.cas.ticket.artifact.DefaultSamlArtifactTicketFactoryTests;
 import org.apereo.cas.ticket.query.DefaultSamlAttributeQueryTicketFactoryTests;
 import org.apereo.cas.web.flow.SamlIdPConsentableAttributeBuilderTests;
 import org.apereo.cas.web.flow.SamlIdPMetadataUIActionTests;
@@ -108,6 +109,7 @@ import org.junit.runner.RunWith;
     SamlResponseArtifactEncoderTests.class,
     SamlIdPSingleLogoutRedirectionStrategyTests.class,
     SamlIdPMetadataUIActionTests.class,
+    DefaultSamlArtifactTicketFactoryTests.class,
     SamlIdPServicesManagerRegisteredServiceLocatorTests.class,
     SamlIdPSingleLogoutRedirectionStrategyPostBindingTests.class,
     SamlIdPSingleLogoutRedirectionStrategyRedirectBindingTests.class,

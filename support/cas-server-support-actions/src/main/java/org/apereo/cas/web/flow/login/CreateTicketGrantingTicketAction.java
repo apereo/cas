@@ -41,59 +41,6 @@ import java.util.stream.Collectors;
 public class CreateTicketGrantingTicketAction extends AbstractAction {
     private final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext;
 
-    /**
-     * Add warning messages to message context if needed.
-     *
-     * @param tgtId          the tgt id
-     * @param messageContext the message context
-     * @return authn warnings from all handlers and results
-     * @since 4.1.0
-     */
-    private static Collection<MessageDescriptor> calculateAuthenticationWarningMessages(final TicketGrantingTicket tgtId,
-                                                                                        final MessageContext messageContext) {
-        val entries = tgtId.getAuthentication().getSuccesses().entrySet();
-        val messages = entries
-            .stream()
-            .map(entry -> entry.getValue().getWarnings())
-            .filter(entry -> !entry.isEmpty())
-            .collect(Collectors.toList());
-        messages.add(tgtId.getAuthentication().getWarnings());
-
-        return messages
-            .stream()
-            .flatMap(Collection::stream)
-            .peek(message -> addMessageDescriptorToMessageContext(messageContext, message))
-            .collect(Collectors.toSet());
-    }
-
-    /**
-     * Adds a warning message to the message context.
-     *
-     * @param context Message context.
-     * @param warning Warning message.
-     */
-    protected static void addMessageDescriptorToMessageContext(final MessageContext context, final MessageDescriptor warning) {
-        val builder = new MessageBuilder()
-            .warning()
-            .code(warning.getCode())
-            .defaultText(warning.getDefaultMessage())
-            .args((Object[]) warning.getParams());
-        context.addMessage(builder.build());
-    }
-
-    private static boolean areAuthenticationsEssentiallyEqual(final Authentication auth1, final Authentication auth2) {
-        if (auth1 == null || auth2 == null) {
-            return false;
-        }
-
-        val builder = new EqualsBuilder();
-        builder.append(auth1.getPrincipal(), auth2.getPrincipal());
-        builder.append(auth1.getCredentials(), auth2.getCredentials());
-        builder.append(auth1.getSuccesses(), auth2.getSuccesses());
-        builder.append(auth1.getAttributes(), auth2.getAttributes());
-        return builder.isEquals();
-    }
-
     @Override
     public Event doExecute(final RequestContext context) {
         val service = WebUtils.getService(context);
@@ -125,6 +72,44 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
         return success();
     }
 
+    /**
+     * Add warning messages to message context if needed.
+     *
+     * @param tgtId          the tgt id
+     * @param messageContext the message context
+     * @return authn warnings from all handlers and results
+     * @since 4.1.0
+     */
+    private static Collection<MessageDescriptor> calculateAuthenticationWarningMessages(final TicketGrantingTicket tgtId,
+                                                                                        final MessageContext messageContext) {
+        val entries = tgtId.getAuthentication().getSuccesses().entrySet();
+        val messages = entries
+            .stream()
+            .map(entry -> entry.getValue().getWarnings())
+            .filter(entry -> !entry.isEmpty())
+            .collect(Collectors.toList());
+        messages.add(tgtId.getAuthentication().getWarnings());
+
+        return messages
+            .stream()
+            .flatMap(Collection::stream)
+            .peek(message -> addMessageDescriptorToMessageContext(messageContext, message))
+            .collect(Collectors.toSet());
+    }
+
+    private static boolean areAuthenticationsEssentiallyEqual(final Authentication auth1, final Authentication auth2) {
+        if (auth1 == null || auth2 == null) {
+            return false;
+        }
+
+        val builder = new EqualsBuilder();
+        builder.append(auth1.getPrincipal(), auth2.getPrincipal());
+        builder.append(auth1.getCredentials(), auth2.getCredentials());
+        builder.append(auth1.getSuccesses(), auth2.getSuccesses());
+        builder.append(auth1.getAttributes(), auth2.getAttributes());
+        return builder.isEquals();
+    }
+
     private String determineTicketGrantingTicketId(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val ticketGrantingTicketId = webflowEventResolutionConfigurationContext.getTicketGrantingTicketCookieGenerator().retrieveCookieValue(request);
@@ -132,6 +117,42 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
             return WebUtils.getTicketGrantingTicketId(context);
         }
         return ticketGrantingTicketId;
+    }
+
+    private boolean shouldIssueTicketGrantingTicket(final Authentication authentication, final String ticketGrantingTicket) {
+        if (StringUtils.isBlank(ticketGrantingTicket)) {
+            return true;
+        }
+        LOGGER.trace("Located ticket-granting ticket in the context. Retrieving associated authentication");
+        val authenticationFromTgt = webflowEventResolutionConfigurationContext.getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicket);
+
+        if (authenticationFromTgt == null) {
+            LOGGER.debug("Authentication session associated with [{}] is no longer valid", ticketGrantingTicket);
+            webflowEventResolutionConfigurationContext.getCentralAuthenticationService().deleteTicket(ticketGrantingTicket);
+            return true;
+        }
+
+        if (areAuthenticationsEssentiallyEqual(authentication, authenticationFromTgt)) {
+            LOGGER.debug("Resulting authentication matches the authentication from context");
+            return false;
+        }
+        LOGGER.debug("Resulting authentication is different from the context");
+        return true;
+    }
+
+    /**
+     * Adds a warning message to the message context.
+     *
+     * @param context Message context.
+     * @param warning Warning message.
+     */
+    protected static void addMessageDescriptorToMessageContext(final MessageContext context, final MessageDescriptor warning) {
+        val builder = new MessageBuilder()
+            .warning()
+            .code(warning.getCode())
+            .defaultText(warning.getDefaultMessage())
+            .args((Object[]) warning.getParams());
+        context.addMessage(builder.build());
     }
 
     /**
@@ -176,26 +197,5 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
             LoggingUtils.error(LOGGER, e);
             throw new InvalidTicketException(ticketGrantingTicket);
         }
-    }
-
-    private boolean shouldIssueTicketGrantingTicket(final Authentication authentication, final String ticketGrantingTicket) {
-        if (StringUtils.isBlank(ticketGrantingTicket)) {
-            return true;
-        }
-        LOGGER.trace("Located ticket-granting ticket in the context. Retrieving associated authentication");
-        val authenticationFromTgt = webflowEventResolutionConfigurationContext.getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicket);
-
-        if (authenticationFromTgt == null) {
-            LOGGER.debug("Authentication session associated with [{}] is no longer valid", ticketGrantingTicket);
-            webflowEventResolutionConfigurationContext.getCentralAuthenticationService().deleteTicket(ticketGrantingTicket);
-            return true;
-        }
-
-        if (areAuthenticationsEssentiallyEqual(authentication, authenticationFromTgt)) {
-            LOGGER.debug("Resulting authentication matches the authentication from context");
-            return false;
-        }
-        LOGGER.debug("Resulting authentication is different from the context");
-        return true;
     }
 }

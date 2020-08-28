@@ -24,7 +24,7 @@ import lombok.experimental.Accessors;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
 @Accessors(chain = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceOAuthDeviceTokenExpirationPolicy implements RegisteredServiceOAuthDeviceTokenExpirationPolicy {
     private static final long serialVersionUID = 2146436756392637728L;
 

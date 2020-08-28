@@ -26,9 +26,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @TestPropertySource(properties = {
-    "cas.authn.saml-idp.metadata.location=file:/tmp",
-    "cas.saml.idp.metadata.git.sign-commits=false",
-    "cas.saml.idp.metadata.git.repository-url=file:/tmp/cas-metadata-idp.git"
+    "cas.authn.saml-idp.metadata.git.sign-commits=false",
+    "cas.authn.saml-idp.metadata.git.repository-url=file:/tmp/cas-metadata-idp.git"
 })
 @Tag("FileSystem")
 @Slf4j

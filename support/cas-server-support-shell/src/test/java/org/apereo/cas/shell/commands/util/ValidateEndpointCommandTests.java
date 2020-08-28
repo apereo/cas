@@ -33,6 +33,10 @@ public class ValidateEndpointCommandTests extends BaseCasShellCommandTests {
             () -> "validate-endpoint --url https://self-signed.badssl.com");
         assertFalse((Boolean) result3);
 
+        val result4 = shell.evaluate(
+            () -> "validate-endpoint --proxy https://httpbin.org:443 --url https://self-signed.badssl.com");
+        assertFalse((Boolean) result4);
+
     }
 }
 

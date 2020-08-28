@@ -25,9 +25,21 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class Bucket4jThrottledRequestExecutor implements ThrottledRequestExecutor {
+
+    /**
+     * Header value to indicate available tokens.
+     */
+    public static final String HEADER_NAME_X_RATE_LIMIT_REMAINING = "X-Rate-Limit-Remaining";
+
+    /**
+     * Header value to indicate available tokens once capacity is consumed..
+     */
+    public static final String HEADER_NAME_X_RATE_LIMIT_RETRY_AFTER_SECONDS = "X-Rate-Limit-Retry-After-Seconds";
+
     private static final long MAX_WAIT_NANOS = TimeUnit.HOURS.toNanos(1);
 
     private final AbstractBucket bucket;
+
     private final boolean blocking;
 
     public Bucket4jThrottledRequestExecutor(final Bucket4jThrottleProperties properties) {
@@ -64,10 +76,10 @@ public class Bucket4jThrottledRequestExecutor implements ThrottledRequestExecuto
         if (result) {
             val probe = this.bucket.tryConsumeAndReturnRemaining(1);
             val seconds = TimeUnit.NANOSECONDS.toSeconds(probe.getNanosToWaitForRefill());
-            response.addHeader("X-Rate-Limit-Retry-After-Seconds", Long.toString(seconds));
+            response.addHeader(HEADER_NAME_X_RATE_LIMIT_RETRY_AFTER_SECONDS, Long.toString(seconds));
             LOGGER.warn("The request is throttled as capacity is entirely consumed. Available tokens are [{}]", availableTokens);
         } else {
-            response.addHeader("X-Rate-Limit-Remaining", Long.toString(availableTokens));
+            response.addHeader(HEADER_NAME_X_RATE_LIMIT_REMAINING, Long.toString(availableTokens));
         }
         return result;
     }

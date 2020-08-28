@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,6 +60,12 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
     private void writeDevicesToFile() {
         val file = jsonResource.getFile();
         MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
+    }
+
+    @Override
+    public Collection<? extends YubiKeyAccount> getAccountsInternal() {
+        this.devices.putAll(getDevicesFromJsonResource(this.jsonResource));
+        return super.getAccountsInternal();
     }
 
     @SneakyThrows

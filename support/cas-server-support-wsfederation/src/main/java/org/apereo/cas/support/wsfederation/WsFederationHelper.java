@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.google.common.base.Predicates;
@@ -175,10 +176,12 @@ public class WsFederationHelper {
      *
      * @param reqToken the req token
      * @param config   the config
+     * @param service  the service
      * @return an assertion
      */
     public Pair<Assertion, WsFederationConfiguration> buildAndVerifyAssertion(final RequestedSecurityToken reqToken,
-                                                                              final Collection<WsFederationConfiguration> config) {
+                                                                              final Collection<WsFederationConfiguration> config,
+                                                                              final Service service) {
         val securityToken = getSecurityTokenFromRequestedToken(reqToken, config);
         if (securityToken instanceof Assertion) {
             LOGGER.trace("Security token is an assertion.");
@@ -189,11 +192,12 @@ public class WsFederationHelper {
                 .filter(c -> {
                     val id = c.getIdentityProviderIdentifier();
                     LOGGER.trace("Comparing identity provider identifier [{}] with assertion issuer [{}]", id, assertion.getIssuer());
-                    return id.equals(assertion.getIssuer());
+                    return RegexUtils.find(id, assertion.getIssuer());
                 })
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Could not locate wsfed configuration for security token provided. The assertion issuer "
-                    + assertion.getIssuer() + " does not match any of the identity provider identifiers defined in the configuration"));
+                .orElseThrow(() ->
+                    new IllegalArgumentException("Could not locate wsfed configuration for security token provided. The assertion issuer "
+                        + assertion.getIssuer() + " does not match any of the identity provider identifiers in the configuration"));
 
             return Pair.of(assertion, cfg);
         }
@@ -341,9 +345,9 @@ public class WsFederationHelper {
         list.add(new InlineEncryptedKeyResolver());
         list.add(new EncryptedElementTypeEncryptedKeyResolver());
         list.add(new SimpleRetrievalMethodEncryptedKeyResolver());
-        LOGGER.debug("Built a list of encrypted key resolvers: [{}]", list);
+        LOGGER.trace("Built a list of encrypted key resolvers: [{}]", list);
         val encryptedKeyResolver = new ChainingEncryptedKeyResolver(list);
-        LOGGER.debug("Building credential instance to decrypt data");
+        LOGGER.trace("Building credential instance to decrypt data");
         val encryptionCredential = getEncryptionCredential(config);
         val resolver = new StaticKeyInfoCredentialResolver(encryptionCredential);
         val decrypter = new Decrypter(null, resolver, encryptedKeyResolver);
@@ -357,17 +361,15 @@ public class WsFederationHelper {
 
         val func = FunctionUtils.doIf(Predicates.instanceOf(EncryptedData.class),
             () -> {
-                LOGGER.debug("Security token is encrypted. Attempting to decrypt to extract the assertion");
+                LOGGER.trace("Security token is encrypted. Attempting to decrypt to extract the assertion");
                 val encryptedData = EncryptedData.class.cast(securityTokenFromAssertion);
                 val it = config.iterator();
                 while (it.hasNext()) {
                     try {
                         val c = it.next();
                         val decrypter = buildAssertionDecrypter(c);
-                        LOGGER.debug("Built an instance of [{}]", decrypter.getClass().getName());
-                        var decryptedToken = decrypter.decryptData(encryptedData);
-                        LOGGER.debug("Decrypted assertion successfully");
-                        return decryptedToken;
+                        LOGGER.trace("Built an instance of [{}]", decrypter.getClass().getName());
+                        return decrypter.decryptData(encryptedData);
                     } catch (final Exception e) {
                         LOGGER.debug(e.getMessage(), e);
                     }

@@ -56,7 +56,7 @@ import java.util.HashMap;
  * @author Hal Deadman
  * @since 6.2.0
  */
-@Configuration(value = "ehcache3TicketRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "ehcache3TicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.ticket.registry.ehcache3", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Slf4j
@@ -96,8 +96,7 @@ public class Ehcache3TicketRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "ehcache3TicketCacheManager")
-    public javax.cache.CacheManager ehcache3TicketCacheManager(
-        @Qualifier("ehcache3CacheManagerConfiguration") final ServiceCreationConfiguration ehcache3CacheManagerConfiguration) {
+    public javax.cache.CacheManager ehcache3TicketCacheManager() {
         val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
         val ehcacheProvider = (EhcacheCachingProvider) Caching.getCachingProvider(EhcacheCachingProvider.class.getName());
         val statisticsAllEnabled = ehcacheProperties.isEnableStatistics() ? ConfigurationElementState.ENABLED : ConfigurationElementState.DISABLED;
@@ -105,7 +104,7 @@ public class Ehcache3TicketRegistryConfiguration {
         val jsr107Config = new Jsr107Configuration(null, new HashMap<>(),
             false, managementAllAllEnabled, statisticsAllEnabled);
         val configuration = new DefaultConfiguration(ehcacheProvider.getDefaultClassLoader(),
-            ehcache3CacheManagerConfiguration,
+            ehcache3CacheManagerConfiguration(),
             jsr107Config);
         return ehcacheProvider.getCacheManager(ehcacheProvider.getDefaultURI(), configuration);
     }

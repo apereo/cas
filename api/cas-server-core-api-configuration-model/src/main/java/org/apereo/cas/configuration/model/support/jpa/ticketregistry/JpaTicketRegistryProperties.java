@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import javax.persistence.LockModeType;
@@ -19,6 +20,7 @@ import javax.persistence.LockModeType;
 @RequiresModule(name = "cas-server-support-jpa-ticket-registry")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class JpaTicketRegistryProperties extends AbstractJpaProperties {
 
     /**

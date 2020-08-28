@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -23,6 +24,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
     private static final int MAX_CACHE_SIZE = 10_000;
 
     private final SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
+
     private final LoadingCache<SamlRegisteredServiceCacheKey, MetadataResolver> cache;
 
     public SamlRegisteredServiceDefaultCachingMetadataResolver(final long metadataCacheExpirationMinutes,
@@ -35,11 +37,12 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
     }
 
     @Override
+    @Synchronized
     public MetadataResolver resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         LOGGER.debug("Resolving metadata for [{}] at [{}].", service.getName(), service.getMetadataLocation());
         val cacheKey = new SamlRegisteredServiceCacheKey(service, criteriaSet);
         LOGGER.trace("Locating cached metadata resolver using key [{}] for service [{}]", cacheKey.getId(), service.getName());
-        val resolver = this.cache.get(cacheKey);
+        val resolver = cache.get(cacheKey);
         if (resolver == null) {
             throw new IllegalArgumentException("Unable to determine and load metadata resolver");
         }
