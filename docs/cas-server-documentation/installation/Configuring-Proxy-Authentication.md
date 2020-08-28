@@ -83,7 +83,7 @@ application issues a request to the `/p3/serviceValidate` endpoint (or `/p3/prox
 will **not** support the additional returning of the proxy granting ticket.
 
 <div class="alert alert-warning">If CAS is configured to return the proxy-granting ticket id directly in the validation response,
-the <code>pgtIou</code> parameter is ommitted from the response and no callback to the application is performed.</div>
+the <code>pgtIou</code> parameter is omitted from the response and no callback to the application is performed.</div>
 
 ### Register Service
 

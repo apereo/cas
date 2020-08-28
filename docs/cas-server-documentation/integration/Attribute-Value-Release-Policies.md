@@ -59,7 +59,7 @@ Suppose that the following attributes are resolved:
 
 The following configuration for instance considers the initial list of `uid`,
 `groupMembership` and then only allows and releases attributes whose value's length
-is 3 characters. Therefor, out of the above list, only `groupMembership` is released to the application.
+is 3 characters. Therefore, out of the above list, only `groupMembership` is released to the application.
 
 ```json
 {
