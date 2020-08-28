@@ -61,7 +61,7 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
         val service3 = getOAuthRegisteredService(oauthClientId, ".+");
         service3.setEvaluationOrder(15);
 
-        servicesManager.save(service1, service2);
+        servicesManager.save(service1, service2, service3);
         val result = servicesManager.findServiceBy("https://app.example.org");
         assertNotNull(result);
         assertTrue(result instanceof OidcRegisteredService);

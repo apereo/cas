@@ -5,12 +5,12 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import com.esotericsoftware.kryo.io.Input;
-import com.google.common.collect.ImmutableMap;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,10 +28,10 @@ public class ImmutableNativeJavaMapSerializerTests {
         val pool = new CasKryoPool();
         try (val kryo = pool.borrow()) {
             val output = new ByteBufferOutput(4096);
-            kryo.writeObject(output, ImmutableMap.of("one", "two"));
+            kryo.writeObject(output, Map.of("one", "two"));
 
             val inputStream = new ByteArrayInputStream(output.toBytes());
-            assertNotNull(kryo.readObject(new Input(inputStream), ImmutableMap.class));
+            assertNotNull(kryo.readObject(new Input(inputStream), Map.class));
         }
     }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.memcached.kryo;
 
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaListSerializer;
+import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaMapSerializer;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaSetSerializer;
 import org.apereo.cas.memcached.kryo.serial.ThrowableSerializer;
 import org.apereo.cas.memcached.kryo.serial.URLSerializer;
@@ -122,18 +123,21 @@ public class CloseableKryoFactory implements KryoFactory {
 
         ImmutableListSerializer.registerSerializers(kryo);
         kryo.register(List.of().getClass(), new ImmutableNativeJavaListSerializer());
+        kryo.register(List.class, new ImmutableNativeJavaListSerializer());
         kryo.register(List.of("1", "2").getClass(), new ImmutableNativeJavaListSerializer());
         kryo.register(List.of("1", "2", "3", "4").getClass(), new ImmutableNativeJavaListSerializer());
 
         ImmutableSetSerializer.registerSerializers(kryo);
         kryo.register(Set.of().getClass(), new ImmutableNativeJavaSetSerializer());
+        kryo.register(Set.class, new ImmutableNativeJavaSetSerializer());
         kryo.register(Set.of("1", "2").getClass(), new ImmutableNativeJavaSetSerializer());
         kryo.register(Set.of("1", "2", "3", "4").getClass(), new ImmutableNativeJavaSetSerializer());
 
         ImmutableMapSerializer.registerSerializers(kryo);
-        kryo.register(Map.of().getClass(), new ImmutableMapSerializer());
-        kryo.register(Map.of("1", "2").getClass(), new ImmutableMapSerializer());
-        kryo.register(Map.of("1", "2", "3", "4", "5", "6").getClass(), new ImmutableMapSerializer());
+        kryo.register(Map.of().getClass(), new ImmutableNativeJavaMapSerializer());
+        kryo.register(Map.class, new ImmutableNativeJavaMapSerializer());
+        kryo.register(Map.of("1", "2").getClass(), new ImmutableNativeJavaMapSerializer());
+        kryo.register(Map.of("1", "2", "3", "4", "5", "6").getClass(), new ImmutableNativeJavaMapSerializer());
 
         ImmutableMultimapSerializer.registerSerializers(kryo);
 

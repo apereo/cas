@@ -49,7 +49,8 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     public OneTimeTokenAccount get(final long id) {
         try {
             val accounts = readAccountsFromJsonRepository();
-            return accounts.values().stream()
+            return accounts.values()
+                .stream()
                 .flatMap(List::stream)
                 .filter(ac -> ac.getId() == id)
                 .findFirst()

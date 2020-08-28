@@ -104,6 +104,8 @@ public class DelegatedClientWebflowManager {
             config.setStateGenerator(new StaticValueGenerator(ticketId));
         }
         if (client instanceof CasClient) {
+            val casClient = (CasClient) client;
+            casClient.getConfiguration().addCustomParam(PARAMETER_CLIENT_ID, ticketId);
             sessionStore.set(webContext, CAS_CLIENT_ID_SESSION_KEY, ticket.getId());
         }
         if (client instanceof OAuth10Client) {

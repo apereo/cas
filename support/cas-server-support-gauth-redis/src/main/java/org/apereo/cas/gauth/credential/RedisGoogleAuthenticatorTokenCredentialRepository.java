@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -45,54 +44,39 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
 
     @Override
     public OneTimeTokenAccount get(final String username, final long id) {
-        try {
-            val keys = getGoogleAuthenticatorTokenKeys(username, String.valueOf(id));
-            if (keys != null && keys.size() == 1) {
-                val r = this.template.boundValueOps(keys.iterator().next()).get();
-                if (r != null && !r.isEmpty()) {
-                    return decode(r.get(0));
-                }
+        val keys = getGoogleAuthenticatorTokenKeys(username, String.valueOf(id));
+        if (keys != null && keys.size() == 1) {
+            val r = this.template.boundValueOps(keys.iterator().next()).get();
+            if (r != null && !r.isEmpty()) {
+                return decode(r.get(0));
             }
-
-        } catch (final NoResultException e) {
-            LOGGER.debug("No record could be found for google authenticator id [{}]", id);
         }
         return null;
     }
 
     @Override
     public OneTimeTokenAccount get(final long id) {
-        try {
-            val keys = getGoogleAuthenticatorTokenKeys("*", String.valueOf(id));
-            if (keys != null && keys.size() == 1) {
-                val r = this.template.boundValueOps(keys.iterator().next()).get();
-                if (r != null && !r.isEmpty()) {
-                    return decode(r.get(0));
-                }
+        val keys = getGoogleAuthenticatorTokenKeys("*", String.valueOf(id));
+        if (keys != null && keys.size() == 1) {
+            val r = this.template.boundValueOps(keys.iterator().next()).get();
+            if (r != null && !r.isEmpty()) {
+                return decode(r.get(0));
             }
-
-        } catch (final NoResultException e) {
-            LOGGER.debug("No record could be found for google authenticator id [{}]", id);
         }
         return null;
     }
 
     @Override
     public Collection<? extends OneTimeTokenAccount> get(final String username) {
-        try {
-            val keys = getGoogleAuthenticatorTokenKeys(username, "*");
-            return keys
-                .stream()
-                .map(key -> this.template.boundValueOps(key).get())
-                .filter(Objects::nonNull)
-                .map(this::decode)
-                .filter(Objects::nonNull)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-        } catch (final NoResultException e) {
-            LOGGER.debug("No record could be found for google authenticator id [{}]", username);
-        }
-        return new ArrayList<>(0);
+        val keys = getGoogleAuthenticatorTokenKeys(username, "*");
+        return keys
+            .stream()
+            .map(key -> this.template.boundValueOps(key).get())
+            .filter(Objects::nonNull)
+            .map(this::decode)
+            .filter(Objects::nonNull)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -162,13 +146,8 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
 
     @Override
     public long count(final String username) {
-        try {
-            val keys = getGoogleAuthenticatorTokenKeys(username, "*");
-            return keys.size();
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-        }
-        return 0;
+        val keys = getGoogleAuthenticatorTokenKeys(username, "*");
+        return keys.size();
     }
 
     private static String getGoogleAuthenticatorRedisKey(final OneTimeTokenAccount account) {

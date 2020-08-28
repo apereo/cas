@@ -29,7 +29,9 @@ import com.esotericsoftware.kryo.KryoException;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -103,6 +105,17 @@ public class CasKryoTranscoderTests {
         this.transcoder = MemcachedUtils.newTranscoder(props, classesToRegister);
         this.principalAttributes = new HashMap<>();
         this.principalAttributes.put(NICKNAME_KEY, List.of(NICKNAME_VALUE));
+    }
+
+    @Test
+    public void verifyBorrowAndDecode() {
+        val data = new CachedData(0, ArrayUtils.EMPTY_BYTE_ARRAY, 10);
+        assertThrows(KryoException.class, () -> transcoder.decode(data));
+        
+        if (transcoder instanceof CasKryoTranscoder) {
+            val enc = CasKryoTranscoder.class.cast(this.transcoder);
+            assertNotNull(enc.getKryo());
+        }
     }
 
     @Test
