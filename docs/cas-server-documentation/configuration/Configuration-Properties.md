@@ -600,7 +600,7 @@ Enable in-memory session replication to replicate web application session deltas
 
 | Clustering Type      | Description
 |----------------------|-------------------------------------------------------
-| `DEFAULT`            | Discovers cluster members via multicast discovery and optionally via staticly defined cluster members using the `clusterMembers`. [SimpelTcpCluster with McastService](http://tomcat.apache.org/tomcat-9.0-doc/cluster-howto.html) 
+| `DEFAULT`            | Discovers cluster members via multicast discovery and optionally via staticly defined cluster members using the `clusterMembers`. [SimpleTcpCluster with McastService](http://tomcat.apache.org/tomcat-9.0-doc/cluster-howto.html) 
 | `CLOUD`              | For use in Kubernetes where members are discovered via accessing the Kubernetes API or doing a DNS lookup of the members of a Kubernetes service. [Documentation](https://cwiki.apache.org/confluence/display/TOMCAT/ClusteringCloud) is currently light, see code for details.
 
 | `CLOUD` Membership Providers   | Description
@@ -2648,7 +2648,9 @@ Principal resolution and Person Directory settings for this feature are availabl
 
 ### X509 LDAP Integration
 
-LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.x509.ldap`.
+LDAP settings for the X509 feature (used if fetching CRLs from LDAP) are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.x509.ldap`.
+
+See LDAP attribute repositories [here](Configuration-Properties.html#ldap) to fetch additional LDAP attributes using the principal extracted from the X509 certificate. 
 
 ## Syncope Authentication
 
@@ -3099,8 +3101,11 @@ To learn more about this topic, [please review this guide](../mfa/FIDO-U2F-Authe
 # cas.authn.mfa.u2f.name=
 # cas.authn.mfa.u2f.order=
 
+# Expiry of U2F device registration requests:
 # cas.authn.mfa.u2f.expire-registrations=30
 # cas.authn.mfa.u2f.expire-registrations-time-unit=SECONDS
+
+# Expiry of U2F devices since registration, independent of last time used:
 # cas.authn.mfa.u2f.expire-devices=30
 # cas.authn.mfa.u2f.expire-devices-time-unit=DAYS
 ```

@@ -74,10 +74,6 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
             LOGGER.debug("SPNEGO Authorization header found with [{}] bytes", authzHeaderLength - prefixLength);
             val base64 = authorizationHeader.substring(prefixLength);
             val token = EncodingUtils.decodeBase64(base64);
-            if (token == null) {
-                LOGGER.warn("Could not decode authorization header in Base64");
-                return null;
-            }
             val tokenString = new String(token, Charset.defaultCharset());
             LOGGER.debug("Obtained token: [{}]. Creating credential...", tokenString);
             return new SpnegoCredential(token);

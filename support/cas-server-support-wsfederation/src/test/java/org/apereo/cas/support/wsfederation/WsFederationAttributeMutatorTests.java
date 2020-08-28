@@ -32,7 +32,7 @@ public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests
         values.add("test@example.com");
         attributes.put(UPN_PARAM, values);
 
-        val instance = new WsFederationAttributeMutatorImpl();
+        val instance = new TestWsFederationAttributeMutator();
         instance.modifyAttributes(attributes);
 
         assertTrue(attributes.containsKey("test"));
@@ -41,7 +41,7 @@ public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests
         assertTrue("testing".equalsIgnoreCase(attributes.get(UPN_PARAM).get(0).toString()));
     }
 
-    private static class WsFederationAttributeMutatorImpl implements WsFederationAttributeMutator {
+    private static class TestWsFederationAttributeMutator implements WsFederationAttributeMutator {
         private static final long serialVersionUID = -1858140387002752668L;
 
         @Override

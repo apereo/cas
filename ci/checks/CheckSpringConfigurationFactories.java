@@ -35,8 +35,8 @@ public class CheckSpringConfigurationFactories {
         }
     }
 
-    private static boolean checkProjectContainsSpringConfigurations(String projectPath,
-                                                                    File springFactoriesFile) throws Exception {
+    private static boolean checkProjectContainsSpringConfigurations(final String projectPath,
+                                                                    final File springFactoriesFile) throws Exception {
         if (springFactoriesFile.exists()) {
             return true;
         }
@@ -56,9 +56,9 @@ public class CheckSpringConfigurationFactories {
         return pass.get();
     }
 
-    private static boolean checkForSpringConfigurationFactories(String projectPath,
-                                                                String configurations,
-                                                                File springFactoriesFile) {
+    private static boolean checkForSpringConfigurationFactories(final String projectPath,
+                                                                final String configurations,
+                                                                final File springFactoriesFile) {
         var classes = configurations.split(",");
         for (var it : Arrays.asList(classes)) {
             var sourcePath = "/src/main/java/".replace("/", String.valueOf(File.separator));

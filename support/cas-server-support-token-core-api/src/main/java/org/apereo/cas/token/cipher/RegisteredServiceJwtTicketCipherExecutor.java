@@ -8,6 +8,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
@@ -34,7 +35,7 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
                 }
             }
         }
-        return decode(data);
+        return decode(data, ArrayUtils.EMPTY_BOOLEAN_OBJECT_ARRAY);
     }
 
     @Override
@@ -49,7 +50,7 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
                 }
             }
         }
-        return encode(data);
+        return encode(data, ArrayUtils.EMPTY_BOOLEAN_OBJECT_ARRAY);
     }
 
     @Override

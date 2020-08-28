@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ChainingRegisteredServiceConsentPolicy implements RegisteredServiceConsentPolicy {
     private static final long serialVersionUID = -2949244688986345692L;
 

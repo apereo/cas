@@ -44,6 +44,7 @@ reports
 *.asc
 /.nb-gradle/
 **/.sts4-cache/**
+**/work/**
 etc/loadtests/loadtests/**
 etc/loadtests/locustfiles/**
 etc/loadtests/__pycache__/**

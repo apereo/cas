@@ -8,6 +8,10 @@ def Object run(final Object... args) {
     logger.info("Checking for impersonation authz for $principal...")
 
     // Decide if impersonation is allowed by returning true...
+    if (principal.contains("fail")) {
+        throw new RuntimeException("Failed")
+    }
+    
     if (principal.contains("enabled")) {
         return true
     }

@@ -36,14 +36,16 @@ import java.util.Map;
 @SpringBootTest(classes = AbstractWsFederationTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.wsfed[0].identity-provider-url=https://adfs.example.com/adfs/ls/",
-        "cas.authn.wsfed[0].identity-provider-identifier=http://adfs.example.com/adfs/services/trust",
+        "cas.authn.wsfed[0].identity-provider-identifier=http://(iam-dev-windows.unicon.net|adfs.example.com)/adfs/services/trust",
         "cas.authn.wsfed[0].relying-party-identifier=urn:federation:cas",
         "cas.authn.wsfed[0].attributes-type=WSFED",
         "cas.authn.wsfed[0].signing-certificate-resources=classpath:adfs-signing.crt",
         "cas.authn.wsfed[0].identity-attribute=upn",
         "cas.authn.wsfed[0].attribute-resolver-enabled=true",
         "cas.authn.wsfed[0].auto-redirect=false",
-        "cas.authn.wsfed[0].name=Test ADFS1"
+        "cas.authn.wsfed[0].name=Test ADFS1",
+        "cas.authn.wsfed[0].encryption-private-key=classpath:adfs-enc-private.key",
+        "cas.authn.wsfed[0].encryption-certificate=classpath:adfs-enc-certificate.crt"
     })
 public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
     protected static final String ISSUER = "http://adfs.example.com/adfs/services/trust";

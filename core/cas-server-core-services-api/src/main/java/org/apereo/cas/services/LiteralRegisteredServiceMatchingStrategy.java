@@ -21,7 +21,7 @@ import lombok.val;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @AllArgsConstructor
 @Accessors(chain = true)
 public class LiteralRegisteredServiceMatchingStrategy implements RegisteredServiceMatchingStrategy {

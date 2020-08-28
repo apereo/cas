@@ -8,6 +8,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.SchedulingUtils;
+import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
@@ -34,6 +35,10 @@ import org.springframework.test.context.TestPropertySource;
 @Setter
 @Getter
 public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasCoreTests {
+    @Autowired
+    @Qualifier("serviceValidationAuthorizers")
+    private ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers;
+
     @Autowired
     @Qualifier("centralAuthenticationService")
     private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;

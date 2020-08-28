@@ -5,7 +5,9 @@ import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
+import org.apereo.cas.services.AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
@@ -71,13 +73,17 @@ public class CasRegisteredServicesTestConfiguration {
         svc3.setEvaluationOrder(10);
         svc3.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         svc3.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
+        svc3.setAuthenticationPolicy(new DefaultRegisteredServiceAuthenticationPolicy()
+            .setCriteria(new AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria()));
         l.add(svc3);
 
         val svc4 = RegisteredServiceTestUtils.getRegisteredService("https://example\\.com/high/.*");
         svc4.setEvaluationOrder(20);
         svc4.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         val handlers = CollectionUtils.wrapHashSet(AcceptUsersAuthenticationHandler.class.getSimpleName(), TestOneTimePasswordAuthenticationHandler.class.getSimpleName());
-        svc4.getAuthenticationPolicy().getRequiredAuthenticationHandlers().addAll(handlers);
+        svc4.setAuthenticationPolicy(new DefaultRegisteredServiceAuthenticationPolicy()
+            .setRequiredAuthenticationHandlers(handlers)
+            .setCriteria(new AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria()));
         svc4.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         l.add(svc4);
 

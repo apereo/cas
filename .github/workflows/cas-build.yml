@@ -437,6 +437,7 @@ jobs:
 
   publish-docs:
     runs-on: ubuntu-latest
+    needs: [validate-docs]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -690,7 +691,7 @@ jobs:
       - name: Validate Code Quality via SonarCloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+          SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.SONARCLOUD_TOKEN != null }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.organization=apereo -Dsonar.host.url=https://sonarcloud.io -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true --parallel -DshowStandardStreams=true
 

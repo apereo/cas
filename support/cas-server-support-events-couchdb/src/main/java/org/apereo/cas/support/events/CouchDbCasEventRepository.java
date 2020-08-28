@@ -11,7 +11,6 @@ import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.stream.Collectors;
 
 /**
@@ -27,12 +26,7 @@ public class CouchDbCasEventRepository extends AbstractCasEventRepository implem
     private final boolean asynchronous;
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor(
-        new ThreadFactory() {
-            @Override
-            public Thread newThread(final Runnable r) {
-                return new Thread(r, "CouchDbCasEventRepositoryThread");
-            }
-        });
+        r -> new Thread(r, "CouchDbCasEventRepositoryThread"));
 
     public CouchDbCasEventRepository(final CasEventRepositoryFilter eventRepositoryFilter,
                                      final EventCouchDbRepository couchDb, final boolean asynchronous) {

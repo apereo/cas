@@ -159,8 +159,8 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         resourceResolverName = "DESTROY_TICKET_RESOURCE_RESOLVER")
     @Transactional(transactionManager = "ticketTransactionManager")
     @Override
-    public void deleteTicket(final String ticketId) {
-        this.ticketRegistry.deleteTicket(ticketId);
+    public int deleteTicket(final String ticketId) {
+        return ticketRegistry.deleteTicket(ticketId);
     }
 
     /**

@@ -28,7 +28,7 @@ import java.time.ZonedDateTime;
 @EqualsAndHashCode(callSuper = true)
 @Setter
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -6180748828025837047L;

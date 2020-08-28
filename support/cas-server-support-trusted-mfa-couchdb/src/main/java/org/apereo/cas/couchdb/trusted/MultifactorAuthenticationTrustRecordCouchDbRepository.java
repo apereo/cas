@@ -1,13 +1,11 @@
 package org.apereo.cas.couchdb.trusted;
 
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.val;
 import org.ektorp.ComplexKey;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.support.CouchDbRepositorySupport;
-import org.ektorp.support.UpdateHandler;
 import org.ektorp.support.View;
 
 import java.time.ZonedDateTime;
@@ -39,22 +37,12 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
     }
 
     /**
-     * Find by recordDate on of before date.
-     *
-     * @param recordDate record key to search for
-     * @return trust records for given input
-     */
-    @View(name = "by_recordDate", map = "function(doc) { if (doc.principal && doc.deviceFingerprint && doc.recordDate) { emit(doc.recordDate, doc) } }")
-    public List<CouchDbMultifactorAuthenticationTrustRecord> findOnOrBeforeDate(final ZonedDateTime recordDate) {
-        return db.queryView(createQuery("by_recordDate").endKey(recordDate), CouchDbMultifactorAuthenticationTrustRecord.class);
-    }
-
-    /**
      * Find record created on or after date.
      *
      * @param onOrAfterDate cutoff date
      * @return records created on or after date
      */
+    @View(name = "by_recordDate", map = "function(doc) { if (doc.principal && doc.deviceFingerprint && doc.recordDate) { emit(doc.recordDate, doc) } }")
     public List<CouchDbMultifactorAuthenticationTrustRecord> findOnOrAfterDate(final ZonedDateTime onOrAfterDate) {
         return db.queryView(createQuery("by_recordDate").startKey(onOrAfterDate), CouchDbMultifactorAuthenticationTrustRecord.class);
     }
@@ -62,6 +50,7 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
     /**
      * Find record created on or after exp date.
      * Remove all records whose expiration date is greater than the given date.
+     *
      * @param onOrAfterDate cutoff date
      * @return records created on or after date
      */
@@ -134,9 +123,10 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
      *
      * @param record record to be deleted
      */
-    @UpdateHandler(name = "delete_record", file = "CouchDbMultifactorAuthenticationTrustRecord_delete.js")
     public void deleteRecord(final CouchDbMultifactorAuthenticationTrustRecord record) {
-        db.callUpdateHandler(stdDesignDocumentId, "delete_record", record.getCid(), null);
+        if (record != null) {
+            remove(record);
+        }
     }
 
     /**
@@ -144,12 +134,11 @@ public class MultifactorAuthenticationTrustRecordCouchDbRepository extends Couch
      *
      * @param record record to be updated
      */
-    @UpdateHandler(name = "update_record", file = "CouchDbMultifactorAuthenticationTrustRecord_update.js")
     public void updateRecord(final CouchDbMultifactorAuthenticationTrustRecord record) {
         if (record.getCid() == null) {
             add(record);
         } else {
-            db.callUpdateHandler(stdDesignDocumentId, "update_record", record.getCid(), CollectionUtils.wrap("doc", record));
+            update(record);
         }
     }
 }

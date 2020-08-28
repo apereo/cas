@@ -144,6 +144,19 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
+    public void verifyCountByUser() {
+        val props = new GoogleAuthenticatorMultifactorProperties();
+        props.getRest().setUrl("http://localhost:8596");
+        val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
+            props, CipherExecutor.noOpOfStringToString());
+        try (val webServer = new MockWebServer(8596,
+            new ByteArrayResource("1".getBytes(UTF_8), "Output"), OK)) {
+            webServer.start();
+            assertEquals(1, repo.count("casuser"));
+        }
+    }
+
+    @Test
     public void verifySave() throws Exception {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8553");

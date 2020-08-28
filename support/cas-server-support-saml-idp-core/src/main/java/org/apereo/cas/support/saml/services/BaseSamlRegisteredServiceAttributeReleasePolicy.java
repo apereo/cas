@@ -21,6 +21,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,13 +47,13 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
             val entityId = getEntityIdFromRequest(request);
             if (StringUtils.isBlank(entityId)) {
                 LOGGER.warn("Could not locate the entity id for SAML attribute release policy processing");
-                return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
+                return new HashMap<>(0);
             }
 
             val applicationContext = ApplicationContextProvider.getApplicationContext();
             if (applicationContext == null) {
                 LOGGER.warn("Could not locate the application context to process attributes");
-                return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
+                return new HashMap<>(0);
             }
             val resolver = applicationContext.getBean("defaultSamlRegisteredServiceCachingMetadataResolver",
                 SamlRegisteredServiceCachingMetadataResolver.class);
@@ -60,13 +61,13 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
 
             if (facade.isEmpty()) {
                 LOGGER.warn("Could not locate metadata for [{}] to process attributes", entityId);
-                return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
+                return new HashMap<>(0);
             }
 
             val entityDescriptor = facade.get().getEntityDescriptor();
             if (entityDescriptor == null) {
                 LOGGER.warn("Could not locate entity descriptor for [{}] to process attributes", entityId);
-                return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
+                return new HashMap<>(0);
             }
             return getAttributesForSamlRegisteredService(attributes, samlRegisteredService, applicationContext,
                 resolver, facade.get(), entityDescriptor, principal, selectedService);

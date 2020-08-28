@@ -59,7 +59,7 @@ YubiKey devices used for [multifactor authentication](../mfa/YubiKey-Authenticat
 
 ### Test Coverage via CodeCov
 
-CAS test coverage across all modules in the codebase has now reached `83%` and continues to climb. Additional validation rules are also applied 
+CAS test coverage across all modules in the codebase has now reached `84%` and continues to climb. Additional validation rules are also applied 
 to fail all pull requests that fall below this threshold. This area will be closely monitored and improved
 as progress is made with the goal of hopefully reaching at least `85%` before the final GA release. Of course, this will not be a blocker for the final release.
 
@@ -113,6 +113,11 @@ SAML2 single logout handling handling, when CAS is running as a [SAML2 identity 
 able to produce a logout response for the service provider once the single logout sequence has completed. Additionally, logout requests
 are no longer sent to the original service provider which initiated the single logout flow. 
 
+### OpenID Connect Logout
+
+Logout requests handled by OpenID Connect authentication flows can now properly redirect to a requested URL via `post_logout_redirect_uri`
+provided `id_token_hint` is specified, and the logout URL is authorized for the relying party.
+
 ### Okta SDK v2
 
 CAS is now using the Okta SDK v2 mainly used to handle the integration between CAS and Okta for authentication and attribute resolution.
@@ -139,6 +144,13 @@ the expiration policy [assigned to the service definition](../ticketing/Configur
 
 Service identifiers defined for applications in the CAS service registry have always been defined as patterns. This release exposes 
 a few [additional options](../services/Configuring-Service-Matching-Strategy.html) while also allowing the matching strategy to be externalized to custom components. 
+
+### SSO Participation Policy
+
+Adjustments are put in place to correctly locate and reconstruct the authentication transaction, in the 
+event that [single sign-on participation](../services/Configuring-Service-SSO-Policy.html) is disabled for a 
+particular service, specially in Open ID Connect authentication flows. Furthermore, the authentication policy criteria
+for a service definition is now defaulted to match the global and default authentication policies for the CAS.  
 
 ### Wildcarded Service Definitions
 
@@ -172,7 +184,7 @@ The issue here is that depending on how the `evaluationOrder` is set up, the wro
 for SAML or CAS protocol authentication requests. The root cause is that the CAS matching engine attempts to locate service definitions
 by their `serviceId` (which might correlate to an entity id or a redirect URI, etc) without taking into account the 
 authentication protocol itself. In this release, a few additional improvements are put in place to allow grouping of 
-application definitions by both type and evaluation order, and the matching engine is enhanced process such groups while considering
+application definitions by both type and evaluation order, and the matching engine is enhanced to process such groups while considering
 both the group's evaluation priority as well as each individual service's evaluation order.
 
 ## Other Stuff
@@ -185,6 +197,7 @@ both the group's evaluation priority as well as each individual service's evalua
 - Component registration with the Memcached serialization engine is now broken apart and delegated to appropriate modules owning said components.
 - Signed SAML authentication requests that embed the signature in URLs are reviewed and adjusted to avoid creating long URLs exceeding browser limits.
 - The naming strategy for JSON/YAML service definition files is relaxed to allow multiple words in the file name.
+- Transformation of service definitions to JSON or YAML is adjusted to exclude fields with default values to produce leaner payloads.
 
 ## Library Upgrades
 
@@ -198,9 +211,16 @@ both the group's evaluation priority as well as each individual service's evalua
 - Gradle
 - Okta
 - Shiro
+- Hazelcast AWS
+- Hazelcast Kubernetes
+- Hazelcast Azure
+- EhCache
 - Spring Boot Admin
 - Ldaptive
 - Inspektr
+- Nexmo
+- Twilio
+- Bootstrap
 - Spring Data
 - Person Directory
 - Azure DocumentDb

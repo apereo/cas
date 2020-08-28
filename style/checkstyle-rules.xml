@@ -206,6 +206,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="MethodLength">
+            <property name="id" value="methodLength"/>
             <property name="max" value="180"/>
         </module>
         <module name="ParameterNumber">

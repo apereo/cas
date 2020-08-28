@@ -141,8 +141,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     protected OAuth20Token getOAuthTokenFromRequest(final HttpServletRequest request) {
         val token = getOAuthConfigurationContext().getTicketRegistry().getTicket(getOAuthParameter(request), OAuth20Token.class);
         if (token == null || token.isExpired()) {
-            LOGGER.error("OAuth token indicated by parameter [{}] has expired or not found: [{}]",
-                getOAuthParameter(request), token);
+            LOGGER.error("OAuth token indicated by parameter [{}] has expired or not found: [{}]", getOAuthParameter(request), token);
             if (token != null) {
                 getOAuthConfigurationContext().getTicketRegistry().deleteTicket(token.getId());
             }

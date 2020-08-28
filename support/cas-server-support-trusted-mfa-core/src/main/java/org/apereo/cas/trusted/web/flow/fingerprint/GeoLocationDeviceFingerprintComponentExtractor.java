@@ -37,9 +37,6 @@ public class GeoLocationDeviceFingerprintComponentExtractor implements DeviceFin
         val loc = WebUtils.getHttpServletRequestGeoLocation(request);
 
         if (loc != null && loc.isValid()) {
-            if (this.geoLocationService == null) {
-                return getDefaultGeoLocation(loc);
-            }
             LOGGER.trace("Attempting to geolocate [{}]", loc);
             val response = this.geoLocationService.locate(loc);
             val address = response.build();

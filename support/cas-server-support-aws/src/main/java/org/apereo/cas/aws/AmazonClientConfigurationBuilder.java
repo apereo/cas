@@ -34,11 +34,12 @@ public class AmazonClientConfigurationBuilder {
      * @param builder             the builder
      * @param credentialsProvider the credentials provider
      * @param props               the props
+     * @return the aws sync client builder
      */
     @SneakyThrows
-    public static void prepareClientBuilder(final AwsSyncClientBuilder builder,
-                                            final AwsCredentialsProvider credentialsProvider,
-                                            final BaseAmazonWebServicesProperties props) {
+    public static AwsSyncClientBuilder prepareClientBuilder(final AwsSyncClientBuilder builder,
+                                                            final AwsCredentialsProvider credentialsProvider,
+                                                            final BaseAmazonWebServicesProperties props) {
         val proxyConfig = ProxyConfiguration.builder();
         if (StringUtils.isNotBlank(props.getProxyHost())) {
             proxyConfig.endpoint(new URI(props.getProxyHost()))
@@ -78,5 +79,6 @@ public class AmazonClientConfigurationBuilder {
                 awsClientBuilder.endpointOverride(new URI(endpoint));
             }
         }
+        return builder;
     }
 }

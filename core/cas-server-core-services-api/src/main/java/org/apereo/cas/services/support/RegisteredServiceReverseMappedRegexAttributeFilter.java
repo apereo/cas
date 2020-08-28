@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @Slf4j
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RegisteredServiceReverseMappedRegexAttributeFilter extends RegisteredServiceMappedRegexAttributeFilter {
 
     private static final long serialVersionUID = 852145306984610128L;

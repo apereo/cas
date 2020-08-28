@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServiceMappedRegexAttributeFilter {
 
     private static final long serialVersionUID = 543145306984660628L;

@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 @ToString
 @NoArgsConstructor
 @EqualsAndHashCode
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @AllArgsConstructor
 public class PartialRegexRegisteredServiceMatchingStrategy implements RegisteredServiceMatchingStrategy {
     private static final long serialVersionUID = -8345895859210185565L;

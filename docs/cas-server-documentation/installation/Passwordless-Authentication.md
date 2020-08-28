@@ -117,8 +117,8 @@ would produce a response body similar to the following:
   "email" : "cas@example.org",
   "phone" : "123-456-7890",
   "name" : "CASUser",        
-  "multifactorAuthenticationEligible": FALSE,  
-  "delegatedAuthenticationEligible": FALSE,  
+  "multifactorAuthenticationEligible": "FALSE",  
+  "delegatedAuthenticationEligible": "FALSE",  
   "requestPassword": false,
   "attributes":{ "lastName" : ["...", "..."] }
 }
@@ -207,8 +207,7 @@ on each individual account store implementation.
 ## Multifactor Authentication Integration
 
 Passwordless authentication can be integrated with [CAS multifactor authentication providers](../mfa/Configuring-Multifactor-Authentication.html). In this scenario,
-once CAS configuration is enabled to support this behavior via settings  or the located passwordless user account is considered *eligible* for multifactor authentication,
-once CAS configuration is enabled to support this behavior or the located passwordless user account is considered *eligible* for multifactor authentication,
+once CAS configuration is enabled to support this behavior via settings or the located passwordless user account is considered *eligible* for multifactor authentication,
 CAS will allow passwordless authentication to skip its own *intended normal* flow (i.e. as described above with token generation, etc) in favor of 
 multifactor authentication providers that may be available and defined in CAS.
 

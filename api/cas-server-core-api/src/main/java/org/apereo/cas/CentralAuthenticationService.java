@@ -114,8 +114,9 @@ public interface CentralAuthenticationService {
      * operation when destroying tickets.
      *
      * @param ticketId the ticket id
+     * @return count of deleted tickets
      */
-    void deleteTicket(String ticketId);
+    int deleteTicket(String ticketId);
 
     /**
      * Attempts to delete a ticket from the underlying store

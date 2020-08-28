@@ -66,30 +66,14 @@ nonetheless. What this means is, logging in to a non-SSO-participating applicati
 via CAS nonetheless creates a valid CAS single sign-on session that will be honored on a
 subsequent attempt to authenticate to a SSO-participating application.
 
-Plausibly, a CAS adopter may want this behavior to be different, such that logging in to a non-SSO-participating application
-via CAS either does not create a CAS SSO session and the SSO session it creates is not honored for authenticating subsequently
-to an SSO-participating application. This might better match user expectations. This behavior can be altered either globally
-via CAS settings or on a per-service basis.
-
-```json
-{
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "...",
-  "name" : "...",
-  "id" : 1,
-  "singleSignOnParticipationPolicy":
-    {
-      "@class": "org.apereo.cas.services.DefaultRegisteredServiceSingleSignOnParticipationPolicy",
-      "createCookieOnRenewedAuthentication": "TRUE"
-    }
-}
-```
+The cookie generation strategy can also be customized on a per-application basis. For additional details, 
+please [review this guide](../services/Configuring-Service-SSO-Policy.html).
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#global-sso-behavior).
 
 ## Disable SSO Globally
 
-Participation in single signon sessions can be disabled globally via CAS properties. To see the relevant list of CAS 
+Participation in single sign-on sessions can be disabled globally via CAS properties. To see the relevant list of CAS 
 properties, please [review this guide](../configuration/Configuration-Properties.html#global-sso-behavior).
 
 ## Disable Service SSO Access
@@ -110,89 +94,12 @@ the following service will be challenged to present credentials every time, ther
 }
 ```
 
-In general, SSO participation policies designed on a per-service basis should override the global behavior.
-
 ## SSO Participation Policies
 
-Additional policies can be assigned to each service definition to control participation of an application in an existing single sign-on session.
-If conditions hold true, CAS shall honor the existing SSO session and will not challenge the user for credentials. If conditions fail, then
-user may be asked for credentials. Such policies can be chained together and executed in order.
+The single sign-on participation strategy can also be customized on a per-application basis. For additional details, 
+please [review this guide](../services/Configuring-Service-SSO-Policy.html).
 
-### Authentication Date
-
-Honor the existing single sign-on session, if any, if the authentication date is at most `5` seconds old. Otherwise, challenge 
-the user for credentials and ignore the existing session.
-
-```json
-{
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "...",
-  "name" : "...",
-  "id" : 1,
-  "singleSignOnParticipationPolicy":
-    {
-      "@class": "org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicy",
-      "policies": [
-        "java.util.ArrayList",
-        [
-          {
-            "@class": "org.apereo.cas.services.AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy",
-            "timeUnit": "SECONDS",
-            "timeValue": 5,
-            "order": 0
-          }
-        ]
-      ]
-    }
-}
-```
-
-### Last Used Time
-
-Honor the existing single sign-on session, if any, if the last time an SSO session was used is at most `5` seconds old. Otherwise, challenge the 
-user for credentials and ignore the existing session.
-
-The policy calculation here typically includes evaluating the last-used-time of the ticket-granting ticket linked to the SSO session to check whether
-the ticket continues to actively issue service tickets, etc. 
-
-```json
-{
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "...",
-  "name" : "...",
-  "id" : 1,
-  "singleSignOnParticipationPolicy":
-    {
-      "@class": "org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicy",
-      "policies": [
-        "java.util.ArrayList",
-        [
-          {
-            "@class": "org.apereo.cas.services.LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy",
-            "timeUnit": "SECONDS",
-            "timeValue": 5,
-            "order": 0
-          }
-        ]
-      ]
-    }
-}
-```
-
-## Custom 
-
-Participation in a single sign-on session can be customized and controlled using custom strategies registered with CAS per the below syntax:
-
-```java
-@Bean
-public SingleSignOnParticipationStrategyConfigurer customSsoConfigurer() {
-    return chain -> chain.addStrategy(...);
-}
-```
-
-[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
-
-# SSO Warning Session Cookie
+## SSO Warning Session Cookie
 
 A warning cookie set by CAS upon the establishment of the SSO session at the request of the user on the CAS login page.
 The cookie is used later to warn and prompt the user before a service ticket is generated and access to the service application is granted.
@@ -200,7 +107,7 @@ The cookie is used later to warn and prompt the user before a service ticket is 
 To see the relevant list of CAS properties, 
 please [review this guide](../configuration/Configuration-Properties.html#warning-cookie).
 
-## "I am at a public workstation" authentication
+## Public Workstations
 
 CAS has the ability to allow the user to opt-out of SSO, by indicating on the login page that the authentication
 is happening at a public workstation. By electing to do so, CAS will not honor the subsequent SSO session

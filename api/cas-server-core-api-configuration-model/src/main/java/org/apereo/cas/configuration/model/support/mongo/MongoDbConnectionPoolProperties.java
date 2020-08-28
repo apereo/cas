@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -15,6 +16,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
+@Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-mongo-core")
 public class MongoDbConnectionPoolProperties implements Serializable {
     private static final long serialVersionUID = 8312213511918496060L;

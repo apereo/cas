@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -31,8 +32,9 @@ import java.time.ZoneId;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Slf4j
+@Accessors(chain = true)
 public class DefaultRegisteredServiceExpirationPolicy implements RegisteredServiceExpirationPolicy {
 
     private static final long serialVersionUID = 5106652807554743500L;

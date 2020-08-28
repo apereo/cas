@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import javax.persistence.NoResultException;
 import java.time.Duration;
 import java.util.Set;
 
@@ -43,15 +42,10 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
 
     @Override
     public GoogleAuthenticatorToken get(final String uid, final Integer otp) {
-        try {
-            val redisKey = getGoogleAuthenticatorTokenRedisKey(uid, otp);
-            val ops = this.template.boundValueOps(redisKey);
-            LOGGER.trace("Locating token by identifier [{}] using key [{}]", uid, redisKey);
-            return ops.get();
-        } catch (final NoResultException e) {
-            LOGGER.debug("No record could be found for google authenticator id [{}]", uid);
-        }
-        return null;
+        val redisKey = getGoogleAuthenticatorTokenRedisKey(uid, otp);
+        val ops = this.template.boundValueOps(redisKey);
+        LOGGER.trace("Locating token by identifier [{}] using key [{}]", uid, redisKey);
+        return ops.get();
     }
 
     @Override
@@ -60,7 +54,6 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
             val redisKey = getGoogleAuthenticatorTokenKeys();
             LOGGER.trace("Deleting tokens using key [{}]", redisKey);
             this.template.delete(redisKey);
-            LOGGER.trace("Deleted tokens");
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);
         }
@@ -81,14 +74,10 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
     @Override
     public void remove(final String uid) {
         try {
-            try {
-                val redisKey = getGoogleAuthenticatorTokenKeys(uid);
-                LOGGER.trace("Deleting tokens for [{}] using key [{}]", uid, redisKey);
-                this.template.delete(redisKey);
-                LOGGER.trace("Deleted tokens [{}]", redisKey);
-            } catch (final Exception e) {
-                LoggingUtils.warn(LOGGER, e);
-            }
+            val redisKey = getGoogleAuthenticatorTokenKeys(uid);
+            LOGGER.trace("Deleting tokens for [{}] using key [{}]", uid, redisKey);
+            this.template.delete(redisKey);
+            LOGGER.trace("Deleted tokens [{}]", redisKey);
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);
         }
@@ -108,24 +97,14 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
 
     @Override
     public long count(final String uid) {
-        try {
-            val keys = getGoogleAuthenticatorTokenKeys(uid);
-            return keys.size();
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-        }
-        return 0;
+        val keys = getGoogleAuthenticatorTokenKeys(uid);
+        return keys.size();
     }
 
     @Override
     public long count() {
-        try {
-            val keys = getGoogleAuthenticatorTokenKeys();
-            return keys.size();
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-        }
-        return 0;
+        val keys = getGoogleAuthenticatorTokenKeys();
+        return keys.size();
     }
 
     private static String getGoogleAuthenticatorTokenRedisKey(final GoogleAuthenticatorToken token) {

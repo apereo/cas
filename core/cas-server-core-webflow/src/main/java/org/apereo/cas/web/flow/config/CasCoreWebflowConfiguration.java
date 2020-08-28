@@ -39,7 +39,6 @@ import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAbstractTicketExceptionHandler;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAuthenticationExceptionHandler;
 import org.apereo.cas.web.flow.authentication.GenericCasWebflowExceptionHandler;
-import org.apereo.cas.web.flow.authentication.RequiredAuthenticationHandlersSingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -295,21 +294,6 @@ public class CasCoreWebflowConfiguration {
 
         errors.addAll(casProperties.getAuthn().getErrors().getExceptions());
         return errors;
-    }
-
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "requiredAuthenticationHandlersSingleSignOnParticipationStrategy")
-    public SingleSignOnParticipationStrategy requiredAuthenticationHandlersSingleSignOnParticipationStrategy() {
-        return new RequiredAuthenticationHandlersSingleSignOnParticipationStrategy(servicesManager.getObject(),
-            authenticationServiceSelectionPlan.getObject(), ticketRegistrySupport.getObject());
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "requiredAuthenticationHandlersSingleSignOnParticipationStrategyConfigurer")
-    @RefreshScope
-    public SingleSignOnParticipationStrategyConfigurer requiredAuthenticationHandlersSingleSignOnParticipationStrategyConfigurer() {
-        return chain -> chain.addStrategy(requiredAuthenticationHandlersSingleSignOnParticipationStrategy());
     }
 
     @Bean

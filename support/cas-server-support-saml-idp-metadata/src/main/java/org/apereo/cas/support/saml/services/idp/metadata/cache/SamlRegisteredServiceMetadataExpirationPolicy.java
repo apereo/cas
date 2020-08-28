@@ -37,6 +37,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
         val service = cacheKey.getRegisteredService();
         val duration = getCacheDurationForServiceProvider(service, chainingMetadataResolver);
         if (duration >= 0) {
+            LOGGER.trace("Metadata cache duration for [{}] is [{}]", service.getName(), duration);
             return duration;
         }
         LOGGER.trace("Metadata for [{}] does not define caching policies", service.getName());
@@ -47,7 +48,6 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
         LOGGER.trace("Service [{}] does not define caching policies. Falling back onto default...", service.getName());
         return defaultExpiration;
     }
-
 
     @Override
     public long expireAfterUpdate(@NonNull final SamlRegisteredServiceCacheKey cacheKey,

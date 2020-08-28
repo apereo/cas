@@ -16,7 +16,7 @@ import java.util.List;
  * @since 6.2.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public interface AttributeDefinition extends Serializable, Comparable<AttributeDefinition> {
 
     /**

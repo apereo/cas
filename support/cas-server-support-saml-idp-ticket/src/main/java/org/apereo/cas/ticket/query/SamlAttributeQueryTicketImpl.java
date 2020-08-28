@@ -86,7 +86,7 @@ public class SamlAttributeQueryTicketImpl extends AbstractTicket implements Saml
 
     @Override
     public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication, final ExpirationPolicy expirationPolicy) {
-        throw new UnsupportedOperationException("No PGT grant is available");
+        throw new UnsupportedOperationException("No proxy granting ticket is available");
     }
 
     @Override

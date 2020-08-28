@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link GroovyRegisteredServiceAuthenticationPolicyCriteria}.
@@ -21,7 +22,8 @@ import lombok.ToString;
 @Getter
 @EqualsAndHashCode
 @Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@Accessors(chain = true)
 public class GroovyRegisteredServiceAuthenticationPolicyCriteria implements RegisteredServiceAuthenticationPolicyCriteria {
     private static final long serialVersionUID = -1905826778096374574L;
 
