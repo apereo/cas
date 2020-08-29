@@ -101,6 +101,6 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("https://example.token.org"));
-        assertEquals("success", this.action.getObject().execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.getObject().execute(context).getId());
     }
 }

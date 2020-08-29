@@ -37,6 +37,21 @@ public class PasswordChangeActionTests extends BasePasswordManagementActionTests
     private Action passwordChangeAction;
 
     @Test
+    public void verifyFailNoCreds() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        val changeReq = new PasswordChangeRequest();
+        changeReq.setUsername("casuser");
+        changeReq.setPassword("123456");
+        context.getFlowScope().put(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, changeReq);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, passwordChangeAction.execute(context).getId());
+    }
+
+    @Test
     public void verifyFailsValidation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

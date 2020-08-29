@@ -2,6 +2,7 @@ package org.apereo.cas.support.openid.web;
 
 import org.apereo.cas.web.AbstractDelegateController;
 import org.apereo.cas.web.DelegatingController;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -63,7 +64,7 @@ public class DelegatingControllerTests {
         }));
         val mv = ctrl.handleRequest(request, response);
         assertNotNull(mv);
-        assertEquals("success", mv.getViewName());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mv.getViewName());
     }
 
 }

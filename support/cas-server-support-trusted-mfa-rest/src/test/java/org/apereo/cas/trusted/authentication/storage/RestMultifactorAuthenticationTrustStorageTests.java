@@ -92,8 +92,6 @@ public class RestMultifactorAuthenticationTrustStorageTests {
                     mfaTrustEngine.remove(r.getRecordKey());
                 }
             });
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 
@@ -108,8 +106,6 @@ public class RestMultifactorAuthenticationTrustStorageTests {
                     mfaTrustEngine.remove(ZonedDateTime.now(ZoneOffset.UTC));
                 }
             });
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 
@@ -125,8 +121,6 @@ public class RestMultifactorAuthenticationTrustStorageTests {
             val record = mfaTrustEngine.get(r.getId());
             assertNotNull(record);
             assertNotNull(mfaTrustEngine.getAll());
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 
@@ -142,8 +136,6 @@ public class RestMultifactorAuthenticationTrustStorageTests {
             mfaTrustEngine.save(r);
             val records = mfaTrustEngine.get("casuser");
             assertNotNull(records);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 
@@ -165,8 +157,6 @@ public class RestMultifactorAuthenticationTrustStorageTests {
             mfaEngine.save(r);
             val records = mfaEngine.get(r.getPrincipal());
             assertNotNull(records);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 }

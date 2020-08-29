@@ -40,7 +40,7 @@ public class ValidateCaptchaActionTests {
     private Action validateCaptchaAction;
 
     @Test
-    public void verifyCaptchaValidated() {
+    public void verifyCaptchaValidated() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
 
@@ -54,13 +54,11 @@ public class ValidateCaptchaActionTests {
             webServer.start();
             val result = validateCaptchaAction.execute(context);
             assertNull(result);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 
     @Test
-    public void verifyCaptchaFails() {
+    public void verifyCaptchaFails() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -76,8 +74,6 @@ public class ValidateCaptchaActionTests {
             val result = validateAction.execute(context);
             assertNotNull(result);
             assertEquals(CasWebflowConstants.TRANSITION_ID_CAPTCHA_ERROR, result.getId());
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 }

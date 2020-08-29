@@ -27,16 +27,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SendPasswordResetInstructionsActionTests extends BasePasswordManagementActionTests {
 
     @Test
-    public void verifyAction() {
-        try {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            request.addParameter("username", "casuser");
-            WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
-        }
+    public void verifyAction() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        request.addParameter("username", "casuser");
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
     }
 }

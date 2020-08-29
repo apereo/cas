@@ -53,8 +53,6 @@ public class RestfulPasswordlessUserAccountStoreTests extends BasePasswordlessUs
             webServer.start();
             val user = passwordlessUserAccountStore.findUser("casuser");
             assertTrue(user.isPresent());
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 }

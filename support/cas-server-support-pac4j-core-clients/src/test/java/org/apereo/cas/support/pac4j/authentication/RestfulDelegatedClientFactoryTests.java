@@ -60,8 +60,6 @@ public class RestfulDelegatedClientFactoryTests {
             val res = r.build();
             assertNotNull(res);
             assertEquals(3, res.size());
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 }
