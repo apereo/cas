@@ -12,6 +12,7 @@ dependencies {
     implementation libraries.redis
     implementation libraries.metrics
     implementation libraries.influxdb
+    implementation libraries.squareup
     implementation libraries.okhttp
 
     implementation project(":support:cas-server-support-redis-core")

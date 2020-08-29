@@ -134,14 +134,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.squareup.retrofit2", module: "retrofit")
                     exclude(group: "com.squareup.okio", module: "okio")
-                },
-                dependencies.create("com.squareup.retrofit2:retrofit:$retrofitVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.squareup.okhttp3", module: "okhttp")
-                    exclude(group: "com.squareup.okio", module: "okio")
-                },
-                dependencies.create("com.squareup.okhttp3:okhttp:$okhttp3Version") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
         bouncycastle            : [
@@ -1130,12 +1122,16 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.jetbrains.kotlin", module: "kotlin-reflect")
                 },
                 dependencies.create("com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                }
+                },
+                dependencies.create("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") {
+                },
+
         ],
         couchbase               : dependencies.create("com.couchbase.client:java-client:$couchbaseVersion"),
         ektorp                  : dependencies.create("org.ektorp:org.ektorp:$ektorpVersion"),
@@ -1182,6 +1178,16 @@ ext.libraries = [
                 },
                 dependencies.create("com.google.code.gson:gson:$gsonVersion") {
 
+                }
+        ],
+        squareup                : [
+                dependencies.create("com.squareup.retrofit2:retrofit:$retrofitVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.squareup.okhttp3", module: "okhttp")
+                    exclude(group: "com.squareup.okio", module: "okio")
+                },
+                dependencies.create("com.squareup.okhttp3:okhttp:$okhttp3Version") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
         oktasdk                 : [
@@ -2077,7 +2083,9 @@ ext.libraries = [
             exclude(group: "com.google.guava", module: "guava")
             exclude(group: "commons-io", module: "commons-io")
             exclude(group: "com.sun.xml.bind", module: "jaxb-impl")
-
+            exclude(group: "com.squareup.retrofit2", module: "retrofit")
+            exclude(group: "com.squareup.retrofit2", module: "converter-moshi")
+            exclude(group: "com.squareup.okhttp3", module: "logging-interceptor")
         },
         quartz                  : dependencies.create("org.quartz-scheduler:quartz:$quartzVersion") {
             exclude(group: "org.slf4j", module: "slf4j-api")
