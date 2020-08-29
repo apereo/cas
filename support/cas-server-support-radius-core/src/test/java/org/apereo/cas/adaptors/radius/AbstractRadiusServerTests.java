@@ -1,9 +1,14 @@
 package org.apereo.cas.adaptors.radius;
 
+import org.apereo.cas.util.HttpRequestUtils;
+
 import lombok.val;
 import net.jradius.dictionary.vsa_microsoft.Attr_MSCHAP2Success;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.security.Security;
 
@@ -26,6 +31,11 @@ public abstract class AbstractRadiusServerTests {
 
     static {
         Security.addProvider(new BouncyCastleProvider());
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr("1.2.3.4");
+        request.setLocalAddr("4.5.6.7");
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
     }
 
     @Test
@@ -34,7 +44,8 @@ public abstract class AbstractRadiusServerTests {
         val response = server.authenticate("casuser", "Mellon");
         assertEquals(2, response.getCode());
         assertFalse(response.getAttributes().isEmpty());
-        assertTrue(response.getAttributes().stream().anyMatch(a -> a.getAttributeName().equals(Attr_MSCHAP2Success.NAME)));
+        assertTrue(response.getAttributes().stream()
+            .anyMatch(a -> a.getAttributeName().equals(Attr_MSCHAP2Success.NAME)));
     }
 
     public abstract RadiusServer getRadiusServer();
