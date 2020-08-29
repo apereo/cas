@@ -9,7 +9,6 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 
@@ -21,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@TestPropertySource(properties = "cas.authn.saml-idp.metadata.location=file:/tmp")
 @Tag("JDBC")
 public class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMetadataTests {
 
@@ -42,7 +40,5 @@ public class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMe
         assertTrue(resolver.isAvailable(service));
         val resolvers = resolver.resolve(service);
         assertTrue(resolvers.size() == 1);
-
-        assertTrue(resolver.isAvailable(service));
     }
 }
