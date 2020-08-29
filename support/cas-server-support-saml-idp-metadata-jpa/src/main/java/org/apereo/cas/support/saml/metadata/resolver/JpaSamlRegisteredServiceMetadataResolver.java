@@ -46,13 +46,11 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
 
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        try {
-            val documents = this.entityManager.createQuery(SELECT_QUERY, SamlMetadataDocument.class).getResultList();
-            return documents.stream().map(doc -> buildMetadataResolverFrom(service, doc)).filter(Objects::nonNull).collect(Collectors.toList());
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return null;
+        val documents = this.entityManager.createQuery(SELECT_QUERY, SamlMetadataDocument.class).getResultList();
+        return documents.stream()
+            .map(doc -> buildMetadataResolverFrom(service, doc))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -68,11 +66,7 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
 
     @Override
     public void saveOrUpdate(final SamlMetadataDocument document) {
-        try {
-            this.entityManager.merge(document);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
+        this.entityManager.merge(document);
     }
 
     @Override

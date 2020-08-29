@@ -1,7 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
-import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.util.CollectionUtils;
@@ -41,7 +40,7 @@ public class VerifyPasswordResetRequestActionTests extends BasePasswordManagemen
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN, UUID.randomUUID().toString());
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertThrows(InvalidTicketException.class, () -> verifyPasswordResetRequestAction.execute(context));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, verifyPasswordResetRequestAction.execute(context).getId());
     }
 
     @Test
@@ -69,6 +68,36 @@ public class VerifyPasswordResetRequestActionTests extends BasePasswordManagemen
         assertTrue(PasswordManagementWebflowUtils.isPasswordResetSecurityQuestionsEnabled(context));
         assertNotNull(PasswordManagementWebflowUtils.getPasswordResetUsername(context));
         assertNotNull(PasswordManagementWebflowUtils.getPasswordResetToken(context));
+    }
+
+    @Test
+    public void verifyNoQuestionsAvailAction() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr("1.2.3.4");
+        request.setLocalAddr("1.2.3.4");
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val token = passwordManagementService.createToken("noquestions");
+        val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
+        val serverPrefix = casProperties.getServer().getPrefix();
+        val service = webApplicationServiceFactory.createService(serverPrefix);
+        val properties = CollectionUtils.<String, Serializable>wrap(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN, token);
+        val ticket = transientFactory.create(service, properties);
+        this.ticketRegistry.addTicket(ticket);
+        request.addParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN, ticket.getId());
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, verifyPasswordResetRequestAction.execute(context).getId());
+    }
+
+    @Test
+    public void verifyBadTicketAction() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        request.addParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN, "badticket");
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, verifyPasswordResetRequestAction.execute(context).getId());
     }
 
 

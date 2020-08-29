@@ -1,12 +1,8 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

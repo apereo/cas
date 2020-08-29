@@ -2,7 +2,6 @@ package org.apereo.cas.support.saml.metadata.resolver;
 
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
