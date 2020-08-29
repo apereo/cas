@@ -4,6 +4,7 @@ package org.apereo.cas;
 import org.apereo.cas.pm.web.flow.PasswordManagementCaptchaWebflowConfigurerTests;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurerDisabledTests;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurerEnabledTests;
+import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtilsTests;
 import org.apereo.cas.pm.web.flow.actions.HandlePasswordExpirationWarningMessagesActionTests;
 import org.apereo.cas.pm.web.flow.actions.InitPasswordResetActionTests;
 import org.apereo.cas.pm.web.flow.actions.PasswordChangeActionTests;
@@ -26,6 +27,7 @@ import org.junit.runner.RunWith;
     VerifySecurityQuestionsActionTests.class,
     SendPasswordResetInstructionsActionTests.class,
     InitPasswordResetActionTests.class,
+    PasswordManagementWebflowUtilsTests.class,
     SendForgotUsernameInstructionsActionTests.class,
     PasswordChangeActionTests.class,
     PasswordManagementCaptchaWebflowConfigurerTests.class,
