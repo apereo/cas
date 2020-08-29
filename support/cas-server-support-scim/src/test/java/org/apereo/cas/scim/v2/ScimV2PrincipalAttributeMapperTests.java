@@ -8,9 +8,12 @@ import com.unboundid.scim2.common.types.UserResource;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.net.URI;
 import java.util.Calendar;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link ScimV2PrincipalAttributeMapperTests}.
@@ -35,12 +38,13 @@ public class ScimV2PrincipalAttributeMapperTests {
         meta.setLocation(new URI("http://localhost:8218"));
         user.setMeta(meta);
 
-        try {
-            val mapper = new ScimV2PrincipalAttributeMapper();
-            mapper.map(user, CoreAuthenticationTestUtils.getPrincipal(),
-                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
-        }
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                val mapper = new ScimV2PrincipalAttributeMapper();
+                mapper.map(user, CoreAuthenticationTestUtils.getPrincipal(),
+                    CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+            }
+        });
     }
 }

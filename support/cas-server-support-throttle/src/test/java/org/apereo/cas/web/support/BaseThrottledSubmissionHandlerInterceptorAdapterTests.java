@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -123,18 +124,14 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         /* Seed with something to compare against */
         loginUnsuccessfully("mog", "1.2.3.4");
 
-        IntStream.range(0, trials).forEach(i -> {
-            try {
-                LOGGER.debug("Waiting for [{}] ms", period);
-                Thread.sleep(period);
-                val status = loginUnsuccessfully("mog", "1.2.3.4");
-                if (i == trials) {
-                    assertEquals(expected, status.getStatus());
-                }
-            } catch (final Exception e) {
-                throw new AssertionError(e.getMessage(), e);
+        IntStream.range(0, trials).forEach(Unchecked.intConsumer(i -> {
+            LOGGER.debug("Waiting for [{}] ms", period);
+            Thread.sleep(period);
+            val status = loginUnsuccessfully("mog", "1.2.3.4");
+            if (i == trials) {
+                assertEquals(expected, status.getStatus());
             }
-        });
+        }));
     }
 
     @SneakyThrows

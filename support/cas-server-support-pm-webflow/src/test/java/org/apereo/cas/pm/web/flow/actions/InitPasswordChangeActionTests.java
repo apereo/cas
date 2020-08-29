@@ -1,6 +1,12 @@
-package org.apereo.cas.pm.web.flow;
+package org.apereo.cas.pm.web.flow.actions;
+
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -11,29 +17,25 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link PasswordManagementWebflowUtilsTests}.
+ * This is {@link InitPasswordChangeActionTests}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Webflow")
-public class PasswordManagementWebflowUtilsTests {
+@Tag("WebflowActions")
+public class InitPasswordChangeActionTests extends BasePasswordManagementActionTests {
     @Test
-    public void verifyResetQs() {
+    public void verifyAction() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
-        PasswordManagementWebflowUtils.putPasswordResetSecurityQuestions(context, List.of("Q1", "Q2"));
-        PasswordManagementWebflowUtils.putPasswordResetPasswordPolicyPattern(context, ".*");
-        assertFalse(PasswordManagementWebflowUtils.getPasswordResetQuestions(context).isEmpty());
+        assertNull(initPasswordChangeAction.execute(context));
+        assertNotNull(PasswordManagementWebflowUtils.getPasswordResetPasswordPolicyPattern(context));
     }
-
 }

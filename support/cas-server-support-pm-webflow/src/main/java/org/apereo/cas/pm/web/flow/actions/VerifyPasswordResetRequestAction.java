@@ -43,18 +43,13 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
         }
 
         val tst = this.centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
-        if (tst == null) {
-            LOGGER.error("Unable to locate token [{}] in the ticket registry", transientTicket);
-            return error();
-        }
-
         val token = tst.getProperties().get(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN).toString();
         val username = passwordManagementService.parseToken(token);
         if (StringUtils.isBlank(username)) {
             LOGGER.error("Password reset token could not be verified");
             return error();
         }
-        this.centralAuthenticationService.deleteTicket(tst.getId());
+        centralAuthenticationService.deleteTicket(tst.getId());
 
         PasswordManagementWebflowUtils.putPasswordResetToken(requestContext, token);
         val pm = casProperties.getAuthn().getPm();

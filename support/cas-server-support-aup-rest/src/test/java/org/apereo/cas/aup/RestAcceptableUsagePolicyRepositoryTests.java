@@ -51,8 +51,6 @@ public class RestAcceptableUsagePolicyRepositoryTests {
             val request = new MockHttpServletRequest();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertTrue(r.submit(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 
@@ -78,8 +76,6 @@ public class RestAcceptableUsagePolicyRepositoryTests {
             val terms = r.fetchPolicy(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
             assertTrue(terms.isPresent());
             assertEquals(terms.get(), input);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 }

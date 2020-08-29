@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RestfulApi")
 public class RestfulAuthenticationPolicyTests {
     @Test
-    public void verifyAllowedOperation() {
+    public void verifyAllowedOperation() throws Exception {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -44,9 +44,7 @@ public class RestfulAuthenticationPolicyTests {
             val policy = new RestfulAuthenticationPolicy("http://localhost:9200");
             assertTrue(policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
                 new LinkedHashSet<>(), applicationContext, Optional.empty()));
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
-        }
+        } 
     }
 
     @Test
@@ -73,8 +71,6 @@ public class RestfulAuthenticationPolicyTests {
             assertThrowsWithRootCause(GeneralSecurityException.class, exceptionClass,
                 () -> policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
                     new LinkedHashSet<>(), applicationContext, Optional.empty()));
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 }

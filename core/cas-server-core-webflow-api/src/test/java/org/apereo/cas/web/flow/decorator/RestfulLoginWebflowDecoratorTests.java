@@ -41,8 +41,6 @@ public class RestfulLoginWebflowDecoratorTests {
 
             rest.decorate(requestContext, mock(ApplicationContext.class));
             assertTrue(requestContext.getFlowScope().contains("decoration"));
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 

@@ -44,8 +44,6 @@ public class RemoteEndpointServiceAccessStrategyTests {
             new ByteArrayResource("OK".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertTrue(strategy.doPrincipalAttributesAllowServiceAccess("casuser", CoreAuthenticationTestUtils.getAttributes()));
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 
@@ -58,8 +56,6 @@ public class RemoteEndpointServiceAccessStrategyTests {
             new ByteArrayResource("OK".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertFalse(strategy.doPrincipalAttributesAllowServiceAccess("casuser", CoreAuthenticationTestUtils.getAttributes()));
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 }

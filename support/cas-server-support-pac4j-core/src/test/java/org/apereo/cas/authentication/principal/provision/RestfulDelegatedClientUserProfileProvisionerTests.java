@@ -39,8 +39,6 @@ public class RestfulDelegatedClientUserProfileProvisionerTests {
             props.setUrl("http://localhost:9192");
             val service = new RestfulDelegatedClientUserProfileProvisioner(props);
             service.execute(CoreAuthenticationTestUtils.getPrincipal(), commonProfile, client);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 }
