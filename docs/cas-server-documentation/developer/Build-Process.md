@@ -66,7 +66,7 @@ The following commandline boolean flags are supported by the build and can be pa
 | `skipVersionConflict`             | If a dependency conflict is found, use the latest version rather than failing the build.
 | `skipNestedConfigMetadataGen`     | Skip generating configuration metadata for nested properties and generic collections.
 | `skipSonarqube`                   | Ignore reporting results to Sonarqube.
-| `skipErrorProneCompiler`          | Skip running the `error-prone` slitatic-analysis compiler.
+| `skipErrorProneCompiler`          | Skip running the `error-prone` static-analysis compiler.
 | `skipBootifulArtifact`            | Do not apply the Spring Boot plugin to bootify application artifacts.
 | `forceBom`                        | Force the generation of the CAS Maven BOM.
 | `ignoreJavadocFailures`           | Ignore javadoc failures and let the build resume.
