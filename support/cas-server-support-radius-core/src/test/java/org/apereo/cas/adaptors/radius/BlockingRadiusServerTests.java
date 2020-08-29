@@ -50,7 +50,7 @@ public class BlockingRadiusServerTests extends AbstractRadiusServerTests {
     public void verifyNasSettings() {
         val context = RadiusServerConfigurationContext.builder()
             .protocol(RadiusProtocol.MSCHAPv2)
-            .radiusClientFactory(new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, 1, INET_ADDRESS, SECRET))
+            .radiusClientFactory(new RadiusClientFactory(1234, 4567, 1, "131.211.138.166", "1234"))
             .nasIpAddress("3.2.1.0")
             .nasIpv6Address("0:0:0:0:0:ffff:302:100")
             .nasPort(ACCOUNTING_PORT)

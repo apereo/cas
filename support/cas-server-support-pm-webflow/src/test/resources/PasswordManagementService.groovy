@@ -16,18 +16,27 @@ def change(Object[] args) {
 def findEmail(Object[] args) {
     def username = args[0]
     def logger = args[1]
+    if (username.equals("none")) {
+        return null
+    }
     return "cas@example.org"
 }
 
 def getSecurityQuestions(Object[] args) {
     def username = args[0]
     def logger = args[1]
+    if (username.equals("noquestions")) {
+        return [:]
+    }
     return [securityQuestion1: "securityAnswer1"]
 }
 
 def findPhone(Object[] args) {
     def username = args[0]
     def logger = args[1]
+    if (username.equals("none")) {
+        return null
+    }
     return "3477463421"
 }
 

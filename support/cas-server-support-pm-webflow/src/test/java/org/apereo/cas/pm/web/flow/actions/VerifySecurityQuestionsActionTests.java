@@ -1,6 +1,5 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
@@ -20,8 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@EnabledIfPortOpen(port = 25000)
-@Tag("Mail")
+@Tag("WebflowActions")
 public class VerifySecurityQuestionsActionTests extends BasePasswordManagementActionTests {
 
     @Test
@@ -32,5 +30,14 @@ public class VerifySecurityQuestionsActionTests extends BasePasswordManagementAc
         context.getFlowScope().put("username", "casuser");
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, verifySecurityQuestionsAction.execute(context).getId());
+    }
+
+    @Test
+    public void verifyFailsAction() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        context.getFlowScope().put("username", "casuser");
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, verifySecurityQuestionsAction.execute(context).getId());
     }
 }

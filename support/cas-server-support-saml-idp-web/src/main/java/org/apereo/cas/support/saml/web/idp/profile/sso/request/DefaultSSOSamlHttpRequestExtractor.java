@@ -28,7 +28,7 @@ public class DefaultSSOSamlHttpRequestExtractor implements SSOSamlHttpRequestExt
     /**
      * The Parser pool.
      */
-    protected final ParserPool parserPool;
+    private final ParserPool parserPool;
 
     @Audit(action = "SAML2_REQUEST",
         actionResolverName = "SAML2_REQUEST_ACTION_RESOLVER",
