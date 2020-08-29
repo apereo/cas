@@ -93,14 +93,14 @@ public class RegisteredServiceResource {
         val extractor = new BasicAuthExtractor();
         val webContext = new JEEContext(request, response);
         val credentialsResult = extractor.extract(webContext);
-        if (credentialsResult.isPresent()) {
-            val credentials = credentialsResult.get();
-            LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);
-            val c = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
-            val serviceRequest = this.serviceFactory.createService(request);
-            val result = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceRequest, c);
-            return result.getAuthentication();
+        val credentials = credentialsResult.get();
+        LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);
+        val c = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
+        val serviceRequest = this.serviceFactory.createService(request);
+        val result = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceRequest, c);
+        if (result == null) {
+            throw new BadRestRequestException("Unable to establish authentication using provided credentials for " + c.getUsername());
         }
-        throw new BadRestRequestException("Could not authenticate request");
+        return result.getAuthentication();
     }
 }

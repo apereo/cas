@@ -34,6 +34,14 @@ public class RadiusUtilsTests {
     }
 
     @Test
+    public void verifyActionFailsWithFailOver() throws Exception {
+        val server = mock(RadiusServer.class);
+        when(server.authenticate(anyString(), anyString())).thenReturn(null);
+        val result = RadiusUtils.authenticate("casuser", "Mellon", CollectionUtils.wrapList(server), true, false, Optional.empty());
+        assertFalse(result.getKey());
+    }
+
+    @Test
     public void verifyActionFails() throws Exception {
         val server = mock(RadiusServer.class);
         when(server.authenticate(anyString(), anyString())).thenReturn(null);

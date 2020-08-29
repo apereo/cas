@@ -45,7 +45,9 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.pm.rest.endpoint-url-security-questions=http://localhost:9090",
         "cas.authn.pm.rest.endpoint-url-email=http://localhost:9090",
         "cas.authn.pm.rest.endpoint-url-user=http://localhost:9090",
-        "cas.authn.pm.rest.endpoint-url-phone=http://localhost:9090"
+        "cas.authn.pm.rest.endpoint-url-phone=http://localhost:9090",
+        "cas.authn.pm.rest.endpoint-username=username",
+        "cas.authn.pm.rest.endpoint-password=password"
     })
 @Tag("RestfulApi")
 public class RestPasswordManagementServiceTests {
