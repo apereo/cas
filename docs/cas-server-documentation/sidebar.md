@@ -262,8 +262,8 @@ layout: null
 * [Developer](#developer)
     *   [Javadocs](https://www.javadoc.io/doc/org.apereo.cas)
     *   [Code Conventions](/cas/developer/Code-Conventions.html)
-    *   [Release Process](/$version/develop/Release-Process.html)
-    *   [Build Process](/$version/develop/Build-Process.html)
+    *   [Release Process](/$version/developer/Release-Process.html)
+    *   [Build Process](/$version/developer/Build-Process.html)
 
 * [Project](#projectpolicy)
     *   [PMC](/cas/developer/Project-Commitee.html)
