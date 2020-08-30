@@ -1186,6 +1186,8 @@ ext.libraries = [
                     exclude(group: "com.squareup.okhttp3", module: "okhttp")
                     exclude(group: "com.squareup.okio", module: "okio")
                 },
+                dependencies.create("com.squareup.retrofit2:converter-moshi:$retrofitVersion") {
+                },
                 dependencies.create("com.squareup.okhttp3:okhttp:$okhttp3Version") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
