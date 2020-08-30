@@ -18,6 +18,7 @@ import org.apereo.cas.web.flow.SendTicketGrantingTicketSsoActionTests;
 import org.apereo.cas.web.flow.ServiceAuthorizationCheckActionTests;
 import org.apereo.cas.web.flow.ServiceAuthorizationCheckMockitoActionTests;
 import org.apereo.cas.web.flow.ServiceWarningActionTests;
+import org.apereo.cas.web.flow.SessionStoreTicketGrantingTicketActionTests;
 import org.apereo.cas.web.flow.SetServiceUnauthorizedRedirectUrlActionTests;
 import org.apereo.cas.web.flow.TerminateSessionActionTests;
 import org.apereo.cas.web.flow.TerminateSessionConfirmingActionTests;
@@ -41,6 +42,7 @@ import org.junit.runner.RunWith;
     GenericSuccessViewActionTests.class,
     InitialFlowSetupActionTests.class,
     LogoutActionTests.class,
+    SessionStoreTicketGrantingTicketActionTests.class,
     RedirectUnauthorizedServiceUrlActionTests.class,
     RenderLoginActionTests.class,
     FlowExecutionExceptionResolverTests.class,

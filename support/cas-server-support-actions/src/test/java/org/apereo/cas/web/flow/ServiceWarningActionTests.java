@@ -33,8 +33,7 @@ public class ServiceWarningActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier("serviceWarningAction")
     private ObjectProvider<Action> action;
-
-
+    
     private MockRequestContext context;
 
     @BeforeEach

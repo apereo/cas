@@ -33,7 +33,7 @@ public class OAuth20WebflowConfigurer extends AbstractCasWebflowConfigurer {
             val state = getTransitionableState(loginFlow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
             state.getEntryActionList().add(createEvaluateAction("oauth20RegisteredServiceUIAction"));
             val createTicketState = getState(loginFlow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET, ActionState.class);
-            createTicketState.getExitActionList().add(createEvaluateAction("oauth20CreateTicketGrantingTicketExitAction"));
+            createTicketState.getExitActionList().add(createEvaluateAction("oauth20SessionStoreTicketGrantingTicketAction"));
         }
     }
 }

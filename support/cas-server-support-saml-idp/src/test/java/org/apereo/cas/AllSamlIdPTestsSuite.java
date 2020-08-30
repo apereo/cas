@@ -30,10 +30,12 @@ import org.apereo.cas.support.saml.web.idp.profile.artifact.CasSamlArtifactMapTe
 import org.apereo.cas.support.saml.web.idp.profile.artifact.SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSamlRegisteredServiceAttributeBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.authn.DefaultAuthnContextClassRefBuilderTests;
+import org.apereo.cas.support.saml.web.idp.profile.builders.conditions.SamlProfileSamlConditionsBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidatorTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponseArtifactEncoderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilderTests;
+import org.apereo.cas.support.saml.web.idp.profile.builders.subject.SamlProfileSamlSubjectBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.ecp.ECPSamlIdPProfileHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.query.SamlIdPSaml2AttributeQueryProfileHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLOSamlIdPPostProfileHandlerControllerTests;
@@ -54,7 +56,7 @@ import org.apereo.cas.ticket.artifact.DefaultSamlArtifactTicketFactoryTests;
 import org.apereo.cas.ticket.query.DefaultSamlAttributeQueryTicketFactoryTests;
 import org.apereo.cas.web.flow.SamlIdPConsentableAttributeBuilderTests;
 import org.apereo.cas.web.flow.SamlIdPMetadataUIActionTests;
-import org.apereo.cas.web.flow.SamlIdPMetadataUIWebflowConfigurerTests;
+import org.apereo.cas.web.flow.SamlIdPWebflowConfigurerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -95,7 +97,7 @@ import org.junit.runner.RunWith;
     SSOSamlIdPProfileCallbackHandlerControllerTests.class,
     SLOSamlIdPPostProfileHandlerControllerTests.class,
     SamlRegisteredServiceCachedMetadataEndpointTests.class,
-    SamlIdPMetadataUIWebflowConfigurerTests.class,
+    SamlIdPWebflowConfigurerTests.class,
     FileSystemSamlIdPMetadataLocatorTests.class,
     FileSystemSamlIdPMetadataGeneratorTests.class,
     DefaultSamlAttributeQueryTicketFactoryTests.class,
@@ -109,6 +111,8 @@ import org.junit.runner.RunWith;
     SamlResponseArtifactEncoderTests.class,
     SamlIdPSingleLogoutRedirectionStrategyTests.class,
     SamlIdPMetadataUIActionTests.class,
+    SamlProfileSamlConditionsBuilderTests.class,
+    SamlProfileSamlSubjectBuilderTests.class,
     DefaultSamlArtifactTicketFactoryTests.class,
     SamlIdPServicesManagerRegisteredServiceLocatorTests.class,
     SamlIdPSingleLogoutRedirectionStrategyPostBindingTests.class,

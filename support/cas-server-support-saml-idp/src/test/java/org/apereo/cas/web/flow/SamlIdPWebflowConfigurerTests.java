@@ -8,13 +8,13 @@ import org.springframework.webflow.engine.Flow;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link SamlIdPMetadataUIWebflowConfigurerTests}.
+ * This is {@link SamlIdPWebflowConfigurerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Tag("SAML")
-public class SamlIdPMetadataUIWebflowConfigurerTests extends BaseSamlIdPWebflowTests {
+public class SamlIdPWebflowConfigurerTests extends BaseSamlIdPWebflowTests {
     @Test
     public void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());

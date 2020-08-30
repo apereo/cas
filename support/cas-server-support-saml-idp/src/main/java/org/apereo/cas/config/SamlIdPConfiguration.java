@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
@@ -107,6 +108,10 @@ public class SamlIdPConfiguration {
     private ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> defaultSamlRegisteredServiceCachingMetadataResolver;
 
     @Autowired
+    @Qualifier("centralAuthenticationService")
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
+
+    @Autowired
     @Qualifier("casSamlIdPMetadataResolver")
     private ObjectProvider<MetadataResolver> casSamlIdPMetadataResolver;
 
@@ -181,7 +186,9 @@ public class SamlIdPConfiguration {
     public SAMLArtifactMap samlArtifactMap() {
         val map = new CasSamlArtifactMap(ticketRegistry.getObject(),
             samlArtifactTicketFactory(),
-            ticketGrantingTicketCookieGenerator.getObject());
+            ticketGrantingTicketCookieGenerator.getObject(),
+            samlIdPDistributedSessionStore.getObject(),
+            centralAuthenticationService.getObject());
         val expirationPolicy = samlArtifactTicketExpirationPolicy().buildTicketExpirationPolicy();
         map.setArtifactLifetime(Duration.ofSeconds(expirationPolicy.getTimeToLive()));
         return map;
@@ -404,6 +411,7 @@ public class SamlIdPConfiguration {
             .sessionStore(samlIdPDistributedSessionStore.getObject())
             .samlArtifactTicketFactory(samlArtifactTicketFactory())
             .samlArtifactMap(samlArtifactMap())
+            .centralAuthenticationService(centralAuthenticationService.getObject())
             .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory())
             .casProperties(casProperties);
     }

@@ -66,8 +66,12 @@ import org.jasig.cas.client.validation.AssertionImpl;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.Subject;
+import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -140,6 +144,18 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlProfileSamlResponseBuilder")
     protected SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder;
+
+    @Autowired
+    @Qualifier("samlProfileSamlSubjectBuilder")
+    protected SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder;
+
+    @Autowired
+    @Qualifier("samlProfileSamlConditionsBuilder")
+    protected SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder;
+
+    @Autowired
+    @Qualifier("samlIdPDistributedSessionStore")
+    protected SessionStore<JEEContext> samlIdPDistributedSessionStore;
 
     @Autowired
     @Qualifier("samlObjectSignatureValidator")

@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.Objects;
 
 /**
  * This is {@link SamlProfileSamlSubjectBuilder}.
@@ -76,7 +75,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
 
         val assertion = Assertion.class.cast(casAssertion);
         val validFromDate = DateTimeUtils.zonedDateTimeOf(assertion.getValidFromDate());
-        LOGGER.debug("Locating the assertion consumer service url for binding [{}]", binding);
+        LOGGER.trace("Locating the assertion consumer service url for binding [{}]", binding);
         val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adaptor, binding);
         val location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
         if (StringUtils.isBlank(location)) {
@@ -100,7 +99,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
             service.isSkipGeneratingSubjectConfirmationInResponseTo() ? null : authnRequest.getID(),
             service.isSkipGeneratingSubjectConfirmationNotBefore() ? null : ZonedDateTime.now(ZoneOffset.UTC));
 
-        if (NameIDType.ENCRYPTED.equalsIgnoreCase(Objects.requireNonNull(subjectNameId).getFormat())) {
+        if (subjectNameId != null && NameIDType.ENCRYPTED.equalsIgnoreCase(subjectNameId.getFormat())) {
             subject.setNameID(null);
             subject.getSubjectConfirmations().forEach(c -> c.setNameID(null));
 
