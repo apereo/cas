@@ -7,13 +7,16 @@ import org.apereo.cas.consent.ConsentableAttributeBuilder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.flow.SamlIdPMetadataUIAction;
-import org.apereo.cas.support.saml.web.flow.SamlIdPMetadataUIWebflowConfigurer;
+import org.apereo.cas.support.saml.web.flow.SamlIdPWebflowConfigurer;
 import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlIdPAttributeDefinition;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.login.SessionStoreTicketGrantingTicketAction;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -61,6 +64,10 @@ public class SamlIdPWebflowConfiguration {
     private ObjectProvider<AuthenticationServiceSelectionPlan> selectionStrategies;
 
     @Autowired
+    @Qualifier("samlIdPDistributedSessionStore")
+    private ObjectProvider<SessionStore<JEEContext>> samlIdPDistributedSessionStore;
+
+    @Autowired
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     private ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> defaultSamlRegisteredServiceCachingMetadataResolver;
 
@@ -68,15 +75,20 @@ public class SamlIdPWebflowConfiguration {
     @Qualifier("attributeDefinitionStore")
     private ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore;
 
-    @ConditionalOnMissingBean(name = "samlIdPMetadataUIWebConfigurer")
+    @ConditionalOnMissingBean(name = "samlIdPWebConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer samlIdPMetadataUIWebConfigurer() {
-        return new SamlIdPMetadataUIWebflowConfigurer(flowBuilderServices.getObject(),
+    public CasWebflowConfigurer samlIdPWebConfigurer() {
+        return new SamlIdPWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
-            samlIdPMetadataUIParserAction(),
             applicationContext,
             casProperties);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "samlIdPSessionStoreTicketGrantingTicketAction")
+    public Action samlIdPSessionStoreTicketGrantingTicketAction() {
+        return new SessionStoreTicketGrantingTicketAction(samlIdPDistributedSessionStore.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataUIParserAction")
@@ -92,7 +104,7 @@ public class SamlIdPWebflowConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "samlIdPCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer samlIdPCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(samlIdPMetadataUIWebConfigurer());
+        return plan -> plan.registerWebflowConfigurer(samlIdPWebConfigurer());
     }
 
     @Configuration(value = "SamlIdPConsentWebflowConfiguration", proxyBeanMethods = false)
