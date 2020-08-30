@@ -201,7 +201,7 @@ public class MockWebServer implements AutoCloseable {
         }
 
         private static byte[] header(final String name, final Object value) {
-            return String.format("%s: %s\r\n", name, value).getBytes(StandardCharsets.UTF_8);
+            return String.format("%s: %s%s", name, value, SEPARATOR).getBytes(StandardCharsets.UTF_8);
         }
 
         private void writeResponse(final Socket socket) throws IOException {
@@ -209,7 +209,7 @@ public class MockWebServer implements AutoCloseable {
                 LOGGER.debug("Socket response for resource [{}]", resource.getFilename());
                 val out = socket.getOutputStream();
 
-                val statusLine = String.format("HTTP/1.1 %s %s\r\n", status.value(), status.getReasonPhrase());
+                val statusLine = String.format("HTTP/1.1 %s %s%s", status.value(), status.getReasonPhrase(), SEPARATOR);
                 out.write(statusLine.getBytes(StandardCharsets.UTF_8));
                 out.write(header("Content-Length", this.resource.contentLength()));
                 out.write(header("Content-Type", this.contentType));
