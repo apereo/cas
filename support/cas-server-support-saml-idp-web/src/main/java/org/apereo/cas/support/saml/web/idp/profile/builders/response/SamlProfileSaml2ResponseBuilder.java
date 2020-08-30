@@ -57,8 +57,9 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         val samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), authnRequest.getID(), null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
 
+        val configContext = getSamlResponseBuilderConfigurationContext();
         if (StringUtils.isBlank(service.getIssuerEntityId())) {
-            samlResponse.setIssuer(buildSamlResponseIssuer(getSamlResponseBuilderConfigurationContext().getCasProperties()
+            samlResponse.setIssuer(buildSamlResponseIssuer(configContext.getCasProperties()
                 .getAuthn().getSamlIdp().getEntityId()));
         } else {
             samlResponse.setIssuer(buildSamlResponseIssuer(service.getIssuerEntityId()));
@@ -68,7 +69,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         val location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
         samlResponse.setDestination(location);
 
-        if (getSamlResponseBuilderConfigurationContext().getCasProperties()
+        if (configContext.getCasProperties()
             .getAuthn().getSamlIdp().isAttributeQueryProfileEnabled()) {
             storeAttributeQueryTicketInRegistry(assertion, request, adaptor);
         }
@@ -90,7 +91,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
 
         if (service.isSignResponses()) {
             LOGGER.debug("SAML entity id [{}] indicates that SAML responses should be signed", adaptor.getEntityId());
-            val samlResponseSigned = getSamlResponseBuilderConfigurationContext().getSamlObjectSigner()
+            val samlResponseSigned = configContext.getSamlObjectSigner()
                 .encode(samlResponse, service, adaptor, response, request, binding, authnRequest);
             SamlUtils.logSamlObject(openSamlConfigBean, samlResponseSigned);
             return samlResponseSigned;
@@ -110,21 +111,22 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                               final RequestAbstractType authnRequest,
                               final Object assertion) throws SamlException {
         LOGGER.trace("Constructing encoder based on binding [{}] for [{}]", binding, adaptor.getEntityId());
+        val configContext = getSamlResponseBuilderConfigurationContext();
         if (binding.equalsIgnoreCase(SAMLConstants.SAML2_ARTIFACT_BINDING_URI)) {
             val encoder = new SamlResponseArtifactEncoder(
-                getSamlResponseBuilderConfigurationContext().getVelocityEngineFactory(),
+                configContext.getVelocityEngineFactory(),
                 adaptor, httpRequest, httpResponse,
-                getSamlResponseBuilderConfigurationContext().getSamlArtifactMap());
+                configContext.getSamlArtifactMap());
             return encoder.encode(authnRequest, samlResponse, relayState);
         }
 
         if (binding.equalsIgnoreCase(SAMLConstants.SAML2_POST_SIMPLE_SIGN_BINDING_URI)) {
-            val encoder = new SamlResponsePostSimpleSignEncoder(getSamlResponseBuilderConfigurationContext().getVelocityEngineFactory(),
+            val encoder = new SamlResponsePostSimpleSignEncoder(configContext.getVelocityEngineFactory(),
                 adaptor, httpResponse, httpRequest);
             return encoder.encode(authnRequest, samlResponse, relayState);
         }
 
-        val encoder = new SamlResponsePostEncoder(getSamlResponseBuilderConfigurationContext().getVelocityEngineFactory(), adaptor, httpResponse, httpRequest);
+        val encoder = new SamlResponsePostEncoder(configContext.getVelocityEngineFactory(), adaptor, httpResponse, httpRequest);
         return encoder.encode(authnRequest, samlResponse, relayState);
     }
 
