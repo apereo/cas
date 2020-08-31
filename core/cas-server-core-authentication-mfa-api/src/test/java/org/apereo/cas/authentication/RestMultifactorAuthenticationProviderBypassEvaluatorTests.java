@@ -39,8 +39,6 @@ public class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
                 MultifactorAuthenticationTestUtils.getRegisteredService(), provider,
                 new MockHttpServletRequest());
             assertTrue(res);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 
@@ -58,8 +56,6 @@ public class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
                 MultifactorAuthenticationTestUtils.getRegisteredService(), null,
                 new MockHttpServletRequest());
             assertTrue(res);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 }

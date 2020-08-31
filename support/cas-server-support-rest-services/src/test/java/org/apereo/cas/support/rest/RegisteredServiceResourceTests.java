@@ -15,6 +15,7 @@ import org.apereo.cas.util.EncodingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,6 +47,12 @@ public class RegisteredServiceResourceTests {
 
     @Mock
     private ServicesManager servicesManager;
+
+    @Test
+    public void checkNoCredentials() throws Exception {
+        runTest("memberOf", "something", StringUtils.EMPTY, status().isBadRequest());
+        runTest("memberOf", "something", ":", status().isBadRequest());
+    }
 
     @Test
     public void checkRegisteredServiceNotAuthorized() throws Exception {
@@ -85,8 +92,10 @@ public class RegisteredServiceResourceTests {
 
     private RegisteredServiceResource getRegisteredServiceResource(final String attrName, final String attrValue) {
         val mgmr = mock(AuthenticationManager.class);
-        lenient().when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("test")))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
-        lenient().when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("testfail")))).thenThrow(AuthenticationException.class);
+        lenient().when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("test"))))
+            .thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        lenient().when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("testfail"))))
+            .thenThrow(AuthenticationException.class);
 
         val publisher = mock(ApplicationEventPublisher.class);
         return new RegisteredServiceResource(new DefaultAuthenticationSystemSupport(
@@ -96,7 +105,8 @@ public class RegisteredServiceResourceTests {
             attrName, attrValue);
     }
 
-    private void runTest(final String attrName, final String attrValue, final String credentials, final ResultMatcher result) throws Exception {
+    private void runTest(final String attrName, final String attrValue, final String credentials,
+                         final ResultMatcher result) throws Exception {
         val registeredServiceResource = getRegisteredServiceResource(attrName, attrValue);
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val sz = new RegisteredServiceJsonSerializer();

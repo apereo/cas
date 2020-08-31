@@ -42,7 +42,7 @@ public class ThreadContextMDCServletFilterTests {
     private ThreadContextMDCServletFilter filter;
 
     @Test
-    public void verifyFilter() {
+    public void verifyFilter() throws Exception {
         val request = new MockHttpServletRequest();
         request.setRequestURI("/cas/login");
         request.setRemoteAddr("1.2.3.4");
@@ -64,12 +64,8 @@ public class ThreadContextMDCServletFilterTests {
         lenient().when(cookieRetrievingCookieGenerator.retrieveCookieValue(any(HttpServletRequest.class))).thenReturn("TICKET");
         lenient().when(ticketSupport.getAuthenticatedPrincipalFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getPrincipal());
 
-        try {
-            filter.init(mock(FilterConfig.class));
-            filter.doFilter(request, response, filterChain);
-            assertEquals(HttpStatus.OK.value(), response.getStatus());
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
-        }
+        filter.init(mock(FilterConfig.class));
+        filter.doFilter(request, response, filterChain);
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
     }
 }

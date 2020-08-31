@@ -3,12 +3,12 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.web.flow.OAuth20CreateTicketGrantingTicketExitAction;
 import org.apereo.cas.support.oauth.web.flow.OAuth20RegisteredServiceUIAction;
 import org.apereo.cas.support.oauth.web.flow.OAuth20WebflowConfigurer;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.login.SessionStoreTicketGrantingTicketAction;
 
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
@@ -89,9 +89,9 @@ public class CasOAuth20WebflowConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "oauth20CreateTicketGrantingTicketExitAction")
-    public Action oauth20CreateTicketGrantingTicketExitAction() {
-        return new OAuth20CreateTicketGrantingTicketExitAction(oauthDistributedSessionStore.getObject());
+    @ConditionalOnMissingBean(name = "oauth20SessionStoreTicketGrantingTicketAction")
+    public Action oauth20SessionStoreTicketGrantingTicketAction() {
+        return new SessionStoreTicketGrantingTicketAction(oauthDistributedSessionStore.getObject());
     }
     
     @Bean

@@ -49,8 +49,6 @@ public class ReturnRestfulAttributeReleasePolicyTests {
                 CoreAuthenticationTestUtils.getService(),
                 CoreAuthenticationTestUtils.getRegisteredService());
             assertFalse(attributes.isEmpty());
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 }

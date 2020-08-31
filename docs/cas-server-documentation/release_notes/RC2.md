@@ -187,6 +187,11 @@ authentication protocol itself. In this release, a few additional improvements a
 application definitions by both type and evaluation order, and the matching engine is enhanced to process such groups while considering
 both the group's evaluation priority as well as each individual service's evaluation order.
 
+<div class="alert alert-info">
+  <strong>Note</strong><br />The fixes presented in this release continue to be in progress to refine additional use cases. This area will likely be
+  revisited in follow-up releases to make sure wildcarded service definitions across all protocols can work together correctly.
+</div>
+
 ## Other Stuff
 
 - Adjustments to SAML2 metadata resolution cache to ensure enough capacity for resolved metadata providers. 

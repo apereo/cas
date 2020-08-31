@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.services.SurrogateRegisteredServiceAccessStrategy;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.SneakyThrows;
@@ -50,7 +51,7 @@ public class SurrogateAuthorizationActionTests extends BaseSurrogateInitialAuthe
             WebUtils.putRegisteredService(context, registeredService);
             val request = new MockHttpServletRequest();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-            assertEquals("success", surrogateAuthorizationCheck.execute(context).getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, surrogateAuthorizationCheck.execute(context).getId());
         } catch (final Exception e) {
             throw new AssertionError(e);
         }

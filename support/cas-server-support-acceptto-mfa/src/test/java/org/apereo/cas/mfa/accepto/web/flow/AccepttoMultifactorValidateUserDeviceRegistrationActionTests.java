@@ -77,9 +77,6 @@ public class AccepttoMultifactorValidateUserDeviceRegistrationActionTests {
             val result = action.doExecute(context);
             assertEquals(result.getId(), CasWebflowConstants.TRANSITION_ID_FINALIZE);
             assertTrue(WebUtils.getCredential(context) instanceof AccepttoEmailCredential);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
-
     }
 }

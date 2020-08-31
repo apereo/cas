@@ -110,6 +110,10 @@ public class BasePasswordManagementActionTests {
     protected Action initPasswordResetAction;
 
     @Autowired
+    @Qualifier("initPasswordChangeAction")
+    protected Action initPasswordChangeAction;
+
+    @Autowired
     @Qualifier("verifyPasswordResetRequestAction")
     protected Action verifyPasswordResetRequestAction;
 

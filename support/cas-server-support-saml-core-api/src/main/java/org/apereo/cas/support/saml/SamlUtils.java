@@ -48,6 +48,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * This is {@link SamlUtils}.
@@ -93,10 +94,7 @@ public class SamlUtils {
         LOGGER.trace("Attempting to create SOAPObject for type: [{}] and QName: [{}]", objectType, qName);
         val builder = (SOAPObjectBuilder<T>)
             XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
-        if (builder == null) {
-            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
-        }
-        return objectType.cast(builder.buildObject(qName));
+        return objectType.cast(Objects.requireNonNull(builder).buildObject(qName));
     }
 
     /**
@@ -114,12 +112,8 @@ public class SamlUtils {
 
     public static <T extends SAMLObject> T newSamlObject(final Class<T> objectType, final QName qName) {
         LOGGER.trace("Attempting to create SAMLObject for type: [{}] and QName: [{}]", objectType, qName);
-        val builder = (SAMLObjectBuilder<T>)
-            XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
-        if (builder == null) {
-            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
-        }
-        return objectType.cast(builder.buildObject(qName));
+        val builder = (SAMLObjectBuilder<T>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
+        return objectType.cast(Objects.requireNonNull(builder).buildObject(qName));
     }
 
     /**

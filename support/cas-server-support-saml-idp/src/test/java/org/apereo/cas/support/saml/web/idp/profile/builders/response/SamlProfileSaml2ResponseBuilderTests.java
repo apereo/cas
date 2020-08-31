@@ -1,8 +1,10 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.xerces.xs.XSObject;
@@ -13,8 +15,11 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.xmlsec.encryption.support.EncryptionConstants;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,6 +47,54 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
         val samlResponse = samlProfileSamlResponseBuilder.build(authnRequest, request, response,
             assertion, service, adaptor,
             SAMLConstants.SAML2_POST_BINDING_URI,
+            new MessageContext());
+        assertNotNull(samlResponse);
+    }
+
+    @Test
+    public void verifySamlResponseWithIssuerEntityId() {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+
+        val service = getSamlRegisteredServiceForTestShib(true, true);
+        service.setIssuerEntityId("https://issuer.example.org");
+        service.getAttributeValueTypes().put("permissions", XSObject.class.getSimpleName());
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+            service, service.getServiceId()).get();
+
+        val authnRequest = getAuthnRequestFor(service);
+        val assertion = getAssertion();
+
+        val samlResponse = samlProfileSamlResponseBuilder.build(authnRequest, request, response,
+            assertion, service, adaptor,
+            SAMLConstants.SAML2_POST_BINDING_URI,
+            new MessageContext());
+        assertNotNull(samlResponse);
+    }
+
+    @Test
+    public void verifySamlResponseWithAttributeQuery() {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+
+        val tgt = new MockTicketGrantingTicket("casuser");
+        ticketRegistry.addTicket(tgt);
+        val webContext = new JEEContext(request, response, samlIdPDistributedSessionStore);
+        samlIdPDistributedSessionStore.set(webContext, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, tgt.getId());
+
+        val service = getSamlRegisteredServiceForTestShib(true, true);
+        service.setIssuerEntityId("https://issuer.example.org");
+        service.getAttributeValueTypes().put("permissions", XSObject.class.getSimpleName());
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+            service, service.getServiceId()).get();
+
+        val authnRequest = getAuthnRequestFor(service);
+        val assertion = getAssertion();
+
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, response));
+        val samlResponse = samlProfileSamlResponseBuilder.build(authnRequest, request, response,
+            assertion, service, adaptor,
+            SAMLConstants.SAML2_ARTIFACT_BINDING_URI,
             new MessageContext());
         assertNotNull(samlResponse);
     }

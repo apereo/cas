@@ -24,6 +24,7 @@ import org.opensaml.saml.saml2.core.RequestAbstractType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -54,7 +55,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      */
     protected static List<String> getSupportedNameIdFormats(final SamlRegisteredService service,
                                                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
-        val supportedNameFormats = adaptor.getSupportedNameIdFormats();
+        val supportedNameFormats = new ArrayList<>(adaptor.getSupportedNameIdFormats());
         LOGGER.debug("Metadata for [{}] declares the following NameIDs [{}]", adaptor.getEntityId(), supportedNameFormats);
 
         if (supportedNameFormats.isEmpty()) {

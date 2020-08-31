@@ -124,7 +124,7 @@ public class TokenWebApplicationServiceResponseBuilderTests {
     }
 
     @Test
-    public void verifyTokenBuilder() {
+    public void verifyTokenBuilder() throws Exception {
         val data = "yes\ncasuser";
         try (val webServer = new MockWebServer(8281,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
@@ -137,10 +137,6 @@ public class TokenWebApplicationServiceResponseBuilderTests {
             assertTrue(result.getAttributes().containsKey(CasProtocolConstants.PARAMETER_TICKET));
             val ticket = result.getAttributes().get(CasProtocolConstants.PARAMETER_TICKET);
             assertNotNull(JWTParser.parse(ticket));
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
-
-
     }
 }

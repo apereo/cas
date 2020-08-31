@@ -98,6 +98,7 @@ public class CouchDbSamlRegisteredServiceMetadataResolverTests {
         service.setDescription("Testing");
         service.setMetadataLocation("couchdb://");
         assertTrue(resolver.supports(service));
+        assertTrue(resolver.isAvailable(service));
         val resolvers = resolver.resolve(service);
         assertSame(1, resolvers.size());
     }

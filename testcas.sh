@@ -16,6 +16,7 @@ cosmosdb,config,sms,util,services,web,audits,password-ops"
     echo -e "\nPlease see the test script for details.\n"
 }
 
+task="cleanTest "
 parallel="--parallel "
 dryRun=""
 info=""

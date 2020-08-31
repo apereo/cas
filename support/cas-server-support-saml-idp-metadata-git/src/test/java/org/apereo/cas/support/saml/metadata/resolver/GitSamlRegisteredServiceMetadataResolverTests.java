@@ -79,6 +79,8 @@ public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMe
         service.setDescription("Testing");
         service.setMetadataLocation("git://");
         assertTrue(resolver.supports(service));
+        assertTrue(resolver.isAvailable(service));
+        assertFalse(resolver.supports(null));
         val resolvers = resolver.resolve(service);
         assertFalse(resolvers.isEmpty());
     }

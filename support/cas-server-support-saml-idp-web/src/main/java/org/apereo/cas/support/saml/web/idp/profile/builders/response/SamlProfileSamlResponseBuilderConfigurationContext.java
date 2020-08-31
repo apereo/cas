@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
@@ -58,4 +59,6 @@ public class SamlProfileSamlResponseBuilderConfigurationContext {
     private final transient SamlProfileObjectBuilder<? extends SAMLObject> samlSoapResponseBuilder;
 
     private final transient SessionStore<JEEContext> sessionStore;
+
+    private final transient CentralAuthenticationService centralAuthenticationService;
 }

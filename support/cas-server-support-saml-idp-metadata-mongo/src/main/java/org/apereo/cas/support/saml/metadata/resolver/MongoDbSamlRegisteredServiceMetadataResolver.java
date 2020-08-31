@@ -13,7 +13,6 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -38,18 +37,13 @@ public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
 
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        try {
-            LOGGER.debug("Fetching metadata documents from collection [{}]", this.collectionName);
-            val documents = mongoTemplate.findAll(SamlMetadataDocument.class, this.collectionName);
-            return documents
-                .stream()
-                .map(doc -> buildMetadataResolverFrom(service, doc))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return new ArrayList<>(0);
+        LOGGER.debug("Fetching metadata documents from collection [{}]", this.collectionName);
+        val documents = mongoTemplate.findAll(SamlMetadataDocument.class, this.collectionName);
+        return documents
+            .stream()
+            .map(doc -> buildMetadataResolverFrom(service, doc))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     @Override

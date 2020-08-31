@@ -81,8 +81,6 @@ public class AccepttoApiUtilsTests {
             val user = AccepttoApiUtils.isUserValid(authentication, properties);
             assertFalse(user.isEmpty());
 
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 
@@ -104,8 +102,6 @@ public class AccepttoApiUtilsTests {
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertTrue(AccepttoApiUtils.isUserDevicePaired(authentication, properties));
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 
@@ -168,8 +164,6 @@ public class AccepttoApiUtilsTests {
             val results = AccepttoApiUtils.authenticate(authentication, properties, context, pub);
             assertNotNull(results);
 
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 }
