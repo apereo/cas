@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
-import com.yubico.webauthn.storage.RegistrationStorage;
+import demo.webauthn.RegistrationStorage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;

@@ -254,6 +254,13 @@ subprojects {
             }
         }
         maven {
+            url "https://dl.bintray.com/apereocas/webauthn-cas/"
+            content {
+                includeGroupByRegex ".*java-webauthn-server.*"
+            }
+            mavenContent { releasesOnly() }
+        }
+        maven {
             url "https://oss.sonatype.org/content/repositories/snapshots"
             mavenContent { snapshotsOnly() }
         }

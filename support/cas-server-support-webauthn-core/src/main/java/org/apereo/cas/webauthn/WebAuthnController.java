@@ -1,4 +1,4 @@
-package com.yubico.webauthn;
+package org.apereo.cas.webauthn;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.LoggingUtils;
@@ -8,9 +8,10 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.util.Either;
-import com.yubico.webauthn.data.AssertionRequestWrapper;
 import com.yubico.webauthn.data.ByteArray;
-import com.yubico.webauthn.data.RegistrationRequest;
+import demo.webauthn.WebAuthnServer;
+import demo.webauthn.data.AssertionRequestWrapper;
+import demo.webauthn.data.RegistrationRequest;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -35,16 +36,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link WebAuthnRestResource}.
+ * This is {@link WebAuthnController}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@RestController("webAuthnRestResource")
+@RestController("webAuthnController")
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping(WebAuthnRestResource.BASE_ENDPOINT_WEBAUTHN)
-public class WebAuthnRestResource {
+@RequestMapping(WebAuthnController.BASE_ENDPOINT_WEBAUTHN)
+public class WebAuthnController {
     /**
      * Base endpoint for all webauthn web resources.
      */

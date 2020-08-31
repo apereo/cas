@@ -5,15 +5,14 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.webauthn.WebAuthnController;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.webauthn.RelyingParty;
-import com.yubico.webauthn.WebAuthnRestResource;
-import com.yubico.webauthn.WebAuthnServer;
 import com.yubico.webauthn.attestation.AttestationResolver;
 import com.yubico.webauthn.attestation.MetadataObject;
 import com.yubico.webauthn.attestation.MetadataService;
@@ -26,8 +25,9 @@ import com.yubico.webauthn.attestation.resolver.SimpleTrustResolverWithEquality;
 import com.yubico.webauthn.data.AttestationConveyancePreference;
 import com.yubico.webauthn.data.RelyingPartyIdentity;
 import com.yubico.webauthn.extension.appid.AppId;
-import com.yubico.webauthn.storage.InMemoryRegistrationStorage;
-import com.yubico.webauthn.storage.RegistrationStorage;
+import demo.webauthn.InMemoryRegistrationStorage;
+import demo.webauthn.RegistrationStorage;
+import demo.webauthn.WebAuthnServer;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
@@ -72,10 +72,10 @@ public class WebAuthnConfiguration {
     @Qualifier("webAuthnBypassEvaluator")
     private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> webAuthnBypassEvaluator;
 
-    @ConditionalOnMissingBean(name = "webAuthnRestResource")
+    @ConditionalOnMissingBean(name = "webAuthnController")
     @Bean
-    public WebAuthnRestResource webAuthnRestResource() throws Exception {
-        return new WebAuthnRestResource(webAuthnOperations(), casProperties);
+    public WebAuthnController webAuthnController() throws Exception {
+        return new WebAuthnController(webAuthnOperations(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "webAuthnCredentialRepository")
@@ -162,15 +162,18 @@ public class WebAuthnConfiguration {
             .validateSignatureCounter(webAuthn.isValidateSignatureCounter())
             .appId(appId)
             .build();
-
-        return new WebAuthnServer(webAuthnCredentialRepository(), newCache(), newCache(), relyingParty);
+        
+        val server = new WebAuthnServer(relyingParty);
+        server.setAssertRequestStorage(newCache());
+        server.setRegisterRequestStorage(newCache());
+        server.setUserStorage(webAuthnCredentialRepository());
+        return server;
     }
 
     private static <K, V> Cache<K, V> newCache() {
-        return Caffeine.newBuilder()
+        return CacheBuilder.newBuilder()
             .maximumSize(CACHE_MAX_SIZE)
             .expireAfterAccess(Duration.ofMinutes(5))
-            .recordStats()
             .build();
     }
 }
