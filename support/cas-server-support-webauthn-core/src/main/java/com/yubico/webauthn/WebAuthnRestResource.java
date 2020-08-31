@@ -22,7 +22,6 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +31,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -63,21 +61,6 @@ public class WebAuthnRestResource {
     private final CasConfigurationProperties casProperties;
 
     private final JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
-
-    @GetMapping
-    public ResponseEntity<String> root() {
-        val casServer = casProperties.getServer();
-        val authenticate = casServer.buildContextRelativeUrl(BASE_ENDPOINT_WEBAUTHN + WEBAUTHN_ENDPOINT_AUTHENTICATE);
-        val deleteAccount = casServer.buildContextRelativeUrl(BASE_ENDPOINT_WEBAUTHN + "/delete-account");
-        val deregister = casServer.buildContextRelativeUrl(BASE_ENDPOINT_WEBAUTHN + "/action/deregister");
-        val register = casServer.buildContextRelativeUrl(BASE_ENDPOINT_WEBAUTHN + WEBAUTHN_ENDPOINT_REGISTER);
-        val endpoints = Map.of("actions", Map.of(
-            "authenticate", authenticate,
-            "deleteAccount", deleteAccount,
-            "deregister", deregister,
-            "register", register));
-        return new ResponseEntity<>(writeJson(endpoints), HttpStatus.OK);
-    }
 
     @PostMapping(WEBAUTHN_ENDPOINT_REGISTER)
     public ResponseEntity<Object> startRegistration(

@@ -303,10 +303,16 @@ function resetDisplays() {
     hideDeviceInfo();
 }
 
-function getIndexActions() {
-    return fetch('webauthn/')
-        .then(response => response.json())
-        .then(data => data.actions);
+function getWebAuthnUrls() {
+    let endpoints = {
+        authenticate: "webauthn/authenticate",
+        deregister: "webauthn/action/deregister",
+        register: "webauthn/register",
+        deleteAccount: "webauthn/delete-account"
+    }
+    return new Promise((resolve, reject) => resolve(endpoints)).then(data => {
+        return data;
+    });
 }
 
 function getRegisterRequest(urls, username, displayName, credentialNickname, requireResidentKey = false) {
@@ -346,14 +352,14 @@ function submitResponse(url, request, response) {
 
 function performCeremony(params) {
     const callbacks = params.callbacks || {};
-    const getIndexActions = params.getIndexActions;
+    const getWebAuthnUrls = params.getWebAuthnUrls;
     const getRequest = params.getRequest;
     const statusStrings = params.statusStrings;
     const executeRequest = params.executeRequest;
 
     resetDisplays();
 
-    return getIndexActions()
+    return getWebAuthnUrls()
         .then(urls => {
             setStatus(statusStrings.int);
             if (callbacks.init) {
@@ -409,7 +415,7 @@ function finishCeremony(response) {
 function register(username, displayName, credentialNickname, requireResidentKey = false, getRequest = getRegisterRequest) {
     var request;
     return performCeremony({
-        getIndexActions,
+        getWebAuthnUrls,
         getRequest: urls => getRequest(urls, username, displayName, credentialNickname, requireResidentKey),
         statusStrings: {
             init: 'Initiating registration ceremony with server...',
@@ -484,7 +490,7 @@ function executeAuthenticateRequest(request) {
 
 function authenticate(username = null, getRequest = getAuthenticateRequest) {
     return performCeremony({
-        getIndexActions,
+        getWebAuthnUrls,
         getRequest: urls => getRequest(urls, username),
         statusStrings: {
             init: 'Initiating authentication ceremony...',
@@ -511,11 +517,10 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
     });
 }
 
-function deregister() {
-    const credentialId = "casuser";
+function deregister(credentialId) {
     addMessage('De-registering credential...');
 
-    return getIndexActions()
+    return getWebAuthnUrls()
         .then(urls =>
             fetch(urls.deregister, {
                 body: new URLSearchParams({

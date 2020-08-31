@@ -1,15 +1,23 @@
 description = "Apereo CAS FIDO2 WebAuthn Core"
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-util")
 
     implementation libraries.webauthn
 
+    implementation group: 'com.github.Yubico.java-webauthn-server', name: 'com.yubico:webauthn-server-demo', version: '1.6.4', ext: 'jar', classifier: 'sources'
+    
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
+
+    testImplementation project(":core:cas-server-core-notifications")
 
     testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
