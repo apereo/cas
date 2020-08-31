@@ -9,8 +9,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.val;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +104,7 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
         assertTrue(repo.verify(context, c).isAccepted());
     }
 
-    @NotNull
+    @NonNull
     private static MockRequestContext getRequestContext() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

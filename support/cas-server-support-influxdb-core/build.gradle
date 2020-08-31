@@ -13,6 +13,7 @@ dependencies {
 
     
     implementation libraries.influxdb
+    implementation libraries.squareup
     implementation libraries.okhttp
 }
 
