@@ -13,7 +13,6 @@ import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -29,7 +28,8 @@ import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorWebflowConfigurer;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartAuthenticationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartRegistrationAction;
 
-import demo.webauthn.RegistrationStorage;
+import com.yubico.webauthn.core.RegistrationStorage;
+import com.yubico.webauthn.core.SessionManager;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +61,10 @@ public class WebAuthnWebflowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("webAuthnSessionManager")
+    private ObjectProvider<SessionManager> webAuthnSessionManager;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -170,7 +174,8 @@ public class WebAuthnWebflowConfiguration {
     @Bean
     @RefreshScope
     public Action webAuthnSaveAccountRegistrationAction() {
-        return new WebAuthnAccountSaveRegistrationAction(webAuthnCredentialRepository.getObject());
+        return new WebAuthnAccountSaveRegistrationAction(webAuthnCredentialRepository.getObject(),
+            webAuthnSessionManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "webAuthnAuthenticationWebflowEventResolver")
@@ -207,7 +212,7 @@ public class WebAuthnWebflowConfiguration {
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnProperty(prefix = "cas.authn.mfa.web-authn", name = "trusted-device-enabled", havingValue = "true", matchIfMissing = true)
     @Configuration("webAuthnMultifactorTrustConfiguration")
-    public class WebAuthnMultifactorTrustConfiguration implements CasWebflowExecutionPlanConfigurer {
+    public class WebAuthnMultifactorTrustConfiguration {
 
         @ConditionalOnMissingBean(name = "webAuthnMultifactorTrustWebflowConfigurer")
         @Bean
@@ -223,9 +228,9 @@ public class WebAuthnWebflowConfiguration {
             return cfg;
         }
 
-        @Override
-        public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-            plan.registerWebflowConfigurer(webAuthnMultifactorTrustWebflowConfigurer());
+        @Bean
+        public CasWebflowExecutionPlanConfigurer webAuthnMultifactorTrustCasWebflowExecutionPlanConfigurer() {
+            return plan -> plan.registerWebflowConfigurer(webAuthnMultifactorTrustWebflowConfigurer());
         }
     }
 }

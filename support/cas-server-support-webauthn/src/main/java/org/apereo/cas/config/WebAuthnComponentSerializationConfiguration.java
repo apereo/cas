@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * This is {@link WebAuthnComponentSerializationConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 6.1.0
+ * @since 6.3.0
  */
 @Configuration(value = "webAuthnComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)

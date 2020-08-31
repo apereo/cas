@@ -22,12 +22,14 @@ import com.yubico.webauthn.attestation.resolver.CompositeAttestationResolver;
 import com.yubico.webauthn.attestation.resolver.CompositeTrustResolver;
 import com.yubico.webauthn.attestation.resolver.SimpleAttestationResolver;
 import com.yubico.webauthn.attestation.resolver.SimpleTrustResolverWithEquality;
+import com.yubico.webauthn.core.DefaultSessionManager;
+import com.yubico.webauthn.core.InMemoryRegistrationStorage;
+import com.yubico.webauthn.core.RegistrationStorage;
+import com.yubico.webauthn.core.SessionManager;
+import com.yubico.webauthn.core.WebAuthnServer;
 import com.yubico.webauthn.data.AttestationConveyancePreference;
 import com.yubico.webauthn.data.RelyingPartyIdentity;
 import com.yubico.webauthn.extension.appid.AppId;
-import demo.webauthn.InMemoryRegistrationStorage;
-import demo.webauthn.RegistrationStorage;
-import demo.webauthn.WebAuthnServer;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
@@ -75,7 +77,7 @@ public class WebAuthnConfiguration {
     @ConditionalOnMissingBean(name = "webAuthnController")
     @Bean
     public WebAuthnController webAuthnController() throws Exception {
-        return new WebAuthnController(webAuthnOperations(), casProperties);
+        return new WebAuthnController(webAuthnServer(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "webAuthnCredentialRepository")
@@ -131,8 +133,14 @@ public class WebAuthnConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "webAuthnOperations")
-    public WebAuthnServer webAuthnOperations() throws Exception {
+    @ConditionalOnMissingBean(name = "webAuthnSessionManager")
+    public SessionManager webAuthnSessionManager() {
+        return new DefaultSessionManager();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "webAuthnServer")
+    public WebAuthnServer webAuthnServer() throws Exception {
         val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn();
         val serverName = casProperties.getServer().getName();
         val appId = new AppId(StringUtils.defaultString(webAuthn.getApplicationId(), serverName));
@@ -162,11 +170,9 @@ public class WebAuthnConfiguration {
             .validateSignatureCounter(webAuthn.isValidateSignatureCounter())
             .appId(appId)
             .build();
-        
-        val server = new WebAuthnServer(relyingParty);
-        server.setAssertRequestStorage(newCache());
-        server.setRegisterRequestStorage(newCache());
-        server.setUserStorage(webAuthnCredentialRepository());
+
+        val server = new WebAuthnServer(webAuthnCredentialRepository(),
+            newCache(), newCache(), relyingParty, webAuthnSessionManager());
         return server;
     }
 

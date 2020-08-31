@@ -8,10 +8,10 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.util.Either;
+import com.yubico.webauthn.core.WebAuthnServer;
+import com.yubico.webauthn.data.AssertionRequestWrapper;
 import com.yubico.webauthn.data.ByteArray;
-import demo.webauthn.WebAuthnServer;
-import demo.webauthn.data.AssertionRequestWrapper;
-import demo.webauthn.data.RegistrationRequest;
+import com.yubico.webauthn.data.RegistrationRequest;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -51,8 +51,14 @@ public class WebAuthnController {
      */
     public static final String BASE_ENDPOINT_WEBAUTHN = "/webauthn";
 
+    /**
+     * webauthn registration endpoint.
+     */
     public static final String WEBAUTHN_ENDPOINT_REGISTER = "/register";
-
+    
+    /**
+     * webauthn authentication endpoint.
+     */
     public static final String WEBAUTHN_ENDPOINT_AUTHENTICATE = "/authenticate";
 
     private static final ObjectMapper MAPPER = JacksonCodecs.json().findAndRegisterModules();

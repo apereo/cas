@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import org.apereo.cas.webauthn.web.flow.WebAuthnAccountCheckRegistrationActionTests;
+import org.apereo.cas.webauthn.web.flow.WebAuthnAccountSaveRegistrationActionTests;
 import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorWebflowConfigurerTests;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartRegistrationActionTests;
 
@@ -15,6 +17,8 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     WebAuthnMultifactorWebflowConfigurerTests.class,
+    WebAuthnAccountCheckRegistrationActionTests.class,
+    WebAuthnAccountSaveRegistrationActionTests.class,
     WebAuthnStartRegistrationActionTests.class
 })
 @RunWith(JUnitPlatform.class)

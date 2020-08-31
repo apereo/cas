@@ -53,7 +53,8 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
             val acctRegCheckState = createActionState(flow, "accountRegistrationCheck",
                 createEvaluateAction("webAuthnCheckAccountRegistrationAction"));
             createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_REGISTER, "viewRegistrationWebAuthn");
-            createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
+            createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
 
             val setPrincipalAction = createSetAction("viewScope.principal", "conversationScope.authentication.principal");
 
@@ -61,10 +62,9 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
             viewRegState.getEntryActionList().addAll(createEvaluateAction("webAuthnStartRegistrationAction"), setPrincipalAction);
             createTransitionForState(viewRegState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "saveRegistration");
 
-            val saveState = createActionState(flow, "saveRegistration",
-                createEvaluateAction("webAuthnSaveAccountRegistrationAction"));
-            createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
-            createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+            val saveState = createActionState(flow, "saveRegistration", createEvaluateAction("webAuthnSaveAccountRegistrationAction"));
+            createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "accountRegistrationCheck");
+            createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_STOP_WEBFLOW);
 
             val loginProperties = CollectionUtils.wrapList("token");
             val loginBinder = createStateBinderConfiguration(loginProperties);
@@ -78,6 +78,8 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
                 createEvaluateAction("webAuthnAuthenticationWebflowAction"));
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
+
+            createViewState(flow, CasWebflowConstants.STATE_ID_STOP_WEBFLOW, CasWebflowConstants.VIEW_ID_ERROR);
         });
 
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(),

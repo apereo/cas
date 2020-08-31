@@ -101,7 +101,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
                 },
-                dependencies.create("com.github.Yubico.java-webauthn-server:webauthn-server-demo:$yubicoWebauthnVersion") {
+                dependencies.create("com.github.Yubico.java-webauthn-server:webauthn-server-demo:$casWebauthnVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
