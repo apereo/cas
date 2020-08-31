@@ -62,7 +62,7 @@ public class ServiceAuthorizationCheckMockitoActionTests {
     public void noServiceProvided() {
         val mockRequestContext = new MockRequestContext();
         val event = this.serviceAuthorizationCheck.doExecute(mockRequestContext);
-        assertEquals("success", event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class ServiceAuthorizationCheckMockitoActionTests {
         val mockRequestContext = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(mockRequestContext, authorizedService);
         val event = this.serviceAuthorizationCheck.doExecute(mockRequestContext);
-        assertEquals("success", event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
     }
 
     @Test

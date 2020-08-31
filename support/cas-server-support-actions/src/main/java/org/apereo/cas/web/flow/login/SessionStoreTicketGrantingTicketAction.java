@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.web.flow;
+package org.apereo.cas.web.flow.login;
 
 import org.apereo.cas.web.support.WebUtils;
 
@@ -11,22 +11,22 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * This is {@link OAuth20CreateTicketGrantingTicketExitAction}.
+ * This is {@link SessionStoreTicketGrantingTicketAction}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
  */
 @RequiredArgsConstructor
-public class OAuth20CreateTicketGrantingTicketExitAction extends AbstractAction {
-    private final SessionStore<JEEContext> oauthDistributedSessionStore;
+public class SessionStoreTicketGrantingTicketAction extends AbstractAction {
+    private final SessionStore<JEEContext> sessionStore;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(requestContext);
-        val webContext = new JEEContext(request, response, oauthDistributedSessionStore);
-        oauthDistributedSessionStore.set(webContext, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticketGrantingTicketId);
+        val webContext = new JEEContext(request, response, sessionStore);
+        sessionStore.set(webContext, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticketGrantingTicketId);
         return null;
     }
 }

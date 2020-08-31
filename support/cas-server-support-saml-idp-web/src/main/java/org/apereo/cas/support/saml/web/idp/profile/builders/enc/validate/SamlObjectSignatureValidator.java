@@ -91,7 +91,6 @@ public class SamlObjectSignatureValidator {
                                                  final MessageContext context) throws Exception {
 
         val roleDescriptorResolver = getRoleDescriptorResolver(resolver, context, profileRequest);
-
         LOGGER.debug("Validating signature for [{}]", profileRequest.getClass().getName());
 
         val signature = profileRequest.getSignature();
@@ -169,7 +168,7 @@ public class SamlObjectSignatureValidator {
 
         LOGGER.debug("Resolving signing credentials for [{}]", peerEntityId);
         val credentials = getSigningCredential(roleDescriptorResolver, profileRequest);
-        if (credentials == null || credentials.isEmpty()) {
+        if (credentials.isEmpty()) {
             throw new SamlException("Signing credentials for validation could not be resolved");
         }
 

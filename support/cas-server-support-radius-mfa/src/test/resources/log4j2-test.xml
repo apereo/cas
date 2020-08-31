@@ -7,7 +7,7 @@
     </Appenders>
     <Loggers>
         <Logger name="net.jradius" level="warn" />
-        <Logger name="org.apereo.cas" level="warn" additivity="false" />
+        <Logger name="org.apereo.cas" level="warn"  />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

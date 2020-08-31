@@ -278,7 +278,7 @@ public class DelegatedClientAuthenticationActionTests {
 
         LOGGER.debug("Initializing action with request parameters [{}]", webContext.getRequestParameters());
         val event = delegatedAuthenticationAction.execute(requestContext);
-        assertEquals("error", event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
 
         delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
 

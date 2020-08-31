@@ -48,6 +48,6 @@ public class PrepareForPasswordlessAuthenticationActionTests extends BasePasswor
             .build();
         WebUtils.putPasswordlessAuthenticationAccount(context, account);
 
-        assertEquals("success", initializeLoginAction.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, initializeLoginAction.execute(context).getId());
     }
 }

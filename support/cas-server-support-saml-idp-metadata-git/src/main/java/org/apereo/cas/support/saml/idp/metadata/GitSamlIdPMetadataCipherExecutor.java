@@ -18,13 +18,6 @@ public class GitSamlIdPMetadataCipherExecutor extends BaseStringCipherExecutor {
         super(secretKeyEncryption, secretKeySigning, alg, signingKeySize, encryptionKeySize);
     }
 
-    public GitSamlIdPMetadataCipherExecutor(final String secretKeyEncryption,
-                                            final String secretKeySigning,
-                                            final int signingKeySize,
-                                            final int encryptionKeySize) {
-        super(secretKeyEncryption, secretKeySigning, signingKeySize, encryptionKeySize);
-    }
-
     @Override
     public String getName() {
         return "Git Saml IdP Metadata";

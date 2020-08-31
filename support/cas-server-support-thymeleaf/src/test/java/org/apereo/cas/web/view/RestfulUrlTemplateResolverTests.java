@@ -52,8 +52,6 @@ public class RestfulUrlTemplateResolverTests {
             val res = r.resolveTemplate(mock(IEngineConfiguration.class), "cas",
                 "template", new LinkedHashMap<>());
             assertNotNull(res);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
 
     }
@@ -70,8 +68,6 @@ public class RestfulUrlTemplateResolverTests {
             val res = r.resolveTemplate(mock(IEngineConfiguration.class), "cas",
                 "template", new LinkedHashMap<>());
             assertNotNull(res);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
 
     }

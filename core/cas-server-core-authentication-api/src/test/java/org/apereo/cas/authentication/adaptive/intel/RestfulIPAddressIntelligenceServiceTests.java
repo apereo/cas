@@ -49,10 +49,7 @@ public class RestfulIPAddressIntelligenceServiceTests {
             val result = service.examine(new MockRequestContext(), "1.2.3.4");
             assertNotNull(result);
             assertTrue(result.isBanned());
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
-
     }
 
     @Test
@@ -73,9 +70,7 @@ public class RestfulIPAddressIntelligenceServiceTests {
             assertNotNull(result);
             assertTrue(result.isBanned());
 
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
-        }
+        } 
 
     }
 }

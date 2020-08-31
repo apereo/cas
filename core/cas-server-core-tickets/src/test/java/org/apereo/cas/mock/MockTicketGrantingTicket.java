@@ -193,6 +193,10 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
         usageCount++;
     }
 
+    @Override
+    public String toString() {
+        return getId();
+    }
 
     @Override
     public int compareTo(final Ticket o) {

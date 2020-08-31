@@ -48,8 +48,6 @@ public class OidcRestfulWebFingerUserInfoRepositoryTests {
             assertNotNull(results);
             assertTrue(results.containsKey("email"));
             assertEquals("cas@example.org", results.get("email"));
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 
@@ -69,8 +67,6 @@ public class OidcRestfulWebFingerUserInfoRepositoryTests {
             assertNotNull(results);
             assertTrue(results.containsKey("username"));
             assertEquals("casuser", results.get("username"));
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 }

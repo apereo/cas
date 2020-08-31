@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -36,7 +37,7 @@ public class PrincipalFromRemoteRequestHeaderNonInteractiveCredentialsActionTest
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         request.addHeader("cas-header-name", "casuser");
-        assertEquals("success", this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
         val c = WebUtils.getCredential(context);
         assertEquals("casuser", c.getId());
     }
