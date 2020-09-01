@@ -29,8 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URL;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -55,17 +53,17 @@ public class WebAuthnController {
      * webauthn registration endpoint.
      */
     public static final String WEBAUTHN_ENDPOINT_REGISTER = "/register";
-    
+
     /**
      * webauthn authentication endpoint.
      */
     public static final String WEBAUTHN_ENDPOINT_AUTHENTICATE = "/authenticate";
 
+    private static final String WEBAUTHN_ENDPOINT_FINISH = "/finish";
+
     private static final ObjectMapper MAPPER = JacksonCodecs.json().findAndRegisterModules();
 
     private final WebAuthnServer server;
-
-    private final CasConfigurationProperties casProperties;
 
     private final JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
 
@@ -91,7 +89,7 @@ public class WebAuthnController {
         return messagesJson(ResponseEntity.badRequest(), result.left().get());
     }
 
-    @PostMapping("/register/finish")
+    @PostMapping(WEBAUTHN_ENDPOINT_REGISTER + WEBAUTHN_ENDPOINT_FINISH)
     public ResponseEntity finishRegistration(@RequestBody final String responseJson) throws Exception {
         val result = server.finishRegistration(responseJson);
         return finishResponse(result, "Attestation verification failed", responseJson);
@@ -106,13 +104,13 @@ public class WebAuthnController {
         return messagesJson(ResponseEntity.badRequest(), request.left().get());
     }
 
-    @PostMapping("/authenticate/finish")
-    public ResponseEntity finishAuthentication(@NonNull final String responseJson) {
+    @PostMapping(WEBAUTHN_ENDPOINT_AUTHENTICATE + WEBAUTHN_ENDPOINT_FINISH)
+    public ResponseEntity finishAuthentication(@RequestBody final String responseJson) {
         val result = server.finishAuthentication(responseJson);
         return finishResponse(result, "Authentication verification failed", responseJson);
     }
 
-    @PostMapping("/action/deregister")
+    @PostMapping("/deregister")
     public ResponseEntity deregisterCredential(
         @NonNull @RequestParam("sessionToken") final String sessionTokenBase64,
         @NonNull @RequestParam("credentialId") final String credentialIdBase64) {
@@ -179,7 +177,7 @@ public class WebAuthnController {
     }
 
     private ResponseEntity<Object> messagesJson(final ResponseEntity.BodyBuilder response, final String message) {
-        return messagesJson(response, Collections.singletonList(message));
+        return messagesJson(response, List.of(message));
     }
 
     private ResponseEntity<Object> messagesJson(final ResponseEntity.BodyBuilder response, final List<String> messages) {
@@ -198,7 +196,7 @@ public class WebAuthnController {
 
     @RequiredArgsConstructor
     @Getter
-    private class StartAuthenticationResponse {
+    private static class StartAuthenticationResponse {
         private final boolean success = true;
 
         private final AssertionRequestWrapper request;
@@ -208,7 +206,7 @@ public class WebAuthnController {
 
     @RequiredArgsConstructor
     @Getter
-    private class StartRegistrationResponse {
+    private static class StartRegistrationResponse {
         private final boolean success = true;
 
         private final RegistrationRequest request;
@@ -217,12 +215,12 @@ public class WebAuthnController {
     }
 
     @Getter
-    private class StartRegistrationActions {
-        private final URL finish = casProperties.getServer().buildContextRelativeUrl(BASE_ENDPOINT_WEBAUTHN + "/register/finish");
+    private static class StartRegistrationActions {
+        private final String finish = BASE_ENDPOINT_WEBAUTHN.substring(1) + WEBAUTHN_ENDPOINT_REGISTER + WEBAUTHN_ENDPOINT_FINISH;
     }
 
     @Getter
-    private class StartAuthenticationActions {
-        private final URL finish = casProperties.getServer().buildContextRelativeUrl(BASE_ENDPOINT_WEBAUTHN + "/authenticate/finish");
+    private static class StartAuthenticationActions {
+        private final String finish = BASE_ENDPOINT_WEBAUTHN.substring(1) + WEBAUTHN_ENDPOINT_AUTHENTICATE + WEBAUTHN_ENDPOINT_FINISH;
     }
 }

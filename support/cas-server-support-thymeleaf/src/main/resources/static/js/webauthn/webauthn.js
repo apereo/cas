@@ -247,6 +247,14 @@ function setStatus(statusText) {
     $('#status').val(statusText);
 }
 
+function addDeviceAttributeAsRow(name, value) {
+    let row = `<tr class="mdc-data-table__row">`
+        + `<td class="mdc-data-table__cell"><code>${name}</code></td>`
+        + `<td class="mdc-data-table__cell"><code>${value}</code></td>`
+        + `</tr>`;
+    $('#deviceTable tbody').append(row);
+}
+
 function addMessage(message) {
     $('#messages').html("<p>" + message + "</p>");
 }
@@ -288,7 +296,6 @@ function hideDeviceInfo() {
 function showDeviceInfo(params) {
     $("#device-info").show();
     $("#device-name").text(params.displayName);
-    // $("#nickname").val(params.nickname);
     $("#device-icon").attr("src", params.imageUrl);
     $("#registerButton").hide();
     $("#deviceNamePanel").hide();
@@ -306,7 +313,7 @@ function resetDisplays() {
 function getWebAuthnUrls() {
     let endpoints = {
         authenticate: "webauthn/authenticate",
-        deregister: "webauthn/action/deregister",
+        deregister: "webauthn/deregister",
         register: "webauthn/register",
         deleteAccount: "webauthn/delete-account"
     }
@@ -489,6 +496,10 @@ function executeAuthenticateRequest(request) {
 }
 
 function authenticate(username = null, getRequest = getAuthenticateRequest) {
+    $('#deviceTable tbody tr').remove();
+    $('#divDeviceInfo').hide();
+    hideDeviceInfo();
+
     return performCeremony({
         getWebAuthnUrls,
         getRequest: urls => getRequest(urls, username),
@@ -499,8 +510,24 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
         },
         executeRequest: executeAuthenticateRequest,
     }).then(data => {
+        $('#divDeviceInfo').show();
+        console.log("Received: " + JSON.stringify(data));
         if (data.registrations) {
-            addMessage(`Authenticated as: ${data.registrations[0].username}`);
+
+            data.registrations.forEach(reg => {
+
+                addDeviceAttributeAsRow("Username", reg.username);
+                addDeviceAttributeAsRow("Credential Nickname", reg.credentialNickname);
+                addDeviceAttributeAsRow("Registration Date", reg.registrationTime);
+                addDeviceAttributeAsRow("Session Token", data.sessionToken);
+                addDeviceAttributeAsRow("Device Id", reg.attestationMetadata.deviceProperties.deviceId);
+                addDeviceAttributeAsRow("Device Name", reg.attestationMetadata.deviceProperties.displayName);
+
+                showDeviceInfo({
+                    "displayName": reg.attestationMetadata.deviceProperties.displayName,
+                    "imageUrl": reg.attestationMetadata.deviceProperties.imageUrl
+                })
+            });
         }
         return data;
     }).catch((err) => {

@@ -77,7 +77,7 @@ public class WebAuthnConfiguration {
     @ConditionalOnMissingBean(name = "webAuthnController")
     @Bean
     public WebAuthnController webAuthnController() throws Exception {
-        return new WebAuthnController(webAuthnServer(), casProperties);
+        return new WebAuthnController(webAuthnServer());
     }
 
     @ConditionalOnMissingBean(name = "webAuthnCredentialRepository")
