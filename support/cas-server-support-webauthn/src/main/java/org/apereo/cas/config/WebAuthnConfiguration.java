@@ -1,12 +1,22 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.webauthn.WebAuthnController;
+import org.apereo.cas.webauthn.WebAuthnCredential;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
+import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.cache.Cache;
@@ -65,6 +75,10 @@ public class WebAuthnConfiguration {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("failureModeEvaluator")
@@ -174,6 +188,46 @@ public class WebAuthnConfiguration {
         val server = new WebAuthnServer(webAuthnCredentialRepository(),
             newCache(), newCache(), relyingParty, webAuthnSessionManager());
         return server;
+    }
+
+    @ConditionalOnMissingBean(name = "webAuthnPrincipalFactory")
+    @Bean
+    @RefreshScope
+    public PrincipalFactory webAuthnPrincipalFactory() {
+        return PrincipalFactoryUtils.newPrincipalFactory();
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "webAuthnAuthenticationHandler")
+    public AuthenticationHandler webAuthnAuthenticationHandler() {
+        val webAuthn = this.casProperties.getAuthn().getMfa().getWebAuthn();
+        return new WebAuthnAuthenticationHandler(webAuthn.getName(),
+            servicesManager.getObject(), webAuthnPrincipalFactory(),
+            webAuthnCredentialRepository(), webAuthnSessionManager(),
+            webAuthn.getOrder());
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "webAuthnAuthenticationMetaDataPopulator")
+    public AuthenticationMetaDataPopulator webAuthnAuthenticationMetaDataPopulator() {
+        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        return new AuthenticationContextAttributeMetaDataPopulator(
+            authenticationContextAttribute,
+            webAuthnAuthenticationHandler(),
+            webAuthnMultifactorAuthenticationProvider().getId()
+        );
+    }
+
+    @ConditionalOnMissingBean(name = "webAuthnAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer webAuthnAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuthenticationHandler(webAuthnAuthenticationHandler());
+            plan.registerAuthenticationMetadataPopulator(webAuthnAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(WebAuthnCredential.class));
+        };
     }
 
     private static <K, V> Cache<K, V> newCache() {

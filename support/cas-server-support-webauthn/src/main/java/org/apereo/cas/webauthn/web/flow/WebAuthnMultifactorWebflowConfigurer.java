@@ -68,9 +68,11 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
 
             val loginProperties = CollectionUtils.wrapList("token");
             val loginBinder = createStateBinderConfiguration(loginProperties);
-            val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, "casWebAuthnLoginView", loginBinder);
+            val viewLoginFormState = createViewState(flow,
+                CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, "casWebAuthnLoginView", loginBinder);
             createStateModelBinding(viewLoginFormState, CasWebflowConstants.VAR_ID_CREDENTIAL, WebAuthnCredential.class);
-            viewLoginFormState.getEntryActionList().addAll(createEvaluateAction("webAuthnStartAuthenticationAction"), setPrincipalAction);
+            viewLoginFormState.getEntryActionList().addAll(
+                createEvaluateAction("webAuthnStartAuthenticationAction"), setPrincipalAction);
             createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
                 CasWebflowConstants.STATE_ID_REAL_SUBMIT, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
 

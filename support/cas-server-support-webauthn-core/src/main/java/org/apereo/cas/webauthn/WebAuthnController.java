@@ -1,6 +1,5 @@
 package org.apereo.cas.webauthn;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
