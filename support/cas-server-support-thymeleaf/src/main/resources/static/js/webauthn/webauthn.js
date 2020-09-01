@@ -528,6 +528,13 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
                     "imageUrl": reg.attestationMetadata.deviceProperties.imageUrl
                 })
             });
+
+            $('#authnButton').hide();
+
+            setTimeout(function () {
+                $('#token').val(data.sessionToken);
+                $('#form').submit();
+            }, 1500);
         }
         return data;
     }).catch((err) => {

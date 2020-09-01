@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.Service;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -21,6 +22,7 @@ import java.util.stream.Stream;
 public class DefaultAuthenticationSystemSupport implements AuthenticationSystemSupport {
 
     private final AuthenticationTransactionManager authenticationTransactionManager;
+
     private final PrincipalElectionStrategy principalElectionStrategy;
 
     @Override
@@ -35,7 +37,8 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     }
 
     @Override
-    public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication, final Credential credentials) {
+    public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication,
+                                                                                 final Credential credentials) {
         return establishAuthenticationContextFromInitial(authentication).collect(credentials);
     }
 
@@ -55,7 +58,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     }
 
     @Override
-    public AuthenticationResult finalizeAllAuthenticationTransactions(final AuthenticationResultBuilder authenticationResultBuilder,
+    public AuthenticationResult finalizeAllAuthenticationTransactions(@NonNull final AuthenticationResultBuilder authenticationResultBuilder,
                                                                       final Service service) {
         return authenticationResultBuilder.build(principalElectionStrategy, service);
     }
