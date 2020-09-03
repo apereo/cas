@@ -49,6 +49,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -175,7 +176,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
         val handler = getAcceptUsersAuthenticationHandler();
         val handlers = List.of(getTestOtpAuthenticationHandler(), handler, getSimpleTestAuthenticationHandler());
         val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
-        val authz = getAuthorizer(new RequiredHandlerAuthenticationPolicy(handler.getName(), true), handlers);
+        val authz = getAuthorizer(new RequiredHandlerAuthenticationPolicy(Set.of(handler.getName()), true), handlers);
         val map = (Map) Map.of(
             new UsernamePasswordCredential(), handler,
             getOtpCredential(), getTestOtpAuthenticationHandler());
