@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -253,7 +254,7 @@ public class PolicyBasedAuthenticationManagerTests {
         map.put(newMockHandler(HANDLER_B, false), null);
 
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy(HANDLER_A, true));
+        authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy(Set.of(HANDLER_A), true));
         val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan, false,
             mock(ConfigurableApplicationContext.class));
 
