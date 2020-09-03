@@ -18,8 +18,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WebAuthnCredentialTests {
     @Test
     public void verifyOperation() {
-        val input = new WebAuthnCredential(UUID.randomUUID().toString());
-        assertNotNull(input.getToken());
+        val c1 = new WebAuthnCredential(UUID.randomUUID().toString());
+        assertNotNull(c1.getToken());
+        assertTrue(c1.hashCode() > 0);
+        val c2 = new WebAuthnCredential();
+        c2.setToken(c1.getToken());
+        assertEquals(c1, c2);
     }
 
 }
