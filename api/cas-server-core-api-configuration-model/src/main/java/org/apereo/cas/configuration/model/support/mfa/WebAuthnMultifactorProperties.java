@@ -93,7 +93,7 @@ public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProper
      * invalid signature will be rejected even if this
      * option is set to true.
      */
-    private boolean allowUntrustedAttestation = true;
+    private boolean allowUntrustedAttestation;
 
     /**
      * If true, finish assertion op will fail if the  signature counter value in the response is not
