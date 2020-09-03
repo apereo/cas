@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.yubikey.YubikeyAccountCipherExecutor;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -31,10 +32,15 @@ public class YubiKeyConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
+
+    @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "transactionManagerYubiKey")
     public PlatformTransactionManager transactionManagerYubiKey() {
         return new PseudoPlatformTransactionManager();
+            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
     }
 
     @Bean

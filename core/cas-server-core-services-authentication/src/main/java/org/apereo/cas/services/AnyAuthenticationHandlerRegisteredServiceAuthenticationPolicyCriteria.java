@@ -30,7 +30,7 @@ public class AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriter
     private boolean tryAll;
 
     @Override
-    public AuthenticationPolicy toAuthenticationPolicy() {
+    public AuthenticationPolicy toAuthenticationPolicy(final RegisteredService registeredService) {
         return new AtLeastOneCredentialValidatedAuthenticationPolicy(this.tryAll);
     }
 }
