@@ -8,6 +8,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -62,6 +63,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
      * @return true, if both service and tgt are found, and the request is not asking to renew.
      * @since 4.1.0
      */
+    @SneakyThrows
     protected boolean isRequestAskingForServiceTicket(final RequestContext context) {
         val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         LOGGER.trace("Located ticket-granting ticket [{}] from the request context", ticketGrantingTicketId);
@@ -72,6 +74,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
         val configContext = getWebflowEventResolutionConfigurationContext();
         if (service != null && StringUtils.isNotBlank(ticketGrantingTicketId)) {
             val authn = configContext.getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicketId);
+            val validAuthn = authn != null;
             LOGGER.debug("Request identifies itself as one asking for service tickets. Checking for authentication context validity...");
             val validAuthn = validateExistingAuthentication(authn, context);
             if (validAuthn) {

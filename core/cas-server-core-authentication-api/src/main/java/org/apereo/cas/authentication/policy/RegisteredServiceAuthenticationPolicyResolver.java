@@ -49,7 +49,7 @@ public class RegisteredServiceAuthenticationPolicyResolver implements Authentica
         val criteria = registeredService.getAuthenticationPolicy().getCriteria();
         val policies = new LinkedHashSet<AuthenticationPolicy>(1);
         if (criteria != null) {
-            policies.add(criteria.toAuthenticationPolicy());
+            policies.add(criteria.toAuthenticationPolicy(registeredService));
         }
         LOGGER.debug("Authentication policies for this transaction are [{}]", policies);
         return policies;

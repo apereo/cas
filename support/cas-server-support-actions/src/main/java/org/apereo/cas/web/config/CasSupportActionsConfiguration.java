@@ -206,6 +206,7 @@ public class CasSupportActionsConfiguration {
             .casProperties(casProperties)
             .singleSignOnParticipationStrategy(webflowSingleSignOnParticipationStrategy.getObject())
             .ticketRegistry(ticketRegistry.getObject())
+            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
             .applicationContext(applicationContext)
             .build();
         return new CreateTicketGrantingTicketAction(context);
