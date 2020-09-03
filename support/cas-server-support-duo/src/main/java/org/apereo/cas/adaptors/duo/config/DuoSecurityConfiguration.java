@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityAuthenticationWebflowEven
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityDirectAuthenticationAction;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -37,6 +38,10 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnDuoSecurityConfigured
 public class DuoSecurityConfiguration {
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -101,6 +106,7 @@ public class DuoSecurityConfiguration {
             .casProperties(casProperties)
             .ticketRegistry(ticketRegistry.getObject())
             .applicationContext(applicationContext)
+            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
             .build();
 
         return new DuoSecurityAuthenticationWebflowEventResolver(context);

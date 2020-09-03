@@ -19,8 +19,9 @@ public interface RegisteredServiceAuthenticationPolicyCriteria extends Serializa
     /**
      * To authentication policy.
      *
+     * @param registeredService the registered service
      * @return the authentication policy
      */
     @JsonIgnore
-    AuthenticationPolicy toAuthenticationPolicy();
+    AuthenticationPolicy toAuthenticationPolicy(RegisteredService registeredService);
 }

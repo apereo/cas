@@ -26,7 +26,7 @@ public class AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCrite
     private static final long serialVersionUID = -2905826778096374574L;
 
     @Override
-    public AuthenticationPolicy toAuthenticationPolicy() {
+    public AuthenticationPolicy toAuthenticationPolicy(final RegisteredService registeredService) {
         return new AllAuthenticationHandlersSucceededAuthenticationPolicy();
     }
 }

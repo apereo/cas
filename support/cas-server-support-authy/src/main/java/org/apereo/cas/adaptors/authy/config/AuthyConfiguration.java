@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowEventRes
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorWebflowConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -48,6 +49,10 @@ import org.springframework.webflow.execution.Action;
 @Configuration("authyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AuthyConfiguration {
+
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -116,6 +121,7 @@ public class AuthyConfiguration {
             .casProperties(casProperties)
             .ticketRegistry(ticketRegistry.getObject())
             .applicationContext(applicationContext)
+            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
             .build();
 
         return new AuthyAuthenticationWebflowEventResolver(context);

@@ -2,6 +2,7 @@ package org.apereo.cas.otp.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.OneTimeToken;
@@ -92,6 +93,10 @@ public class OneTimeTokenAuthenticationConfiguration {
     @Qualifier("ticketRegistry")
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
+    
     @Bean
     @RefreshScope
     public CasWebflowEventResolver oneTimeTokenAuthenticationWebflowEventResolver() {
@@ -106,6 +111,7 @@ public class OneTimeTokenAuthenticationConfiguration {
             .casProperties(casProperties)
             .ticketRegistry(ticketRegistry.getObject())
             .applicationContext(applicationContext)
+            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
             .build();
 
         return new OneTimeTokenAuthenticationWebflowEventResolver(context);

@@ -8,6 +8,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -25,8 +26,8 @@ import java.util.Set;
  */
 @Slf4j
 public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflowEventResolver {
-    public ServiceTicketRequestWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext) {
-        super(webflowEventResolutionConfigurationContext);
+    public ServiceTicketRequestWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext configContext) {
+        super(configContext);
     }
 
     @Override
@@ -46,6 +47,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
      * @return true, if both service and tgt are found, and the request is not asking to renew.
      * @since 4.1.0
      */
+    @SneakyThrows
     protected boolean isRequestAskingForServiceTicket(final RequestContext context) {
         val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         LOGGER.debug("Located ticket-granting ticket [{}] from the request context", ticketGrantingTicketId);
@@ -61,9 +63,9 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
 
         if (service != null && StringUtils.isNotBlank(ticketGrantingTicketId)) {
             val authn = configContext.getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicketId);
+            val validAuthn = authn != null;
             if (StringUtils.isNotBlank(renewParam)) {
                 LOGGER.debug("Request identifies itself as one asking for service tickets. Checking for authentication context validity...");
-                val validAuthn = authn != null;
                 if (validAuthn) {
                     LOGGER.debug("Existing authentication context linked to ticket-granting ticket [{}] is valid. "
                         + "CAS will try to issue service tickets for [{}] once credentials are renewed", ticketGrantingTicketId, service);

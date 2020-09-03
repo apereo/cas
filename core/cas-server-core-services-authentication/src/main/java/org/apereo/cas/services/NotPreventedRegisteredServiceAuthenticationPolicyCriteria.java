@@ -26,7 +26,7 @@ public class NotPreventedRegisteredServiceAuthenticationPolicyCriteria implement
     private static final long serialVersionUID = -4905826778096374574L;
 
     @Override
-    public AuthenticationPolicy toAuthenticationPolicy() {
+    public AuthenticationPolicy toAuthenticationPolicy(final RegisteredService registeredService) {
         return new NotPreventedAuthenticationPolicy();
     }
 }

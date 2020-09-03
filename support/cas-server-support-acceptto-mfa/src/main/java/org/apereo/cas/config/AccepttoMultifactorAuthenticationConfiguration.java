@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -77,6 +78,10 @@ import java.security.PublicKey;
 @EnableRetry
 @Slf4j
 public class AccepttoMultifactorAuthenticationConfiguration {
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
+
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
@@ -230,6 +235,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
             .casProperties(casProperties)
             .ticketRegistry(ticketRegistry.getObject())
             .applicationContext(applicationContext)
+            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
             .build();
 
         return new AccepttoMultifactorAuthenticationWebflowEventResolver(context);

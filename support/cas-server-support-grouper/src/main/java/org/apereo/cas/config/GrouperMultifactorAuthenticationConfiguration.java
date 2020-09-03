@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
@@ -42,6 +43,10 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @ConditionalOnProperty(name = "cas.authn.mfa.grouper-group-field")
 public class GrouperMultifactorAuthenticationConfiguration {
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
+
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
     private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
@@ -116,6 +121,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
             .casProperties(casProperties)
             .ticketRegistry(ticketRegistry.getObject())
             .applicationContext(applicationContext)
+            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
             .build();
 
         val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(

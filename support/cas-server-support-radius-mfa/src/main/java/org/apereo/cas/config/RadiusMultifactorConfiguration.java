@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowEventR
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -50,6 +51,10 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(name = "cas.authn.mfa.radius.client.inet-address")
 public class RadiusMultifactorConfiguration {
+
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
@@ -126,6 +131,7 @@ public class RadiusMultifactorConfiguration {
             .casProperties(casProperties)
             .ticketRegistry(ticketRegistry.getObject())
             .applicationContext(applicationContext)
+            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
             .build();
 
         return new RadiusAuthenticationWebflowEventResolver(context,

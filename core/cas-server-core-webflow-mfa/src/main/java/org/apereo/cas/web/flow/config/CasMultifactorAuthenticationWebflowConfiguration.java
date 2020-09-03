@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationProviderResolver;
@@ -101,6 +102,10 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @Autowired
     @Qualifier("centralAuthenticationService")
     private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
+
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -471,6 +476,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             .ticketRegistry(ticketRegistry.getObject())
             .applicationContext(applicationContext)
             .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getObject())
+            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
             .build();
     }
 }

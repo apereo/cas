@@ -32,7 +32,7 @@ public class RestfulRegisteredServiceAuthenticationPolicyCriteria implements Reg
     private String basicAuthPassword;
 
     @Override
-    public AuthenticationPolicy toAuthenticationPolicy() {
+    public AuthenticationPolicy toAuthenticationPolicy(final RegisteredService registeredService) {
         return new RestfulAuthenticationPolicy(this.url, this.basicAuthUsername, this.basicAuthPassword);
     }
 }

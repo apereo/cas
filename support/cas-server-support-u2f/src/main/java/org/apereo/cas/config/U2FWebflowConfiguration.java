@@ -10,6 +10,7 @@ import org.apereo.cas.adaptors.u2f.web.flow.U2FMultifactorWebflowConfigurer;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartAuthenticationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartRegistrationAction;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -75,6 +76,10 @@ public class U2FWebflowConfiguration {
     @Autowired
     @Qualifier("centralAuthenticationService")
     private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
+
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -175,6 +180,7 @@ public class U2FWebflowConfiguration {
             .casProperties(casProperties)
             .ticketRegistry(ticketRegistry.getObject())
             .applicationContext(applicationContext)
+            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
             .build();
 
         return new U2FAuthenticationWebflowEventResolver(context);

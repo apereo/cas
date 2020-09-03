@@ -7,6 +7,7 @@ import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowEven
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -93,6 +94,10 @@ public class YubiKeyConfiguration {
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
+
+    @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
     private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
@@ -139,6 +144,7 @@ public class YubiKeyConfiguration {
             .casProperties(casProperties)
             .ticketRegistry(ticketRegistry.getObject())
             .applicationContext(applicationContext)
+            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
             .build();
 
         return new YubiKeyAuthenticationWebflowEventResolver(context);

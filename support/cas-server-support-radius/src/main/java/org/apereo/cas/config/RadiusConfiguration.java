@@ -10,6 +10,7 @@ import org.apereo.cas.adaptors.radius.server.NonBlockingRadiusServer;
 import org.apereo.cas.adaptors.radius.server.RadiusServerConfigurationContext;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAccessChallengedMultifactorAuthenticationTrigger;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -64,6 +65,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @ConditionalOnProperty(name = "cas.authn.radius.client.inet-address")
 public class RadiusConfiguration {
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
+
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
     private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
@@ -201,6 +206,7 @@ public class RadiusConfiguration {
             .casProperties(casProperties)
             .ticketRegistry(ticketRegistry.getObject())
             .applicationContext(applicationContext)
+            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
             .build();
         val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(context, radiusAccessChallengedMultifactorAuthenticationTrigger());
         LOGGER.debug("Activating MFA event resolver based on RADIUS...");

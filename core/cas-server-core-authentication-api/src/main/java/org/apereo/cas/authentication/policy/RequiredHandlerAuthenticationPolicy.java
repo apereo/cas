@@ -11,13 +11,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Set;
 
 /**
- * Authentication security policy that is satisfied iff a specified authentication handler successfully authenticates
+ * Authentication security policy that is satisfied iff a specified
+ * authentication handler successfully authenticates
  * at least one credential.
  *
  * @author Marvin S. Addison
@@ -37,15 +37,15 @@ public class RequiredHandlerAuthenticationPolicy extends BaseAuthenticationPolic
     /**
      * Authentication handler name that is required to satisfy policy.
      */
-    private String requiredHandlerName;
+    private Set<String> requiredHandlerNames;
 
     /**
      * Flag to try all credentials before policy is satisfied.
      */
     private boolean tryAll;
 
-    public RequiredHandlerAuthenticationPolicy(final String requiredHandlerName) {
-        this(requiredHandlerName, false);
+    public RequiredHandlerAuthenticationPolicy(final String requiredHandlerNames) {
+        this(org.springframework.util.StringUtils.commaDelimitedListToSet(requiredHandlerNames), false);
     }
 
     @Override
@@ -63,15 +63,16 @@ public class RequiredHandlerAuthenticationPolicy extends BaseAuthenticationPolic
             return false;
         }
 
-        LOGGER.debug("Examining authentication successes for authentication handler [{}]", this.requiredHandlerName);
-        if (StringUtils.isNotBlank(this.requiredHandlerName)) {
-            credsOk = authn.getSuccesses().keySet()
+        LOGGER.debug("Examining authentication successes for authentication handler [{}]", this.requiredHandlerNames);
+        if (!requiredHandlerNames.isEmpty()) {
+            credsOk = authn.getSuccesses()
+                .keySet()
                 .stream()
-                .anyMatch(s -> s.equalsIgnoreCase(this.requiredHandlerName));
+                .anyMatch(s -> requiredHandlerNames.contains(s));
 
             if (!credsOk) {
                 LOGGER.warn("Required authentication handler [{}] is not present in the list of recorded successful authentications",
-                    this.requiredHandlerName);
+                    this.requiredHandlerNames);
                 return false;
             }
         }

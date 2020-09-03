@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.resolver.impl;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -48,4 +49,6 @@ public class CasWebflowEventResolutionConfigurationContext {
     private final CasConfigurationProperties casProperties;
 
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
+
+    private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 }

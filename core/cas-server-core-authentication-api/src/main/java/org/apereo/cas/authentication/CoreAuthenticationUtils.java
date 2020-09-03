@@ -330,7 +330,9 @@ public class CoreAuthenticationUtils {
     public static Collection<AuthenticationPolicy> newAuthenticationPolicy(final AuthenticationPolicyProperties policyProps) {
         if (policyProps.getReq().isEnabled()) {
             LOGGER.trace("Activating authentication policy [{}]", RequiredHandlerAuthenticationPolicy.class.getSimpleName());
-            return CollectionUtils.wrapList(new RequiredHandlerAuthenticationPolicy(policyProps.getReq().getHandlerName(), policyProps.getReq().isTryAll()));
+            val requiredHandlerNames = org.springframework.util.StringUtils.commaDelimitedListToSet(policyProps.getReq().getHandlerName());
+            var policy = new RequiredHandlerAuthenticationPolicy(requiredHandlerNames, policyProps.getReq().isTryAll());
+            return CollectionUtils.wrapList(policy);
         }
 
         if (policyProps.getAllHandlers().isEnabled()) {

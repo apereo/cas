@@ -197,6 +197,7 @@ public class CasSupportActionsConfiguration {
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
             .ticketRegistry(ticketRegistry.getObject())
+            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
             .applicationContext(applicationContext)
             .build();
         return new CreateTicketGrantingTicketAction(context);

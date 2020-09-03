@@ -7,6 +7,7 @@ import org.apereo.cas.adaptors.swivel.web.flow.SwivelMultifactorTrustWebflowConf
 import org.apereo.cas.adaptors.swivel.web.flow.SwivelMultifactorWebflowConfigurer;
 import org.apereo.cas.adaptors.swivel.web.flow.rest.SwivelTuringImageGeneratorController;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -49,6 +50,10 @@ import org.springframework.webflow.execution.Action;
 @Configuration("swivelConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SwivelConfiguration {
+
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -128,6 +133,7 @@ public class SwivelConfiguration {
             .casProperties(casProperties)
             .ticketRegistry(ticketRegistry.getObject())
             .applicationContext(applicationContext)
+            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
             .build();
         return new SwivelAuthenticationWebflowEventResolver(context);
     }
