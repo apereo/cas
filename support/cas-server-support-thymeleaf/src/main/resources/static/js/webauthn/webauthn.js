@@ -313,9 +313,7 @@ function resetDisplays() {
 function getWebAuthnUrls() {
     let endpoints = {
         authenticate: "webauthn/authenticate",
-        deregister: "webauthn/deregister",
         register: "webauthn/register",
-        deleteAccount: "webauthn/delete-account"
     }
     return new Promise((resolve, reject) => resolve(endpoints)).then(data => {
         return data;
@@ -453,7 +451,7 @@ function register(username, displayName, credentialNickname, requireResidentKey 
                     setTimeout(function () {
                         $('#sessionToken').val(session.sessionToken);
                         $('#form').submit();
-                    }, 1500);
+                    }, 1000);
                 }
             }
         })
@@ -534,7 +532,7 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
             setTimeout(function () {
                 $('#token').val(data.sessionToken);
                 $('#form').submit();
-            }, 1500);
+            }, 1000);
         }
         return data;
     }).catch((err) => {
@@ -549,49 +547,6 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
         console.error('Authentication failed', err);
         return rejected(err);
     });
-}
-
-function deregister(credentialId) {
-    addMessage('De-registering credential...');
-
-    return getWebAuthnUrls()
-        .then(urls =>
-            fetch(urls.deregister, {
-                body: new URLSearchParams({
-                    credentialId,
-                    sessionToken: session.sessionToken || null,
-                }),
-                method: 'POST',
-            })
-        )
-        .then(response => response.json())
-        .then(updateSession)
-        .then(rejectIfNotSuccess)
-        .then(data => {
-            if (data.success) {
-                if (data.droppedRegistration) {
-                    addMessage(`Successfully de-registered credential: ${data.droppedRegistration.credentialNickname || credentialId}`);
-                } else {
-                    addMessage(`Successfully de-registered credential: ${credentialId}`);
-                }
-                if (data.accountDeleted) {
-                    addMessage('No credentials remain - account deleted.');
-                    logout();
-                }
-            } else {
-                addMessage('Credential de-registration failed.');
-            }
-        })
-        .catch((err) => {
-            setStatus('Credential de-registration failed.');
-            if (err.message) {
-                addMessage(`${err.name}: ${err.message}`);
-            } else if (err.messages) {
-                addMessages(err.messages);
-            }
-            console.error('Authentication failed', err);
-            return rejected(err);
-        });
 }
 
 function init() {
