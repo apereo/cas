@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.http.HttpStatus;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -38,6 +39,8 @@ public class WebAuthnAccountSaveRegistrationAction extends AbstractAction {
         if (!credentials.isEmpty() && sessionManager.getSession(token).isPresent()) {
             return success();
         }
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        WebUtils.produceErrorView(request, HttpStatus.BAD_REQUEST, "Unable to verify registration record");
         return error();
     }
 }

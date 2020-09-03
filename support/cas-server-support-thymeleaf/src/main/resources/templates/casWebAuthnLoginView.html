@@ -63,6 +63,15 @@
 
         <div class="d-flex justify-content-center flex-column align-items-center">
             <h2 id="status">Login with FIDO2-enabled Device</h2>
+
+            <div id="errorPanel" class="banner banner-danger alert-dismissible mb-4"
+                 th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+                <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
+                   th:utext="#{${message.text}}">
+                    Error Message Text
+                </p>
+            </div>
+            
             <div id="messages"></div>
             <div id="device-info">
                 <div class="d-flex justify-content-center flex-column align-items-center">
@@ -109,6 +118,7 @@
 
             var btn = document.getElementById('authnButton');
             btn.addEventListener('click', function (event) {
+                $("#errorPanel").hide();
                 const username = '[[${principal.id}]]';
                 authenticate(username);
             }, false);
