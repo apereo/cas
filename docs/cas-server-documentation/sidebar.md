@@ -104,6 +104,7 @@ layout: null
         *   [Authy](/$version/mfa/AuthyAuthenticator-Authentication.html)
         *   [Simple](/$version/mfa/Simple-Multifactor-Authentication.html)
         *   [FIDO U2F](/$version/mfa/FIDO-U2F-Authentication.html)
+        *   [FIDO2 WebAuthn](/$version/mfa/FIDO2-WebAuthn-Authentication.html)
         *   [Swivel Secure](/$version/mfa/SwivelSecure-Authentication.html)
         *   [Custom](/$version/mfa/Custom-MFA-Authentication.html)
     *   [Triggers](/$version/mfa/Configuring-Multifactor-Authentication-Triggers.html)
