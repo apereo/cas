@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.webauthn.WebAuthnControllerTests;
 import org.apereo.cas.webauthn.WebAuthnCredentialTests;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProviderTests;
 
@@ -15,6 +16,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     WebAuthnCredentialTests.class,
+    WebAuthnControllerTests.class,
     WebAuthnMultifactorAuthenticationProviderTests.class
 })
 @RunWith(JUnitPlatform.class)

@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * This is {@link WebAuthnController}.
  *
  * @author Misagh Moayyed
- * @since 6.2.0
+ * @since 6.3.0
  */
 @RestController("webAuthnController")
 @Slf4j
@@ -164,13 +164,8 @@ public class WebAuthnController {
     private ResponseEntity<Object> finishResponse(final Either<List<String>, ?> result, final String jsonFailMessage,
                                                   final String responseJson) {
         if (result.isRight()) {
-            try {
-                LOGGER.trace("Response: [{}]", responseJson);
-                return ResponseEntity.ok(writeJson(result.right().get()));
-            } catch (final Exception e) {
-                LoggingUtils.error(LOGGER, e);
-                return messagesJson(ResponseEntity.ok(), jsonFailMessage);
-            }
+            LOGGER.trace("Response: [{}]", responseJson);
+            return ResponseEntity.ok(writeJson(result.right().get()));
         }
         return messagesJson(ResponseEntity.badRequest(), result.left().get());
     }
