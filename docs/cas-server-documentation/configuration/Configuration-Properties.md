@@ -3082,7 +3082,7 @@ To learn more about this topic, [please review this guide](../mfa/DuoSecurity-Au
 # cas.authn.mfa.duo[0].order=
 ```
 
-The `duoApplicationKey` is a string, at least 40 characters long, that you generate and keep secret from Duo.
+The `duo-application-key` is a string, at least 40 characters long, that you generate and keep secret from Duo.
 You can generate a random string in Python with:
 
 ```python
@@ -3090,7 +3090,29 @@ import os, hashlib
 print hashlib.sha1(os.urandom(32)).hexdigest()
 ```
 
-Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.duo[0]`.
+Multifactor authentication bypass settings for this provider are 
+available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.duo[0]`.
+
+### FIDO2 WebAuthn
+
+To learn more about this topic, [please review this guide](../mfa/FIDO2-WebAuthn-Authentication.html).
+
+```properties
+# cas.authn.mfa.web-authn.allowed-origins=
+# cas.authn.mfa.web-authn.application-id=
+# cas.authn.mfa.web-authn.relying-party-name=CAS WebAuthn 
+# cas.authn.mfa.web-authn.relying-party-id=
+
+# cas.authn.mfa.web-authn.display-name-attribute=displayName
+
+# cas.authn.mfa.web-authn.allowUnrequestedExtensions=false
+# cas.authn.mfa.web-authn.allowUntrustedAttestation=false
+# cas.authn.mfa.web-authn.validateSignatureCounter=true
+# cas.authn.mfa.web-authn.attestationConveyancePreference=DIRECT|INDIRECT|NONE
+# cas.authn.mfa.web-authn.trusted-device-metadata.location=
+
+# cas.authn.mfa.web-authn.trusted-device-enabled=false
+```                                                         
 
 ### FIDO U2F
 
