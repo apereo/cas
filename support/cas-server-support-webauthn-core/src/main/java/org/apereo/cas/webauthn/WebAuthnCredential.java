@@ -12,7 +12,7 @@ import lombok.ToString;
  * This is {@link WebAuthnCredential}.
  *
  * @author Misagh Moayyed
- * @since 6.1.0
+ * @since 6.3.0
  */
 @ToString
 @Getter
