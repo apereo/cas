@@ -60,16 +60,18 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
         val ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
         try {
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
-            val successfulHandlerNames = CollectionUtils.toCollection(authentication.getAttributes()
-                .get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
-            val assertedHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
-                .stream()
-                .filter(handler -> successfulHandlerNames.contains(handler.getName()))
-                .collect(Collectors.toSet());
-            val criteria = authenticationPolicy.getCriteria();
-            if (criteria != null) {
-                val policy = criteria.toAuthenticationPolicy(registeredService);
-                return policy.isSatisfiedBy(authentication, assertedHandlers, applicationContext);
+            if (authentication != null) {
+                val successfulHandlerNames = CollectionUtils.toCollection(authentication.getAttributes()
+                    .get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
+                val assertedHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
+                    .stream()
+                    .filter(handler -> successfulHandlerNames.contains(handler.getName()))
+                    .collect(Collectors.toSet());
+                val criteria = authenticationPolicy.getCriteria();
+                if (criteria != null) {
+                    val policy = criteria.toAuthenticationPolicy(registeredService);
+                    return policy.isSatisfiedBy(authentication, assertedHandlers, applicationContext);
+                }
             }
         } finally {
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(ca);
