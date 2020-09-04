@@ -4,12 +4,5 @@
   "name": "HTTPS and IMAPS",
   "id": 10000001,
   "description": "This service definition authorizes all application urls that support HTTPS and IMAPS protocols.",
-  "evaluationOrder": 10000,
-  "authenticationPolicy": {
-    "@class": "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
-    "requiredAuthenticationHandlers" : ["java.util.TreeSet", [ "JSON" ]],
-    "criteria": {
-      "@class": "org.apereo.cas.services.AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria"
-    }
-  }
+  "evaluationOrder": 10000
 }
