@@ -122,9 +122,10 @@ public class RegisteredServiceAuthenticationPolicyResolverTests {
         val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid2"),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
-        assertFalse(resolver.supports(transaction));
+        assertTrue(resolver.supports(transaction));
         val policies = resolver.resolve(transaction);
-        assertTrue(policies.isEmpty());
+        assertFalse(policies.isEmpty());
+        assertTrue(policies.iterator().next() instanceof AtLeastOneCredentialValidatedAuthenticationPolicy);
     }
 
     @Test
