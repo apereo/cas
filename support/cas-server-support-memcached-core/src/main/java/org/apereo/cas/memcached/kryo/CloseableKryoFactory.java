@@ -6,6 +6,12 @@ import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaSetSerializer;
 import org.apereo.cas.memcached.kryo.serial.ThrowableSerializer;
 import org.apereo.cas.memcached.kryo.serial.URLSerializer;
 import org.apereo.cas.memcached.kryo.serial.ZonedDateTimeSerializer;
+import org.apereo.cas.services.AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria;
+import org.apereo.cas.services.AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria;
+import org.apereo.cas.services.AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria;
+import org.apereo.cas.services.GroovyRegisteredServiceAuthenticationPolicyCriteria;
+import org.apereo.cas.services.NotPreventedRegisteredServiceAuthenticationPolicyCriteria;
+import org.apereo.cas.services.RestfulRegisteredServiceAuthenticationPolicyCriteria;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.pool.KryoFactory;
@@ -115,7 +121,7 @@ public class CloseableKryoFactory implements KryoFactory {
         });
         return kryo;
     }
-
+    
     private static void registerImmutableOrEmptyCollectionsWithKryo(final Kryo kryo) {
         LOGGER.trace("Registering immutable/empty collections with Kryo");
 
