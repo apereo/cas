@@ -42,9 +42,9 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
         val registeredService = this.servicesManager.findServiceBy(service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
         val tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService);
-        final boolean ticketIdAvaiable=isTicketIdAvailable(parameters);
+        final boolean ticketIdAvailable=isTicketIdAvailable(parameters);
 
-        if ((!tokenAsResponse)||(!ticketIdAvaiable)) {
+        if ((!tokenAsResponse)||(!ticketIdAvailable)) {
             if(ticketIdAvaiable) {
                 LOGGER.debug("Registered service [{}] is not configured to issue JWTs for service tickets. "
                                 + "Make sure the service property [{}] is defined and set to true", registeredService,
