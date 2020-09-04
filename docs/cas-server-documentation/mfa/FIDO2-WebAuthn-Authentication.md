@@ -6,6 +6,11 @@ category: Multifactor Authentication
 
 # FIDO2 WebAuthn Multifactor Authentication
 
+[WebAuthn](https://webauthn.io/) is an API that makes it very easy for a relying party, such as a web service, to integrate strong 
+authentication into applications using support built in to all leading browsers and platforms. This means 
+that web services can now easily offer their users strong authentication with a choice of authenticators 
+such as security keys or built-in platform authenticators such as biometric readers.
+
 Support is enabled by including the following module in the WAR overlay:
 
 ```xml
@@ -53,3 +58,16 @@ purposes. Needless to say, this JSON resource acts as a database that must be av
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido2-webauthn-json).
 
+### MongoDb
+
+Device registrations may be kept inside a MongoDb instance by including the following module in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-webauthn-mongo</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido2-webauthn-mongodb).

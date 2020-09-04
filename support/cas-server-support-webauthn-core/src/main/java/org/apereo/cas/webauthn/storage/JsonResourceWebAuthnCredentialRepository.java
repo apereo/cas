@@ -19,16 +19,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 /**
- * This is {@link JsonResourceRegistrationStorage}.
+ * This is {@link JsonResourceWebAuthnCredentialRepository}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
  */
 @Slf4j
-public class JsonResourceRegistrationStorage extends BaseWebAuthnRegistrationStorage implements InitializingBean {
+public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepository implements InitializingBean {
     private final Resource location;
 
-    public JsonResourceRegistrationStorage(final CasConfigurationProperties properties, final Resource location) {
+    public JsonResourceWebAuthnCredentialRepository(final CasConfigurationProperties properties, final Resource location) {
         super(properties);
         this.location = location;
     }

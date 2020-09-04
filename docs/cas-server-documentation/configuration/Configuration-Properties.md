@@ -3117,15 +3117,14 @@ To learn more about this topic, [please review this guide](../mfa/FIDO2-WebAuthn
 
 # cas.authn.mfa.web-authn.display-name-attribute=displayName
 
-# cas.authn.mfa.web-authn.allowUnrequestedExtensions=false
-# cas.authn.mfa.web-authn.allowUntrustedAttestation=false
-# cas.authn.mfa.web-authn.validateSignatureCounter=true
-# cas.authn.mfa.web-authn.attestationConveyancePreference=DIRECT|INDIRECT|NONE
+# cas.authn.mfa.web-authn.allow-unrequested-extensions=false
+# cas.authn.mfa.web-authn.allow-untrusted-attestation=false
+# cas.authn.mfa.web-authn.validate-signature-counter=true
+# cas.authn.mfa.web-authn.attestation-conveyance-preference=DIRECT|INDIRECT|NONE
 # cas.authn.mfa.web-authn.trusted-device-metadata.location=
 
 # cas.authn.mfa.web-authn.trusted-device-enabled=false
 
-# Expiry of U2F devices since registration, independent of last time used:
 # cas.authn.mfa.web-authn.expire-devices=30
 # cas.authn.mfa.web-authn.expire-devices-time-unit=DAYS
 ```                                                         
@@ -3140,6 +3139,11 @@ available [here](Configuration-Properties-Common.html#job-scheduling) under the 
 ```properties
 # cas.authn.mfa.web-authn.json.location=file:///etc/cas/config/devices.json
 ```
+
+### FIDO2 WebAuthn MongoDb
+
+Common configuration settings for this feature are 
+available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.web-authn`.
 
 ### FIDO U2F
 

@@ -131,6 +131,12 @@ public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProper
     private WebAuthnJsonMultifactorProperties json = new WebAuthnJsonMultifactorProperties();
 
     /**
+     * Keep device registration records inside a MongoDb resource.
+     */
+    @NestedConfigurationProperty
+    private WebAuthnMongoDbMultifactorProperties mongo = new WebAuthnMongoDbMultifactorProperties();
+
+    /**
      * Clean up expired records via a background cleaner process.
      */
     @NestedConfigurationProperty

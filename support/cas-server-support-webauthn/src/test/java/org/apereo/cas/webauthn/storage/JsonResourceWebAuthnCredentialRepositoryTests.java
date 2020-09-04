@@ -9,14 +9,14 @@ import org.springframework.test.context.TestPropertySource;
 import java.io.File;
 
 /**
- * This is {@link JsonResourceRegistrationStorageTests}.
+ * This is {@link JsonResourceWebAuthnCredentialRepositoryTests}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
  */
 @Tag("FileSystem")
 @TestPropertySource(properties = "cas.authn.mfa.web-authn.json.location=file:/tmp/webauthn-devices.json")
-public class JsonResourceRegistrationStorageTests extends BaseWebAuthnRegistrationStorageTests {
+public class JsonResourceWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
 
     @BeforeAll
     public static void bootstrap() {
