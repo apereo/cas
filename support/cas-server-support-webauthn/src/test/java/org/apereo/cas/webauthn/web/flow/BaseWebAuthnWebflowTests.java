@@ -78,7 +78,6 @@ public abstract class BaseWebAuthnWebflowTests {
         CasWebflowContextConfiguration.class,
         MultifactorAuthnTrustConfiguration.class,
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
-        MultifactorAuthnTrustWebflowConfiguration.class,
         WebAuthnComponentSerializationConfiguration.class,
         WebAuthnMultifactorProviderBypassConfiguration.class,
         WebAuthnConfiguration.class,
