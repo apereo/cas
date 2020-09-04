@@ -1,7 +1,7 @@
 ---
 layout: default
 title: CAS - Build Process
-category: Build
+category: Developer
 ---
 
 # Build Process

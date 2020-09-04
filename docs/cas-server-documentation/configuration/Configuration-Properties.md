@@ -11,9 +11,10 @@ line switches](Configuration-Management.html#overview). This section provides a 
 references to the underlying modules that consume them.
 
 <div class="alert alert-warning"><strong>Be Selective</strong><p>
-This section is meant as a guide only. Do <strong>NOT</strong> copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as <i>reference</i>. All these ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p></div>
-
-Note that property names can be specified in very relaxed terms. For instance `cas.someProperty`, `cas.some-property`, `cas.some_property` are all valid names.
+This section is meant as a guide only. Do <strong>NOT</strong> copy/paste the entire 
+collection of settings into your CAS configuration; rather pick only the properties that you need. Do NOT enable settings unless you are 
+certain of their purpose and do NOT copy settings into your configuration only to keep 
+them as <i>reference</i>. All these ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p></div>
 
 The following list of properties are controlled by and provided to CAS. Each block, for most use cases, corresponds
 to a specific CAS module that is expected to be included in the final CAS distribution prepared during the build
@@ -23,6 +24,17 @@ and deployment process.
  declaring and configuring properties listed below is sufficient. You should NOT have to
 explicitly massage a CAS XML configuration file to design an authentication handler,
 create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.</p></div>
+
+## Naming Convention
+
+Property names can be specified in very relaxed terms. For 
+instance `cas.someProperty`, `cas.some-property`, `cas.some_property` are all valid names. While all forms are accepted by CAS, there are 
+certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a 
+property value, where this property is required to have been specified in CAS configuration using kebab case. This 
+is both true for properties that are owned by CAS as well as those that might be presented to the system via 
+an external library or framework such as Spring Boot, etc.
+
+> When possible, properties should be stored in lower-case kebab format, such as cas.property-name=value.
 
 ## General
 
@@ -3082,7 +3094,7 @@ To learn more about this topic, [please review this guide](../mfa/DuoSecurity-Au
 # cas.authn.mfa.duo[0].order=
 ```
 
-The `duoApplicationKey` is a string, at least 40 characters long, that you generate and keep secret from Duo.
+The `duo-application-key` is a string, at least 40 characters long, that you generate and keep secret from Duo.
 You can generate a random string in Python with:
 
 ```python
@@ -3090,7 +3102,55 @@ import os, hashlib
 print hashlib.sha1(os.urandom(32)).hexdigest()
 ```
 
-Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.duo[0]`.
+Multifactor authentication bypass settings for this provider are 
+available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.duo[0]`.
+
+### FIDO2 WebAuthn
+
+To learn more about this topic, [please review this guide](../mfa/FIDO2-WebAuthn-Authentication.html).
+
+```properties
+# cas.authn.mfa.web-authn.allowed-origins=
+# cas.authn.mfa.web-authn.application-id=
+# cas.authn.mfa.web-authn.relying-party-name=CAS WebAuthn 
+# cas.authn.mfa.web-authn.relying-party-id=
+
+# cas.authn.mfa.web-authn.display-name-attribute=displayName
+
+# cas.authn.mfa.web-authn.allow-unrequested-extensions=false
+# cas.authn.mfa.web-authn.allow-untrusted-attestation=false
+# cas.authn.mfa.web-authn.validate-signature-counter=true
+# cas.authn.mfa.web-authn.attestation-conveyance-preference=DIRECT|INDIRECT|NONE
+# cas.authn.mfa.web-authn.trusted-device-metadata.location=
+
+# cas.authn.mfa.web-authn.trusted-device-enabled=false
+
+# cas.authn.mfa.web-authn.expire-devices=30
+# cas.authn.mfa.web-authn.expire-devices-time-unit=DAYS
+```   
+
+Multifactor authentication bypass settings for this provider are
+available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.web-authn`.
+
+The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
+Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption)
+under the configuration key `cas.authn.mfa.web-authn`.                                                      
+
+### FIDO2 WebAuthn Cleaner
+
+Scheduler settings for this feature are 
+available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.authn.mfa.web-authn.cleaner`.
+
+### FIDO2 WebAuthn JSON
+
+```properties
+# cas.authn.mfa.web-authn.json.location=file:///etc/cas/config/devices.json
+```
+
+### FIDO2 WebAuthn MongoDb
+
+Common configuration settings for this feature are 
+available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.web-authn`.
 
 ### FIDO U2F
 

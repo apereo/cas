@@ -80,7 +80,7 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
         assertEquals(List.of("cas", "system"), status.getPropertyOrDefault("example2", List.of()));
         assertEquals(Set.of("hello"), status.getPropertyOrDefault("nada", "hello"));
 
-        
+
         assertEquals(List.of("hello1", "hello2"), status.getPropertyOrDefault("nada", "hello1", "hello2"));
         assertEquals(List.of("cas", "system"), status.getPropertyOrDefault("example2", "hello1", "hello2"));
     }
@@ -104,7 +104,6 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
         assertTrue(repo.verify(context, c).isAccepted());
     }
 
-    @NonNull
     private static MockRequestContext getRequestContext() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

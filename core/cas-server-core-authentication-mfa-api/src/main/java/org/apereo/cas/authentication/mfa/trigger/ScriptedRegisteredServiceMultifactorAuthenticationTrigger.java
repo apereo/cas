@@ -29,7 +29,6 @@ import org.springframework.core.Ordered;
 
 import javax.persistence.Transient;
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -43,7 +42,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @deprecated Since 6.2
  */
 @Getter
-@Setter
 @Slf4j
 @RequiredArgsConstructor
 @Deprecated(since = "6.2.0")
@@ -52,6 +50,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implement
 
     private final ApplicationContext applicationContext;
 
+    @Setter
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @JsonIgnore

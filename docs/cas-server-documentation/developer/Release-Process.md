@@ -1,10 +1,10 @@
 ---
 layout: default
 title: CAS - Release Process
-category: Build
+category: Developer
 ---
 
-# CAS 6.3.x Release Process
+# CAS Release Process
 
 This page documents the steps that a release engineer should take for cutting a CAS server release. 
 

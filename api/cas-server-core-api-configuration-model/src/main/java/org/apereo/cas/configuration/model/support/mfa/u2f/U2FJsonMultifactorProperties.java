@@ -13,7 +13,6 @@ import lombok.experimental.Accessors;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-
 @RequiresModule(name = "cas-server-support-u2f")
 @Getter
 @Setter
