@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.support.mfa.webauthn;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorProviderProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -141,8 +143,16 @@ public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProper
      */
     @NestedConfigurationProperty
     private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT10S", "PT1M");
-    
+
+    /**
+     * Properties and settings related to device registration records and encryption.
+     */
+    @NestedConfigurationProperty
+    private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+
     public WebAuthnMultifactorProperties() {
         setId(DEFAULT_IDENTIFIER);
+        crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+        crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }
 }

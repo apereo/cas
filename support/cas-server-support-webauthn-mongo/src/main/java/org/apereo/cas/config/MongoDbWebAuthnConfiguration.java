@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.webauthn.MongoDbWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
@@ -32,6 +33,10 @@ public class MongoDbWebAuthnConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
+    private ObjectProvider<CipherExecutor> webAuthnCredentialRegistrationCipherExecutor;
+
+    @Autowired
     @Qualifier("sslContext")
     private ObjectProvider<SSLContext> sslContext;
 
@@ -54,6 +59,7 @@ public class MongoDbWebAuthnConfiguration {
     @RefreshScope
     @Bean
     public WebAuthnCredentialRepository webAuthnCredentialRepository() {
-        return new MongoDbWebAuthnCredentialRepository(mongoWebAuthnTemplate(), casProperties);
+        return new MongoDbWebAuthnCredentialRepository(mongoWebAuthnTemplate(),
+            casProperties, webAuthnCredentialRegistrationCipherExecutor.getObject());
     }
 }

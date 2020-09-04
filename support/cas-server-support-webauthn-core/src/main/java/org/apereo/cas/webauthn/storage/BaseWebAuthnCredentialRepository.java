@@ -3,6 +3,7 @@ package org.apereo.cas.webauthn.storage;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -54,6 +55,8 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     private final CasConfigurationProperties properties;
+
+    private final CipherExecutor<String, String> cipherExecutor;
 
     @Override
     public Optional<CredentialRegistration> getRegistrationByUsernameAndCredentialId(final String username, final ByteArray id) {

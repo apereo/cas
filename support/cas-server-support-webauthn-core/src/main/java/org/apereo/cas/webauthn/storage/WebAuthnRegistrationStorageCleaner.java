@@ -11,5 +11,5 @@ public interface WebAuthnRegistrationStorageCleaner {
     /**
      * Clean.
      */
-    default void clean() {};
+    default void clean() {}
 }

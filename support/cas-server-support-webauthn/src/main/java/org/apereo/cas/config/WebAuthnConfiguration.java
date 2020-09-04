@@ -13,7 +13,10 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.webauthn.WebAuthnCredential;
+import org.apereo.cas.webauthn.WebAuthnCredentialRegistrationCipherExecutor;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
 import org.apereo.cas.webauthn.storage.JsonResourceWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
@@ -108,7 +111,7 @@ public class WebAuthnConfiguration {
         val webauthn = casProperties.getAuthn().getMfa().getWebAuthn();
         val location = webauthn.getJson().getLocation();
         if (location != null) {
-            return new JsonResourceWebAuthnCredentialRepository(casProperties, location);
+            return new JsonResourceWebAuthnCredentialRepository(casProperties, location, webAuthnCredentialRegistrationCipherExecutor());
         }
         return WebAuthnCredentialRepository.inMemory();
     }
@@ -197,9 +200,8 @@ public class WebAuthnConfiguration {
             .appId(appId)
             .build();
 
-        val server = new WebAuthnServer(webAuthnCredentialRepository(),
+        return new WebAuthnServer(webAuthnCredentialRepository(),
             newCache(), newCache(), relyingParty, webAuthnSessionManager());
-        return server;
     }
 
     @ConditionalOnMissingBean(name = "webAuthnPrincipalFactory")
@@ -207,6 +209,18 @@ public class WebAuthnConfiguration {
     @RefreshScope
     public PrincipalFactory webAuthnPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
+    }
+
+    @ConditionalOnMissingBean(name = "webAuthnCredentialRegistrationCipherExecutor")
+    @Bean
+    @RefreshScope
+    public CipherExecutor webAuthnCredentialRegistrationCipherExecutor() {
+        val crypto = casProperties.getAuthn().getMfa().getWebAuthn().getCrypto();
+        if (crypto.isEnabled()) {
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, WebAuthnCredentialRegistrationCipherExecutor.class);
+        }
+        LOGGER.trace("Web Authn credential registration records managed by CAS are not signed/encrypted.");
+        return CipherExecutor.noOp();
     }
 
     @Bean
