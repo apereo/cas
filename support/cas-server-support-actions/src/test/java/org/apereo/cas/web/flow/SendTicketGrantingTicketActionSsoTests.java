@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.4.0
  */
-@TestPropertySource(properties = "cas.sso.createSsoCookieOnRenewAuthn=false")
+@TestPropertySource(properties = "cas.sso.create-sso-cookie-on-renew-authn=false")
 @Tag("Webflow")
 public class SendTicketGrantingTicketActionSsoTests extends AbstractWebflowActionsTests {
 
