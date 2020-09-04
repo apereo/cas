@@ -34,9 +34,11 @@ on all nodes may likely lead to severe performance and locking issues.</p></div>
 
 The following endpoints are provided by CAS:
  
-| Endpoint                  | Description
-|---------------------------|------------------------------------------------
-
+| Endpoint                                      | Description
+|-----------------------------------------------|----------------------------------------------------------------------------
+| `webAuthnDevices/{username}`                  | `GET` request to fetch device registration records for the user.
+| `webAuthnDevices/{username}`                  | `DELETE` request to delete all device registration records for the user.
+| `webAuthnDevices/{username}/{credential}`    | `DELETE` request to delete a device registration record for the user.
 
 ### Default
 

@@ -1,8 +1,9 @@
 package org.apereo.cas.webauthn.storage;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yubico.webauthn.data.CredentialRegistration;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,9 +25,13 @@ import java.util.stream.Stream;
  * @since 6.3.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class JsonResourceRegistrationStorage extends BaseWebAuthnRegistrationStorage implements InitializingBean {
     private final Resource location;
+
+    public JsonResourceRegistrationStorage(final CasConfigurationProperties properties, final Resource location) {
+        super(properties);
+        this.location = location;
+    }
 
     @Override
     public void afterPropertiesSet() {

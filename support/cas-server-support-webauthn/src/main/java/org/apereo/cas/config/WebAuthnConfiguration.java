@@ -16,7 +16,9 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.webauthn.WebAuthnCredential;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
 import org.apereo.cas.webauthn.storage.JsonResourceRegistrationStorage;
+import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.web.WebAuthnController;
+import org.apereo.cas.webauthn.web.WebAuthnRegisteredDevicesEndpoint;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,24 +36,27 @@ import com.yubico.webauthn.attestation.resolver.CompositeTrustResolver;
 import com.yubico.webauthn.attestation.resolver.SimpleAttestationResolver;
 import com.yubico.webauthn.attestation.resolver.SimpleTrustResolverWithEquality;
 import com.yubico.webauthn.core.DefaultSessionManager;
-import com.yubico.webauthn.core.InMemoryRegistrationStorage;
-import com.yubico.webauthn.core.RegistrationStorage;
 import com.yubico.webauthn.core.SessionManager;
 import com.yubico.webauthn.core.WebAuthnServer;
 import com.yubico.webauthn.data.AttestationConveyancePreference;
 import com.yubico.webauthn.data.RelyingPartyIdentity;
 import com.yubico.webauthn.extension.appid.AppId;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.net.URL;
 import java.time.Duration;
@@ -65,6 +70,7 @@ import java.util.LinkedHashSet;
  * @since 6.1.0
  */
 @Configuration("webAuthnConfiguration")
+@Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class WebAuthnConfiguration {
     private static final int CACHE_MAX_SIZE = 10_000;
@@ -98,13 +104,13 @@ public class WebAuthnConfiguration {
     @ConditionalOnMissingBean(name = "webAuthnCredentialRepository")
     @Bean
     @RefreshScope
-    public RegistrationStorage webAuthnCredentialRepository() {
+    public WebAuthnCredentialRepository webAuthnCredentialRepository() {
         val webauthn = casProperties.getAuthn().getMfa().getWebAuthn();
         val location = webauthn.getJson().getLocation();
         if (location != null) {
-            return new JsonResourceRegistrationStorage(location);
+            return new JsonResourceRegistrationStorage(casProperties, location);
         }
-        return new InMemoryRegistrationStorage();
+        return WebAuthnCredentialRepository.inMemory();
     }
 
     @ConditionalOnMissingBean(name = "webAuthnMultifactorAuthenticationProvider")
@@ -236,10 +242,39 @@ public class WebAuthnConfiguration {
         };
     }
 
+    @Bean
+    @ConditionalOnAvailableEndpoint
+    public WebAuthnRegisteredDevicesEndpoint webAuthnRegisteredDevicesEndpoint() {
+        return new WebAuthnRegisteredDevicesEndpoint(casProperties, webAuthnCredentialRepository());
+    }
+
+    @ConditionalOnMissingBean(name = "webAuthnDeviceRepositoryCleanerScheduler")
+    @Bean
+    @ConditionalOnProperty(prefix = "authn.mfa.web-authn.cleaner", name = "enabled", havingValue = "true", matchIfMissing = true)
+    public Runnable webAuthnDeviceRepositoryCleanerScheduler() {
+        return new WebAuthnDeviceRepositoryCleanerScheduler(webAuthnCredentialRepository());
+    }
+
     private static <K, V> Cache<K, V> newCache() {
         return CacheBuilder.newBuilder()
             .maximumSize(CACHE_MAX_SIZE)
             .expireAfterAccess(Duration.ofMinutes(5))
             .build();
+    }
+
+    /**
+     * The device cleaner scheduler.
+     */
+    @RequiredArgsConstructor
+    public static class WebAuthnDeviceRepositoryCleanerScheduler implements Runnable {
+        private final WebAuthnCredentialRepository repository;
+
+        @Scheduled(initialDelayString = "${cas.authn.mfa.web-authn.cleaner.schedule.start-delay:PT20S}",
+            fixedDelayString = "${cas.authn.mfa.web-authn.cleaner.schedule.repeat-interval:PT5M}")
+        @Override
+        public void run() {
+            LOGGER.debug("Starting to clean expired devices from repository");
+            repository.clean();
+        }
     }
 }

@@ -2,12 +2,15 @@ package org.apereo.cas.configuration.model.support.mfa.webauthn;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorProviderProperties;
+import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link WebAuthnMultifactorProperties}.
@@ -72,6 +75,16 @@ public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProper
     private String relyingPartyId;
 
     /**
+     * Expire and forget device registration records after this period.
+     */
+    private long expireDevices = 30;
+
+    /**
+     * Device registration record expiration time unit.
+     */
+    private TimeUnit expireDevicesTimeUnit = TimeUnit.DAYS;
+    
+    /**
      * The allowed origins that returned authenticator responses will be compared against.
      * The default is set to the server name. A successful registration or authentication
      * operation requires origins to exactly equal one of these values.
@@ -117,6 +130,12 @@ public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProper
     @NestedConfigurationProperty
     private WebAuthnJsonMultifactorProperties json = new WebAuthnJsonMultifactorProperties();
 
+    /**
+     * Clean up expired records via a background cleaner process.
+     */
+    @NestedConfigurationProperty
+    private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT10S", "PT1M");
+    
     public WebAuthnMultifactorProperties() {
         setId(DEFAULT_IDENTIFIER);
     }

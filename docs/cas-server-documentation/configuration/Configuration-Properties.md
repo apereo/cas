@@ -11,9 +11,10 @@ line switches](Configuration-Management.html#overview). This section provides a 
 references to the underlying modules that consume them.
 
 <div class="alert alert-warning"><strong>Be Selective</strong><p>
-This section is meant as a guide only. Do <strong>NOT</strong> copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as <i>reference</i>. All these ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p></div>
-
-Note that property names can be specified in very relaxed terms. For instance `cas.someProperty`, `cas.some-property`, `cas.some_property` are all valid names.
+This section is meant as a guide only. Do <strong>NOT</strong> copy/paste the entire 
+collection of settings into your CAS configuration; rather pick only the properties that you need. Do NOT enable settings unless you are 
+certain of their purpose and do NOT copy settings into your configuration only to keep 
+them as <i>reference</i>. All these ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p></div>
 
 The following list of properties are controlled by and provided to CAS. Each block, for most use cases, corresponds
 to a specific CAS module that is expected to be included in the final CAS distribution prepared during the build
@@ -23,6 +24,17 @@ and deployment process.
  declaring and configuring properties listed below is sufficient. You should NOT have to
 explicitly massage a CAS XML configuration file to design an authentication handler,
 create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.</p></div>
+
+## Naming Convention
+
+Property names can be specified in very relaxed terms. For 
+instance `cas.someProperty`, `cas.some-property`, `cas.some_property` are all valid names. While all forms are accepted by CAS, there are 
+certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a 
+property value, where this property is required to have been specified in CAS configuration using kebab case. This 
+is both true for properties that are owned by CAS as well as those that might be presented to the system via 
+an external library or framework such as Spring Boot, etc.
+
+> When possible, properties should be stored in lower-case kebab format, such as cas.property-name=value.
 
 ## General
 
@@ -3112,7 +3124,16 @@ To learn more about this topic, [please review this guide](../mfa/FIDO2-WebAuthn
 # cas.authn.mfa.web-authn.trusted-device-metadata.location=
 
 # cas.authn.mfa.web-authn.trusted-device-enabled=false
+
+# Expiry of U2F devices since registration, independent of last time used:
+# cas.authn.mfa.web-authn.expire-devices=30
+# cas.authn.mfa.web-authn.expire-devices-time-unit=DAYS
 ```                                                         
+
+### FIDO2 WebAuthn Cleaner
+
+Scheduler settings for this feature are 
+available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.authn.mfa.web-authn.cleaner`.
 
 ### FIDO2 WebAuthn JSON
 
