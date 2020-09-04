@@ -5,9 +5,9 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
 import com.yubico.webauthn.RegisteredCredential;
-import com.yubico.webauthn.core.RegistrationStorage;
 import com.yubico.webauthn.core.SessionManager;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.CredentialRegistration;
@@ -45,7 +45,7 @@ public class WebAuthnAccountSaveRegistrationActionTests {
 
     @Autowired
     @Qualifier("webAuthnCredentialRepository")
-    private RegistrationStorage webAuthnCredentialRepository;
+    private WebAuthnCredentialRepository webAuthnCredentialRepository;
 
     @Autowired
     @Qualifier("webAuthnSessionManager")

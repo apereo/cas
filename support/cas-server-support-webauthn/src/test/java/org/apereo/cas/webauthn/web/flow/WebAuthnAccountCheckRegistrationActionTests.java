@@ -3,8 +3,8 @@ package org.apereo.cas.webauthn.web.flow;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
-import com.yubico.webauthn.core.RegistrationStorage;
 import com.yubico.webauthn.data.CredentialRegistration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -40,7 +40,7 @@ public class WebAuthnAccountCheckRegistrationActionTests {
 
     @Autowired
     @Qualifier("webAuthnCredentialRepository")
-    private RegistrationStorage webAuthnCredentialRepository;
+    private WebAuthnCredentialRepository webAuthnCredentialRepository;
 
     @Test
     public void verifyOperation() throws Exception {

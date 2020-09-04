@@ -1,5 +1,9 @@
 package org.apereo.cas.webauthn.storage;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
+
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,16 +11,19 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.webauthn.AssertionResult;
-import com.yubico.webauthn.CredentialRepository;
 import com.yubico.webauthn.RegisteredCredential;
-import com.yubico.webauthn.core.RegistrationStorage;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.CredentialRegistration;
 import com.yubico.webauthn.data.PublicKeyCredentialDescriptor;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
@@ -32,7 +39,10 @@ import java.util.stream.Stream;
  * @since 6.3.0
  */
 @Getter
-public abstract class BaseWebAuthnRegistrationStorage implements RegistrationStorage, CredentialRepository {
+@Slf4j
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+public abstract class BaseWebAuthnRegistrationStorage implements WebAuthnCredentialRepository {
+
     private final ObjectMapper objectMapper = JacksonCodecs
         .json()
         .addMixIn(CredentialRegistration.class, CredentialRegistrationMixin.class)
@@ -42,6 +52,8 @@ public abstract class BaseWebAuthnRegistrationStorage implements RegistrationSto
         .findAndRegisterModules()
         .setDefaultPrettyPrinter(new DefaultPrettyPrinter())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+    private final CasConfigurationProperties properties;
 
     @Override
     public Optional<CredentialRegistration> getRegistrationByUsernameAndCredentialId(final String username, final ByteArray id) {
@@ -56,7 +68,6 @@ public abstract class BaseWebAuthnRegistrationStorage implements RegistrationSto
         update(username, new HashSet<>(registrations));
         return result;
     }
-
 
     @Override
     public Collection<CredentialRegistration> getRegistrationsByUserHandle(final ByteArray handle) {
@@ -141,6 +152,27 @@ public abstract class BaseWebAuthnRegistrationStorage implements RegistrationSto
                 .signatureCount(reg.getSignatureCount())
                 .build())
             .collect(Collectors.toSet());
+    }
+
+    @Override
+    public void clean() {
+        try {
+            val webAuthn = properties.getAuthn().getMfa().getWebAuthn();
+            val expirationDate = LocalDate.now(ZoneOffset.UTC)
+                .minus(webAuthn.getExpireDevices(), DateTimeUtils.toChronoUnit(webAuthn.getExpireDevicesTimeUnit()));
+            LOGGER.debug("Filtering devices based on device expiration date [{}]", expirationDate);
+
+            val expInstant = expirationDate.atStartOfDay(ZoneOffset.UTC).toInstant();
+            val removingDevices = load()
+                .filter(d -> d.getRegistrationTime().isBefore(expInstant))
+                .collect(Collectors.toList());
+            if (!removingDevices.isEmpty()) {
+                LOGGER.debug("There are [{}] expired device(s) remaining in repository. Cleaning...", removingDevices.size());
+                removingDevices.forEach(device -> removeRegistrationByUsername(device.getUsername(), device));
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
     }
 
     @JsonDeserialize(builder = CredentialRegistration.CredentialRegistrationBuilder.class)

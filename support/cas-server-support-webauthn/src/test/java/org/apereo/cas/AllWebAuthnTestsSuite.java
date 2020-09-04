@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.webauthn.storage.JsonResourceRegistrationStorageTests;
+import org.apereo.cas.webauthn.web.WebAuthnRegisteredDevicesEndpointTests;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAccountCheckRegistrationActionTests;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAccountSaveRegistrationActionTests;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationWebflowEventResolverTests;
@@ -24,6 +25,7 @@ import org.junit.runner.RunWith;
     WebAuthnAccountSaveRegistrationActionTests.class,
     WebAuthnStartAuthenticationActionTests.class,
     JsonResourceRegistrationStorageTests.class,
+    WebAuthnRegisteredDevicesEndpointTests.class,
     WebAuthnAuthenticationWebflowEventResolverTests.class,
     WebAuthnStartRegistrationActionTests.class
 })

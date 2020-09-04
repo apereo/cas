@@ -6,13 +6,13 @@ import org.apereo.cas.webauthn.web.flow.BaseWebAuthnWebflowTests;
 
 import com.yubico.webauthn.AssertionResult;
 import com.yubico.webauthn.RegisteredCredential;
-import com.yubico.webauthn.core.RegistrationStorage;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.CredentialRegistration;
 import com.yubico.webauthn.data.UserIdentity;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,7 +43,7 @@ public abstract class BaseWebAuthnRegistrationStorageTests {
 
     @Autowired
     @Qualifier("webAuthnCredentialRepository")
-    protected RegistrationStorage webAuthnCredentialRepository;
+    protected WebAuthnCredentialRepository webAuthnCredentialRepository;
 
     @Test
     public void verifyOperation() throws Exception {
@@ -67,10 +67,17 @@ public abstract class BaseWebAuthnRegistrationStorageTests {
         constructor.setAccessible(true);
         val result = constructor.newInstance(true, ba, ba, id, 1, true, List.of());
         webAuthnCredentialRepository.updateSignatureCount(result);
-        
+
         webAuthnCredentialRepository.removeAllRegistrations(id);
         webAuthnCredentialRepository.removeRegistrationByUsername(id, registration);
         assertTrue(webAuthnCredentialRepository.lookup(ba, ba).isEmpty());
+
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                webAuthnCredentialRepository.clean();
+            }
+        });
     }
 
     @SneakyThrows
@@ -90,5 +97,5 @@ public abstract class BaseWebAuthnRegistrationStorageTests {
             .build();
     }
 
-    
+
 }
