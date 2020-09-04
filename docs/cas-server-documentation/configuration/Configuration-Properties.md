@@ -3114,6 +3114,12 @@ To learn more about this topic, [please review this guide](../mfa/FIDO2-WebAuthn
 # cas.authn.mfa.web-authn.trusted-device-enabled=false
 ```                                                         
 
+### FIDO2 WebAuthn JSON
+
+```properties
+# cas.authn.mfa.web-authn.json.location=file:///etc/cas/config/devices.json
+```
+
 ### FIDO U2F
 
 To learn more about this topic, [please review this guide](../mfa/FIDO-U2F-Authentication.html).

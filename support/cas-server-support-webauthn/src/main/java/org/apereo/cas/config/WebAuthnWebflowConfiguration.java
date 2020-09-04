@@ -143,10 +143,12 @@ public class WebAuthnWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer() {
-        return new WebAuthnMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
+        val cfg = new WebAuthnMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), webAuthnFlowRegistry(),
             applicationContext, casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+        cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
+        return cfg;
     }
 
     @ConditionalOnMissingBean(name = "webAuthnStartAuthenticationAction")
@@ -218,7 +220,8 @@ public class WebAuthnWebflowConfiguration {
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer webAuthnMultifactorTrustWebflowConfigurer() {
-            val cfg = new WebAuthnMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
+            val cfg = new WebAuthnMultifactorTrustWebflowConfigurer(
+                flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(),
                 webAuthnFlowRegistry(),
                 applicationContext,
