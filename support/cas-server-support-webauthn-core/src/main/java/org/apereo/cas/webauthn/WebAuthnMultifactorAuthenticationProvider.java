@@ -1,7 +1,7 @@
 package org.apereo.cas.webauthn;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.WebAuthnMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorProperties;
 
 import org.apache.commons.lang3.StringUtils;
 

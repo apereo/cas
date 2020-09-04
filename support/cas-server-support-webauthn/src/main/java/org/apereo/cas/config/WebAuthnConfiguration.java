@@ -13,9 +13,10 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.webauthn.WebAuthnController;
 import org.apereo.cas.webauthn.WebAuthnCredential;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
+import org.apereo.cas.webauthn.storage.JsonResourceRegistrationStorage;
+import org.apereo.cas.webauthn.web.WebAuthnController;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -98,6 +99,11 @@ public class WebAuthnConfiguration {
     @Bean
     @RefreshScope
     public RegistrationStorage webAuthnCredentialRepository() {
+        val webauthn = casProperties.getAuthn().getMfa().getWebAuthn();
+        val location = webauthn.getJson().getLocation();
+        if (location != null) {
+            return new JsonResourceRegistrationStorage(location);
+        }
         return new InMemoryRegistrationStorage();
     }
 
@@ -105,13 +111,13 @@ public class WebAuthnConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider() {
-        val u2f = casProperties.getAuthn().getMfa().getWebAuthn();
+        val webauthn = casProperties.getAuthn().getMfa().getWebAuthn();
         val p = new WebAuthnMultifactorAuthenticationProvider();
         p.setBypassEvaluator(webAuthnBypassEvaluator.getObject());
-        p.setFailureMode(u2f.getFailureMode());
+        p.setFailureMode(webauthn.getFailureMode());
         p.setFailureModeEvaluator(failureModeEvaluator.getObject());
-        p.setOrder(u2f.getRank());
-        p.setId(u2f.getId());
+        p.setOrder(webauthn.getRank());
+        p.setId(webauthn.getId());
         return p;
     }
 

@@ -1,6 +1,7 @@
-package org.apereo.cas.configuration.model.support.mfa;
+package org.apereo.cas.configuration.model.support.mfa.webauthn;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorProviderProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -109,6 +110,12 @@ public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProper
      * parameter undefined.
      */
     private String attestationConveyancePreference = "DIRECT";
+
+    /**
+     * Store device registration records inside a static JSON resource.
+     */
+    @NestedConfigurationProperty
+    private WebAuthnJsonMultifactorProperties json = new WebAuthnJsonMultifactorProperties();
 
     public WebAuthnMultifactorProperties() {
         setId(DEFAULT_IDENTIFIER);
