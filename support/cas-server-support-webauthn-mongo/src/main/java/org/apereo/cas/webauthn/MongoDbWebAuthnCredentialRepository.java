@@ -1,6 +1,7 @@
 package org.apereo.cas.webauthn;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -30,8 +31,9 @@ public class MongoDbWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
     private final MongoTemplate mongoTemplate;
 
     public MongoDbWebAuthnCredentialRepository(final MongoTemplate mongoTemplate,
-                                               final CasConfigurationProperties properties) {
-        super(properties);
+                                               final CasConfigurationProperties properties,
+                                               final CipherExecutor<String, String> cipherExecutor) {
+        super(properties, cipherExecutor);
         this.mongoTemplate = mongoTemplate;
     }
 
@@ -41,7 +43,8 @@ public class MongoDbWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
         val records = mongoTemplate.find(query, MongoDbWebAuthnCredentialRegistration.class,
             getProperties().getAuthn().getMfa().getWebAuthn().getMongo().getCollection());
         return records.stream()
-            .map(Unchecked.function(record -> getObjectMapper().readValue(record.getRecords(), new TypeReference<Set<CredentialRegistration>>() {
+            .map(record -> getCipherExecutor().decode(record.getRecords()))
+            .map(Unchecked.function(record -> getObjectMapper().readValue(record, new TypeReference<Set<CredentialRegistration>>() {
             })))
             .flatMap(Collection::stream)
             .collect(Collectors.toList());
@@ -53,7 +56,8 @@ public class MongoDbWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
         val records = mongoTemplate.find(query, MongoDbWebAuthnCredentialRegistration.class,
             getProperties().getAuthn().getMfa().getWebAuthn().getMongo().getCollection());
         return records.stream()
-            .map(Unchecked.function(record -> getObjectMapper().readValue(record.getRecords(), new TypeReference<Set<CredentialRegistration>>() {
+            .map(record -> getCipherExecutor().decode(record.getRecords()))
+            .map(Unchecked.function(record -> getObjectMapper().readValue(record, new TypeReference<Set<CredentialRegistration>>() {
             })))
             .flatMap(Collection::stream);
     }
@@ -64,9 +68,10 @@ public class MongoDbWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
         val query = new Query(Criteria.where(MongoDbWebAuthnCredentialRegistration.FIELD_USERNAME).is(username));
         val collection = getProperties().getAuthn().getMfa().getWebAuthn().getMongo().getCollection();
         if (records.isEmpty()) {
+            LOGGER.debug("No records are provided for [{}] so entry will be removed", username);
             mongoTemplate.remove(query, MongoDbWebAuthnCredentialRegistration.class, collection);
         } else {
-            val jsonRecords = getObjectMapper().writeValueAsString(records);
+            val jsonRecords = getCipherExecutor().encode(getObjectMapper().writeValueAsString(records));
             val entry = MongoDbWebAuthnCredentialRegistration.builder()
                 .records(jsonRecords)
                 .username(username)
@@ -75,6 +80,7 @@ public class MongoDbWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
             val update = Update.update(MongoDbWebAuthnCredentialRegistration.FIELD_RECORDS, jsonRecords);
             val result = mongoTemplate.updateFirst(query, update, collection);
             if (result.getMatchedCount() <= 0) {
+                LOGGER.debug("Storing new registration record for [{}]", username);
                 mongoTemplate.save(entry, collection);
             }
         }

@@ -1,6 +1,7 @@
 package org.apereo.cas.webauthn.storage;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yubico.webauthn.data.CredentialRegistration;
@@ -28,8 +29,10 @@ import java.util.stream.Stream;
 public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepository implements InitializingBean {
     private final Resource location;
 
-    public JsonResourceWebAuthnCredentialRepository(final CasConfigurationProperties properties, final Resource location) {
-        super(properties);
+    public JsonResourceWebAuthnCredentialRepository(final CasConfigurationProperties properties,
+                                                    final Resource location,
+                                                    final CipherExecutor<String, String> cipherExecutor) {
+        super(properties, cipherExecutor);
         this.location = location;
     }
 
