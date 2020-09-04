@@ -2,6 +2,7 @@ package org.apereo.cas.webauthn;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.webauthn.web.WebAuthnController;
 
 import com.yubico.util.Either;
 import com.yubico.webauthn.AssertionRequest;

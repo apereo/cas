@@ -175,7 +175,6 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
         assertFalse(o1.equals(new Object()));
     }
 
-    @NotNull
     private DefaultServicesManager getServicesManager() {
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(mock(ServiceRegistry.class))

@@ -1,4 +1,4 @@
-package org.apereo.cas.webauthn;
+package org.apereo.cas.webauthn.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yubico.internal.util.JacksonCodecs;
