@@ -11,6 +11,8 @@ import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProper
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.TokenTicketBuilder;
 
+import org.apache.commons.lang3.StringUtils;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -40,11 +42,14 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
         val registeredService = this.servicesManager.findServiceBy(service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
         val tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService);
+        final boolean ticketIdAvaiable=isTicketIdAvailable(parameters);
 
-        if (!tokenAsResponse) {
-            LOGGER.debug("Registered service [{}] is not configured to issue JWTs for service tickets. "
-                    + "Make sure the service property [{}] is defined and is set to true", registeredService,
-                RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName());
+        if ((!tokenAsResponse)||(!ticketIdAvaiable)) {
+            if(ticketIdAvaiable) {
+                LOGGER.debug("Registered service [{}] is not configured to issue JWTs for service tickets. "
+                                + "Make sure the service property [{}] is defined and set to true", registeredService,
+                        RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName());
+            }
             return super.buildInternal(service, parameters);
         }
 
@@ -57,6 +62,16 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
         parameters.put(Response.ResponseType.REDIRECT.name().toLowerCase(), Boolean.TRUE.toString());
 
         return jwtService;
+    }
+    
+    private boolean isTicketIdAvailable(final Map<String, String> parameters){
+        final String ticketId=parameters.get(CasProtocolConstants.PARAMETER_TICKET);
+
+        if(StringUtils.isBlank(ticketId)){
+            return false;
+        }
+
+        return true;
     }
 
     /**
