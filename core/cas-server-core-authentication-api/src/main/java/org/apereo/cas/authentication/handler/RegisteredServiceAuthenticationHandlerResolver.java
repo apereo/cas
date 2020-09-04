@@ -68,13 +68,15 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
         val handlerSet = new LinkedHashSet<AuthenticationHandler>(candidateHandlers);
         LOGGER.debug("Candidate authentication handlers examined for this transaction are [{}]", handlerSet);
 
-        val it = handlerSet.iterator();
-        while (it.hasNext()) {
-            val handler = it.next();
-            val handlerName = handler.getName();
-            if (!(handler instanceof HttpBasedServiceCredentialsAuthenticationHandler) && !requiredHandlers.contains(handlerName)) {
-                LOGGER.debug("Authentication handler [{}] is not required for this transaction and is removed", handlerName);
-                it.remove();
+        if (!requiredHandlers.isEmpty()) {
+            val it = handlerSet.iterator();
+            while (it.hasNext()) {
+                val handler = it.next();
+                val handlerName = handler.getName();
+                if (!(handler instanceof HttpBasedServiceCredentialsAuthenticationHandler) && !requiredHandlers.contains(handlerName)) {
+                    LOGGER.debug("Authentication handler [{}] is not required for this transaction and is removed", handlerName);
+                    it.remove();
+                }
             }
         }
         LOGGER.info("Authentication handlers for this transaction are [{}]", handlerSet);

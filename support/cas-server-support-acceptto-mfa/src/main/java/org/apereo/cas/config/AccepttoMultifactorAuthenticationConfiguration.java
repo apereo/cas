@@ -299,5 +299,4 @@ public class AccepttoMultifactorAuthenticationConfiguration {
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(AccepttoEmailCredential.class));
         };
     }
-
 }

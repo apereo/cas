@@ -95,7 +95,7 @@ configurations.all {
                     details.useVersion("${httpclientVersion}")
                 }
             }
-            if (requested.group ==~ /com\\.fasterxml\\.jackson(.*)/)  {
+            if (requested.group.startsWith("com.fasterxml.jackson"))  {
                 details.useVersion("${jacksonVersion}")
             }
             if (requested.group == "io.micrometer")  {

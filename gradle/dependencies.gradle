@@ -72,6 +72,54 @@ ext.libraries = [
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                 }
         ],
+        webauthn                    : [
+                dependencies.create("com.yubico:webauthn-server-core:$yubicoWebauthnVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
+                },
+                dependencies.create("com.yubico:webauthn-server-attestation:$yubicoWebauthnVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
+                },
+                dependencies.create("com.yubico:yubico-util:$yubicoWebauthnVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
+                },
+                dependencies.create("com.github.Yubico.java-webauthn-server:webauthn-server-demo:$casWebauthnVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
+                },
+                dependencies.create("com.upokecenter:cbor:$cborVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                },
+                dependencies.create("org.webjars.npm:text-encoding:$textEncodingVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                },
+                dependencies.create("org.webjars.npm:whatwg-fetch:$whatWgFetchVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                },
+                dependencies.create("org.webjars.npm:base64-js:$base64JsVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                }
+        ],
         semver                  : [
                 dependencies.create("com.vdurmont:semver4j:$semverVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -1105,7 +1153,6 @@ ext.libraries = [
 
                 },
                 dependencies.create("org.hjson:hjson:$hjsonVersion") {
-
                 },
                 dependencies.create("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion") {
                     exclude(group: "org.yaml", module: "snakeyaml")

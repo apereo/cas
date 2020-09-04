@@ -8,10 +8,12 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
+import java.net.URL;
 
 /**
  * This is {@link CasServerProperties}.
@@ -64,4 +66,8 @@ public class CasServerProperties implements Serializable {
         return getPrefix().concat(CasProtocolConstants.ENDPOINT_LOGOUT);
     }
 
+    @SneakyThrows
+    public URL buildContextRelativeUrl(final String path) {
+        return new URL(getPrefix().concat(path));
+    }
 }
