@@ -42,7 +42,7 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
         val registeredService = this.servicesManager.findServiceBy(service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
         val tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService);
-        final boolean ticketIdAvailable=isTicketIdAvailable(parameters);
+        val ticketIdAvailable=isTicketIdAvailable(parameters);
 
         if ((!tokenAsResponse)||(!ticketIdAvailable)) {
             if(ticketIdAvaiable) {
