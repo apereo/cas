@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Configuration(value = "u2fDynamoDbConfiguration", proxyBeanMethods = true)
+@Configuration(value = "u2fDynamoDbConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class U2FDynamoDbConfiguration {
     @Autowired
@@ -40,9 +40,10 @@ public class U2FDynamoDbConfiguration {
 
     @RefreshScope
     @Bean
-    public U2FDynamoDbFacilitator u2fDynamoDbFacilitator() {
+    @Autowired
+    public U2FDynamoDbFacilitator u2fDynamoDbFacilitator(@Qualifier("u2fDynamoDbClient") final DynamoDbClient u2fDynamoDbClient) {
         val db = casProperties.getAuthn().getMfa().getU2f().getDynamoDb();
-        val f = new U2FDynamoDbFacilitator(db, u2fDynamoDbClient());
+        val f = new U2FDynamoDbFacilitator(db, u2fDynamoDbClient);
         if (!db.isPreventTableCreationOnStartup()) {
             f.createTable(db.isDropTablesOnStartup());
         }
@@ -61,13 +62,14 @@ public class U2FDynamoDbConfiguration {
 
     @Bean
     @RefreshScope
-    public U2FDeviceRepository u2fDeviceRepository() {
+    @Autowired
+    public U2FDeviceRepository u2fDeviceRepository(@Qualifier("u2fDynamoDbFacilitator") final U2FDynamoDbFacilitator u2fDynamoDbFacilitator) {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
         final LoadingCache<String, String> requestStorage =
             Caffeine.newBuilder()
                 .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
                 .build(key -> StringUtils.EMPTY);
         return new U2FDynamoDbDeviceRepository(requestStorage, u2fRegistrationRecordCipherExecutor.getObject(),
-            u2f.getExpireDevices(), u2f.getExpireDevicesTimeUnit(), u2fDynamoDbFacilitator());
+            u2f.getExpireDevices(), u2f.getExpireDevicesTimeUnit(), u2fDynamoDbFacilitator);
     }
 }

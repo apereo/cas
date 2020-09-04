@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casThemesConfiguration", proxyBeanMethods = true)
+@Configuration(value = "casThemesConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasThemesConfiguration {
     @Autowired
@@ -46,7 +46,7 @@ public class CasThemesConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    protected Map<String, String> serviceThemeResolverSupportedBrowsers() {
+    public Map<String, String> serviceThemeResolverSupportedBrowsers() {
         val map = new HashMap<String, String>();
         map.put(".*Android.*", "android");
         map.put(".*Safari.*Pre.*", "safari");
@@ -57,7 +57,9 @@ public class CasThemesConfiguration {
 
     @ConditionalOnMissingBean(name = "themeResolver")
     @Bean
-    public ThemeResolver themeResolver() {
+    @Autowired
+    public ThemeResolver themeResolver(
+        @Qualifier("serviceThemeResolverSupportedBrowsers") final Map<String, String> serviceThemeResolverSupportedBrowsers) {
         val defaultThemeName = casProperties.getTheme().getDefaultThemeName();
 
         val fixedResolver = new FixedThemeResolver();
@@ -78,7 +80,7 @@ public class CasThemesConfiguration {
         val serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager.getObject(),
             authenticationRequestServiceSelectionStrategies.getObject(),
             new CasConfigurationProperties(),
-            serviceThemeResolverSupportedBrowsers().entrySet()
+            serviceThemeResolverSupportedBrowsers.entrySet()
                 .stream()
                 .collect(Collectors.toMap(entry -> Pattern.compile(entry.getKey()), Map.Entry::getValue)));
         serviceThemeResolver.setDefaultThemeName(defaultThemeName);
@@ -95,6 +97,4 @@ public class CasThemesConfiguration {
         chainingThemeResolver.setDefaultThemeName(defaultThemeName);
         return chainingThemeResolver;
     }
-
-
 }

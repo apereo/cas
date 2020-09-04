@@ -9,7 +9,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

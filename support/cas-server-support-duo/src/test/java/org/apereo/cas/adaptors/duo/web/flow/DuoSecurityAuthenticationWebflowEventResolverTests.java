@@ -2,6 +2,8 @@ package org.apereo.cas.adaptors.duo.web.flow;
 
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -31,7 +33,11 @@ import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DuoSecurityAuthenticationWebflowEventResolverTests}.
@@ -78,7 +84,12 @@ public class DuoSecurityAuthenticationWebflowEventResolverTests extends BaseCasW
         context.getRootFlow().getGlobalTransitionSet().add(transition);
 
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
-        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
+        val authentication = CoreAuthenticationTestUtils.getAuthentication();
+        WebUtils.putAuthentication(authentication, context);
+        val builder = mock(AuthenticationResultBuilder.class);
+        when(builder.getInitialAuthentication()).thenReturn(Optional.of(authentication));
+        when(builder.collect(any(Authentication.class))).thenReturn(builder);
+        WebUtils.putAuthenticationResultBuilder(builder, context);
     }
 
     @Test

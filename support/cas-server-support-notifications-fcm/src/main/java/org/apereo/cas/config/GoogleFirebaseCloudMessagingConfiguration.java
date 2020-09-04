@@ -11,6 +11,7 @@ import com.google.firebase.FirebaseOptions;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -25,30 +26,20 @@ import java.io.FileInputStream;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Configuration(value = "googleFirebaseCloudMessagingConfiguration", proxyBeanMethods = true)
+@Configuration(value = "googleFirebaseCloudMessagingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class GoogleFirebaseCloudMessagingConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "firebaseCloudMessagingNotificationSender")
-    public NotificationSender firebaseCloudMessagingNotificationSender() {
-        val firebase = casProperties.getGoogleFirebaseMessaging();
-        val options = new FirebaseOptions.Builder()
-            .setCredentials(getCredentials())
-            .setDatabaseUrl(firebase.getDatabaseUrl())
-            .build();
-        FirebaseApp.initializeApp(options);
-        return new GoogleFirebaseCloudMessagingNotificationSender(firebase);
-    }
 
     @Bean
     @ConditionalOnMissingBean(name = "firebaseCloudMessagingNotificationSenderExecutionPlanConfigurer")
     @RefreshScope
-    public NotificationSenderExecutionPlanConfigurer firebaseCloudMessagingNotificationSenderExecutionPlanConfigurer() {
-        return this::firebaseCloudMessagingNotificationSender;
+    @Autowired
+    public NotificationSenderExecutionPlanConfigurer firebaseCloudMessagingNotificationSenderExecutionPlanConfigurer(
+        @Qualifier("firebaseCloudMessagingNotificationSender") final NotificationSender firebaseCloudMessagingNotificationSender) {
+        return () -> firebaseCloudMessagingNotificationSender;
     }
 
     @SneakyThrows
@@ -61,6 +52,22 @@ public class GoogleFirebaseCloudMessagingConfiguration {
             return GoogleCredentials
                 .fromStream(new FileInputStream(keyPath))
                 .createScoped(firebase.getScopes());
+        }
+    }
+
+    @Configuration(value = "GoogleFirebaseCloudMessagingInternalConfiguration", proxyBeanMethods = false)
+    public class GoogleFirebaseCloudMessagingInternalConfiguration {
+        @Bean
+        @RefreshScope
+        @ConditionalOnMissingBean(name = "firebaseCloudMessagingNotificationSender")
+        public NotificationSender firebaseCloudMessagingNotificationSender() {
+            val firebase = casProperties.getGoogleFirebaseMessaging();
+            val options = new FirebaseOptions.Builder()
+                .setCredentials(getCredentials())
+                .setDatabaseUrl(firebase.getDatabaseUrl())
+                .build();
+            FirebaseApp.initializeApp(options);
+            return new GoogleFirebaseCloudMessagingNotificationSender(firebase);
         }
     }
 }
