@@ -21,6 +21,8 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -49,11 +51,13 @@ public class WebAuthnAccountCheckRegistrationActionTests {
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
-        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
+        val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
+        WebUtils.putAuthentication(authentication, context);
         var result = webAuthnCheckAccountRegistrationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, result.getId());
 
-        webAuthnCredentialRepository.addRegistrationByUsername("casuser", CredentialRegistration.builder().build());
+        webAuthnCredentialRepository.addRegistrationByUsername(
+            authentication.getPrincipal().getId(), CredentialRegistration.builder().build());
         result = webAuthnCheckAccountRegistrationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
     }

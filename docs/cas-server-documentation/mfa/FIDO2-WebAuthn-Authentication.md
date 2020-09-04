@@ -49,10 +49,5 @@ A device repository implementation that collects user device registrations and s
 path is taught to CAS via settings. This is a very modest option and should mostly be used for demo and testing 
 purposes. Needless to say, this JSON resource acts as a database that must be available to all CAS server nodes in the cluster.
 
-Devices stored into the JSON file take on the following format:
-
-```json
-{
-}
-```
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido2-webauthn-json).
 
