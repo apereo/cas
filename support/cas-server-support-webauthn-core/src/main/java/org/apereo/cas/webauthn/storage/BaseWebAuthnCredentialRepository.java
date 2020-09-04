@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * This is {@link BaseWebAuthnRegistrationStorage}.
+ * This is {@link BaseWebAuthnCredentialRepository}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
@@ -41,7 +41,7 @@ import java.util.stream.Stream;
 @Getter
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class BaseWebAuthnRegistrationStorage implements WebAuthnCredentialRepository {
+public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCredentialRepository {
 
     private final ObjectMapper objectMapper = JacksonCodecs
         .json()
@@ -86,9 +86,7 @@ public abstract class BaseWebAuthnRegistrationStorage implements WebAuthnCredent
 
     @Override
     public boolean removeAllRegistrations(final String username) {
-        val registrations = getRegistrationsByUsername(username);
-        registrations.clear();
-        update(username, new HashSet<>(registrations));
+        update(username, new HashSet<>());
         return true;
     }
 

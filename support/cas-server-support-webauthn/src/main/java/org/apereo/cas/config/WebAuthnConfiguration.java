@@ -15,7 +15,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.webauthn.WebAuthnCredential;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
-import org.apereo.cas.webauthn.storage.JsonResourceRegistrationStorage;
+import org.apereo.cas.webauthn.storage.JsonResourceWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.web.WebAuthnController;
 import org.apereo.cas.webauthn.web.WebAuthnRegisteredDevicesEndpoint;
@@ -108,7 +108,7 @@ public class WebAuthnConfiguration {
         val webauthn = casProperties.getAuthn().getMfa().getWebAuthn();
         val location = webauthn.getJson().getLocation();
         if (location != null) {
-            return new JsonResourceRegistrationStorage(casProperties, location);
+            return new JsonResourceWebAuthnCredentialRepository(casProperties, location);
         }
         return WebAuthnCredentialRepository.inMemory();
     }

@@ -25,7 +25,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link BaseWebAuthnRegistrationStorageTests}.
+ * This is {@link BaseWebAuthnCredentialRepositoryTests}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.web-authn.relying-party-name=CAS WebAuthn Demo",
         "cas.authn.mfa.web-authn.relying-party-id=example.org"
     })
-public abstract class BaseWebAuthnRegistrationStorageTests {
+public abstract class BaseWebAuthnCredentialRepositoryTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
 
