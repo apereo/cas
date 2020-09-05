@@ -85,15 +85,16 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public SimpleUrlHandlerMapping handlerMapping() {
+    @Autowired
+    public SimpleUrlHandlerMapping handlerMapping(@Qualifier("rootController")
+                                                  final Controller rootController) {
         val mapping = new SimpleUrlHandlerMapping();
 
-        val root = rootController();
         mapping.setOrder(1);
         mapping.setAlwaysUseFullPath(true);
-        mapping.setRootHandler(root);
+        mapping.setRootHandler(rootController);
         val urls = new HashMap<String, Object>();
-        urls.put("/", root);
+        urls.put("/", rootController);
 
         mapping.setUrlMap(urls);
         return mapping;
@@ -106,12 +107,8 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    protected UrlFilenameViewController passThroughController() {
-        return new UrlFilenameViewController();
-    }
-
-    @Bean
-    protected Controller rootController() {
+    @ConditionalOnMissingBean(name = "rootController")
+    public Controller rootController() {
         return new ParameterizableViewController() {
             @Override
             protected ModelAndView handleRequestInternal(final HttpServletRequest request,
@@ -123,5 +120,10 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
             }
 
         };
+    }
+
+    @Bean
+    protected UrlFilenameViewController passThroughController() {
+        return new UrlFilenameViewController();
     }
 }
