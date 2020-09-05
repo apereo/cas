@@ -67,7 +67,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DirtiesContext
 @Slf4j
 @SpringBootTest(properties = {
-    "cas.clearpass.cacheCredential=true",
+    "cas.clearpass.cache-credential=true",
     "cas.clearpass.crypto.enabled=false"
 },
     classes = {

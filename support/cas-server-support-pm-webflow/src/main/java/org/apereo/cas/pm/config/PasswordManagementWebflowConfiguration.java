@@ -189,7 +189,7 @@ public class PasswordManagementWebflowConfiguration {
     }
 
     @ConditionalOnProperty(prefix = "cas.authn.pm", name = "captcha-enabled", havingValue = "true")
-    @Configuration(value = "passwordManagementCaptchaConfiguration")
+    @Configuration(value = "passwordManagementCaptchaConfiguration", proxyBeanMethods = false)
     @DependsOn("passwordManagementWebflowConfigurer")
     public class PasswordManagementCaptchaConfiguration {
 
@@ -219,9 +219,11 @@ public class PasswordManagementWebflowConfiguration {
         }
 
         @Bean
+        @Autowired
         @ConditionalOnMissingBean(name = "passwordManagementCaptchaWebflowExecutionPlanConfigurer")
-        public CasWebflowExecutionPlanConfigurer passwordManagementCaptchaWebflowExecutionPlanConfigurer() {
-            return plan -> plan.registerWebflowConfigurer(passwordManagementCaptchaWebflowConfigurer());
+        public CasWebflowExecutionPlanConfigurer passwordManagementCaptchaWebflowExecutionPlanConfigurer(
+            @Qualifier("passwordManagementCaptchaWebflowConfigurer") final CasWebflowConfigurer passwordManagementCaptchaWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(passwordManagementCaptchaWebflowConfigurer);
         }
     }
 }

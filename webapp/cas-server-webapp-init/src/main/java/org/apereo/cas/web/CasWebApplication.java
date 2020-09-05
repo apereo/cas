@@ -59,7 +59,7 @@ import java.time.Instant;
     CassandraAutoConfiguration.class,
     DataSourceTransactionManagerAutoConfiguration.class,
     RedisRepositoriesAutoConfiguration.class
-})
+    }, proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
 @EnableAspectJAutoProxy(proxyTargetClass = true)

@@ -52,4 +52,12 @@ CAS can now support [WebAuthn FIDO2](../mfa/FIDO2-WebAuthn-Authentication.html) 
 
 ## Other Stuff
 
+- Configuration bean definitions are tuned to avoid and remove avoid CGLIB subclass processing, forcing `@Bean` methods to be self-contained and designed as a plain factory method for the Spring Container.
+
 ## Library Upgrades
+
+- Cassandra Driver
+- Oshi
+- Twilio
+- Spring Cloud
+
