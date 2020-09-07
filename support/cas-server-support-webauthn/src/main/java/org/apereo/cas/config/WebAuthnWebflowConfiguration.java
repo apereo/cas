@@ -54,7 +54,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "webAuthnWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "webAuthnWebflowConfiguration", proxyBeanMethods = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class WebAuthnWebflowConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
@@ -144,11 +144,9 @@ public class WebAuthnWebflowConfiguration {
     @ConditionalOnMissingBean(name = "webAuthnMultifactorWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
-    @Autowired
-    public CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer(@Qualifier("webAuthnFlowRegistry")
-                                                                     final FlowDefinitionRegistry webAuthnFlowRegistry) {
+    public CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer() {
         val cfg = new WebAuthnMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(), webAuthnFlowRegistry,
+            loginFlowDefinitionRegistry.getObject(), webAuthnFlowRegistry(),
             applicationContext, casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
         cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
