@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -36,6 +37,7 @@ public class CasInterruptConfiguration {
     @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "interruptInquirer")
+    @RefreshScope
     public InterruptInquiryExecutionPlan interruptInquirer(final List<InterruptInquiryExecutionPlanConfigurer> configurers) {
         val plan = new DefaultInterruptInquiryExecutionPlan();
         configurers.forEach(c -> {
@@ -46,6 +48,8 @@ public class CasInterruptConfiguration {
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "casDefaultInterruptInquiryExecutionPlanConfigurer")
     public InterruptInquiryExecutionPlanConfigurer casDefaultInterruptInquiryExecutionPlanConfigurer() {
         return plan -> {
             val ip = casProperties.getInterrupt();
