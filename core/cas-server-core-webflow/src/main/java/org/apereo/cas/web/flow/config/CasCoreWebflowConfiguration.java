@@ -27,6 +27,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.ChainingSingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.DefaultSingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 import org.apereo.cas.web.flow.actions.AuthenticationExceptionHandlerAction;
@@ -131,10 +132,6 @@ public class CasCoreWebflowConfiguration {
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
-    @Qualifier("singleSignOnParticipationStrategy")
-    private ObjectProvider<SingleSignOnParticipationStrategy> webflowSingleSignOnParticipationStrategy;
-
-    @Autowired
     @Qualifier("authenticationEventExecutionPlan")
     private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
@@ -153,7 +150,7 @@ public class CasCoreWebflowConfiguration {
             .authenticationRequestServiceSelectionStrategies(authenticationServiceSelectionPlan.getObject())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
-            .singleSignOnParticipationStrategy(webflowSingleSignOnParticipationStrategy.getObject())
+            .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy())
             .ticketRegistry(ticketRegistry.getObject())
             .applicationContext(applicationContext)
             .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
@@ -300,6 +297,23 @@ public class CasCoreWebflowConfiguration {
 
         errors.addAll(casProperties.getAuthn().getErrors().getExceptions());
         return errors;
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "defaultSingleSignOnParticipationStrategy")
+    public SingleSignOnParticipationStrategy defaultSingleSignOnParticipationStrategy() {
+        return new DefaultSingleSignOnParticipationStrategy(servicesManager.getObject(),
+            casProperties.getSso(),
+            ticketRegistrySupport.getObject(),
+            authenticationServiceSelectionPlan.getObject());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "defaultSingleSignOnParticipationStrategyConfigurer")
+    @RefreshScope
+    public SingleSignOnParticipationStrategyConfigurer defaultSingleSignOnParticipationStrategyConfigurer() {
+        return chain -> chain.addStrategy(defaultSingleSignOnParticipationStrategy());
     }
 
     @Bean

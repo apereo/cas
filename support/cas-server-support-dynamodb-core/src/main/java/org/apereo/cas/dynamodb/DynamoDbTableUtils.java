@@ -68,7 +68,7 @@ public class DynamoDbTableUtils {
         try {
             dynamo.createTable(createTableRequest);
             return true;
-        } catch (final ResourceInUseException e) {
+        } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return false;

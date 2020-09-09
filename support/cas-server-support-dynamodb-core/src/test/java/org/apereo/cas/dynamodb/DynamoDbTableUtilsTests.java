@@ -3,6 +3,7 @@ package org.apereo.cas.dynamodb;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
@@ -46,7 +47,7 @@ public class DynamoDbTableUtilsTests {
         val client = mock(DynamoDbClient.class);
         when(client.describeTable(any(DescribeTableRequest.class)))
             .thenThrow(ResourceNotFoundException.create("fail", new IllegalArgumentException()));
-        assertThrows(DynamoDbTableUtils.TableNeverTransitionedToStateException.class,
+        assertThrows(SdkException.class,
             () -> DynamoDbTableUtils.waitUntilActive(client, "tableName", 1000, 1000));
 
     }
