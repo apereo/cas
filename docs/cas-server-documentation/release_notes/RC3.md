@@ -46,12 +46,13 @@ cas.version=6.3.0-RC3
 
 ## New & Noteworthy
 
+The following items are new improvements and enhancements presented in this release. 
+
 ### WebAuthn Support
 
 CAS can now support [WebAuthn FIDO2](../mfa/FIDO2-WebAuthn-Authentication.html) for multifactor authentication.
 
 ## Other Stuff
-
 
 ## Library Upgrades
 

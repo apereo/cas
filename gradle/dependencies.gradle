@@ -2086,6 +2086,8 @@ ext.libraries = [
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "com.sun.mail", module: "javax.mail")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
                 },
                 dependencies.create("net.minidev:json-smart:$jsonSmartVersion") {
                 }
