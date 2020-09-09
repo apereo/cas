@@ -11,11 +11,13 @@ import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.WebUtils;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -26,7 +28,6 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -115,12 +116,17 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
     }
 
     private static RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy getSingleSignOnStrategy(final RegisteredService svc,
-                                                                                                                  final TicketRegistry ticketRegistry) {
+        final TicketRegistry ticketRegistry) {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
-        val dao = new InMemoryServiceRegistry(appCtx, List.of(svc), new ArrayList<>());
 
-        val servicesManager = new DefaultServicesManager(dao, appCtx, new HashSet<>());
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(new InMemoryServiceRegistry(appCtx, List.of(svc), List.of()))
+            .applicationContext(appCtx)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .build();
+        val servicesManager = new DefaultServicesManager(context);
         servicesManager.load();
 
         val authenticationExecutionPlan = new DefaultAuthenticationEventExecutionPlan();

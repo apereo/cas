@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -70,7 +71,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
                 val criteria = authenticationPolicy.getCriteria();
                 if (criteria != null) {
                     val policy = criteria.toAuthenticationPolicy(registeredService);
-                    return policy.isSatisfiedBy(authentication, assertedHandlers, applicationContext);
+                    return policy.isSatisfiedBy(authentication, assertedHandlers, applicationContext, Optional.empty());
                 }
             }
         } finally {
