@@ -51,6 +51,8 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
         service.setMetadataLocation(METADATA_URL);
         val results = resolver.resolve(service);
         assertFalse(results.isEmpty());
+        assertTrue(resolver.isAvailable(service));
+        assertFalse(resolver.supports(null));
     }
 
     @Test

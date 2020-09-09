@@ -35,7 +35,7 @@ import java.util.Optional;
     "cas.authn.saml-idp.metadata.rest.basic-auth-username=user",
     "cas.authn.saml-idp.metadata.rest.basic-auth-password=passw0rd",
     "cas.authn.saml-idp.metadata.rest.idp-metadata-enabled=true",
-    "cas.authn.saml-idp.metadata.rest.crypto.enabled=false"
+    "cas.authn.saml-idp.metadata.rest.crypto.enabled=true"
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RestfulSamlIdPMetadataGeneratorTests extends BaseRestfulSamlMetadataTests {
@@ -63,7 +63,6 @@ public class RestfulSamlIdPMetadataGeneratorTests extends BaseRestfulSamlMetadat
     @Test
     public void verifyOperation() {
         samlIdPMetadataGenerator.generate(Optional.empty());
-
         val service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);
