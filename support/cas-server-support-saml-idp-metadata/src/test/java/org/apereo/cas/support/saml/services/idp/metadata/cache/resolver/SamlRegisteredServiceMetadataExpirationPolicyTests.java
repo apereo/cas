@@ -9,10 +9,9 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatcher;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.io.FileSystemResource;
