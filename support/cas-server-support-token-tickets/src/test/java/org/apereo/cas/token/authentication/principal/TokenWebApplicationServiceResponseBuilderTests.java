@@ -139,4 +139,19 @@ public class TokenWebApplicationServiceResponseBuilderTests {
             assertNotNull(JWTParser.parse(ticket));
         }
     }
+    
+    @Test
+    public void verifyTokenBuilderWhenGatewayIsTrue() throws Exception {
+        val data = "yes\ncasuser";
+        try (val webServer = new MockWebServer(8281,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+
+            val result = responseBuilder.build(CoreAuthenticationTestUtils.getWebApplicationService("jwtservice"),
+                "",
+                CoreAuthenticationTestUtils.getAuthentication());
+            assertNotNull(result);
+            assertFalse(result.getAttributes().containsKey(CasProtocolConstants.PARAMETER_TICKET));
+        }
+    }
 }
