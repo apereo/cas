@@ -95,4 +95,15 @@ public class ChainingAttributeReleasePolicyTests {
         assertTrue(values.contains("CasUserPolicy1"));
         assertTrue(values.contains("CasUserPolicy2"));
     }
+
+    @Test
+    public void verifyConsentableAttrs() {
+        chain.setMergingPolicy("multivalued");
+        val results = chain.getConsentableAttributes(CoreAuthenticationTestUtils.getPrincipal(),
+            CoreAuthenticationTestUtils.getService(),
+            CoreAuthenticationTestUtils.getRegisteredService());
+        assertTrue(results.containsKey("givenName"));
+        val values = CollectionUtils.toCollection(results.get("givenName"));
+        assertEquals(2, values.size());
+    }
 }

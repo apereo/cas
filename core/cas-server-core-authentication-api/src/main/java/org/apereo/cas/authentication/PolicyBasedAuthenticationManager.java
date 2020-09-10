@@ -162,7 +162,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         LOGGER.trace("Invoking authentication pre processors for authentication transaction");
         val pops = authenticationEventExecutionPlan.getAuthenticationPreProcessors(transaction);
 
-        final Collection<AuthenticationPreProcessor> supported = pops.stream()
+        val supported = pops.stream()
             .filter(processor -> transaction.getCredentials()
                 .stream()
                 .anyMatch(processor::supports))
