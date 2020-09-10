@@ -48,9 +48,21 @@ cas.version=6.3.0-RC3
 
 The following items are new improvements and enhancements presented in this release. 
 
+### Test Coverage via CodeCov
+
+CAS test coverage across all modules in the codebase has now reached `85%` and continues to climb. Additional validation rules are also applied 
+to fail all pull requests that fall below this threshold. This area will be closely monitored and improved
+as progress is made with the goal of hopefully reaching at least `88%` before the final GA release. Of course, 
+this will not be a blocker for the final release.
+
 ### WebAuthn Support
 
 CAS can now support [WebAuthn FIDO2](../mfa/FIDO2-WebAuthn-Authentication.html) for multifactor authentication.
+
+### Service Authentication Policy
+
+An additional [authentication policy for services](../services/Configuring-Service-AuthN-Policy.html) is now 
+available to require allowed/defined authentication handlers.
 
 ## Other Stuff
 
@@ -59,5 +71,6 @@ CAS can now support [WebAuthn FIDO2](../mfa/FIDO2-WebAuthn-Authentication.html) 
 - Cassandra Driver
 - Oshi
 - Twilio
+- Spring Security
 - Spring Cloud
 
