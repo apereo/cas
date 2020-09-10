@@ -26,6 +26,11 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 @RequiredArgsConstructor
 public class VerifyPasswordResetRequestAction extends AbstractAction {
+    /**
+     * Event id to signal security questions are disabled.
+     */
+    public static final String EVENT_ID_SECURITY_QUESTIONS_DISABLED = "questionsDisabled";
+
     private final CasConfigurationProperties casProperties;
 
     private final PasswordManagementService passwordManagementService;
@@ -43,14 +48,10 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
         }
 
         try {
-            val tst = this.centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
+            val tst = centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
             val token = tst.getProperties().get(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN).toString();
             val username = passwordManagementService.parseToken(token);
-            if (StringUtils.isBlank(username)) {
-                LOGGER.error("Password reset token could not be verified");
-                return error();
-            }
-            this.centralAuthenticationService.deleteTicket(tst.getId());
+            centralAuthenticationService.deleteTicket(tst.getId());
 
             PasswordManagementWebflowUtils.putPasswordResetToken(requestContext, token);
             val pm = casProperties.getAuthn().getPm();
@@ -67,15 +68,16 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
             }
 
             PasswordManagementWebflowUtils.putPasswordResetUsername(requestContext, username);
-            PasswordManagementWebflowUtils.putPasswordResetSecurityQuestionsEnabled(requestContext, pm.getReset().isSecurityQuestionsEnabled());
+            PasswordManagementWebflowUtils.putPasswordResetSecurityQuestionsEnabled(requestContext,
+                pm.getReset().isSecurityQuestionsEnabled());
 
             if (pm.getReset().isSecurityQuestionsEnabled()) {
                 return success();
             }
-            return new EventFactorySupport().event(this, "questionsDisabled");
+            return new EventFactorySupport().event(this, EVENT_ID_SECURITY_QUESTIONS_DISABLED);
         } catch (final Exception e) {
-            LOGGER.error("Unable to locate token [{}] in the ticket registry", transientTicket);
+            LOGGER.error("Password reset token could not be verified: [{}]", e.getMessage());
+            return error();
         }
-        return error();
     }
 }
