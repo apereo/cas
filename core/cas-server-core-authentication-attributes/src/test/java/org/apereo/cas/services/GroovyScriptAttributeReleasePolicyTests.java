@@ -46,6 +46,17 @@ public class GroovyScriptAttributeReleasePolicyTests {
     }
 
     @Test
+    public void verifyFails() {
+        val policy = new GroovyScriptAttributeReleasePolicy();
+        policy.setGroovyScript("classpath:bad-path.groovy");
+        val attributes = policy.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
+            CoreAuthenticationTestUtils.getService(),
+            CoreAuthenticationTestUtils.getRegisteredService());
+        assertTrue(attributes.isEmpty());
+    }
+
+
+    @Test
     public void verifySystemPropertyInRef() throws Exception {
         val file = File.createTempFile("GroovyAttributeRelease", ".groovy");
         try (val is = new ClassPathResource("GroovyAttributeRelease.groovy").getInputStream()) {

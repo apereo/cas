@@ -70,7 +70,7 @@ public class RestfulIPAddressIntelligenceServiceTests {
             assertNotNull(result);
             assertTrue(result.isBanned());
 
-        } 
+        }
 
     }
 }

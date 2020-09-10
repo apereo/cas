@@ -15,6 +15,7 @@ import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -43,6 +44,29 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Webflow")
 public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTests {
+    @Test
+    public void verifyNoServiceOrPolicy() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        val svc = CoreAuthenticationTestUtils.getRegisteredService("serviceid1");
+        val policy = new DefaultRegisteredServiceAuthenticationPolicy();
+        policy.setCriteria(null);
+        when(svc.getAuthenticationPolicy()).thenReturn(policy);
+        val ticketRegistry = new DefaultTicketRegistry();
+        val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
+        assertTrue(strategy.isParticipating(context));
+        
+        WebUtils.putRegisteredService(context, svc);
+        assertEquals(0, strategy.getOrder());
+        assertFalse(strategy.supports(context));
+
+        when(svc.getAuthenticationPolicy()).thenReturn(null);
+        assertTrue(strategy.isParticipating(context));
+    }
+
     @Test
     public void verifyNoServiceOrSso() {
         val context = new MockRequestContext();
@@ -115,7 +139,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
         assertTrue(strategy.isParticipating(context));
     }
 
-    private static RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy getSingleSignOnStrategy(final RegisteredService svc,
+    private static SingleSignOnParticipationStrategy getSingleSignOnStrategy(final RegisteredService svc,
         final TicketRegistry ticketRegistry) {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();

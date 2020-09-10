@@ -33,6 +33,14 @@ public class AtLeastOneCredentialValidatedAuthenticationPolicyTests {
     }
 
     @Test
+    public void verifyHandlerCountMismatch() throws Exception {
+        val input = new AtLeastOneCredentialValidatedAuthenticationPolicy(true);
+        val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
+        val authn = builder.addFailure("Prevented", new PreventedException("error")).build();
+        assertFalse(input.isSatisfiedBy(authn, Set.of(), mock(ConfigurableApplicationContext.class), Optional.empty()));
+    }
+
+    @Test
     public void verifyOperation() throws Exception {
         val input = new AtLeastOneCredentialValidatedAuthenticationPolicy();
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());

@@ -1,0 +1,17 @@
+description = "Apereo CAS WebSockets Support"
+dependencies {
+    api libraries.websockets
+
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-services-authentication")
+    implementation project(":core:cas-server-core-services-registry")
+    implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-authentication-mfa")
+    implementation project(":core:cas-server-core-webflow-api")
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+}
