@@ -6,8 +6,11 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo.cas" level="warn"  />
-        <Logger name="org.eclipse.jgit" level="debug" />
+        <Logger name="org.apereo" level="error"  />
+        <Logger name="com.yubico.webauthn" level="warn"  />
+        <Logger name="org.hibernate" level="warn"  />
+        <Logger name="org.springframework.orm.jpa" level="info"  />
+
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>
