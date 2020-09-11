@@ -43,6 +43,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column
     private String metadataLocation;
 
+    @Column
+    private String metadataLocationProxy;
+
     /**
      * Defines a filter that requires the presence of a validUntil
      * attribute on the root element of the metadata document.
