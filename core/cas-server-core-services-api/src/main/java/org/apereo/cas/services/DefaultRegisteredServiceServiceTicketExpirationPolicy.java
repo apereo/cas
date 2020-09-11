@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link DefaultRegisteredServiceServiceTicketExpirationPolicy}.
@@ -22,6 +23,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
+@Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceServiceTicketExpirationPolicy implements RegisteredServiceServiceTicketExpirationPolicy {
     private static final long serialVersionUID = -6745109870746310448L;

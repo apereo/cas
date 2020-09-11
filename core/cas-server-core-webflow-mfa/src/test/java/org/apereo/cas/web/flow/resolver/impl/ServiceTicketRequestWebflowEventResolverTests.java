@@ -89,6 +89,28 @@ public class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflo
     }
 
     @Test
+    public void verifyServiceTicketRequestPrincipalMismatch() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+
+        val tgt = new MockTicketGrantingTicket("randomuser");
+        ticketRegistry.addTicket(tgt);
+
+        val service = RegisteredServiceTestUtils.getService("service-ticket-request");
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
+        registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, true));
+        servicesManager.save(registeredService);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        WebUtils.putServiceIntoFlowScope(context, service);
+        WebUtils.putCredential(context, RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon"));
+        assertNull(serviceTicketRequestWebflowEventResolver.resolveSingle(context));
+    }
+
+    @Test
     public void verifyServiceTicketRequestFailsAuthN() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

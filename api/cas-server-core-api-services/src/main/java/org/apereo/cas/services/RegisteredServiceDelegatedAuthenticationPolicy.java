@@ -51,4 +51,10 @@ public interface RegisteredServiceDelegatedAuthenticationPolicy extends Serializ
     default boolean isProviderAllowed(final String provider, final RegisteredService registeredService) {
         return true;
     }
+
+    @JsonIgnore
+    default boolean isProviderRequired() {
+        return !getAllowedProviders().isEmpty() || (getAllowedProviders().isEmpty() && !isPermitUndefined());
+    }
+
 }

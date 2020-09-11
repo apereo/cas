@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -28,6 +29,7 @@ import java.time.ZonedDateTime;
 @EqualsAndHashCode(callSuper = true)
 @Setter
 @NoArgsConstructor
+@Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
 

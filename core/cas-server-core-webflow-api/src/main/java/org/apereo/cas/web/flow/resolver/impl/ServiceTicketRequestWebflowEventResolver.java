@@ -111,7 +111,8 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
             val registeredService = configContext.getServicesManager().findServiceBy(service);
 
             if (existingAuthn != null && registeredService != null) {
-                LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, existingAuthn.getPrincipal());
+                LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]",
+                    registeredService, existingAuthn.getPrincipal());
 
                 val audit = AuditableContext.builder().service(service)
                     .authentication(existingAuthn)
