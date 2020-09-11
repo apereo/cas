@@ -13,7 +13,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DigestUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.UrlValidator;
 
@@ -36,20 +35,16 @@ import static org.mockito.Mockito.*;
 @Tag("OIDC")
 public class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTests {
 
-    private static final String LOGOUT_URL = "http://logout";
+    private static final String LOGOUT_URL = "https://mocky.io/post";
 
     @Test
     public void verifyCreateLogoutRequestsFrontChannel() {
-
         verifyCreateLogoutRequests(RegisteredServiceLogoutType.FRONT_CHANNEL,
             LOGOUT_URL + "?iss=https%3A%2F%2Fsso.example.org%2Fcas%2Foidc&sid=" + DigestUtils.sha(TGT_ID));
     }
 
     @Test
     public void verifyCreateLogoutRequestsBackChannel() {
-
-        HttpUtils.setHttpClient(mock(org.apache.http.client.HttpClient.class));
-
         verifyCreateLogoutRequests(RegisteredServiceLogoutType.BACK_CHANNEL, LOGOUT_URL);
     }
 

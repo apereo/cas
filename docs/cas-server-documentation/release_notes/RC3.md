@@ -64,6 +64,12 @@ CAS can now support [WebAuthn FIDO2](../mfa/FIDO2-WebAuthn-Authentication.html) 
 An additional [authentication policy for services](../services/Configuring-Service-AuthN-Policy.html) is now 
 available to require allowed/defined authentication handlers.
 
+### Service Authentication Policy
+
+Participation in single sign-on sessions for applications that are 
+assigned a [delegated authentication policy](../integration/Delegate-Authentication.html#access-strategy) can now be conditionally renewed
+if the single sign-on session is established using a disallowed provider for the application.
+
 ## Other Stuff
 
 ## Library Upgrades
