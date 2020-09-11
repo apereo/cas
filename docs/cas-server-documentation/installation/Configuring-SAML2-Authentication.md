@@ -151,6 +151,7 @@ The following fields are available for SAML services:
 | Field                                | Description
 |--------------------------------------|------------------------------------------------------------------
 | `metadataLocation`                   | Location of service metadata defined from system files, classpath, directories or URL resources.
+| `metadataLocationProxy`              | Proxy endpoint (`https://proxy:8901`) to fetch service metadata from URL resources.
 | `metadataSignatureLocation`          | Location of the metadata signing certificate/public key to validate the metadata which must be defined from system files or classpath. If defined, will enforce the `SignatureValidationFilter` validation filter on metadata.
 | `metadataExpirationDuration`         | If defined, will expire metadata in the cache after the indicated duration which will force CAS to retrieve and resolve the metadata again.
 | `requireSignedRoot`                  | Whether incoming metadata's root element is required to be signed. Default is `true`.
