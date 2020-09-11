@@ -330,7 +330,7 @@ public interface CasWebflowConstants {
     String STATE_ID_GATEWAY_REQUEST_CHECK = "gatewayRequestCheck";
 
     /**
-     * The state 'gatewayRequestCheck'.
+     * The state 'generateServiceTicket'.
      */
     String STATE_ID_GENERATE_SERVICE_TICKET = "generateServiceTicket";
 
