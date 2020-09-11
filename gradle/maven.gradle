@@ -198,6 +198,11 @@ ext.createPomRepositories = { node ->
     repository.appendNode("releases").appendNode("enabled", "true")
 
     repository = repositories.appendNode("repository")
+    repository.appendNode("id", "apereocas")
+    repository.appendNode("url", "https://dl.bintray.com/apereocas/webauthn-cas")
+    repository.appendNode("releases").appendNode("enabled", "true")
+
+    repository = repositories.appendNode("repository")
     repository.appendNode("id", "spring-libs-milestone")
     repository.appendNode("url", "https://repo.spring.io/libs-milestone")
     repository.appendNode("releases").appendNode("enabled", "true")
