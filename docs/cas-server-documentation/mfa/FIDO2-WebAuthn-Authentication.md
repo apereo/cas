@@ -23,6 +23,20 @@ Support is enabled by including the following module in the WAR overlay:
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido2-webauthn).
 
+You may also need to declare the following repository in
+your CAS overlay to be able to resolve dependencies:
+
+```xml
+<repositories>
+    ...
+    <repository>
+        <id>webauthn-cas</id>
+        <url>https://dl.bintray.com/apereocas/webauthn-cas</url>
+    </repository>
+    ...
+</repositories>
+```
+
 ## Registration
 
 Device registration flows are baked into CAS automatically. A background *cleaner* process is also automatically scheduled to scan the 
