@@ -70,13 +70,21 @@ Participation in single sign-on sessions for applications that are
 assigned a [delegated authentication policy](../integration/Delegate-Authentication.html#access-strategy) can now be conditionally renewed
 if the single sign-on session is established using a disallowed provider for the application.
 
+### SAML2 Metadata URL Proxies
+
+SAML2 application definitions whose metadata is retrieved from URLs can now specify a proxy endpoint in the application definition,
+in case the metadata is behind a proxy.
+
 ## Other Stuff
+
+- Password reset verification attempts can now properly handle expired or invalid reset attempts in the authentication webflow.
 
 ## Library Upgrades
 
 - Cassandra Driver
 - Oshi
 - Twilio
+- JGit
 - Spring Security
 - Spring Cloud
 
