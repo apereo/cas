@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - U2F - FIDO Universal Multifactor Authentication
+title: CAS - FIDO2 WebAuthn Multifactor Authentication
 category: Multifactor Authentication
 ---
 
