@@ -3153,6 +3153,11 @@ available [here](Configuration-Properties-Common.html#job-scheduling) under the 
 Common configuration settings for this feature are 
 available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.web-authn`.
 
+### FIDO2 WebAuthn JPA
+
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
+under the configuration key `cas.authn.mfa.web-authn.jpa`.
+
 ### FIDO U2F
 
 To learn more about this topic, [please review this guide](../mfa/FIDO-U2F-Authentication.html).
