@@ -93,9 +93,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             .filter(processor -> transaction.getCredentials()
                 .stream()
                 .anyMatch(processor::supports))
-            .forEach(processor -> {
-                processor.process(builder, transaction);
-            });
+            .forEach(processor -> processor.process(builder, transaction));
     }
 
     /**

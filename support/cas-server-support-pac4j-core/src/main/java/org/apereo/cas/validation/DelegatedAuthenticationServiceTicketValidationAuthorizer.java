@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 public class DelegatedAuthenticationServiceTicketValidationAuthorizer implements ServiceTicketValidationAuthorizer {
 
     private final ServicesManager servicesManager;
+
     private final AuditableExecution delegatedAuthenticationPolicyEnforcer;
 
     @Override
@@ -42,7 +43,8 @@ public class DelegatedAuthenticationServiceTicketValidationAuthorizer implements
                 val value = CollectionUtils.firstElement(clientNameAttr);
                 if (value.isPresent()) {
                     val client = value.get().toString();
-                    LOGGER.debug("Evaluating delegated authentication policy [{}] for client [{}] and service [{}]", policy, client, registeredService);
+                    LOGGER.debug("Evaluating delegated authentication policy [{}] for client [{}] and service [{}]",
+                        policy, client, registeredService);
 
                     val context = AuditableContext.builder()
                         .registeredService(registeredService)

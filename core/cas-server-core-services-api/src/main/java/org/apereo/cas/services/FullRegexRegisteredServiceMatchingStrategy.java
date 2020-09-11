@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.springframework.data.annotation.Transient;
 
 import java.util.regex.Pattern;
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
 @ToString
 @NoArgsConstructor
 @EqualsAndHashCode
+@Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class FullRegexRegisteredServiceMatchingStrategy implements RegisteredServiceMatchingStrategy {
     private static final long serialVersionUID = -8345895859210185565L;

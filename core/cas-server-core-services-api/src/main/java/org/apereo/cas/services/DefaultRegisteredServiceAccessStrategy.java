@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
 @Getter
 @EqualsAndHashCode
 @Setter
+@Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
 
