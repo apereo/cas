@@ -22,10 +22,11 @@ public class HttpUtilsTests {
 
     @Test
     public void verifyExec() {
-        assertNotNull(HttpUtils.getHttpClient());
         assertNull(HttpUtils.execute("http://localhost:1234", "GET", "user", "password", "entity"));
         assertNull(HttpUtils.execute("http://localhost:1234", "GET", Map.of()));
         assertNull(HttpUtils.executeGet("http://localhost:1234", "user", "password", Map.of()));
+        assertNotNull(HttpUtils.executeGet("http://localhost:1234", "https://httpbin.org:443"));
+        assertNotNull(HttpUtils.executeGet("http://localhost:1234", "http://httpbin.org"));
         assertNull(HttpUtils.executeDelete("http://localhost:1234", "user", "password", Map.of(), Map.of()));
     }
 

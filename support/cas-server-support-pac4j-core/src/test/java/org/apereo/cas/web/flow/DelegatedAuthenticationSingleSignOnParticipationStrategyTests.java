@@ -109,7 +109,7 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    public void verifySsoWithMissingClient() {
+    public void verifySsoWithMissingClientAndExclusive() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -121,7 +121,9 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
         val svc = CoreAuthenticationTestUtils.getRegisteredService("serviceid1");
         val policy = new DefaultRegisteredServiceAccessStrategy();
         policy.setDelegatedAuthenticationPolicy(
-            new DefaultRegisteredServiceDelegatedAuthenticationPolicy().setAllowedProviders(List.of("CAS")));
+            new DefaultRegisteredServiceDelegatedAuthenticationPolicy()
+                .setExclusive(true)
+                .setAllowedProviders(List.of("CAS")));
         when(svc.getAccessStrategy()).thenReturn(policy);
         when(svc.matches(anyString())).thenReturn(Boolean.TRUE);
 
