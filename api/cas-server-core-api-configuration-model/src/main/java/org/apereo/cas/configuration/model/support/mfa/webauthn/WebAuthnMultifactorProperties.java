@@ -140,6 +140,12 @@ public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProper
     private WebAuthnMongoDbMultifactorProperties mongo = new WebAuthnMongoDbMultifactorProperties();
 
     /**
+     * Store device registration records inside a redis resource.
+     */
+    @NestedConfigurationProperty
+    private WebAuthnRedisMultifactorProperties redis = new WebAuthnRedisMultifactorProperties();
+
+    /**
      * Store device registration records inside a JDBC resource.
      */
     @NestedConfigurationProperty
