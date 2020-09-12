@@ -3158,6 +3158,11 @@ available [here](Configuration-Properties-Common.html#mongodb-configuration) und
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
 under the configuration key `cas.authn.mfa.web-authn.jpa`.
 
+### FIDO2 WebAuthn Redis
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration)
+under the configuration key `cas.authn.mfa.web-authn`.
+
 ### FIDO U2F
 
 To learn more about this topic, [please review this guide](../mfa/FIDO-U2F-Authentication.html).
