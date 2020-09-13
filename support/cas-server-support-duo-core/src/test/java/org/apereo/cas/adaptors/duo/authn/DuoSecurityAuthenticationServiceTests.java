@@ -8,6 +8,7 @@ import org.apereo.cas.util.http.HttpClient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,7 +25,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link BaseDuoSecurityAuthenticationServiceTests}.
+ * This is {@link DuoSecurityAuthenticationServiceTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
@@ -39,8 +40,9 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
     "cas.authn.mfa.duo[0].duo-api-host=http://localhost:6556"
 })
+@Tag("MFA")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class BaseDuoSecurityAuthenticationServiceTests {
+public class DuoSecurityAuthenticationServiceTests {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

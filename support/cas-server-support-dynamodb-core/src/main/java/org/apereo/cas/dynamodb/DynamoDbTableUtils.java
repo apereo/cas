@@ -10,7 +10,6 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.ResourceInUseException;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
@@ -26,35 +25,16 @@ import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 public class DynamoDbTableUtils {
     private static final int DEFAULT_WAIT_TIMEOUT = 10 * 60 * 1000;
 
-    private static final int DEFAULT_WAIT_INTERVAL = 20 * 1000;
-
-    /**
-     * Wait until exists.
-     *
-     * @param dynamo    the dynamo
-     * @param tableName the table name
-     * @param timeout   the timeout
-     * @param interval  the interval
-     * @throws InterruptedException the interrupted exception
-     */
-    public static void waitUntilExists(final DynamoDbClient dynamo, final String tableName, final int timeout,
-                                       final int interval) throws InterruptedException {
-        val table = waitForTableDescription(dynamo, tableName, null, timeout, interval);
-        if (table == null) {
-            throw SdkClientException.create("Table " + tableName + " never returned a result");
-        }
-    }
+    private static final int DEFAULT_WAIT_INTERVAL = 10 * 1000;
 
     /**
      * Wait until active.
      *
      * @param dynamo    the dynamo
      * @param tableName the table name
-     * @throws InterruptedException                   the interrupted exception
-     * @throws TableNeverTransitionedToStateException the table never transitioned to state exception
+     * @throws Exception the exception
      */
-    public static void waitUntilActive(final DynamoDbClient dynamo, final String tableName)
-        throws InterruptedException, TableNeverTransitionedToStateException {
+    public static void waitUntilActive(final DynamoDbClient dynamo, final String tableName) throws Exception {
         waitUntilActive(dynamo, tableName, DEFAULT_WAIT_TIMEOUT, DEFAULT_WAIT_INTERVAL);
     }
 
@@ -65,10 +45,10 @@ public class DynamoDbTableUtils {
      * @param tableName the table name
      * @param timeout   the timeout
      * @param interval  the interval
-     * @throws InterruptedException the interrupted exception
+     * @throws Exception the exception
      */
     public static void waitUntilActive(final DynamoDbClient dynamo, final String tableName, final int timeout,
-                                       final int interval) throws InterruptedException {
+                                       final int interval) throws Exception {
         val table = waitForTableDescription(dynamo, tableName, TableStatus.ACTIVE, timeout, interval);
 
         if (table == null || !table.tableStatusAsString().equals(TableStatus.ACTIVE.toString())) {
@@ -87,7 +67,7 @@ public class DynamoDbTableUtils {
         try {
             dynamo.createTable(createTableRequest);
             return true;
-        } catch (final ResourceInUseException e) {
+        } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return false;
@@ -112,7 +92,7 @@ public class DynamoDbTableUtils {
 
     private static TableDescription waitForTableDescription(final DynamoDbClient dynamo, final String tableName,
                                                             final TableStatus desiredStatus, final int timeout, final int interval)
-        throws InterruptedException, IllegalArgumentException {
+        throws Exception {
         val startTime = System.currentTimeMillis();
         val endTime = startTime + timeout;
 
@@ -131,10 +111,16 @@ public class DynamoDbTableUtils {
         return table;
     }
 
-    private static class TableNeverTransitionedToStateException extends SdkClientException {
+    static class TableNeverTransitionedToStateException extends SdkClientException {
 
         private static final long serialVersionUID = 8920567021104846647L;
 
+        /**
+         * Instantiates a new Table never transitioned to state exception.
+         *
+         * @param tableName     the table name
+         * @param desiredStatus the desired status
+         */
         TableNeverTransitionedToStateException(final String tableName, final TableStatus desiredStatus) {
             super(TableNeverTransitionedToStateException
                 .builder()

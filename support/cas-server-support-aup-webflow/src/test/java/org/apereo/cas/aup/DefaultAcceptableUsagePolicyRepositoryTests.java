@@ -9,7 +9,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -80,7 +79,7 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
         assertEquals(List.of("cas", "system"), status.getPropertyOrDefault("example2", List.of()));
         assertEquals(Set.of("hello"), status.getPropertyOrDefault("nada", "hello"));
 
-        
+
         assertEquals(List.of("hello1", "hello2"), status.getPropertyOrDefault("nada", "hello1", "hello2"));
         assertEquals(List.of("cas", "system"), status.getPropertyOrDefault("example2", "hello1", "hello2"));
     }
@@ -104,7 +103,6 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
         assertTrue(repo.verify(context, c).isAccepted());
     }
 
-    @NonNull
     private static MockRequestContext getRequestContext() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

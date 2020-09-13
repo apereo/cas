@@ -133,6 +133,7 @@ public class RegisteredServiceAuthenticationPolicyResolverTests {
         assertTrue(resolver.supports(transaction));
         val policies = resolver.resolve(transaction);
         assertFalse(policies.isEmpty());
+        assertTrue(policies.iterator().next() instanceof AtLeastOneCredentialValidatedAuthenticationPolicy);
     }
 
     @Test

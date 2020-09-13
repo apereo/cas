@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.apereo.cas.util.LoggingUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -32,7 +33,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casCoreTicketsSchedulingConfiguration")
+@Configuration(value = "casCoreTicketsSchedulingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @EnableAsync
@@ -67,8 +68,8 @@ public class CasCoreTicketsSchedulingConfiguration {
                 logoutManager.getObject(), ticketRegistry.getObject());
         }
         LOGGER.debug("Ticket registry cleaner is not enabled. "
-            + "Expired tickets are not forcefully collected and cleaned by CAS. It is up to the ticket registry itself to "
-            + "clean up tickets based on expiration and eviction policies.");
+            + "Expired tickets are not forcefully cleaned by CAS. It is up to the ticket registry itself to "
+            + "clean up tickets based on its own expiration and eviction policies.");
         return NoOpTicketRegistryCleaner.getInstance();
     }
 
@@ -76,8 +77,10 @@ public class CasCoreTicketsSchedulingConfiguration {
     @ConditionalOnProperty(prefix = "cas.ticket.registry.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
     @Bean
     @RefreshScope
-    public TicketRegistryCleanerScheduler ticketRegistryCleanerScheduler() {
-        return new TicketRegistryCleanerScheduler(ticketRegistryCleaner());
+    @Autowired
+    public TicketRegistryCleanerScheduler ticketRegistryCleanerScheduler(@Qualifier("ticketRegistryCleaner")
+                                                                         final TicketRegistryCleaner ticketRegistryCleaner) {
+        return new TicketRegistryCleanerScheduler(ticketRegistryCleaner);
     }
 
 
@@ -88,12 +91,9 @@ public class CasCoreTicketsSchedulingConfiguration {
      * so that {@link Scheduled} annotations can be processed and not interfere
      * with transaction semantics of the cleaner.
      */
+    @RequiredArgsConstructor
     public static class TicketRegistryCleanerScheduler {
         private final TicketRegistryCleaner ticketRegistryCleaner;
-
-        public TicketRegistryCleanerScheduler(final TicketRegistryCleaner ticketRegistryCleaner) {
-            this.ticketRegistryCleaner = ticketRegistryCleaner;
-        }
 
         @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.schedule.start-delay:PT30S}",
             fixedDelayString = "${cas.ticket.registry.cleaner.schedule.repeat-interval:PT120S}")

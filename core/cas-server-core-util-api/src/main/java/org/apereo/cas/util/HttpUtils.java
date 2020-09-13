@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -21,6 +21,7 @@ import org.springframework.http.MediaType;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -41,11 +42,6 @@ public class HttpUtils {
 
     private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
 
-    private static HttpClient HTTP_CLIENT = HttpClientBuilder.create()
-        .setMaxConnTotal(MAX_CONNECTIONS)
-        .setMaxConnPerRoute(MAX_CONNECTIONS_PER_ROUTE)
-        .build();
-
     /**
      * Execute http response.
      *
@@ -57,12 +53,12 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse execute(final String url,
-                                       final String method,
-                                       final String basicAuthUsername,
-                                       final String basicAuthPassword,
-                                       final String entity) {
+        final String method,
+        final String basicAuthUsername,
+        final String basicAuthPassword,
+        final String entity) {
         return execute(url, method, basicAuthUsername, basicAuthPassword,
-            new HashMap<>(0), new HashMap<>(0), entity);
+            new HashMap<>(0), new HashMap<>(0), entity, null);
     }
 
     /**
@@ -77,13 +73,13 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse execute(final String url,
-                                       final String method,
-                                       final String basicAuthUsername,
-                                       final String basicAuthPassword,
-                                       final Map<String, Object> headers,
-                                       final String entity) {
+        final String method,
+        final String basicAuthUsername,
+        final String basicAuthPassword,
+        final Map<String, Object> headers,
+        final String entity) {
         return execute(url, method, basicAuthUsername, basicAuthPassword,
-            new HashMap<>(0), headers, entity);
+            new HashMap<>(0), headers, entity, null);
     }
 
     /**
@@ -96,8 +92,8 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse execute(final String url, final String method,
-                                       final String basicAuthUsername,
-                                       final String basicAuthPassword) {
+        final String basicAuthUsername,
+        final String basicAuthPassword) {
         return execute(url, method, basicAuthUsername, basicAuthPassword, new HashMap<>(0), new HashMap<>(0));
     }
 
@@ -112,8 +108,8 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse execute(final String url, final String method,
-                                       final String basicAuthUsername, final String basicAuthPassword,
-                                       final Map<String, Object> headers) {
+        final String basicAuthUsername, final String basicAuthPassword,
+        final Map<String, Object> headers) {
         return execute(url, method, basicAuthUsername, basicAuthPassword, new HashMap<>(0), headers);
     }
 
@@ -126,7 +122,7 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse execute(final String url, final String method,
-                                       final Map<String, Object> headers) {
+        final Map<String, Object> headers) {
         return execute(url, method, null, null, new HashMap<>(0), headers);
     }
 
@@ -153,11 +149,11 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse execute(final String url, final String method,
-                                       final String basicAuthUsername,
-                                       final String basicAuthPassword,
-                                       final Map<String, Object> parameters,
-                                       final Map<String, Object> headers) {
-        return execute(url, method, basicAuthUsername, basicAuthPassword, parameters, headers, null);
+        final String basicAuthUsername,
+        final String basicAuthPassword,
+        final Map<String, Object> parameters,
+        final Map<String, Object> headers) {
+        return execute(url, method, basicAuthUsername, basicAuthPassword, parameters, headers, null, null);
     }
 
     /**
@@ -170,21 +166,30 @@ public class HttpUtils {
      * @param parameters        the parameters
      * @param headers           the headers
      * @param entity            the entity
+     * @param proxyUrl          the proxy url
      * @return the http response
      */
     public static HttpResponse execute(final String url,
-                                       final String method,
-                                       final String basicAuthUsername,
-                                       final String basicAuthPassword,
-                                       final Map<String, Object> parameters,
-                                       final Map<String, Object> headers,
-                                       final String entity) {
+        final String method,
+        final String basicAuthUsername,
+        final String basicAuthPassword,
+        final Map<String, Object> parameters,
+        final Map<String, Object> headers,
+        final String entity,
+        final String proxyUrl) {
         try {
             val uri = buildHttpUri(url.trim(), parameters);
             val request = getHttpRequestByMethod(method.toLowerCase().trim(), entity, uri);
             headers.forEach((k, v) -> request.addHeader(k, v.toString()));
             prepareHttpRequest(request, basicAuthUsername, basicAuthPassword);
-            return HTTP_CLIENT.execute(request);
+            val builder = getHttpClientBuilder();
+            if (StringUtils.isNotBlank(proxyUrl)) {
+                val proxyEndpoint = new URL(proxyUrl);
+                val proxy = new HttpHost(proxyEndpoint.getHost(), proxyEndpoint.getPort(), proxyEndpoint.getProtocol());
+                builder.setProxy(proxy);
+            }
+            val client = builder.build();
+            return client.execute(request);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -217,10 +222,11 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse executeGet(final String url,
-                                          final String basicAuthUsername,
-                                          final String basicAuthPassword,
-                                          final Map<String, Object> parameters) {
-        return executeGet(url, basicAuthUsername, basicAuthPassword, parameters, new HashMap<>(0));
+        final String basicAuthUsername,
+        final String basicAuthPassword,
+        final Map<String, Object> parameters) {
+        return executeGet(url, basicAuthUsername, basicAuthPassword,
+            parameters, new HashMap<>(0), null);
     }
 
     /**
@@ -234,11 +240,32 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse executeGet(final String url,
-                                          final String basicAuthUsername,
-                                          final String basicAuthPassword,
-                                          final Map<String, Object> parameters,
-                                          final Map<String, Object> headers) {
-        return execute(url, HttpMethod.GET.name(), basicAuthUsername, basicAuthPassword, parameters, headers);
+        final String basicAuthUsername,
+        final String basicAuthPassword,
+        final Map<String, Object> parameters,
+        final Map<String, Object> headers) {
+        return executeGet(url, basicAuthUsername, basicAuthPassword, parameters, headers, null);
+    }
+
+    /**
+     * Execute get http response.
+     *
+     * @param url               the url
+     * @param basicAuthUsername the basic auth username
+     * @param basicAuthPassword the basic auth password
+     * @param parameters        the parameters
+     * @param headers           the headers
+     * @param proxyUrl          the proxy url
+     * @return the http response
+     */
+    public static HttpResponse executeGet(final String url,
+        final String basicAuthUsername,
+        final String basicAuthPassword,
+        final Map<String, Object> parameters,
+        final Map<String, Object> headers,
+        final String proxyUrl) {
+        return execute(url, HttpMethod.GET.name(), basicAuthUsername,
+            basicAuthPassword, parameters, headers, null, proxyUrl);
     }
 
     /**
@@ -250,8 +277,8 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse executeGet(final String url,
-                                          final Map<String, Object> parameters,
-                                          final Map<String, Object> headers) {
+        final Map<String, Object> parameters,
+        final Map<String, Object> headers) {
         return execute(url, HttpMethod.GET.name(), null, null, parameters, headers);
     }
 
@@ -263,7 +290,7 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse executeGet(final String url,
-                                          final Map<String, Object> parameters) {
+        final Map<String, Object> parameters) {
         return executeGet(url, null, null, parameters);
     }
 
@@ -280,14 +307,25 @@ public class HttpUtils {
     /**
      * Execute get http response.
      *
+     * @param url      the url
+     * @param proxyUrl the proxy url
+     * @return the http response
+     */
+    public static HttpResponse executeGet(final String url, final String proxyUrl) {
+        return executeGet(url, null, null, new LinkedHashMap<>(0), new LinkedHashMap<>(0), proxyUrl);
+    }
+
+    /**
+     * Execute get http response.
+     *
      * @param url               the url
      * @param basicAuthUsername the basic auth username
      * @param basicAuthPassword the basic auth password
      * @return the http response
      */
     public static HttpResponse executeGet(final String url,
-                                          final String basicAuthUsername,
-                                          final String basicAuthPassword) {
+        final String basicAuthUsername,
+        final String basicAuthPassword) {
         return executeGet(url, basicAuthUsername, basicAuthPassword, new HashMap<>(0));
     }
 
@@ -301,9 +339,9 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse executePost(final String url,
-                                           final String basicAuthUsername,
-                                           final String basicAuthPassword,
-                                           final String entity) {
+        final String basicAuthUsername,
+        final String basicAuthPassword,
+        final String entity) {
         return executePost(url, basicAuthUsername, basicAuthPassword, entity, new HashMap<>(0));
     }
 
@@ -316,8 +354,8 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse executePost(final String url,
-                                           final String entity,
-                                           final Map<String, Object> parameters) {
+        final String entity,
+        final Map<String, Object> parameters) {
         return executePost(url, null, null, entity, parameters);
     }
 
@@ -332,11 +370,12 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse executePost(final String url,
-                                           final String basicAuthUsername,
-                                           final String basicAuthPassword,
-                                           final String entity,
-                                           final Map<String, Object> parameters) {
-        return executePost(url, basicAuthUsername, basicAuthPassword, entity, parameters, new HashMap<>(0));
+        final String basicAuthUsername,
+        final String basicAuthPassword,
+        final String entity,
+        final Map<String, Object> parameters) {
+        return executePost(url, basicAuthUsername, basicAuthPassword,
+            entity, parameters, new HashMap<>(0));
     }
 
     /**
@@ -351,12 +390,13 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse executePost(final String url,
-                                           final String basicAuthUsername,
-                                           final String basicAuthPassword,
-                                           final String entity,
-                                           final Map<String, Object> parameters,
-                                           final Map<String, Object> headers) {
-        return execute(url, HttpMethod.POST.name(), basicAuthUsername, basicAuthPassword, parameters, headers, entity);
+        final String basicAuthUsername,
+        final String basicAuthPassword,
+        final String entity,
+        final Map<String, Object> parameters,
+        final Map<String, Object> headers) {
+        return execute(url, HttpMethod.POST.name(), basicAuthUsername,
+            basicAuthPassword, parameters, headers, entity, null);
     }
 
     /**
@@ -368,9 +408,9 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse executePost(final String url,
-                                           final Map<String, Object> parameters,
-                                           final Map<String, Object> headers) {
-        return execute(url, HttpMethod.POST.name(), null, null, parameters, headers, null);
+        final Map<String, Object> parameters,
+        final Map<String, Object> headers) {
+        return execute(url, HttpMethod.POST.name(), null, null, parameters, headers, null, null);
     }
 
     /**
@@ -385,12 +425,13 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse executeDelete(final String url,
-                                             final String basicAuthUsername,
-                                             final String basicAuthPassword,
-                                             final String entity,
-                                             final Map<String, Object> parameters,
-                                             final Map<String, Object> headers) {
-        return execute(url, HttpMethod.DELETE.name(), basicAuthUsername, basicAuthPassword, parameters, headers, entity);
+        final String basicAuthUsername,
+        final String basicAuthPassword,
+        final String entity,
+        final Map<String, Object> parameters,
+        final Map<String, Object> headers) {
+        return execute(url, HttpMethod.DELETE.name(), basicAuthUsername,
+            basicAuthPassword, parameters, headers, entity, null);
     }
 
     /**
@@ -404,10 +445,10 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse executeDelete(final String url,
-                                             final String basicAuthUsername,
-                                             final String basicAuthPassword,
-                                             final Map<String, Object> parameters,
-                                             final Map<String, Object> headers) {
+        final String basicAuthUsername,
+        final String basicAuthPassword,
+        final Map<String, Object> parameters,
+        final Map<String, Object> headers) {
         return executeDelete(url, basicAuthUsername, basicAuthPassword, null, parameters, headers);
     }
 
@@ -420,8 +461,8 @@ public class HttpUtils {
      * @return the http response
      */
     public static HttpResponse executeDelete(final String url,
-                                             final String basicAuthUsername,
-                                             final String basicAuthPassword) {
+        final String basicAuthUsername,
+        final String basicAuthPassword) {
         return executeDelete(url, basicAuthUsername, basicAuthPassword, null, null, null);
     }
 
@@ -444,7 +485,8 @@ public class HttpUtils {
      * @param basicCharset      The charset used to encode auth header
      * @return the org . springframework . http . http headers
      */
-    public static org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser, final String basicAuthPassword, final String basicCharset) {
+    public static org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser, final String basicAuthPassword,
+        final String basicCharset) {
         val acceptHeaders = new org.springframework.http.HttpHeaders();
         acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         if (StringUtils.isNotBlank(basicAuthUser) && StringUtils.isNotBlank(basicAuthPassword)) {
@@ -453,14 +495,6 @@ public class HttpUtils {
             acceptHeaders.set(org.springframework.http.HttpHeaders.AUTHORIZATION, "Basic " + basic);
         }
         return acceptHeaders;
-    }
-
-    public static HttpClient getHttpClient() {
-        return HTTP_CLIENT;
-    }
-
-    public static void setHttpClient(final HttpClient httpClient) {
-        HTTP_CLIENT = httpClient;
     }
 
     @SneakyThrows
@@ -490,7 +524,7 @@ public class HttpUtils {
      * @param basicAuthPassword the basic auth password
      */
     private static void prepareHttpRequest(final HttpUriRequest request, final String basicAuthUsername,
-                                           final String basicAuthPassword) {
+        final String basicAuthPassword) {
         if (StringUtils.isNotBlank(basicAuthUsername) && StringUtils.isNotBlank(basicAuthPassword)) {
             val auth = EncodingUtils.encodeBase64(basicAuthUsername + ':' + basicAuthPassword);
             request.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + auth);
@@ -501,5 +535,12 @@ public class HttpUtils {
         val uriBuilder = new URIBuilder(url);
         parameters.forEach((k, v) -> uriBuilder.addParameter(k, v.toString()));
         return uriBuilder.build();
+    }
+
+    private HttpClientBuilder getHttpClientBuilder() {
+        return HttpClientBuilder
+            .create()
+            .setMaxConnTotal(MAX_CONNECTIONS)
+            .setMaxConnPerRoute(MAX_CONNECTIONS_PER_ROUTE);
     }
 }

@@ -30,7 +30,7 @@ public class GroovyRegisteredServiceAuthenticationPolicyCriteria implements Regi
     private String script;
 
     @Override
-    public AuthenticationPolicy toAuthenticationPolicy() {
+    public AuthenticationPolicy toAuthenticationPolicy(final RegisteredService registeredService) {
         return new GroovyScriptAuthenticationPolicy(this.script);
     }
 }

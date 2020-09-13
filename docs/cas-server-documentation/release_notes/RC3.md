@@ -4,7 +4,7 @@ title: CAS - Release Notes
 category: Planning
 ---
 
-# RC2 Release Notes
+# RC3 Release Notes
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set 
 you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS 
@@ -46,6 +46,45 @@ cas.version=6.3.0-RC3
 
 ## New & Noteworthy
 
+The following items are new improvements and enhancements presented in this release. 
+
+### Test Coverage via CodeCov
+
+CAS test coverage across all modules in the codebase has now reached `85%` and continues to climb. Additional validation rules are also applied 
+to fail all pull requests that fall below this threshold. This area will be closely monitored and improved
+as progress is made with the goal of hopefully reaching at least `88%` before the final GA release. Of course, 
+this will not be a blocker for the final release.
+
+### WebAuthn Support
+
+CAS can now support [WebAuthn FIDO2](../mfa/FIDO2-WebAuthn-Authentication.html) for multifactor authentication.
+
+### Service Authentication Policy
+
+An additional [authentication policy for services](../services/Configuring-Service-AuthN-Policy.html) is now 
+available to require allowed/defined authentication handlers.
+
+### Delegated Authentication SSO Participation
+
+Participation in single sign-on sessions for applications that are 
+assigned a [delegated authentication policy](../integration/Delegate-Authentication.html#access-strategy) can now be conditionally renewed
+if the single sign-on session is established using a disallowed provider for the application.
+
+### SAML2 Metadata URL Proxies
+
+SAML2 application definitions whose metadata is retrieved from URLs can now specify a proxy endpoint in the application definition,
+in case the metadata is behind a proxy.
+
 ## Other Stuff
 
+- Password reset verification attempts can now properly handle expired or invalid reset attempts in the authentication webflow.
+
 ## Library Upgrades
+
+- Cassandra Driver
+- Oshi
+- Twilio
+- JGit
+- Spring Security
+- Spring Cloud
+

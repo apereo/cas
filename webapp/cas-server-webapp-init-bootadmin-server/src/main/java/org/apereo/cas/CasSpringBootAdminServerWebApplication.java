@@ -40,7 +40,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
     MetricsAutoConfiguration.class,
     DataSourceTransactionManagerAutoConfiguration.class,
     RedisRepositoriesAutoConfiguration.class
-})
+    }, proxyBeanMethods = false)
 @EnableAdminServer
 @NoArgsConstructor
 public class CasSpringBootAdminServerWebApplication {

@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import com.github.benmanes.caffeine.cache.Expiry;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
 public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<SamlRegisteredServiceCacheKey, MetadataResolver> {
     private final long defaultExpiration;
 

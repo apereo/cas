@@ -27,7 +27,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Configuration(value = "AmazonS3ServiceRegistryConfiguration")
+@Configuration(value = "AmazonS3ServiceRegistryConfiguration", proxyBeanMethods = false)
 public class AmazonS3ServiceRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -54,17 +54,20 @@ public class AmazonS3ServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "amazonS3ServiceRegistry")
-    public ServiceRegistry amazonS3ServiceRegistry() {
+    @Autowired
+    public ServiceRegistry amazonS3ServiceRegistry(@Qualifier("amazonS3ServiceRegistryClient") final S3Client amazonS3ServiceRegistryClient) {
         return new AmazonS3ServiceRegistry(applicationContext,
             serviceRegistryListeners.getObject(),
-            amazonS3ServiceRegistryClient());
+            amazonS3ServiceRegistryClient);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "amazonS3ServiceRegistryExecutionPlanConfigurer")
     @RefreshScope
-    public ServiceRegistryExecutionPlanConfigurer amazonS3ServiceRegistryExecutionPlanConfigurer() {
-        return plan -> plan.registerServiceRegistry(amazonS3ServiceRegistry());
+    @Autowired
+    public ServiceRegistryExecutionPlanConfigurer amazonS3ServiceRegistryExecutionPlanConfigurer(@Qualifier("amazonS3ServiceRegistry")
+                                                                                                 final ServiceRegistry amazonS3ServiceRegistry) {
+        return plan -> plan.registerServiceRegistry(amazonS3ServiceRegistry);
     }
 
 }

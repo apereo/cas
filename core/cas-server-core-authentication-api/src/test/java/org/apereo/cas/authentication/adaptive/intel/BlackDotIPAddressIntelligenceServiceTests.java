@@ -104,6 +104,21 @@ public class BlackDotIPAddressIntelligenceServiceTests {
         }
     }
 
+    @Test
+    public void verifyBadResponse() {
+        try (val webServer = new MockWebServer(9319,
+            new ByteArrayResource("${bad-json$".getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
+            webServer.start();
+            val props = new AdaptiveAuthenticationProperties();
+            props.getIpIntel().getBlackDot().setUrl("http://localhost:9319?ip=%s");
+            props.getIpIntel().getBlackDot().setMode("DYNA_CHECK");
+            props.getIpIntel().getBlackDot().setEmailAddress("cas@apereo.org");
+            val service = new BlackDotIPAddressIntelligenceService(props);
+            val response = service.examine(new MockRequestContext(), "37.58.59.181");
+            assertTrue(response.isBanned());
+        }
+    }
+
     /*
     @Test
     public void verifyAllowedOperation() {

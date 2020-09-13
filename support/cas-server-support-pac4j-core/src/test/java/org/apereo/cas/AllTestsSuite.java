@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.provision.GroovyDelegatedClientUs
 import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientUserProfileProvisionerTests;
 import org.apereo.cas.validation.DelegatedAuthenticationServiceTicketValidationAuthorizerTests;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactoryTests;
+import org.apereo.cas.web.flow.DelegatedAuthenticationSingleSignOnParticipationStrategyTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -23,6 +24,7 @@ import org.junit.runner.RunWith;
     DelegatedClientIdentityProviderConfigurationFactoryTests.class,
     DelegatedAuthenticationServiceTicketValidationAuthorizerTests.class,
     GroovyDelegatedClientUserProfileProvisionerTests.class,
+    DelegatedAuthenticationSingleSignOnParticipationStrategyTests.class,
     ChainingDelegatedClientUserProfileProvisionerTests.class,
     RestfulDelegatedClientUserProfileProvisionerTests.class
 })

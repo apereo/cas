@@ -32,6 +32,7 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.context.ExternalContextHolder;
@@ -394,7 +395,7 @@ public class WebUtils {
     public static void putRegisteredService(final HttpServletRequest request, final RegisteredService registeredService) {
         request.setAttribute(PARAMETER_REGISTERED_SERVICE, registeredService);
     }
-    
+
     /**
      * Put registered service into flowscope.
      *
@@ -805,7 +806,7 @@ public class WebUtils {
      * Is remember me authentication enabled ?.
      *
      * @param context the context
-     * @return true/false
+     * @return true /false
      */
     public static Boolean isRememberMeAuthenticationEnabled(final RequestContext context) {
         return context.getFlowScope().getBoolean("rememberMeAuthenticationEnabled", Boolean.FALSE);
@@ -934,6 +935,19 @@ public class WebUtils {
     }
 
     /**
+     * Produce error view.
+     *
+     * @param request    the request
+     * @param badRequest the bad request
+     * @param message    the message
+     */
+    public static void produceErrorView(final HttpServletRequest request, final HttpStatus badRequest, final String message) {
+        request.setAttribute("status", HttpStatus.BAD_REQUEST.value());
+        request.setAttribute("error", HttpStatus.BAD_REQUEST.name());
+        request.setAttribute("message", "Unable to verify registration record");
+    }
+    
+    /**
      * Produce error view model and view.
      *
      * @param e the e
@@ -1012,7 +1026,7 @@ public class WebUtils {
      * Has passwordless authentication account.
      *
      * @param requestContext the request context
-     * @return true/false
+     * @return true /false
      */
     public static boolean hasPasswordlessAuthenticationAccount(final RequestContext requestContext) {
         return requestContext.getFlowScope().contains("passwordlessAccount");
@@ -1032,7 +1046,7 @@ public class WebUtils {
      * Has request surrogate authentication request.
      *
      * @param requestContext the request context
-     * @return true/false
+     * @return true /false
      */
     public static boolean hasRequestSurrogateAuthenticationRequest(final RequestContext requestContext) {
         return requestContext.getFlowScope().getBoolean("requestSurrogateAccount", Boolean.FALSE);
@@ -1081,7 +1095,7 @@ public class WebUtils {
      * Put graphical user authentication enabled.
      *
      * @param requestContext the request context
-     * @return true/false
+     * @return true /false
      */
     public static boolean isGraphicalUserAuthenticationEnabled(final RequestContext requestContext) {
         return BooleanUtils.isTrue(requestContext.getFlowScope().get("guaEnabled", Boolean.class));
@@ -1101,7 +1115,7 @@ public class WebUtils {
      * Contains graphical user authentication username.
      *
      * @param requestContext the request context
-     * @return true/false
+     * @return true /false
      */
     public static boolean containsGraphicalUserAuthenticationUsername(final RequestContext requestContext) {
         return requestContext.getFlowScope().contains("guaUsername");
@@ -1121,7 +1135,7 @@ public class WebUtils {
      * Contains graphical user authentication image boolean.
      *
      * @param requestContext the request context
-     * @return true/false
+     * @return true /false
      */
     public static boolean containsGraphicalUserAuthenticationImage(final RequestContext requestContext) {
         return requestContext.getFlowScope().contains("guaUserImage");
@@ -1266,7 +1280,7 @@ public class WebUtils {
      * Is cas login form viewable.
      *
      * @param context the context
-     * @return true/false
+     * @return true /false
      */
     public static boolean isCasLoginFormViewable(final RequestContext context) {
         return context.getFlowScope().getBoolean("casLoginFormViewable", Boolean.TRUE);
@@ -1306,7 +1320,9 @@ public class WebUtils {
         removeCredential(requestContext);
         val flow = (Flow) requestContext.getActiveFlow();
         val var = flow.getVariable(CasWebflowConstants.VAR_ID_CREDENTIAL);
-        var.create(requestContext);
+        if (var != null) {
+            var.create(requestContext);
+        }
     }
 
     /**
@@ -1447,7 +1463,7 @@ public class WebUtils {
      * Is google authenticator multiple device registration enabled?
      *
      * @param requestContext the request context
-     * @return true/false
+     * @return true /false
      */
     public static Boolean isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("gauthMultipleDeviceRegistrationEnabled", Boolean.class);
