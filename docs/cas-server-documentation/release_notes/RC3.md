@@ -84,6 +84,7 @@ in case the metadata is behind a proxy.
 - Cassandra Driver
 - Oshi
 - Twilio
+- JUnit
 - JGit
 - Spring Security
 - Spring Cloud
