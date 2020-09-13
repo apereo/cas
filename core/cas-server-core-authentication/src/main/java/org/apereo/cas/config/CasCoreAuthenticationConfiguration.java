@@ -34,7 +34,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Configuration(value = "casCoreAuthenticationConfiguration")
+@Configuration(value = "casCoreAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreAuthenticationConfiguration {
@@ -51,8 +51,10 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     @RefreshScope
-    public AuthenticationTransactionManager authenticationTransactionManager() {
-        return new DefaultAuthenticationTransactionManager(applicationContext, casAuthenticationManager());
+    @Autowired
+    public AuthenticationTransactionManager authenticationTransactionManager(@Qualifier("casAuthenticationManager")
+                                                                             final AuthenticationManager casAuthenticationManager) {
+        return new DefaultAuthenticationTransactionManager(applicationContext, casAuthenticationManager);
     }
 
     @ConditionalOnMissingBean(name = "casAuthenticationManager")

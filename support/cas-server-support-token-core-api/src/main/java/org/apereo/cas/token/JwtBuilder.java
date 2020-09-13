@@ -140,8 +140,7 @@ public class JwtBuilder {
         claims.expirationTime(payload.getValidUntilDate());
 
         val claimsSet = claims.build();
-        val object = claimsSet.toJSONObject();
-        val jwtJson = object.toJSONString();
+        val jwtJson = claimsSet.toJSONObject().toJSONString();
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Generated JWT [{}]", JsonValue.readJSON(jwtJson).toString(Stringify.FORMATTED));

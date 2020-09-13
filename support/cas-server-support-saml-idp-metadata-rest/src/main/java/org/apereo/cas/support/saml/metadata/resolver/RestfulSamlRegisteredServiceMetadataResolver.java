@@ -25,16 +25,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 /**
- * This is {@link RestSamlRegisteredServiceMetadataResolver}.
+ * This is {@link RestfulSamlRegisteredServiceMetadataResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @Slf4j
-public class RestSamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
+public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    public RestSamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties,
+    public RestfulSamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                                      final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
     }

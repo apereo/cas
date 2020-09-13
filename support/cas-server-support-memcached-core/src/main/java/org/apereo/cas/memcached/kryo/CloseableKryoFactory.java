@@ -165,7 +165,7 @@ public class CloseableKryoFactory implements KryoFactory {
     private static void registerNativeJdkComponentsWithKryo(final Kryo kryo) {
         kryo.register(GeneralSecurityException.class, new ThrowableSerializer());
         kryo.register(AccountNotFoundException.class, new ThrowableSerializer());
-        
+
         kryo.register(Class.class, new DefaultSerializers.ClassSerializer());
         kryo.register(ArrayList.class);
         kryo.register(LinkedList.class);

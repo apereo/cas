@@ -42,8 +42,13 @@ import java.util.stream.StreamSupport;
 public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataResolver {
 
     public MetadataQueryProtocolMetadataResolver(final SamlIdPProperties samlIdPProperties,
-                                                 final OpenSamlConfigBean configBean) {
+        final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
+    }
+
+    @Override
+    public boolean supports(final SamlRegisteredService service) {
+        return SamlUtils.isDynamicMetadataQueryConfigured(service.getMetadataLocation());
     }
 
     @Override
@@ -80,7 +85,8 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
     }
 
     @Override
-    protected HttpResponse fetchMetadata(final String metadataLocation, final CriteriaSet criteriaSet, final File backupFile) {
+    protected HttpResponse fetchMetadata(final SamlRegisteredService service,
+        final String metadataLocation, final CriteriaSet criteriaSet, final File backupFile) {
         val metadata = samlIdPProperties.getMetadata();
         val headers = new LinkedHashMap<String, Object>();
         headers.put("Content-Type", metadata.getSupportedContentTypes());
@@ -97,7 +103,8 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
 
         LOGGER.trace("Fetching dynamic metadata via MDQ for [{}]", metadataLocation);
         val response = HttpUtils.executeGet(metadataLocation, metadata.getBasicAuthnUsername(),
-            samlIdPProperties.getMetadata().getBasicAuthnPassword(), new HashMap<>(0), headers);
+            samlIdPProperties.getMetadata().getBasicAuthnPassword(), new HashMap<>(0), headers,
+            service.getMetadataLocationProxy());
         if (response == null) {
             LOGGER.error("Unable to fetch metadata from [{}]", metadataLocation);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
@@ -109,15 +116,13 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
     protected String getMetadataLocationForService(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         LOGGER.trace("Getting metadata location dynamically for [{}] based on criteria [{}]", service.getName(), criteriaSet);
         val entityIdCriteria = criteriaSet.get(EntityIdCriterion.class);
-        val entityId = Optional.ofNullable(entityIdCriteria).map(EntityIdCriterion::getEntityId).orElseGet(service::getServiceId);
+        val entityId = Optional.ofNullable(entityIdCriteria)
+            .map(EntityIdCriterion::getEntityId)
+            .orElseGet(service::getServiceId);
         if (StringUtils.isBlank(entityId)) {
             throw new SamlException("Unable to determine entity id to fetch metadata dynamically via MDQ for service " + service.getName());
         }
-        return service.getMetadataLocation().replace("{0}", EncodingUtils.urlEncode(entityId));
-    }
-
-    @Override
-    public boolean supports(final SamlRegisteredService service) {
-        return SamlUtils.isDynamicMetadataQueryConfigured(service.getMetadataLocation());
+        val location = super.getMetadataLocationForService(service, criteriaSet);
+        return location.replace("{0}", EncodingUtils.urlEncode(entityId));
     }
 }

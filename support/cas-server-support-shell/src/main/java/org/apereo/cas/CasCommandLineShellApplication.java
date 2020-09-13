@@ -49,7 +49,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
     BatchAutoConfiguration.class,
     TaskExecutionAutoConfiguration.class,
     QuartzAutoConfiguration.class
-})
+    }, proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
 @NoArgsConstructor

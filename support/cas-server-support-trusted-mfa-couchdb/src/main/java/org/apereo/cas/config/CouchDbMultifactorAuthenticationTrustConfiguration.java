@@ -58,8 +58,7 @@ public class CouchDbMultifactorAuthenticationTrustConfiguration {
         return new MultifactorAuthenticationTrustRecordCouchDbRepository(mfaTrustCouchDbFactory.getCouchDbConnector(),
             casProperties.getAuthn().getMfa().getTrusted().getCouchDb().isCreateIfNotExists());
     }
-
-    @ConditionalOnMissingBean(name = "couchDbMfaTrustEngine")
+    
     @Bean
     @RefreshScope
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(

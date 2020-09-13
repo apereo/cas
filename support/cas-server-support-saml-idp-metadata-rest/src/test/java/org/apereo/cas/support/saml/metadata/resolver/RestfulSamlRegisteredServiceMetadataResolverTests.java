@@ -63,6 +63,8 @@ public class RestfulSamlRegisteredServiceMetadataResolverTests extends BaseRestf
         service.setDescription("Testing");
         service.setMetadataLocation("rest://");
         assertTrue(resolver.supports(service));
+        assertFalse(resolver.supports(null));
+        assertTrue(resolver.isAvailable(service));
         val resolvers = resolver.resolve(service);
         assertEquals(1, resolvers.size());
     }

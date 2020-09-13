@@ -154,6 +154,10 @@ public class CoreAuthenticationTestUtils {
         return getAuthentication(principal, attributes, null);
     }
 
+    public static Authentication getAuthentication(final Map<String, List<Object>> authnAttributes) {
+        return getAuthentication(getPrincipal(CONST_USERNAME), authnAttributes, null);
+    }
+
     public static Authentication getAuthentication(final Principal principal, final Map<String, List<Object>> attributes, final ZonedDateTime authnDate) {
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());

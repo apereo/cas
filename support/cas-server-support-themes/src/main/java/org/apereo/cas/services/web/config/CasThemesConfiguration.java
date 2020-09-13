@@ -22,6 +22,7 @@ import org.springframework.web.servlet.theme.SessionThemeResolver;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casThemesConfiguration", proxyBeanMethods = true)
+@Configuration(value = "casThemesConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasThemesConfiguration {
     @Autowired
@@ -46,18 +47,20 @@ public class CasThemesConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    protected Map<String, String> serviceThemeResolverSupportedBrowsers() {
+    public Supplier<Map<String, String>> serviceThemeResolverSupportedBrowsers() {
         val map = new HashMap<String, String>();
         map.put(".*Android.*", "android");
         map.put(".*Safari.*Pre.*", "safari");
         map.put(".*iPhone.*", "iphone");
         map.put(".*Nokia.*AppleWebKit.*", "nokiawebkit");
-        return map;
+        return () -> map;
     }
 
     @ConditionalOnMissingBean(name = "themeResolver")
     @Bean
-    public ThemeResolver themeResolver() {
+    @Autowired
+    public ThemeResolver themeResolver(
+        @Qualifier("serviceThemeResolverSupportedBrowsers") final Supplier<Map<String, String>> serviceThemeResolverSupportedBrowsers) {
         val defaultThemeName = casProperties.getTheme().getDefaultThemeName();
 
         val fixedResolver = new FixedThemeResolver();
@@ -78,7 +81,7 @@ public class CasThemesConfiguration {
         val serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager.getObject(),
             authenticationRequestServiceSelectionStrategies.getObject(),
             new CasConfigurationProperties(),
-            serviceThemeResolverSupportedBrowsers().entrySet()
+            serviceThemeResolverSupportedBrowsers.get().entrySet()
                 .stream()
                 .collect(Collectors.toMap(entry -> Pattern.compile(entry.getKey()), Map.Entry::getValue)));
         serviceThemeResolver.setDefaultThemeName(defaultThemeName);
@@ -95,6 +98,4 @@ public class CasThemesConfiguration {
         chainingThemeResolver.setDefaultThemeName(defaultThemeName);
         return chainingThemeResolver;
     }
-
-
 }

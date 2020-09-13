@@ -70,7 +70,7 @@ The following features are supported by the CAS project:
 * Authorization via ABAC, Time/Date, REST, Internet2's Grouper and more.
 * HA clustered deployments via Hazelcast, Ehcache, JPA, Apache Cassandra, Memcached, Apache Ignite, MongoDb, Redis, DynamoDb, Couchbase and more.
 * Application registration backed by JSON, LDAP, YAML, Apache Cassandra, JPA, Couchbase, MongoDb, DynamoDb, Redis and more.
-* Multifactor authentication via Duo Security, YubiKey, RSA, Google Authenticator and more.
+* Multifactor authentication via Duo Security, YubiKey, RSA, Google Authenticator, U2F, WebAuthn and more.
 * Administrative UIs to manage logging, monitoring, statistics, configuration, client registration and more.
 * Global and per-application user interface theme and branding.
 * Password management and password policy enforcement.

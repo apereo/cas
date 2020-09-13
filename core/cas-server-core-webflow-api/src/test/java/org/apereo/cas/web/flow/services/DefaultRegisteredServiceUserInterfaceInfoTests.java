@@ -98,4 +98,23 @@ public class DefaultRegisteredServiceUserInterfaceInfoTests {
         assertTrue(info.getLogoHeight() > 0);
     }
 
+    @Test
+    public void verifyDefault() {
+        val service = mock(RegisteredService.class);
+        val info = new DefaultRegisteredServiceUserInterfaceInfo(service) {
+            private static final long serialVersionUID = 2331519665722637762L;
+
+            @Override
+            public Collection<String> getInformationURLs() {
+                return List.of("informationUrl");
+            }
+
+            @Override
+            public Collection<String> getPrivacyStatementURLs() {
+                return List.of("PrivacyStatement");
+            }
+        };
+        assertNotNull(info.getInformationURL());
+        assertNotNull(info.getPrivacyStatementURL());
+    }
 }

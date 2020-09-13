@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties =
-    "cas.authn.oauth.code.timeToKillInSeconds=60"
+    "cas.authn.oauth.code.time-to-kill-in-seconds=60"
 )
 public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
 

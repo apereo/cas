@@ -53,7 +53,7 @@ import java.time.Instant;
     MetricsAutoConfiguration.class,
     DataSourceTransactionManagerAutoConfiguration.class,
     RedisRepositoriesAutoConfiguration.class
-})
+    }, proxyBeanMethods = false)
 @EnableConfigServer
 @NoArgsConstructor
 @Slf4j

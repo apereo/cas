@@ -3,8 +3,10 @@ package org.apereo.cas;
 import org.apereo.cas.support.saml.services.SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.ClasspathResourceMetadataResolverTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.DynamicResourceMetadataResolverTests;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.FileSystemResourceMetadataResolverTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.GroovyResourceMetadataResolverTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.JsonResourceMetadataResolverTests;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataExpirationPolicyTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.UrlResourceMetadataResolverTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -21,8 +23,10 @@ import org.junit.runner.RunWith;
     SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests.class,
     ClasspathResourceMetadataResolverTests.class,
     DynamicResourceMetadataResolverTests.class,
+    SamlRegisteredServiceMetadataExpirationPolicyTests.class,
     GroovyResourceMetadataResolverTests.class,
     UrlResourceMetadataResolverTests.class,
+    FileSystemResourceMetadataResolverTests.class,
     JsonResourceMetadataResolverTests.class
 })
 @RunWith(JUnitPlatform.class)

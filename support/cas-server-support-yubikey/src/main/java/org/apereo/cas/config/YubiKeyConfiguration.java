@@ -31,6 +31,7 @@ public class YubiKeyConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "transactionManagerYubiKey")
     public PlatformTransactionManager transactionManagerYubiKey() {
