@@ -10,7 +10,6 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.TokenTicketBuilder;
-
 import org.apache.commons.lang3.StringUtils;
 
 import lombok.SneakyThrows;
