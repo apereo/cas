@@ -115,7 +115,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             .validationSpecifications(CollectionUtils.wrapSet(getValidationSpecification()))
             .authenticationSystemSupport(getAuthenticationSystemSupport())
             .servicesManager(getServicesManager())
-            .centralAuthenticationService(getCentralAuthenticationService().getObject())
+            .centralAuthenticationService(getCentralAuthenticationService())
             .argumentExtractor(getArgumentExtractor())
             .proxyHandler(getProxyHandler())
             .requestedContextValidator((assertion, request) -> Pair.of(Boolean.TRUE, Optional.empty()))
