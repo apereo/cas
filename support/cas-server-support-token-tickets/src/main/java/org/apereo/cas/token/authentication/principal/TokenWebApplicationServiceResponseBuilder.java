@@ -10,10 +10,10 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.TokenTicketBuilder;
-import org.apache.commons.lang3.StringUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import java.util.Map;
 
 /**
@@ -42,7 +42,7 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
         val ticketIdAvailable=isTicketIdAvailable(parameters);
 
         if (!tokenAsResponse||!ticketIdAvailable) {
-            if(ticketIdAvailable) {
+            if (ticketIdAvailable) {
                 LOGGER.debug("Registered service [{}] is not configured to issue JWTs for service tickets. "
                                 + "Make sure the service property [{}] is defined and set to true", registeredService,
                         RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName());
@@ -64,7 +64,7 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
     private boolean isTicketIdAvailable(final Map<String, String> parameters){
         final String ticketId=parameters.get(CasProtocolConstants.PARAMETER_TICKET);
 
-        if(StringUtils.isBlank(ticketId)){
+        if (StringUtils.isBlank(ticketId)){
             return false;
         }
 
