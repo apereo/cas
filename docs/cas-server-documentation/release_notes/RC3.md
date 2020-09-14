@@ -78,6 +78,7 @@ in case the metadata is behind a proxy.
 ## Other Stuff
 
 - Password reset verification attempts can now properly handle expired or invalid reset attempts in the authentication webflow.
+- Logged ascii-art statements are now routed to their own dedicated `AsciiArt` logging category. 
 
 ## Library Upgrades
 
@@ -85,6 +86,7 @@ in case the metadata is behind a proxy.
 - Oshi
 - Twilio
 - JUnit
+- SnakeYAML
 - JGit
 - Spring Security
 - Spring Cloud
