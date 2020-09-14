@@ -2,7 +2,6 @@ package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
@@ -12,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -81,17 +79,12 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
 
     @Override
     public Collection<? extends OneTimeTokenAccount> load() {
-        try {
-            return (Collection) getGoogleAuthenticatorTokenKeys()
-                .stream()
-                .map(redisKey -> this.template.boundValueOps(redisKey).get())
-                .filter(Objects::nonNull)
-                .map(this::decode)
-                .collect(Collectors.toList());
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return new ArrayList<>(0);
+        return (Collection) getGoogleAuthenticatorTokenKeys()
+            .stream()
+            .map(redisKey -> this.template.boundValueOps(redisKey).get())
+            .filter(Objects::nonNull)
+            .map(this::decode)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -111,37 +104,24 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
 
     @Override
     public void deleteAll() {
-        try {
-            val redisKey = getGoogleAuthenticatorTokenKeys();
-            LOGGER.trace("Deleting tokens using key [{}]", redisKey);
-            this.template.delete(redisKey);
-            LOGGER.trace("Deleted tokens");
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-        }
+        val redisKey = getGoogleAuthenticatorTokenKeys();
+        LOGGER.trace("Deleting tokens using key [{}]", redisKey);
+        this.template.delete(redisKey);
+        LOGGER.trace("Deleted tokens");
     }
 
     @Override
     public void delete(final String username) {
-        try {
-            val redisKey = getGoogleAuthenticatorTokenKeys(username, "*");
-            LOGGER.trace("Deleting tokens using key [{}]", redisKey);
-            this.template.delete(redisKey);
-            LOGGER.trace("Deleted tokens");
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-        }
+        val redisKey = getGoogleAuthenticatorTokenKeys(username, "*");
+        LOGGER.trace("Deleting tokens using key [{}]", redisKey);
+        this.template.delete(redisKey);
+        LOGGER.trace("Deleted tokens");
     }
 
     @Override
     public long count() {
-        try {
-            val keys = getGoogleAuthenticatorTokenKeys();
-            return keys.size();
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-        }
-        return 0;
+        val keys = getGoogleAuthenticatorTokenKeys();
+        return keys.size();
     }
 
     @Override
