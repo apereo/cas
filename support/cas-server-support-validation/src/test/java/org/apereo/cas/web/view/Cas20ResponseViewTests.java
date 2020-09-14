@@ -77,7 +77,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
             .validationSpecifications(CollectionUtils.wrapSet(getValidationSpecification()))
             .authenticationSystemSupport(getAuthenticationSystemSupport())
             .servicesManager(getServicesManager())
-            .centralAuthenticationService(getCentralAuthenticationService().getObject())
+            .centralAuthenticationService(getCentralAuthenticationService())
             .argumentExtractor(getArgumentExtractor())
             .proxyHandler(getProxyHandler())
             .requestedContextValidator((assertion, request) -> Pair.of(Boolean.TRUE, Optional.empty()))
@@ -115,8 +115,8 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
 
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service);
-        val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
-        val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), service, ctx);
+        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), service, ctx);
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
         
         val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
@@ -134,8 +134,8 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
         registeredService.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
         getServicesManager().save(registeredService);
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service);
-        val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
-        val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), service, ctx);
+        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), service, ctx);
 
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_URL, SERVICE.getId());
@@ -156,8 +156,8 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
         registeredService.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
         getServicesManager().save(registeredService);
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service);
-        val tId = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctx);
-        val sId = getCentralAuthenticationService().getObject().grantServiceTicket(tId.getId(), service, ctx);
+        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), service, ctx);
 
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_URL, SERVICE.getId());

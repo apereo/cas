@@ -23,6 +23,7 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseServiceAuthorizationCheckAction extends AbstractAction {
     private final ServicesManager servicesManager;
+
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @Override
