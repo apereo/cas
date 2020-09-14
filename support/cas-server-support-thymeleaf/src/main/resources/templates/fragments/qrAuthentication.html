@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title>loginProviders Fragment</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div th:fragment="qrAuthentication" th:remove="tag">
+
+        <div class="card bg-light">
+            <div class="card-body pb-4">
+                <div class="card-title">
+                    <div class="text-center">
+                        <h3 class="mt-md-0 mt-4">
+                            <i class="mdi mdi-qrcode-scan"></i>
+                            <span>Login with QR Code</span>
+                        </h3>
+                        <p>Scan the QR code with your mobile device to begin the login flow. If your credentials are accepted, you will automatically proceed to the next step.</p>
+                    </div>
+                </div>
+                <div class="card-text">
+                    <center>
+                        <img th:src="@{qr/channel}"/>
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
