@@ -49,7 +49,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val requestedScopes = OAuth20Utils.parseRequestScopes(request);
         val token = getOAuthTokenFromRequest(request);
         val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
-        if (token == null || token.isExpired() || !StringUtils.equals(clientId, token.getService().getId())) {
+        if (token == null || token.isExpired() || !StringUtils.equals(clientId, token.getClientId())) {
             throw new InvalidTicketException(getOAuthParameter(request));
         }
         val scopes = extractRequestedScopesByToken(requestedScopes, token, request);
