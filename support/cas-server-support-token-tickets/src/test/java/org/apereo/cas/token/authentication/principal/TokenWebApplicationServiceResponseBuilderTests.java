@@ -49,9 +49,9 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.apache.commons.lang3.StringUtils;
 
 import java.nio.charset.StandardCharsets;
-import org.apache.commons.lang3.StringUtils;
 
 import static org.junit.jupiter.api.Assertions.*;
 
