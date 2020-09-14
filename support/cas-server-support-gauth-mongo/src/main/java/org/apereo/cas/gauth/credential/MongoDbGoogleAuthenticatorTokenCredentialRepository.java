@@ -1,7 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
@@ -13,7 +12,6 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -67,17 +65,11 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
 
     @Override
     public Collection<? extends OneTimeTokenAccount> load() {
-        try {
-            val r = this.mongoTemplate.findAll(GoogleAuthenticatorAccount.class, this.collectionName);
-            return r.stream()
-                .map(this::decode)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return new ArrayList<>(0);
+        val r = this.mongoTemplate.findAll(GoogleAuthenticatorAccount.class, this.collectionName);
+        return r.stream()
+            .map(this::decode)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     @Override
