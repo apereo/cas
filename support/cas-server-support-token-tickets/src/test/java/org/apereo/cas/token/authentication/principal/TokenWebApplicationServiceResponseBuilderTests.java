@@ -51,6 +51,7 @@ import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.nio.charset.StandardCharsets;
+import org.apache.commons.lang3.StringUtils;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -148,7 +149,7 @@ public class TokenWebApplicationServiceResponseBuilderTests {
             webServer.start();
 
             val result = responseBuilder.build(CoreAuthenticationTestUtils.getWebApplicationService("jwtservice"),
-                "",
+                StringUtils.EMPTY,
                 CoreAuthenticationTestUtils.getAuthentication());
             assertNotNull(result);
             assertFalse(result.getAttributes().containsKey(CasProtocolConstants.PARAMETER_TICKET));
