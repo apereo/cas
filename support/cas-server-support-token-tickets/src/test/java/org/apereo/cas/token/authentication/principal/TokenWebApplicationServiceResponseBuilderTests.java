@@ -38,6 +38,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.apache.commons.lang3.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 
