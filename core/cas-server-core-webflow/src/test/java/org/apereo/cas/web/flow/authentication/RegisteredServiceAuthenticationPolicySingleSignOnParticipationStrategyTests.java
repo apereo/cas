@@ -9,6 +9,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.ExcludedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
@@ -137,6 +138,35 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         assertTrue(strategy.supports(context));
         assertTrue(strategy.isParticipating(context));
+    }
+
+    @Test
+    public void verifySsoWithExcludedHandlers() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        val svc = CoreAuthenticationTestUtils.getRegisteredService("serviceid1");
+        val policy = new DefaultRegisteredServiceAuthenticationPolicy();
+        policy.setCriteria(new ExcludedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria());
+        policy.setExcludedAuthenticationHandlers(
+            Set.of(SimpleTestUsernamePasswordAuthenticationHandler.class.getName()));
+        when(svc.getAuthenticationPolicy()).thenReturn(policy);
+        when(svc.matches(anyString())).thenReturn(Boolean.TRUE);
+
+        val ticketRegistry = new DefaultTicketRegistry();
+        val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
+
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService("serviceid1"));
+        val tgt = new MockTicketGrantingTicket("casuser");
+        ticketRegistry.addTicket(tgt);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        assertTrue(strategy.supports(context));
+        assertFalse(strategy.isParticipating(context));
     }
 
     private static SingleSignOnParticipationStrategy getSingleSignOnStrategy(final RegisteredService svc,

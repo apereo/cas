@@ -104,7 +104,7 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
         LOGGER.trace("Fetching dynamic metadata via MDQ for [{}]", metadataLocation);
         val response = HttpUtils.executeGet(metadataLocation, metadata.getBasicAuthnUsername(),
             samlIdPProperties.getMetadata().getBasicAuthnPassword(), new HashMap<>(0), headers,
-            service.getMetadataLocationProxy());
+            service.getMetadataProxyLocation());
         if (response == null) {
             LOGGER.error("Unable to fetch metadata from [{}]", metadataLocation);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);

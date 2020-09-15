@@ -46,9 +46,13 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         svc.getAuthenticationPolicy().getRequiredAuthenticationHandlers().addAll(CollectionUtils.wrapHashSet("handler1", "handler2"));
         list.add(svc);
 
-        svc = RegisteredServiceTestUtils.getRegisteredService("serviceid2");
-        svc.getAuthenticationPolicy().getRequiredAuthenticationHandlers().addAll(new HashSet<>(0));
-        list.add(svc);
+        val svc2 = RegisteredServiceTestUtils.getRegisteredService("serviceid2");
+        svc2.getAuthenticationPolicy().getRequiredAuthenticationHandlers().addAll(new HashSet<>(0));
+        list.add(svc2);
+
+        val svc3 = RegisteredServiceTestUtils.getRegisteredService("serviceid3");
+        svc3.getAuthenticationPolicy().getExcludedAuthenticationHandlers().addAll(Set.of("handler3", "handler1"));
+        list.add(svc3);
 
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -91,5 +95,16 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val handlers = resolver.resolve(this.authenticationHandlers, transaction);
         assertEquals(handlers.size(), this.authenticationHandlers.size());
+    }
+
+    @Test
+    public void checkAuthenticationHandlerExcluded() {
+        val resolver = new RegisteredServiceAuthenticationHandlerResolver(this.defaultServicesManager,
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
+        val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid3"),
+            RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+        val handlers = resolver.resolve(this.authenticationHandlers, transaction);
+        assertEquals(1, handlers.size());
+        assertEquals("handler2", handlers.iterator().next().getName());
     }
 }

@@ -44,7 +44,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private String metadataLocation;
 
     @Column
-    private String metadataLocationProxy;
+    private String metadataProxyLocation;
 
     /**
      * Defines a filter that requires the presence of a validUntil
