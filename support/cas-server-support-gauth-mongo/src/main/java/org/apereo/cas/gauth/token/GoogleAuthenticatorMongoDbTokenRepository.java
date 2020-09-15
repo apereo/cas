@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -19,7 +18,6 @@ import java.time.ZoneId;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenRepository {
     private final MongoOperations mongoTemplate;
@@ -41,13 +39,6 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
     }
 
     @Override
-    public void removeAll() {
-        val query = new Query();
-        query.addCriteria(Criteria.where("userId").exists(true));
-        this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
-    }
-
-    @Override
     public void remove(final String uid, final Integer otp) {
         val query = new Query();
         query.addCriteria(Criteria.where("userId").is(uid).and("token").is(otp));
@@ -65,6 +56,13 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
     public void remove(final Integer otp) {
         val query = new Query();
         query.addCriteria(Criteria.where("token").is(otp));
+        this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
+    }
+
+    @Override
+    public void removeAll() {
+        val query = new Query();
+        query.addCriteria(Criteria.where("userId").exists(true));
         this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
     }
 
