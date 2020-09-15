@@ -3,7 +3,7 @@ dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-util")
 
-    implementation libraries.webauthn
+    api libraries.webauthn
     
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-configuration-api")
