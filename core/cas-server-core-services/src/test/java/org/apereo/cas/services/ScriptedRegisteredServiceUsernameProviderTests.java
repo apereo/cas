@@ -20,9 +20,19 @@ public class ScriptedRegisteredServiceUsernameProviderTests {
     public void verifyUsernameProvider() {
         val p = new ScriptedRegisteredServiceUsernameProvider();
         p.setScript("file:src/test/resources/uidscript.groovy");
-        val id =
-            p.resolveUsername(RegisteredServiceTestUtils.getPrincipal(), RegisteredServiceTestUtils.getService(),
-                RegisteredServiceTestUtils.getRegisteredService());
+        val id = p.resolveUsername(RegisteredServiceTestUtils.getPrincipal(),
+            RegisteredServiceTestUtils.getService(),
+            RegisteredServiceTestUtils.getRegisteredService());
         assertEquals("test", id);
+    }
+
+    @Test
+    public void verifyFails() {
+        val p = new ScriptedRegisteredServiceUsernameProvider();
+        p.setScript("file:src/test/resources/unknown-bad.groovy");
+        val id = p.resolveUsername(RegisteredServiceTestUtils.getPrincipal("example"),
+            RegisteredServiceTestUtils.getService(),
+            RegisteredServiceTestUtils.getRegisteredService());
+        assertEquals("example", id);
     }
 }

@@ -12,6 +12,7 @@ import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.function.Executable;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Tickets")
+@SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class)
 public class CachingTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Override
