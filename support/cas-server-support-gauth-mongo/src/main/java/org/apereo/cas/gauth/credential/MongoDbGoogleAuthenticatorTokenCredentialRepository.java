@@ -6,7 +6,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -22,7 +21,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @ToString
 @Getter
 public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
@@ -31,26 +29,26 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     private final String collectionName;
 
     public MongoDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-                                                               final MongoOperations mongoTemplate,
-                                                               final String collectionName,
-                                                               final CipherExecutor<String, String> tokenCredentialCipher) {
+        final MongoOperations mongoTemplate,
+        final String collectionName,
+        final CipherExecutor<String, String> tokenCredentialCipher) {
         super(tokenCredentialCipher, googleAuthenticator);
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
     }
 
     @Override
-    public OneTimeTokenAccount get(final String username, final long id) {
+    public OneTimeTokenAccount get(final long id) {
         val query = new Query();
-        query.addCriteria(Criteria.where("username").is(username).and("id").is(id));
+        query.addCriteria(Criteria.where("id").is(id));
         val r = this.mongoTemplate.findOne(query, GoogleAuthenticatorAccount.class, this.collectionName);
         return r != null ? decode(r) : null;
     }
 
     @Override
-    public OneTimeTokenAccount get(final long id) {
+    public OneTimeTokenAccount get(final String username, final long id) {
         val query = new Query();
-        query.addCriteria(Criteria.where("id").is(id));
+        query.addCriteria(Criteria.where("username").is(username).and("id").is(id));
         val r = this.mongoTemplate.findOne(query, GoogleAuthenticatorAccount.class, this.collectionName);
         return r != null ? decode(r) : null;
     }
