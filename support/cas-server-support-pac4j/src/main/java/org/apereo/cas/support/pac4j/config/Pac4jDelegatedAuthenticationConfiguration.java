@@ -1,12 +1,17 @@
 package org.apereo.cas.support.pac4j.config;
 
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.validation.DelegatedAuthenticationServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizerConfigurer;
+import org.apereo.cas.web.flow.DelegatedAuthenticationSingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -35,8 +40,16 @@ import org.springframework.context.annotation.Configuration;
 public class Pac4jDelegatedAuthenticationConfiguration {
 
     @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
+
+    @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
+
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
 
     @Bean
     @RefreshScope
@@ -66,6 +79,21 @@ public class Pac4jDelegatedAuthenticationConfiguration {
         return plan -> plan.registerAuthorizer(pac4jServiceTicketValidationAuthorizer());
     }
 
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy")
+    public SingleSignOnParticipationStrategy pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy() {
+        return new DelegatedAuthenticationSingleSignOnParticipationStrategy(servicesManager.getObject(),
+            authenticationServiceSelectionPlan.getObject(), ticketRegistrySupport.getObject());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "pac4jDelegatedAuthenticationSingleSignOnParticipationStrategyConfigurer")
+    @RefreshScope
+    public SingleSignOnParticipationStrategyConfigurer pac4jDelegatedAuthenticationSingleSignOnParticipationStrategyConfigurer() {
+        return chain -> chain.addStrategy(pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy());
+    }
+    
 
     /**
      * The type Oauth1 request token mixin.
