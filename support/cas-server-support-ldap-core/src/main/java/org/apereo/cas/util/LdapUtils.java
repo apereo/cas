@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
@@ -123,10 +122,7 @@ public class LdapUtils {
      */
     public static Boolean getBoolean(final LdapEntry ctx, final String attribute, final Boolean nullValue) {
         val v = getString(ctx, attribute, nullValue.toString());
-        if (v != null) {
-            return v.equalsIgnoreCase(Boolean.TRUE.toString());
-        }
-        return nullValue;
+        return v.equalsIgnoreCase(Boolean.TRUE.toString());
     }
 
     /**
@@ -139,10 +135,7 @@ public class LdapUtils {
      */
     public static Long getLong(final LdapEntry entry, final String attribute, final Long nullValue) {
         val v = getString(entry, attribute, nullValue.toString());
-        if (NumberUtils.isCreatable(v)) {
-            return Long.valueOf(v);
-        }
-        return nullValue;
+        return Long.valueOf(v);
     }
 
     /**
@@ -312,7 +305,7 @@ public class LdapUtils {
                 newPassword));
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
-        } catch (final LdapException e) {
+        } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return false;
@@ -343,7 +336,7 @@ public class LdapUtils {
             val response = operation.execute(request);
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
-        } catch (final LdapException e) {
+        } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return false;
@@ -377,7 +370,7 @@ public class LdapUtils {
             val response = operation.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
-        } catch (final LdapException e) {
+        } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return false;
@@ -397,7 +390,7 @@ public class LdapUtils {
             val response = delete.execute(request);
             LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
-        } catch (final LdapException e) {
+        } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return false;
