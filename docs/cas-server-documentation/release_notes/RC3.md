@@ -87,6 +87,10 @@ in case the metadata is behind a proxy.
 - Twilio
 - JUnit
 - SnakeYAML
+- Eureka
+- Apache Tomcat
+- Spring
+- Spring Boot
 - JGit
 - Spring Security
 - Spring Cloud
