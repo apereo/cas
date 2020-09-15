@@ -72,7 +72,8 @@ public class LdapUtilsTests {
     }
 
     @Test
-    public void verifyEntry() {
+    public void verifyEntry() throws Exception {
+        assertFalse(LdapUtils.isLdapConnectionUrl(new URL("https://github.com")));
         assertFalse(LdapUtils.containsResultEntry(null));
     }
 
@@ -152,8 +153,6 @@ public class LdapUtilsTests {
         ldap.setBindDn("cn=Directory Manager");
         ldap.setBindCredential("password");
         ldap.setSearchFilter("cn=invalid-user");
-
-        assertTrue(LdapUtils.isLdapConnectionUrl(new URL(ldap.getLdapUrl())));
 
         var factory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         var response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(),
