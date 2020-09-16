@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -23,7 +22,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -124,12 +122,6 @@ public class InitialFlowSetupAction extends AbstractAction {
                     WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, accessStrategy.getUnauthorizedRedirectUrl());
                 }
             }
-        } else if (!casProperties.getSso().isAllowMissingServiceParameter()) {
-            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-            LOGGER.warn("No service authentication request is available at [{}]. CAS is configured to disable the flow.",
-                request.getRequestURL());
-            throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
-                new UnauthorizedServiceException("screen.service.required.message", "Service is required"));
         }
         WebUtils.putServiceIntoFlowScope(context, service);
     }
