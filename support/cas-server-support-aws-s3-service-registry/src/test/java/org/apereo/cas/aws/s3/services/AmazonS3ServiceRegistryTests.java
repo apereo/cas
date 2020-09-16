@@ -28,11 +28,11 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreUtilConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = {
-    "cas.service-registry.amazon-s3.endpoint=http://127.0.0.1:4572",
+    "cas.service-registry.amazon-s3.endpoint=http://127.0.0.1:4566",
     "cas.service-registry.amazon-s3.credential-access-key=test",
     "cas.service-registry.amazon-s3.credential-secret-key=test"
 })
-@EnabledIfPortOpen(port = 4572)
+@EnabledIfPortOpen(port = 4566)
 @Tag("AmazonWebServices")
 @Getter
 public class AmazonS3ServiceRegistryTests extends AbstractServiceRegistryTests {

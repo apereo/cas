@@ -42,14 +42,14 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.spring.cloud.aws.s3.credential-access-key=" + AmazonS3BucketsCloudConfigBootstrapConfigurationTests.CREDENTIAL_ACCESS_KEY,
     "cas.spring.cloud.aws.s3.credential-secret-key=" + AmazonS3BucketsCloudConfigBootstrapConfigurationTests.CREDENTIAL_SECRET_KEY
 })
-@EnabledIfPortOpen(port = 4572)
+@EnabledIfPortOpen(port = 4566)
 @Tag("AmazonWebServices")
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AmazonS3BucketsCloudConfigBootstrapConfigurationTests {
     static final String BUCKET_NAME = "config-bucket";
 
-    static final String ENDPOINT = "http://localhost:4572";
+    static final String ENDPOINT = "http://localhost:4566";
 
     static final String CREDENTIAL_SECRET_KEY = "test";
 
