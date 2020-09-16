@@ -1,7 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,15 +21,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@TestPropertySource(properties = {
-    "cas.sso.allow-missing-service-parameter=false",
-    "cas.authn.policy.source-selection-enabled=true",
-    "cas.authn.accept.users=casuser::Mellon"
-})
+@TestPropertySource(properties = "cas.sso.allow-missing-service-parameter=false")
 @Tag("WebflowActions")
-public class InitialFlowSetupSsoActionTests extends AbstractWebflowActionsTests {
+public class InitializeLoginActionTests extends AbstractWebflowActionsTests {
     @Autowired
-    @Qualifier("initialFlowSetupAction")
+    @Qualifier("initializeLoginAction")
     private Action action;
 
     @Test
@@ -41,6 +35,5 @@ public class InitialFlowSetupSsoActionTests extends AbstractWebflowActionsTests 
         request.setMethod(HttpMethod.POST.name());
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         assertThrows(NoSuchFlowExecutionException.class, () -> this.action.execute(context));
-        assertEquals(1, WebUtils.getAvailableAuthenticationHandleNames(context).size());
     }
 }
