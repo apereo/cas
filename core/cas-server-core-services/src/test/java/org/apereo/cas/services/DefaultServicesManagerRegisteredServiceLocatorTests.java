@@ -16,6 +16,7 @@ import org.springframework.core.Ordered;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultServicesManagerRegisteredServiceLocatorTests}.
@@ -34,6 +35,15 @@ public class DefaultServicesManagerRegisteredServiceLocatorTests {
     @Autowired
     @Qualifier("defaultServicesManagerRegisteredServiceLocator")
     private ServicesManagerRegisteredServiceLocator defaultServicesManagerRegisteredServiceLocator;
+
+    @Test
+    public void verifyDefaultOperation() {
+        val input = mock(ServicesManagerRegisteredServiceLocator.class);
+        when(input.getOrder()).thenCallRealMethod();
+        when(input.getName()).thenCallRealMethod();
+        assertEquals(Ordered.LOWEST_PRECEDENCE, input.getOrder());
+        assertNotNull(input.getName());
+    }
 
     @Test
     public void verifyOperation() {
