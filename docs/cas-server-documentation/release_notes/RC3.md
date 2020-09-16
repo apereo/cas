@@ -91,6 +91,7 @@ in case the metadata is behind a proxy.
 - Apache Tomcat
 - Spring
 - Spring Boot
+- Spring Data
 - JGit
 - Spring Security
 - Spring Cloud
