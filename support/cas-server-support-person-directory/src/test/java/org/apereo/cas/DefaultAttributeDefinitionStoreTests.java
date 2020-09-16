@@ -115,6 +115,18 @@ public class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
+    public void verifyPredicateAttributeDefinitions() {
+        val store = new DefaultAttributeDefinitionStore();
+        store.setScope("example.org");
+        val defn = DefaultAttributeDefinition.builder()
+            .key("cn")
+            .scoped(true)
+            .build();
+        store.registerAttributeDefinition(defn);
+        assertTrue(store.locateAttributeDefinition(attributeDefinition -> attributeDefinition.equals(defn)).isPresent());
+    }
+
+    @Test
     public void verifyMismatchedKeyReturnAll() {
         val person = attributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
         assertNotNull(person);

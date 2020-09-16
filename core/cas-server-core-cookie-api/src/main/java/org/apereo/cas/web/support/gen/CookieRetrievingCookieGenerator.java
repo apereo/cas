@@ -5,6 +5,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.cookie.CookieValueManager;
+import org.apereo.cas.web.support.InvalidCookieException;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 
@@ -145,6 +146,9 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     @Override
     public String retrieveCookieValue(final HttpServletRequest request) {
         try {
+            if (StringUtils.isBlank(getCookieName())) {
+                throw new InvalidCookieException("Cookie name is undefined");
+            }
             var cookie = org.springframework.web.util.WebUtils.getCookie(request, Objects.requireNonNull(getCookieName()));
             if (cookie == null) {
                 val cookieValue = request.getHeader(getCookieName());

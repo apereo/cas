@@ -56,6 +56,21 @@ public class DefaultCasCookieValueManagerTests {
     }
 
     @Test
+    public void verifySessionPinning() {
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr(CLIENT_IP);
+        request.setLocalAddr(CLIENT_IP);
+        request.removeHeader("User-Agent");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+
+        val props = new TicketGrantingCookieProperties();
+        assertThrows(IllegalStateException.class,
+            () -> new DefaultCasCookieValueManager(CipherExecutor.noOp(), props).buildCookieValue(VALUE, request));
+        props.setPinToSession(false);
+        assertNotNull(new DefaultCasCookieValueManager(CipherExecutor.noOp(), props).buildCookieValue(VALUE, request));
+    }
+
+    @Test
     public void verifyEncodeAndDecodeCookie() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr(CLIENT_IP);
