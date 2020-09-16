@@ -43,9 +43,9 @@ import static org.junit.jupiter.api.Assertions.*;
     CloudDirectoryAuthenticationConfiguration.class
 },
     properties = {
-        "cas.authn.cloudDirectory.usernameAttributeName=username",
-        "cas.authn.cloudDirectory.passwordAttributeName=password",
-        "cas.authn.cloudDirectory.endpoint=http://127.0.0.1:1234"
+        "cas.authn.cloud-directory.username-attribute-name=username",
+        "cas.authn.cloud-directory.password-attribute-name=password",
+        "cas.authn.cloud-directory.endpoint=http://127.0.0.1:1234"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("AmazonWebServices")
