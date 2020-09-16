@@ -10,6 +10,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -23,6 +24,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link RegexRegisteredService}.
@@ -114,6 +116,23 @@ public class RegexRegisteredServiceTests {
         service.setMatchingStrategy(null);
         service.setServiceId("\\d\\d\\d");
         assertFalse(service.matches("https://google123.com"));
+    }
+
+    @Test
+    public void verifyDefaults() {
+        val service = mock(RegisteredService.class);
+        when(service.getDescription()).thenCallRealMethod();
+        when(service.getFriendlyName()).thenCallRealMethod();
+        doCallRealMethod().when(service).initialize();
+
+        assertNotNull(service.getDescription());
+        assertNotNull(service.getFriendlyName());
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                service.initialize();
+            }
+        });
     }
 
     private static RegexRegisteredService newService(final String id) {

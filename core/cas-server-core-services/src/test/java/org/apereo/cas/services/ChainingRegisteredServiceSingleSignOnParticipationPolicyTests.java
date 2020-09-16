@@ -23,6 +23,17 @@ import static org.mockito.Mockito.*;
  */
 @Tag("RegisteredService")
 public class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
+
+    @Test
+    public void verifyOperation() {
+        val input = mock(RegisteredServiceSingleSignOnParticipationPolicy.class);
+        when(input.getOrder()).thenCallRealMethod();
+        when(input.isCreateCookieOnRenewedAuthentication()).thenCallRealMethod();
+        assertEquals(0, input.getOrder());
+        assertEquals(TriStateBoolean.UNDEFINED, input.isCreateCookieOnRenewedAuthentication());
+    }
+
+    
     @Test
     public void verifySsoParticipationByAuthenticationDateFails() {
         val authn = mock(Authentication.class);
