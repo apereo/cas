@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseCasGoogleAnalyticsTests.SharedTestConfiguration.class,
     properties = {
         "cas.google-analytics.cookie.name=CasGoogleCookie",
-        "cas.google-analytics.cookie.sameSitePolicy=strict",
+        "cas.google-analytics.cookie.same-site-policy=strict",
         "cas.tgc.cookie.same-site-policy=lax"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
