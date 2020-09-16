@@ -102,7 +102,7 @@ public class GraphicalUserAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public Action initializeLoginAction() {
-        return new PrepareForGraphicalAuthenticationAction(servicesManager.getObject());
+        return new PrepareForGraphicalAuthenticationAction(servicesManager.getObject(), casProperties);
     }
 
     @Bean
