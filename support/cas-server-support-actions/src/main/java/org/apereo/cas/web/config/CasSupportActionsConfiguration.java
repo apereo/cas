@@ -224,7 +224,7 @@ public class CasSupportActionsConfiguration {
     @Bean
     @RefreshScope
     public Action initializeLoginAction() {
-        return new InitializeLoginAction(servicesManager.getObject());
+        return new InitializeLoginAction(servicesManager.getObject(), casProperties);
     }
 
     @RefreshScope
