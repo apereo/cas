@@ -8,7 +8,6 @@ import org.apereo.cas.web.flow.GatewayServicesManagementCheckActionTests;
 import org.apereo.cas.web.flow.GenerateServiceTicketActionTests;
 import org.apereo.cas.web.flow.GenericSuccessViewActionTests;
 import org.apereo.cas.web.flow.InitialFlowSetupActionCookieTests;
-import org.apereo.cas.web.flow.InitialFlowSetupActionSsoTests;
 import org.apereo.cas.web.flow.InitialFlowSetupActionTests;
 import org.apereo.cas.web.flow.LogoutActionTests;
 import org.apereo.cas.web.flow.SendTicketGrantingTicketActionSsoTests;
@@ -40,7 +39,6 @@ import org.junit.runner.RunWith;
     InitialFlowSetupActionTests.class,
     LogoutActionTests.class,
     FlowExecutionExceptionResolverTests.class,
-    InitialFlowSetupActionSsoTests.class,
     InitialFlowSetupActionCookieTests.class,
     SendTicketGrantingTicketActionTests.class,
     SendTicketGrantingTicketActionSsoTests.class,
