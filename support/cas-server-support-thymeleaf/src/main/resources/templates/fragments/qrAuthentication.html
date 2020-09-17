@@ -12,6 +12,9 @@
 <main role="main" class="container mt-3 mb-3">
     <div th:fragment="qrAuthentication" th:remove="tag">
 
+        <script type="text/javascript" th:src="@{#{webjars.socket.js}}"></script>
+        <script type="text/javascript" th:src="@{#{webjars.stomp.js}}"></script>
+
         <div class="card bg-light">
             <div class="card-body pb-4">
                 <div class="card-title">
@@ -20,7 +23,8 @@
                             <i class="mdi mdi-qrcode-scan"></i>
                             <span>Login with QR Code</span>
                         </h3>
-                        <p>Scan the QR code with your mobile device to begin the login flow. If your credentials are accepted, you will automatically proceed to the next step.</p>
+                        <p>Scan the QR code with your mobile device to begin the login flow. If your credentials
+                            are accepted, you will automatically proceed to the next step.</p>
                     </div>
                 </div>
                 <div class="card-text">
@@ -30,6 +34,35 @@
                 </div>
             </div>
         </div>
+
+
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            var endpoint = /*[[@{/qr-websocket}]]*/  ;
+            /*]]>*/
+        </script>
+        
+        <script>
+            var stompClient = null;
+            $(function () {
+                var socket = new SockJS(endpoint);
+                stompClient = Stomp.over(socket);
+                stompClient.connect({}, function (frame) {
+                    stompClient.subscribe('/qrtopic/verify', function (result) {
+                        let body = JSON.parse(result.body);
+                        if (body.success) {
+                            stompClient.disconnect();
+                        }
+                    });
+                });
+            });
+        </script>
+
+        <form method="post" id="submitForm" th:action="@{/login}">
+            <input type="hidden" id="eventId" name="_eventId" value="submit"/>
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+        </form>
+        
     </div>
 </main>
 </body>

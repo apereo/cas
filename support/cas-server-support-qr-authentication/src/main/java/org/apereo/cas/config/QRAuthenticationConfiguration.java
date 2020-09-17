@@ -15,6 +15,11 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -25,8 +30,9 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @since 6.3.0
  */
 @Configuration("QRAuthenticationConfiguration")
+@EnableWebSocketMessageBroker
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class QRAuthenticationConfiguration {
+public class QRAuthenticationConfiguration implements WebSocketMessageBrokerConfigurer {
     @Autowired
     @Qualifier("loginFlowRegistry")
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
@@ -58,6 +64,20 @@ public class QRAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "qrAuthenticationCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer qrAuthenticationCasWebflowExecutionPlanConfigurer() {
         return plan -> plan.registerWebflowConfigurer(qrAuthenticationWebflowConfigurer());
+    }
+
+    @Override
+    public void configureMessageBroker(final MessageBrokerRegistry config) {
+        config.enableSimpleBroker("/qrtopic");
+        config.setApplicationDestinationPrefixes("/qr");
+    }
+
+    @Override
+    public void registerStompEndpoints(final StompEndpointRegistry registry) {
+        registry.addEndpoint("/qr-websocket")
+            .setAllowedOrigins("*")
+            .addInterceptors(new HttpSessionHandshakeInterceptor())
+            .withSockJS();
     }
 }
 
