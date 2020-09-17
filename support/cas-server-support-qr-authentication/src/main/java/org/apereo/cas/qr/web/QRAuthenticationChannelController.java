@@ -41,7 +41,9 @@ public class QRAuthenticationChannelController {
     @MessageMapping("/accept")
     public void verify(final Message<String> message) {
         LOGGER.debug("Received message [{}]", message.getPayload());
-        val channelId = message.getHeaders().get("nativeHeaders", LinkedMultiValueMap.class).get("QR_AUTHENTICATION_CHANNEL_ID").get(0);
+        val channelId = message.getHeaders()
+            .get("nativeHeaders", LinkedMultiValueMap.class)
+            .get("QR_AUTHENTICATION_CHANNEL_ID").get(0);
         val outcome = QRAuthenticationResult.builder().build();
         messageTemplate.convertAndSend(String.format("/%s/verify", channelId), outcome);
     }
