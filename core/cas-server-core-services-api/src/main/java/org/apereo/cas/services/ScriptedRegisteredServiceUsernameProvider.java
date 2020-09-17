@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
@@ -38,16 +37,13 @@ public class ScriptedRegisteredServiceUsernameProvider extends BaseRegisteredSer
 
     @Override
     protected String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
-        try {
-            LOGGER.debug("Found groovy script to execute");
-            var args = new Object[]{principal.getAttributes(), principal.getId(), LOGGER};
-            val result = ScriptingUtils.executeScriptEngine(SpringExpressionLanguageValueResolver.getInstance().resolve(this.script), args, Object.class);
-            if (result != null) {
-                LOGGER.debug("Found username [{}] from script [{}]", result, this.script);
-                return result.toString();
-            }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+        LOGGER.trace("Found groovy script [{}] to execute", this.script);
+        val args = new Object[]{principal.getAttributes(), principal.getId(), LOGGER};
+        val result = ScriptingUtils.executeScriptEngine(
+            SpringExpressionLanguageValueResolver.getInstance().resolve(this.script), args, Object.class);
+        if (result != null) {
+            LOGGER.debug("Found username [{}] from script [{}]", result, this.script);
+            return result.toString();
         }
         LOGGER.warn("Script [{}] returned no value for username attribute. Fallback to default [{}]", this.script, principal.getId());
         return principal.getId();

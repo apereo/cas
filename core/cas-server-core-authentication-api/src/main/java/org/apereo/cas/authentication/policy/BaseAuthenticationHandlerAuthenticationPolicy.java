@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -27,33 +29,34 @@ import java.util.Set;
  */
 @Slf4j
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@NoArgsConstructor(force = true)
+@NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = true)
 @Setter
 @Getter
-@AllArgsConstructor
-public class RequiredHandlerAuthenticationPolicy extends BaseAuthenticationPolicy {
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends BaseAuthenticationPolicy {
 
     private static final long serialVersionUID = -3871692225877293627L;
 
     /**
      * Authentication handler name that is required to satisfy policy.
      */
-    private Set<String> requiredHandlerNames;
+    private Set<String> handlerNames;
 
     /**
      * Flag to try all credentials before policy is satisfied.
      */
     private boolean tryAll;
-
-    public RequiredHandlerAuthenticationPolicy(final String requiredHandlerNames) {
-        this(org.springframework.util.StringUtils.commaDelimitedListToSet(requiredHandlerNames), false);
+    
+    protected BaseAuthenticationHandlerAuthenticationPolicy(final String requiredHandlerNames) {
+        this(StringUtils.commaDelimitedListToSet(requiredHandlerNames), false);
     }
 
     @Override
-    public boolean isSatisfiedBy(final Authentication authn, final Set<AuthenticationHandler> authenticationHandlers,
-                                 final ConfigurableApplicationContext applicationContext,
-                                 final Optional<Serializable> assertion) {
+    public boolean isSatisfiedBy(final Authentication authn,
+        final Set<AuthenticationHandler> authenticationHandlers,
+        final ConfigurableApplicationContext applicationContext,
+        final Optional<Serializable> assertion) {
         var credsOk = true;
         val sum = authn.getSuccesses().size() + authn.getFailures().size();
         if (this.tryAll) {
@@ -66,21 +69,14 @@ public class RequiredHandlerAuthenticationPolicy extends BaseAuthenticationPolic
             return false;
         }
 
-        LOGGER.debug("Examining authentication successes for authentication handler [{}]", this.requiredHandlerNames);
-        if (!requiredHandlerNames.isEmpty()) {
-            credsOk = authn.getSuccesses()
-                .keySet()
-                .stream()
-                .anyMatch(s -> requiredHandlerNames.contains(s));
-
-            if (!credsOk) {
-                LOGGER.warn("Required authentication handler [{}] is not present in the list of recorded successful authentications",
-                    this.requiredHandlerNames);
-                return false;
-            }
-        }
-
-        LOGGER.trace("Authentication policy is satisfied");
-        return true;
+        return isSatisfiedByInternal(authn);
     }
+
+    /**
+     * Is satisfied by internal checks.
+     *
+     * @param authn the authn
+     * @return the boolean
+     */
+    abstract boolean isSatisfiedByInternal(Authentication authn);
 }

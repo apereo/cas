@@ -90,7 +90,8 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
     }
 
     @Override
-    public List<MessageDescriptor> handle(final AuthenticationResponse response, final PasswordPolicyContext configuration) throws LoginException {
+    public List<MessageDescriptor> handle(final AuthenticationResponse response,
+        final PasswordPolicyContext configuration) throws LoginException {
         LOGGER.debug("Attempting to handle LDAP account state for [{}]", response);
         if (!this.attributesToErrorMap.isEmpty() && response.isSuccess()) {
             LOGGER.debug("Handling policy based on pre-defined attributes");

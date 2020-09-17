@@ -36,11 +36,11 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.spring.cloud.aws.ssm.credential-secret-key=" + AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests.CREDENTIAL_SECRET_KEY
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnabledIfPortOpen(port = 4583)
+@EnabledIfPortOpen(port = 4566)
 @Tag("AmazonWebServices")
 @ActiveProfiles("example")
 public class AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests {
-    static final String ENDPOINT = "http://localhost:4583";
+    static final String ENDPOINT = "http://localhost:4566";
 
     static final String CREDENTIAL_SECRET_KEY = "test";
 

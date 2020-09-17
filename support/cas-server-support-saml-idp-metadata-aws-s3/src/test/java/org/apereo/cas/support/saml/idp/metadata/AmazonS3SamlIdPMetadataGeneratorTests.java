@@ -31,13 +31,13 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseSamlIdPMetadataTests.SharedTestConfiguration.class
 }, properties = {
     "cas.authn.saml-idp.metadata.amazon-s3.idp-metadata-bucket-name=thebucket",
-    "cas.authn.saml-idp.metadata.amazon-s3.endpoint=http://127.0.0.1:4572",
+    "cas.authn.saml-idp.metadata.amazon-s3.endpoint=http://127.0.0.1:4566",
     "cas.authn.saml-idp.metadata.amazon-s3.credential-access-key=test",
     "cas.authn.saml-idp.metadata.amazon-s3.credential-secret-key=test",
     "cas.authn.saml-idp.metadata.amazon-s3.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
     "cas.authn.saml-idp.metadata.amazon-s3.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
 })
-@EnabledIfPortOpen(port = 4572)
+@EnabledIfPortOpen(port = 4566)
 @Tag("AmazonWebServices")
 public class AmazonS3SamlIdPMetadataGeneratorTests {
     @Autowired

@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -21,7 +23,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.junit.jupiter.params.provider.Arguments.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link RegexRegisteredService}.
@@ -47,50 +50,50 @@ public class RegexRegisteredServiceTests {
                 newService(domainCatchallHttp),
                 "https://service.vt.edu/webapp?a=1",
                 true
-            ),
+                     ),
             arguments(
                 newService(domainCatchallHttp),
                 "http://test-01.service.vt.edu/webapp?a=1",
                 true
-            ),
+                     ),
             arguments(
                 newService(domainCatchallHttp),
                 "https://thepiratebay.se?service.vt.edu/webapp?a=1",
                 false
-            ),
+                     ),
             arguments(
                 newService(domainCatchallHttpImap),
                 "http://test_service.vt.edu/login",
                 true
-            ),
+                     ),
             arguments(
                 newService(domainCatchallHttpImap),
                 "imaps://imap-server-01.vt.edu/",
                 true
-            ),
+                     ),
             arguments(
                 newService(globalCatchallHttpImap),
                 "https://host-01.example.com/",
                 true
-            ),
+                     ),
             arguments(
                 newService(globalCatchallHttpImap),
                 "imap://host-02.example.edu/",
                 true
-            ),
+                     ),
             arguments(
                 newService(globalCatchallHttpImap),
                 null,
                 false
-            )
-        );
+                     )
+                        );
     }
 
     @ParameterizedTest
     @MethodSource("getParameters")
     public void verifyMatches(final RegexRegisteredService service,
-                              final String serviceToMatch,
-                              final boolean expectedResult) {
+        final String serviceToMatch,
+        final boolean expectedResult) {
         val testService = Optional.ofNullable(serviceToMatch).map(RegisteredServiceTestUtils::getService).orElse(null);
         assertEquals(expectedResult, service.matches(testService));
     }
@@ -98,13 +101,38 @@ public class RegexRegisteredServiceTests {
     @ParameterizedTest
     @MethodSource("getParameters")
     public void verifySerialization(final RegexRegisteredService service,
-                                    final String serviceToMatch,
-                                    final boolean expectedResult) throws IOException {
+        final String serviceToMatch,
+        final boolean expectedResult) throws IOException {
         MAPPER.writeValue(JSON_FILE, service);
         val serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);
         assertEquals(service, serviceRead);
         val testService = Optional.ofNullable(serviceToMatch).map(RegisteredServiceTestUtils::getService).orElse(null);
         assertEquals(expectedResult, serviceRead.matches(testService));
+    }
+
+    @Test
+    public void verifyDefaultMatchingStrategy() {
+        val service = new RegexRegisteredService();
+        service.setMatchingStrategy(null);
+        service.setServiceId("\\d\\d\\d");
+        assertFalse(service.matches("https://google123.com"));
+    }
+
+    @Test
+    public void verifyDefaults() {
+        val service = mock(RegisteredService.class);
+        when(service.getDescription()).thenCallRealMethod();
+        when(service.getFriendlyName()).thenCallRealMethod();
+        doCallRealMethod().when(service).initialize();
+
+        assertNotNull(service.getDescription());
+        assertNotNull(service.getFriendlyName());
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                service.initialize();
+            }
+        });
     }
 
     private static RegexRegisteredService newService(final String id) {

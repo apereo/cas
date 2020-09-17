@@ -54,6 +54,9 @@ public class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends Base
     @Test
     public void verifySave() {
         val id = UUID.randomUUID().toString();
+        assertNull(registry.get(654321));
+        assertNull(registry.get(id, 654321));
+
         var toSave = OneTimeTokenAccount.builder()
             .username(id)
             .secretKey("secret")

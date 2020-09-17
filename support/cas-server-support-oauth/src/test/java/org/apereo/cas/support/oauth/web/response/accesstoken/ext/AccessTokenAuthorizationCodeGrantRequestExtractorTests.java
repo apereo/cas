@@ -45,25 +45,6 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
     }
 
     @Test
-    public void verifyBadClientId() {
-        val request = new MockHttpServletRequest();
-        request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
-        request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
-
-        val service = getRegisteredService(REDIRECT_URI, CLIENT_ID, CLIENT_SECRET);
-        servicesManager.save(service);
-
-        val principal = RegisteredServiceTestUtils.getPrincipal();
-        val code = addCode(principal, service);
-        request.addParameter(OAuth20Constants.CODE, code.getId());
-        request.addParameter(OAuth20Constants.CLIENT_ID, "xyz");
-
-        val response = new MockHttpServletResponse();
-        val extractor = new AccessTokenAuthorizationCodeGrantRequestExtractor(oauth20ConfigurationContext);
-        assertThrows(InvalidTicketException.class, () -> extractor.extract(request, response));
-    }
-
-    @Test
     public void verifyExtraction() {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);

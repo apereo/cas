@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.AuthenticationPolicy;
-import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.RequiredAuthenticationHandlerAuthenticationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -29,6 +29,6 @@ public class AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyC
     @Override
     public AuthenticationPolicy toAuthenticationPolicy(final RegisteredService registeredService) {
         val handlers = registeredService.getAuthenticationPolicy().getRequiredAuthenticationHandlers();
-        return new RequiredHandlerAuthenticationPolicy(handlers, false);
+        return new RequiredAuthenticationHandlerAuthenticationPolicy(handlers, false);
     }
 }

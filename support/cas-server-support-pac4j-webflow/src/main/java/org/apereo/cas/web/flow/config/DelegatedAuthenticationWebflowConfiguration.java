@@ -5,7 +5,6 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -13,7 +12,6 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.DefaultDelegatedAuthenticationNavigationController;
-import org.apereo.cas.web.DelegatedAuthenticationWebApplicationServiceFactory;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -51,7 +49,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -245,19 +242,5 @@ public class DelegatedAuthenticationWebflowConfiguration {
             delegatedClientDistributedSessionStore.getObject(),
             helper,
             casProperties);
-    }
-
-    @Bean
-    @RefreshScope
-    public ServiceFactoryConfigurer delegatedClientServiceFactoryConfigurer() {
-        return () -> {
-            if (!casProperties.getSso().isAllowMissingServiceParameter()) {
-                return CollectionUtils.wrap(
-                    new DelegatedAuthenticationWebApplicationServiceFactory(builtClients.getObject(),
-                        delegatedClientWebflowManager(),
-                        delegatedClientDistributedSessionStore.getObject()));
-            }
-            return new ArrayList<>(0);
-        };
     }
 }

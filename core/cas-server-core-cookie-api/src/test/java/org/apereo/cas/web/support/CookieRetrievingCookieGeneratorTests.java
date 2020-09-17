@@ -7,8 +7,10 @@ import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockCookie;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -26,17 +28,35 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 public class CookieRetrievingCookieGeneratorTests {
 
-    private static CookieGenerationContext getCookieGenerationContext() {
-        return CookieGenerationContext.builder()
-            .name("cas")
-            .path("/")
-            .maxAge(1000)
-            .comment("CAS Cookie")
-            .domain("example.org")
-            .secure(true)
-            .httpOnly(true)
-            .build();
+    @Test
+    public void verifyCookieValueMissing() {
+        val context = getCookieGenerationContext();
+        context.setName(StringUtils.EMPTY);
+
+        val gen = new CookieRetrievingCookieGenerator(context);
+        val request = new MockHttpServletRequest();
+        request.addHeader(context.getName(), "CAS-Cookie-Value");
+        val cookie = gen.retrieveCookieValue(request);
+        assertNull(cookie);
     }
+
+    @Test
+    public void verifyCookieSameSiteLax() {
+        val ctx = getCookieGenerationContext();
+        ctx.setSameSitePolicy("lax");
+
+        val gen = new CookieRetrievingCookieGenerator(ctx);
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        gen.addCookie(request, response, false, "CAS-Cookie-Value");
+        val cookie = (MockCookie) response.getCookie(ctx.getName());
+        assertNotNull(cookie);
+        assertEquals("Lax", cookie.getSameSite());
+    }
+
 
     @Test
     public void verifyCookieValueByHeader() {
@@ -84,5 +104,17 @@ public class CookieRetrievingCookieGeneratorTests {
         val cookie = response.getCookie(ctx.getName());
         assertNotNull(cookie);
         assertEquals(ctx.getRememberMeMaxAge(), cookie.getMaxAge());
+    }
+
+    private static CookieGenerationContext getCookieGenerationContext() {
+        return CookieGenerationContext.builder()
+            .name("cas")
+            .path("/")
+            .maxAge(1000)
+            .comment("CAS Cookie")
+            .domain("example.org")
+            .secure(true)
+            .httpOnly(true)
+            .build();
     }
 }

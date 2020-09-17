@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Tickets")
+@SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class)
 public class DefaultTicketRegistrySupportTests {
 
     @Test

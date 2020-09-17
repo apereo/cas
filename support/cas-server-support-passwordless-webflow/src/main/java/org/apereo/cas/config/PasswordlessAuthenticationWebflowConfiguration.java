@@ -162,7 +162,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
 
     @Bean
     public Action initializeLoginAction() {
-        return new PrepareForPasswordlessAuthenticationAction(servicesManager.getObject());
+        return new PrepareForPasswordlessAuthenticationAction(servicesManager.getObject(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "passwordlessAuthenticationWebflowConfigurer")

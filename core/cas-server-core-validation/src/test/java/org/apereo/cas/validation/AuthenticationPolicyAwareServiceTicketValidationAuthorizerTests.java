@@ -13,7 +13,8 @@ import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordA
 import org.apereo.cas.authentication.policy.AllAuthenticationHandlersSucceededAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
-import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.ExcludedAuthenticationHandlerAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.RequiredAuthenticationHandlerAuthenticationPolicy;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -35,6 +36,7 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceException;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -93,32 +95,6 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
-    private static Assertion getAssertion(final Map<Credential, ? extends AuthenticationHandler> handlers) {
-        val assertion = mock(Assertion.class);
-        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
-        val authentication = CoreAuthenticationTestUtils.getAuthenticationBuilder(principal, handlers,
-            Map.of(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS,
-                handlers.values().stream().map(AuthenticationHandler::getName).collect(Collectors.toList()))).build();
-        when(assertion.getPrimaryAuthentication()).thenReturn(authentication);
-        return assertion;
-    }
-
-    private static SimpleTestUsernamePasswordAuthenticationHandler getSimpleTestAuthenticationHandler() {
-        return new SimpleTestUsernamePasswordAuthenticationHandler();
-    }
-
-    private static AcceptUsersAuthenticationHandler getAcceptUsersAuthenticationHandler() {
-        return new AcceptUsersAuthenticationHandler(Map.of("casuser", "Mellon"));
-    }
-
-    private static OneTimePasswordCredential getOtpCredential() {
-        return new OneTimePasswordCredential("test", "123456789");
-    }
-
-    private static TestOneTimePasswordAuthenticationHandler getTestOtpAuthenticationHandler() {
-        return new TestOneTimePasswordAuthenticationHandler(Map.of("casuser", "123456789"));
-    }
-
     @Test
     public void verifyAllAuthenticationHandlersSucceededAuthenticationPolicy() {
         val handlers = List.of(getTestOtpAuthenticationHandler(), getAcceptUsersAuthenticationHandler(), getSimpleTestAuthenticationHandler());
@@ -158,7 +134,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
         val handler = getAcceptUsersAuthenticationHandler();
         val handlers = List.of(getTestOtpAuthenticationHandler(), handler, getSimpleTestAuthenticationHandler());
         val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
-        val authz = getAuthorizer(new RequiredHandlerAuthenticationPolicy(handler.getName()), handlers);
+        val authz = getAuthorizer(new RequiredAuthenticationHandlerAuthenticationPolicy(handler.getName()), handlers);
         val map = (Map) Map.of(
             new UsernamePasswordCredential(), handler,
             getOtpCredential(), getTestOtpAuthenticationHandler());
@@ -176,7 +152,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
         val handler = getAcceptUsersAuthenticationHandler();
         val handlers = List.of(getTestOtpAuthenticationHandler(), handler, getSimpleTestAuthenticationHandler());
         val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
-        val authz = getAuthorizer(new RequiredHandlerAuthenticationPolicy(Set.of(handler.getName()), true), handlers);
+        val authz = getAuthorizer(new RequiredAuthenticationHandlerAuthenticationPolicy(Set.of(handler.getName()), true), handlers);
         val map = (Map) Map.of(
             new UsernamePasswordCredential(), handler,
             getOtpCredential(), getTestOtpAuthenticationHandler());
@@ -223,11 +199,51 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
         });
     }
 
+    @Test
+    public void verifyOperationWithExcludedHandlers() {
+        val h1 = getTestOtpAuthenticationHandler();
+        val h2 = getSimpleTestAuthenticationHandler();
+        val handlers = List.of(h1, getAcceptUsersAuthenticationHandler(), h2);
+        val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
+        val authz = getAuthorizer(new ExcludedAuthenticationHandlerAuthenticationPolicy(Set.of(h1.getName(), h2.getName()), false), handlers);
+        val map = (Map) Map.of(
+            new UsernamePasswordCredential(), getAcceptUsersAuthenticationHandler(),
+            getOtpCredential(), h1);
+        val assertion = getAssertion(map);
+        assertThrows(UnauthorizedServiceException.class, () -> authz.authorize(new MockHttpServletRequest(), service, assertion));
+    }
+
     private ServiceTicketValidationAuthorizer getAuthorizer(final AuthenticationPolicy policy,
-                                                            final List<? extends AuthenticationHandler> authenticationHandlers) {
+        final List<? extends AuthenticationHandler> authenticationHandlers) {
         val plan = new DefaultAuthenticationEventExecutionPlan();
         plan.registerAuthenticationHandlers(authenticationHandlers);
         plan.registerAuthenticationPolicy(policy);
         return new AuthenticationPolicyAwareServiceTicketValidationAuthorizer(servicesManager, plan, applicationContext);
+    }
+
+    private static Assertion getAssertion(final Map<Credential, ? extends AuthenticationHandler> handlers) {
+        val assertion = mock(Assertion.class);
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
+        val authentication = CoreAuthenticationTestUtils.getAuthenticationBuilder(principal, handlers,
+            Map.of(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS,
+                handlers.values().stream().map(AuthenticationHandler::getName).collect(Collectors.toList()))).build();
+        when(assertion.getPrimaryAuthentication()).thenReturn(authentication);
+        return assertion;
+    }
+
+    private static SimpleTestUsernamePasswordAuthenticationHandler getSimpleTestAuthenticationHandler() {
+        return new SimpleTestUsernamePasswordAuthenticationHandler();
+    }
+
+    private static AcceptUsersAuthenticationHandler getAcceptUsersAuthenticationHandler() {
+        return new AcceptUsersAuthenticationHandler(Map.of("casuser", "Mellon"));
+    }
+
+    private static OneTimePasswordCredential getOtpCredential() {
+        return new OneTimePasswordCredential("test", "123456789");
+    }
+
+    private static TestOneTimePasswordAuthenticationHandler getTestOtpAuthenticationHandler() {
+        return new TestOneTimePasswordAuthenticationHandler(Map.of("casuser", "123456789"));
     }
 }
