@@ -69,7 +69,7 @@ import java.util.stream.Collectors;
 public class DefaultDelegatedClientFactory implements DelegatedClientFactory<IndirectClient> {
     private final CasConfigurationProperties casProperties;
     private final Collection<DelegatedClientFactoryCustomizer> customizers;
-    
+
     @SneakyThrows
     private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc, final Class<T> clazz) {
         val cfg = clazz.getDeclaredConstructor().newInstance();
@@ -77,6 +77,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
             cfg.setScope(oidc.getScope());
         }
         cfg.setUseNonce(oidc.isUseNonce());
+        cfg.setDisablePkce(oidc.isDisablePkce());
         cfg.setSecret(oidc.getSecret());
         cfg.setClientId(oidc.getId());
         cfg.setReadTimeout((int) Beans.newDuration(oidc.getReadTimeout()).toMillis());
@@ -482,7 +483,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 }
 
                 val client = new SAML2Client(cfg);
-                
+
                 if (StringUtils.isBlank(saml.getClientName())) {
                     val count = index.intValue();
                     client.setName(client.getClass().getSimpleName() + count);
