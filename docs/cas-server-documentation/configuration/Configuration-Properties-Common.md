@@ -1134,6 +1134,7 @@ to an external OpenID Connect provider such as Azure AD, given the provider's *c
 # ${configurationKey}.max-clock-skew=
 # ${configurationKey}.scope=
 # ${configurationKey}.use-nonce=
+# ${configurationKey}.disable-pkce=
 # ${configurationKey}.preferred-jws-algorithm=
 # ${configurationKey}.response-mode=
 # ${configurationKey}.response-type=
