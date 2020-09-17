@@ -15,6 +15,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -46,9 +47,12 @@ public class QRAuthenticationConfiguration implements WebSocketMessageBrokerConf
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
     @Bean
-    public QRAuthenticationChannelController qrAuthenticationChannelController() {
-        return new QRAuthenticationChannelController();
+    public QRAuthenticationChannelController qrAuthenticationChannelController(
+        @Qualifier("brokerMessagingTemplate")
+        final SimpMessagingTemplate template) {
+        return new QRAuthenticationChannelController(template);
     }
 
     @ConditionalOnMissingBean(name = "qrAuthenticationWebflowConfigurer")
@@ -67,17 +71,17 @@ public class QRAuthenticationConfiguration implements WebSocketMessageBrokerConf
     }
 
     @Override
-    public void configureMessageBroker(final MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/qrtopic");
-        config.setApplicationDestinationPrefixes("/qr");
-    }
-
-    @Override
     public void registerStompEndpoints(final StompEndpointRegistry registry) {
         registry.addEndpoint("/qr-websocket")
             .setAllowedOrigins("*")
             .addInterceptors(new HttpSessionHandshakeInterceptor())
             .withSockJS();
+    }
+
+    @Override
+    public void configureMessageBroker(final MessageBrokerRegistry config) {
+        config.enableSimpleBroker("/qrtopic");
+        config.setApplicationDestinationPrefixes("/qr");
     }
 }
 

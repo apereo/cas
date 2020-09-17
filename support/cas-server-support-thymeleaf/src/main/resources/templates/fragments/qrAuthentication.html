@@ -30,6 +30,7 @@
                 <div class="card-text">
                     <center>
                         <img th:src="@{qr/channel}"/>
+                        <p th:utext="${#session.id}"></p>
                     </center>
                 </div>
             </div>
@@ -39,16 +40,14 @@
         <script th:inline="javascript">
             /*<![CDATA[*/
             var endpoint = /*[[@{/qr-websocket}]]*/  ;
-            /*]]>*/
-        </script>
-        
-        <script>
+            var topic = /*[[${#session.id}]]*/  ;
+
             var stompClient = null;
             $(function () {
                 var socket = new SockJS(endpoint);
                 stompClient = Stomp.over(socket);
                 stompClient.connect({}, function (frame) {
-                    stompClient.subscribe('/qrtopic/verify', function (result) {
+                    stompClient.subscribe('/' + topic + '/verify', function (result) {
                         let body = JSON.parse(result.body);
                         if (body.success) {
                             stompClient.disconnect();
@@ -56,6 +55,8 @@
                     });
                 });
             });
+
+            /*]]>*/
         </script>
 
         <form method="post" id="submitForm" th:action="@{/login}">
