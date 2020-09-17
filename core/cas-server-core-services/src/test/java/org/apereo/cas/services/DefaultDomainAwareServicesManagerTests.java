@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Travis Schmidt
@@ -23,6 +24,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RegisteredService")
 public class DefaultDomainAwareServicesManagerTests extends AbstractServicesManagerTests<DefaultDomainAwareServicesManager> {
     private DefaultDomainAwareServicesManager defaultDomainAwareServicesManager;
+
+    @Test
+    public void verifyOperation() {
+        val input = mock(DomainAwareServicesManager.class);
+        when(input.getDomains()).thenCallRealMethod();
+        assertNotNull(input.getDomains());
+    }
 
     @Test
     public void verifyDeleteEmptyDomains() {

@@ -9,7 +9,7 @@ import org.apereo.cas.web.flow.GenerateServiceTicketActionTests;
 import org.apereo.cas.web.flow.GenericSuccessViewActionTests;
 import org.apereo.cas.web.flow.InitialFlowSetupActionTests;
 import org.apereo.cas.web.flow.InitialFlowSetupCookieActionTests;
-import org.apereo.cas.web.flow.InitialFlowSetupSsoActionTests;
+import org.apereo.cas.web.flow.InitializeLoginActionTests;
 import org.apereo.cas.web.flow.LogoutActionTests;
 import org.apereo.cas.web.flow.RedirectUnauthorizedServiceUrlActionTests;
 import org.apereo.cas.web.flow.RenderLoginActionTests;
@@ -46,7 +46,7 @@ import org.junit.runner.RunWith;
     RedirectUnauthorizedServiceUrlActionTests.class,
     RenderLoginActionTests.class,
     FlowExecutionExceptionResolverTests.class,
-    InitialFlowSetupSsoActionTests.class,
+    InitializeLoginActionTests.class,
     InitialFlowSetupCookieActionTests.class,
     SendTicketGrantingTicketActionTests.class,
     SendTicketGrantingTicketSsoActionTests.class,

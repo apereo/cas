@@ -9,7 +9,7 @@ import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticatio
 import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
-import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.RequiredAuthenticationHandlerAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -334,9 +334,9 @@ public class CoreAuthenticationUtils {
      */
     public static Collection<AuthenticationPolicy> newAuthenticationPolicy(final AuthenticationPolicyProperties policyProps) {
         if (policyProps.getReq().isEnabled()) {
-            LOGGER.trace("Activating authentication policy [{}]", RequiredHandlerAuthenticationPolicy.class.getSimpleName());
+            LOGGER.trace("Activating authentication policy [{}]", RequiredAuthenticationHandlerAuthenticationPolicy.class.getSimpleName());
             val requiredHandlerNames = org.springframework.util.StringUtils.commaDelimitedListToSet(policyProps.getReq().getHandlerName());
-            var policy = new RequiredHandlerAuthenticationPolicy(requiredHandlerNames, policyProps.getReq().isTryAll());
+            var policy = new RequiredAuthenticationHandlerAuthenticationPolicy(requiredHandlerNames, policyProps.getReq().isTryAll());
             return CollectionUtils.wrapList(policy);
         }
 

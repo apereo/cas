@@ -2,10 +2,8 @@ package org.apereo.cas.gauth.token;
 
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
-import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -20,7 +18,6 @@ import java.time.ZoneId;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenRepository {
     private final MongoOperations mongoTemplate;
@@ -42,81 +39,53 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
     }
 
     @Override
-    public void removeAll() {
-        try {
-            val query = new Query();
-            query.addCriteria(Criteria.where("userId").exists(true));
-            this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-        }
-    }
-
-    @Override
     public void remove(final String uid, final Integer otp) {
-        try {
-            val query = new Query();
-            query.addCriteria(Criteria.where("userId").is(uid).and("token").is(otp));
-            this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-        }
+        val query = new Query();
+        query.addCriteria(Criteria.where("userId").is(uid).and("token").is(otp));
+        this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
     }
 
     @Override
     public void remove(final String uid) {
-        try {
-            val query = new Query();
-            query.addCriteria(Criteria.where("userId").is(uid));
-            this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-        }
+        val query = new Query();
+        query.addCriteria(Criteria.where("userId").is(uid));
+        this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
     }
 
     @Override
     public void remove(final Integer otp) {
-        try {
-            val query = new Query();
-            query.addCriteria(Criteria.where("token").is(otp));
-            this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-        }
+        val query = new Query();
+        query.addCriteria(Criteria.where("token").is(otp));
+        this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
+    }
+
+    @Override
+    public void removeAll() {
+        val query = new Query();
+        query.addCriteria(Criteria.where("userId").exists(true));
+        this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
     }
 
     @Override
     public long count(final String uid) {
-        try {
-            val query = new Query();
-            query.addCriteria(Criteria.where("userId").is(uid));
-            return this.mongoTemplate.count(query, GoogleAuthenticatorToken.class, this.collectionName);
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-        }
-        return 0;
+        val query = new Query();
+        query.addCriteria(Criteria.where("userId").is(uid));
+        return this.mongoTemplate.count(query, GoogleAuthenticatorToken.class, this.collectionName);
     }
 
     @Override
     public long count() {
-        try {
-            val query = new Query();
-            query.addCriteria(Criteria.where("userId").exists(true));
-            return this.mongoTemplate.count(query, GoogleAuthenticatorToken.class, this.collectionName);
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-        }
-        return 0;
+        val query = new Query();
+        query.addCriteria(Criteria.where("userId").exists(true));
+        return this.mongoTemplate.count(query, GoogleAuthenticatorToken.class, this.collectionName);
     }
 
     @Override
     protected void cleanInternal() {
-        try {
-            val query = new Query();
-            query.addCriteria(Criteria.where("issuedDateTime").gte(LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(this.expireTokensInSeconds)));
-            this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-        }
+        val query = new Query();
+        query.addCriteria(Criteria.where("issuedDateTime")
+            .gte(LocalDateTime.now(ZoneId.systemDefault())
+                .minusSeconds(this.expireTokensInSeconds)));
+        this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
     }
 }

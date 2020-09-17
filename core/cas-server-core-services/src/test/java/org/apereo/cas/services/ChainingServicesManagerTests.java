@@ -5,10 +5,12 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.core.Ordered;
 
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link ChainingServicesManagerTests}.
@@ -18,6 +20,22 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RegisteredService")
 public class ChainingServicesManagerTests extends AbstractServicesManagerTests<ChainingServicesManager> {
+    @Test
+    public void verifyOperation() {
+        val input = mock(ServicesManager.class);
+        when(input.findServiceBy(anyLong(), any())).thenCallRealMethod();
+        when(input.findServiceByName(anyString(), any())).thenCallRealMethod();
+        when(input.count()).thenCallRealMethod();
+        when(input.getName()).thenCallRealMethod();
+        when(input.getOrder()).thenCallRealMethod();
+        assertEquals(Ordered.LOWEST_PRECEDENCE, input.getOrder());
+        assertEquals(0, input.count());
+        assertNotNull(input.getName());
+
+        assertNull(input.findServiceBy(0, RegexRegisteredService.class));
+        assertNull(input.findServiceBy("name", RegexRegisteredService.class));
+    }
+
     @Test
     public void verifySupports() {
         val r = new RegexRegisteredService();

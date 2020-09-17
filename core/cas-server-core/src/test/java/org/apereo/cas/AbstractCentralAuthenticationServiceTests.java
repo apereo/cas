@@ -15,7 +15,6 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -41,7 +40,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
 
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
+    private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")

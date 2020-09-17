@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolve
 import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
-import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.RequiredAuthenticationHandlerAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
@@ -200,7 +200,7 @@ public class PolicyBasedAuthenticationManagerTests {
         map.put(newMockHandler(HANDLER_B, false), null);
 
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy(HANDLER_A));
+        authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredAuthenticationHandlerAuthenticationPolicy(HANDLER_A));
         val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
             false, mock(ConfigurableApplicationContext.class));
 
@@ -217,7 +217,7 @@ public class PolicyBasedAuthenticationManagerTests {
         map.put(newMockHandler(HANDLER_B, false), null);
 
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy(HANDLER_B));
+        authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredAuthenticationHandlerAuthenticationPolicy(HANDLER_B));
         val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
             false, mock(ConfigurableApplicationContext.class));
 
@@ -231,7 +231,7 @@ public class PolicyBasedAuthenticationManagerTests {
         map.put(newMockHandler(HANDLER_B, false), null);
 
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy(Set.of(HANDLER_A), true));
+        authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredAuthenticationHandlerAuthenticationPolicy(Set.of(HANDLER_A), true));
         val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan, false,
             mock(ConfigurableApplicationContext.class));
 

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @TestPropertySource(properties = {
-    "management.endpoint.loggingConfig.enabled=true",
+    "management.endpoint.logging-config.enabled=true",
     "logging.config=file:/tmp/log4j2.xml"
 })
 @Tag("ActuatorEndpoint")

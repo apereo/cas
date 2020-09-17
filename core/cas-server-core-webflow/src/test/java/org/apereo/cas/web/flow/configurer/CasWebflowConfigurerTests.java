@@ -52,6 +52,7 @@ public class CasWebflowConfigurerTests {
             mock(FlowDefinitionRegistry.class), new StaticApplicationContext(), props) {
         };
         assertDoesNotThrow(cfg::initialize);
+        assertNotNull(cfg.getName());
     }
 
     @Test

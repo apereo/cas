@@ -15,6 +15,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Setter
 @Tag("Tickets")
+@SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class)
 public class DistributedTicketRegistryTests {
 
     private static final String TGT_NAME = "TGT";

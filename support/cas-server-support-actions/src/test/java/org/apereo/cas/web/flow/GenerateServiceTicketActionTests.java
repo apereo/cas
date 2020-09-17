@@ -10,7 +10,6 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -36,7 +35,7 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
 
     @Autowired
     @Qualifier("generateServiceTicketAction")
-    private ObjectProvider<Action> action;
+    private Action action;
 
     private TicketGrantingTicket ticketGrantingTicket;
 
@@ -46,7 +45,7 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
             .handleAndFinalizeSingleAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        this.ticketGrantingTicket = getCentralAuthenticationService().getObject().createTicketGrantingTicket(authnResult);
+        this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(authnResult);
         getTicketRegistry().addTicket(this.ticketGrantingTicket);
     }
 
@@ -61,7 +60,7 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE_PARAM);
         request.setCookies(new Cookie("TGT", this.ticketGrantingTicket.getId()));
 
-        this.action.getObject().execute(context);
+        this.action.execute(context);
 
         assertNotNull(WebUtils.getServiceTicketFromRequestScope(context));
     }
@@ -75,7 +74,7 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE_PARAM);
         WebUtils.putTicketGrantingTicketInScopes(context, this.ticketGrantingTicket);
 
-        this.action.getObject().execute(context);
+        this.action.execute(context);
 
         assertNotNull(WebUtils.getServiceTicketFromRequestScope(context));
     }
@@ -93,7 +92,7 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
         when(tgt.getId()).thenReturn("bleh");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
-        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.getObject().execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.execute(context).getId());
     }
 
     @Test
@@ -106,7 +105,7 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
         WebUtils.putTicketGrantingTicketInScopes(context, this.ticketGrantingTicket);
         this.ticketGrantingTicket.markTicketExpired();
         getTicketRegistry().updateTicket(this.ticketGrantingTicket);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.getObject().execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.execute(context).getId());
     }
 
     @Test
@@ -120,6 +119,6 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
         val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("bleh");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_GATEWAY, this.action.getObject().execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_GATEWAY, this.action.execute(context).getId());
     }
 }
