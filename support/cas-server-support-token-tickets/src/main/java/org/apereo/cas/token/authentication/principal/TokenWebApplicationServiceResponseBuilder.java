@@ -43,9 +43,9 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
 
         if (!tokenAsResponse || !ticketIdAvailable) {
             if (ticketIdAvailable) {
-                LOGGER.debug("Registered service [{}] is not configured to issue JWTs for service tickets. "
+                LOGGER.debug("Registered service [{}] is not configured to issue JWTs for service tickets. " 
                              + "Make sure the service property [{}] is defined and set to true", 
-                             registeredService,RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName());
+                             registeredService,RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName()); 
             }
             return super.buildInternal(service, parameters);
         }
