@@ -142,7 +142,7 @@ public class TokenWebApplicationServiceResponseBuilderTests {
     }
     
     @Test
-    public void verifyTokenBuilderWhenGatewayIsTrue() throws Exception {
+    public void verifyTokenBuilderWithoutServiceTicket() throws Exception {
         val data = "yes\ncasuser";
         try (val webServer = new MockWebServer(8281,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
