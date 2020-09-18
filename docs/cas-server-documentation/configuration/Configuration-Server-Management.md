@@ -21,9 +21,9 @@ The CAS server web application responds to the following strategies that dictate
 
 This is the default configuration mode which indicates that CAS does **NOT** require connections to an external configuration server
 and will run in an embedded *standalone mode*. When this option is turned on, CAS by default will attempt to locate settings and properties
-inside a given directory indicated under the setting name `cas.standalone.configurationDirectory` and otherwise falls back to using `/etc/cas/config` as the configuration directory.
+inside a given directory indicated under the setting name `cas.standalone.configuration-directory` and otherwise falls back to using `/etc/cas/config` as the configuration directory.
 You may instruct CAS to use this setting via the methods [outlined here](Configuration-Management.html#overview). 
-There also exists a `cas.standalone.configurationFile` which can be used to directly feed a collection of properties to CAS in form of a file or classpath resource. 
+There also exists a `cas.standalone.configuration-file` which can be used to directly feed a collection of properties to CAS in form of a file or classpath resource. 
 
 Similar to the Spring Cloud external configuration server, the contents of this directory include `(cas|application).(yml|properties)`
 files that can be used to control CAS behavior. Also, note that this configuration directory can be monitored by CAS to auto-pick up changes
