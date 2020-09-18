@@ -41,11 +41,11 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
         val tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService);
         val ticketIdAvailable=isTicketIdAvailable(parameters);
 
-        if (!tokenAsResponse||!ticketIdAvailable) {
+        if (!tokenAsResponse || !ticketIdAvailable) {
             if (ticketIdAvailable) {
                 LOGGER.debug("Registered service [{}] is not configured to issue JWTs for service tickets. "
-                                + "Make sure the service property [{}] is defined and set to true", registeredService,
-                        RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName());
+                             + "Make sure the service property [{}] is defined and set to true", 
+                             registeredService,RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName());
             }
             return super.buildInternal(service, parameters);
         }
@@ -62,13 +62,7 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
     }
     
     private boolean isTicketIdAvailable(final Map<String, String> parameters){
-        final String ticketId=parameters.get(CasProtocolConstants.PARAMETER_TICKET);
-
-        if (StringUtils.isBlank(ticketId)){
-            return false;
-        }
-
-        return true;
+        return StringUtils.isNotBlank(parameters.get(CasProtocolConstants.PARAMETER_TICKET));
     }
 
     /**
