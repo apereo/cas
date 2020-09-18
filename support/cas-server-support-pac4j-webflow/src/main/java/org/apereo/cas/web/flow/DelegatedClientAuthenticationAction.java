@@ -128,6 +128,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
                 return stopWebflow();
             }
+        } catch (final UnauthorizedServiceException e) {
+            LOGGER.warn(e.getMessage(), e);
+            throw e;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             return stopWebflow();
