@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -23,6 +24,7 @@ import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -47,6 +49,11 @@ import java.util.stream.Stream;
 public class DelegatedClientAuthenticationAction extends AbstractAuthenticationAction {
     private final DelegatedClientAuthenticationConfigurationContext configContext;
 
+    /**
+     * Instantiates a new Delegated client authentication action.
+     *
+     * @param context the context
+     */
     public DelegatedClientAuthenticationAction(final DelegatedClientAuthenticationConfigurationContext context) {
         super(context.getInitialAuthenticationAttemptWebflowEventResolver(),
             context.getServiceTicketRequestWebflowEventResolver(),
@@ -127,16 +134,16 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             LOGGER.trace("Delegated authentication providers are finalized as [{}]", providers);
             WebUtils.createCredential(context);
             if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
-                return stopWebflow();
+                throw new UnauthorizedAuthenticationException("Authentication is not authorized: " + response.getStatus());
             }
-            return error();
         } catch (final UnauthorizedServiceException e) {
             LOGGER.warn(e.getMessage(), e);
             throw e;
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
+            return stopWebflow(e, context);
         }
-        return stopWebflow();
+        return error();
     }
 
     private Service resolveServiceFromRequestContext(final RequestContext context) {
@@ -193,6 +200,14 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return super.doPreExecute(context);
     }
 
+    /**
+     * Populate context with service service.
+     *
+     * @param context    the context
+     * @param webContext the web context
+     * @param clientName the client name
+     * @return the service
+     */
     protected Service populateContextWithService(final RequestContext context, final JEEContext webContext, final String clientName) {
         val service = restoreAuthenticationRequestInContext(context, webContext, clientName);
         val resolvedService = configContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(service);
@@ -204,6 +219,13 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return service;
     }
 
+    /**
+     * Populate context with client credential.
+     *
+     * @param client         the client
+     * @param webContext     the web context
+     * @param requestContext the request context
+     */
     protected void populateContextWithClientCredential(final BaseClient<Credentials> client, final JEEContext webContext,
                                                        final RequestContext requestContext) {
         LOGGER.debug("Fetching credentials from delegated client [{}]", client);
@@ -260,12 +282,15 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     /**
      * Stop webflow event.
      *
+     * @param e              the exception
+     * @param requestContext the request context
      * @return the event
      */
-    protected Event stopWebflow() {
-        return new Event(this, CasWebflowConstants.TRANSITION_ID_STOP);
+    protected Event stopWebflow(final Exception e, final RequestContext requestContext) {
+        requestContext.getFlashScope().put("rootCauseException", e);
+        return new Event(this, CasWebflowConstants.TRANSITION_ID_STOP, new LocalAttributeMap<>("error", e));
     }
-
+    
     /**
      * Restore authentication request in context service (return null for a logout call).
      *
@@ -294,6 +319,12 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
     }
 
+    /**
+     * Single sign on session authorized for service boolean.
+     *
+     * @param context the context
+     * @return the boolean
+     */
     protected boolean singleSignOnSessionAuthorizedForService(final RequestContext context) {
         val resolvedService = resolveServiceFromRequestContext(context);
         val authentication = getSingleSignOnAuthenticationFrom(context);
