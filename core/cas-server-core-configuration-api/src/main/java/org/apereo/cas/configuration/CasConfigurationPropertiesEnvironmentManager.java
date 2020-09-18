@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration;
 
+import org.apereo.cas.configuration.support.RelaxedPropertyNames;
+
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,8 @@ import org.springframework.core.env.Environment;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Objects;
 
 /**
  * This is {@link CasConfigurationPropertiesEnvironmentManager}.
@@ -23,6 +27,16 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 @Getter
 public class CasConfigurationPropertiesEnvironmentManager {
+
+    /**
+     * Property name passed to the environment that indicates the path to the standalone configuration file.
+     */
+    public static final String PROPERTY_CAS_STANDALONE_CONFIGURATION_FILE = "cas.standalone.configurationFile";
+    /**
+     * Property name passed to the environment that indicates the path to the standalone configuration directory.
+     */
+    public static final String PROPERTY_CAS_STANDALONE_CONFIGURATION_DIRECTORY = "cas.standalone.configurationDirectory";
+
     /**
      * Configuration directories for CAS, listed in order.
      */
@@ -43,7 +57,7 @@ public class CasConfigurationPropertiesEnvironmentManager {
      * @param applicationContext the application context
      */
     public static void rebindCasConfigurationProperties(final ConfigurationPropertiesBindingPostProcessor binder,
-                                                        final ApplicationContext applicationContext) {
+        final ApplicationContext applicationContext) {
 
         val map = applicationContext.getBeansOfType(CasConfigurationProperties.class);
         val name = map.keySet().iterator().next();
@@ -70,7 +84,16 @@ public class CasConfigurationPropertiesEnvironmentManager {
      * @return the standalone profile configuration directory
      */
     public File getStandaloneProfileConfigurationDirectory() {
-        val file = environment.getProperty("cas.standalone.configurationDirectory", File.class);
+        val values = new LinkedHashSet<>(RelaxedPropertyNames.forCamelCase(PROPERTY_CAS_STANDALONE_CONFIGURATION_DIRECTORY).getValues());
+        values.add(PROPERTY_CAS_STANDALONE_CONFIGURATION_DIRECTORY);
+
+        val file = values
+            .stream()
+            .map(key -> environment.getProperty(key, File.class))
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
+
         if (file != null && file.exists()) {
             LOGGER.trace("Received standalone configuration directory [{}]", file);
             return file;
@@ -88,7 +111,15 @@ public class CasConfigurationPropertiesEnvironmentManager {
      * @return the standalone profile configuration file
      */
     public File getStandaloneProfileConfigurationFile() {
-        return environment.getProperty("cas.standalone.configurationFile", File.class);
+        val values = new LinkedHashSet<>(RelaxedPropertyNames.forCamelCase(PROPERTY_CAS_STANDALONE_CONFIGURATION_FILE).getValues());
+        values.add(PROPERTY_CAS_STANDALONE_CONFIGURATION_FILE);
+
+        return values
+            .stream()
+            .map(key -> environment.getProperty(key, File.class))
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
     }
 
     public String getApplicationName() {
