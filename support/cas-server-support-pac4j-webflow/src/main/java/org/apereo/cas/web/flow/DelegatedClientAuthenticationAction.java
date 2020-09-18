@@ -132,7 +132,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             val providers = configContext.getDelegatedClientIdentityProvidersFunction().apply(context);
             LOGGER.trace("Delegated authentication providers are finalized as [{}]", providers);
             WebUtils.createCredential(context);
-            if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
+            if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
                 throw new UnauthorizedAuthenticationException("Authentication is not authorized: " + response.getStatus());
             }
         } catch (final UnauthorizedServiceException e) {
