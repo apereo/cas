@@ -123,15 +123,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             createTransitionForState(sendInst, CasWebflowConstants.TRANSITION_ID_ERROR, viewState.getId());
             createViewState(flow, CasWebflowConstants.VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO, CasWebflowConstants.VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO);
 
-            val pswdFlow = buildFlow("classpath:/webflow/pswdreset/pswdreset-webflow.xml", FLOW_ID_PASSWORD_RESET);
-            pswdFlow.getStartActionList().add(requestContext -> {
-                WebUtils.putPasswordManagementEnabled(requestContext, casProperties.getAuthn().getPm().isEnabled());
-                return null;
-            });
-            createViewState(pswdFlow, "passwordResetErrorView", CasWebflowConstants.VIEW_ID_PASSWORD_RESET_ERROR);
-            createViewState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS, CasWebflowConstants.VIEW_ID_PASSWORD_UPDATE_SUCCESS);
-            configurePasswordResetFlow(pswdFlow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
-            mainFlowDefinitionRegistry.registerFlowDefinition(pswdFlow);
+            registerPasswordResetFlowDefinition();
 
             val initializeLoginFormState = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
             val originalTargetState = initializeLoginFormState.getTransition(CasWebflowConstants.STATE_ID_SUCCESS).getTargetStateId();
@@ -147,11 +139,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             createTransitionForState(initializeLoginFormState,
                 CasWebflowConstants.STATE_ID_SUCCESS,
                 CasWebflowConstants.DECISION_STATE_CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION, true);
-            createEndState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_RESET_FLOW_COMPLETE);
-            createTransitionForState(
-                getTransitionableState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS),
-                CasWebflowConstants.TRANSITION_ID_PROCEED,
-                CasWebflowConstants.STATE_ID_PASSWORD_RESET_FLOW_COMPLETE);
+            
             createEndState(flow, CasWebflowConstants.STATE_ID_REDIRECT_TO_LOGIN, '\'' + CasWebflowConfigurer.FLOW_ID_LOGIN + '\'', true);
 
             createTransitionForState(
@@ -181,8 +169,42 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
                 getTransitionableState(flow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS),
                 CasWebflowConstants.TRANSITION_ID_PROCEED,
                 CasWebflowConstants.STATE_ID_POST_LOGIN_PASSWORD_CHANGE_CHECK);
-
         }
+    }
+
+    private void registerPasswordResetFlowDefinition() {
+        val pswdFlow = buildFlow("classpath:/webflow/pswdreset/pswdreset-webflow.xml", FLOW_ID_PASSWORD_RESET);
+
+        val initReset = createActionState(pswdFlow, "initPasswordReset", "initPasswordResetAction");
+        createStateDefaultTransition(initReset, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
+
+        val verifyQuestions = createActionState(pswdFlow, "verifySecurityQuestions", "verifySecurityQuestionsAction");
+        createTransitionForState(verifyQuestions, CasWebflowConstants.TRANSITION_ID_SUCCESS, "initPasswordReset");
+        createTransitionForState(verifyQuestions, CasWebflowConstants.TRANSITION_ID_ERROR, "passwordResetErrorView");
+
+        val verifyRequest = createActionState(pswdFlow, "verifyPasswordResetRequest", "verifyPasswordResetRequestAction");
+        createTransitionForState(verifyRequest, CasWebflowConstants.TRANSITION_ID_SUCCESS, "getSecurityQuestionsView");
+        createTransitionForState(verifyRequest, CasWebflowConstants.TRANSITION_ID_ERROR, "passwordResetErrorView");
+        createTransitionForState(verifyRequest, "questionsDisabled", "initPasswordReset");
+
+        val questionsView = createViewState(pswdFlow, "getSecurityQuestionsView", "casResetPasswordVerifyQuestionsView");
+        createTransitionForState(questionsView, CasWebflowConstants.TRANSITION_ID_SUBMIT,
+            "verifySecurityQuestions", Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
+
+        pswdFlow.getStartActionList().add(requestContext -> {
+            WebUtils.putPasswordManagementEnabled(requestContext, casProperties.getAuthn().getPm().isEnabled());
+            return null;
+        });
+        createViewState(pswdFlow, "passwordResetErrorView", CasWebflowConstants.VIEW_ID_PASSWORD_RESET_ERROR);
+        createViewState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS, CasWebflowConstants.VIEW_ID_PASSWORD_UPDATE_SUCCESS);
+        configurePasswordResetFlow(pswdFlow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
+        mainFlowDefinitionRegistry.registerFlowDefinition(pswdFlow);
+
+        createEndState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_RESET_FLOW_COMPLETE);
+        createTransitionForState(
+            getTransitionableState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS),
+            CasWebflowConstants.TRANSITION_ID_PROCEED,
+            CasWebflowConstants.STATE_ID_PASSWORD_RESET_FLOW_COMPLETE);
     }
 
     private void configurePasswordResetFlow(final Flow flow, final String id) {
