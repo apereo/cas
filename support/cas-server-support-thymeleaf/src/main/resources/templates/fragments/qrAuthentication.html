@@ -29,8 +29,11 @@
                 </div>
                 <div class="card-text">
                     <center>
-                        <img th:src="@{qr/channel}"/>
-                        <p th:utext="${#session.id}"></p>
+                        <img th:src="@{'data:image/jpeg;base64,' + ${qrCode}}"/>
+                        <p>
+                            Your mobile device must communicate with CAS using the following channel id:
+                            <p th:utext="${qrChannel}"></p>
+                        </p>
                     </center>
                 </div>
             </div>
@@ -40,7 +43,7 @@
         <script th:inline="javascript">
             /*<![CDATA[*/
             var endpoint = /*[[@{/qr-websocket}]]*/  ;
-            var topic = /*[[${#session.id}]]*/  ;
+            var topic = /*[[${qrChannel}]]*/  ;
 
             var stompClient = null;
             $(function () {
