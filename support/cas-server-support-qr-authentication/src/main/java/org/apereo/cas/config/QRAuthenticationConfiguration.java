@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.mfa.accepto.web.flow.QRAuthenticationWebflowConfigurer;
 import org.apereo.cas.qr.web.QRAuthenticationChannelController;
+import org.apereo.cas.qr.web.flow.QRAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
