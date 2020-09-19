@@ -175,6 +175,8 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     private void registerPasswordResetFlowDefinition() {
         val pswdFlow = buildFlow("classpath:/webflow/pswdreset/pswdreset-webflow.xml", FLOW_ID_PASSWORD_RESET);
 
+        pswdFlow.getStartActionList().add(createEvaluateAction("initialFlowSetupAction"));
+
         val initReset = createActionState(pswdFlow, "initPasswordReset", "initPasswordResetAction");
         createStateDefaultTransition(initReset, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
 

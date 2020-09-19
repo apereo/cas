@@ -616,6 +616,9 @@ tasks.withType(Test) {
             logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
         }
     }
+    if (System.getenv().containsKey("CI")) {
+        outputs.upToDateWhen { false }
+    }
     systemProperty("spring.main.banner-mode", "off")
 //    systemProperty("spring.main.lazy-initialization", "true")
     systemProperty("CI", System.getProperty("CI"))
