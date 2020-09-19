@@ -83,6 +83,9 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
+                    exclude(group: "javax.ws.rs", module: "javax.ws.rs-api")
+                    exclude(group: "org.eclipse.jetty", module: "jetty-eclipse")
+                    exclude(group: "org.glassfish.jersey.containers", module: "jersey-container-servlet-core")
                 },
                 dependencies.create("com.yubico:webauthn-server-attestation:$yubicoWebauthnVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -94,12 +97,18 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
+                    exclude(group: "javax.ws.rs", module: "javax.ws.rs-api")
+                    exclude(group: "org.eclipse.jetty", module: "jetty-eclipse")
+                    exclude(group: "org.glassfish.jersey.containers", module: "jersey-container-servlet-core")
                 },
                 dependencies.create("com.yubico:yubico-util:$yubicoWebauthnVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
+                    exclude(group: "javax.ws.rs", module: "javax.ws.rs-api")
+                    exclude(group: "org.eclipse.jetty", module: "jetty-eclipse")
+                    exclude(group: "org.glassfish.jersey.containers", module: "jersey-container-servlet-core")
                 },
                 dependencies.create("com.github.Yubico.java-webauthn-server:webauthn-server-demo:$casWebauthnVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -2210,7 +2219,7 @@ ext.libraries = [
                     exclude(group: "commons-cli", module: "commons-cli")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
-                   
+
                 },
                 dependencies.create("org.json:json:$jsonVersion") {
                     exclude(group: "com.vaadin.external.google", module: "android-json")
