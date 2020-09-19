@@ -6,6 +6,7 @@ import org.apereo.cas.qr.web.flow.QRAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -73,7 +74,7 @@ public class QRAuthenticationConfiguration implements WebSocketMessageBrokerConf
     @Override
     public void registerStompEndpoints(final StompEndpointRegistry registry) {
         registry.addEndpoint("/qr-websocket")
-            .setAllowedOrigins("*")
+            .setAllowedOrigins(casProperties.getAuthn().getQr().getAllowedOrigins().toArray(ArrayUtils.EMPTY_STRING_ARRAY))
             .addInterceptors(new HttpSessionHandshakeInterceptor())
             .withSockJS();
     }
