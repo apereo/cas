@@ -183,7 +183,7 @@ public class DelegatedClientAuthenticationActionTests {
         val mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
 
-        assertThrows(IllegalArgumentException.class, () -> delegatedAuthenticationAction.execute(mockRequestContext));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_STOP, delegatedAuthenticationAction.execute(mockRequestContext).getId());
     }
 
     @Test
