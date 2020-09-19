@@ -37,7 +37,7 @@ task pathingJar(type: Jar, description: "Produces a 'pathing' JAR whose manifest
 }
 
 task testJar(type: Jar, dependsOn: testClasses, description: "archive the testClasses") {
-    baseName = "${project.archivesBaseName}-tests"
+    archiveBaseName = "${project.archivesBaseName}-tests"
     classifier = "tests"
     from sourceSets.test.output
 }
