@@ -71,6 +71,7 @@ public class CasPullRequestListener implements PullRequestListener {
                 && !file.getFilename().endsWith(".html")
                 && !file.getFilename().endsWith(".js")
                 && !file.getFilename().endsWith(".jpg")
+                && !file.getFilename().endsWith(".md")
                 && !file.getFilename().endsWith(".gif")
                 && !file.getFilename().endsWith(".css"))
             .count();
