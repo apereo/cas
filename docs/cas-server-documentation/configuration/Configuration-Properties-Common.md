@@ -1353,3 +1353,14 @@ The following types are supported:
 | `PRIMARY_GROUP` | Constructs the primary group SID and then searches for that group and puts it's DN in the 'memberOf' attribute of the original search entry. 
 | `RANGE_ENTRY` |  Rewrites attributes returned from Active Directory to include all values by performing additional searches.
 | `RECURSIVE_ENTRY` | This recursively searches based on a supplied attribute and merges those results into the original entry.
+
+### LDAP Multiple Base DNs
+
+There may be scenarios where different parts of a single LDAP tree could be considered as base-dns. Rather than duplicating 
+the LDAP configuration block for each individual base-dn, each entry can be specified and joined together using a special delimiter character.
+The user DN is retrieved using the combination of all base-dn and DN resolvers in the order defined. DN resolution should fail if multiple DNs 
+are found. Otherwise the first DN found is returned.
+
+```properties
+# ${configurationKey}.base-dn=subtreeA,dc=example,dc=net|subtreeC,dc=example,dc=net
+```
