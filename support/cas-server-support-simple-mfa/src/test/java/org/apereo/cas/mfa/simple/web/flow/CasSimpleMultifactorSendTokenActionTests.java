@@ -42,7 +42,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link CasSimpleSendTokenActionTests}.
+ * This is {@link CasSimpleMultifactorSendTokenActionTests}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -59,7 +59,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfPortOpen(port = 25000)
 @Tag("Mail")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasSimpleSendTokenActionTests {
+public class CasSimpleMultifactorSendTokenActionTests {
     @Autowired
     @Qualifier("mfaSimpleMultifactorSendTokenAction")
     private Action mfaSimpleMultifactorSendTokenAction;

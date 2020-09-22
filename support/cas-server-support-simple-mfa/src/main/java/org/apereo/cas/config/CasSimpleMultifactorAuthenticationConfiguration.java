@@ -7,7 +7,7 @@ import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationUniqueTicketI
 import org.apereo.cas.mfa.simple.DefaultCasSimpleMultifactorAuthenticationTicketFactory;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorWebflowConfigurer;
-import org.apereo.cas.mfa.simple.web.flow.CasSimpleSendTokenAction;
+import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorSendTokenAction;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
@@ -107,7 +107,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         if (!Objects.requireNonNull(communicationsManager.getObject()).validate()) {
             throw new BeanCreationException("Unable to submit tokens since no communication strategy is defined");
         }
-        return new CasSimpleSendTokenAction(ticketRegistry.getObject(), communicationsManager.getObject(),
+        return new CasSimpleMultifactorSendTokenAction(ticketRegistry.getObject(), communicationsManager.getObject(),
             casSimpleMultifactorAuthenticationTicketFactory(), simple);
     }
 
