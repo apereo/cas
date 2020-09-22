@@ -4,8 +4,8 @@ import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationHandlerTests;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationProviderTests;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationTicketFactoryTests;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationUniqueTicketIdGeneratorTests;
-import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorWebflowConfigurerTests;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorSendTokenActionTests;
+import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorWebflowConfigurerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;

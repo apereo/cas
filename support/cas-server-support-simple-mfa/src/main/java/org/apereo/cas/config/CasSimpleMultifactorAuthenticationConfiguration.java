@@ -1,13 +1,14 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder;
-import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationTicketFactory;
-import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator;
-import org.apereo.cas.mfa.simple.DefaultCasSimpleMultifactorAuthenticationTicketFactory;
+import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy;
+import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder;
+import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
+import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator;
+import org.apereo.cas.mfa.simple.ticket.DefaultCasSimpleMultifactorAuthenticationTicketFactory;
+import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorSendTokenAction;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorWebflowConfigurer;
-import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorSendTokenAction;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
@@ -107,8 +108,16 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         if (!Objects.requireNonNull(communicationsManager.getObject()).validate()) {
             throw new BeanCreationException("Unable to submit tokens since no communication strategy is defined");
         }
-        return new CasSimpleMultifactorSendTokenAction(ticketRegistry.getObject(), communicationsManager.getObject(),
-            casSimpleMultifactorAuthenticationTicketFactory(), simple);
+        return new CasSimpleMultifactorSendTokenAction(ticketRegistry.getObject(),
+            communicationsManager.getObject(),
+            casSimpleMultifactorAuthenticationTicketFactory(), simple,
+            mfaSimpleMultifactorTokenCommunicationStrategy());
+    }
+
+    @ConditionalOnMissingBean(name = "mfaSimpleMultifactorTokenCommunicationStrategy")
+    @Bean
+    public CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy() {
+        return CasSimpleMultifactorTokenCommunicationStrategy.all();
     }
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationTicketExpirationPolicy")
@@ -141,7 +150,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
     public TicketFactoryExecutionPlanConfigurer casSimpleMultifactorAuthenticationTicketFactoryConfigurer() {
         return this::casSimpleMultifactorAuthenticationTicketFactory;
     }
-    
+
     /**
      * The simple multifactor trust configuration.
      */

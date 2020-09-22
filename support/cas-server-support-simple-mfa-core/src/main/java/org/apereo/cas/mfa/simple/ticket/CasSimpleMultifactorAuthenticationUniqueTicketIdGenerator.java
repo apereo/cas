@@ -1,4 +1,4 @@
-package org.apereo.cas.mfa.simple;
+package org.apereo.cas.mfa.simple.ticket;
 
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.RandomUtils;
