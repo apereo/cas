@@ -23,14 +23,14 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * This is {@link CasSimpleSendTokenAction}.
+ * This is {@link CasSimpleMultifactorSendTokenAction}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CasSimpleSendTokenAction extends AbstractAction {
+public class CasSimpleMultifactorSendTokenAction extends AbstractAction {
     private static final String MESSAGE_MFA_TOKEN_SENT = "cas.mfa.simple.label.tokensent";
 
     private final TicketRegistry ticketRegistry;
@@ -81,7 +81,8 @@ public class CasSimpleSendTokenAction extends AbstractAction {
         val authentication = WebUtils.getInProgressAuthentication();
         val principal = authentication.getPrincipal();
         val service = WebUtils.getService(requestContext);
-        val token = ticketFactory.create(service, CollectionUtils.wrap(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
+        val token = ticketFactory.create(service,
+            CollectionUtils.wrap(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
         LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", token, service);
 
         val smsSent = isSmsSent(communicationsManager, properties, principal, token);
