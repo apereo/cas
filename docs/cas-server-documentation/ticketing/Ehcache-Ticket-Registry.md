@@ -22,8 +22,9 @@ and [an optional Terracotta cluster](https://www.ehcache.org/documentation/3.3/c
 ## In-memory store with disk persistence
 
 Ehcache 3.x doesn't support distributing caching without Terracotta so using it without pointing at a Terracotta 
-server or cluster doesn't support using more than one CAS server at a time, but the registry should survive restarts due 
-to the disk persistence.
+server or cluster doesn't support using more than one CAS server at a time. The location and size of the disk caches 
+can be configured using the root-directory and per-cache-size-on-disk properties. If the persist-on-disk property
+is set to true then the caches will survive a restart. 
 
 ### Terracotta Clustering
 
