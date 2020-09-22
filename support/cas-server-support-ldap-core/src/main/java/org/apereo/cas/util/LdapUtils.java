@@ -1107,7 +1107,6 @@ public class LdapUtils {
         private final List<? extends EntryResolver> resolvers;
 
         @Override
-        @SneakyThrows
         public LdapEntry resolve(final AuthenticationCriteria criteria, final AuthenticationHandlerResponse response) {
             return resolvers.stream()
                 .map(resolver -> FunctionUtils.doAndHandle(
@@ -1119,7 +1118,7 @@ public class LdapUtils {
                     .get())
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new AccountNotFoundException("Unable to resolve entry for " + criteria.getDn()));
+                .orElse(null);
         }
     }
 }
