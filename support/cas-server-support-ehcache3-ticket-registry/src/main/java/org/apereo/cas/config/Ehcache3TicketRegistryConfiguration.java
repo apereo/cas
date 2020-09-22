@@ -135,8 +135,9 @@ public class Ehcache3TicketRegistryConfiguration {
 
         if (StringUtils.isBlank(terracottaClusterUri)) {
             val perCacheCapacity = Capacity.parse(ehcacheProperties.getPerCacheSizeOnDisk());
+            val persistOnDisk = ehcacheProperties.isPersistOnDisk();
             resourcePools = resourcePools.disk(perCacheCapacity.getSize().longValue(),
-                MemoryUnit.valueOf(perCacheCapacity.getUnitOfMeasure().name()));
+                MemoryUnit.valueOf(perCacheCapacity.getUnitOfMeasure().name()), persistOnDisk);
         }
 
         var cacheConfigBuilder = CacheConfigurationBuilder.newCacheConfigurationBuilder(
