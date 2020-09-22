@@ -4,13 +4,17 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticatio
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.function.FunctionUtils;
 
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.jooq.lambda.Unchecked;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
@@ -50,8 +54,8 @@ import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
 import org.ldaptive.ad.handler.PrimaryGroupIdHandler;
 import org.ldaptive.ad.handler.RangeEntryHandler;
-import org.ldaptive.auth.AggregateDnResolver;
-import org.ldaptive.auth.AggregateEntryResolver;
+import org.ldaptive.auth.AuthenticationCriteria;
+import org.ldaptive.auth.AuthenticationHandlerResponse;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.CompareAuthenticationHandler;
 import org.ldaptive.auth.DnResolver;
@@ -60,6 +64,7 @@ import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.SearchDnResolver;
 import org.ldaptive.auth.SearchEntryResolver;
 import org.ldaptive.auth.SimpleBindAuthenticationHandler;
+import org.ldaptive.auth.User;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.control.util.PagedResultsClient;
 import org.ldaptive.extended.ExtendedOperation;
@@ -83,6 +88,7 @@ import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -91,6 +97,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -846,42 +853,38 @@ public class LdapUtils {
      */
     public static EntryResolver newLdaptiveSearchEntryResolver(final AbstractLdapAuthenticationProperties l,
         final ConnectionFactory factory) {
-        if (StringUtils.isBlank(l.getBaseDn())) {
-            throw new IllegalArgumentException("To create a search entry resolver, base dn cannot be empty/blank ");
-        }
-        if (StringUtils.isBlank(l.getSearchFilter())) {
-            throw new IllegalArgumentException("To create a search entry resolver, user filter cannot be empty/blank");
-        }
-        val aggregate = new AggregateEntryResolver();
-        Arrays.stream(StringUtils.split(l.getBaseDn(), BASE_DN_DELIMITER)).forEach(baseDn -> {
-            val entryResolver = new SearchEntryResolver();
-            entryResolver.setBaseDn(baseDn.trim());
-            entryResolver.setUserFilter(l.getSearchFilter());
-            entryResolver.setSubtreeSearch(l.isSubtreeSearch());
-            entryResolver.setConnectionFactory(factory);
-            entryResolver.setAllowMultipleEntries(l.isAllowMultipleEntries());
-            entryResolver.setBinaryAttributes(l.getBinaryAttributes().toArray(new String[0]));
 
-            if (StringUtils.isNotBlank(l.getDerefAliases())) {
-                entryResolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
-            }
+        var resolvers = Arrays.stream(StringUtils.split(l.getBaseDn(), BASE_DN_DELIMITER))
+            .map(baseDn -> {
+                val entryResolver = new SearchEntryResolver();
+                entryResolver.setBaseDn(baseDn.trim());
+                entryResolver.setUserFilter(l.getSearchFilter());
+                entryResolver.setSubtreeSearch(l.isSubtreeSearch());
+                entryResolver.setConnectionFactory(factory);
+                entryResolver.setAllowMultipleEntries(l.isAllowMultipleEntries());
+                entryResolver.setBinaryAttributes(l.getBinaryAttributes().toArray(new String[0]));
 
-            val entryHandlers = newLdaptiveEntryHandlers(l.getSearchEntryHandlers());
-            val searchResultHandlers = newLdaptiveSearchResultHandlers(l.getSearchEntryHandlers());
-            if (!entryHandlers.isEmpty()) {
-                LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), entryHandlers);
-                entryResolver.setEntryHandlers(entryHandlers.toArray(LdapEntryHandler[]::new));
-            }
-            if (!searchResultHandlers.isEmpty()) {
-                LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), searchResultHandlers);
-                entryResolver.setSearchResultHandlers(searchResultHandlers.toArray(SearchResultHandler[]::new));
-            }
-            if (l.isFollowReferrals()) {
-                entryResolver.setSearchResultHandlers(new FollowSearchReferralHandler());
-            }
-            aggregate.addEntryResolver(baseDn, entryResolver);
-        });
-        return aggregate;
+                if (StringUtils.isNotBlank(l.getDerefAliases())) {
+                    entryResolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
+                }
+
+                val entryHandlers = newLdaptiveEntryHandlers(l.getSearchEntryHandlers());
+                val searchResultHandlers = newLdaptiveSearchResultHandlers(l.getSearchEntryHandlers());
+                if (!entryHandlers.isEmpty()) {
+                    LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), entryHandlers);
+                    entryResolver.setEntryHandlers(entryHandlers.toArray(LdapEntryHandler[]::new));
+                }
+                if (!searchResultHandlers.isEmpty()) {
+                    LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), searchResultHandlers);
+                    entryResolver.setSearchResultHandlers(searchResultHandlers.toArray(SearchResultHandler[]::new));
+                }
+                if (l.isFollowReferrals()) {
+                    entryResolver.setSearchResultHandlers(new FollowSearchReferralHandler());
+                }
+                return entryResolver;
+            })
+            .collect(Collectors.toList());
+        return new ChainingLdapEntryResolver(resolvers);
     }
 
     /**
@@ -1058,22 +1061,65 @@ public class LdapUtils {
 
     private static DnResolver buildAggregateDnResolver(final AbstractLdapAuthenticationProperties l,
         final ConnectionFactory connectionFactory) {
-        val aggregateDnResolver = new AggregateDnResolver();
-        Arrays.stream(StringUtils.split(l.getBaseDn(), BASE_DN_DELIMITER)).forEach(baseDn -> {
-            val resolver = new SearchDnResolver();
-            resolver.setBaseDn(baseDn);
-            resolver.setSubtreeSearch(l.isSubtreeSearch());
-            resolver.setAllowMultipleDns(l.isAllowMultipleDns());
-            resolver.setConnectionFactory(connectionFactory);
-            resolver.setUserFilter(l.getSearchFilter());
-            if (l.isFollowReferrals()) {
-                resolver.setSearchResultHandlers(new FollowSearchReferralHandler());
-            }
-            if (StringUtils.isNotBlank(l.getDerefAliases())) {
-                resolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
-            }
-            aggregateDnResolver.addDnResolver(baseDn, new SearchDnResolver());
-        });
-        return aggregateDnResolver;
+        var resolvers = Arrays.stream(StringUtils.split(l.getBaseDn(), BASE_DN_DELIMITER))
+            .map(baseDn -> {
+                val resolver = new SearchDnResolver();
+                resolver.setBaseDn(baseDn);
+                resolver.setSubtreeSearch(l.isSubtreeSearch());
+                resolver.setAllowMultipleDns(l.isAllowMultipleDns());
+                resolver.setConnectionFactory(connectionFactory);
+                resolver.setUserFilter(l.getSearchFilter());
+                if (l.isFollowReferrals()) {
+                    resolver.setSearchResultHandlers(new FollowSearchReferralHandler());
+                }
+                if (StringUtils.isNotBlank(l.getDerefAliases())) {
+                    resolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
+                }
+                return resolver;
+            })
+            .collect(Collectors.toList());
+        return new ChainingLdapDnResolver(resolvers);
+    }
+
+    @RequiredArgsConstructor
+    private static class ChainingLdapDnResolver implements DnResolver {
+        private final List<? extends DnResolver> resolvers;
+
+        @Override
+        @SneakyThrows
+        public String resolve(final User user) {
+            return resolvers.stream()
+                .map(resolver -> FunctionUtils.doAndHandle(
+                    Unchecked.supplier(() -> resolver.resolve(user)),
+                    throwable -> {
+                        LOGGER.warn(throwable.getMessage(), throwable);
+                        return null;
+                    })
+                    .get())
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new AccountNotFoundException("Unable to resolve user dn for " + user.getIdentifier()));
+        }
+    }
+
+    @RequiredArgsConstructor
+    private static class ChainingLdapEntryResolver implements EntryResolver {
+        private final List<? extends EntryResolver> resolvers;
+
+        @Override
+        @SneakyThrows
+        public LdapEntry resolve(final AuthenticationCriteria criteria, final AuthenticationHandlerResponse response) {
+            return resolvers.stream()
+                .map(resolver -> FunctionUtils.doAndHandle(
+                    Unchecked.supplier(() -> resolver.resolve(criteria, response)),
+                    throwable -> {
+                        LOGGER.warn(throwable.getMessage(), throwable);
+                        return null;
+                    })
+                    .get())
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new AccountNotFoundException("Unable to resolve entry for " + criteria.getDn()));
+        }
     }
 }
