@@ -156,7 +156,13 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
+        mockRequest.setContextPath("");
         val mockResponse = new MockHttpServletResponse();
+
+        val casProperties = oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getCasProperties();
+        casProperties.getSessionReplication().getCookie().setAutoConfigureCookiePath(true);
+        casProperties.getAuthn().getOauth().setReplicateSessions(true);
+        oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getOauthDistributedSessionCookieGenerator().setCookiePath("");
 
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(true);
@@ -186,6 +192,8 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         assertNotNull(redirectUrl);
         assertEquals(redirectUrl, REDIRECT_URI);
 
+        assertEquals("/", oAuth20AuthorizeEndpointController.getOAuthConfigurationContext()
+                .getOauthDistributedSessionCookieGenerator().getCookiePath());
         val code = modelAndView.getModelMap().get("code");
         val oAuthCode = (OAuth20Code) this.ticketRegistry.getTicket(String.valueOf(code));
         assertNotNull(oAuthCode);
@@ -207,7 +215,12 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
+        mockRequest.setContextPath("");
         val mockResponse = new MockHttpServletResponse();
+
+        val oauthContext = oAuth20AuthorizeEndpointController.getOAuthConfigurationContext();
+        oauthContext.getCasProperties().getSessionReplication().getCookie().setAutoConfigureCookiePath(false);
+        oauthContext.getOauthDistributedSessionCookieGenerator().setCookiePath("");
 
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(true);
@@ -235,6 +248,8 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         assertNotNull(redirectUrl);
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "#access_token="));
 
+        assertEquals("", oAuth20AuthorizeEndpointController.getOAuthConfigurationContext()
+                .getOauthDistributedSessionCookieGenerator().getCookiePath());
         val code = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=bearer");
         val accessToken = (OAuth20AccessToken) this.ticketRegistry.getTicket(code);
         assertNotNull(accessToken);
