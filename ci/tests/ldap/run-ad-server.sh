@@ -99,16 +99,33 @@ docker exec samba bash -c "samba-tool domain passwordsettings set --history-leng
 #Disable password min-age at the domain level
 docker exec samba bash -c "samba-tool domain passwordsettings set --min-pwd-age=0"
 
-# Create users that can be used by various tests (e.g. authenticiation tests, password change tests, etc.
+# Create users that can be used by various tests (e.g. authentication tests, password change tests, etc.
 # If we aren't setting up brand new instance these will fail if they already exist but that is OK.
 echo Creating users for tests
+
+docker exec samba bash -c "samba-tool user setpassword --filter=samAccountName=Administrator --newpassword=$DOMAINPASS"
+
 docker exec samba bash -c "samba-tool user create admin $DEFAULT_TESTUSER_PASSWORD --given-name=Joe --surname=Admin --use-username-as-cn"
-docker exec samba bash -c "samba-tool user create aburr $DEFAULT_TESTUSER_PASSWORD --given-name=Aaron --surname=Burr"
-docker exec samba bash -c "samba-tool user create aham $DEFAULT_TESTUSER_PASSWORD --given-name=Alexander --surname=Hamilton"
+docker exec samba bash -c "samba-tool user setpassword --filter=cn=admin --newpassword=$DEFAULT_TESTUSER_PASSWORD"
+
+docker exec samba bash -c "samba-tool user create aburr $DEFAULT_TESTUSER_PASSWORD --given-name=Aaron --surname=Burr --use-username-as-cn"
+docker exec samba bash -c "samba-tool user setpassword --filter=samAccountName=aburr --newpassword=$DEFAULT_TESTUSER_PASSWORD"
+
+docker exec samba bash -c "samba-tool user create aham $DEFAULT_TESTUSER_PASSWORD --given-name=Alexander --surname=Hamilton --use-username-as-cn"
+docker exec samba bash -c "samba-tool user setpassword --filter=samAccountName=aham --newpassword=$DEFAULT_TESTUSER_PASSWORD"
+
 docker exec samba bash -c "samba-tool user create expireduser $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn"
+docker exec samba bash -c "samba-tool user setpassword --filter=cn=expireduser --newpassword=$DEFAULT_TESTUSER_PASSWORD"
+
 docker exec samba bash -c "samba-tool user create disableduser $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn"
+docker exec samba bash -c "samba-tool user setpassword --filter=cn=disableduser --newpassword=$DEFAULT_TESTUSER_PASSWORD"
+
 docker exec samba bash -c "samba-tool user create changepassword $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn --mail-address=changepassword@example.org --telephone-number=1234567890 --department='DepartmentQuestion' --company='CompanyAnswer' --description='DescriptionQuestion' --physical-delivery-office=PhysicalDeliveryOfficeAnswer "
+docker exec samba bash -c "samba-tool user setpassword --filter=cn=changepassword --newpassword=$DEFAULT_TESTUSER_PASSWORD"
+
 docker exec samba bash -c "samba-tool user create changepasswordnoreset $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn"
+docker exec samba bash -c "samba-tool user setpassword --filter=cn=changepasswordnoreset --newpassword=$DEFAULT_TESTUSER_PASSWORD"
+
 docker exec samba bash -c "samba-tool user setexpiry --days 0 expireduser"
 docker exec samba bash -c "samba-tool user disable disableduser"
 docker exec samba bash -c "samba-tool user list"
@@ -116,9 +133,10 @@ docker exec samba bash -c "samba-tool group addmembers 'Account Operators' admin
 
 # create a special password policy and apply it to a user
 docker exec samba bash -c "samba-tool user create expirestomorrow $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn"
+docker exec samba bash -c "samba-tool user setpassword --filter=cn=expirestomorrow --newpassword=$DEFAULT_TESTUSER_PASSWORD"
+
 docker exec samba bash -c "samba-tool domain passwordsettings pso create expirepasswordsoon 10 --max-pwd-age=2"
 docker exec samba bash -c "samba-tool domain passwordsettings pso apply expirepasswordsoon expirestomorrow"
-
 
 
 # Copying certificate out of the container so it can be put in a Java certificate trust store.
