@@ -60,29 +60,57 @@
                         </span>
                     </section>
 
+
                     <section class="cas-field my-3">
-                        <div class="mdc-text-field  d-flex">
-                            <input class="mdc-text-field__input"
-                                id="username"
-                                size="25"
-                                type="text"
-                                th:readonly="!${@casThymeleafLoginFormDirector.isLoginFormUsernameInputVisible(#vars)}"
-                                th:disabled="${@casThymeleafLoginFormDirector.isLoginFormUsernameInputDisabled(#vars)}"
-                                th:field="*{username}"
-                                th:accesskey="#{screen.welcome.label.netid.accesskey}"
-                                th:value="${@casThymeleafLoginFormDirector.getLoginFormUsername(#vars)}"
-                                autocomplete="off" />
-                            <label for="username" class="mdc-floating-label" th:utext="#{screen.welcome.label.netid}">Username</label>
+
+                        <div class="d-flex">
+
+                            <label for="username" class="mdc-text-field mdc-text-field--outlined">
+                                <input class="mdc-text-field__input"
+                                    id="username"
+                                    size="25"
+                                    type="text"
+                                    th:readonly="!${@casThymeleafLoginFormDirector.isLoginFormUsernameInputVisible(#vars)}"
+                                    th:disabled="${@casThymeleafLoginFormDirector.isLoginFormUsernameInputDisabled(#vars)}"
+                                    th:field="*{username}"
+                                    th:accesskey="#{screen.welcome.label.netid.accesskey}"
+                                    th:value="${@casThymeleafLoginFormDirector.getLoginFormUsername(#vars)}"
+                                    autocomplete="off" />
+
+                                <span class="mdc-notched-outline">
+                                <span class="mdc-notched-outline__leading"></span>
+                                <span class="mdc-notched-outline__notch">
+                                  <span class="mdc-floating-label" th:utext="#{screen.welcome.label.netid}">Username</span>
+                                </span>
+                                <span class="mdc-notched-outline__trailing"></span>
+                              </span>
+                            </label>
                         </div>
                     </section>
 
                     <section class="cas-field my-3 mdc-input-group">
                         <div class="mdc-input-group-field mdc-input-group-field-append">
-                            <div class="mdc-text-field  mdc-text-field--with-trailing-icon d-flex caps-check">
-                                <input class="mdc-text-field__input pwd" type="password" id="password" size="25"
-                                    th:accesskey="#{screen.welcome.label.password.accesskey}" th:field="*{password}" autocomplete="off" />
-                                <label for="username" class="mdc-floating-label" th:utext="#{screen.welcome.label.password}">Password</label>
+                            <div class="d-flex caps-check">
+
+                                <label for="password"
+                                       class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+
+                                    <input class="mdc-text-field__input pwd"
+                                           type="password" id="password" size="25"
+                                           th:accesskey="#{screen.welcome.label.password.accesskey}"
+                                           th:field="*{password}" autocomplete="off" />
+                                    
+                                    <span class="mdc-notched-outline">
+                                        <span class="mdc-notched-outline__leading"></span>
+                                        <span class="mdc-notched-outline__notch">
+                                          <span class="mdc-floating-label" th:utext="#{screen.welcome.label.password}">Username</span>
+                                        </span>
+                                        <span class="mdc-notched-outline__trailing"></span>
+                                    </span>
+                                    
+                                </label>
                             </div>
+                            
                             <div class="mdc-text-field-helper-line caps-warn">
                                 <p
                                     class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">

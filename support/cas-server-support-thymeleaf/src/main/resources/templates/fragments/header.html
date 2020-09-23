@@ -164,7 +164,7 @@
                     var closeDrawer = function (evt) {
                         drawer.open = false;
                     };
-                    drawer.foundation_.handleScrimClick = closeDrawer;
+                    drawer.foundation.handleScrimClick = closeDrawer;
                     document.onkeydown = function (evt) {
                         evt = evt || window.event;
                         if (evt.keyCode == 27) {
