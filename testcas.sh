@@ -3,7 +3,7 @@
 clear
 
 printHelp() {
-    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--no-parallel] [--dry-run] [--info] [--with-coverage] \n"
+    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--no-parallel] [--dry-run] [--info] [--with-coverage] [--no-build-cache] \n"
     echo -e "Available test categories are:\n"
     echo -e "simple,memcached,cassandra,groovy,kafka,ldap,rest,\
 mfa,jdbc,mssql,oracle,radius,couchdb,webapp,tickets,webflowconfig,\
@@ -73,6 +73,10 @@ while (( "$#" )); do
         ;;
     --ignore-failures)
         flags+=" -DignoreTestFailures=true"
+        shift
+        ;;
+    --no-build-cache)
+        flags+=" --no-build-cache"
         shift
         ;;
     --category)

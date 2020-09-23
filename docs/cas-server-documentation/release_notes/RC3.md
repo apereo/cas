@@ -79,6 +79,8 @@ in case the metadata is behind a proxy.
 
 - Password reset verification attempts can now properly handle expired or invalid reset attempts in the authentication webflow.
 - Logged ascii-art statements are now routed to their own dedicated `AsciiArt` logging category. 
+- Multiple LDAP base-dns can be specified and join together for a single LDAP configuration block using a special delimiter character.
+- [Integration with Ehcache](../ticketing/Ehcache-Ticket-Registry.md) gains a new setting to allow disk persistence.
 
 ## Library Upgrades
 
