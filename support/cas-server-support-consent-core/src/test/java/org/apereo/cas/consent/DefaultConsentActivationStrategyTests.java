@@ -1,6 +1,5 @@
 package org.apereo.cas.consent;
 
-import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 
 /**
@@ -10,8 +9,5 @@ import org.junit.jupiter.api.Tag;
  * @since 6.3.0
  */
 @Tag("Simple")
-@Getter
 public class DefaultConsentActivationStrategyTests extends BaseConsentActivationStrategyTests {
-
-
 }
