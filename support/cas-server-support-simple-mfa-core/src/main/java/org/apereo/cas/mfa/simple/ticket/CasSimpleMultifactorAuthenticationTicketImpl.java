@@ -1,4 +1,4 @@
-package org.apereo.cas.mfa.simple;
+package org.apereo.cas.mfa.simple.ticket;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicket;

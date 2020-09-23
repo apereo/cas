@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationTicket;
-import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationTicketImpl;
+import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
+import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketImpl;
 import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketCatalog;
