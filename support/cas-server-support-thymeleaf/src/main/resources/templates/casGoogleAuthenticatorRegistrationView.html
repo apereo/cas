@@ -39,22 +39,55 @@
 
                                 <section class="cas-field my-3 mdc-input-group">
                                     <div class="mdc-input-group-field mdc-input-group-field-append">
-                                        <div class="mdc-text-field mdc-text-field--with-trailing-icon d-flex caps-check">
-                                            <input class="mdc-text-field__input pwd" type="password" name="token"
-                                                   id="token" size="25" autocomplete="off"/>
-                                            <label for="token" class="mdc-floating-label"
-                                                   th:utext="#{cas.mfa.googleauth.label.token}">Token</label>
-                                        <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button" type="button">
-                                            <i class="mdi mdi-eye reveal-password-icon"></i>
-                                            <span class="sr-only">Toggle Token</span>
-                                        </button>
+                                        <div class="d-flex caps-check">
+
+                                            <label for="token"
+                                                   class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+                                                <input class="mdc-text-field__input pwd"
+                                                       type="password"
+                                                       name="token"
+                                                       id="token"
+                                                       size="25"
+                                                       required
+                                                       autocomplete="off" />
+                                                <span class="mdc-notched-outline">
+                                                    <span class="mdc-notched-outline__leading"></span>
+                                                    <span class="mdc-notched-outline__notch">
+                                                      <span class="mdc-floating-label" th:utext="#{cas.mfa.googleauth.label.token}">Token</span>
+                                                    </span>
+                                                    <span class="mdc-notched-outline__trailing"></span>
+                                                </span>
+
+                                            </label>
+                                            
+                                            <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button" type="button">
+                                                <i class="mdi mdi-eye reveal-password-icon"></i>
+                                                <span class="sr-only">Toggle Token</span>
+                                            </button>
                                         </div>
+
+
                                         <br>
-                                        <div class="mdc-text-field d-flex">
-                                            <input class="mdc-text-field__input" id="accountName"
-                                                   name="accountName" size="50" type="text" autocomplete="off"/>
-                                            <label for="accountName" class="mdc-floating-label"
-                                                   th:utext="#{screen.authentication.gauth.name}">Name</label>
+                                        <div class="d-flex">
+                                            <label for="accountName"
+                                                   class="mdc-text-field mdc-text-field--outlined">
+
+                                                <input class="mdc-text-field__input"
+                                                       type="text"
+                                                       name="accountName"
+                                                       id="accountName"
+                                                       size="50"
+                                                       autocomplete="off" />
+
+                                                <span class="mdc-notched-outline">
+                                                    <span class="mdc-notched-outline__leading"></span>
+                                                    <span class="mdc-notched-outline__notch">
+                                                      <span class="mdc-floating-label" th:utext="#{screen.authentication.gauth.name}">Token</span>
+                                                    </span>
+                                                    <span class="mdc-notched-outline__trailing"></span>
+                                                </span>
+
+                                            </label>
                                             <script>document.getElementById("accountName").value = randomWord();</script>
                                         </div>
                                     </div>
