@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.MongoDbPropertySourceLocator;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +18,6 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @Configuration("mongoDbCloudConfigBootstrapConfiguration")
 public class MongoDbCloudConfigBootstrapConfiguration {
     /**
