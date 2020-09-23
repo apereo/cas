@@ -125,4 +125,5 @@ public class OAuth20ConfigurationContext {
 
     private final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
 
+    private final CasCookieBuilder oauthDistributedSessionCookieGenerator;
 }

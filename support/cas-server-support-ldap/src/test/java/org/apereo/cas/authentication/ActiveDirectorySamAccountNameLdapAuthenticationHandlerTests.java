@@ -21,7 +21,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].subtree-search=true",
     "cas.authn.ldap[0].base-dn=cn=Users,dc=cas,dc=example,dc=org",
     "cas.authn.ldap[0].dn-format=CAS\\\\%s",
-    "cas.authn.ldap[0].principalAttributeList=sAMAccountName,cn",
+    "cas.authn.ldap[0].principal-attribute-list=sAMAccountName,cn",
     "cas.authn.ldap[0].enhance-with-entry-resolver=true",
     "cas.authn.ldap[0].search-filter=(sAMAccountName={user})",
     "cas.authn.ldap[0].pool-passivator=bind",

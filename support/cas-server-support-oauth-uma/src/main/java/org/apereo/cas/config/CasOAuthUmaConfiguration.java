@@ -39,6 +39,7 @@ import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistratio
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointController;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.val;
 import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
@@ -89,6 +90,10 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
+    @Qualifier("oauthDistributedSessionCookieGenerator")
+    private ObjectProvider<CasCookieBuilder> oauthDistributedSessionCookieGenerator;
+
+    @Autowired
     @Qualifier("oauthDistributedSessionStore")
     private ObjectProvider<SessionStore> oauthDistributedSessionStore;
 
@@ -123,6 +128,7 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
             .ticketRegistry(ticketRegistry.getObject())
             .servicesManager(servicesManager.getObject())
             .idTokenSigningAndEncryptionService(signingService)
+            .oauthDistributedSessionCookieGenerator(oauthDistributedSessionCookieGenerator.getObject())
             .sessionStore(oauthDistributedSessionStore.getObject())
             .casProperties(casProperties)
             .accessTokenJwtBuilder(accessTokenJwtBuilder.getObject())
