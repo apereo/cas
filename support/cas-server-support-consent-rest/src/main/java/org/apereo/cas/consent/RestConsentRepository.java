@@ -42,33 +42,25 @@ public class RestConsentRepository implements ConsentRepository {
 
     @Override
     public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
-        try {
-            val headers = new HttpHeaders();
-            headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            headers.put("principal", CollectionUtils.wrap(principal));
-            val entity = new HttpEntity<Object>(headers);
-            val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
-            if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
-                return result.getBody();
-            }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+        val headers = new HttpHeaders();
+        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+        headers.put("principal", CollectionUtils.wrap(principal));
+        val entity = new HttpEntity<>(headers);
+        val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
+        if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
+            return result.getBody();
         }
         return new ArrayList<>(0);
     }
 
     @Override
     public Collection<? extends ConsentDecision> findConsentDecisions() {
-        try {
-            val headers = new HttpHeaders();
-            headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            val entity = new HttpEntity<Object>(headers);
-            val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
-            if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
-                return result.getBody();
-            }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+        val headers = new HttpHeaders();
+        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+        val entity = new HttpEntity<>(headers);
+        val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
+        if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
+            return result.getBody();
         }
         return new ArrayList<>(0);
     }

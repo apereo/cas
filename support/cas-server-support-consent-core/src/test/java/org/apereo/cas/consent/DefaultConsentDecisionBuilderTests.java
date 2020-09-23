@@ -2,6 +2,7 @@ package org.apereo.cas.consent;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultConsentDecisionBuilderTests}.
@@ -26,6 +28,14 @@ public class DefaultConsentDecisionBuilderTests {
     @Autowired
     @Qualifier("consentDecisionBuilder")
     private ConsentDecisionBuilder consentDecisionBuilder;
+
+    @Test
+    public void verifyUnableToDecodeConsentDecision() {
+        val consentDecision = mock(ConsentDecision.class);
+        when(consentDecision.getAttributes()).thenCallRealMethod();
+        val builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
+        assertTrue(builder.getConsentableAttributesFrom(consentDecision).isEmpty());
+    }
 
     @Test
     public void verifyNewConsentDecision() {
