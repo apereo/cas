@@ -125,4 +125,5 @@ public class OAuth20ConfigurationContext {
 
     private OAuth20TokenSigningAndEncryptionService idTokenSigningAndEncryptionService;
 
+    private final CasCookieBuilder oauthDistributedSessionCookieGenerator;
 }

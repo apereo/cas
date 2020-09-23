@@ -43,8 +43,6 @@ public class SessionReplicationProperties implements Serializable {
 
         public Cookie() {
             setName("DISSESSION");
-            setPath("/cas/");
         }
     }
-
 }
