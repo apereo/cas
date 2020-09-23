@@ -34,9 +34,9 @@ public class RestfulPropertySourceLocatorTests {
     @Test
     public void verifyBadParsing() {
         val environment = new MockEnvironment();
-        environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + '.' + "url", "http://localhost:1000");
+        environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + '.' + "url", "http://localhost:8021");
         val loc = new RestfulPropertySourceLocator();
-        try (val webServer = new MockWebServer(1000,
+        try (val webServer = new MockWebServer(8021,
             new ByteArrayResource("@@".getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
             assertTrue(((Map) loc.locate(environment).getSource()).isEmpty());
