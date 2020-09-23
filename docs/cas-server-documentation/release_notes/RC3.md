@@ -79,8 +79,11 @@ in case the metadata is behind a proxy.
 
 - Password reset verification attempts can now properly handle expired or invalid reset attempts in the authentication webflow.
 - Logged ascii-art statements are now routed to their own dedicated `AsciiArt` logging category. 
+- Configuration distributed session store and its replication for OAuth, OpenID Connect and Delegated Authentication is corrected to determine the cookie path automatically if CAS is set to auto-configure the cookie path based on the context. This item would be specially applicable if the `autoConfigureCookiePath` is set to false.
 - Multiple LDAP base-dns can be specified and join together for a single LDAP configuration block using a special delimiter character.
 - [Integration with Ehcache](../ticketing/Ehcache-Ticket-Registry.html) gains a new setting to allow disk persistence.
+- CAS configuration properties based on an embedded `application.yml` can now recognize settings based on 
+active profiles via `classpath:/application-{profile}.yml` configuration files.
 
 ## Library Upgrades
 
