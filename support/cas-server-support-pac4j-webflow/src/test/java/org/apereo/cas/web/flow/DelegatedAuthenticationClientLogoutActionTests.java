@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -40,10 +39,6 @@ public class DelegatedAuthenticationClientLogoutActionTests {
     @Autowired
     @Qualifier("delegatedAuthenticationClientLogoutAction")
     private Action delegatedAuthenticationClientLogoutAction;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
     @Qualifier("logoutManager")
