@@ -20,8 +20,11 @@ import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 
 import lombok.Getter;
 import lombok.val;
+import net.spy.memcached.MemcachedClientIF;
+import org.apache.commons.pool2.ObjectPool;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +34,7 @@ import org.springframework.context.annotation.Lazy;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for MemcachedTicketRegistry class.
@@ -86,6 +90,24 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
         assertNotNull(ticket);
     }
 
+    @RepeatedTest(1)
+    public void verifyFailures() {
+        val pool = mock(ObjectPool.class);
+        val registry = new MemcachedTicketRegistry(pool);
+        assertNotNull(registry.updateTicket(new MockTicketGrantingTicket("casuser")));
+        assertNotNull(registry.deleteSingleTicket(new MockTicketGrantingTicket("casuser").getId()));
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Exception {
+                val client = mock(MemcachedClientIF.class);
+                when(pool.borrowObject()).thenReturn(client);
+                when(client.set(anyString(), anyInt(), any())).thenThrow(new IllegalArgumentException());
+                doThrow(new IllegalArgumentException()).when(pool).returnObject(any());
+                registry.addTicket(new MockTicketGrantingTicket("casuser"));
+            }
+        });
+    }
+    
     @TestConfiguration("MemcachedTicketRegistryTestConfiguration")
     @Lazy(false)
     public static class MemcachedTicketRegistryTestConfiguration implements ComponentSerializationPlanConfigurer {

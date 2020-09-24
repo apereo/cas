@@ -78,6 +78,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
             cfg.setScope(oidc.getScope());
         }
         cfg.setUseNonce(oidc.isUseNonce());
+        cfg.setDisablePkce(oidc.isDisablePkce());
         cfg.setSecret(oidc.getSecret());
         cfg.setClientId(oidc.getId());
         cfg.setReadTimeout((int) Beans.newDuration(oidc.getReadTimeout()).toMillis());
