@@ -43,6 +43,11 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
     private boolean useNonce;
 
     /**
+     * Disable PKCE support for the provider.
+     */
+    private boolean disablePkce;
+
+    /**
      * Requested scope(s).
      */
     private String scope;
