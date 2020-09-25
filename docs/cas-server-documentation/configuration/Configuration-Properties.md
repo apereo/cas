@@ -4516,6 +4516,7 @@ under the configuration key `cas.service-registry`.
 
 ```properties
 # cas.service-registry.git.group-by-type=true
+# cas.service-registry.git.root-directory=
 ```
 
 To learn more about this topic, [please review this guide](../services/Git-Service-Management.html).

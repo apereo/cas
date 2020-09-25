@@ -43,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "cas.service-registry.git.sign-commits=false",
+        "cas.service-registry.git.root-directory=svc-cfg",
         "cas.service-registry.git.repository-url=file:/tmp/cas-sample-data.git"
     })
 @Slf4j
