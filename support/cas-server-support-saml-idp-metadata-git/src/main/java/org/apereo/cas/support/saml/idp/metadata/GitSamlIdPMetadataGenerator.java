@@ -34,7 +34,11 @@ public class GitSamlIdPMetadataGenerator extends FileSystemSamlIdPMetadataGenera
         val appliesTo = getAppliesToFor(registeredService);
         doc.setAppliesTo(appliesTo);
         gitRepository.commitAll("Generated metadata for " + appliesTo);
-        gitRepository.push();
+
+        val props = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getMetadata().getGit();
+        if (props.isPushChanges()) {
+            gitRepository.push();
+        }
         return super.finalizeMetadataDocument(doc, registeredService);
     }
 

@@ -20,8 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JcifsConfigTests {
 
     @Test
-    @SneakyThrows
-    public void verifyKerbSysConfig() {
+    public void verifyKerbSysConfig() throws Exception {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
