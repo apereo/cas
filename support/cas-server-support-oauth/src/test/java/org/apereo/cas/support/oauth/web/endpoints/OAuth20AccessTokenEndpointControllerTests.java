@@ -70,8 +70,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    @SneakyThrows
-    public void verifyClientNoClientId(final OAuthRegisteredService registeredService) {
+    public void verifyClientNoClientId(final OAuthRegisteredService registeredService) throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
@@ -108,8 +107,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
     
 
     @Test
-    @SneakyThrows
-    public void verifyClientNoAuthorizationCode() {
+    public void verifyClientNoAuthorizationCode() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -127,8 +125,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
     }
 
     @Test
-    @SneakyThrows
-    public void verifyClientBadGrantType() {
+    public void verifyClientBadGrantType() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -167,8 +164,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
     }
 
     @Test
-    @SneakyThrows
-    public void verifyClientNoClientSecret() {
+    public void verifyClientNoClientSecret() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -206,8 +202,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    @SneakyThrows
-    public void verifyClientNoCasService(final OAuthRegisteredService registeredService) {
+    public void verifyClientNoCasService(final OAuthRegisteredService registeredService) throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -266,8 +261,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
     }
 
     @Test
-    @SneakyThrows
-    public void verifyClientEmptySecret() {
+    public void verifyClientEmptySecret() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -286,8 +280,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
     }
 
     @Test
-    @SneakyThrows
-    public void verifyPKCECodeVerifier() {
+    public void verifyPKCECodeVerifier() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -309,8 +302,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    @SneakyThrows
-    public void verifyPKCEInvalidCodeVerifier(final OAuthRegisteredService registeredService) {
+    public void verifyPKCEInvalidCodeVerifier(final OAuthRegisteredService registeredService) throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -331,8 +323,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
     }
 
     @Test
-    @SneakyThrows
-    public void verifyPKCEEmptySecret() {
+    public void verifyPKCEEmptySecret() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -354,8 +345,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    @SneakyThrows
-    public void verifyPKCEWrongSecret(final OAuthRegisteredService registeredService) {
+    public void verifyPKCEWrongSecret(final OAuthRegisteredService registeredService) throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -663,8 +653,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
     }
 
     @Test
-    @SneakyThrows
-    public void verifyRefreshTokenExpiredToken() {
+    public void verifyRefreshTokenExpiredToken() throws Exception {
         val principal = createPrincipal();
         val registeredService = addRegisteredService(
             CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));

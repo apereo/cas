@@ -138,13 +138,16 @@ public class GitRepository implements DisposableBean {
      */
     @SneakyThrows
     public void push() {
-        val providers = this.credentialsProvider.toArray(CredentialsProvider[]::new);
-        this.gitInstance.push()
-            .setTimeout((int) timeoutInSeconds)
-            .setTransportConfigCallback(this.transportConfigCallback)
-            .setPushAll()
-            .setCredentialsProvider(new ChainingCredentialsProvider(providers))
-            .call();
+        val remotes = gitInstance.remoteList().call();
+        if (!remotes.isEmpty()) {
+            val providers = this.credentialsProvider.toArray(CredentialsProvider[]::new);
+            gitInstance.push()
+                .setTimeout((int) timeoutInSeconds)
+                .setTransportConfigCallback(this.transportConfigCallback)
+                .setPushAll()
+                .setCredentialsProvider(new ChainingCredentialsProvider(providers))
+                .call();
+        }
     }
 
     /**
