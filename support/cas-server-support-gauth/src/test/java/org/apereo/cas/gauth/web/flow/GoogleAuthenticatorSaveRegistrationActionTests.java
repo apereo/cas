@@ -44,7 +44,7 @@ import static org.springframework.webflow.execution.RequestContextHolder.setRequ
     GoogleAuthenticatorSaveRegistrationActionTests.GoogleAuthenticatorSaveRegistrationActionTestConfiguration.class,
     BaseGoogleAuthenticatorTests.SharedTestConfiguration.class
 })
-@Tag("WebflowActions")
+@Tag("WebflowMfaActions")
 public class GoogleAuthenticatorSaveRegistrationActionTests {
 
     @Autowired
