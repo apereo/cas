@@ -75,6 +75,11 @@ if the single sign-on session is established using a disallowed provider for the
 SAML2 application definitions whose metadata is retrieved from URLs can now specify a proxy endpoint in the application definition,
 in case the metadata is behind a proxy.
 
+### Git Service Registry Groups
+
+Service definitions managed by [Git Service Registry](../services/Git-Service-Management.html) are now given an option, on by default,
+to locate and group service definitions by their type, and store them in dedicated folders for easier management.
+
 ## Other Stuff
 
 - Password reset verification attempts can now properly handle expired or invalid reset attempts in the authentication webflow.

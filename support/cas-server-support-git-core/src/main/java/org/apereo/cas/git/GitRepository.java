@@ -138,17 +138,13 @@ public class GitRepository implements DisposableBean {
      */
     @SneakyThrows
     public void push() {
-        if (!this.credentialsProvider.isEmpty()) {
-            val providers = this.credentialsProvider.toArray(CredentialsProvider[]::new);
-            this.gitInstance.push()
-                .setTimeout((int) timeoutInSeconds)
-                .setTransportConfigCallback(this.transportConfigCallback)
-                .setPushAll()
-                .setCredentialsProvider(new ChainingCredentialsProvider(providers))
-                .call();
-        } else {
-            LOGGER.debug("No credentials are provided. Changes will not be pushed to repository");
-        }
+        val providers = this.credentialsProvider.toArray(CredentialsProvider[]::new);
+        this.gitInstance.push()
+            .setTimeout((int) timeoutInSeconds)
+            .setTransportConfigCallback(this.transportConfigCallback)
+            .setPushAll()
+            .setCredentialsProvider(new ChainingCredentialsProvider(providers))
+            .call();
     }
 
     /**
