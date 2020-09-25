@@ -55,7 +55,7 @@ to fail all pull requests that fall below this threshold. This area will be clos
 as progress is made with the goal of hopefully reaching at least `88%` before the final GA release. Of course, 
 this will not be a blocker for the final release.
 
-### WebAuthn Support
+### WebAuthn FIDO2 Support
 
 CAS can now support [WebAuthn FIDO2](../mfa/FIDO2-WebAuthn-Authentication.html) for multifactor authentication.
 
@@ -80,6 +80,11 @@ in case the metadata is behind a proxy.
 Service definitions managed by [Git Service Registry](../services/Git-Service-Management.html) are now given an option, on by default,
 to locate and group service definitions by their type, and store them in dedicated folders for easier management.
 
+### Registered Service Properties
+
+Assigning [custom properties](../services/Configuring-Service-Custom-Properties.html) to registered service definitions can now 
+take advantage of [Spring Expressions](../configuration/Configuration-Spring-Expressions.html).
+
 ## Other Stuff
 
 - Password reset verification attempts can now properly handle expired or invalid reset attempts in the authentication webflow.
@@ -103,6 +108,7 @@ active profiles via `classpath:/application-{profile}.yml` configuration files.
 - Spring Boot
 - Spring Data
 - JGit
+- Mockito
 - Spring Security
 - Spring Cloud
 

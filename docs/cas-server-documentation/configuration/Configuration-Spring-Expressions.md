@@ -6,7 +6,8 @@ category: Installation
 
 # Spring Expression Language
 
-A number of components in CAS are able to take advantage of the [Spring Expression Language](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#expressions) syntax
+A number of components in CAS are able to take advantage of 
+the [Spring Expression Language](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#expressions) syntax
 for their internal configuration. This is primarily useful when the component
 wishes to have access to system variables, environment properties or in general requires a more dynamic or
 programmatic strategy before it can be fully functional.

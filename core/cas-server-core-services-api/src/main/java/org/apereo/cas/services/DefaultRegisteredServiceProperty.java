@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
@@ -13,6 +15,7 @@ import javax.persistence.Table;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -50,7 +53,10 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
         if (this.values == null) {
             this.values = new HashSet<>(0);
         }
-        return this.values;
+        return this.values
+            .stream()
+            .map(value -> SpringExpressionLanguageValueResolver.getInstance().resolve(value))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**
@@ -69,15 +75,15 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
     @Override
     @JsonIgnore
     public String getValue() {
-        if (this.values.isEmpty()) {
+        if (getValues().isEmpty()) {
             return null;
         }
-        return this.values.iterator().next();
+        return getValues().iterator().next();
     }
 
     @Override
     public boolean contains(final String value) {
-        return this.values.contains(value);
+        return getValues().contains(value);
     }
 
     /**
