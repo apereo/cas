@@ -4368,7 +4368,7 @@ Works with git repository to fetch and manage service registry definitions.
 
 ```properties
 # cas.service-registry.git.repository-url=https://github.com/repository
-# cas.service-registry.git.branches-to-clone=master
+# cas.service-registry.git.root-directory=
 # cas.service-registry.git.active-branch=master
 # cas.service-registry.git.sign-commits=false
 # cas.service-registry.git.username=
