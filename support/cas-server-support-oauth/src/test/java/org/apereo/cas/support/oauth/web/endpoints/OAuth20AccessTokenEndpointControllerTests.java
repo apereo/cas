@@ -105,6 +105,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
         assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get("error"));
     }
+    
 
     @Test
     @SneakyThrows
@@ -455,7 +456,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         mockRequest.setParameter(OAuth20Constants.CODE, devCode);
         val approveResp = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, approveResp, null);
-        val mvApproved = accessTokenController.handleRequest(mockRequest, approveResp);
+        val mvApproved = accessTokenController.handleGetRequest(mockRequest, approveResp);
         assertTrue(mvApproved.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
         assertEquals(getDefaultAccessTokenExpiration(), mvApproved.getModel().get(OAuth20Constants.EXPIRES_IN));
         assertTrue(mvApproved.getModel().containsKey(OAuth20Constants.TOKEN_TYPE));
@@ -499,8 +500,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
     }
 
     @Test
-    @SneakyThrows
-    public void ensureOnlyRefreshTokenIsAcceptedForRefreshGrant() {
+    public void ensureOnlyRefreshTokenIsAcceptedForRefreshGrant() throws Exception {
         addRegisteredService(true, CollectionUtils.wrapSet(OAuth20GrantTypes.PASSWORD,
             OAuth20GrantTypes.REFRESH_TOKEN));
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);

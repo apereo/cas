@@ -11,10 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.HttpConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,5 +50,43 @@ public class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20
         request.addParameter(OAuth20Constants.TOKEN, at);
         val result = introspectionEndpoint.handleRequest(request, response);
         assertNotNull(result.getBody());
+    }
+
+    @Test
+    public void verifyNoService() {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+
+        val id = UUID.randomUUID().toString();
+        val auth = id + ':' + CLIENT_SECRET;
+        val value = EncodingUtils.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
+        request.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
+
+        val registeredService = getRegisteredService(id, id);
+        val mv = generateAccessTokenResponseAndGetModelAndView(registeredService);
+        val at = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
+
+        request.addParameter(OAuth20Constants.ACCESS_TOKEN, at);
+        val result = introspectionEndpoint.handleRequest(request, response);
+        assertEquals(HttpStatus.UNAUTHORIZED, result.getStatusCode());
+    }                                                   
+
+    @Test
+    public void verifyUnauthzOperation() {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val result = introspectionEndpoint.handleRequest(request, response);
+        assertEquals(HttpStatus.UNAUTHORIZED, result.getStatusCode());
+    }
+
+    @Test
+    public void verifyBadOperation() {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val auth = CLIENT_ID + ':' + CLIENT_SECRET;
+        val value = EncodingUtils.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
+        request.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
+        val result = introspectionEndpoint.handleRequest(request, response);
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 }

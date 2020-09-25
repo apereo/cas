@@ -65,20 +65,20 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
      * @param values the values
      */
     public void setValues(final Set<String> values) {
-        getValues().clear();
+        this.values.clear();
         if (values == null) {
             return;
         }
-        getValues().addAll(values);
+        this.values.addAll(values);
     }
 
     @Override
     @JsonIgnore
     public String getValue() {
-        if (getValues().isEmpty()) {
+        if (values.isEmpty()) {
             return null;
         }
-        return getValues().iterator().next();
+        return SpringExpressionLanguageValueResolver.getInstance().resolve(values.iterator().next());
     }
 
     @Override
@@ -92,7 +92,7 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
      * @param value the value
      */
     public void addValue(final String value) {
-        getValues().add(value);
+        values.add(value);
     }
 
 }
