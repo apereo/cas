@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.git.PathRegexPatternTreeFilter;
+import org.apereo.cas.services.locator.GitRepositoryRegisteredServiceLocator;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import lombok.SneakyThrows;

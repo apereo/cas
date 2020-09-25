@@ -3,13 +3,13 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.git.GitRepositoryBuilder;
-import org.apereo.cas.services.DefaultGitRepositoryRegisteredServiceLocator;
-import org.apereo.cas.services.GitRepositoryRegisteredServiceLocator;
 import org.apereo.cas.services.GitServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
-import org.apereo.cas.services.TypeAwareGitRepositoryRegisteredServiceLocator;
+import org.apereo.cas.services.locator.DefaultGitRepositoryRegisteredServiceLocator;
+import org.apereo.cas.services.locator.GitRepositoryRegisteredServiceLocator;
+import org.apereo.cas.services.locator.TypeAwareGitRepositoryRegisteredServiceLocator;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
@@ -71,12 +71,12 @@ public class GitServiceRegistryConfiguration {
 
         val locators = new ArrayList<GitRepositoryRegisteredServiceLocator>();
         if (properties.isGroupByType()) {
-            new TypeAwareGitRepositoryRegisteredServiceLocator(resourceNamingStrategy.getObject(),
-                gitRepository.getRepositoryDirectory());
+            locators.add(new TypeAwareGitRepositoryRegisteredServiceLocator(resourceNamingStrategy.getObject(),
+                gitRepository.getRepositoryDirectory(), properties));
         }
         locators.add(new DefaultGitRepositoryRegisteredServiceLocator(resourceNamingStrategy.getObject(),
-            gitRepository.getRepositoryDirectory()));
-        
+            gitRepository.getRepositoryDirectory(), properties));
+
         return new GitServiceRegistry(applicationContext,
             gitRepository,
             CollectionUtils.wrapList(

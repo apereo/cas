@@ -1,9 +1,14 @@
-package org.apereo.cas.services;
+package org.apereo.cas.services.locator;
 
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jgit.util.FileUtils;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -46,5 +51,22 @@ public interface GitRepositoryRegisteredServiceLocator {
             .map(ext -> determine(service, ext))
             .filter(File::exists)
             .findFirst();
+    }
+
+    /**
+     * Normalize parent directory file.
+     *
+     * @param repositoryDirectory the repository directory
+     * @param rootDirectory       the root directory
+     * @return the file
+     * @throws IOException the io exception
+     */
+    static File normalizeParentDirectory(final File repositoryDirectory, final String rootDirectory) throws IOException {
+        var parentDirectory = repositoryDirectory;
+        if (StringUtils.isNotBlank(rootDirectory)) {
+            parentDirectory = new File(repositoryDirectory, rootDirectory);
+            FileUtils.mkdir(parentDirectory, true);
+        }
+        return parentDirectory;
     }
 }
