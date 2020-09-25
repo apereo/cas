@@ -473,6 +473,7 @@ jobs:
           - webflow-config
           - webflow-actions
           - webflow-events
+          - webflow-mfa-actions
           - attributes
           - services
           - expiration-policy
@@ -486,7 +487,7 @@ jobs:
           - util
           - authentication
           - tickets
-          - casconfig
+          - cas-config
           - actuator
           - webapp
           - ldap

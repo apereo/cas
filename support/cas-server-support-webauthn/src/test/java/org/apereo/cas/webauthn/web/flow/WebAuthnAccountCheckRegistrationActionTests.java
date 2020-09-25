@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowMfaActions")
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class)
 public class WebAuthnAccountCheckRegistrationActionTests {
     @Autowired
