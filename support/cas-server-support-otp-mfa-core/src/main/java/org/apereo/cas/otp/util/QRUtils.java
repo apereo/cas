@@ -1,5 +1,7 @@
 package org.apereo.cas.otp.util;
 
+import org.apereo.cas.util.EncodingUtils;
+
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.qrcode.QRCodeWriter;
@@ -13,6 +15,7 @@ import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
@@ -66,7 +69,11 @@ public class QRUtils {
                 .filter(j -> byteMatrix.get(i, j))
                 .forEach(j -> graphics.fillRect(i, j, 1, 1)));
 
-        ImageIO.write(image, "png", stream);
-    }
+        val out = new ByteArrayOutputStream();
+        ImageIO.write(image, "PNG", out);
+        byte[] bytes = out.toByteArray();
 
+        val base64bytes = EncodingUtils.encodeBase64(bytes);
+        stream.write(base64bytes.getBytes("UTF-8"));
+    }
 }
