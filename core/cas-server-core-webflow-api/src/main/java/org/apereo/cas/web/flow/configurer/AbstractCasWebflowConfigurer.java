@@ -630,7 +630,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public void createStateModelBinding(final TransitionableState state, final String modelName, final Class modelType) {
-        LOGGER.trace("Creating model binding [{}] with type [{}} for [{}]", modelName, modelType, state.getId());
+        LOGGER.trace("Creating model binding [{}] with type [{}] for [{}]", modelName, modelType, state.getId());
         state.getAttributes().put("model", createExpression(modelName, modelType));
     }
 

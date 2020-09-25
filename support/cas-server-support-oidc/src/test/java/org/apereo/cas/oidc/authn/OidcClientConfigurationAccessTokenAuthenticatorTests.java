@@ -41,4 +41,18 @@ public class OidcClientConfigurationAccessTokenAuthenticatorTests extends Abstra
         assertNotNull(userProfile);
         assertEquals("casuser", userProfile.getId());
     }
+
+    @Test
+    public void verifyFailsOperation() {
+        val request = new MockHttpServletRequest();
+        val ctx = new JEEContext(request, new MockHttpServletResponse());
+        val auth = new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry, oidcAccessTokenJwtBuilder);
+        val at = getAccessToken();
+        when(at.getScopes()).thenThrow(new IllegalArgumentException());
+        ticketRegistry.addTicket(at);
+        val credentials = new TokenCredentials(at.getId());
+        auth.validate(credentials, ctx);
+        val userProfile = credentials.getUserProfile();
+        assertNull(userProfile);
+    }
 }

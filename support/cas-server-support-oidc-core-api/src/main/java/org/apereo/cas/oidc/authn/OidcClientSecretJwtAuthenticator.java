@@ -55,7 +55,6 @@ public class OidcClientSecretJwtAuthenticator extends BaseOidcJwtAuthenticator {
             return;
         }
         try {
-
             val params = new HashMap<String, List<String>>();
             params.put(OAuth20Constants.CLIENT_ASSERTION_TYPE, List.of(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER));
             params.put(OAuth20Constants.CLIENT_ASSERTION, List.of(credentials.getPassword()));

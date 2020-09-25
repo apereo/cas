@@ -46,7 +46,7 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
         val uid = authentication.getPrincipal().getId();
 
         val otp = Integer.parseInt(tokenCredential.getToken());
-        LOGGER.trace("Received OTP [{}] assigned to account [{}}", otp, tokenCredential.getAccountId());
+        LOGGER.trace("Received OTP [{}] assigned to account [{}]", otp, tokenCredential.getAccountId());
 
         LOGGER.trace("Received principal id [{}]. Attempting to locate account in credential repository...", uid);
         val accounts = this.credentialRepository.get(uid);
