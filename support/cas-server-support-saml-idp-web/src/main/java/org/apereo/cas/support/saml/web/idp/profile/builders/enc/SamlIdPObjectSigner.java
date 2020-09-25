@@ -398,7 +398,7 @@ public class SamlIdPObjectSigner {
             privateKeyFactoryBean.setAlgorithm(registeredService.getSigningKeyAlgorithm());
         }
         privateKeyFactoryBean.setSingleton(false);
-        LOGGER.debug("Locating signature signing key for [{}] using algorithm [{}}",
+        LOGGER.debug("Locating signature signing key for [{}] using algorithm [{}]",
             registeredService, privateKeyFactoryBean.getAlgorithm());
         return privateKeyFactoryBean.getObject();
     }

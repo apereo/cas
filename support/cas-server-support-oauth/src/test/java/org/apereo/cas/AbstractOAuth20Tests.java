@@ -115,6 +115,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.nio.charset.StandardCharsets;
@@ -201,6 +202,10 @@ public abstract class AbstractOAuth20Tests {
     public static final int DELTA = 2;
 
     public static final int TIMEOUT = 7200;
+
+    @Autowired
+    @Qualifier("oauthHandlerInterceptorAdapter")
+    protected HandlerInterceptor oauthHandlerInterceptorAdapter;
 
     @Autowired
     @Qualifier("accessTokenController")

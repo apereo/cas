@@ -47,11 +47,11 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         val allAttributes = new HashMap<>(principalAttributes);
         val results = getWsGetGroupsResults(principal);
-        val grouperGroups = new ArrayList<String>(results.size());
         if (results.isEmpty()) {
             LOGGER.warn("No groups could be found for [{}]", principal);
             return false;
         }
+        val grouperGroups = new ArrayList<String>(results.size());
         results
             .stream()
             .filter(groupsResult -> groupsResult.getWsGroups() != null && groupsResult.getWsGroups().length > 0)

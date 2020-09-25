@@ -44,7 +44,8 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
      */
     private InetAddress inetNetworkRange;
 
-    public RemoteAddressAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public RemoteAddressAuthenticationHandler(final String name,
+        final ServicesManager servicesManager,
                                               final PrincipalFactory principalFactory,
                                               final Integer order) {
         super(name, servicesManager, principalFactory, order);

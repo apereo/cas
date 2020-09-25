@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.acceptto.organization-secret=thisisasecret",
         "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
     })
-@Tag("WebflowActions")
+@Tag("WebflowMfaActions")
 public class AccepttoQRCodeValidateWebSocketChannelActionTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

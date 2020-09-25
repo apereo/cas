@@ -56,7 +56,7 @@ public class AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration impl
                         .build();
                     val result = client.getParametersByPath(request);
                     nextToken = result.nextToken();
-                    LOGGER.trace("Fetched [{}] parameters with next token as [{}}", result.parameters().size(), result.nextToken());
+                    LOGGER.trace("Fetched [{}] parameters with next token as [{}]", result.parameters().size(), result.nextToken());
 
                     result.parameters().forEach(p -> {
                         val key = StringUtils.removeEnd(StringUtils.removeStart(p.name(), prefix), "/");

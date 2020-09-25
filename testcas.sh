@@ -12,7 +12,7 @@ jms,hazelcast,jmx,ehcache,actuator,wsfed,authn,attributes,cas,logout,\
 expiration-policy,files,postgres,dynamodb,couchbase,uma,saml,mail,aws,jms,\
 hazelcast,jmx,ehcache,actuator,wsfed,authn,attributes,metrics,webflowactions,\
 oauth,oidc,redis,webflow,mongo,ignite,influxdb,zookeeper,mysql,x509,shell,\
-cosmosdb,config,sms,util,services,web,audits,password-ops"
+cosmosdb,config,sms,util,services,web,audits,password-ops,webflow-mfa-actions"
     echo -e "\nPlease see the test script for details.\n"
 }
 
@@ -147,7 +147,7 @@ while (( "$#" )); do
             filesystem|files|file|fsys)
                 task+="testFileSystem "
                 ;;
-            config|casconfig|ccfg|cfg)
+            config|casconfig|ccfg|cfg|cas-config)
                 task+="testCasConfiguration "
                 ;;
             groovy|script)
@@ -173,6 +173,9 @@ while (( "$#" )); do
                 ;;
             rest|restful|restapi)
                 task+="testRestfulApi "
+                ;;
+            webflow-mfa-actions|swf-mfa_actions)
+                task+="testWebflowMfaActions "
                 ;;
             webflowactions|swfactions|webflow-actions)
                 task+="testWebflowActions "
