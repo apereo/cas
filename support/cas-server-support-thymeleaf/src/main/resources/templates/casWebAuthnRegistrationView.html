@@ -80,11 +80,24 @@
                 <section id="deviceNamePanel" class="cas-field my-3 mdc-input-group">
                     <div class="mdc-input-group-field mdc-input-group-field-append">
                         <br>
-                        <div class="mdc-text-field d-flex">
-                            <input class="mdc-text-field__input" id="credentialNickname"
-                                   name="credentialNickname" size="50" type="text" autocomplete="off"/>
-                            <label for="credentialNickname" class="mdc-floating-label"
-                                   th:utext="#{screen.authentication.webauthn.name}">Nickname</label>
+                        <div class="d-flex">
+                            <label for="credentialNickname" class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+                                <input class="mdc-text-field__input"
+                                       type="text"
+                                       name="credentialNickname"
+                                       id="credentialNickname"
+                                       size="50"
+                                       autocomplete="off" required />
+
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                      <span class="mdc-floating-label" th:utext="#{screen.authentication.webauthn.name}">Nickname</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                            </label>
+                            
                         </div>
                     </div>
                 </section>

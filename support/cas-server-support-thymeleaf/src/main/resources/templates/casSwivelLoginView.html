@@ -23,12 +23,27 @@
                 </p>
                 <section class="cas-field my-3 mdc-input-group">
                     <div class="mdc-input-group-field mdc-input-group-field-append">
-                        <div class="mdc-text-field  mdc-text-field--with-trailing-icon d-flex caps-check">
-                            <input class="mdc-text-field__input pwd" type="password" required id="token" size="25"
-                                th:field="*{token}"
-                                 th:accesskey="#{screen.welcome.label.password.accesskey}"
-                                autocomplete="off" />
-                            <label for="token" class="mdc-floating-label" th:utext="#{cas.mfa.swivel.label.token}">Token</label>
+                        <div class="d-flex caps-check">
+
+                            <label for="token" class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+                                <input class="mdc-text-field__input pwd"
+                                       type="password"
+                                       name="token"
+                                       id="token"
+                                       th:accesskey="#{screen.welcome.label.password.accesskey}"
+                                       th:field="*{token}"
+                                       size="25"
+                                       autocomplete="off" required />
+
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                      <span class="mdc-floating-label" th:utext="#{cas.mfa.swivel.label.token}">Token</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                            </label>
+                            
                         </div>
                         <div class="mdc-text-field-helper-line caps-warn">
                             <p
