@@ -60,11 +60,26 @@
                     </button>
 
                 </section>
-                <div class="mdc-text-field d-flex">
-                    <input class="mdc-text-field__input" id="accountName"
-                           name="accountName" size="50" type="text" autocomplete="off"/>
-                    <label for="accountName" class="mdc-floating-label"
-                           th:utext="#{screen.authentication.yubikey.name}">Name</label>
+                <div class="d-flex">
+                    
+
+                    <label for="accountName" class="mdc-text-field mdc-text-field--outlined">
+                        <input class="mdc-text-field__input"
+                               type="text"
+                               name="accountName"
+                               id="accountName"
+                               size="50"
+                               autocomplete="off" required />
+
+                        <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                      <span class="mdc-floating-label" th:utext="#{screen.authentication.yubikey.name}">Token</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                    </label>
+
                     <script>document.getElementById("accountName").value = randomWord();</script>
                 </div>
                 <br>

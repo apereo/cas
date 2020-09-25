@@ -38,9 +38,25 @@
 
             <div class="cas-field my-3 mdc-input-group">
                 <div class="mdc-input-group-field mdc-input-group-field-append">
-                    <div class="mdc-text-field  mdc-text-field--with-trailing-icon d-flex caps-check">
-                        <input class="mdc-text-field__input pwd" type="password" id="password" th:field="*{password}" required />
-                        <label for="username" class="mdc-floating-label" th:utext="#{screen.pm.enterpsw}">Enter Password:</label>
+                    <div class="d-flex caps-check">
+
+                        <label for="password" class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+                            <input class="mdc-text-field__input pwd"
+                                   type="password"
+                                   name="password"
+                                   id="password"
+                                   th:field="*{password}"
+                                   autocomplete="off" required />
+
+                            <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                      <span class="mdc-floating-label" th:utext="#{screen.pm.enterpsw}">Enter Password:</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                        </label>
+
                         <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
                         
                     </div>
