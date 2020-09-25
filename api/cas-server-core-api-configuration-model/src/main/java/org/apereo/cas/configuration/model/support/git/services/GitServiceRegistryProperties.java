@@ -22,6 +22,13 @@ import java.io.File;
 public class GitServiceRegistryProperties extends BaseGitProperties {
     private static final long serialVersionUID = 4194689836396653458L;
 
+    /**
+     * Determine whether service definitions in the
+     * git repository should be located/stored in groups and
+     * separate folder structures based on the service type.
+     */
+    private boolean groupByType = true;
+    
     public GitServiceRegistryProperties() {
         setCloneDirectory(new File(FileUtils.getTempDirectory(), "cas-service-registry"));
     }
