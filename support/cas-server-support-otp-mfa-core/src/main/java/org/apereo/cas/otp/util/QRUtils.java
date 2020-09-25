@@ -1,6 +1,8 @@
 package org.apereo.cas.otp.util;
 
 import com.google.zxing.BarcodeFormat;
+import java.io.ByteArrayOutputStream;
+import org.apereo.cas.util.EncodingUtils;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
@@ -66,7 +68,13 @@ public class QRUtils {
                 .filter(j -> byteMatrix.get(i, j))
                 .forEach(j -> graphics.fillRect(i, j, 1, 1)));
 
-        ImageIO.write(image, "png", stream);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ImageIO.write(image, "PNG", out);
+        byte[] bytes = out.toByteArray();
+
+        String base64bytes = EncodingUtils.encodeBase64(bytes);
+        String src = "data:image/png;base64," + base64bytes;
+        stream.write(src.getBytes("UTF-8"));
     }
 
 }
