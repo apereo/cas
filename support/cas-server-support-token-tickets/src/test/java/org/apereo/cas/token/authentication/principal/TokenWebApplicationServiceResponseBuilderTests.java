@@ -38,6 +38,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,6 +138,21 @@ public class TokenWebApplicationServiceResponseBuilderTests {
             assertTrue(result.getAttributes().containsKey(CasProtocolConstants.PARAMETER_TICKET));
             val ticket = result.getAttributes().get(CasProtocolConstants.PARAMETER_TICKET);
             assertNotNull(JWTParser.parse(ticket));
+        }
+    }
+    
+    @Test
+    public void verifyTokenBuilderWithoutServiceTicket() throws Exception {
+        val data = "yes\ncasuser";
+        try (val webServer = new MockWebServer(8281,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+
+            val result = responseBuilder.build(CoreAuthenticationTestUtils.getWebApplicationService("jwtservice"),
+                StringUtils.EMPTY,
+                CoreAuthenticationTestUtils.getAuthentication());
+            assertNotNull(result);
+            assertFalse(result.getAttributes().containsKey(CasProtocolConstants.PARAMETER_TICKET));
         }
     }
 }

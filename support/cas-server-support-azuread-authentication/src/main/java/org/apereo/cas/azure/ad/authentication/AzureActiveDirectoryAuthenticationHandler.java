@@ -92,7 +92,7 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
         try {
             service = Executors.newFixedThreadPool(1);
             val context = new AuthenticationContext(this.loginUrl, false, service);
-            LOGGER.debug("Acquiring token for resource [{}] and client id [{}} for user [{}]", this.resource, this.clientId, username);
+            LOGGER.debug("Acquiring token for resource [{}] and client id [{}] for user [{}]", this.resource, this.clientId, username);
             val future = context.acquireToken(this.resource, this.clientId, username, password, null);
             return future.get();
         } finally {

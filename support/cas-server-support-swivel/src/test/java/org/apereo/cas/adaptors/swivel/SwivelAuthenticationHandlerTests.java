@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -73,8 +72,7 @@ public class SwivelAuthenticationHandlerTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyAuthn() {
+    public void verifyAuthn()throws Exception {
         val c = new SwivelTokenCredential("123456");
         val context = new MockRequestContext();
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);

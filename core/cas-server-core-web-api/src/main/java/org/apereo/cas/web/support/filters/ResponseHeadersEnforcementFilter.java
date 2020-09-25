@@ -315,7 +315,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
             httpServletResponse.addHeader("Cache-Control", value);
             httpServletResponse.addHeader("Pragma", "no-cache");
             httpServletResponse.addIntHeader("Expires", 0);
-            LOGGER.trace("Adding Cache Control response headers for [{}}", uri);
+            LOGGER.trace("Adding Cache Control response headers for [{}]", uri);
         }
     }
 

@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
@@ -13,6 +15,7 @@ import javax.persistence.Table;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -50,7 +53,10 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
         if (this.values == null) {
             this.values = new HashSet<>(0);
         }
-        return this.values;
+        return this.values
+            .stream()
+            .map(value -> SpringExpressionLanguageValueResolver.getInstance().resolve(value))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**
@@ -59,25 +65,25 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
      * @param values the values
      */
     public void setValues(final Set<String> values) {
-        getValues().clear();
+        this.values.clear();
         if (values == null) {
             return;
         }
-        getValues().addAll(values);
+        this.values.addAll(values);
     }
 
     @Override
     @JsonIgnore
     public String getValue() {
-        if (this.values.isEmpty()) {
+        if (values.isEmpty()) {
             return null;
         }
-        return this.values.iterator().next();
+        return SpringExpressionLanguageValueResolver.getInstance().resolve(values.iterator().next());
     }
 
     @Override
     public boolean contains(final String value) {
-        return this.values.contains(value);
+        return getValues().contains(value);
     }
 
     /**
@@ -86,7 +92,7 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
      * @param value the value
      */
     public void addValue(final String value) {
-        getValues().add(value);
+        values.add(value);
     }
 
 }

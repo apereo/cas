@@ -82,7 +82,7 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
             val existingChannel = AccepttoWebflowUtils.getChannel(requestContext);
             if (existingChannel.isPresent()) {
                 val channel = existingChannel.get();
-                LOGGER.debug("Using existing channel retrieved as [{}}", channel);
+                LOGGER.debug("Using existing channel retrieved as [{}]", channel);
                 return channel;
             }
 

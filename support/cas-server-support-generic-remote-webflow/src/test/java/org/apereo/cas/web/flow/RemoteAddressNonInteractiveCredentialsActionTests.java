@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.BaseRemoteAddressTests;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,5 +44,17 @@ public class RemoteAddressNonInteractiveCredentialsActionTests {
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
         assertNotNull(remoteAddressCheck.execute(context));
+    }
+
+    @Test
+    public void verifyFails() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr(StringUtils.EMPTY);
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, remoteAddressCheck.execute(context).getId());
     }
 }

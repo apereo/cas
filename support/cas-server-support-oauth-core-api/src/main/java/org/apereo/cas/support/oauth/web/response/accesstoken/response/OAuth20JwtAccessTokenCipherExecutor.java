@@ -25,26 +25,6 @@ public class OAuth20JwtAccessTokenCipherExecutor extends JwtTicketCipherExecutor
             signingEnabled, signingKeySize, encryptionKeySize);
     }
 
-    public OAuth20JwtAccessTokenCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
-                                               final String alg, final boolean encryptionEnabled, final int signingKeySize,
-                                               final int encryptionKeySize) {
-        super(secretKeyEncryption, secretKeySigning, alg, encryptionEnabled,
-            signingKeySize, encryptionKeySize);
-    }
-
-    public OAuth20JwtAccessTokenCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
-                                               final boolean encryptionEnabled, final int signingKeySize, final int encryptionKeySize) {
-        super(secretKeyEncryption, secretKeySigning, encryptionEnabled,
-            signingKeySize, encryptionKeySize);
-    }
-
-    public OAuth20JwtAccessTokenCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
-                                               final boolean encryptionEnabled, final boolean signingEnabled,
-                                               final int signingKeySize, final int encryptionKeySize) {
-        super(secretKeyEncryption, secretKeySigning, encryptionEnabled,
-            signingEnabled, signingKeySize, encryptionKeySize);
-    }
-
     @Override
     protected String getEncryptionKeySetting() {
         return "cas.authn.oauth.access-token.crypto.encryption.key";

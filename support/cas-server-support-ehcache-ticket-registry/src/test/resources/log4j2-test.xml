@@ -10,6 +10,7 @@
         <Logger name="org.springframework.test" level="error" />
 
         <Logger name="org.apereo.cas" level="error"/>
+        <Logger name="org.apereo.cas.config.EhcacheTicketRegistryConfiguration" level="debug"/>
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

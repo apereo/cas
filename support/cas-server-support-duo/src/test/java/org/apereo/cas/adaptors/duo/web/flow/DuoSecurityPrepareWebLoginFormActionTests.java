@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowMfaActions")
 public class DuoSecurityPrepareWebLoginFormActionTests {
     @Test
     public void verifyOperation() throws Exception {

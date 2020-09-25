@@ -2,7 +2,6 @@ package org.apereo.cas.shell.commands.properties;
 
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -21,8 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SHELL")
 public class AddPropertiesToConfigurationCommandTests extends BaseCasShellCommandTests {
     @Test
-    @SneakyThrows
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         var file = File.createTempFile("cas", ".properties");
         exportProperties(file);
         file = File.createTempFile("cas", ".yml");

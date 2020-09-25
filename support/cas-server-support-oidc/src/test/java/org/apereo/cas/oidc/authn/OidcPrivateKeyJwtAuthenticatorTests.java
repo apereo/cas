@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
 
     @Test
-    public void verifyAction() {
+    public void verifyAction() throws Exception {
         val auth = new OidcPrivateKeyJwtAuthenticator(servicesManager,
             registeredServiceAccessStrategyEnforcer, ticketRegistry,
             webApplicationServiceFactory, casProperties, applicationContext);
@@ -54,18 +54,43 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
             registeredService.getClientId(), audience);
         val webKey = oidcServiceJsonWebKeystoreCache.get(registeredService).get();
         val jwt = EncodingUtils.signJwsRSASha512(webKey.getPrivateKey(), claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
-        val credentials = new UsernamePasswordCredentials(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
-            new String(jwt, StandardCharsets.UTF_8));
+
+        val credentials = getCredential(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
+            new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
+
+        auth.validate(credentials, context);
+        assertNotNull(credentials.getUserProfile());
+    }
+
+    @Test
+    public void verifyBadUser() throws Exception {
+        val auth = new OidcPrivateKeyJwtAuthenticator(servicesManager,
+            registeredServiceAccessStrategyEnforcer, ticketRegistry,
+            webApplicationServiceFactory, casProperties, applicationContext);
+
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+
+        val registeredService = getOidcRegisteredService();
+        val credentials = getCredential(request, "unknown", "unknown", registeredService.getClientId());
+
+        auth.validate(credentials, context);
+        assertNull(credentials.getUserProfile());
+    }
+
+    private UsernamePasswordCredentials getCredential(final MockHttpServletRequest request,
+        final String uid, final String password, final String clientId) {
+        val credentials = new UsernamePasswordCredentials(uid, password);
 
         val code = defaultOAuthCodeFactory.create(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getAuthentication(),
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(),
             StringUtils.EMPTY, StringUtils.EMPTY,
-            registeredService.getClientId(), new HashMap<>());
+            clientId, new HashMap<>());
         ticketRegistry.addTicket(code);
         request.addParameter(OAuth20Constants.CODE, code.getId());
-        auth.validate(credentials, context);
-        assertNotNull(credentials.getUserProfile());
+        return credentials;
     }
 }

@@ -197,6 +197,10 @@ public class CasOAuth20Configuration {
     @Qualifier("ticketGrantingTicketCookieGenerator")
     private ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator;
 
+    @Autowired
+    @Qualifier("oauthDistributedSessionCookieGenerator")
+    private ObjectProvider<CasCookieBuilder> oauthDistributedSessionCookieGenerator;
+
     @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
     @Bean
     @RefreshScope
@@ -811,15 +815,20 @@ public class CasOAuth20Configuration {
         return CipherExecutor.noOp();
     }
 
+    @ConditionalOnMissingBean(name = "oauthDistributedSessionCookieGenerator")
+    @Bean
+    public CasCookieBuilder oauthDistributedSessionCookieGenerator() {
+        val cookie = casProperties.getSessionReplication().getCookie();
+        return CookieUtils.buildCookieRetrievingGenerator(cookie);
+    }
+
     @ConditionalOnMissingBean(name = "oauthDistributedSessionStore")
     @Bean
     public SessionStore<JEEContext> oauthDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getOauth().isReplicateSessions();
         if (replicate) {
-            val cookie = casProperties.getSessionReplication().getCookie();
-            val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
             return new DistributedJEESessionStore(centralAuthenticationService.getObject(),
-                ticketFactory.getObject(), cookieGenerator);
+                ticketFactory.getObject(), oauthDistributedSessionCookieGenerator());
         }
         return new JEESessionStore();
     }
@@ -865,6 +874,7 @@ public class CasOAuth20Configuration {
             .webApplicationServiceServiceFactory(webApplicationServiceFactory.getObject())
             .casProperties(casProperties)
             .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getObject())
+            .oauthDistributedSessionCookieGenerator(oauthDistributedSessionCookieGenerator.getObject())
             .oauthConfig(oauthSecConfig())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .centralAuthenticationService(centralAuthenticationService.getObject())
