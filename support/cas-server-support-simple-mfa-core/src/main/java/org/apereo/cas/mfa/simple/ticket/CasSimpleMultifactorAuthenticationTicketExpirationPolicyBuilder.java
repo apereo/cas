@@ -1,4 +1,4 @@
-package org.apereo.cas.mfa.simple;
+package org.apereo.cas.mfa.simple.ticket;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ExpirationPolicy;

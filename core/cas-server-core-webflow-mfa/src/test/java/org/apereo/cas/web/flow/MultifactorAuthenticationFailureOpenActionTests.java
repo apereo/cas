@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowMfaActions")
 public class MultifactorAuthenticationFailureOpenActionTests extends MultifactorAuthenticationFailureActionTests {
     @Override
     @Test

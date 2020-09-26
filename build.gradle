@@ -23,7 +23,7 @@ buildscript {
             mavenContent { releasesOnly() }
         }
         maven {
-            url "http://repo.spring.io/snapshot"
+            url "https://repo.spring.io/snapshot"
             mavenContent { snapshotsOnly() }
         }
     }
@@ -589,7 +589,7 @@ task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, description: "Aggre
 }
 
 task rootSourcesJar(type: Jar, description: "Build JAR for the root CAS module") {
-    baseName = "${project.archivesBaseName}"
+    archiveBaseName = "${project.archivesBaseName}"
     from rootProject.file("src")
 }
 

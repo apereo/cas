@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = BaseU2FWebflowActionTests.SharedTestConfiguration.class)
-@Tag("WebflowActions")
+@Tag("WebflowMfaActions")
 public class U2FStartRegistrationActionTests extends BaseU2FWebflowActionTests {
     @Test
     public void verifyOperation() throws Exception {

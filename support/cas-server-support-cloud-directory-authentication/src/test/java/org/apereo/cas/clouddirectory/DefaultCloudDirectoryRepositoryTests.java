@@ -43,6 +43,7 @@ public class DefaultCloudDirectoryRepositoryTests {
         when(cloud.listIndex(any(ListIndexRequest.class))).thenReturn(result);
         val r = new DefaultCloudDirectoryRepository(cloud, new CloudDirectoryProperties());
         assertTrue(r.getUser("casuser").isEmpty());
+        assertNotNull(r.getListIndexRequest("casuser", ObjectReference.builder().build()));
     }
 
     @Test
@@ -121,7 +122,7 @@ public class DefaultCloudDirectoryRepositoryTests {
     }
 
     private static DefaultCloudDirectoryRepository getMockCloudDirectoryRepository(final CloudDirectoryClient cloud,
-                                                                                   final ListObjectAttributesRequest request) {
+        final ListObjectAttributesRequest request) {
         return new DefaultCloudDirectoryRepository(cloud, new CloudDirectoryProperties()) {
             @Override
             protected ListIndexRequest getListIndexRequest(final String username, final ObjectReference reference) {

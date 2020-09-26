@@ -178,9 +178,24 @@
                         Show the consent screen, as a reminder, in the event that there is no change to the collection of attributes released to {0}.
                     </p>
                     <div class="d-flex mt-2">
-                        <div class="mdc-text-field  mr-2">
-                            <input class="mdc-text-field__input" name="reminder" id="reminder" type="number" th:value="${reminder}">
-                            <label for="reminder" class="mdc-floating-label">Reminder</label>
+                        <div class="mr-2">
+
+                            <label for="reminder" class="mdc-text-field mdc-text-field--outlined">
+                                <input class="mdc-text-field__input"
+                                       type="number"
+                                       name="reminder"
+                                       id="reminder"
+                                       th:value="${reminder}" />
+
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                      <span class="mdc-floating-label">Reminder</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                            </label>
+
                         </div>
                         <select name="reminderTimeUnit" id="reminderTimeUnit" class="custom-select">
                             <option value="seconds" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'seconds'}"

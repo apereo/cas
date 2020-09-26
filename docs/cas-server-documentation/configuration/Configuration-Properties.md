@@ -4514,6 +4514,11 @@ Works with git repository to fetch and manage service registry definitions.
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#git-configuration) 
 under the configuration key `cas.service-registry`.
 
+```properties
+# cas.service-registry.git.group-by-type=true
+# cas.service-registry.git.root-directory=
+```
+
 To learn more about this topic, [please review this guide](../services/Git-Service-Management.html).
 
 ### RESTful Service Registry
@@ -4834,6 +4839,7 @@ To learn more about this topic, [please review this guide](../ticketing/Ehcache-
 # cas.ticket.registry.ehcache3.resource-pool-name=cas-ticket-pool
 # cas.ticket.registry.ehcache3.resource-pool-size=15MB
 # cas.ticket.registry.ehcache3.root-directory=/tmp/cas/ehcache3
+# cas.ticket.registry.ehcache3.persist-on-disk=true
 # cas.ticket.registry.ehcache3.cluster-connection-timeout=150
 # cas.ticket.registry.ehcache3.cluster-read-write-timeout=5
 # cas.ticket.registry.ehcache3.clustered-cache-consistency=STRONG

@@ -321,6 +321,9 @@ button.close {
     word-break: break-all;
 }
 
+.mdc-text-field {
+    width: 100%;
+}
 .mdc-text-field>.mdc-text-field__input, .mdc-text-field:not(.mdc-text-field--disabled):not(.mdc-text-field--outlined):not(.mdc-text-field--textarea)>.mdc-text-field__input {
     border-color: #153e50;
     border: 1px solid var(--cas-theme-primary, #153e50);

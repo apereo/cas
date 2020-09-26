@@ -91,6 +91,6 @@ public class GoogleAuthenticatorRedisTokenRepositoryTests extends BaseOneTimeTok
 
     @BeforeEach
     public void initialize() {
-        oneTimeTokenAuthenticatorTokenRepository.getObject().removeAll();
+        oneTimeTokenAuthenticatorTokenRepository.removeAll();
     }
 }

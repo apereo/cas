@@ -59,13 +59,6 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
             return principal.getId();
         }
         val sectorIdentifier = getSectorIdentifier(oidcSvc);
-        if (StringUtils.isBlank(sectorIdentifier)) {
-            LOGGER.debug("Service definition [{}] does not provide a sector identifier", oidcSvc);
-            return principal.getId();
-        }
-        if (this.persistentIdGenerator == null) {
-            throw new IllegalArgumentException("No pairwise persistent id generator is defined");
-        }
         val id = this.persistentIdGenerator.generate(principal, new PairwiseService(sectorIdentifier));
         LOGGER.debug("Resolved username [{}] for pairwise access", id);
         return id;
