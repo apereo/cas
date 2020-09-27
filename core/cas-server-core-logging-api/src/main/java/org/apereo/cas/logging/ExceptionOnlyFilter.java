@@ -6,12 +6,13 @@ import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.config.Node;
-import org.apache.logging.log4j.core.config.plugins.*;
+import org.apache.logging.log4j.core.config.plugins.Plugin;
+import org.apache.logging.log4j.core.config.plugins.PluginBuilderFactory;
 import org.apache.logging.log4j.core.filter.AbstractFilter;
 import org.apache.logging.log4j.message.Message;
 
 /**
- * Deny any messages without an exception (for stack trace). Neutral on messages with stack trace to allow threshold filtering.
+ * Deny any messages without an exception (for stack trace). Neutral on messages with stack trace to allow other filters.
  * @author Hal Deadman
  * @since 6.3
  */
@@ -31,17 +32,20 @@ public class ExceptionOnlyFilter extends AbstractFilter {
     }
 
     @Override
-    public Result filter(final Logger logger, final Level level, final Marker marker, final Message msg, final Throwable t) {
+    public Result filter(final Logger logger, final Level level, final Marker marker, final Message msg,
+                         final Throwable t) {
         return t != null ? getOnMatch() : getOnMismatch();
     }
 
     @Override
-    public Result filter(final Logger logger, final Level level, final Marker marker, final Object msg, final Throwable t) {
+    public Result filter(final Logger logger, final Level level, final Marker marker, final Object msg,
+                         final Throwable t) {
         return t != null ? getOnMatch() : getOnMismatch();
     }
 
     @Override
-    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object... params) {
+    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg,
+                         final Object... params) {
         if (params != null && params.length > 0 && params[params.length - 1] instanceof Throwable) {
             return getOnMatch();
         }
@@ -49,52 +53,66 @@ public class ExceptionOnlyFilter extends AbstractFilter {
     }
 
     @Override
-    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0) {
+    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg,
+                         final Object p0) {
         return super.filter(logger, level, marker, msg, p0);
     }
 
     @Override
-    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0, final Object p1) {
+    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0,
+                         final Object p1) {
         return super.filter(logger, level, marker, msg, p0, p1);
     }
 
     @Override
-    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0, final Object p1, final Object p2) {
+    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0,
+                         final Object p1, final Object p2) {
         return super.filter(logger, level, marker, msg, p0, p1, p2);
     }
 
     @Override
-    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0, final Object p1, final Object p2, final Object p3) {
+    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0,
+                         final Object p1, final Object p2, final Object p3) {
         return super.filter(logger, level, marker, msg, p0, p1, p2, p3);
     }
 
     @Override
-    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0, final Object p1, final Object p2, final Object p3, final Object p4) {
+    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0,
+                         final Object p1, final Object p2, final Object p3, final Object p4) {
         return super.filter(logger, level, marker, msg, p0, p1, p2, p3, p4);
     }
 
     @Override
-    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0, final Object p1, final Object p2, final Object p3, final Object p4, final Object p5) {
+    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0,
+                         final Object p1, final Object p2, final Object p3, final Object p4, final Object p5) {
         return super.filter(logger, level, marker, msg, p0, p1, p2, p3, p4, p5);
     }
 
     @Override
-    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0, final Object p1, final Object p2, final Object p3, final Object p4, final Object p5, final Object p6) {
+    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0,
+                         final Object p1, final Object p2, final Object p3, final Object p4, final Object p5,
+                         final Object p6) {
         return super.filter(logger, level, marker, msg, p0, p1, p2, p3, p4, p5, p6);
     }
 
     @Override
-    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0, final Object p1, final Object p2, final Object p3, final Object p4, final Object p5, final Object p6, final Object p7) {
+    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0,
+                         final Object p1, final Object p2, final Object p3, final Object p4, final Object p5,
+                         final Object p6, final Object p7) {
         return filter(logger, level, marker, msg, new Object[] {p0, p1, p2, p3, p4, p5, p6, p7});
     }
 
     @Override
-    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0, final Object p1, final Object p2, final Object p3, final Object p4, final Object p5, final Object p6, final Object p7, final Object p8) {
+    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0,
+                         final Object p1, final Object p2, final Object p3, final Object p4, final Object p5,
+                         final Object p6, final Object p7, final Object p8) {
         return super.filter(logger, level, marker, msg, p0, p1, p2, p3, p4, p5, p6, p7, p8);
     }
 
     @Override
-    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0, final Object p1, final Object p2, final Object p3, final Object p4, final Object p5, final Object p6, final Object p7, final Object p8, final Object p9) {
+    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg, final Object p0,
+                         final Object p1, final Object p2, final Object p3, final Object p4, final Object p5,
+                         final Object p6, final Object p7, final Object p8, final Object p9) {
         return super.filter(logger, level, marker, msg, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9);
     }
 

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-In order to make all loggers asynchronous, run CAS with the following system property:
--Dlog4j2.contextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector
-Do not use <asyncRoot> or <asyncLogger> if using AsyncLoggerContextSelector to make all loggers async
+All loggers are asynchronous because of log42.component.properties in cas-server-core-logging-api.
+Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContextSelector or override log42.component.properties to turn off async
 -->
 <!-- Specify the refresh internal in seconds. -->
 <Configuration monitorInterval="5" status="info" packages="org.apereo.cas.logging">
