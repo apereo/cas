@@ -37,7 +37,6 @@ but older versions will require you to explicitly tell git to download the conte
 git submodule update --init --recursive
 ```
 
-
 ## Build
 
 The following shell commands may be used to build the source:
@@ -72,6 +71,7 @@ The following commandline boolean flags are supported by the build and can be pa
 | `ignoreJavadocFailures`           | Ignore javadoc failures and let the build resume.
 | `ignoreFindbugsFailures`          | Ignore Findbugs failures and let the build resume.
 | `ignoreTestFailures`              | Ignore test failures and let the build resume.
+| `casModules`                      | Comma separated list of modules without the `cas-server-` prefix.
 
 - You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
 - If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.
@@ -177,9 +177,11 @@ To test the functionality provided by a given CAS module, execute the following 
 ```gradle
 implementation project(":support:cas-server-support-modulename")
 ```
+
 Alternatively, set a `casModules` property in the root project's `gradle.properties` or `~/.gradle/gradle.properties` to a comma separated list of modules without the `cas-server-` prefix:
 
 For example:
+
 ```properties
 casModules=core-monitor,\
     support-ldap,\
@@ -192,14 +194,14 @@ Or set the property on the command-line:
 ```bash
 bc -PcasModules=support-ldap,support-x509
 ```
-where `bc` is an alias for building cas, [see below](Build-Process.html#sample-build-aliases).
+
+...where `bc` is an [alias for building CAS](Build-Process.html#sample-build-aliases).
 
 - Prepare the embedded container, as described below, to run and deploy the web application
 
 ## Embedded Containers
 
-The CAS project comes with a number of built-in modules that are pre-configured with embedded servlet containers such as Apache Tomcat, Jetty, etc 
-for the server web application, the management web application and others. These modules are found in the `webapp` folder of the CAS project.
+The CAS project comes with a number of built-in modules that are pre-configured with embedded servlet containers such as Apache Tomcat, Jetty, etc for the server web application, the management web application and others. These modules are found in the `webapp` folder of the CAS project.
 
 ### Configure SSL
 
@@ -275,9 +277,7 @@ By default CAS will be available at `https://mymachine.domain.edu:8443/cas`
 
 ### Remote Debugging
 
-The embedded container instance is pre-configured to listen to debugger requests on port `5000` provided you specify the `enableRemoteDebugging` parameter. 
-For external container deployments, [such as Apache Tomcat](https://wiki.apache.org/tomcat/FAQ/Developing#Q1), 
-the following example shows what needs configuring in the `bin/startup.sh|bat` file:
+The embedded container instance is pre-configured to listen to debugger requests on port `5000` provided you specify the `enableRemoteDebugging` parameter. For external container deployments, [such as Apache Tomcat](https://wiki.apache.org/tomcat/FAQ/Developing#Q1), the following example shows what needs configuring in the `bin/startup.sh|bat` file:
 
 ```bash
 export JPDA_ADDRESS=5000
@@ -289,9 +289,7 @@ When you're done, create a remote debugger configuration in your IDE that connec
 
 ![image](https://cloud.githubusercontent.com/assets/1205228/26517058/d09a8288-4245-11e7-962e-004bfe174a0a.png)
 
-
-
-## Manual submodule testing
+## Manual Submodule Testing
 
 To simplify the test execution process, you may take advantage of the `testcas.sh` script found at the root of the repository as such:
 
@@ -300,18 +298,27 @@ To simplify the test execution process, you may take advantage of the `testcas.s
 ./testcas.sh --category <category> [--test <test-class>] [--debug] [--coverage]
 ```
 
+To learn more about the script, use:
+
+```bash
+./testcas.sh --help
+```
+
 ## Sample Build Aliases
+
 Below are some examples of convenient build aliases for quickly running a local cas server from the project or 
 installing dependencies from the project for use in the cas-overlay.
 
 ```bash
 # adjust the cas alias to the location of cas project folder
 alias cas='cd ~/Workspace/cas'
+
 # test cas directly from project rather than using the CAS overlay
 alias bc='clear; cas; cd webapp/cas-server-webapp-tomcat ; \
     ../../gradlew build bootRun --configure-on-demand --build-cache --parallel \
     -x test -x javadoc -x check -DremoteDebuggingSuspend=false -DenableRemoteDebugging=true --stacktrace \
     -DskipNestedConfigMetadataGen=true -DskipGradleLint=true -Dcas.standalone.configurationDirectory=/etc/cas/config'
+
 # install jars for use with a CAS overlay project
 alias bci='clear; cas; \
     ./gradlew clean build install --configure-on-demand --build-cache --parallel \
