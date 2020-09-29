@@ -172,18 +172,34 @@ Then, import the project into eclipse using "General\Existing Projects into Work
 
 To test the functionality provided by a given CAS module, execute the following steps:
 
-- Add the module reference to the build script (i.e. `build.gradle`) of web application you intend to run (i.e Web App, Management Web App, etc)
+- For the tomcat, undertow or jetty webapp, add the module reference to the `webapp.gradle` build script of web application you intend to run:
 
 ```gradle
 implementation project(":support:cas-server-support-modulename")
 ```
+Alternatively, set a `casModules` property in the root project's `gradle.properties` or `~/.gradle/gradle.properties` to a comma separated list of modules without the `cas-server-` prefix:
+
+For example:
+```properties
+casModules=core-monitor,\
+    support-ldap,\
+    support-x509,\
+    support-bootadmin-client
+```
+
+Or set the property on the command-line:
+
+```bash
+bc -PcasModules=support-ldap,support-x509
+```
+where `bc` is an alias for building cas, [see below](Build-Process.html#sample-build-aliases).
 
 - Prepare the embedded container, as described below, to run and deploy the web application
 
 ## Embedded Containers
 
 The CAS project comes with a number of built-in modules that are pre-configured with embedded servlet containers such as Apache Tomcat, Jetty, etc 
-for the server web application, the management web application and others.
+for the server web application, the management web application and others. These modules are found in the `webapp` folder of the CAS project.
 
 ### Configure SSL
 
@@ -235,7 +251,7 @@ sudo keytool -import -file /etc/cas/config/cas.crt -alias cas -keystore $JAVA_HO
 
 ...where `JAVA_HOME` is where you have the JDK installed (i.e `/Library/Java/JavaVirtualMachines/jdk[version].jdk/Contents/Home`).
 
-On Windows, Administration right should be granted to the concole instead of sudo, and `$JAVA_HOME/lib/security/cacerts` should be changed to `"%JAVA_HOME%/lib/security/cacerts"` instead.
+On Windows, Administration right should be granted to the console instead of sudo, and `$JAVA_HOME/lib/security/cacerts` should be changed to `"%JAVA_HOME%/lib/security/cacerts"` instead.
 
 ### Deploy
 
@@ -282,4 +298,24 @@ To simplify the test execution process, you may take advantage of the `testcas.s
 ```bash
 # chmod +x ./testcas.sh
 ./testcas.sh --category <category> [--test <test-class>] [--debug] [--coverage]
+```
+
+## Sample Build Aliases
+Below are some examples of convenient build aliases for quickly running a local cas server from the project or 
+installing dependencies from the project for use in the cas-overlay.
+
+```bash
+# adjust the cas alias to the location of cas project folder
+alias cas='cd ~/Workspace/cas'
+# test cas directly from project rather than using the CAS overlay
+alias bc='clear; cas; cd webapp/cas-server-webapp-tomcat ; \
+    ../../gradlew build bootRun --configure-on-demand --build-cache --parallel \
+    -x test -x javadoc -x check -DremoteDebuggingSuspend=false -DenableRemoteDebugging=true --stacktrace \
+    -DskipNestedConfigMetadataGen=true -DskipGradleLint=true -Dcas.standalone.configurationDirectory=/etc/cas/config'
+# install jars for use with a CAS overlay project
+alias bci='clear; cas; \
+    ./gradlew clean build install --configure-on-demand --build-cache --parallel \
+    -x test -x javadoc -x check --stacktrace \
+    -DskipNestedConfigMetadataGen=true -DskipGradleLint=true \
+    -DskipBootifulArtifact=true'
 ```
