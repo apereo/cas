@@ -2778,6 +2778,12 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "javax.servlet", module: "servlet-api")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-core")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-transport")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-httpclient")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-eureka")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon")
                     exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
@@ -2840,6 +2846,7 @@ ext.libraries = [
                     exclude(group: "javax.servlet", module: "servlet-api")
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "com.netflix.ribbon", module: "ribbon")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-core")
                     exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
                     exclude(group: "com.netflix.ribbon", module: "ribbon-transport")
                     exclude(group: "com.netflix.ribbon", module: "ribbon-httpclient")
@@ -2921,6 +2928,15 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
 
+                },
+                dependencies.create("com.netflix.ribbon:ribbon-core:$ribbonVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "io.reactivex", module: "rxjava")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "com.google.code.findbugs", module: "jsr305")
                 }
         ],
         springcloudeurekaserver : [
