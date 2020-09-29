@@ -53,8 +53,8 @@ dependencies {
     implementation project(":webapp:cas-server-webapp-resources")
 
     // add modules in format compatible with overlay casmodules property
-    if (project.hasProperty("casmodules")) {
-        def dependencies = project.getProperty("casmodules").split(",")
+    if (project.hasProperty("casModules")) {
+        def dependencies = project.getProperty("casModules").split(",")
         dependencies.each {
             if (it.startsWith("core")) {
                 implementation project(":core:cas-server-${it}")
