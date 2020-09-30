@@ -23,6 +23,7 @@ public class TextMagicSmsSenderTests {
         val props = new TextMagicProperties();
         props.setUsername("casuser");
         props.setPassword("password");
+        props.setUserAgent("agent");
         val sender = new TextMagicSmsSender(props, Optional.empty());
         assertFalse(sender.send("123456678", "123456678", "Msg"));
     }
