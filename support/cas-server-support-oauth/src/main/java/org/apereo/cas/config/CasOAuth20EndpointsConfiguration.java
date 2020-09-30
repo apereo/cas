@@ -89,10 +89,10 @@ public class CasOAuth20EndpointsConfiguration {
     }
 
 
-    @ConditionalOnMissingBean(name = "profileController")
+    @ConditionalOnMissingBean(name = "oauthProfileController")
     @Bean
     @Autowired
-    public OAuth20UserProfileEndpointController profileController(
+    public OAuth20UserProfileEndpointController oauthProfileController(
         @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
         return new OAuth20UserProfileEndpointController(context);
     }

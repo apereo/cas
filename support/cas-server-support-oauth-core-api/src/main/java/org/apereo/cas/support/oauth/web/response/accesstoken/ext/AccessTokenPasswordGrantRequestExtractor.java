@@ -40,7 +40,6 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId);
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
-
         val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
         val profile = manager.get(true);
         if (profile.isEmpty()) {
