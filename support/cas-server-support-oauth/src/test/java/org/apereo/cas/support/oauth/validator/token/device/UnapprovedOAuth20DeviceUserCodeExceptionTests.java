@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UnapprovedOAuth20DeviceUserCodeExceptionTests {
     @Test
     public void verifyOperation() {
-        assertDoesNotThrow(new Executable() {
+        assertThrows(UnapprovedOAuth20DeviceUserCodeException.class, new Executable() {
             @Override
-            public void execute() {
-                new UnapprovedOAuth20DeviceUserCodeException("bad-ticket-id");
+            public void execute() throws Throwable {
+                throw new UnapprovedOAuth20DeviceUserCodeException("bad-ticket");
             }
         });
     }
