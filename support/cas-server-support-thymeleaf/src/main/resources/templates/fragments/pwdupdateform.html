@@ -32,7 +32,7 @@
             <form id="passwordManagementForm" th:if="${passwordManagementEnabled}" method="post"
                 th:object="${password}">
                 <div class="banner banner-danger banner-dismissible my-4" th:if="${#fields.hasErrors('*')}">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+               
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err}">Error text</span>
             </div>
 
@@ -68,9 +68,25 @@
             </div>
 
             <div class="cas-field my-3">
-                <div class="mdc-text-field  mdc-text-field--with-trailing-icon d-flex caps-check">
-                    <input class="mdc-text-field__input" type="password" id="confirmedPassword" th:field="*{confirmedPassword}" required />
-                    <label for="confirmedPassword" class="mdc-floating-label" th:utext="#{screen.pm.confirmpsw}">Confirm Password:</label>
+                <div class="d-flex caps-check">
+                    
+                    <label for="confirmedPassword" class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+                        <input class="mdc-text-field__input pwd"
+                               type="password"
+                               name="confirmedPassword"
+                               id="confirmedPassword"
+                               th:field="*{confirmedPassword}"
+                               autocomplete="off" required />
+
+                        <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <span class="mdc-notched-outline__notch">
+                              <span class="mdc-floating-label" th:utext="#{screen.pm.confirmpsw}">Confirm Password:</span>
+                            </span>
+                            <span class="mdc-notched-outline__trailing"></span>
+                        </span>
+                    </label>
+
                     <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
                 </div>
             </div>

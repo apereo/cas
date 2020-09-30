@@ -57,7 +57,8 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private void createTransitionStateForAuthenticationWarnings(final Flow flow) {
         val state = getState(flow, CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS, ViewState.class);
-        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_PROCEED, STATE_ID_INQUIRE_INTERRUPT_ACTION, true);
+        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_PROCEED,
+            CasWebflowConstants.STATE_ID_PROCEED_FROM_AUTHENTICATION_WARNINGS_VIEW, true);
     }
 
     private void createTransitionStateToInterrupt(final Flow flow) {
