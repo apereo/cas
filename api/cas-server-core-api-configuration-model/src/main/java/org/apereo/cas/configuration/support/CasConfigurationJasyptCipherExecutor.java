@@ -89,7 +89,8 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     public void setAlgorithm(final String alg) {
         if (StringUtils.isNotBlank(alg)) {
             if (ALGORITHM_BLACKLIST_SET.contains(alg)) {
-                throw new IllegalArgumentException(String.format("Configured Jasypt algorithm [%s] doesn't work for decryption due to Jasypt bug", alg));
+                throw new IllegalArgumentException(
+                    String.format("Configured Jasypt algorithm [%s] doesn't work for decryption due to Jasypt bug", alg));
             }
             LOGGER.debug("Configured Jasypt algorithm [{}]", alg);
             jasyptInstance.setAlgorithm(alg);

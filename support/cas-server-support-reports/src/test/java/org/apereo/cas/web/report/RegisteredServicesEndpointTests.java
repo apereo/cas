@@ -28,12 +28,17 @@ public class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
 
     @Test
     public void verifyOperation() {
-        val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
-        this.servicesManager.save(service);
+        val service1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        val service2 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(service1, service2);
+        
         assertFalse(endpoint.handle().isEmpty());
-        assertNotNull(endpoint.fetchService(service.getServiceId()));
-        assertNotNull(endpoint.deleteService(service.getServiceId()));
-        assertNull(endpoint.fetchService(String.valueOf(service.getId())));
+        assertNotNull(endpoint.fetchService(service1.getServiceId()));
+        assertNotNull(endpoint.deleteService(service1.getServiceId()));
+        assertNull(endpoint.fetchService(String.valueOf(service1.getId())));
+
+        assertNotNull(endpoint.deleteService(String.valueOf(service2.getId())));
+        assertNull(endpoint.deleteService(String.valueOf(service2.getId())));
     }
 }
 
