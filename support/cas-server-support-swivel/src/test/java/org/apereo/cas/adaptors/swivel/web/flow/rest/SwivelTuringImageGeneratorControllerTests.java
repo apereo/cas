@@ -27,10 +27,10 @@ import static org.springframework.http.HttpStatus.OK;
  */
 @SpringBootTest(classes = BaseSwivelAuthenticationTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.mfa.swivel.swivelUrl=http://localhost:9991",
-        "cas.authn.mfa.swivel.swivelTuringImageUrl=http://localhost:9991",
-        "cas.authn.mfa.swivel.sharedSecret=$ecret",
-        "cas.authn.mfa.swivel.ignoreSslErrors=true"
+        "cas.authn.mfa.swivel.swivel-url=http://localhost:9991",
+        "cas.authn.mfa.swivel.swivel-turing-image-url=http://localhost:9991",
+        "cas.authn.mfa.swivel.shared-secret=$ecret",
+        "cas.authn.mfa.swivel.ignore-ssl-errors=true"
     })
 @Tag("MFA")
 public class SwivelTuringImageGeneratorControllerTests {
@@ -56,5 +56,12 @@ public class SwivelTuringImageGeneratorControllerTests {
                 }
             });
         }
+    }
+
+    @Test
+    public void verifyFailsOperation() {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        assertThrows(IllegalArgumentException.class, () -> controller.generate(response, request));
     }
 }

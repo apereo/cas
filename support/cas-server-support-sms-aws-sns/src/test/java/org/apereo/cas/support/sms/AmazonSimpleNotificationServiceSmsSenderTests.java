@@ -31,4 +31,15 @@ public class AmazonSimpleNotificationServiceSmsSenderTests {
         val sender = new AmazonSimpleNotificationServiceSmsSender(snsClient, properties);
         assertTrue(sender.send("1234567890", "1234567890", "TestMessage"));
     }
+    
+    @Test
+    public void verifyFailsAction() {
+        val snsClient = mock(SnsClient.class);
+        when(snsClient.publish(any(PublishRequest.class))).thenThrow(new IllegalArgumentException());
+        val properties = new AmazonSnsProperties();
+        properties.setMaxPrice("100");
+        properties.setSenderId("SenderId");
+        val sender = new AmazonSimpleNotificationServiceSmsSender(snsClient, properties);
+        assertFalse(sender.send("1234567890", "1234567890", "TestMessage"));
+    }
 }

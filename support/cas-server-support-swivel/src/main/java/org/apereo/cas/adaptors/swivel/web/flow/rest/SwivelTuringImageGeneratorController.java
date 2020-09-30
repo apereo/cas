@@ -47,9 +47,6 @@ public class SwivelTuringImageGeneratorController {
     @SneakyThrows
     private void generateImage(final OutputStream stream, final String principal) {
         val params = String.format("?username=%s&random=%s", principal, RandomUtils.nextLong(1, Long.MAX_VALUE));
-        if (StringUtils.isBlank(swivel.getSwivelTuringImageUrl())) {
-            throw new IllegalArgumentException("Swivel turing image url cannot be blank and must be specified");
-        }
         val url = new URL(swivel.getSwivelTuringImageUrl().concat(params));
         val image = ImageIO.read(url);
         ImageIO.write(image, "png", stream);
