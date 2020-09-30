@@ -56,6 +56,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.CasOAuth20TestAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointController;
+import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
@@ -204,6 +205,10 @@ public abstract class AbstractOAuth20Tests {
     public static final int DELTA = 2;
 
     public static final int TIMEOUT = 7200;
+
+    @Autowired
+    @Qualifier("oauthCasClientRedirectActionBuilder")
+    protected OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")

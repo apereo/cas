@@ -73,7 +73,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
             accessResult.throwExceptionIfNeeded();
 
             if (!registeredService.equals(codeRegisteredService)) {
-                LOGGER.warn("The OAuth code [{}] issued to service [{}] does not match the registered service [{}] provided in the request given the redirect URI [{}]",
+                LOGGER.warn("OAuth code [{}] issued to service [{}] does not match [{}] provided, given the redirect URI [{}]",
                     code, id, registeredService.getName(), redirectUri);
                 return false;
             }

@@ -255,13 +255,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
 
     private OAuth20DeviceUserCode getDeviceUserCodeFromRegistry(final OAuth20DeviceToken deviceCodeTicket) {
         try {
-            val userCode = centralAuthenticationService.getTicket(deviceCodeTicket.getUserCode(), OAuth20DeviceUserCode.class);
-            if (userCode.isExpired()) {
-                centralAuthenticationService.deleteTicket(userCode.getId());
-                LOGGER.error("Device code [{}] has expired and will be removed", deviceCodeTicket.getUserCode());
-                throw new InvalidOAuth20DeviceTokenException(deviceCodeTicket.getUserCode());
-            }
-            return userCode;
+            return centralAuthenticationService.getTicket(deviceCodeTicket.getUserCode(), OAuth20DeviceUserCode.class);
         } catch (final Exception e) {
             LOGGER.error("Provided user code [{}] is invalid or expired and cannot be found in the ticket registry",
                 deviceCodeTicket.getUserCode());
@@ -271,13 +265,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
 
     private OAuth20DeviceToken getDeviceTokenFromTicketRegistry(final String deviceCode) {
         try {
-            val deviceCodeTicket = this.centralAuthenticationService.getTicket(deviceCode, OAuth20DeviceToken.class);
-            if (deviceCodeTicket == null || deviceCodeTicket.isExpired()) {
-                LOGGER.error("Provided device code [{}] is invalid or expired and cannot be found in the ticket registry", deviceCode);
-                this.centralAuthenticationService.deleteTicket(deviceCode);
-                throw new InvalidOAuth20DeviceTokenException(deviceCode);
-            }
-            return deviceCodeTicket;
+            return centralAuthenticationService.getTicket(deviceCode, OAuth20DeviceToken.class);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             throw new InvalidOAuth20DeviceTokenException(deviceCode);
