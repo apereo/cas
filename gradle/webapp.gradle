@@ -52,7 +52,7 @@ dependencies {
     implementation project(":webapp:cas-server-webapp-init")
     implementation project(":webapp:cas-server-webapp-resources")
 
-    // add modules in format compatible with overlay casmodules property
+    // add modules in format compatible with overlay casModules property
     if (project.hasProperty("casModules")) {
         def dependencies = project.getProperty("casModules").split(",")
         dependencies.each {
