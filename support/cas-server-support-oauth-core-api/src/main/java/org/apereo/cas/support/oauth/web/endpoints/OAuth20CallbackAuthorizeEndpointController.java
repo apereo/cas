@@ -2,13 +2,10 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
-import org.apereo.cas.support.oauth.session.OAuth20SessionStoreMismatchException;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.engine.DefaultCallbackLogic;
@@ -48,12 +45,7 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
         callback.perform(context, getOAuthConfigurationContext().getOauthConfig(), (object, ctx) -> Boolean.FALSE,
             context.getFullRequestURL(), Boolean.TRUE, Boolean.FALSE,
             Boolean.FALSE, Authenticators.CAS_OAUTH_CLIENT);
-        var url = callback.getRedirectUrl();
-        if (StringUtils.isBlank(url)) {
-            val msg = "Unable to locate OAuth redirect URL from the session store; Stale or mismatched session request?";
-            LOGGER.error(msg);
-            return WebUtils.produceErrorView(OAuth20Constants.SESSION_STALE_MISMATCH, new OAuth20SessionStoreMismatchException(msg));
-        }
+        val url = callback.getRedirectUrl();
         val manager = new ProfileManager<>(context, context.getSessionStore());
         LOGGER.trace("OAuth callback URL is [{}]", url);
         return getOAuthConfigurationContext().getCallbackAuthorizeViewResolver().resolve(context, manager, url);
