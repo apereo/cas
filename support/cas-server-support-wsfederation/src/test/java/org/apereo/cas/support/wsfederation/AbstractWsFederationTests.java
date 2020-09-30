@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
+import org.apereo.cas.support.wsfederation.config.WsFederationAuthenticationComponentSerializationConfiguration;
 import org.apereo.cas.support.wsfederation.config.WsFederationAuthenticationConfiguration;
 import org.apereo.cas.support.wsfederation.config.support.authentication.WsFedAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
@@ -97,6 +98,7 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
     @SpringBootConfiguration
     @Import({
         WsFederationAuthenticationConfiguration.class,
+        WsFederationAuthenticationComponentSerializationConfiguration.class,
         WsFedAuthenticationEventExecutionPlanConfiguration.class,
         AbstractOpenSamlTests.SharedTestConfiguration.class
     })
