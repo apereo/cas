@@ -5,6 +5,7 @@ import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -28,6 +29,10 @@ public class ValidateRegisteredServiceCommandTests extends BaseCasShellCommandTe
     public void verifyOperation() throws Exception {
         val file = File.createTempFile("service", ".json");
         val yaml = File.createTempFile("service", ".yaml");
+
+        val other = File.createTempFile("service-bad", ".json");
+        FileUtils.write(other, "data{{}}", StandardCharsets.UTF_8);
+
         val svc = RegisteredServiceTestUtils.getRegisteredService("example");
 
         try (val writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {

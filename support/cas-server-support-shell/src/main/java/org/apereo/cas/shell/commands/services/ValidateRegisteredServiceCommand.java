@@ -14,6 +14,7 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
 import java.io.File;
+import java.util.Objects;
 
 /**
  * This is {@link ValidateRegisteredServiceCommand}.
@@ -38,10 +39,10 @@ public class ValidateRegisteredServiceCommand {
     public static void validateService(
         @ShellOption(value = {"file", "--file"},
             help = "Path to the JSON/YAML service definition file",
-            defaultValue = "/etc/cas/services/service.json") final String file,
+            defaultValue = StringUtils.EMPTY) final String file,
         @ShellOption(value = {"directory", "--directory"},
             help = "Path to the JSON/YAML service definitions directory",
-            defaultValue = "/etc/cas/services") final String directory) {
+            defaultValue = StringUtils.EMPTY) final String directory) {
 
         if (StringUtils.isNotBlank(file)) {
             val filePath = new File(file);
@@ -68,10 +69,8 @@ public class ValidateRegisteredServiceCommand {
                     case "yaml":
                         validator = new RegisteredServiceYamlSerializer();
                         break;
-                    default:
-                        throw new IllegalStateException("Incorrect file extension");
                 }
-                val svc = validator.from(filePath);
+                val svc = Objects.requireNonNull(validator).from(filePath);
                 LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
             } else {
                 LOGGER.warn("File [{}] is does not exist, is not readable or is empty", filePath.getCanonicalPath());
