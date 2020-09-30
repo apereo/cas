@@ -28,7 +28,7 @@ public class PrincipalMultifactorAuthenticationProviderBypassEvaluator extends B
 
     public PrincipalMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
                                                                      final String providerId) {
-        this(bypassProperties.getPrincipalAttributeName(), bypassProperties.getAuthenticationAttributeValue(), providerId);
+        this(bypassProperties.getPrincipalAttributeName(), bypassProperties.getPrincipalAttributeValue(), providerId);
     }
 
     public PrincipalMultifactorAuthenticationProviderBypassEvaluator(final String attributeName,

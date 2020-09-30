@@ -156,7 +156,8 @@ public class DuoSecurityMultifactorProviderBypassConfiguration {
         duoProps
             .stream()
             .filter(duo -> StringUtils.isNotBlank(duo.getBypass().getPrincipalAttributeName()))
-            .forEach(duo -> bypass.addMultifactorAuthenticationProviderBypassEvaluator(new PrincipalMultifactorAuthenticationProviderBypassEvaluator(duo.getBypass(), duo.getId())));
+            .forEach(duo -> bypass.addMultifactorAuthenticationProviderBypassEvaluator(
+                new PrincipalMultifactorAuthenticationProviderBypassEvaluator(duo.getBypass(), duo.getId())));
         if (bypass.isEmpty()) {
             return NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance();
         }
