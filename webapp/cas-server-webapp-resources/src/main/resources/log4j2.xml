@@ -4,7 +4,7 @@ All loggers are asynchronous because of log42.component.properties in cas-server
 Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContextSelector or override log42.component.properties to turn off async
 -->
 <!-- Specify the refresh internal in seconds. -->
-<Configuration monitorInterval="5" status="info" packages="org.apereo.cas.logging">
+<Configuration monitorInterval="5" packages="org.apereo.cas.logging">
     <Properties>
         <Property name="baseDir">/tmp/logs</Property>
         <Property name="cas.log.level">info</Property>
