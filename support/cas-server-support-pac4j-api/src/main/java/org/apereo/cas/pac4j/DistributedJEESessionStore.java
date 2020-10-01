@@ -1,4 +1,4 @@
-package org.apereo.cas.integration.pac4j;
+package org.apereo.cas.pac4j;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.ticket.TicketFactory;
@@ -69,8 +69,7 @@ public class DistributedJEESessionStore implements SessionStore<JEEContext> {
         if (value instanceof Serializable) {
             properties.put(key, (Serializable) value);
         } else if (value != null) {
-            LOGGER.trace("Object value [{}] assigned to [{}] is not serializable and may not be part of the ticket [{}]",
-                value, key, sessionId);
+            LOGGER.trace("Object value [{}] assigned to [{}] is not serializable and may not be part of the ticket [{}]", value, key, sessionId);
         }
 
         var ticket = getTransientSessionTicketForSession(context);

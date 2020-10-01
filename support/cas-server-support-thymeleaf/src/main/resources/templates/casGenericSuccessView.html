@@ -26,8 +26,7 @@
             <p th:unless="${#maps.isEmpty(authentication.principal.attributes)}">
 
                 The following attributes are resolved for <strong th:utext="${authentication.principal.id}" />:
-
-
+            
                 <div id="attribute-tabs" class="mdc-tab-bar" role="tablist">
                     <div class="mdc-tab-scroller">
                         <div class="mdc-tab-scroller__scroll-area">
@@ -68,8 +67,9 @@
                             <tbody class="mdc-data-table__content">
                             <tr th:each="attribute : ${authentication.principal.attributes}" class="mdc-data-table__row">
                                 <td class="mdc-data-table__cell"><code><kbd th:utext="${attribute.key}"/></code></td>
-                                <td class="mdc-data-table__cell"><code><kbd th:utext="${attribute.value}"/></code></td>
-                                
+                                <td class="mdc-data-table__cell">
+                                    <code><kbd th:utext="${#strings.abbreviate(attribute.value, 80)}"/></code>
+                                </td>
                             </tr>
                             
                             </tbody>
@@ -90,15 +90,14 @@
                         
                             <tr th:each="attribute : ${authentication.attributes}" class="mdc-data-table__row">
                                 <td class="mdc-data-table__cell"><code><span th:utext="${attribute.key}"/></code></td>
-                                <td class="mdc-data-table__cell"><code><span th:utext="${attribute.value}"/></code></td>
+                                <td class="mdc-data-table__cell">
+                                    <code><kbd th:utext="${#strings.abbreviate(attribute.value, 80)}"/></code>
+                                </td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                 </section>
-
-                
-
             </p>
         </div>
         

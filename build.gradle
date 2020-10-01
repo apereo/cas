@@ -68,6 +68,8 @@ ext {
         '**/**ConfigurationMetadata**',
         '**/**NtlmAuthenticationHandler**',
         '**/**CosmosDbServiceRegistry**',
+        '**/**NimbusOAuthJacksonModule**',
+        '**/**DelegatedClientJacksonModuleTests**',
         '**/**Application**',
         '**/**Application$**',
         '**/**Exception$**',
