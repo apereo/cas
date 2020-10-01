@@ -1,4 +1,4 @@
-package org.apereo.cas.support.pac4j.config.support.authentication;
+package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;

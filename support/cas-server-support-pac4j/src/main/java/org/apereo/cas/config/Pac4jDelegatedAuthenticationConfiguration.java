@@ -1,4 +1,4 @@
-package org.apereo.cas.support.pac4j.config;
+package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;

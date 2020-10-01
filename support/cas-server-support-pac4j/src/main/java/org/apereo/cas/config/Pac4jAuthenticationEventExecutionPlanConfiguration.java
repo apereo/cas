@@ -1,4 +1,4 @@
-package org.apereo.cas.support.pac4j.config.support.authentication;
+package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
@@ -14,8 +14,8 @@ import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProf
 import org.apereo.cas.authentication.principal.provision.GroovyDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.integration.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
+import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.DefaultDelegatedClientFactory;
