@@ -23,6 +23,7 @@ public class DefaultCasBannerTests {
     public void verifyOperation() throws Exception {
         val banner = new DefaultCasBanner();
         assertNotNull(banner.getTitle());
+        assertNotNull(DefaultCasBanner.LINE_SEPARATOR);
 
         val environment = new MockEnvironment();
         try (val os = new ByteArrayOutputStream(); val out = new PrintStream(os)) {

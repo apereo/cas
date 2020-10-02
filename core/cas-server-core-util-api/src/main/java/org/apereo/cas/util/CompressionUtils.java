@@ -79,10 +79,6 @@ public class CompressionUtils {
         try {
             val resultLength = inflater.inflate(xmlMessageBytes);
             inflater.end();
-            if (!inflater.finished()) {
-                throw new RuntimeException("buffer not large enough.");
-            }
-            inflater.end();
             return new String(xmlMessageBytes, 0, resultLength, StandardCharsets.UTF_8);
         } catch (final DataFormatException e) {
             return null;
