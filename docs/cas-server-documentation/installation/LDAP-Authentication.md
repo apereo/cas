@@ -29,8 +29,8 @@ To learn how to enforce a password policy for LDAP, please [review this guide](P
 To enable additional logging, modify the logging configuration file to add the following:
 
 ```xml
-<AsyncLogger name="org.ldaptive" level="debug" additivity="false">
+<Logger name="org.ldaptive" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
+</Logger>
 ```

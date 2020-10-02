@@ -53,12 +53,12 @@ Support for HTTP basic authentication will be automatically added if one of Eure
 To enable additional logging, configure the log4j configuration file to add the following levels:
 
 ```xml
-<AsyncLogger name="org.springframework.cloud" level="debug" additivity="false">
+<Logger name="org.springframework.cloud" level="debug" additivity="false">
   <AppenderRef ref="casConsole"/>
   <AppenderRef ref="casFile"/>
-</AsyncLogger>
-<AsyncLogger name="com.netflix" level="debug" additivity="false">
+</Logger>
+<Logger name="com.netflix" level="debug" additivity="false">
     <AppenderRef ref="casConsole"/>
     <AppenderRef ref="casFile"/>
-</AsyncLogger>
+</Logger>
 ```

@@ -280,8 +280,8 @@ your CAS Overlay to be able to resolve dependencies:
 To enable additional logging, modify the logging configuration file to add the following:
 
 ```xml
-<AsyncLogger name="org.apache.cxf" level="debug" additivity="false">
+<Logger name="org.apache.cxf" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
+</Logger>
 ```

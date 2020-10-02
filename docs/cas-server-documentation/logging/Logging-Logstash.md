@@ -18,9 +18,9 @@ This configuration assumes that the Logstash server has enabled its [TCP input](
     </Socket>
 </Appenders>
 ...
-<AsyncLogger name="org.apereo" additivity="true" level="debug">
+<Logger name="org.apereo" additivity="true" level="debug">
     <appender-ref ref="cas" />
     <appender-ref ref="socket" />
-</AsyncLogger>
+</Logger>
 ...
 ```
