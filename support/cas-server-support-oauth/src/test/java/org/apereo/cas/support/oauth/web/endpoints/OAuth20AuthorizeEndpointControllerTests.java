@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.AbstractOAuth20Tests;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -9,6 +10,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -169,11 +171,11 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         casProperties.getSessionReplication().getCookie().setAutoConfigureCookiePath(true);
         casProperties.getAuthn().getOauth().setReplicateSessions(true);
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext()
-                .getOauthDistributedSessionCookieGenerator().setCookiePath(StringUtils.EMPTY);
+            .getOauthDistributedSessionCookieGenerator().setCookiePath(StringUtils.EMPTY);
 
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(true);
-        this.servicesManager.save(service);
+        oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getServicesManager().save(service);
 
         val profile = new CasProfile();
         profile.setId(ID);
@@ -184,9 +186,12 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
-        oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore()
-            .set(new JEEContext(mockRequest, mockResponse, new JEESessionStore()),
-                Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+        val sessionStore = oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore();
+        val context = new JEEContext(mockRequest, mockResponse, sessionStore);
+        val ticket = new MockTicketGrantingTicket("casuser");
+        oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getTicketRegistry().addTicket(ticket);
+        sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
+        sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
@@ -194,14 +199,11 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
-        assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=" + OAuth20Code.PREFIX));
 
         assertEquals("/", oAuth20AuthorizeEndpointController.getOAuthConfigurationContext()
-                .getOauthDistributedSessionCookieGenerator().getCookiePath());
-                
-        val code = modelAndView.getModelMap().get("code");
+            .getOauthDistributedSessionCookieGenerator().getCookiePath());
+        val code = new URIBuilder(redirectUrl).getQueryParams().get(0).getValue();
         val oAuthCode = (OAuth20Code) this.ticketRegistry.getTicket(String.valueOf(code));
-
         assertNotNull(oAuthCode);
         val principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());

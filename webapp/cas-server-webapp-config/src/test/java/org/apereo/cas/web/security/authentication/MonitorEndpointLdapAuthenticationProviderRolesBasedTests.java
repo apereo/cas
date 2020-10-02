@@ -11,6 +11,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.TestPropertySource;
 
@@ -43,6 +44,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
         val provider = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
+        assertTrue(provider.supports(UsernamePasswordAuthenticationToken.class));
         val token = provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456"));
         assertNotNull(token);
         assertAll(new Executable() {
@@ -78,7 +80,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
         val provider = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
-        assertThrows(BadCredentialsException.class, () -> provider.authenticate(new UsernamePasswordAuthenticationToken("UNKNOWN_USER", "123456")));
+        assertThrows(InsufficientAuthenticationException.class, () -> provider.authenticate(new UsernamePasswordAuthenticationToken("UNKNOWN_USER", "123456")));
         assertAll(new Executable() {
             @Override
             public void execute() throws Exception {
