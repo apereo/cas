@@ -14,10 +14,10 @@ CAS server logs are the best resource for determining the root cause of the prob
 Specifically you want to make sure `DEBUG` levels are turned on the `org.apereo` package in the log configuration:
 
 ```xml
-<AsyncLogger name="org.apereo" level="trace" additivity="false" includeLocation="true">
+<Logger name="org.apereo" level="trace" additivity="false" includeLocation="true">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
+</Logger>
 ```
 
 When changes are applied, restart the server environment and observe the log files to get a better 

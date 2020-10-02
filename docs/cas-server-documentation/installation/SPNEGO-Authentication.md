@@ -217,10 +217,10 @@ To enable additional logging, configure the log4j configuration file to add the 
 
 ```xml
 ...
-<AsyncLogger name="jcifs.spnego" level="debug" additivity="false">
+<Logger name="jcifs.spnego" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
+</Logger>
 ...
 ```
 

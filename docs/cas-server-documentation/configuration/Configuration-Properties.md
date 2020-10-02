@@ -4132,9 +4132,9 @@ destination that the logging system supports.
 The logger name is fixed at `org.apereo.inspektr.audit.support`.
 
 ```xml
-<AsyncLogger name="org.apereo.inspektr.audit.support" level="info">
+<Logger name="org.apereo.inspektr.audit.support" level="info">
     <!-- Route the audit data to any number of appenders supported by the logging framework. -->
-</AsyncLogger>
+</Logger>
 ```
 
 <div class="alert alert-info"><strong></strong><p>Audit records routed to the Slf4j log are not

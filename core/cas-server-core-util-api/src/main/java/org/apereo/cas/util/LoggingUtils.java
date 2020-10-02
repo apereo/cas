@@ -21,11 +21,7 @@ public class LoggingUtils {
      * @param throwable the throwable
      */
     public static void error(final Logger logger, final String msg, final Throwable throwable) {
-        if (logger.isDebugEnabled()) {
-            logger.error(msg, throwable);
-        } else {
-            logger.error(msg);
-        }
+        logger.error(msg, throwable);
     }
 
     /**
@@ -45,11 +41,7 @@ public class LoggingUtils {
      * @param throwable the throwable
      */
     public void warn(final Logger logger, final Throwable throwable) {
-        if (logger.isDebugEnabled()) {
-            logger.warn(throwable.getMessage(), throwable);
-        } else {
-            logger.warn(throwable.getMessage());
-        }
+        warn(logger, StringUtils.defaultIfEmpty(throwable.getMessage(), throwable.getClass().getSimpleName()), throwable);
     }
 
     /**
@@ -60,11 +52,7 @@ public class LoggingUtils {
      * @param throwable the throwable
      */
     public void warn(final Logger logger, final String message, final Throwable throwable) {
-        if (logger.isDebugEnabled()) {
-            logger.warn(message, throwable);
-        } else {
-            logger.warn(message);
-        }
+        logger.warn(message, throwable);
     }
 
 }

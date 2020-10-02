@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!--
+All loggers are asynchronous because of log42.component.properties in cas-server-core-logging-api.
+Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContextSelector or override log42.component.properties to turn off async
+-->
 <!-- Specify the refresh internal in seconds. -->
 <Configuration monitorInterval="5">
     <Appenders>
@@ -17,48 +21,38 @@
     </Appenders>
     
     <Loggers>
-        <AsyncLogger name="org.apereo.cas" level="info" additivity="false" includeLocation="true">
-            <AppenderRef ref="casConsole"/>
+        <Logger name="org.apereo.cas" level="info" includeLocation="true">
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.apache" level="info" additivity="false">
-            <AppenderRef ref="casConsole"/>
+        </Logger>
+        <Logger name="org.apache" level="info">
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.cloud.server" level="debug" additivity="false">
-            <AppenderRef ref="casConsole"/>
+        </Logger>
+        <Logger name="org.springframework.cloud.server" level="debug">
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.cloud.bus" level="info" additivity="false">
-            <AppenderRef ref="casConsole"/>
+        </Logger>
+        <Logger name="org.springframework.cloud.bus" level="info">
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.cloud.vault" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
+        </Logger>
+        <Logger name="org.springframework.cloud.vault" level="warn">
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.security" level="debug" additivity="false">
-            <AppenderRef ref="casConsole"/>
+        </Logger>
+        <Logger name="org.springframework.security" level="debug">
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.boot" level="info" additivity="false">
-            <AppenderRef ref="casConsole"/>
+        </Logger>
+        <Logger name="org.springframework.boot" level="info">
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.boot.autoconfigure.security" level="debug" additivity="false">
-            <AppenderRef ref="casConsole"/>
+        </Logger>
+        <Logger name="org.springframework.boot.autoconfigure.security" level="debug">
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.amqp" level="off" additivity="false">
-            <AppenderRef ref="casConsole"/>
+        </Logger>
+        <Logger name="org.springframework.amqp" level="off">
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.web" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
+        </Logger>
+        <Logger name="org.springframework.web" level="warn">
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncRoot level="error">
+        </Logger>
+        <Root level="error">
             <AppenderRef ref="casConsole"/>
-        </AsyncRoot>
+        </Root>
     </Loggers>
 </Configuration>

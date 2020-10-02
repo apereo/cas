@@ -33,9 +33,9 @@ Splunk Enterprise management port.
 </Appenders>
 ...
 <Loggers>
-   <AsyncLogger name="org.apereo" level="debug">
+   <Logger name="org.apereo" level="debug">
       <AppenderRef ref="SplunkAppender"/>
-   </AsyncLogger>
+   </Logger>
 </Loggers>
 ```
 

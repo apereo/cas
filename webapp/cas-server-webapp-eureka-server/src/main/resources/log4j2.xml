@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!--
+All loggers are asynchronous because of log42.component.properties in cas-server-core-logging-api.
+Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContextSelector or override log42.component.properties to turn off async
+-->
 <!-- Specify the refresh internal in seconds. -->
 <Configuration monitorInterval="5">
     <Appenders>
@@ -18,28 +22,23 @@
     </Appenders>
     
     <Loggers>
-        <AsyncLogger name="org.apereo.cas" level="info" additivity="false" includeLocation="true">
-            <AppenderRef ref="casConsole"/>
+        <Logger name="org.apereo.cas" level="info" includeLocation="true">
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.apache" level="off" additivity="false">
-            <AppenderRef ref="casConsole"/>
+        </Logger>
+        <Logger name="org.apache" level="error" >
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.cloud" level="info" additivity="false">
-            <AppenderRef ref="casConsole"/>
+        </Logger>
+        <Logger name="org.springframework.cloud" level="info" >
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.cloud.netflix.eureka" level="info" additivity="false">
-            <AppenderRef ref="casConsole"/>
+        </Logger>
+        <Logger name="org.springframework.cloud.netflix.eureka" level="info" >
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.boot" level="off" additivity="false">
-            <AppenderRef ref="casConsole"/>
+        </Logger>
+        <Logger name="org.springframework.boot" level="error" >
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncRoot level="error">
+        </Logger>
+        <Root level="error">
             <AppenderRef ref="casConsole"/>
-        </AsyncRoot>
+        </Root>
     </Loggers>
 </Configuration>

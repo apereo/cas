@@ -51,9 +51,9 @@ levels:
 
 ```xml
 ...
-<AsyncLogger name="com.couchbase" level="debug" additivity="false">
+<Logger name="com.couchbase" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
+</Logger>
 ...
 ```

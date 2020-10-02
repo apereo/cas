@@ -527,12 +527,12 @@ For Java-based applications, the following frameworks may be used to integrate y
 To enable additional logging, modify the logging configuration file to add the following:
 
 ```xml
-<AsyncLogger name="org.opensaml" level="debug" additivity="false">
+<Logger name="org.opensaml" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
-<AsyncLogger name="PROTOCOL_MESSAGE" level="debug" additivity="false">
+</Logger>
+<Logger name="PROTOCOL_MESSAGE" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
+</Logger>
 ```

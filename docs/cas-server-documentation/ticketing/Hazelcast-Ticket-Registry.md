@@ -141,9 +141,9 @@ levels:
 
 ```xml
 ...
-<AsyncLogger name="com.hazelcast" level="debug" additivity="false">
+<Logger name="com.hazelcast" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
+</Logger>
 ...
 ```

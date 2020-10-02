@@ -34,11 +34,11 @@ The [Logging](../logging/Logging.html) configuration file must be adjusted to ma
     ...
     <Loggers>
         ...
-        <AsyncLogger name="org.apereo" level="info" additivity="false" includeLocation="true">
+        <Logger name="org.apereo" level="info" additivity="false" includeLocation="true">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
             <AppenderRef ref="Sentry"/>
-        </AsyncLogger>
+        </Logger>
         ...
     </Loggers>
 ...
