@@ -56,16 +56,10 @@ dependencies {
     if (project.hasProperty("casModules")) {
         def dependencies = project.getProperty("casModules").split(",")
         dependencies.each {
-            if (it.startsWith("core")) {
-                implementation project(":core:cas-server-${it}")
-            } else if (it.startsWith("support")) {
-                implementation project(":support:cas-server-${it}")
-            } else {
-                def projectsToAdd = rootProject.subprojects.findAll {project ->
-                    project.name == "cas-server-core-${it}" || project.name == "cas-server-support-${it}"
-                }
-                projectsToAdd.each {implementation it}
+            def projectsToAdd = rootProject.subprojects.findAll {project ->
+                project.name == "cas-server-core-${it}" || project.name == "cas-server-support-${it}"
             }
+            projectsToAdd.each {implementation it}
         }
     }
 
