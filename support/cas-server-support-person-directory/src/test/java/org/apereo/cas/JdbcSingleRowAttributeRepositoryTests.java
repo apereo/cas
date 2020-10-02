@@ -26,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attributeRepository.jdbc[0].singleRow=true",
     "cas.authn.attributeRepository.jdbc[0].requireAllAttributes=true",
     "cas.authn.attributeRepository.jdbc[0].single-row=true",
-    "cas.authn.attributeRepository.jdbc[0].require-all-attributes=true",
+    "cas.authn.attributeRepository.jdbc[0].username=uid",
     "cas.authn.attributeRepository.jdbc[0].sql=SELECT * FROM table_users WHERE {0}",
     "cas.authn.attributeRepository.jdbc[0].case-canonicalization=LOWER",
-    "cas.authn.attributeRepository.jdbc[0].case-insensitive-query-attributes=username->LOWER,attr1,attr2",
+    "cas.authn.attributeRepository.jdbc[0].case-insensitive-query-attributes=username->LOWER,attr1,attr2"
 })
 @Tag("JDBC")
 public class JdbcSingleRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {
