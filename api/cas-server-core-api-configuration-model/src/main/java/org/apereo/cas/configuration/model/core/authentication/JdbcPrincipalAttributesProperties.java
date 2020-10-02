@@ -105,4 +105,17 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
      * use for virtual renames.
      */
     private Map<String, String> attributes = new HashMap<>(0);
+
+    /**
+     * Collection of attributes, used to build the SQL query, that should go through
+     * a case canonicalization process defined as {@code key->value}.
+     * Note that the key is not the name of
+     * the attribute, but the query attribute that is used in generating the
+     * final query clause (i.e. {@code username}). The value can be {@code NONE, LOWER, UPPER}.
+     *
+     * It's also possible to simply define a list of attributes without a
+     * case canonicalization override such as {@code username, attribute2}
+     * in which case {@link #caseCanonicalization} will dictate the final outcome.
+     */
+    private List<String> caseInsensitiveQueryAttributes = new ArrayList<>(0);
 }

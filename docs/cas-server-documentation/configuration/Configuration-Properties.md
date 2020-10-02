@@ -1237,6 +1237,7 @@ Retrieve attributes from a JDBC source. Database settings for this feature are a
 # cas.authn.attribute-repository.jdbc[0].require-all-attributes=true
 # cas.authn.attribute-repository.jdbc[0].case-canonicalization=NONE|LOWER|UPPER
 # cas.authn.attribute-repository.jdbc[0].query-type=OR|AND
+# cas.authn.attribute-repository.jdbc[0].case-insensitive-query-attributes=username
 
 # Used only when there is a mapping of many rows to one user
 # cas.authn.attribute-repository.jdbc[0].column-mappings.column-attr-name1=columnAttrValue1
