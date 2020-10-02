@@ -10,6 +10,7 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,6 +49,23 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
         assertNull(ticket);
         assertTrue(secondRegistry.getTickets().isEmpty());
         assertEquals(0, getNewTicketRegistry().getTicketsStream().count());
+    }
+
+    @RepeatedTest(1)
+    public void verifyFailure() {
+        val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
+        getNewTicketRegistry().addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            originalAuthn, NeverExpiresExpirationPolicy.INSTANCE));
+        assertNull(getNewTicketRegistry().getTicket(ticketGrantingTicketId, t -> {
+            throw new IllegalArgumentException();
+        }));
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() {
+                getNewTicketRegistry().addTicket(null);
+                getNewTicketRegistry().updateTicket(null);
+            }
+        });
     }
 
 }

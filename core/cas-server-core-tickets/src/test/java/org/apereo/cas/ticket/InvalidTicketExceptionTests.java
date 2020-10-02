@@ -17,7 +17,7 @@ public class InvalidTicketExceptionTests {
 
     @Test
     public void verifyCodeNoThrowable() {
-        val t = new InvalidTicketException("InvalidTicketId");
+        val t = new InvalidTicketException(new IllegalArgumentException("FailsOp"), "InvalidTicket");
         assertEquals("INVALID_TICKET", t.getCode());
     }
 

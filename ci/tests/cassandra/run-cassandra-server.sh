@@ -4,7 +4,7 @@
 
 echo "Running Cassandra docker image..."
 docker stop cassandra || true && docker rm cassandra || true
-docker run --name cassandra -d -p 9042:9042 cassandra:3.11.6
+docker run --name cassandra -d -p 9042:9042 cassandra:4.0
 
 docker ps | grep "cassandra"
 retVal=$?
