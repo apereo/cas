@@ -1,13 +1,12 @@
 package org.apereo.cas.util;
 
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.time.Instant;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-
 
 /**
  * Class that exposes the CAS version. Fetches the "Implementation-Version"
@@ -50,16 +49,11 @@ public class CasVersion {
      *
      * @return the date/time
      */
+    @SneakyThrows
     public static ZonedDateTime getDateTime() {
         val clazz = CasVersion.class;
         val resource = clazz.getResource(clazz.getSimpleName() + ".class");
-        try {
-            val time = Instant.ofEpochMilli(resource.openConnection().getLastModified());
-            return DateTimeUtils.zonedDateTimeOf(time);
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-        }
-        LOGGER.warn("Unhandled url protocol: [{}] resource: [{}]", resource.getProtocol(), resource);
-        return ZonedDateTime.now(ZoneOffset.UTC);
+        val time = Instant.ofEpochMilli(resource.openConnection().getLastModified());
+        return DateTimeUtils.zonedDateTimeOf(time);
     }
 }
