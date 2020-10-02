@@ -51,6 +51,17 @@ dependencies {
     implementation project(":webapp:cas-server-webapp-init")
     implementation project(":webapp:cas-server-webapp-resources")
 
+    // Add modules in format compatible with overlay casModules property
+    if (project.hasProperty("casModules")) {
+        def dependencies = project.getProperty("casModules").split(",")
+        dependencies.each {
+            def projectsToAdd = rootProject.subprojects.findAll {project ->
+                project.name == "cas-server-core-${it}" || project.name == "cas-server-support-${it}"
+            }
+            projectsToAdd.each {implementation it}
+        }
+    }
+
     implementation libraries.springcloudconfigclient
     if (!rootProject.publishReleases && !rootProject.publishSnapshots) {
         runtimeClasspath libraries.springbootdevtools

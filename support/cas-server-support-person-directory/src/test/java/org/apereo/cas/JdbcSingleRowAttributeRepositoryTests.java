@@ -25,8 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attributeRepository.jdbc[0].attributes.cn=commonName",
     "cas.authn.attributeRepository.jdbc[0].singleRow=true",
     "cas.authn.attributeRepository.jdbc[0].requireAllAttributes=true",
+    "cas.authn.attributeRepository.jdbc[0].single-row=true",
+    "cas.authn.attributeRepository.jdbc[0].require-all-attributes=true",
     "cas.authn.attributeRepository.jdbc[0].sql=SELECT * FROM table_users WHERE {0}",
-    "cas.authn.attributeRepository.jdbc[0].username=uid"
+    "cas.authn.attributeRepository.jdbc[0].case-canonicalization=LOWER",
+    "cas.authn.attributeRepository.jdbc[0].case-insensitive-query-attributes=username->LOWER,attr1,attr2",
 })
 @Tag("JDBC")
 public class JdbcSingleRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {
@@ -47,7 +50,7 @@ public class JdbcSingleRowAttributeRepositoryTests extends BaseJdbcAttributeRepo
     @Test
     public void verifyPeopleSingleRowAttributeRepository() {
         assertNotNull(attributeRepository);
-        val people = attributeRepository.getPeople(Map.of("username", List.of("casuser")));
+        val people = attributeRepository.getPeople(Map.of("username", List.of("CASUSER")));
         val person = people.iterator().next();
         assertNotNull(person);
         assertNotNull(person.getAttributes());
