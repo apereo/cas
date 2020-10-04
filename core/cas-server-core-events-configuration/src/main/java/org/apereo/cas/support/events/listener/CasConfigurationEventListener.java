@@ -54,11 +54,6 @@ public class CasConfigurationEventListener {
     @EventListener
     @Async
     public void handleConfigurationModifiedEvent(final CasConfigurationModifiedEvent event) {
-        if (this.contextRefresher == null) {
-            LOGGER.warn("Unable to refresh application context, since no refresher is available");
-            return;
-        }
-
         if (event.isEligibleForContextRefresh()) {
             LOGGER.info("Received event [{}]. Refreshing CAS configuration...", event);
             Collection<String> keys = null;

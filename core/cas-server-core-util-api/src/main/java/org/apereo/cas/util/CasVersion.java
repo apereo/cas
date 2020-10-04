@@ -2,7 +2,6 @@ package org.apereo.cas.util;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.time.Instant;
@@ -15,7 +14,6 @@ import java.time.ZonedDateTime;
  * @author Dmitriy Kopylenko
  * @since 3.0.0
  */
-@Slf4j
 @UtilityClass
 public class CasVersion {
     /**
