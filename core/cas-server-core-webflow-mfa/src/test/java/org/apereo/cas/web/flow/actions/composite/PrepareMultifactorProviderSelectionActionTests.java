@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.ChainingMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.DefaultChainingMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.bypass.DefaultChainingMultifactorAuthenticationBypassProvider;
+import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -60,10 +62,13 @@ public class PrepareMultifactorProviderSelectionActionTests extends BaseCasWebfl
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
-        val provider = new DefaultChainingMultifactorAuthenticationProvider(
+        val chain = new DefaultChainingMultifactorAuthenticationProvider(
             new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
+        val provider = new TestMultifactorAuthenticationProvider();
+        provider.setBypassEvaluator(new DefaultChainingMultifactorAuthenticationBypassProvider());
+        chain.addMultifactorAuthenticationProvider(provider);
         val attributes = new LocalAttributeMap(RegisteredService.class.getName(), RegisteredServiceTestUtils.getRegisteredService());
-        attributes.put(MultifactorAuthenticationProvider.class.getName(), provider);
+        attributes.put(MultifactorAuthenticationProvider.class.getName(), chain);
 
         val event = new EventFactorySupport().event(this,
             ChainingMultifactorAuthenticationProvider.DEFAULT_IDENTIFIER,

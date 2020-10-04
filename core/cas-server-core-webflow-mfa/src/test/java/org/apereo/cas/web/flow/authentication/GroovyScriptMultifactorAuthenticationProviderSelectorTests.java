@@ -40,4 +40,14 @@ public class GroovyScriptMultifactorAuthenticationProviderSelectorTests extends 
         assertEquals(TestMultifactorAuthenticationProvider.ID, provider.getId());
     }
 
+    @Test
+    public void verifyNoProvider() {
+        val service = RegisteredServiceTestUtils.getRegisteredService();
+        servicesManager.save(service);
+        val dummy = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        val provider = multifactorAuthenticationProviderSelector.resolve(CollectionUtils.wrapList(dummy),
+            service, RegisteredServiceTestUtils.getPrincipal("none"));
+        assertNull(provider);
+    }
+
 }

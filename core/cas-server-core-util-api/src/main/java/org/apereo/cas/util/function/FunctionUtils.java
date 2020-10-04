@@ -63,8 +63,9 @@ public class FunctionUtils {
         return account -> {
             if (condition) {
                 trueFunction.accept(account);
+            } else {
+                falseFunction.accept(account);
             }
-            falseFunction.accept(account);
         };
     }
 

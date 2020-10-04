@@ -59,8 +59,8 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
             LOGGER.trace("Saving registered service [{}]", rs);
             invokeServiceRegistryListenerPreSave(rs);
             val bucketNameToUse = determineBucketName(rs);
-            if (!s3Client.listBuckets(ListBucketsRequest.builder().build())
-                .buckets().stream().anyMatch(b -> b.name().equalsIgnoreCase(bucketNameToUse))) {
+            if (s3Client.listBuckets(ListBucketsRequest.builder().build())
+                .buckets().stream().noneMatch(b -> b.name().equalsIgnoreCase(bucketNameToUse))) {
                 LOGGER.trace("Bucket [{}] does not exist. Creating...", bucketNameToUse);
                 val bucket = s3Client.createBucket(CreateBucketRequest.builder().bucket(bucketNameToUse).build());
                 LOGGER.debug("Created bucket [{}]", bucket.location());

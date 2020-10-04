@@ -8,6 +8,8 @@ class SampleGroovyProviderSelection {
         def logger = args[3]
 
         logger.debug("Resolving provider from ${providersCollection} for ${principal} with service ${service}")
+        if (principal.id == "none")
+            return null
         return "mfa-dummy"
     }
 }

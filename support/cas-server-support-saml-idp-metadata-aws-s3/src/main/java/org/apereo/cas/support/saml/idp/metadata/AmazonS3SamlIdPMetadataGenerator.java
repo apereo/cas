@@ -54,8 +54,8 @@ public class AmazonS3SamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerat
     protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
                                                                final Optional<SamlRegisteredService> registeredService) {
         val bucketNameToUse = AmazonS3SamlIdPMetadataUtils.determineBucketNameFor(registeredService, this.bucketName, s3Client);
-        if (!s3Client.listBuckets(ListBucketsRequest.builder().build())
-            .buckets().stream().anyMatch(b -> b.name().equalsIgnoreCase(bucketNameToUse))) {
+        if (s3Client.listBuckets(ListBucketsRequest.builder().build())
+            .buckets().stream().noneMatch(b -> b.name().equalsIgnoreCase(bucketNameToUse))) {
             LOGGER.trace("Bucket [{}] does not exist. Creating...", bucketNameToUse);
             val bucket = s3Client.createBucket(CreateBucketRequest.builder().bucket(bucketNameToUse).build());
             LOGGER.debug("Created bucket [{}]", bucket.location());
