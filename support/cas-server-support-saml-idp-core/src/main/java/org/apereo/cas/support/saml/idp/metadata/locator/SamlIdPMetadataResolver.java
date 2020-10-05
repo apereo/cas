@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.idp.metadata.locator;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -34,13 +35,18 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
 
     private final OpenSamlConfigBean openSamlConfigBean;
 
+    private final Optional<SamlRegisteredService> service;
+
     public SamlIdPMetadataResolver(final SamlIdPMetadataLocator locator,
                                    final SamlIdPMetadataGenerator generator,
-                                   final OpenSamlConfigBean openSamlConfigBean) {
+                                   final OpenSamlConfigBean openSamlConfigBean,
+                                   final Optional<SamlRegisteredService> service) {
         super(null);
         this.locator = locator;
         this.generator = generator;
         this.openSamlConfigBean = openSamlConfigBean;
+        this.service = service;
+        LOGGER.trace("Instantiating MetadataResolver for service [{}]", service);
     }
 
     @Override
@@ -52,12 +58,12 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
 
     @Override
     @Retryable(value = ResolverException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, maxDelay = 5000))
-    public Iterable<EntityDescriptor> resolve(final CriteriaSet criteria) throws ResolverException {
+    public Iterable<EntityDescriptor> resolve (final CriteriaSet criteria) throws ResolverException {
         try {
-            if (!locator.exists(Optional.empty())) {
-                generator.generate(Optional.empty());
+            if (!locator.exists(this.service)) {
+                generator.generate(this.service);
             }
-            val resource = locator.resolveMetadata(Optional.empty());
+            val resource = locator.resolveMetadata(this.service);
             if (resource.contentLength() > 0) {
                 val element = SamlUtils.getRootElementFrom(resource.getInputStream(), openSamlConfigBean);
 
