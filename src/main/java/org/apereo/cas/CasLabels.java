@@ -91,7 +91,7 @@ public enum CasLabels {
     LABEL_RADIUS("RADIUS", "jradius"),
     LABEL_REST_PROTOCOL("REST Protocol & Integrations", "rest"),
     LABEL_REDIS("Redis", "redis|sentinel"),
-    LABEL_REFACTORING_CODE_CLEANUP("Refactoring & Code CleanUp", "refactor:*\\s*|NPE|cleanup|CVE|spotbugs|typos|checkstyle|codacy|duplicate code"),
+    LABEL_REFACTORING_CODE_CLEANUP("Refactoring & Code CleanUp", "refactor:*\\s*|@UtilityClass|NPE|cleanup|CVE|Lombok|spotbugs|typos|checkstyle|codacy|duplicate code"),
     LABEL_REMEMBER_ME("Remember-Me", "long-term|rememberme"),
     LABEL_SAML_CORE("SAML Core", "saml"),
     LABEL_APACHE_SYNCOPE("Apache Syncope", "syncope"),
