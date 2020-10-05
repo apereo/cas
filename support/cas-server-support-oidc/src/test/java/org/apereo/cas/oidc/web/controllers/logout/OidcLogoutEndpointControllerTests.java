@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.web.controllers.logout;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,6 +29,23 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcLogoutEndpointController")
     protected OidcLogoutEndpointController oidcLogoutEndpointController;
+
+    @Test
+    public void verifyOidcNoLogoutUrls() {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+
+        val id = UUID.randomUUID().toString();
+        val claims = getClaims(id);
+        val oidcRegisteredService = new OidcRegisteredService();
+        oidcRegisteredService.setClientId(id);
+        servicesManager.save(oidcRegisteredService);
+
+        val idToken = oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims);
+        val result = oidcLogoutEndpointController.handleRequestInternal(StringUtils.EMPTY, StringUtils.EMPTY,
+            idToken, request, response);
+        assertEquals(HttpStatus.PERMANENT_REDIRECT.value(), result.getStatusCodeValue());
+    }
 
     @Test
     public void verifyOidcLogoutWithoutParams() {

@@ -15,7 +15,6 @@ import com.couchbase.client.java.query.QueryResult;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
@@ -44,12 +43,6 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
         .findAndRegisterModules();
 
     private final CouchbaseClientFactory couchbase;
-
-    @Override
-    public Ticket updateTicket(final Ticket ticket) {
-        addTicket(ticket);
-        return ticket;
-    }
 
     @Override
     public void addTicket(final Ticket ticketToAdd) {
@@ -93,14 +86,12 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
         return null;
     }
 
-    /**
-     * Stops the couchbase client.
-     */
-    @SneakyThrows
     @Override
-    public void destroy() {
-        LOGGER.trace("Shutting down Couchbase");
-        this.couchbase.shutdown();
+    public long deleteAll() {
+        val query = getQueryForAllTickets();
+        val count = couchbase.count(query);
+        couchbase.remove(query);
+        return count;
     }
 
     @Override
@@ -123,6 +114,21 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
+    public Ticket updateTicket(final Ticket ticket) {
+        addTicket(ticket);
+        return ticket;
+    }
+
+    /**
+     * Stops the couchbase client.
+     */
+    @Override
+    public void destroy() {
+        LOGGER.trace("Shutting down Couchbase");
+        this.couchbase.shutdown();
+    }
+
+    @Override
     public long sessionCount() {
         return couchbase.count(String.format("prefix='%s'", TicketGrantingTicket.PREFIX));
     }
@@ -135,26 +141,18 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     @Override
     public boolean deleteSingleTicket(final String ticketIdToDelete) {
         val ticketId = encodeTicketId(ticketIdToDelete);
-        LOGGER.debug("Deleting ticket [{}]", ticketId);
-        try {
-            return couchbase.bucketRemoveFromDefaultCollection(ticketId) != null;
-        } catch (final Exception e) {
-            LOGGER.error("Failed deleting [{}]", ticketId);
-            LoggingUtils.error(LOGGER, e);
-            return false;
-        }
-    }
-
-    @Override
-    public long deleteAll() {
-        val query = getQueryForAllTickets();
-        val count = couchbase.count(query);
-        couchbase.remove(query);
-        return count;
+        LOGGER.trace("Deleting ticket [{}]", ticketId);
+        return couchbase.bucketRemoveFromDefaultCollection(ticketId).isPresent();
     }
 
     private String getQueryForAllTickets() {
         return String.format("REGEX_CONTAINS(%s.`@class`, \".*Ticket.*\")", couchbase.getBucket());
+    }
+
+    private QueryResult queryForTickets() {
+        val query = getQueryForAllTickets();
+        return couchbase.select(query,
+            QueryOptions.queryOptions().serializer(JacksonJsonSerializer.create(MAPPER)), false);
     }
 
     /**
@@ -166,12 +164,6 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     private static Duration getTimeToLive(final Ticket ticket) {
         val expTime = ticket.getExpirationPolicy().getTimeToLive().intValue();
         return Duration.ofSeconds(expTime);
-    }
-
-    private QueryResult queryForTickets() {
-        val query = getQueryForAllTickets();
-        return couchbase.select(query,
-            QueryOptions.queryOptions().serializer(JacksonJsonSerializer.create(MAPPER)), false);
     }
 }
 

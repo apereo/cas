@@ -358,7 +358,10 @@ public abstract class AbstractOidcTests {
     }
 
     protected JwtClaims getClaims() {
-        val clientId = getOidcRegisteredService().getClientId();
+        return getClaims(getOidcRegisteredService().getClientId());
+    }
+
+    protected JwtClaims getClaims(final String clientId) {
         return getClaims("casuser", casProperties.getAuthn().getOidc().getIssuer(), clientId, clientId);
     }
 
