@@ -24,7 +24,7 @@ public class LoggingUtils {
      * @param logEvent the log event
      * @return the log event
      */
-    public LogEvent prepareLogEvent(final LogEvent logEvent) {
+    public static LogEvent prepareLogEvent(final LogEvent logEvent) {
         val messageModified = TicketIdSanitizationUtils.sanitize(logEvent.getMessage().getFormattedMessage());
         val message = new SimpleMessage(messageModified);
         val newLogEventBuilder = Log4jLogEvent.newBuilder()

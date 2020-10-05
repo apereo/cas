@@ -20,7 +20,7 @@ public class LoggingUtils {
      * @param msg       the msg
      * @param throwable the throwable
      */
-    public void error(final Logger logger, final String msg, final Throwable throwable) {
+    public static void error(final Logger logger, final String msg, final Throwable throwable) {
         logger.error(msg, throwable);
     }
 
@@ -30,7 +30,7 @@ public class LoggingUtils {
      * @param logger    the logger
      * @param throwable the throwable
      */
-    public void error(final Logger logger, final Throwable throwable) {
+    public static void error(final Logger logger, final Throwable throwable) {
         error(logger, StringUtils.defaultIfEmpty(throwable.getMessage(), throwable.getClass().getSimpleName()), throwable);
     }
 
@@ -40,7 +40,7 @@ public class LoggingUtils {
      * @param logger    the logger
      * @param throwable the throwable
      */
-    public void warn(final Logger logger, final Throwable throwable) {
+    public static void warn(final Logger logger, final Throwable throwable) {
         warn(logger, StringUtils.defaultIfEmpty(throwable.getMessage(), throwable.getClass().getSimpleName()), throwable);
     }
 
@@ -51,7 +51,7 @@ public class LoggingUtils {
      * @param message   the message
      * @param throwable the throwable
      */
-    public void warn(final Logger logger, final String message, final Throwable throwable) {
+    public static void warn(final Logger logger, final String message, final Throwable throwable) {
         logger.warn(message, throwable);
     }
 

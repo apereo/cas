@@ -3,7 +3,6 @@ package org.apereo.cas.util;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,5 +24,4 @@ public class LoggingUtilsTests {
             LoggingUtils.warn(LOGGER, new RuntimeException("error"));
         });
     }
-
 }
