@@ -34,6 +34,19 @@ Note that in addition to the above options, some multifactor authentication prov
 may also skip and bypass the authentication request in the event that the authenticated principal does not quite "qualify"
 for multifactor authentication. See the documentation for each specific provider to learn more.
 
+### Default Bypass Configuration Steps
+
+Propose we have CAS configured with LDAP and U2F support and we need to bypass second factor to certain users.
+To do so we can:
+1) In LDAP add description field to exact users.
+2) In cas.properties add
+```json
+cas.authn.ldap[0].principalAttributeList=memberOf,memberof,cn,description
+cas.authn.mfa.u2f.bypass.type=DEFAULT 
+cas.authn.mfa.u2f.bypass.principalAttributeName=description 
+```
+All users with description attribute present should bypass second factor.
+
 ### Configuration
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
