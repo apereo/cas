@@ -18,14 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LoggingUtilsTests {
     @Test
     public void verifyOperation() {
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                LoggingUtils.error(LOGGER, "error", new RuntimeException("error"));
-                LoggingUtils.error(LOGGER, new RuntimeException("error"));
-                LoggingUtils.warn(LOGGER, "error", new RuntimeException("error"));
-                LoggingUtils.warn(LOGGER, new RuntimeException("error"));
-            }
+        assertDoesNotThrow(() -> {
+            LoggingUtils.error(LOGGER, "error", new RuntimeException("error"));
+            LoggingUtils.error(LOGGER, new RuntimeException("error"));
+            LoggingUtils.warn(LOGGER, "error", new RuntimeException("error"));
+            LoggingUtils.warn(LOGGER, new RuntimeException("error"));
         });
     }
 

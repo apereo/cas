@@ -20,7 +20,7 @@ public class LoggingUtils {
      * @param msg       the msg
      * @param throwable the throwable
      */
-    public static void error(final Logger logger, final String msg, final Throwable throwable) {
+    public void error(final Logger logger, final String msg, final Throwable throwable) {
         logger.error(msg, throwable);
     }
 
