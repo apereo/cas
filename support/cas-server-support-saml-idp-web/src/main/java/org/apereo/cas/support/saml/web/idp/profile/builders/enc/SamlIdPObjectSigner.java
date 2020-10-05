@@ -49,6 +49,7 @@ import org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.criterion.SignatureSigningConfigurationCriterion;
 import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
+import org.springframework.beans.factory.ObjectProvider;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,7 +68,7 @@ import java.util.regex.Pattern;
 @Slf4j
 @RequiredArgsConstructor
 public class SamlIdPObjectSigner {
-    private final MetadataResolver casSamlIdPMetadataResolver;
+    private final ObjectProvider<MetadataResolver> casSamlIdPMetadataResolver;
 
     private final CasConfigurationProperties casProperties;
 
@@ -346,8 +347,9 @@ public class SamlIdPObjectSigner {
         val privateKey = getSigningPrivateKey(service);
 
         val kekCredentialResolver = new MetadataCredentialResolver();
-        val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver,
-            samlIdp.getMetadata().isRequireValidMetadata());
+        val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(
+                casSamlIdPMetadataResolver.getObject(Optional.of(service)), 
+                samlIdp.getMetadata().isRequireValidMetadata());
         kekCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
         kekCredentialResolver.setKeyInfoCredentialResolver(DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
         kekCredentialResolver.initialize();
@@ -355,7 +357,8 @@ public class SamlIdPObjectSigner {
         val criteriaSet = new CriteriaSet();
         criteriaSet.add(new SignatureSigningConfigurationCriterion(config));
         criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
-        criteriaSet.add(new EntityIdCriterion(samlIdp.getEntityId()));
+        criteriaSet.add(new EntityIdCriterion(
+                    StringUtils.defaultIfBlank(service.getIssuerEntityId(), samlIdp.getEntityId())));
         criteriaSet.add(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
 
         val credentials = Sets.<Credential>newLinkedHashSet(kekCredentialResolver.resolve(criteriaSet));

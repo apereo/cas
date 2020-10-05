@@ -112,8 +112,8 @@ public class SamlIdPConfiguration {
     private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
-    @Qualifier("casSamlIdPMetadataResolver")
-    private ObjectProvider<MetadataResolver> casSamlIdPMetadataResolver;
+    @Qualifier("perServiceSamlIdPMetadataResolver")
+    private ObjectProvider<MetadataResolver> perServiceSamlIdPMetadataResolver;
 
     @Autowired
     @Qualifier("shibbolethCompatiblePersistentIdGenerator")
@@ -319,7 +319,7 @@ public class SamlIdPConfiguration {
     @RefreshScope
     public SamlIdPObjectSigner samlObjectSigner() {
         return new SamlIdPObjectSigner(
-            this.casSamlIdPMetadataResolver.getObject(),
+            this.perServiceSamlIdPMetadataResolver,
             casProperties,
             this.samlIdPMetadataLocator.getObject());
     }
