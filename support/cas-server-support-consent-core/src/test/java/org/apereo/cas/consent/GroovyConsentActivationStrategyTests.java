@@ -33,6 +33,4 @@ public class GroovyConsentActivationStrategyTests extends BaseConsentActivationS
         assertNotNull(consentActivationStrategy);
         applicationContext.getBeanFactory().destroyBean(consentActivationStrategy);
     }
-
-
 }

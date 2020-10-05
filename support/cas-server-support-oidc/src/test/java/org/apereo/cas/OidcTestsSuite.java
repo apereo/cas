@@ -47,10 +47,12 @@ import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseB
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilderTests;
 import org.apereo.cas.oidc.web.controllers.OidcIntrospectionEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.OidcWellKnownEndpointControllerTests;
+import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientConfigurationEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistrationEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.logout.OidcLogoutEndpointControllerTests;
+import org.apereo.cas.oidc.web.controllers.profile.OidcUserProfileEndpointControllerTests;
 import org.apereo.cas.oidc.web.flow.OidcAuthenticationContextWebflowEventResolverTests;
 import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIActionTests;
@@ -109,6 +111,8 @@ import org.junit.runner.RunWith;
     OidcSingleLogoutServiceLogoutUrlBuilderTests.class,
     OidcImplicitIdTokenAuthorizationResponseBuilderTests.class,
     OidcJwksEndpointControllerTests.class,
+    OidcAuthorizeEndpointControllerTests.class,
+    OidcUserProfileEndpointControllerTests.class,
     OidcJsonWebKeyStoreJacksonDeserializerTests.class,
     OidcMultifactorAuthenticationTriggerTests.class,
     OidcWebFingerDiscoveryServiceTests.class,
