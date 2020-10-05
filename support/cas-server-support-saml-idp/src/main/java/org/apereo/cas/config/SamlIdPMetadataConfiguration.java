@@ -15,6 +15,7 @@ import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataResolver;
 import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataHealthIndicator;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceDefaultCachingMetadataResolver;
@@ -47,6 +48,7 @@ import org.opensaml.saml.saml2.core.Response;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -58,8 +60,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 
 import java.net.URL;
+import java.util.Optional;
 
 /**
  * This is {@link SamlIdPMetadataConfiguration}.
@@ -106,18 +110,25 @@ public class SamlIdPMetadataConfiguration {
     @Qualifier("samlProfileSamlResponseBuilder")
     private ObjectProvider<SamlProfileObjectBuilder<Response>> samlProfileSamlResponseBuilder;
 
-    @Lazy
     @Bean(initMethod = "initialize", destroyMethod = "destroy")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     @DependsOn("samlIdPMetadataGenerator")
     @SneakyThrows
-    public MetadataResolver casSamlIdPMetadataResolver() {
+    public SamlIdPMetadataResolver perServiceSamlIdPMetadataResolver(final Optional<SamlRegisteredService> service) {
         val idp = casProperties.getAuthn().getSamlIdp();
         val resolver = new SamlIdPMetadataResolver(samlIdPMetadataLocator(),
-            samlIdPMetadataGenerator(), openSamlConfigBean.getObject());
+                samlIdPMetadataGenerator(), openSamlConfigBean.getObject(), service);
         resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
         resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
         resolver.setId(idp.getEntityId());
         return resolver;
+    }
+
+
+    @Lazy
+    @Bean
+    public MetadataResolver casSamlIdPMetadataResolver() {
+        return perServiceSamlIdPMetadataResolver(Optional.empty());
     }
 
     @Lazy
