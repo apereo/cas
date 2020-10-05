@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
+import com.authy.api.Error;
 import com.authy.api.Hash;
 import com.authy.api.Token;
 import com.authy.api.Tokens;
@@ -60,7 +61,16 @@ public class AuthyAuthenticationRegistrationWebflowActionTests {
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         val action = new AuthyAuthenticationRegistrationWebflowAction(authyInstance);
-        val event = action.doExecute(context);
-        assertEquals(CasWebflowConstants.STATE_ID_SUCCESS, event.getId());
+        var event = action.doExecute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+
+        user.setStatus(400);
+        assertThrows(IllegalArgumentException.class, () -> action.doExecute(context));
+
+        user.setStatus(200);
+        hash.setSuccess(false);
+        hash.setError(new Error());
+        hash.setMessage("Message");
+        assertThrows(IllegalArgumentException.class, () -> action.doExecute(context));
     }
 }

@@ -1,4 +1,4 @@
-package org.apereo.cas.services;
+package org.apereo.cas.couchdb.services;
 
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -7,7 +7,6 @@ import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CouchDbServiceRegistryConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +17,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link CouchDbServiceRegistryTests}.
+ * This is {@link RegisteredServiceCouchDbRepositoryTests}.
  *
- * @author Timur Duehr
- * @since 5.3.0
+ * @author Misagh Moayyed
+ * @since 6.3.0
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
@@ -38,18 +37,15 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("CouchDb")
 @EnabledIfPortOpen(port = 5984)
-@Getter
-public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
-
+public class RegisteredServiceCouchDbRepositoryTests {
     @Autowired
-    @Qualifier("couchDbServiceRegistry")
-    private ServiceRegistry newServiceRegistry;
+    @Qualifier("serviceRegistryCouchDbRepository")
+    private RegisteredServiceCouchDbRepository serviceRegistryCouchDbRepository;
 
     @Test
     public void verifyOperation() {
-        assertNull(newServiceRegistry.findServiceByExactServiceName("unknown-service"));
-        assertNull(newServiceRegistry.findServiceByExactServiceId("unknown-service"));
-        assertNull(newServiceRegistry.findServiceById(554433));
+        assertNull(serviceRegistryCouchDbRepository.findByServiceName("unknown-service"));
+        assertNull(serviceRegistryCouchDbRepository.get(554433));
     }
 
 }
