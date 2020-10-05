@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
@@ -40,6 +39,7 @@ import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
@@ -131,12 +131,13 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         throws AbstractTicketException {
 
         val proxyGrantingTicketObject = getTicket(proxyGrantingTicket, ProxyGrantingTicket.class);
-        val registeredService = this.servicesManager.findServiceBy(service);
+        val registeredService = servicesManager.findServiceBy(service);
 
         try {
             enforceRegisteredServiceAccess(service, proxyGrantingTicketObject, registeredService);
             RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, service, proxyGrantingTicketObject);
-        } catch (final PrincipalException e) {
+        } catch (final Exception e) {
+            LoggingUtils.warn(LOGGER, e);
             throw new UnauthorizedSsoServiceException();
         }
 
@@ -148,7 +149,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
 
         val principal = authentication.getPrincipal();
-        val factory = (ProxyTicketFactory) this.ticketFactory.get(ProxyTicket.class);
+        val factory = (ProxyTicketFactory) ticketFactory.get(ProxyTicket.class);
         val proxyTicket = factory.create(proxyGrantingTicketObject, service, ProxyTicket.class);
 
         this.ticketRegistry.updateTicket(proxyGrantingTicketObject);
@@ -217,7 +218,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             throw new InvalidTicketException(serviceTicketId);
         }
 
-        val serviceTicket = this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
+        val serviceTicket = ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null) {
             LOGGER.warn("Service ticket [{}] does not exist.", serviceTicketId);
