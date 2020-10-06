@@ -29,9 +29,9 @@ public class OidcAccessTokenEndpointControllerTests extends AbstractOidcTests {
     public void verifyClientNoCode() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        var mv = oidcAccessTokenEndpointController.handleRequest(request, response);
+        oidcAccessTokenEndpointController.handleRequest(request, response);
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatus());
-        mv = oidcAccessTokenEndpointController.handleGetRequest(request, response);
+        oidcAccessTokenEndpointController.handleGetRequest(request, response);
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatus());
     }
 
