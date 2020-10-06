@@ -178,4 +178,12 @@ public class AbstractRegisteredServiceTests {
         service.matches("notRelevant");
         assertEquals(invalidId, service.getServiceId());
     }
+
+    @Test
+    public void verifySetRequiredHandlersDoesNotThrowNPEWhenNullHandlersRefIsPassedIn() {
+        val regexRegisteredService = new RegexRegisteredService();
+        assertDoesNotThrow(() -> {
+            regexRegisteredService.setRequiredHandlers(null);
+        });
+    }
 }
