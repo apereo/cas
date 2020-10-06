@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  * @since 3.4.12
  */
 @Setter
-public class AbstractRegisteredServiceTests {
+public class RegisteredServiceTests {
     private static final long ID = 1000;
 
     private static final String SERVICE_ID = "test";
@@ -49,7 +49,7 @@ public class AbstractRegisteredServiceTests {
 
     private static final String ATTR_3 = "attr3";
 
-    private final AbstractRegisteredService r = new AbstractRegisteredService() {
+    private final AbstractRegisteredService baseService = new AbstractRegisteredService() {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -84,33 +84,34 @@ public class AbstractRegisteredServiceTests {
     @Test
     public void verifySettersAndGetters() {
         prepareService();
-        assertEquals(ALLOWED_TO_PROXY, this.r.getProxyPolicy().isAllowedToProxy());
-        assertEquals(DESCRIPTION, this.r.getDescription());
-        assertEquals(ENABLED, this.r.getAccessStrategy().isServiceAccessAllowed());
-        assertEquals(ID, this.r.getId());
-        assertEquals(NAME, this.r.getName());
-        assertEquals(SERVICEID, this.r.getServiceId());
-        assertEquals(SSO_ENABLED, this.r.getAccessStrategy().isServiceAccessAllowedForSso());
-        assertEquals(THEME, this.r.getTheme());
-        assertNotNull(this.r);
-        assertNotEquals(this.r, new Object());
-        assertEquals(this.r, this.r);
+        assertEquals(ALLOWED_TO_PROXY, baseService.getProxyPolicy().isAllowedToProxy());
+        assertEquals(DESCRIPTION, baseService.getDescription());
+        assertEquals(ENABLED, baseService.getAccessStrategy().isServiceAccessAllowed());
+        assertEquals(ID, baseService.getId());
+        assertEquals(NAME, baseService.getName());
+        assertEquals(SERVICEID, baseService.getServiceId());
+        assertEquals(SSO_ENABLED, baseService.getAccessStrategy().isServiceAccessAllowedForSso());
+        assertEquals(THEME, baseService.getTheme());
+        assertNotNull(baseService);
+        assertNotEquals(baseService, new Object());
+        assertEquals(baseService, baseService);
     }
 
     private void prepareService() {
-        this.r.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider(new ShibbolethCompatiblePersistentIdGenerator("casrox")));
-        this.r.setDescription(DESCRIPTION);
-        this.r.setId(ID);
-        this.r.setName(NAME);
-        this.r.setServiceId(SERVICEID);
-        this.r.setTheme(THEME);
-        this.r.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(ENABLED, SSO_ENABLED));
+        baseService.setUsernameAttributeProvider(
+            new AnonymousRegisteredServiceUsernameAttributeProvider(new ShibbolethCompatiblePersistentIdGenerator("casrox")));
+        baseService.setDescription(DESCRIPTION);
+        baseService.setId(ID);
+        baseService.setName(NAME);
+        baseService.setServiceId(SERVICEID);
+        baseService.setTheme(THEME);
+        baseService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(ENABLED, SSO_ENABLED));
     }
 
     @Test
     public void verifyServiceAttributeFilterAllAttributes() {
         prepareService();
-        this.r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        baseService.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         val p = mock(Principal.class);
         val map = new HashMap<String, List<Object>>();
         map.put(ATTR_1, List.of("value1"));
@@ -118,7 +119,7 @@ public class AbstractRegisteredServiceTests {
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        val attr = this.r.getAttributeReleasePolicy().getAttributes(p,
+        val attr = baseService.getAttributeReleasePolicy().getAttributes(p,
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
         assertEquals(attr.size(), map.size());
     }
@@ -128,7 +129,7 @@ public class AbstractRegisteredServiceTests {
         prepareService();
         val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList(ATTR_1, ATTR_3));
-        this.r.setAttributeReleasePolicy(policy);
+        baseService.setAttributeReleasePolicy(policy);
         val p = mock(Principal.class);
         val map = new HashMap<String, List<Object>>();
         map.put(ATTR_1, List.of("value1"));
@@ -136,7 +137,7 @@ public class AbstractRegisteredServiceTests {
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        val attr = this.r.getAttributeReleasePolicy().getAttributes(p,
+        val attr = baseService.getAttributeReleasePolicy().getAttributes(p,
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
         assertEquals(2, attr.size());
         assertTrue(attr.containsKey(ATTR_1));
@@ -150,7 +151,7 @@ public class AbstractRegisteredServiceTests {
         val mappedAttr = ArrayListMultimap.<String, Object>create();
         mappedAttr.put(ATTR_1, "newAttr1");
         policy.setAllowedAttributes(CollectionUtils.wrap(mappedAttr));
-        this.r.setAttributeReleasePolicy(policy);
+        baseService.setAttributeReleasePolicy(policy);
         val p = mock(Principal.class);
         val map = new HashMap<String, List<Object>>();
         map.put(ATTR_1, List.of("value1"));
@@ -158,7 +159,7 @@ public class AbstractRegisteredServiceTests {
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        val attr = this.r.getAttributeReleasePolicy().getAttributes(p,
+        val attr = baseService.getAttributeReleasePolicy().getAttributes(p,
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
         assertEquals(1, attr.size());
         assertTrue(attr.containsKey("newAttr1"));
