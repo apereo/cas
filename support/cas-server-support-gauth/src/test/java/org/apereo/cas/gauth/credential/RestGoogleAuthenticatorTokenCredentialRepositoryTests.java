@@ -27,9 +27,9 @@ import org.springframework.http.HttpStatus;
 import java.util.List;
 import java.util.UUID;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.charset.StandardCharsets.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 /**
  * This is {@link RestGoogleAuthenticatorTokenCredentialRepositoryTests}.
@@ -53,16 +53,36 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     private IGoogleAuthenticator googleAuthenticatorInstance;
 
     @Test
+    public void verifyFailOps() throws Exception {
+        val props = new GoogleAuthenticatorMultifactorProperties();
+        props.getRest().setUrl("http://localhost:8551");
+        val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
+            props, CipherExecutor.noOpOfStringToString());
+        val entity = MAPPER.writeValueAsString(List.of("----"));
+        try (val webServer = new MockWebServer(8551,
+            new ByteArrayResource(entity.getBytes(UTF_8), "Output"), OK)) {
+            webServer.start();
+            assertNull(repo.get("casuser", 1));
+            assertNull(repo.get(1));
+            assertNull(repo.get("casuser"));
+            assertEquals(0, repo.count());
+            assertEquals(0, repo.count("casuser"));
+            assertNull(repo.update(null));
+        }
+    }
+
+    @Test
     public void verifyLoad() throws Exception {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8551");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
             props, CipherExecutor.noOpOfStringToString());
-        val entity = MAPPER.writeValueAsString(List.of());
+        val account = repo.create(UUID.randomUUID().toString());
+        val entity = MAPPER.writeValueAsString(CollectionUtils.wrapArrayList(account));
         try (val webServer = new MockWebServer(8551,
             new ByteArrayResource(entity.getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
-            assertTrue(repo.load().isEmpty());
+            assertFalse(repo.load().isEmpty());
         }
     }
 
@@ -84,7 +104,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
             });
         }
     }
-    
+
     @Test
     public void verifyGet() throws Exception {
         val props = new GoogleAuthenticatorMultifactorProperties();
