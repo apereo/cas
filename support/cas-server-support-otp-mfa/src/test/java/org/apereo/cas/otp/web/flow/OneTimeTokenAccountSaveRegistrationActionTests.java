@@ -56,4 +56,19 @@ public class OneTimeTokenAccountSaveRegistrationActionTests {
         context.getFlowScope().put(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT, account);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.doExecute(context).getId());
     }
+
+    @Test
+    public void verifyMissingAccount() {
+        val props = new CasConfigurationProperties();
+        val repository = mock(OneTimeTokenCredentialRepository.class);
+        val action = new OneTimeTokenAccountSaveRegistrationAction(repository, props);
+
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, action.doExecute(context).getId());
+    }
 }
