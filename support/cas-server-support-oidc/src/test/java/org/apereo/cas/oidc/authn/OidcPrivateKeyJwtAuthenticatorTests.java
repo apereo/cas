@@ -63,7 +63,7 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyBadUser() throws Exception {
+    public void verifyBadUser() {
         val auth = new OidcPrivateKeyJwtAuthenticator(servicesManager,
             registeredServiceAccessStrategyEnforcer, ticketRegistry,
             webApplicationServiceFactory, casProperties, applicationContext);
@@ -75,6 +75,21 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
         val registeredService = getOidcRegisteredService();
         val credentials = getCredential(request, "unknown", "unknown", registeredService.getClientId());
 
+        auth.validate(credentials, context);
+        assertNull(credentials.getUserProfile());
+    }
+
+    @Test
+    public void verifyBadCred() {
+        val auth = new OidcPrivateKeyJwtAuthenticator(servicesManager,
+            registeredServiceAccessStrategyEnforcer, ticketRegistry,
+            webApplicationServiceFactory, casProperties, applicationContext);
+
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+
+        val credentials = new UsernamePasswordCredentials(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER, null);
         auth.validate(credentials, context);
         assertNull(credentials.getUserProfile());
     }
