@@ -67,6 +67,17 @@ public class CouchbaseAuthenticationHandlerTests {
     }
 
     @Test
+    public void verifyBadRecord() {
+        val props = casProperties.getAuthn().getCouchbase();
+        val factory = new CouchbaseClientFactory(props);
+        val handler = new CouchbaseAuthenticationHandler(mock(ServicesManager.class),
+            PrincipalFactoryUtils.newPrincipalFactory(), factory, props);
+        handler.setPasswordEncoder(new SCryptPasswordEncoder());
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("nopsw", "Mellon");
+        assertThrows(FailedLoginException.class, () -> handler.authenticate(c));
+    }
+
+    @Test
     public void verifyMissingUser() {
         val props = casProperties.getAuthn().getCouchbase();
         val factory = new CouchbaseClientFactory(props);

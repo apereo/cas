@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -49,5 +51,17 @@ public class CouchbasePersonAttributeDaoTests {
         assertTrue(attributes.containsKey("firstname"));
         assertTrue(attributes.containsKey("lastname"));
         assertEquals("casuser", person.getName());
+    }
+
+    @Test
+    public void verifyUnknown() {
+        val person = attributeRepository.getPerson("unknown", IPersonAttributeDaoFilter.alwaysChoose());
+        assertNull(person);
+        
+        val persons = attributeRepository.getPeople(Map.of("username", "casuser"), IPersonAttributeDaoFilter.alwaysChoose());
+        assertFalse(persons.isEmpty());
+
+        assertTrue(attributeRepository.getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose()).isEmpty());
+        assertTrue(attributeRepository.getAvailableQueryAttributes(IPersonAttributeDaoFilter.alwaysChoose()).isEmpty());
     }
 }

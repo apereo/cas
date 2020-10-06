@@ -4,7 +4,7 @@
 
 echo "Running Couchbase docker image..."
 docker stop couchbase || true && docker rm couchbase || true
-docker run -d --name couchbase -p 8091-8094:8091-8094 -p 11210:11210 couchbase/server:6.5.0
+docker run -d --name couchbase -p 8091-8094:8091-8094 -p 11210:11210 couchbase/server:6.6.0
 echo "Waiting for Couchbase server to come online..."
 sleep 20
 until $(curl --output /dev/null --silent --head --fail http://localhost:8091); do
@@ -81,6 +81,10 @@ echo -e "Creating document/accounts..."
 echo -e "*************************************************************"
 curl -u 'admin:password'  http://localhost:8093/query/service \
 -d 'statement=INSERT INTO `testbucket` (KEY,VALUE) VALUES("accounts", {"username": "casuser", "psw": "Mellon", "firstname": "CAS", "lastname":"User"})'
+
+curl -u 'admin:password'  http://localhost:8093/query/service \
+-d 'statement=INSERT INTO `testbucket` (KEY,VALUE) VALUES("bad-accounts", {"username": "nopsw", "firstname": "hello", "lastname":"world"})'
+
 
 docker ps | grep "couchbase"
 retVal=$?

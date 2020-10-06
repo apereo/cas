@@ -20,7 +20,6 @@ import com.couchbase.client.java.kv.UpsertOptions;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.query.QueryResult;
 import com.couchbase.client.java.query.QueryScanConsistency;
-import com.couchbase.client.java.query.QueryStatus;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -159,9 +158,6 @@ public class CouchbaseClientFactory {
         val options = QueryOptions.queryOptions().scanConsistency(QueryScanConsistency.valueOf(properties.getScanConsistency()));
         parameters.ifPresent(options::parameters);
         val result = executeQuery(options, formattedQuery);
-        if (result.metaData().status() == QueryStatus.ERRORS) {
-            throw new CouchbaseException("Could not execute query");
-        }
         return result.rowsAsObject().get(0).getLong("count");
     }
 
@@ -366,11 +362,7 @@ public class CouchbaseClientFactory {
         if (properties.getMaxParallelism() > 0) {
             options.maxParallelism(properties.getMaxParallelism());
         }
-        val result = cluster.query(formattedQuery, options);
-        if (result.metaData().status() == QueryStatus.ERRORS) {
-            throw new CouchbaseException("Could not execute query");
-        }
-        return result;
+        return cluster.query(formattedQuery, options);
     }
 }
 
