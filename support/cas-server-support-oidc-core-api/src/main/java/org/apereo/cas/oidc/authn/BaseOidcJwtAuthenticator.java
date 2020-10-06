@@ -103,7 +103,7 @@ public abstract class BaseOidcJwtAuthenticator implements Authenticator<Username
         val audit = AuditableContext.builder()
             .registeredService(registeredService)
             .build();
-        val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
         if (accessResult.isExecutionFailure()) {
             return null;
         }
