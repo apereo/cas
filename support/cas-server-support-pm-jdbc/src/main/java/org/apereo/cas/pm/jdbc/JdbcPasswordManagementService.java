@@ -40,12 +40,14 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     private final PasswordEncoder passwordEncoder;
 
     public JdbcPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
-                                         final String issuer,
-                                         final PasswordManagementProperties passwordManagementProperties,
-                                         @NonNull final DataSource dataSource,
-                                         @NonNull final TransactionTemplate transactionTemplate,
-                                         final PasswordHistoryService passwordHistoryService,
-                                         final PasswordEncoder passwordEncoder) {
+        final String issuer,
+        final PasswordManagementProperties passwordManagementProperties,
+        @NonNull
+        final DataSource dataSource,
+        @NonNull
+        final TransactionTemplate transactionTemplate,
+        final PasswordHistoryService passwordHistoryService,
+        final PasswordEncoder passwordEncoder) {
         super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.transactionTemplate = transactionTemplate;
@@ -111,14 +113,8 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     @Override
     public String findUsername(final String email) {
         try {
-            return this.transactionTemplate.execute(action -> {
-                val username = this.jdbcTemplate.queryForObject(properties.getJdbc().getSqlFindUser(), String.class, email);
-                if (StringUtils.isNotBlank(username)) {
-                    return username;
-                }
-                LOGGER.debug("Email [{}] not found when searching for user", email);
-                return null;
-            });
+            return transactionTemplate.execute(action ->
+                jdbcTemplate.queryForObject(properties.getJdbc().getSqlFindUser(), String.class, email));
         } catch (final EmptyResultDataAccessException e) {
             LOGGER.debug("Email [{}] not found when searching for user", email);
             return null;
