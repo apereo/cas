@@ -31,12 +31,10 @@ public class CasCoreTicketIdGeneratorsConfiguration {
     @Bean
     public Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap() {
         val map = new HashMap<String, UniqueTicketIdGenerator>();
-        configurers.ifAvailable(cfgs -> {
-            cfgs.forEach(c -> {
-                val pair = c.buildUniqueTicketIdGenerators();
-                pair.forEach(p -> map.put(p.getKey(), p.getValue()));
-            });
-        });
+        configurers.ifAvailable(cfgs -> cfgs.forEach(c -> {
+            val pair = c.buildUniqueTicketIdGenerators();
+            pair.forEach(p -> map.put(p.getKey(), p.getValue()));
+        }));
         return map;
     }
 }
