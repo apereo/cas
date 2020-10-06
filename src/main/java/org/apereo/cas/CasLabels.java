@@ -105,7 +105,7 @@ public enum CasLabels {
     LABEL_SSO_COOKIES("SSO & Cookies", "sso sessions|sso session|tgc|cookie"),
     LABEL_SEE_MAINTENANCE_POLICY("See Maintenance Policy"),
     LABEL_SERVICE_EXPIRATION_POLICY("Service Expiration Policy"),
-    LABEL_SERVICES_REGISTRIES("Services & Registries", "\\bservice\\b|service registries|service registry|service files|\\bservices\\b|\\bRegisteredServices\\b"),
+    LABEL_SERVICES_REGISTRIES("Services & Registries", "\\bservice\\b|service registries|service registry|service files|\\bservices\\b|\\bRegisteredServices\\b|AbstractRegisteredService|RegisteredService"),
     LABEL_SESSION_MANAGEMENT("Session Management", "sso sessions"),
     LABEL_SHIBBOLETH("Shibboleth", "shib"),
     LABEL_SIGNING_ENCRYPTION("Signing & Encryption", "cipher|aes|encryption|crypto|decrypt|decryption"),
