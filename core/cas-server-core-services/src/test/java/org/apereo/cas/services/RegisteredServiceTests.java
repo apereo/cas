@@ -183,8 +183,6 @@ public class RegisteredServiceTests {
     @Test
     public void verifySetRequiredHandlersDoesNotThrowNPEWhenNullHandlersRefIsPassedIn() {
         val regexRegisteredService = new RegexRegisteredService();
-        assertDoesNotThrow(() -> {
-            regexRegisteredService.setRequiredHandlers(null);
-        });
+        assertDoesNotThrow(() -> regexRegisteredService.setRequiredHandlers(null));
     }
 }
