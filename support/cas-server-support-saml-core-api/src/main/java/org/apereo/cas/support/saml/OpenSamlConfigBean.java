@@ -28,9 +28,13 @@ import org.opensaml.xmlsec.config.DecryptionParserPool;
 public class OpenSamlConfigBean {
 
     private final ParserPool parserPool;
+
     private final XMLObjectBuilderFactory builderFactory;
+
     private final MarshallerFactory marshallerFactory;
+
     private final UnmarshallerFactory unmarshallerFactory;
+
     private final XMLObjectProviderRegistry xmlObjectProviderRegistry;
 
     @SneakyThrows
@@ -44,7 +48,7 @@ public class OpenSamlConfigBean {
         this.xmlObjectProviderRegistry = FunctionUtils.doIfNull(currentProvider,
             () -> {
                 LOGGER.trace("XMLObjectProviderRegistry did not exist in ConfigurationService and it will be created");
-                var provider = new XMLObjectProviderRegistry();
+                val provider = new XMLObjectProviderRegistry();
                 ConfigurationService.register(XMLObjectProviderRegistry.class, provider);
                 return provider;
             },
