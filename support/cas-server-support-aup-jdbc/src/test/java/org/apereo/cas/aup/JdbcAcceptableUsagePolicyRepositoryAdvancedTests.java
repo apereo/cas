@@ -70,6 +70,14 @@ public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAc
     }
 
     @Test
+    public void verifySubmitWithoutAuthn() {
+        val c = getCredential("casuser");
+        val context = getRequestContext("casuser", Map.of(), c);
+        WebUtils.putAuthentication(null, context);
+        assertFalse(getAcceptableUsagePolicyRepository().submit(context, c));
+    }
+
+    @Test
     public void verifyRepositoryPolicyText() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceAcceptableUsagePolicy();
@@ -133,6 +141,6 @@ public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAc
         val principal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
         val auth = CoreAuthenticationTestUtils.getAuthentication(principal);
         WebUtils.putAuthentication(auth, context);
-        jdbcAupRepository.determinePrincipalId(principal);
+        assertNotNull(jdbcAupRepository.determinePrincipalId(principal));
     }
 }

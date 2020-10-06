@@ -20,6 +20,7 @@ import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponseTests;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoaderTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreJacksonDeserializerTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtilsTests;
+import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheExpirationPolicyTests;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheLoaderTests;
 import org.apereo.cas.oidc.jwks.generator.OidcDefaultJsonWebKeystoreGeneratorServiceTests;
 import org.apereo.cas.oidc.jwks.generator.OidcRestfulJsonWebKeystoreGeneratorServiceTests;
@@ -111,6 +112,7 @@ import org.junit.runner.RunWith;
     OidcSingleLogoutServiceLogoutUrlBuilderTests.class,
     OidcImplicitIdTokenAuthorizationResponseBuilderTests.class,
     OidcJwksEndpointControllerTests.class,
+    OidcServiceJsonWebKeystoreCacheExpirationPolicyTests.class,
     OidcAuthorizeEndpointControllerTests.class,
     OidcUserProfileEndpointControllerTests.class,
     OidcJsonWebKeyStoreJacksonDeserializerTests.class,
