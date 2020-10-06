@@ -40,7 +40,8 @@ public class OidcAccessTokenAuthenticator extends OAuth20AccessTokenAuthenticato
     }
 
     @Override
-    protected CommonProfile buildUserProfile(final TokenCredentials tokenCredentials, final WebContext webContext, final OAuth20AccessToken accessToken) {
+    protected CommonProfile buildUserProfile(final TokenCredentials tokenCredentials,
+        final WebContext webContext, final OAuth20AccessToken accessToken) {
         try {
             val profile = super.buildUserProfile(tokenCredentials, webContext, accessToken);
             validateIdTokenIfAny(accessToken, profile);

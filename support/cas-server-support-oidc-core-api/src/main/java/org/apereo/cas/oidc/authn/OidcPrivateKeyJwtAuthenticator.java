@@ -12,8 +12,11 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWSAlgorithm;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
+import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -30,23 +33,18 @@ import org.springframework.context.ApplicationContext;
 public class OidcPrivateKeyJwtAuthenticator extends BaseOidcJwtAuthenticator {
 
     public OidcPrivateKeyJwtAuthenticator(final ServicesManager servicesManager,
-                                          final AuditableExecution registeredServiceAccessStrategyEnforcer,
-                                          final TicketRegistry ticketRegistry,
-                                          final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                          final CasConfigurationProperties casProperties,
-                                          final ApplicationContext applicationContext) {
+        final AuditableExecution registeredServiceAccessStrategyEnforcer,
+        final TicketRegistry ticketRegistry,
+        final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+        final CasConfigurationProperties casProperties,
+        final ApplicationContext applicationContext) {
         super(servicesManager, registeredServiceAccessStrategyEnforcer,
             ticketRegistry, webApplicationServiceServiceFactory, casProperties, applicationContext);
     }
 
     @Override
-    protected boolean validateJwtAlgorithm(final Algorithm alg) {
-        return JWSAlgorithm.Family.RSA.contains(alg) || JWSAlgorithm.Family.EC.contains(alg);
-    }
-
-    @Override
     public void validate(final UsernamePasswordCredentials credentials,
-                         final WebContext webContext) {
+        final WebContext webContext) {
 
         val registeredService = verifyCredentials(credentials, webContext);
         if (registeredService == null) {
@@ -58,7 +56,7 @@ public class OidcPrivateKeyJwtAuthenticator extends BaseOidcJwtAuthenticator {
         val audience = casProperties.getServer().getPrefix().concat('/'
             + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL);
         val keys = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(registeredService, this.applicationContext);
-        keys.ifPresent(jwks ->
+        keys.ifPresent(Unchecked.consumer(jwks ->
             jwks.getJsonWebKeys().forEach(jsonWebKey -> {
                 val consumer = new JwtConsumerBuilder()
                     .setVerificationKey(jsonWebKey.getKey())
@@ -69,16 +67,22 @@ public class OidcPrivateKeyJwtAuthenticator extends BaseOidcJwtAuthenticator {
                     .setExpectedIssuer(true, clientId)
                     .setExpectedAudience(true, audience)
                     .build();
-                try {
-                    val jwt = consumer.processToClaims(credentials.getPassword());
-                    val userProfile = new CommonProfile(true);
-                    userProfile.setId(jwt.getSubject());
-                    userProfile.addAttributes(jwt.getClaimsMap());
-                    credentials.setUserProfile(userProfile);
-                } catch (final Exception e) {
-                    LOGGER.trace(e.getMessage(), e);
-                }
-            }));
+                determineUserProfile(credentials, consumer);
+            })));
+    }
 
+    @Override
+    protected boolean validateJwtAlgorithm(final Algorithm alg) {
+        return JWSAlgorithm.Family.RSA.contains(alg) || JWSAlgorithm.Family.EC.contains(alg);
+    }
+
+    @SneakyThrows
+    private static void determineUserProfile(final UsernamePasswordCredentials credentials,
+        final JwtConsumer consumer) {
+        val jwt = consumer.processToClaims(credentials.getPassword());
+        val userProfile = new CommonProfile(true);
+        userProfile.setId(jwt.getSubject());
+        userProfile.addAttributes(jwt.getClaimsMap());
+        credentials.setUserProfile(userProfile);
     }
 }

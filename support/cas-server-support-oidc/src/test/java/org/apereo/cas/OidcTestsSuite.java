@@ -37,6 +37,7 @@ import org.apereo.cas.oidc.slo.OidcSingleLogoutServiceMessageHandlerTests;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorServiceTests;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionServiceTests;
 import org.apereo.cas.oidc.token.OidcJwtAccessTokenEncoderTests;
+import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutorNoCacheTests;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutorTests;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupportTests;
 import org.apereo.cas.oidc.web.OidcAccessTokenResponseGeneratorTests;
@@ -54,6 +55,8 @@ import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistration
 import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.logout.OidcLogoutEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.profile.OidcUserProfileEndpointControllerTests;
+import org.apereo.cas.oidc.web.controllers.token.OidcAccessTokenEndpointControllerTests;
+import org.apereo.cas.oidc.web.controllers.token.OidcRevocationEndpointControllerTests;
 import org.apereo.cas.oidc.web.flow.OidcAuthenticationContextWebflowEventResolverTests;
 import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIActionTests;
@@ -93,6 +96,7 @@ import org.junit.runner.RunWith;
     OidcUserProfileSigningAndEncryptionServiceTests.class,
     OidcJsonWebKeyStoreUtilsTests.class,
     OidcDynamicClientRegistrationEndpointControllerTests.class,
+    OidcRegisteredServiceJwtAccessTokenCipherExecutorNoCacheTests.class,
     OidcUserProfileViewRendererDefaultTests.class,
     OidcUserProfileViewRendererFlatTests.class,
     OidcAccessTokenResponseGeneratorTests.class,
@@ -107,6 +111,8 @@ import org.junit.runner.RunWith;
     OidcDefaultAttributeToScopeClaimMapperTests.class,
     OidcAccessTokenAuthenticatorTests.class,
     OidcWebflowConfigurerTests.class,
+    OidcAccessTokenEndpointControllerTests.class,
+    OidcRevocationEndpointControllerTests.class,
     OidcServicesManagerRegisteredServiceLocatorTests.class,
     OidcOpenIdScopeAttributeReleasePolicyTests.class,
     OidcSingleLogoutServiceLogoutUrlBuilderTests.class,
