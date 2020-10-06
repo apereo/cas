@@ -1,7 +1,6 @@
 package org.apereo.cas.otp.repository.token;
 
 import org.apereo.cas.authentication.OneTimeToken;
-import org.apereo.cas.util.LoggingUtils;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +9,7 @@ import lombok.val;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * This is {@link CachingOneTimeTokenRepository}.
@@ -31,21 +31,17 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
     public void cleanInternal() {
         LOGGER.debug("Beginning to clean up the cache storage to remove expiring tokens");
         this.storage.cleanUp();
-        LOGGER.debug("Estimated total of [{}] token(s) remain in the cache and may be removed in future iterations", this.storage.estimatedSize());
+        LOGGER.debug("Estimated total of [{}] token(s) cached and may be removed in future iterations", this.storage.estimatedSize());
     }
 
     @Override
     public void store(final OneTimeToken token) {
         if (exists(token.getUserId(), token.getToken())) {
-            try {
-                val tokens = this.storage.get(token.getUserId());
-                tokens.add(token);
+            val tokens = this.storage.get(token.getUserId());
+            Objects.requireNonNull(tokens).add(token);
 
-                LOGGER.debug("Storing previously used tokens [{}] for user [{}]", tokens, token.getUserId());
-                this.storage.put(token.getUserId(), tokens);
-            } catch (final Exception e) {
-                LoggingUtils.warn(LOGGER, e);
-            }
+            LOGGER.debug("Storing previously used tokens [{}] for user [{}]", tokens, token.getUserId());
+            this.storage.put(token.getUserId(), tokens);
         } else {
             val tokens = new ArrayList<OneTimeToken>(1);
             tokens.add(token);
@@ -57,18 +53,14 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
 
     @Override
     public OneTimeToken get(final String uid, final Integer otp) {
-        try {
-            val tokens = this.storage.getIfPresent(uid);
-            LOGGER.debug("Found used tokens [{}]", tokens);
-            if (tokens != null) {
-                return tokens
-                    .stream()
-                    .filter(t -> t.getToken().equals(otp))
-                    .findFirst()
-                    .orElse(null);
-            }
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
+        val tokens = this.storage.getIfPresent(uid);
+        LOGGER.debug("Found used tokens [{}]", tokens);
+        if (tokens != null) {
+            return tokens
+                .stream()
+                .filter(t -> t.getToken().equals(otp))
+                .findFirst()
+                .orElse(null);
         }
         return null;
     }
