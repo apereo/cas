@@ -58,7 +58,7 @@ this will not be a blocker for the final release.
 ## Other Stuff
 
 - Apereo CAS [Docker images](https://hub.docker.com/r/apereo/cas) are now automatically published for the `latest` tag.
-- CAS [Release Process](../developer/Release-Process.md) can now automatically close and publish releases on Sonatype. 
+- CAS [Release Process](../developer/Release-Process.html) can now automatically close and publish releases on Sonatype. 
 
 ## Library Upgrades
 
