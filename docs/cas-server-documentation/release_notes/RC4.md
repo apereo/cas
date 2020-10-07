@@ -50,12 +50,15 @@ The following items are new improvements and enhancements presented in this rele
 
 ### Test Coverage via CodeCov
 
-CAS test coverage across all modules in the codebase has now reached `87%` and continues to climb. Additional validation rules are also applied 
+CAS test coverage across all modules in the codebase has now reached `88%` and continues to climb. Additional validation rules are also applied 
 to fail all pull requests that fall below this threshold. This area will be closely monitored and improved
 as progress is made with the goal of hopefully reaching at least `90%` before the final GA release. Of course, 
 this will not be a blocker for the final release.
 
 ## Other Stuff
+
+- Apereo CAS [Docker images](https://hub.docker.com/r/apereo/cas) are now automatically published for the `latest` tag.
+- CAS [Release Process](../developer/Release-Process.md) can now automatically close and publish releases on Sonatype. 
 
 ## Library Upgrades
 
