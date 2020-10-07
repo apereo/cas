@@ -97,14 +97,14 @@ Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContext
         </CasAppender>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo.cas" level="${sys:cas.log.level}" includeLocation="${sys:log.include.location}" />
-        <Logger name="org.apereo.cas.services" level="${sys:cas.log.level}" includeLocation="${sys:log.include.location}" />
-        <Logger name="org.apereo.spring" level="${sys:cas.log.level}" includeLocation="${sys:log.include.location}" />
-        <Logger name="org.apereo.services.persondir" level="${sys:cas.log.level}" includeLocation="${sys:log.include.location}" />
-        <Logger name="org.apereo.cas.web.flow" level="${sys:cas.log.level}" includeLocation="${sys:log.include.location}" />
-        <Logger name="org.apereo.cas.web.CasWebApplication" level="${sys:cas.log.level}" includeLocation="${sys:log.include.location}"/>
+        <Logger name="org.apereo.cas" level="${sys:cas.log.level}" />
+        <Logger name="org.apereo.cas.services" level="${sys:cas.log.level}" />
+        <Logger name="org.apereo.spring" level="${sys:cas.log.level}" />
+        <Logger name="org.apereo.services.persondir" level="${sys:cas.log.level}" />
+        <Logger name="org.apereo.cas.web.flow" level="${sys:cas.log.level}" />
+        <Logger name="org.apereo.cas.web.CasWebApplication" level="${sys:cas.log.level}"/>
 
-        <Logger name="org.apereo.inspektr.audit.support" additivity="false" level="info" includeLocation="${sys:log.include.location}">
+        <Logger name="org.apereo.inspektr.audit.support" additivity="false" level="info">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
             <AppenderRef ref="casAudit"/>
@@ -116,45 +116,45 @@ Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContext
         <Logger name="org.springframework.boot.autoconfigure.security" level="${sys:spring.security.log.level}" />
         <Logger name="org.springframework.boot.devtools" level="debug" />
         
-        <Logger name="org.springframework" level="warn" includeLocation="${sys:log.include.location}" />
-        <Logger name="org.springframework.webflow" level="${sys:spring.webflow.log.level}" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.springframework.aop" level="warn" includeLocation="${sys:log.include.location}" />
-        <Logger name="org.springframework.session" level="warn" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.springframework.scheduling" level="info" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.springframework.cloud.vault" level="warn" includeLocation="${sys:log.include.location}" />
-        <Logger name="org.springframework.web.client" level="warn" includeLocation="${sys:log.include.location}" />
-        <Logger name="org.springframework.security" level="${sys:spring.security.log.level}" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.springframework.cloud" level="${sys:spring.cloud.log.level}" includeLocation="${sys:log.include.location}"/>
+        <Logger name="org.springframework" level="warn" />
+        <Logger name="org.springframework.webflow" level="${sys:spring.webflow.log.level}"/>
+        <Logger name="org.springframework.aop" level="warn" />
+        <Logger name="org.springframework.session" level="warn"/>
+        <Logger name="org.springframework.scheduling" level="info"/>
+        <Logger name="org.springframework.cloud.vault" level="warn" />
+        <Logger name="org.springframework.web.client" level="warn" />
+        <Logger name="org.springframework.security" level="${sys:spring.security.log.level}"/>
+        <Logger name="org.springframework.cloud" level="${sys:spring.cloud.log.level}"/>
         <Logger name="org.springframework.amqp" level="error" />
-        <Logger name="org.springframework.integration" level="warn" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.springframework.messaging" level="warn" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.springframework.web" level="${sys:spring.web.log.level}" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.springframework.orm.jpa" level="warn" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.springframework.scheduling" level="warn" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.springframework.context.annotation" level="off" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.springframework.web.socket" level="warn" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter" level="trace" includeLocation="${sys:log.include.location}"/>
+        <Logger name="org.springframework.integration" level="warn"/>
+        <Logger name="org.springframework.messaging" level="warn"/>
+        <Logger name="org.springframework.web" level="${sys:spring.web.log.level}"/>
+        <Logger name="org.springframework.orm.jpa" level="warn"/>
+        <Logger name="org.springframework.scheduling" level="warn"/>
+        <Logger name="org.springframework.context.annotation" level="off"/>
+        <Logger name="org.springframework.web.socket" level="warn"/>
+        <Logger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter" level="trace"/>
 
-        <Logger name="com.couchbase" level="warn" includeLocation="${sys:log.include.location}" />
-        <Logger name="org.apache" level="error" includeLocation="${sys:log.include.location}"/>
-        <Logger name="com.netflix" level="warn" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.quartz" level="warn" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.thymeleaf" level="warn" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.pac4j" level="${sys:pac4j.log.level}" includeLocation="${sys:log.include.location}"/>
+        <Logger name="com.couchbase" level="warn" />
+        <Logger name="org.apache" level="error"/>
+        <Logger name="com.netflix" level="warn"/>
+        <Logger name="org.quartz" level="warn"/>
+        <Logger name="org.thymeleaf" level="warn"/>
+        <Logger name="org.pac4j" level="${sys:pac4j.log.level}"/>
 
-        <Logger name="org.opensaml" level="${sys:opensaml.log.level}" includeLocation="${sys:log.include.location}"/>
-        <Logger name="PROTOCOL_MESSAGE" level="${sys:opensaml.log.level}" includeLocation="${sys:log.include.location}" />
+        <Logger name="org.opensaml" level="${sys:opensaml.log.level}"/>
+        <Logger name="PROTOCOL_MESSAGE" level="${sys:opensaml.log.level}" />
 
-        <Logger name="net.sf.ehcache" level="warn" includeLocation="${sys:log.include.location}"/>
-        <Logger name="net.jradius" level="warn" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.openid4java" level="warn" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.ldaptive" level="${sys:ldap.log.level}" includeLocation="${sys:log.include.location}"/>
-        <Logger name="com.hazelcast" level="${sys:hazelcast.log.level}" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.jasig.spring" level="warn" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.apache.cxf" level="warn" includeLocation="${sys:log.include.location}"/>
-        <Logger name="org.apache.http" level="warn" includeLocation="${sys:log.include.location}"/>
-b
-        <Root level="warn">
+        <Logger name="net.sf.ehcache" level="warn"/>
+        <Logger name="net.jradius" level="warn"/>
+        <Logger name="org.openid4java" level="warn"/>
+        <Logger name="org.ldaptive" level="${sys:ldap.log.level}"/>
+        <Logger name="com.hazelcast" level="${sys:hazelcast.log.level}" />
+        <Logger name="org.jasig.spring" level="warn" />
+        <Logger name="org.apache.cxf" level="warn" />
+        <Logger name="org.apache.http" level="warn" />
+
+        <Root level="warn" includeLocation="${sys:log.include.location}">
             <AppenderRef ref="casFile"/>
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="${sys:log.stacktraceappender}"/>
