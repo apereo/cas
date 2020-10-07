@@ -1,6 +1,7 @@
 package org.apereo.cas.otp.repository.token;
 
 import org.apereo.cas.authentication.OneTimeToken;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.Getter;
 import lombok.val;
@@ -32,9 +33,10 @@ public class CachingOneTimeTokenRepositoryTests extends BaseOneTimeTokenReposito
     @Test
     public void verifyOperation() {
         val id = UUID.randomUUID().toString();
-        val token = new OneTimeToken(1234, id);
+        val token = new OneTimeToken(RandomUtils.nextInt(), id);
         repository.store(token);
         repository.remove(token.getUserId(), token.getToken());
+
         assertFalse(repository.exists(token.getUserId(), token.getToken()));
         repository.removeAll();
         assertEquals(0, repository.count());
