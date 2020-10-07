@@ -319,9 +319,9 @@ public class SamlIdPConfiguration {
     @RefreshScope
     public SamlIdPObjectSigner samlObjectSigner() {
         return new SamlIdPObjectSigner(
-            this.casSamlIdPMetadataResolver.getObject(),
+            casSamlIdPMetadataResolver.getObject(),
             casProperties,
-            this.samlIdPMetadataLocator.getObject());
+            samlIdPMetadataLocator.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlAttributeQueryFaultResponseBuilder")

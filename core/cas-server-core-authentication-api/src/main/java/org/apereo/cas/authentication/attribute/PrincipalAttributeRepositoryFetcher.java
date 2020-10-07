@@ -49,6 +49,7 @@ public class PrincipalAttributeRepositoryFetcher {
         var filter = IPersonAttributeDaoFilter.alwaysChoose();
         if (!activeAttributeRepositoryIdentifiers.isEmpty()) {
             val repoIdsArray = activeAttributeRepositoryIdentifiers.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
+            LOGGER.trace("Active attribute repository identifiers [{}]", activeAttributeRepositoryIdentifiers);
             filter = dao -> Arrays.stream(dao.getId())
                 .anyMatch(daoId -> daoId.equalsIgnoreCase(IPersonAttributeDao.WILDCARD)
                     || StringUtils.equalsAnyIgnoreCase(daoId, repoIdsArray)
