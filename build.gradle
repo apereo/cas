@@ -42,6 +42,7 @@ buildscript {
         classpath "gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
         classpath "com.github.jengelman.gradle.plugins:shadow:$gradleShadowVersion"
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:$gradleNexusStagingVersion"
     }
 }
 
@@ -81,6 +82,14 @@ ext {
 
 def isArtifactSigningRequired = {
     return publishReleases
+}
+
+apply plugin: "io.codearte.nexus-staging"
+nexusStaging {
+    username = "${sonatypeUsername}"
+    password = "${sonatypePassword}"
+    packageGroup = "org.apereo"
+    stagingProfileId = "11d1ddbbdeae9d"
 }
 
 apply from: rootProject.file("gradle/dependencies.gradle")
