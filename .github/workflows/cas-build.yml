@@ -443,8 +443,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          - repository: 'apereo/cas-overlay-template'
-          - ref: 'master'
+          repository: 'apereo/cas-overlay-template'
+          ref: 'master'
       - name: Initialize
         run: chmod -R 777 ./*.sh
       - name: Build Docker Image
