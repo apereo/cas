@@ -3,11 +3,14 @@ package org.apereo.cas.otp.repository.token;
 import org.apereo.cas.authentication.OneTimeToken;
 
 import lombok.Getter;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,11 +31,11 @@ public class CachingOneTimeTokenRepositoryTests extends BaseOneTimeTokenReposito
 
     @Test
     public void verifyOperation() {
-        var token = (OneTimeToken) new OneTimeToken(1234, CASUSER);
+        val id = UUID.randomUUID().toString();
+        val token = new OneTimeToken(1234, id);
         repository.store(token);
         repository.remove(token.getUserId(), token.getToken());
         assertFalse(repository.exists(token.getUserId(), token.getToken()));
-
         repository.removeAll();
         assertEquals(0, repository.count());
     }
