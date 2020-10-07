@@ -6,6 +6,8 @@ env:
   TERM: xterm-256color
   SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
   SONATYPE_PWD: ${{ secrets.SONATYPE_PWD }}
+  DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  DOCKER_PWD: ${{ secrets.DOCKER_PWD }}
   GH_PAGES_TOKEN: ${{ secrets.GH_PAGES_TOKEN }}
   RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
   GRADLE_BUILDCACHE_USER: ${{ secrets.GRADLE_BUILDCACHE_USER }}
@@ -432,6 +434,24 @@ jobs:
       - name: Publish SNAPSHOTs
         if: ${{ github.event_name == 'push' && env.SONATYPE_USER != null && env.SONATYPE_PWD != null }}
         run: ./gradlew -DpublishSnapshots=true --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
+
+  ##########################################################################
+
+  publish-docker-image:
+    runs-on: ubuntu-latest
+    needs: [publish-snapshots]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          - repository: 'apereo/cas-overlay-template'
+          - ref: 'master'
+      - name: Initialize
+        run: chmod -R 777 ./*.sh
+      - name: Build Docker Image
+        run: ./docker-build.sh latest
+      - name: Publish Docker Image
+        if: ${{ github.event_name == 'push' && env.DOCKER_USER != null && env.DOCKER_PWD != null }}
+        run: ./docker-push.sh "${DOCKER_USER}" "${DOCKER_PWD}" latest
 
 ##########################################################################
 
