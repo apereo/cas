@@ -8,6 +8,7 @@ import org.apereo.cas.util.CollectionUtils;
 import com.google.common.collect.ArrayListMultimap;
 import lombok.Setter;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.*;
  * @since 3.4.12
  */
 @Setter
+@Tag("RegisteredService")
 public class RegisteredServiceTests {
     private static final long ID = 1000;
 
