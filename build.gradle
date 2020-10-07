@@ -546,6 +546,7 @@ subprojects {
     checkLicense.finalizedBy outputDependenciesWithoutLicense
     
     dependencies {
+        
         implementation libraries.aspectj
         implementation libraries.validationapi
 
