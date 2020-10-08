@@ -22,7 +22,7 @@ dependencies {
 
     implementation "io.spring.initializr:initializr-web"
     implementation "io.spring.initializr:initializr-actuator"
-//    implementation "io.spring.initializr:initializr-generator-spring"
+    implementation "io.spring.initializr:initializr-generator-spring"
     implementation "io.spring.initializr:initializr-generator"
 
     runtime "org.springframework.boot:spring-boot-starter-tomcat"

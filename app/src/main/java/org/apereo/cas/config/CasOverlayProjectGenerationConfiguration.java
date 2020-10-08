@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import io.spring.initializr.generator.buildsystem.BuildItemResolver;
+import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import org.apereo.cas.overlay.CasOverlayGradleBuild;
 import org.apereo.cas.overlay.contrib.CasOverlayConfigurationContributor;
@@ -22,6 +23,7 @@ import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperExec
 import org.apereo.cas.overlay.contrib.spring.CasApplicationYamlPropertiesContributor;
 import org.apereo.cas.overlay.contrib.spring.CasOverlaySpringBootConfigurationContributor;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 
 @ProjectGenerationConfiguration
