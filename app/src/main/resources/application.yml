@@ -43,16 +43,8 @@ initializr:
         format: project
       default: false
       action: /starter.tgz
-    - name: Gradle build
-      id: gradle-build
-      description: Generate a Gradle-based build
-      tags:
-        build: overlay
-        format: project
-      default: false
-      action: /build.gradle
   boot-versions:
-    - id: 2.3.1.RELEASE
+    - id: 2.3.4.RELEASE
       default: true
   env:
     boms:
