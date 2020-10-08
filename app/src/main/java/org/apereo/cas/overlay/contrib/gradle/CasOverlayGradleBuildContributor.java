@@ -1,5 +1,6 @@
 package org.apereo.cas.overlay.contrib.gradle;
 
+import org.apereo.cas.overlay.CasOverlayGradleBuild;
 import com.github.mustachejava.DefaultMustacheFactory;
 import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
@@ -7,10 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.FileCopyUtils;
 import java.io.BufferedInputStream;
@@ -30,8 +31,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CasOverlayGradleBuildContributor implements ProjectContributor {
     private final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+
     private final ApplicationContext applicationContext;
-    
+
     @Override
     public void contribute(final Path projectRoot) throws IOException {
         var output = projectRoot.resolve("./build.gradle");
@@ -39,7 +41,7 @@ public class CasOverlayGradleBuildContributor implements ProjectContributor {
             Files.createDirectories(output.getParent());
             Files.createFile(output);
         }
-        Resource resource = resolver.getResource("classpath:overlay/build.gradle");
+        val resource = resolver.getResource("classpath:overlay/build.gradle");
         val mf = new DefaultMustacheFactory();
         val mustache = mf.compile(new InputStreamReader(resource.getInputStream()), resource.getFilename());
         try (val writer = new StringWriter()) {
@@ -47,9 +49,10 @@ public class CasOverlayGradleBuildContributor implements ProjectContributor {
             val dependencies = project.getRequestedDependencies()
                 .values()
                 .stream()
+                .filter(dep -> !CasOverlayGradleBuild.WEBAPP_ARTIFACTS.contains(dep.getArtifactId()))
                 .map(dep -> new CasDependency(dep.getGroupId(), dep.getArtifactId()))
                 .collect(Collectors.toList());
-            log.trace("Requested dependencies: {}", dependencies);
+            log.debug("Requested dependencies: {}", dependencies);
             mustache.execute(writer, new Dependencies(dependencies)).flush();
             val template = writer.toString();
             log.trace("Rendered dependencies in the build:\n{}", template);
@@ -69,6 +72,7 @@ public class CasOverlayGradleBuildContributor implements ProjectContributor {
 
     @Getter
     @AllArgsConstructor
+    @ToString
     public static class CasDependency {
         private final String groupId;
 

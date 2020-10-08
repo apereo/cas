@@ -36,6 +36,18 @@ that contains indicated modules/dependencies selected by their identifier:
 curl http://localhost:8080/starter.tgz -d dependencies=core | tar -xzvf -
 ```
 
+## Dependency List
+
+Dependencies that can be requested must be specified by their identifier. To see a full list of
+all dependencies supported and available by this service, you can invoke the following command:
+
+```bash
+curl http://localhost:8080/dependencies
+```
+
+Typically, dependency identifiers match CAS server 
+dependency/module artifact names without the `cas-server-` prefix.
+
 ## Service metadata
 
 The metadata lists the capabilities of the service, 

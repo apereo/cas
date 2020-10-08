@@ -4,11 +4,11 @@ logging:
       apereo:
         cas:
           overlay: debug
-          
+
 spring:
   main:
     allow-bean-definition-overriding: true
-    
+
 initializr:
   name:
     value: cas
@@ -60,11 +60,2363 @@ initializr:
         artifactId: cas-server-support-bom
         version: 6.3.0-SNAPSHOT
   dependencies:
-    - name: Core
+    - name: api
       content:
-        - name: core
+        - name: cas-server-core-api
+          id: api
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-api
+          description: Apereo CAS Core APIs
+          bom: cas-bom
+        - name: cas-server-core-api-audit
+          id: api-audit
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-api-audit
+          description: Apereo CAS API Audit
+          bom: cas-bom
+        - name: cas-server-core-api-authentication
+          id: api-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-api-authentication
+          description: Apereo CAS Core Authentication APIs
+          bom: cas-bom
+        - name: cas-server-core-api-configuration
+          id: api-configuration
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-api-configuration
+          description: Apereo CAS Core Configuration
+          bom: cas-bom
+        - name: cas-server-core-api-configuration-model
+          id: api-configuration-model
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-api-configuration-model
+          description: Apereo CAS Core Configuration Model
+          bom: cas-bom
+        - name: cas-server-core-api-cookie
+          id: api-cookie
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-api-cookie
+          description: Apereo CAS Cookie API
+          bom: cas-bom
+        - name: cas-server-core-api-events
+          id: api-events
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-api-events
+          description: Apereo CAS Core API Events
+          bom: cas-bom
+        - name: cas-server-core-api-logout
+          id: api-logout
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-api-logout
+          description: Apereo CAS Core Logout APIs
+          bom: cas-bom
+        - name: cas-server-core-api-mfa
+          id: api-mfa
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-api-mfa
+          description: Apereo CAS Core MFA APIs
+          bom: cas-bom
+        - name: cas-server-core-api-monitor
+          id: api-monitor
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-api-monitor
+          description: Apereo CAS Core Monitor APIs
+          bom: cas-bom
+        - name: cas-server-core-api-protocol
+          id: api-protocol
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-api-protocol
+          description: Apereo CAS Core Protocol APIs
+          bom: cas-bom
+        - name: cas-server-core-api-services
+          id: api-services
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-api-services
+          description: Apereo CAS Core Services APIs
+          bom: cas-bom
+        - name: cas-server-core-api-throttle
+          id: api-throttle
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-api-throttle
+          description: Apereo CAS Core Throttling APIs
+          bom: cas-bom
+        - name: cas-server-core-api-ticket
+          id: api-ticket
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-api-ticket
+          description: Apereo CAS Core Ticket APIs
+          bom: cas-bom
+        - name: cas-server-core-api-util
+          id: api-util
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-api-util
+          description: Apereo CAS Core Utility APIs
+          bom: cas-bom
+        - name: cas-server-core-api-validation
+          id: api-validation
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-api-validation
+          description: Apereo CAS Core Validation APIs
+          bom: cas-bom
+        - name: cas-server-core-api-web
+          id: api-web
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-api-web
+          description: Apereo CAS Core Web APIs
+          bom: cas-bom
+        - name: cas-server-core-api-webflow
+          id: api-webflow
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-api-webflow
+          description: Apereo CAS Core Webflow APIs
+          bom: cas-bom
+    - name: core
+      content:
+        - name: cas-server-core
           id: core
           groupId: org.apereo.cas
           artifactId: cas-server-core
-          description: A solid description for this dependency
+          description: Apereo CAS Core
+          bom: cas-bom
+        - name: cas-server-core-audit
+          id: core-audit
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-audit
+          description: Apereo CAS Core Audit
+          bom: cas-bom
+        - name: cas-server-core-audit-api
+          id: core-audit-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-audit-api
+          description: Apereo CAS Core Audit API
+          bom: cas-bom
+        - name: cas-server-core-authentication
+          id: core-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-authentication
+          description: Apereo CAS Core Authentication
+          bom: cas-bom
+        - name: cas-server-core-authentication-api
+          id: core-authentication-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-authentication-api
+          description: Apereo CAS Core Authentication
+          bom: cas-bom
+        - name: cas-server-core-authentication-attributes
+          id: core-authentication-attributes
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-authentication-attributes
+          description: Apereo CAS Core Authentication Attributes & Repositories
+          bom: cas-bom
+        - name: cas-server-core-authentication-mfa
+          id: core-authentication-mfa
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-authentication-mfa
+          description: Apereo CAS Core Authentication
+          bom: cas-bom
+        - name: cas-server-core-authentication-mfa-api
+          id: core-authentication-mfa-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-authentication-mfa-api
+          description: Apereo CAS Core Multifactor Authentication
+          bom: cas-bom
+        - name: cas-server-core-authentication-throttle
+          id: core-authentication-throttle
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-authentication-throttle
+          description: Apereo CAS Core Authentication Throttling
+          bom: cas-bom
+        - name: cas-server-core-configuration
+          id: core-configuration
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-configuration
+          description: Apereo CAS Central Configuration
+          bom: cas-bom
+        - name: cas-server-core-configuration-api
+          id: core-configuration-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-configuration-api
+          description: Apereo CAS Core Configuration API
+          bom: cas-bom
+        - name: cas-server-core-configuration-metadata-repository
+          id: core-configuration-metadata-repository
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-configuration-metadata-repository
+          description: Apereo CAS Core Configuration Metadata Repository
+          bom: cas-bom
+        - name: cas-server-core-cookie
+          id: core-cookie
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-cookie
+          description: Apereo CAS Cookie Management Core
+          bom: cas-bom
+        - name: cas-server-core-cookie-api
+          id: core-cookie-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-cookie-api
+          description: Apereo CAS Cookie Management Core
+          bom: cas-bom
+        - name: cas-server-core-events
+          id: core-events
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-events
+          description: Apereo CAS Core Events
+          bom: cas-bom
+        - name: cas-server-core-events-api
+          id: core-events-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-events-api
+          description: Apereo CAS Core Events API
+          bom: cas-bom
+        - name: cas-server-core-events-configuration
+          id: core-events-configuration
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-events-configuration
+          description: Apereo CAS Core Events - Configuration Events
+          bom: cas-bom
+        - name: cas-server-core-events-configuration-cloud-bus
+          id: core-events-configuration-cloud-bus
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-events-configuration-cloud-bus
+          description: Apereo CAS Core Events - Spring Cloud Configuration Bus Events
+          bom: cas-bom
+        - name: cas-server-core-logging
+          id: core-logging
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-logging
+          description: Apereo CAS Core Logging
+          bom: cas-bom
+        - name: cas-server-core-logging-api
+          id: core-logging-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-logging-api
+          description: Apereo CAS Core Logging Configuration
+          bom: cas-bom
+        - name: cas-server-core-logout
+          id: core-logout
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-logout
+          description: Apereo CAS Core Logout
+          bom: cas-bom
+        - name: cas-server-core-logout-api
+          id: core-logout-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-logout-api
+          description: Apereo CAS Core Logout
+          bom: cas-bom
+        - name: cas-server-core-monitor
+          id: core-monitor
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-monitor
+          description: Apereo CAS Core Monitor Support
+          bom: cas-bom
+        - name: cas-server-core-notifications
+          id: core-notifications
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-notifications
+          description: Apereo CAS Core Notifications
+          bom: cas-bom
+        - name: cas-server-core-rest
+          id: core-rest
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-rest
+          description: Apereo CAS REST API
+          bom: cas-bom
+        - name: cas-server-core-services
+          id: core-services
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-services
+          description: Apereo CAS Core Services
+          bom: cas-bom
+        - name: cas-server-core-services-api
+          id: core-services-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-services-api
+          description: Apereo CAS Core Services API
+          bom: cas-bom
+        - name: cas-server-core-services-authentication
+          id: core-services-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-services-authentication
+          description: Apereo CAS Core Services/Authentication API
+          bom: cas-bom
+        - name: cas-server-core-services-registry
+          id: core-services-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-services-registry
+          description: Apereo CAS Core Services Registry and Manager
+          bom: cas-bom
+        - name: cas-server-core-tickets
+          id: core-tickets
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-tickets
+          description: Apereo CAS Core Tickets
+          bom: cas-bom
+        - name: cas-server-core-tickets-api
+          id: core-tickets-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-tickets-api
+          description: Apereo CAS Core Tickets
+          bom: cas-bom
+        - name: cas-server-core-util
+          id: core-util
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-util
+          description: Apereo CAS Core Utilities
+          bom: cas-bom
+        - name: cas-server-core-util-api
+          id: core-util-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-util-api
+          description: Apereo CAS Core Utilities
+          bom: cas-bom
+        - name: cas-server-core-validation
+          id: core-validation
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-validation
+          description: Apereo CAS Core Validation
+          bom: cas-bom
+        - name: cas-server-core-validation-api
+          id: core-validation-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-validation-api
+          description: Apereo CAS Core Validation APIs
+          bom: cas-bom
+        - name: cas-server-core-web
+          id: core-web
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-web
+          description: Apereo CAS Core Web
+          bom: cas-bom
+        - name: cas-server-core-web-api
+          id: core-web-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-web-api
+          description: Apereo CAS Core Web
+          bom: cas-bom
+        - name: cas-server-core-webflow
+          id: core-webflow
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-webflow
+          description: Apereo CAS Core Webflow
+          bom: cas-bom
+        - name: cas-server-core-webflow-api
+          id: core-webflow-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-webflow-api
+          description: Apereo CAS Core Webflow
+          bom: cas-bom
+        - name: cas-server-core-webflow-mfa
+          id: core-webflow-mfa
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-webflow-mfa
+          description: Apereo CAS Core Webflow MFA
+          bom: cas-bom
+        - name: cas-server-core-webflow-mfa-api
+          id: core-webflow-mfa-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-core-webflow-mfa-api
+          description: Apereo CAS Core Webflow MFA API
+          bom: cas-bom
+    - name: support
+      content:
+        - name: cas-server-support-acceptto-mfa
+          id: support-acceptto-mfa
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-acceptto-mfa
+          description: Apereo CAS Acceptto MFA Support
+          bom: cas-bom
+        - name: cas-server-support-actions
+          id: support-actions
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-actions
+          description: Apereo CAS Web Application Spring Webflow Actions
+          bom: cas-bom
+        - name: cas-server-support-audit-couchbase
+          id: support-audit-couchbase
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-audit-couchbase
+          description: Apereo CAS Couchbase Audit Support
+          bom: cas-bom
+        - name: cas-server-support-audit-couchdb
+          id: support-audit-couchdb
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-audit-couchdb
+          description: Apereo CAS MongoDb Audit Support
+          bom: cas-bom
+        - name: cas-server-support-audit-dynamodb
+          id: support-audit-dynamodb
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-audit-dynamodb
+          description: Apereo CAS DynamoDb Audit Log Support
+          bom: cas-bom
+        - name: cas-server-support-audit-jdbc
+          id: support-audit-jdbc
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-audit-jdbc
+          description: Apereo CAS JDBC Audit Support
+          bom: cas-bom
+        - name: cas-server-support-audit-mongo
+          id: support-audit-mongo
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-audit-mongo
+          description: Apereo CAS MongoDb Audit Support
+          bom: cas-bom
+        - name: cas-server-support-audit-redis
+          id: support-audit-redis
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-audit-redis
+          description: Apereo CAS Redis Audit Support
+          bom: cas-bom
+        - name: cas-server-support-audit-rest
+          id: support-audit-rest
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-audit-rest
+          description: Apereo CAS REST Audit Support
+          bom: cas-bom
+        - name: cas-server-support-aup-core
+          id: support-aup-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-aup-core
+          description: Apereo CAS AUP Support
+          bom: cas-bom
+        - name: cas-server-support-aup-couchbase
+          id: support-aup-couchbase
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-aup-couchbase
+          description: Apereo CAS AUP Couchbase Support
+          bom: cas-bom
+        - name: cas-server-support-aup-couchdb
+          id: support-aup-couchdb
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-aup-couchdb
+          description: Apereo CAS AUP CouchDb Support
+          bom: cas-bom
+        - name: cas-server-support-aup-jdbc
+          id: support-aup-jdbc
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-aup-jdbc
+          description: Apereo CAS AUP JDBC Support
+          bom: cas-bom
+        - name: cas-server-support-aup-ldap
+          id: support-aup-ldap
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-aup-ldap
+          description: Apereo CAS AUP LDAP Support
+          bom: cas-bom
+        - name: cas-server-support-aup-mongo
+          id: support-aup-mongo
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-aup-mongo
+          description: Apereo CAS AUP Mongo Support
+          bom: cas-bom
+        - name: cas-server-support-aup-redis
+          id: support-aup-redis
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-aup-redis
+          description: Apereo CAS AUP Redis Support
+          bom: cas-bom
+        - name: cas-server-support-aup-rest
+          id: support-aup-rest
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-aup-rest
+          description: Apereo CAS AUP REST Support
+          bom: cas-bom
+        - name: cas-server-support-aup-webflow
+          id: support-aup-webflow
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-aup-webflow
+          description: Apereo CAS AUP Webflow Support
+          bom: cas-bom
+        - name: cas-server-support-authy
+          id: support-authy
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-authy
+          description: Apereo CAS Authy Support
+          bom: cas-bom
+        - name: cas-server-support-authy-core
+          id: support-authy-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-authy-core
+          description: Apereo CAS Authy Core Support
+          bom: cas-bom
+        - name: cas-server-support-aws
+          id: support-aws
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-aws
+          description: Apereo CAS Amazon Web Services Support
+          bom: cas-bom
+        - name: cas-server-support-aws-cognito-authentication
+          id: support-aws-cognito-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-aws-cognito-authentication
+          description: Apereo CAS Amazon Web Services Cognito Authentication
+          bom: cas-bom
+        - name: cas-server-support-aws-s3-service-registry
+          id: support-aws-s3-service-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-aws-s3-service-registry
+          description: Apereo CAS AWS S3 Service Registry Support
+          bom: cas-bom
+        - name: cas-server-support-azuread-authentication
+          id: support-azuread-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-azuread-authentication
+          description: Apereo CAS Microsoft Azure Active Directory Authentication
+          bom: cas-bom
+        - name: cas-server-support-basic
+          id: support-basic
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-basic
+          description: Apereo CAS Basic Authentication Support
+          bom: cas-bom
+        - name: cas-server-support-bom
+          id: support-bom
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-bom
+          description: Apereo CAS ‌‌Bill of Material
+          bom: cas-bom
+        - name: cas-server-support-bootadmin-client
+          id: support-bootadmin-client
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-bootadmin-client
+          description: Apereo CAS Spring Boot Admin Client
+          bom: cas-bom
+        - name: cas-server-support-captcha
+          id: support-captcha
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-captcha
+          description: Apereo CAS Captcha Support
+          bom: cas-bom
+        - name: cas-server-support-captcha-core
+          id: support-captcha-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-captcha-core
+          description: Apereo CAS Captcha Support
+          bom: cas-bom
+        - name: cas-server-support-cassandra-authentication
+          id: support-cassandra-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-cassandra-authentication
+          description: Apereo CAS Apache Cassandra Authentication Support
+          bom: cas-bom
+        - name: cas-server-support-cassandra-core
+          id: support-cassandra-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-cassandra-core
+          description: Apereo CAS Apache Cassandra Core Support
+          bom: cas-bom
+        - name: cas-server-support-cassandra-service-registry
+          id: support-cassandra-service-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-cassandra-service-registry
+          description: Apereo CAS Cassandra Service Registry
+          bom: cas-bom
+        - name: cas-server-support-cassandra-ticket-registry
+          id: support-cassandra-ticket-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-cassandra-ticket-registry
+          description: Apereo CAS Cassandra Ticket Registry
+          bom: cas-bom
+        - name: cas-server-support-cloud-directory-authentication
+          id: support-cloud-directory-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-cloud-directory-authentication
+          description: Apereo CAS Amazon Cloud Directory Authentication Support
+          bom: cas-bom
+        - name: cas-server-support-configuration-cloud-amqp
+          id: support-configuration-cloud-amqp
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-configuration-cloud-amqp
+          description: Apereo CAS Configuration - Cloud Bus AMQP
+          bom: cas-bom
+        - name: cas-server-support-configuration-cloud-aws-s3
+          id: support-configuration-cloud-aws-s3
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-configuration-cloud-aws-s3
+          description: Apereo CAS Configuration - AWS S3 Objects
+          bom: cas-bom
+        - name: cas-server-support-configuration-cloud-aws-secretsmanager
+          id: support-configuration-cloud-aws-secretsmanager
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-configuration-cloud-aws-secretsmanager
+          description: Apereo CAS Configuration - AWS Secrets Manager
+          bom: cas-bom
+        - name: cas-server-support-configuration-cloud-aws-ssm
+          id: support-configuration-cloud-aws-ssm
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-configuration-cloud-aws-ssm
+          description: Apereo CAS Configuration - AWS Parameter Store
+          bom: cas-bom
+        - name: cas-server-support-configuration-cloud-azure-keyvault
+          id: support-configuration-cloud-azure-keyvault
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-configuration-cloud-azure-keyvault
+          description: Apereo CAS Configuration - Microsoft Azure KeyVault
+          bom: cas-bom
+        - name: cas-server-support-configuration-cloud-dynamodb
+          id: support-configuration-cloud-dynamodb
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-configuration-cloud-dynamodb
+          description: Apereo CAS Configuration - DynamoDb
+          bom: cas-bom
+        - name: cas-server-support-configuration-cloud-jdbc
+          id: support-configuration-cloud-jdbc
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-configuration-cloud-jdbc
+          description: Apereo CAS Configuration - JDBC
+          bom: cas-bom
+        - name: cas-server-support-configuration-cloud-kafka
+          id: support-configuration-cloud-kafka
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-configuration-cloud-kafka
+          description: Apereo CAS Configuration - Cloud Bus Kafka
+          bom: cas-bom
+        - name: cas-server-support-configuration-cloud-mongo
+          id: support-configuration-cloud-mongo
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-configuration-cloud-mongo
+          description: Apereo CAS Configuration - MongoDb
+          bom: cas-bom
+        - name: cas-server-support-configuration-cloud-rest
+          id: support-configuration-cloud-rest
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-configuration-cloud-rest
+          description: Apereo CAS Configuration - REST Support
+          bom: cas-bom
+        - name: cas-server-support-configuration-cloud-vault
+          id: support-configuration-cloud-vault
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-configuration-cloud-vault
+          description: Apereo CAS Configuration - HashiCorp Vault
+          bom: cas-bom
+        - name: cas-server-support-configuration-cloud-zookeeper
+          id: support-configuration-cloud-zookeeper
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-configuration-cloud-zookeeper
+          description: Apereo CAS Configuration - Apache Zookeeper
+          bom: cas-bom
+        - name: cas-server-support-consent-api
+          id: support-consent-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-consent-api
+          description: Apereo CAS Consent API
+          bom: cas-bom
+        - name: cas-server-support-consent-core
+          id: support-consent-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-consent-core
+          description: Apereo CAS Consent Core
+          bom: cas-bom
+        - name: cas-server-support-consent-couchdb
+          id: support-consent-couchdb
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-consent-couchdb
+          description: Apereo CAS Consent Support via CouchDbDb
+          bom: cas-bom
+        - name: cas-server-support-consent-jdbc
+          id: support-consent-jdbc
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-consent-jdbc
+          description: Apereo CAS Consent JDBC Support
+          bom: cas-bom
+        - name: cas-server-support-consent-ldap
+          id: support-consent-ldap
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-consent-ldap
+          description: Apereo CAS Consent LDAP Support
+          bom: cas-bom
+        - name: cas-server-support-consent-mongo
+          id: support-consent-mongo
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-consent-mongo
+          description: Apereo CAS Consent Support via MongoDb
+          bom: cas-bom
+        - name: cas-server-support-consent-redis
+          id: support-consent-redis
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-consent-redis
+          description: Apereo CAS Consent Support via Redis
+          bom: cas-bom
+        - name: cas-server-support-consent-rest
+          id: support-consent-rest
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-consent-rest
+          description: Apereo CAS Consent REST Support
+          bom: cas-bom
+        - name: cas-server-support-consent-webflow
+          id: support-consent-webflow
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-consent-webflow
+          description: Apereo CAS Consent Webflow
+          bom: cas-bom
+        - name: cas-server-support-consul-client
+          id: support-consul-client
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-consul-client
+          description: Apereo CAS Spring Cloud Consul Client
+          bom: cas-bom
+        - name: cas-server-support-cosmosdb-core
+          id: support-cosmosdb-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-cosmosdb-core
+          description: Apereo CAS Cosmos DB Support Core
+          bom: cas-bom
+        - name: cas-server-support-cosmosdb-service-registry
+          id: support-cosmosdb-service-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-cosmosdb-service-registry
+          description: Apereo CAS Azure Cosmos DB Service Registry
+          bom: cas-bom
+        - name: cas-server-support-couchbase-authentication
+          id: support-couchbase-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-couchbase-authentication
+          description: Apereo CAS Couchbase Authentication Support
+          bom: cas-bom
+        - name: cas-server-support-couchbase-core
+          id: support-couchbase-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-couchbase-core
+          description: Apereo CAS Couchbase Support Core
+          bom: cas-bom
+        - name: cas-server-support-couchbase-service-registry
+          id: support-couchbase-service-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-couchbase-service-registry
+          description: Apereo CAS Couchbase Service Registry
+          bom: cas-bom
+        - name: cas-server-support-couchbase-ticket-registry
+          id: support-couchbase-ticket-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-couchbase-ticket-registry
+          description: Apereo CAS Couchbase Ticket Registry
+          bom: cas-bom
+        - name: cas-server-support-couchdb-authentication
+          id: support-couchdb-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-couchdb-authentication
+          description: Apereo CAS CouchDb Authentication Support
+          bom: cas-bom
+        - name: cas-server-support-couchdb-core
+          id: support-couchdb-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-couchdb-core
+          description: Apereo CAS CouchDB Support Core
+          bom: cas-bom
+        - name: cas-server-support-couchdb-service-registry
+          id: support-couchdb-service-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-couchdb-service-registry
+          description: Apereo CAS CouchDB Service Registry
+          bom: cas-bom
+        - name: cas-server-support-couchdb-ticket-registry
+          id: support-couchdb-ticket-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-couchdb-ticket-registry
+          description: Apereo CAS CouchDB Ticket Registry
+          bom: cas-bom
+        - name: cas-server-support-digest-authentication
+          id: support-digest-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-digest-authentication
+          description: Apereo CAS Digest Authentication Support
+          bom: cas-bom
+        - name: cas-server-support-discovery-profile
+          id: support-discovery-profile
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-discovery-profile
+          description: Apereo CAS Discovery Support
+          bom: cas-bom
+        - name: cas-server-support-duo
+          id: support-duo
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-duo
+          description: Apereo CAS DuoSecurity Support
+          bom: cas-bom
+        - name: cas-server-support-duo-core
+          id: support-duo-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-duo-core
+          description: Apereo CAS DuoSecurity Support
+          bom: cas-bom
+        - name: cas-server-support-duo-core-mfa
+          id: support-duo-core-mfa
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-duo-core-mfa
+          description: Apereo CAS Duo Security Core MFA
+          bom: cas-bom
+        - name: cas-server-support-dynamodb-core
+          id: support-dynamodb-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-dynamodb-core
+          description: Apereo CAS DynamoDb Support
+          bom: cas-bom
+        - name: cas-server-support-dynamodb-service-registry
+          id: support-dynamodb-service-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-dynamodb-service-registry
+          description: Apereo CAS DynamoDb Service Registry
+          bom: cas-bom
+        - name: cas-server-support-dynamodb-ticket-registry
+          id: support-dynamodb-ticket-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-dynamodb-ticket-registry
+          description: Apereo CAS DynamoDb Ticket Registry
+          bom: cas-bom
+        - name: cas-server-support-ehcache-monitor
+          id: support-ehcache-monitor
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-ehcache-monitor
+          description: Apereo CAS Ehcache Integration Monitor
+          bom: cas-bom
+        - name: cas-server-support-ehcache-ticket-registry
+          id: support-ehcache-ticket-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-ehcache-ticket-registry
+          description: Apereo CAS Ehcache Integration
+          bom: cas-bom
+        - name: cas-server-support-ehcache3-ticket-registry
+          id: support-ehcache3-ticket-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-ehcache3-ticket-registry
+          description: Apereo CAS Ehcache3 Integration
+          bom: cas-bom
+        - name: cas-server-support-electrofence
+          id: support-electrofence
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-electrofence
+          description: Apereo CAS Risk-based Authentication Support
+          bom: cas-bom
+        - name: cas-server-support-eureka-client
+          id: support-eureka-client
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-eureka-client
+          description: Apereo CAS Spring Cloud Eureka Client
+          bom: cas-bom
+        - name: cas-server-support-events-couchdb
+          id: support-events-couchdb
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-events-couchdb
+          description: Apereo CAS Events Consumer CouchDb
+          bom: cas-bom
+        - name: cas-server-support-events-dynamodb
+          id: support-events-dynamodb
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-events-dynamodb
+          description: Apereo CAS DynamoDb Events
+          bom: cas-bom
+        - name: cas-server-support-events-influxdb
+          id: support-events-influxdb
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-events-influxdb
+          description: Apereo CAS Event InfluxDb Repository
+          bom: cas-bom
+        - name: cas-server-support-events-jpa
+          id: support-events-jpa
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-events-jpa
+          description: Apereo CAS Events Consumer JPA
+          bom: cas-bom
+        - name: cas-server-support-events-memory
+          id: support-events-memory
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-events-memory
+          description: Apereo CAS Event Memory Repository
+          bom: cas-bom
+        - name: cas-server-support-events-mongo
+          id: support-events-mongo
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-events-mongo
+          description: Apereo CAS Events Consumer MongoDb
+          bom: cas-bom
+        - name: cas-server-support-fortress
+          id: support-fortress
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-fortress
+          description: Apereo CAS Fortress Support
+          bom: cas-bom
+        - name: cas-server-support-gauth
+          id: support-gauth
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-gauth
+          description: Apereo CAS Google Authenticator Support
+          bom: cas-bom
+        - name: cas-server-support-gauth-core
+          id: support-gauth-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-gauth-core
+          description: Apereo CAS Core Google Authenticator Support
+          bom: cas-bom
+        - name: cas-server-support-gauth-core-mfa
+          id: support-gauth-core-mfa
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-gauth-core-mfa
+          description: Apereo CAS Core Google Authenticator Support
+          bom: cas-bom
+        - name: cas-server-support-gauth-couchdb
+          id: support-gauth-couchdb
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-gauth-couchdb
+          description: Apereo CAS Google Authenticator CouchDb
+          bom: cas-bom
+        - name: cas-server-support-gauth-jpa
+          id: support-gauth-jpa
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-gauth-jpa
+          description: Apereo CAS Google Authenticator JPA
+          bom: cas-bom
+        - name: cas-server-support-gauth-mongo
+          id: support-gauth-mongo
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-gauth-mongo
+          description: Apereo CAS Google Authenticator Mongo
+          bom: cas-bom
+        - name: cas-server-support-gauth-redis
+          id: support-gauth-redis
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-gauth-redis
+          description: Apereo CAS Google Authenticator Redis
+          bom: cas-bom
+        - name: cas-server-support-generic
+          id: support-generic
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-generic
+          description: Apereo CAS Generic Support
+          bom: cas-bom
+        - name: cas-server-support-generic-remote-webflow
+          id: support-generic-remote-webflow
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-generic-remote-webflow
+          description: Apereo CAS Remote Address Authentication Webflow Support
+          bom: cas-bom
+        - name: cas-server-support-geolocation
+          id: support-geolocation
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-geolocation
+          description: Apereo CAS GeoLocation Tracking Support
+          bom: cas-bom
+        - name: cas-server-support-geolocation-googlemaps
+          id: support-geolocation-googlemaps
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-geolocation-googlemaps
+          description: Apereo CAS GeoLocation Tracking Support
+          bom: cas-bom
+        - name: cas-server-support-geolocation-maxmind
+          id: support-geolocation-maxmind
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-geolocation-maxmind
+          description: Apereo CAS GeoLocation Tracking Maxmind Support
+          bom: cas-bom
+        - name: cas-server-support-git-core
+          id: support-git-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-git-core
+          description: Apereo CAS Git Service Registry Implementation
+          bom: cas-bom
+        - name: cas-server-support-git-service-registry
+          id: support-git-service-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-git-service-registry
+          description: Apereo CAS Git Service Registry Implementation
+          bom: cas-bom
+        - name: cas-server-support-google-analytics
+          id: support-google-analytics
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-google-analytics
+          description: Apereo CAS Support for Google Analytics
+          bom: cas-bom
+        - name: cas-server-support-grouper
+          id: support-grouper
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-grouper
+          description: Apereo CAS Internet2 Grouper Integration
+          bom: cas-bom
+        - name: cas-server-support-grouper-core
+          id: support-grouper-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-grouper-core
+          description: Apereo CAS Internet2 Grouper Integration
+          bom: cas-bom
+        - name: cas-server-support-gua
+          id: support-gua
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-gua
+          description: Apereo CAS Graphical User Authentication Support
+          bom: cas-bom
+        - name: cas-server-support-hazelcast
+          id: support-hazelcast
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-hazelcast
+          description: Apereo CAS Hazelcast Core Support Config
+          bom: cas-bom
+        - name: cas-server-support-hazelcast-core
+          id: support-hazelcast-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-hazelcast-core
+          description: Apereo CAS Hazelcast Core Support
+          bom: cas-bom
+        - name: cas-server-support-hazelcast-discovery-aws
+          id: support-hazelcast-discovery-aws
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-hazelcast-discovery-aws
+          description: Apereo CAS Hazelcast Discovery AWS Support
+          bom: cas-bom
+        - name: cas-server-support-hazelcast-discovery-azure
+          id: support-hazelcast-discovery-azure
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-hazelcast-discovery-azure
+          description: Apereo CAS Hazelcast Discovery Azure Support
+          bom: cas-bom
+        - name: cas-server-support-hazelcast-discovery-jclouds
+          id: support-hazelcast-discovery-jclouds
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-hazelcast-discovery-jclouds
+          description: Apereo CAS Hazelcast Discovery JClouds Support
+          bom: cas-bom
+        - name: cas-server-support-hazelcast-discovery-kubernetes
+          id: support-hazelcast-discovery-kubernetes
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-hazelcast-discovery-kubernetes
+          description: Apereo CAS Hazelcast Discovery Kubernetes Support
+          bom: cas-bom
+        - name: cas-server-support-hazelcast-discovery-swarm
+          id: support-hazelcast-discovery-swarm
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-hazelcast-discovery-swarm
+          description: Apereo CAS Hazelcast Discovery Docker Swarm Support
+          bom: cas-bom
+        - name: cas-server-support-hazelcast-monitor
+          id: support-hazelcast-monitor
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-hazelcast-monitor
+          description: Apereo CAS Hazelcast Monitoring Support
+          bom: cas-bom
+        - name: cas-server-support-hazelcast-ticket-registry
+          id: support-hazelcast-ticket-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-hazelcast-ticket-registry
+          description: Apereo CAS Hazelcast Integration
+          bom: cas-bom
+        - name: cas-server-support-ignite-ticket-registry
+          id: support-ignite-ticket-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-ignite-ticket-registry
+          description: Apereo CAS Ignite Integration
+          bom: cas-bom
+        - name: cas-server-support-infinispan-ticket-registry
+          id: support-infinispan-ticket-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-infinispan-ticket-registry
+          description: Apereo CAS Infinispan Integration
+          bom: cas-bom
+        - name: cas-server-support-influxdb-core
+          id: support-influxdb-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-influxdb-core
+          description: Apereo CAS InfluxDb Core
+          bom: cas-bom
+        - name: cas-server-support-interrupt-api
+          id: support-interrupt-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-interrupt-api
+          description: Apereo CAS Notification/Interrupt API
+          bom: cas-bom
+        - name: cas-server-support-interrupt-core
+          id: support-interrupt-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-interrupt-core
+          description: Apereo CAS Notification/Interrupt Core Implementations
+          bom: cas-bom
+        - name: cas-server-support-interrupt-webflow
+          id: support-interrupt-webflow
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-interrupt-webflow
+          description: Apereo CAS Notification/Interrupt Webflow
+          bom: cas-bom
+        - name: cas-server-support-javamelody
+          id: support-javamelody
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-javamelody
+          description: Apereo CAS JavaMelody Support
+          bom: cas-bom
+        - name: cas-server-support-jdbc
+          id: support-jdbc
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-jdbc
+          description: Apereo CAS JDBC Support
+          bom: cas-bom
+        - name: cas-server-support-jdbc-authentication
+          id: support-jdbc-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-jdbc-authentication
+          description: Apereo CAS JDBC Support
+          bom: cas-bom
+        - name: cas-server-support-jdbc-drivers
+          id: support-jdbc-drivers
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-jdbc-drivers
+          description: Apereo CAS JDBC Driver Support
+          bom: cas-bom
+        - name: cas-server-support-jdbc-monitor
+          id: support-jdbc-monitor
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-jdbc-monitor
+          description: Apereo CAS JDBC Monitor Support
+          bom: cas-bom
+        - name: cas-server-support-jms-ticket-registry
+          id: support-jms-ticket-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-jms-ticket-registry
+          description: Apereo CAS JMS Ticket Registry
+          bom: cas-bom
+        - name: cas-server-support-jmx
+          id: support-jmx
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-jmx
+          description: Apereo CAS JMX Support
+          bom: cas-bom
+        - name: cas-server-support-jpa-eclipselink
+          id: support-jpa-eclipselink
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-jpa-eclipselink
+          description: Apereo CAS JPA EclipseLink Support
+          bom: cas-bom
+        - name: cas-server-support-jpa-hibernate
+          id: support-jpa-hibernate
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-jpa-hibernate
+          description: Apereo CAS JPA Hibernate Support
+          bom: cas-bom
+        - name: cas-server-support-jpa-service-registry
+          id: support-jpa-service-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-jpa-service-registry
+          description: Apereo CAS JPA Service Registry Support
+          bom: cas-bom
+        - name: cas-server-support-jpa-ticket-registry
+          id: support-jpa-ticket-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-jpa-ticket-registry
+          description: Apereo CAS JPA Ticket Registry Support
+          bom: cas-bom
+        - name: cas-server-support-jpa-util
+          id: support-jpa-util
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-jpa-util
+          description: Apereo CAS JPA Utilities and Support
+          bom: cas-bom
+        - name: cas-server-support-json-service-registry
+          id: support-json-service-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-json-service-registry
+          description: Apereo CAS JSON Service Registry
+          bom: cas-bom
+        - name: cas-server-support-kafka-core
+          id: support-kafka-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-kafka-core
+          description: Apereo CAS Support with Kafka
+          bom: cas-bom
+        - name: cas-server-support-ldap
+          id: support-ldap
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-ldap
+          description: Apereo CAS LDAP Support
+          bom: cas-bom
+        - name: cas-server-support-ldap-core
+          id: support-ldap-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-ldap-core
+          description: Apereo CAS LDAP Core Support
+          bom: cas-bom
+        - name: cas-server-support-ldap-monitor
+          id: support-ldap-monitor
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-ldap-monitor
+          description: Apereo CAS LDAP Monitor Support
+          bom: cas-bom
+        - name: cas-server-support-ldap-service-registry
+          id: support-ldap-service-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-ldap-service-registry
+          description: Apereo CAS LDAP Service Registry Support
+          bom: cas-bom
+        - name: cas-server-support-logback
+          id: support-logback
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-logback
+          description: Apereo CAS Core Logging Support for Logback
+          bom: cas-bom
+        - name: cas-server-support-logging-config-cloudwatch
+          id: support-logging-config-cloudwatch
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-logging-config-cloudwatch
+          description: Apereo CAS Core Logging AWS CloudWatch
+          bom: cas-bom
+        - name: cas-server-support-logging-config-splunk
+          id: support-logging-config-splunk
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-logging-config-splunk
+          description: Apereo CAS Core Logging Splunk Support
+          bom: cas-bom
+        - name: cas-server-support-memcached-aws-elasticache
+          id: support-memcached-aws-elasticache
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-memcached-aws-elasticache
+          description: Apereo CAS Memcached Support via AWS Elasticache
+          bom: cas-bom
+        - name: cas-server-support-memcached-core
+          id: support-memcached-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-memcached-core
+          description: Apereo CAS Memcached Monitor Core
+          bom: cas-bom
+        - name: cas-server-support-memcached-monitor
+          id: support-memcached-monitor
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-memcached-monitor
+          description: Apereo CAS Memcached Monitor Integration
+          bom: cas-bom
+        - name: cas-server-support-memcached-spy
+          id: support-memcached-spy
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-memcached-spy
+          description: Apereo CAS Memcached Support via Memcached
+          bom: cas-bom
+        - name: cas-server-support-memcached-ticket-registry
+          id: support-memcached-ticket-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-memcached-ticket-registry
+          description: Apereo CAS Memcached Integration
+          bom: cas-bom
+        - name: cas-server-support-metrics
+          id: support-metrics
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-metrics
+          description: Apereo CAS Metrics Support
+          bom: cas-bom
+        - name: cas-server-support-mongo
+          id: support-mongo
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-mongo
+          description: Apereo CAS Mongo Authentication Support
+          bom: cas-bom
+        - name: cas-server-support-mongo-core
+          id: support-mongo-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-mongo-core
+          description: Apereo CAS MongoDb Core Support
+          bom: cas-bom
+        - name: cas-server-support-mongo-monitor
+          id: support-mongo-monitor
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-mongo-monitor
+          description: Apereo CAS MongoDB Monitoring
+          bom: cas-bom
+        - name: cas-server-support-mongo-service-registry
+          id: support-mongo-service-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-mongo-service-registry
+          description: Apereo CAS Mongo Integration
+          bom: cas-bom
+        - name: cas-server-support-mongo-ticket-registry
+          id: support-mongo-ticket-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-mongo-ticket-registry
+          description: Apereo CAS MongoDB Ticket Registry
+          bom: cas-bom
+        - name: cas-server-support-notifications-fcm
+          id: support-notifications-fcm
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-notifications-fcm
+          description: Apereo CAS Server FCM Notifications Support
+          bom: cas-bom
+        - name: cas-server-support-oauth
+          id: support-oauth
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-oauth
+          description: Apereo CAS Server OAuth Provider Support
+          bom: cas-bom
+        - name: cas-server-support-oauth-api
+          id: support-oauth-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-oauth-api
+          description: Apereo CAS OAuth Server API Support
+          bom: cas-bom
+        - name: cas-server-support-oauth-core
+          id: support-oauth-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-oauth-core
+          description: Apereo CAS OAuth Server Support
+          bom: cas-bom
+        - name: cas-server-support-oauth-core-api
+          id: support-oauth-core-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-oauth-core-api
+          description: Apereo CAS Server OAuth Provider Core APIs
+          bom: cas-bom
+        - name: cas-server-support-oauth-services
+          id: support-oauth-services
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-oauth-services
+          description: Apereo CAS OAuth Server Services Support
+          bom: cas-bom
+        - name: cas-server-support-oauth-uma
+          id: support-oauth-uma
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-oauth-uma
+          description: Apereo CAS OAuth UMA Server Core Support
+          bom: cas-bom
+        - name: cas-server-support-oauth-uma-core
+          id: support-oauth-uma-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-oauth-uma-core
+          description: Apereo CAS OAuth UMA Server Support
+          bom: cas-bom
+        - name: cas-server-support-oauth-uma-jpa
+          id: support-oauth-uma-jpa
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-oauth-uma-jpa
+          description: Apereo CAS OAuth UMA Server Support
+          bom: cas-bom
+        - name: cas-server-support-oauth-webflow
+          id: support-oauth-webflow
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-oauth-webflow
+          description: Apereo CAS OAuth Webflow Support
+          bom: cas-bom
+        - name: cas-server-support-oidc
+          id: support-oidc
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-oidc
+          description: Apereo CAS Server OpenID Connect Support
+          bom: cas-bom
+        - name: cas-server-support-oidc-core
+          id: support-oidc-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-oidc-core
+          description: Apereo CAS Server OpenID Connect Core
+          bom: cas-bom
+        - name: cas-server-support-oidc-core-api
+          id: support-oidc-core-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-oidc-core-api
+          description: Apereo CAS Server OpenID Connect Support
+          bom: cas-bom
+        - name: cas-server-support-oidc-services
+          id: support-oidc-services
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-oidc-services
+          description: Apereo CAS Server OpenID Connect Support Services
+          bom: cas-bom
+        - name: cas-server-support-okta-authentication
+          id: support-okta-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-okta-authentication
+          description: Apereo CAS Okta Authentication
+          bom: cas-bom
+        - name: cas-server-support-openid
+          id: support-openid
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-openid
+          description: Apereo CAS OpenId Server Support
+          bom: cas-bom
+        - name: cas-server-support-openid-webflow
+          id: support-openid-webflow
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-openid-webflow
+          description: Apereo CAS OpenID Webflow Support
+          bom: cas-bom
+        - name: cas-server-support-otp-mfa
+          id: support-otp-mfa
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-otp-mfa
+          description: Apereo CAS Multifactor Authentication OTP Support
+          bom: cas-bom
+        - name: cas-server-support-otp-mfa-core
+          id: support-otp-mfa-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-otp-mfa-core
+          description: Apereo CAS Multifactor Authentication OTP Support
+          bom: cas-bom
+        - name: cas-server-support-pac4j
+          id: support-pac4j
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-pac4j
+          description: Apereo CAS Delegated Authentication Support Using Pac4J
+          bom: cas-bom
+        - name: cas-server-support-pac4j-api
+          id: support-pac4j-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-pac4j-api
+          description: Apereo CAS Support for Pac4j APIs
+          bom: cas-bom
+        - name: cas-server-support-pac4j-authentication
+          id: support-pac4j-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-pac4j-authentication
+          description: Apereo CAS Authentication handler wrapping pac4j
+          bom: cas-bom
+        - name: cas-server-support-pac4j-core
+          id: support-pac4j-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-pac4j-core
+          description: Apereo CAS Support for Pac4j
+          bom: cas-bom
+        - name: cas-server-support-pac4j-core-clients
+          id: support-pac4j-core-clients
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-pac4j-core-clients
+          description: Apereo CAS Delegated Authentication Support Using Pac4J
+          bom: cas-bom
+        - name: cas-server-support-pac4j-webflow
+          id: support-pac4j-webflow
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-pac4j-webflow
+          description: Apereo CAS Pac4j Webflow Support
+          bom: cas-bom
+        - name: cas-server-support-passwordless
+          id: support-passwordless
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-passwordless
+          description: Apereo CAS Passwordless Authentication Support
+          bom: cas-bom
+        - name: cas-server-support-passwordless-jpa
+          id: support-passwordless-jpa
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-passwordless-jpa
+          description: Apereo CAS Passwordless Authentication JPA Support
+          bom: cas-bom
+        - name: cas-server-support-passwordless-ldap
+          id: support-passwordless-ldap
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-passwordless-ldap
+          description: Apereo CAS Passwordless Authentication LDAP Support
+          bom: cas-bom
+        - name: cas-server-support-passwordless-mongo
+          id: support-passwordless-mongo
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-passwordless-mongo
+          description: Apereo CAS Passwordless Authentication MongoDb Support
+          bom: cas-bom
+        - name: cas-server-support-passwordless-webflow
+          id: support-passwordless-webflow
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-passwordless-webflow
+          description: Apereo CAS Passwordless Authentication Webflow Support
+          bom: cas-bom
+        - name: cas-server-support-person-directory
+          id: support-person-directory
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-person-directory
+          description: Apereo CAS Person Directory & Attribute Resolution Support
+          bom: cas-bom
+        - name: cas-server-support-pm
+          id: support-pm
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-pm
+          description: Apereo CAS Password Management - Core Configuration
+          bom: cas-bom
+        - name: cas-server-support-pm-core
+          id: support-pm-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-pm-core
+          description: Apereo CAS Password Management - Core
+          bom: cas-bom
+        - name: cas-server-support-pm-jdbc
+          id: support-pm-jdbc
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-pm-jdbc
+          description: Apereo CAS Password Management JDBC Support
+          bom: cas-bom
+        - name: cas-server-support-pm-ldap
+          id: support-pm-ldap
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-pm-ldap
+          description: Apereo CAS Password Management LDAP Support
+          bom: cas-bom
+        - name: cas-server-support-pm-rest
+          id: support-pm-rest
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-pm-rest
+          description: Apereo CAS Password Management LDAP Support
+          bom: cas-bom
+        - name: cas-server-support-pm-webflow
+          id: support-pm-webflow
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-pm-webflow
+          description: Apereo CAS Password Management - Core
+          bom: cas-bom
+        - name: cas-server-support-radius
+          id: support-radius
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-radius
+          description: Apereo CAS RADIUS Support
+          bom: cas-bom
+        - name: cas-server-support-radius-core
+          id: support-radius-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-radius-core
+          description: Apereo CAS RADIUS Support
+          bom: cas-bom
+        - name: cas-server-support-radius-core-mfa
+          id: support-radius-core-mfa
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-radius-core-mfa
+          description: Apereo CAS RADIUS RSA MFA Support
+          bom: cas-bom
+        - name: cas-server-support-radius-mfa
+          id: support-radius-mfa
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-radius-mfa
+          description: Apereo CAS RADIUS RSA MFA Support
+          bom: cas-bom
+        - name: cas-server-support-redis-authentication
+          id: support-redis-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-redis-authentication
+          description: Apereo CAS Redis Authentication
+          bom: cas-bom
+        - name: cas-server-support-redis-core
+          id: support-redis-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-redis-core
+          description: Apereo CAS Redis Core Support
+          bom: cas-bom
+        - name: cas-server-support-redis-service-registry
+          id: support-redis-service-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-redis-service-registry
+          description: Apereo CAS Redis Service Registry Support
+          bom: cas-bom
+        - name: cas-server-support-redis-ticket-registry
+          id: support-redis-ticket-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-redis-ticket-registry
+          description: Apereo CAS Redis Ticket Registry
+          bom: cas-bom
+        - name: cas-server-support-reports
+          id: support-reports
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-reports
+          description: Apereo CAS Web Application Reports
+          bom: cas-bom
+        - name: cas-server-support-reports-core
+          id: support-reports-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-reports-core
+          description: Apereo CAS Web Application Reports
+          bom: cas-bom
+        - name: cas-server-support-rest
+          id: support-rest
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-rest
+          description: Apereo CAS REST Implementation
+          bom: cas-bom
+        - name: cas-server-support-rest-authentication
+          id: support-rest-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-rest-authentication
+          description: Apereo CAS Rest Authentication Support
+          bom: cas-bom
+        - name: cas-server-support-rest-core
+          id: support-rest-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-rest-core
+          description: Apereo CAS REST Implementation
+          bom: cas-bom
+        - name: cas-server-support-rest-service-registry
+          id: support-rest-service-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-rest-service-registry
+          description: Apereo CAS RESTful Service Registry
+          bom: cas-bom
+        - name: cas-server-support-rest-services
+          id: support-rest-services
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-rest-services
+          description: Apereo CAS Services REST Implementation
+          bom: cas-bom
+        - name: cas-server-support-rest-tokens
+          id: support-rest-tokens
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-rest-tokens
+          description: Apereo CAS REST JWT Tickets Implementation
+          bom: cas-bom
+        - name: cas-server-support-rest-x509
+          id: support-rest-x509
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-rest-x509
+          description: Apereo CAS X509 REST Implementation
+          bom: cas-bom
+        - name: cas-server-support-saml
+          id: support-saml
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml
+          description: Apereo CAS SAML Server and Validation Support
+          bom: cas-bom
+        - name: cas-server-support-saml-core
+          id: support-saml-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-core
+          description: Apereo CAS SAML Core/Common Functionality
+          bom: cas-bom
+        - name: cas-server-support-saml-core-api
+          id: support-saml-core-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-core-api
+          description: Apereo CAS SAML Core Functionality
+          bom: cas-bom
+        - name: cas-server-support-saml-googleapps
+          id: support-saml-googleapps
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-googleapps
+          description: Apereo CAS SAML Server Google Apps SAML Support
+          bom: cas-bom
+        - name: cas-server-support-saml-googleapps-core
+          id: support-saml-googleapps-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-googleapps-core
+          description: Apereo CAS SAML Server Google Apps SAML Core Support
+          bom: cas-bom
+        - name: cas-server-support-saml-idp
+          id: support-saml-idp
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-idp
+          description: Apereo CAS SAML Identity Provider Support
+          bom: cas-bom
+        - name: cas-server-support-saml-idp-core
+          id: support-saml-idp-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-idp-core
+          description: Apereo CAS SAML Identity Provider Core
+          bom: cas-bom
+        - name: cas-server-support-saml-idp-discovery
+          id: support-saml-idp-discovery
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-idp-discovery
+          description: Apereo CAS SAML Identity Provider Discovery Support
+          bom: cas-bom
+        - name: cas-server-support-saml-idp-metadata
+          id: support-saml-idp-metadata
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-idp-metadata
+          description: Apereo CAS SAML Identity Provider Metadata Support
+          bom: cas-bom
+        - name: cas-server-support-saml-idp-metadata-aws-s3
+          id: support-saml-idp-metadata-aws-s3
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-idp-metadata-aws-s3
+          description: Apereo CAS SAML Identity Provider Metadata Resolution Via Amazon S3 Buckets
+          bom: cas-bom
+        - name: cas-server-support-saml-idp-metadata-couchdb
+          id: support-saml-idp-metadata-couchdb
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-idp-metadata-couchdb
+          description: Apereo CAS SAML Identity Provider Metadata Resolution Via CouchDb
+          bom: cas-bom
+        - name: cas-server-support-saml-idp-metadata-git
+          id: support-saml-idp-metadata-git
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-idp-metadata-git
+          description: Apereo CAS SAML Identity Provider Metadata Resolution Via Git Repositories
+          bom: cas-bom
+        - name: cas-server-support-saml-idp-metadata-jpa
+          id: support-saml-idp-metadata-jpa
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-idp-metadata-jpa
+          description: Apereo CAS SAML Metadata Support via JDBC
+          bom: cas-bom
+        - name: cas-server-support-saml-idp-metadata-mongo
+          id: support-saml-idp-metadata-mongo
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-idp-metadata-mongo
+          description: Apereo CAS SAML Identity Provider Metadata Resolution Via MongoDb
+          bom: cas-bom
+        - name: cas-server-support-saml-idp-metadata-rest
+          id: support-saml-idp-metadata-rest
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-idp-metadata-rest
+          description: Apereo CAS SAML Identity Provider Metadata Resolution Via REST
+          bom: cas-bom
+        - name: cas-server-support-saml-idp-ticket
+          id: support-saml-idp-ticket
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-idp-ticket
+          description: Apereo CAS SAML Identity Provider Ticket Support
+          bom: cas-bom
+        - name: cas-server-support-saml-idp-web
+          id: support-saml-idp-web
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-idp-web
+          description: Apereo CAS SAML Identity Provider Web Support
+          bom: cas-bom
+        - name: cas-server-support-saml-mdui
+          id: support-saml-mdui
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-mdui
+          description: Apereo CAS SAML Server MDUI Support
+          bom: cas-bom
+        - name: cas-server-support-saml-mdui-core
+          id: support-saml-mdui-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-mdui-core
+          description: Apereo CAS SAML Server MDUI Core
+          bom: cas-bom
+        - name: cas-server-support-saml-sp-integrations
+          id: support-saml-sp-integrations
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-sp-integrations
+          description: Apereo CAS SAML SP Integrations
+          bom: cas-bom
+        - name: cas-server-support-scim
+          id: support-scim
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-scim
+          description: Apereo CAS SCIM 2 Provisioning Support
+          bom: cas-bom
+        - name: cas-server-support-script-engines
+          id: support-script-engines
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-script-engines
+          description: Apereo CAS Scripting Engine Drivers
+          bom: cas-bom
+        - name: cas-server-support-sentry
+          id: support-sentry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-sentry
+          description: Apereo CAS Sentry Monitoring and Tracking Support
+          bom: cas-bom
+        - name: cas-server-support-service-registry-stream
+          id: support-service-registry-stream
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-service-registry-stream
+          description: Apereo CAS Service Registry Streaming Support
+          bom: cas-bom
+        - name: cas-server-support-service-registry-stream-hazelcast
+          id: support-service-registry-stream-hazelcast
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-service-registry-stream-hazelcast
+          description: Apereo CAS Service Registry Streaming Support with Hazelcast
+          bom: cas-bom
+        - name: cas-server-support-service-registry-stream-kafka
+          id: support-service-registry-stream-kafka
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-service-registry-stream-kafka
+          description: Apereo CAS Service Registry Streaming Support with Kafka
+          bom: cas-bom
+        - name: cas-server-support-session-hazelcast
+          id: support-session-hazelcast
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-session-hazelcast
+          description: Apereo CAS Web Application Hazelcast Session Management
+          bom: cas-bom
+        - name: cas-server-support-session-jdbc
+          id: support-session-jdbc
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-session-jdbc
+          description: Apereo CAS Web Application JDBC Session Management
+          bom: cas-bom
+        - name: cas-server-support-session-mongo
+          id: support-session-mongo
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-session-mongo
+          description: Apereo CAS Web Application Mongo Session Management
+          bom: cas-bom
+        - name: cas-server-support-session-redis
+          id: support-session-redis
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-session-redis
+          description: Apereo CAS Web Application Redis Session Management
+          bom: cas-bom
+        - name: cas-server-support-shell
+          id: support-shell
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-shell
+          description: Apereo CAS Shell Support via Spring Shell
+          bom: cas-bom
+        - name: cas-server-support-shibboleth
+          id: support-shibboleth
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-shibboleth
+          description: Apereo CAS Shibboleth IdP/SP Extensions
+          bom: cas-bom
+        - name: cas-server-support-shiro-authentication
+          id: support-shiro-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-shiro-authentication
+          description: Apereo CAS Apache Shiro Authentication Support
+          bom: cas-bom
+        - name: cas-server-support-simple-mfa
+          id: support-simple-mfa
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-simple-mfa
+          description: Apereo CAS Simple Multifactor Authentication Support
+          bom: cas-bom
+        - name: cas-server-support-simple-mfa-core
+          id: support-simple-mfa-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-simple-mfa-core
+          description: Apereo CAS Simple Multifactor Authentication Core Support
+          bom: cas-bom
+        - name: cas-server-support-sleuth
+          id: support-sleuth
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-sleuth
+          description: Apereo CAS Spring Cloud Sleuth Support
+          bom: cas-bom
+        - name: cas-server-support-sms-aws-sns
+          id: support-sms-aws-sns
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-sms-aws-sns
+          description: Apereo CAS AWS Simple Notification SMS Support
+          bom: cas-bom
+        - name: cas-server-support-sms-clickatell
+          id: support-sms-clickatell
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-sms-clickatell
+          description: Apereo CAS TextMagic SMS Support
+          bom: cas-bom
+        - name: cas-server-support-sms-nexmo
+          id: support-sms-nexmo
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-sms-nexmo
+          description: Apereo CAS Nexmo SMS Support
+          bom: cas-bom
+        - name: cas-server-support-sms-textmagic
+          id: support-sms-textmagic
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-sms-textmagic
+          description: Apereo CAS TextMagic SMS Support
+          bom: cas-bom
+        - name: cas-server-support-sms-twilio
+          id: support-sms-twilio
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-sms-twilio
+          description: Apereo CAS Twilio SMS Support
+          bom: cas-bom
+        - name: cas-server-support-soap-authentication
+          id: support-soap-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-soap-authentication
+          description: Apereo CAS SOAP Authentication
+          bom: cas-bom
+        - name: cas-server-support-spnego
+          id: support-spnego
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-spnego
+          description: Apereo CAS SPNEGO/NTLM Support
+          bom: cas-bom
+        - name: cas-server-support-spnego-webflow
+          id: support-spnego-webflow
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-spnego-webflow
+          description: Apereo CAS SPNEGO Webflow Support
+          bom: cas-bom
+        - name: cas-server-support-surrogate-api
+          id: support-surrogate-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-surrogate-api
+          description: Apereo CAS Surrogate Authentication API
+          bom: cas-bom
+        - name: cas-server-support-surrogate-authentication
+          id: support-surrogate-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-surrogate-authentication
+          description: Apereo CAS Surrogate Authentication Support
+          bom: cas-bom
+        - name: cas-server-support-surrogate-authentication-couchdb
+          id: support-surrogate-authentication-couchdb
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-surrogate-authentication-couchdb
+          description: Apereo CAS Surrogate Authentication CouchDb Support
+          bom: cas-bom
+        - name: cas-server-support-surrogate-authentication-jdbc
+          id: support-surrogate-authentication-jdbc
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-surrogate-authentication-jdbc
+          description: Apereo CAS Surrogate Authentication JDBC Support
+          bom: cas-bom
+        - name: cas-server-support-surrogate-authentication-ldap
+          id: support-surrogate-authentication-ldap
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-surrogate-authentication-ldap
+          description: Apereo CAS Surrogate Authentication LDAP Support
+          bom: cas-bom
+        - name: cas-server-support-surrogate-authentication-rest
+          id: support-surrogate-authentication-rest
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-surrogate-authentication-rest
+          description: Apereo CAS Surrogate Authentication REST Support
+          bom: cas-bom
+        - name: cas-server-support-surrogate-webflow
+          id: support-surrogate-webflow
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-surrogate-webflow
+          description: Apereo CAS Surrogate Authentication Webflow
+          bom: cas-bom
+        - name: cas-server-support-swagger
+          id: support-swagger
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-swagger
+          description: Apereo CAS Swagger API Support
+          bom: cas-bom
+        - name: cas-server-support-swivel
+          id: support-swivel
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-swivel
+          description: Apereo CAS Swivel Support
+          bom: cas-bom
+        - name: cas-server-support-swivel-core
+          id: support-swivel-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-swivel-core
+          description: Apereo CAS Swivel Core Support
+          bom: cas-bom
+        - name: cas-server-support-syncope-authentication
+          id: support-syncope-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-syncope-authentication
+          description: Apereo CAS Apache Syncope Authentication Support
+          bom: cas-bom
+        - name: cas-server-support-themes
+          id: support-themes
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-themes
+          description: Apereo CAS Web Application Themes Support
+          bom: cas-bom
+        - name: cas-server-support-themes-collection
+          id: support-themes-collection
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-themes-collection
+          description: Apereo CAS Themes Collection
+          bom: cas-bom
+        - name: cas-server-support-themes-core
+          id: support-themes-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-themes-core
+          description: Apereo CAS Web Application Themes Support
+          bom: cas-bom
+        - name: cas-server-support-throttle
+          id: support-throttle
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-throttle
+          description: Apereo CAS Web Application Authentication Throttling
+          bom: cas-bom
+        - name: cas-server-support-throttle-bucket4j
+          id: support-throttle-bucket4j
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-throttle-bucket4j
+          description: Apereo CAS Bucket4j Authentication Throttling
+          bom: cas-bom
+        - name: cas-server-support-throttle-core
+          id: support-throttle-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-throttle-core
+          description: Apereo CAS Authentication Throttling Core
+          bom: cas-bom
+        - name: cas-server-support-throttle-couchdb
+          id: support-throttle-couchdb
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-throttle-couchdb
+          description: Apereo CAS CouchDb Authentication Throttling
+          bom: cas-bom
+        - name: cas-server-support-throttle-hazelcast
+          id: support-throttle-hazelcast
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-throttle-hazelcast
+          description: Apereo CAS Hazelcast Authentication Throttling
+          bom: cas-bom
+        - name: cas-server-support-throttle-jdbc
+          id: support-throttle-jdbc
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-throttle-jdbc
+          description: Apereo CAS JDBC Authentication Throttling
+          bom: cas-bom
+        - name: cas-server-support-throttle-mongo
+          id: support-throttle-mongo
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-throttle-mongo
+          description: Apereo CAS MongoDb Authentication Throttling
+          bom: cas-bom
+        - name: cas-server-support-throttle-redis
+          id: support-throttle-redis
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-throttle-redis
+          description: Apereo CAS Redis Authentication Throttling
+          bom: cas-bom
+        - name: cas-server-support-thymeleaf
+          id: support-thymeleaf
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-thymeleaf
+          description: Apereo CAS Support for Thymeleaf Template Engine
+          bom: cas-bom
+        - name: cas-server-support-token-authentication
+          id: support-token-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-token-authentication
+          description: Apereo CAS JWT Token Authentication Support
+          bom: cas-bom
+        - name: cas-server-support-token-core
+          id: support-token-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-token-core
+          description: Apereo CAS JWT Token Core
+          bom: cas-bom
+        - name: cas-server-support-token-core-api
+          id: support-token-core-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-token-core-api
+          description: Apereo CAS JWT Token Core
+          bom: cas-bom
+        - name: cas-server-support-token-tickets
+          id: support-token-tickets
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-token-tickets
+          description: Apereo CAS JWT Token Authentication Support
+          bom: cas-bom
+        - name: cas-server-support-token-webflow
+          id: support-token-webflow
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-token-webflow
+          description: Apereo CAS Token Authentication Webflow Support
+          bom: cas-bom
+        - name: cas-server-support-trusted
+          id: support-trusted
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-trusted
+          description: Apereo CAS Trusted User Support
+          bom: cas-bom
+        - name: cas-server-support-trusted-mfa
+          id: support-trusted-mfa
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-trusted-mfa
+          description: Apereo CAS Trusted MFA Browser/Device Support
+          bom: cas-bom
+        - name: cas-server-support-trusted-mfa-core
+          id: support-trusted-mfa-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-trusted-mfa-core
+          description: Apereo CAS Trusted MFA Browser/Device Core
+          bom: cas-bom
+        - name: cas-server-support-trusted-mfa-couchdb
+          id: support-trusted-mfa-couchdb
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-trusted-mfa-couchdb
+          description: Apereo CAS Trusted MFA Browser/Device CouchDb Support
+          bom: cas-bom
+        - name: cas-server-support-trusted-mfa-dynamodb
+          id: support-trusted-mfa-dynamodb
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-trusted-mfa-dynamodb
+          description: Apereo CAS Trusted MFA Browser/Device DynamoDb Support
+          bom: cas-bom
+        - name: cas-server-support-trusted-mfa-jdbc
+          id: support-trusted-mfa-jdbc
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-trusted-mfa-jdbc
+          description: Apereo CAS Trusted MFA Browser/Device JDBC Support
+          bom: cas-bom
+        - name: cas-server-support-trusted-mfa-mongo
+          id: support-trusted-mfa-mongo
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-trusted-mfa-mongo
+          description: Apereo CAS Trusted MFA Browser/Device Mongo Support
+          bom: cas-bom
+        - name: cas-server-support-trusted-mfa-rest
+          id: support-trusted-mfa-rest
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-trusted-mfa-rest
+          description: Apereo CAS Trusted MFA Browser/Device REST Support
+          bom: cas-bom
+        - name: cas-server-support-trusted-webflow
+          id: support-trusted-webflow
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-trusted-webflow
+          description: Apereo CAS Trusted Authentication Webflow Support
+          bom: cas-bom
+        - name: cas-server-support-u2f
+          id: support-u2f
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-u2f
+          description: Apereo CAS U2F Support
+          bom: cas-bom
+        - name: cas-server-support-u2f-core
+          id: support-u2f-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-u2f-core
+          description: Apereo CAS U2F Core Support
+          bom: cas-bom
+        - name: cas-server-support-u2f-couchdb
+          id: support-u2f-couchdb
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-u2f-couchdb
+          description: Apereo CAS U2F FIDO CouchDb Support
+          bom: cas-bom
+        - name: cas-server-support-u2f-dynamodb
+          id: support-u2f-dynamodb
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-u2f-dynamodb
+          description: Apereo CAS U2F FIDO DynamoDb Support
+          bom: cas-bom
+        - name: cas-server-support-u2f-jpa
+          id: support-u2f-jpa
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-u2f-jpa
+          description: Apereo CAS U2F FIDO Jpa Support
+          bom: cas-bom
+        - name: cas-server-support-u2f-mongo
+          id: support-u2f-mongo
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-u2f-mongo
+          description: Apereo CAS U2F FIDO MongoDb Support
+          bom: cas-bom
+        - name: cas-server-support-u2f-redis
+          id: support-u2f-redis
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-u2f-redis
+          description: Apereo CAS U2F FIDO Redis Support
+          bom: cas-bom
+        - name: cas-server-support-validation
+          id: support-validation
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-validation
+          description: Apereo CAS Web Application Protocol Validation
+          bom: cas-bom
+        - name: cas-server-support-validation-core
+          id: support-validation-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-validation-core
+          description: Apereo CAS Web Application Protocol Validation
+          bom: cas-bom
+        - name: cas-server-support-webauthn
+          id: support-webauthn
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-webauthn
+          description: Apereo CAS FIDO2 WebAuthn Support
+          bom: cas-bom
+        - name: cas-server-support-webauthn-core
+          id: support-webauthn-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-webauthn-core
+          description: Apereo CAS FIDO2 WebAuthn Core
+          bom: cas-bom
+        - name: cas-server-support-webauthn-jpa
+          id: support-webauthn-jpa
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-webauthn-jpa
+          description: Apereo CAS WebAuthN JPA Support
+          bom: cas-bom
+        - name: cas-server-support-webauthn-mongo
+          id: support-webauthn-mongo
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-webauthn-mongo
+          description: Apereo CAS WebAuthN MongoDb Support
+          bom: cas-bom
+        - name: cas-server-support-webauthn-redis
+          id: support-webauthn-redis
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-webauthn-redis
+          description: Apereo CAS WebAuthN Redis Support
+          bom: cas-bom
+        - name: cas-server-support-websockets
+          id: support-websockets
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-websockets
+          description: Apereo CAS WebSockets Support
+          bom: cas-bom
+        - name: cas-server-support-ws-idp
+          id: support-ws-idp
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-ws-idp
+          description: Apereo CAS WS-Security IdP
+          bom: cas-bom
+        - name: cas-server-support-ws-idp-api
+          id: support-ws-idp-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-ws-idp-api
+          description: Apereo CAS WS-Security IdP API
+          bom: cas-bom
+        - name: cas-server-support-ws-sts
+          id: support-ws-sts
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-ws-sts
+          description: Apereo CAS WS-Security Secure Token Service
+          bom: cas-bom
+        - name: cas-server-support-ws-sts-api
+          id: support-ws-sts-api
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-ws-sts-api
+          description: Apereo CAS WS-Security Secure Token Service
+          bom: cas-bom
+        - name: cas-server-support-wsfederation
+          id: support-wsfederation
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-wsfederation
+          description: Apereo CAS WS-Federation Support
+          bom: cas-bom
+        - name: cas-server-support-wsfederation-webflow
+          id: support-wsfederation-webflow
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-wsfederation-webflow
+          description: Apereo CAS WS-Federation Webflow Support
+          bom: cas-bom
+        - name: cas-server-support-x509
+          id: support-x509
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-x509
+          description: Apereo CAS X.509 Client Certificate Support
+          bom: cas-bom
+        - name: cas-server-support-x509-core
+          id: support-x509-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-x509-core
+          description: Apereo CAS X.509 Client Certificate Core
+          bom: cas-bom
+        - name: cas-server-support-x509-webflow
+          id: support-x509-webflow
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-x509-webflow
+          description: Apereo CAS X509 Webflow Support
+          bom: cas-bom
+        - name: cas-server-support-yaml-service-registry
+          id: support-yaml-service-registry
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-yaml-service-registry
+          description: Apereo CAS YAML Service Registry
+          bom: cas-bom
+        - name: cas-server-support-yubikey
+          id: support-yubikey
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-yubikey
+          description: Apereo CAS YubiKey Support
+          bom: cas-bom
+        - name: cas-server-support-yubikey-core
+          id: support-yubikey-core
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-yubikey-core
+          description: Apereo CAS YubiKey Core
+          bom: cas-bom
+        - name: cas-server-support-yubikey-core-mfa
+          id: support-yubikey-core-mfa
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-yubikey-core-mfa
+          description: Apereo CAS YubiKey Core Multifactor Authentication
+          bom: cas-bom
+        - name: cas-server-support-yubikey-couchdb
+          id: support-yubikey-couchdb
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-yubikey-couchdb
+          description: Apereo CAS YubiKey CouchDb Support
+          bom: cas-bom
+        - name: cas-server-support-yubikey-dynamodb
+          id: support-yubikey-dynamodb
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-yubikey-dynamodb
+          description: Apereo CAS U2F YubiKey DynamoDb Support
+          bom: cas-bom
+        - name: cas-server-support-yubikey-jpa
+          id: support-yubikey-jpa
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-yubikey-jpa
+          description: Apereo CAS YubiKey Jpa Support
+          bom: cas-bom
+        - name: cas-server-support-yubikey-mongo
+          id: support-yubikey-mongo
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-yubikey-mongo
+          description: Apereo CAS YubiKey MongoDb Support
+          bom: cas-bom
+        - name: cas-server-support-yubikey-redis
+          id: support-yubikey-redis
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-yubikey-redis
+          description: Apereo CAS YubiKey Redis Support
+          bom: cas-bom
+    - name: webapp
+      content:
+        - name: cas-server-webapp
+          id: webapp
+          groupId: org.apereo.cas
+          artifactId: cas-server-webapp
+          description: Apereo CAS Web Application
+          bom: cas-bom
+        - name: cas-server-webapp-bootadmin-server
+          id: webapp-bootadmin-server
+          groupId: org.apereo.cas
+          artifactId: cas-server-webapp-bootadmin-server
+          description: Apereo CAS Spring Boot Admin Server
+          bom: cas-bom
+        - name: cas-server-webapp-config
+          id: webapp-config
+          groupId: org.apereo.cas
+          artifactId: cas-server-webapp-config
+          description: Apereo CAS Web Application Configuration
+          bom: cas-bom
+        - name: cas-server-webapp-config-server
+          id: webapp-config-server
+          groupId: org.apereo.cas
+          artifactId: cas-server-webapp-config-server
+          description: Apereo CAS Spring Cloud Configuration Web Application Server
+          bom: cas-bom
+        - name: cas-server-webapp-eureka-server
+          id: webapp-eureka-server
+          groupId: org.apereo.cas
+          artifactId: cas-server-webapp-eureka-server
+          description: Apereo CAS Spring Cloud Eureka Service Discovery Server Web Application
+          bom: cas-bom
+        - name: cas-server-webapp-init
+          id: webapp-init
+          groupId: org.apereo.cas
+          artifactId: cas-server-webapp-init
+          description: Apereo CAS Web Application Initializer
+          bom: cas-bom
+        - name: cas-server-webapp-init-bootadmin-server
+          id: webapp-init-bootadmin-server
+          groupId: org.apereo.cas
+          artifactId: cas-server-webapp-init-bootadmin-server
+          description: Apereo CAS Spring Boot Admin Web Application Initializer
+          bom: cas-bom
+        - name: cas-server-webapp-init-config-server
+          id: webapp-init-config-server
+          groupId: org.apereo.cas
+          artifactId: cas-server-webapp-init-config-server
+          description: Apereo CAS Spring Cloud Configuration Server API
+          bom: cas-bom
+        - name: cas-server-webapp-init-eureka-server
+          id: webapp-init-eureka-server
+          groupId: org.apereo.cas
+          artifactId: cas-server-webapp-init-eureka-server
+          description: Apereo CAS Spring Cloud Eureka Service Discovery Server API
+          bom: cas-bom
+        - name: cas-server-webapp-init-tomcat
+          id: webapp-init-tomcat
+          groupId: org.apereo.cas
+          artifactId: cas-server-webapp-init-tomcat
+          description: Apereo CAS Web Application via Apache Tomcat
+          bom: cas-bom
+        - name: cas-server-webapp-jetty
+          id: webapp-jetty
+          groupId: org.apereo.cas
+          artifactId: cas-server-webapp-jetty
+          description: Apereo CAS Web Application via Jetty
+          bom: cas-bom
+        - name: cas-server-webapp-resources
+          id: webapp-resources
+          groupId: org.apereo.cas
+          artifactId: cas-server-webapp-resources
+          description: Apereo CAS Web Resources
+          bom: cas-bom
+        - name: cas-server-webapp-tomcat
+          id: webapp-tomcat
+          groupId: org.apereo.cas
+          artifactId: cas-server-webapp-tomcat
+          description: Apereo CAS Web Application via Apache Tomcat
+          bom: cas-bom
+        - name: cas-server-webapp-undertow
+          id: webapp-undertow
+          groupId: org.apereo.cas
+          artifactId: cas-server-webapp-undertow
+          description: Apereo CAS Web Application via Undertow
           bom: cas-bom

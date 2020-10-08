@@ -1,7 +1,6 @@
 package org.apereo.cas.overlay.contrib;
 
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
-import io.spring.initializr.generator.project.contributor.SingleResourceProjectContributor;
 import org.jooq.lambda.Unchecked;
 
 import java.nio.file.Path;
