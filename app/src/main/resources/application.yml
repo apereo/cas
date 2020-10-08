@@ -1,3 +1,10 @@
+logging:
+  level:
+    org:
+      apereo:
+        cas:
+          overlay: debug
+          
 spring:
   main:
     allow-bean-definition-overriding: true

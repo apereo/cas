@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import io.spring.initializr.generator.buildsystem.BuildItemResolver;
+import io.spring.initializr.generator.buildsystem.gradle.GradleBuild;
 import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import org.apereo.cas.overlay.CasOverlayGradleBuild;
@@ -24,10 +25,13 @@ import org.apereo.cas.overlay.contrib.spring.CasApplicationYamlPropertiesContrib
 import org.apereo.cas.overlay.contrib.spring.CasOverlaySpringBootConfigurationContributor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 
 @ProjectGenerationConfiguration
 public class CasOverlayProjectGenerationConfiguration {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     private static CasOverlayGradleBuild createGradleBuild(BuildItemResolver buildItemResolver) {
         return buildItemResolver != null ? new CasOverlayGradleBuild(buildItemResolver) : new CasOverlayGradleBuild();
@@ -74,7 +78,7 @@ public class CasOverlayProjectGenerationConfiguration {
     @Bean
     public ChainingSingleResourceProjectContributor casOverlayGradleConfigurationContributor() {
         var chain = new ChainingSingleResourceProjectContributor();
-        chain.addContributor(new CasOverlayGradleBuildContributor());
+        chain.addContributor(new CasOverlayGradleBuildContributor(applicationContext));
         chain.addContributor(new CasOverlayGradlePropertiesContributor());
         chain.addContributor(new CasOverlayGradleSettingsContributor());
         chain.addContributor(new CasOverlayGradleSpringBootContributor());

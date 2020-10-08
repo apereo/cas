@@ -83,6 +83,10 @@ dependencies {
             projectsToAdd.each {implementation it}
         }
     }
+
+    {{#dependencies}}
+    implementation "{{groupId}}:{{artifactId}}"
+    {{/dependencies}}
 }
 
 tasks.findByName("jibDockerBuild")
