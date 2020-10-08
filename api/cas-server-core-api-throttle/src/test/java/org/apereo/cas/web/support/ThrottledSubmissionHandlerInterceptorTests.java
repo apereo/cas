@@ -37,7 +37,5 @@ public class ThrottledSubmissionHandlerInterceptorTests {
                 input.afterCompletion(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), new RuntimeException());
             }
         });
-
     }
-
 }
