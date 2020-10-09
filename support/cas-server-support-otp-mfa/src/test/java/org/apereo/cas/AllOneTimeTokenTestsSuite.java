@@ -5,7 +5,6 @@ import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCheckRegistrationActionTes
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountSaveRegistrationActionTests;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAuthenticationWebflowActionTests;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAuthenticationWebflowEventResolverTests;
-import org.apereo.cas.otp.web.flow.rest.OneTimeTokenQRGeneratorControllerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -22,8 +21,7 @@ import org.junit.runner.RunWith;
     OneTimeTokenAuthenticationWebflowEventResolverTests.class,
     OneTimeTokenAuthenticationWebflowActionTests.class,
     OneTimeTokenAccountSaveRegistrationActionTests.class,
-    OneTimeTokenAccountCheckRegistrationActionTests.class,
-    OneTimeTokenQRGeneratorControllerTests.class
+    OneTimeTokenAccountCheckRegistrationActionTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllOneTimeTokenTestsSuite {
