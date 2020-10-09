@@ -53,6 +53,6 @@ public class SamlIdPMetadataResolverTests extends BaseSamlIdPConfigurationTests 
     public void verifyOperationFail() {
         val criteria = mock(CriteriaSet.class);
         when(criteria.get(any())).thenThrow(IllegalArgumentException.class);
-        assertThrows(ResolverException.class, () -> casSamlIdPMetadataResolver.resolve(criteria));
+        assertThrows(IllegalArgumentException.class, () -> casSamlIdPMetadataResolver.resolve(criteria));
     }
 }

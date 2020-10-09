@@ -48,6 +48,12 @@ cas.version=6.3.0-RC4
 
 The following items are new improvements and enhancements presented in this release.
 
+### JDK 15 Compatibility
+
+CAS is able to build and run successfully against the latest versions of JDK 15. The JDK baseline requirement 
+continues to be set at JDK 11, and this release is keeping up with JDK releases to ensure CAS 
+can correctly switch the baseline requirement when deemed necessary.
+
 ### Test Coverage via CodeCov
 
 CAS test coverage across all modules in the codebase has now reached `88%` and continues to climb. Additional validation rules are also applied 
