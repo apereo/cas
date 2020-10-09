@@ -1,3 +1,8 @@
+server:
+  port: ${PORT:8080}
+  ssl:
+    enabled: false
+
 logging:
   level:
     org:

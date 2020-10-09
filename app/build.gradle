@@ -29,6 +29,11 @@ dependencies {
     runtime "org.springframework.boot:spring-boot-starter-tomcat"
 }
 
+bootJar {
+    archiveName "app.jar"
+    baseName "app"
+}
+
 bootRun {
     def list = []
     list.add("-Xrunjdwp:transport=dt_socket,address=5005,server=y,suspend=n")
