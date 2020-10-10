@@ -51,8 +51,8 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
         r.setServiceId("https://www.example.com/two");
         servicesManager.save(r);
 
-        assertNull(domainAwareServicesManager.findServiceBy("https://whatever.com"));
-        assertNotNull(domainAwareServicesManager.findServiceBy("https://www.example.com/one"));
+        assertNull(domainAwareServicesManager.findServiceBy(serviceFactory.createService("https://whatever.com")));
+        assertNotNull(domainAwareServicesManager.findServiceBy(serviceFactory.createService("https://www.example.com/one")));
         
         servicesManager.deleteAll();
         assertTrue(domainAwareServicesManager.getDomains().count() == 0);

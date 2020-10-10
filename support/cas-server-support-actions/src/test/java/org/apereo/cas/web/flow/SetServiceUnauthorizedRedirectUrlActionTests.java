@@ -1,15 +1,11 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.login.SetServiceUnauthorizedRedirectUrlAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -26,19 +22,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowActions")
 public class SetServiceUnauthorizedRedirectUrlActionTests extends AbstractWebflowActionsTests {
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
     @Test
     public void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        val action = new SetServiceUnauthorizedRedirectUrlAction(servicesManager.getObject());
+        val action = new SetServiceUnauthorizedRedirectUrlAction(getServicesManager());
 
-        WebUtils.putRegisteredService(context, servicesManager.getObject().findServiceBy("https://github.com/apereo/cas"));
+        val service = getWebApplicationServiceFactory().createService("https://github.com/apereo/cas");
+        WebUtils.putRegisteredService(context, getServicesManager().findServiceBy(service));
         action.execute(context);
         assertNotNull(WebUtils.getUnauthorizedRedirectUrlFromFlowScope(context));
     }

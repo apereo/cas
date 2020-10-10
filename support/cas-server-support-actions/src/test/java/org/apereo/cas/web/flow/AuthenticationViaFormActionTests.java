@@ -48,7 +48,6 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
     public void verifySuccessfulAuthenticationWithNoService() throws Exception {
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
-
         request.addParameter(USERNAME_PARAM, TEST);
         request.addParameter(PASSWORD_PARAM, TEST);
 

@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -36,6 +38,10 @@ public class DefaultServicesManagerRegisteredServiceLocatorTests {
     @Qualifier("defaultServicesManagerRegisteredServiceLocator")
     private ServicesManagerRegisteredServiceLocator defaultServicesManagerRegisteredServiceLocator;
 
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
     @Test
     public void verifyDefaultOperation() {
         val input = mock(ServicesManagerRegisteredServiceLocator.class);
@@ -51,7 +57,7 @@ public class DefaultServicesManagerRegisteredServiceLocatorTests {
         assertEquals(Ordered.LOWEST_PRECEDENCE, defaultServicesManagerRegisteredServiceLocator.getOrder());
         val service = RegisteredServiceTestUtils.getRegisteredService("https://example.org.+");
         val result = defaultServicesManagerRegisteredServiceLocator.locate(List.of(service),
-            "https://example.org/test",
+            webApplicationServiceFactory.createService("https://example.org/test"),
             r -> r.matches("https://example.org/test"));
         assertNotNull(result);
     }

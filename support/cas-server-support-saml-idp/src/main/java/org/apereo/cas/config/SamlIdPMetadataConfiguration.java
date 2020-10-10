@@ -71,6 +71,9 @@ import java.net.URL;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SamlIdPMetadataConfiguration {
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -124,7 +127,9 @@ public class SamlIdPMetadataConfiguration {
     @Bean
     @RefreshScope
     public SamlIdPMetadataController samlIdPMetadataController() {
-        return new SamlIdPMetadataController(samlIdPMetadataGenerator(), samlIdPMetadataLocator(), servicesManager.getObject());
+        return new SamlIdPMetadataController(samlIdPMetadataGenerator(),
+            samlIdPMetadataLocator(), servicesManager.getObject(),
+            webApplicationServiceFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataGenerator")

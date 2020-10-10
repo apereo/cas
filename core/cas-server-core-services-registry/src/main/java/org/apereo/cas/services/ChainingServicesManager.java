@@ -82,15 +82,6 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
     }
 
     @Override
-    public RegisteredService findServiceBy(final String serviceId) {
-        return serviceManagers.stream()
-            .map(s -> s.findServiceBy(serviceId))
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElse(null);
-    }
-
-    @Override
     public RegisteredService findServiceBy(final Service service) {
         val manager = findServicesManager(service);
         return manager.map(servicesManager -> servicesManager.findServiceBy(service)).orElse(null);
@@ -106,12 +97,6 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
     @Override
     public <T extends RegisteredService> T findServiceBy(final Service serviceId, final Class<T> clazz) {
         val manager = findServicesManager(serviceId);
-        return manager.map(servicesManager -> servicesManager.findServiceBy(serviceId, clazz)).orElse(null);
-    }
-
-    @Override
-    public <T extends RegisteredService> T findServiceBy(final String serviceId, final Class<T> clazz) {
-        val manager = findServicesManager(clazz);
         return manager.map(servicesManager -> servicesManager.findServiceBy(serviceId, clazz)).orElse(null);
     }
 
@@ -146,23 +131,6 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
     }
 
     @Override
-    public RegisteredService findServiceByExactServiceId(final String serviceId) {
-        return serviceManagers.stream()
-            .map(s -> s.findServiceByExactServiceId(serviceId))
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElse(null);
-    }
-
-    @Override
-    public Stream<String> getDomains() {
-        return serviceManagers.stream()
-            .filter(mgr -> mgr instanceof DomainAwareServicesManager)
-            .map(DomainAwareServicesManager.class::cast)
-            .flatMap(DomainAwareServicesManager::getDomains);
-    }
-
-    @Override
     public Collection<RegisteredService> getAllServices() {
         return serviceManagers.stream()
             .flatMap(s -> s.getAllServices().stream())
@@ -173,15 +141,6 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
     public Collection<RegisteredService> load() {
         return serviceManagers.stream()
             .flatMap(s -> s.load().stream())
-            .collect(Collectors.toList());
-    }
-
-    @Override
-    public Collection<RegisteredService> getServicesForDomain(final String domain) {
-        return serviceManagers.stream()
-            .filter(mgr -> mgr instanceof DomainAwareServicesManager)
-            .map(DomainAwareServicesManager.class::cast)
-            .flatMap(d -> d.getServicesForDomain(domain).stream())
             .collect(Collectors.toList());
     }
 
@@ -205,6 +164,23 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
     @Override
     public boolean supports(final Class clazz) {
         return findServicesManager(clazz).isPresent();
+    }
+
+    @Override
+    public Stream<String> getDomains() {
+        return serviceManagers.stream()
+            .filter(mgr -> mgr instanceof DomainAwareServicesManager)
+            .map(DomainAwareServicesManager.class::cast)
+            .flatMap(DomainAwareServicesManager::getDomains);
+    }
+
+    @Override
+    public Collection<RegisteredService> getServicesForDomain(final String domain) {
+        return serviceManagers.stream()
+            .filter(mgr -> mgr instanceof DomainAwareServicesManager)
+            .map(DomainAwareServicesManager.class::cast)
+            .flatMap(d -> d.getServicesForDomain(domain).stream())
+            .collect(Collectors.toList());
     }
 
     private Optional<ServicesManager> findServicesManager(final RegisteredService service) {

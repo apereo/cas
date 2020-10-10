@@ -1,6 +1,8 @@
 package org.apereo.cas.support.oauth.profile;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -21,9 +23,12 @@ import java.util.Map;
 public class CasServerApiBasedTicketValidator implements TicketValidator {
     private final CentralAuthenticationService centralAuthenticationService;
 
+    private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
     @Override
     public Assertion validate(final String ticketId, final String service) {
-        val assertion = centralAuthenticationService.validateServiceTicket(ticketId, () -> service);
+        val assertion = centralAuthenticationService.validateServiceTicket(ticketId,
+            webApplicationServiceFactory.createService(service));
         val authn = assertion.getPrimaryAuthentication();
         val principal = authn.getPrincipal();
         val attrPrincipal = new AttributePrincipalImpl(principal.getId(), (Map) principal.getAttributes());

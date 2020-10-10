@@ -43,9 +43,12 @@ public class OAuth20AuthenticationServiceSelectionStrategyTests extends Abstract
         val request = new MockHttpServletRequest();
         request.addHeader("X-" + CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL2);
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
-        assertNotNull(strategy.resolveServiceFrom(RegisteredServiceTestUtils.getService("https://example.org?"
+        val service = strategy.resolveServiceFrom(RegisteredServiceTestUtils.getService("https://example.org?"
             + OAuth20Constants.CLIENT_ID + '=' + CLIENT_ID + '&'
-            + OAuth20Constants.GRANT_TYPE + '=' + OAuth20GrantTypes.CLIENT_CREDENTIALS.getType())));
+            + OAuth20Constants.GRANT_TYPE + '=' + OAuth20GrantTypes.CLIENT_CREDENTIALS.getType()));
+        assertNotNull(service);
+        assertTrue(service.getAttributes().containsKey(OAuth20Constants.CLIENT_ID));
+        assertTrue(service.getAttributes().containsKey(OAuth20Constants.GRANT_TYPE));
     }
 
 }

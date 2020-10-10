@@ -149,7 +149,8 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceSelectionStrategy")
     public AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy() {
-        return new WSFederationAuthenticationServiceSelectionStrategy(webApplicationServiceFactory.getObject());
+        return new WSFederationAuthenticationServiceSelectionStrategy(servicesManager.getObject(),
+            webApplicationServiceFactory.getObject());
     }
 
     @Bean

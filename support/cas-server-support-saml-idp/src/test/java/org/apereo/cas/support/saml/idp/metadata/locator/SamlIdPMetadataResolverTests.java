@@ -5,7 +5,6 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import com.google.common.collect.Iterables;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;

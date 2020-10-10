@@ -1,19 +1,19 @@
 package org.apereo.cas.ws.idp.authentication;
 
-import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.BaseAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
-import org.springframework.core.Ordered;
 
 import java.util.Optional;
 
@@ -26,13 +26,13 @@ import java.util.Optional;
 @Slf4j
 @Getter
 @Setter
-@RequiredArgsConstructor
-public class WSFederationAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
+public class WSFederationAuthenticationServiceSelectionStrategy extends BaseAuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = 8035218407906419228L;
 
-    private final transient ServiceFactory webApplicationServiceFactory;
-
-    private int order = Ordered.HIGHEST_PRECEDENCE;
+    public WSFederationAuthenticationServiceSelectionStrategy(final ServicesManager servicesManager,
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
+        super(servicesManager, webApplicationServiceFactory);
+    }
 
     @Override
     public Service resolveServiceFrom(final Service service) {
@@ -40,7 +40,7 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
         if (replyParamRes.isPresent()) {
             val serviceReply = replyParamRes.get().getValue();
             LOGGER.debug("Located service id [{}] from service authentication request at [{}]", serviceReply, service.getId());
-            return this.webApplicationServiceFactory.createService(serviceReply);
+            return createService(serviceReply, service);
         }
         LOGGER.trace("Resolved final service as [{}]", service);
         return service;
