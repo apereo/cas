@@ -20,7 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.core.Ordered;
 
-import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -77,14 +76,10 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
         LOGGER.debug("Locating registered service for client id [{}]", clientId);
         
         val registeredService = getRegisteredServiceByClientId(clientId);
-        val service = Optional.ofNullable(registeredService)
-            .map(svc -> webApplicationServiceServiceFactory.createService(svc.getServiceId()))
-            .orElse(null);
         val audit = AuditableContext.builder()
-            .service(service)
             .registeredService(registeredService)
             .build();
-        val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
 
         if (accessResult.isExecutionFailure()) {
             LOGGER.warn("Registered service [{}] is not found or is not authorized for access.", registeredService);

@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.http.client.utils.URIBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -101,6 +102,24 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         return null;
     }
 
+    @SneakyThrows
+    private static void populateAttributes(final AbstractWebApplicationService service, final HttpServletRequest request) {
+        val attributes = request.getParameterMap()
+            .entrySet()
+            .stream()
+            .filter(entry -> !IGNORED_ATTRIBUTES_PARAMS.contains(entry.getKey()))
+            .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
+            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+
+        if (UrlValidator.getInstance().isValid(service.getOriginalUrl())) {
+            new URIBuilder(service.getOriginalUrl()).getQueryParams()
+                .forEach(pair -> attributes.put(pair.getName(), CollectionUtils.wrapArrayList(pair.getValue())));
+        }
+
+        LOGGER.trace("Extracted attributes [{}] for service [{}]", attributes, service.getId());
+        service.setAttributes(new HashMap(attributes));
+    }
+
     /**
      * Determine web application format boolean.
      *
@@ -122,19 +141,5 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             LOGGER.error("Format specified in the request [{}] is not recognized", format);
         }
         return webApplicationService;
-    }
-
-    @SneakyThrows
-    private static void populateAttributes(final AbstractWebApplicationService service, final HttpServletRequest request) {
-        val attributes = request.getParameterMap()
-            .entrySet()
-            .stream()
-            .filter(entry -> !IGNORED_ATTRIBUTES_PARAMS.contains(entry.getKey()))
-            .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
-            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
-        new URIBuilder(service.getOriginalUrl()).getQueryParams()
-            .forEach(pair -> attributes.put(pair.getName(), CollectionUtils.wrapArrayList(pair.getValue())));
-        LOGGER.trace("Extracted attributes [{}] for service [{}]", attributes, service.getId());
-        service.setAttributes(new HashMap(attributes));
     }
 }
