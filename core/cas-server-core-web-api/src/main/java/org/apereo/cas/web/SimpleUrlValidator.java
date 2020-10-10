@@ -17,6 +17,7 @@ public class SimpleUrlValidator implements org.apereo.cas.web.UrlValidator {
     private static org.apereo.cas.web.UrlValidator INSTANCE;
 
     private final UrlValidator urlValidator;
+
     private final DomainValidator domainValidator;
 
     /**
