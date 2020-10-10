@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.services;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -34,9 +35,10 @@ public class OAuth20ServicesManagerRegisteredServiceLocatorTests extends Abstrac
         assertEquals(Ordered.HIGHEST_PRECEDENCE, oauthServicesManagerRegisteredServiceLocator.getOrder());
         val service = getRegisteredService("clientid123456", UUID.randomUUID().toString());
         service.setMatchingStrategy(new PartialRegexRegisteredServiceMatchingStrategy());
+        val svc = serviceFactory.createService(
+            String.format("https://oauth.example.org/whatever?%s=clientid", OAuth20Constants.CLIENT_ID));
         val result = oauthServicesManagerRegisteredServiceLocator.locate(List.of(service),
-            "https://oauth.example.org",
-            r -> r.matches("https://oauth.example.org"));
+            svc, r -> r.matches("https://oauth.example.org"));
         assertNotNull(result);
     }
 

@@ -37,11 +37,11 @@ public class DefaultServicesManagerByEnvironmentTests extends AbstractServicesMa
         r.setName(getClass().getSimpleName());
         r.setServiceId(getClass().getSimpleName());
         r.setEnvironments(CollectionUtils.wrapHashSet("dev1"));
-        this.servicesManager.save(r);
-        assertNull(this.servicesManager.findServiceBy(getClass().getSimpleName()));
-        assertNull(this.servicesManager.findServiceBy(2000));
+        servicesManager.save(r);
+        assertNull(servicesManager.findServiceBy(serviceFactory.createService(getClass().getSimpleName())));
+        assertNull(servicesManager.findServiceBy(2000));
         r.setEnvironments(CollectionUtils.wrapHashSet("prod1"));
-        this.servicesManager.save(r);
-        assertNotNull(this.servicesManager.findServiceBy(2000));
+        servicesManager.save(r);
+        assertNotNull(servicesManager.findServiceBy(2000));
     }
 }

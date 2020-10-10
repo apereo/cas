@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.profile;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.validation.Assertion;
 
@@ -28,7 +29,8 @@ public class CasServerApiBasedTicketValidatorTests extends AbstractOAuth20Tests 
         val assertion = mock(Assertion.class);
         when(assertion.getPrimaryAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
         when(cas.validateServiceTicket(anyString(), any(Service.class))).thenReturn(assertion);
-        assertNotNull(new CasServerApiBasedTicketValidator(cas).validate("ST-12345", RegisteredServiceTestUtils.CONST_TEST_URL2));
+        val validator = new CasServerApiBasedTicketValidator(cas, new WebApplicationServiceFactory());
+        assertNotNull(validator.validate("ST-12345", RegisteredServiceTestUtils.CONST_TEST_URL2));
 
     }
 

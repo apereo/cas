@@ -1,12 +1,14 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests}.
@@ -18,10 +20,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     @Test
     public void verifyAction() {
+        val servicesManager = mock(ServicesManager.class);
         val factory = new WebApplicationServiceFactory();
-        val strategy =
-            new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(factory,
-                "http://localhost:8080/cas");
+        val strategy = new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(servicesManager, factory, "http://localhost:8080/cas");
 
         val service = factory.createService("http://localhost:8080/cas/idp/profile/SAML2/Callback.+?"
             + "entityId=http%3A%2F%2Flocalhost%3A8081%2Fcallback%3Fclient_name%3DSAML2Client&SAMLRequest=PD94bWwgdmVyc2lvbj0i"

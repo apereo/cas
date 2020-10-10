@@ -1,5 +1,9 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     private static final String TEST = "test";
 
+    protected final ServiceFactory<WebApplicationService> serviceFactory = new WebApplicationServiceFactory();
+
     protected final List<RegisteredService> listOfDefaultServices = new ArrayList<>();
 
     protected ServiceRegistry serviceRegistry;
@@ -42,8 +48,8 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     @BeforeEach
     public void initialize() {
         serviceRegistry = getServiceRegistryInstance();
-        this.servicesManager = getServicesManagerInstance();
-        this.servicesManager.load();
+        servicesManager = getServicesManagerInstance();
+        servicesManager.load();
     }
 
     @Test
@@ -53,11 +59,11 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         services.setName(TEST);
         services.setServiceId(TEST);
         servicesManager.save(services);
-        assertNotNull(this.servicesManager.findServiceBy(1100));
-        assertNotNull(this.servicesManager.findServiceBy(1100, RegexRegisteredService.class));
-        assertNotNull(this.servicesManager.findServiceByName(TEST));
-        assertNotNull(this.servicesManager.findServiceByName(TEST, RegexRegisteredService.class));
-        assertTrue(this.servicesManager.count() > 0);
+        assertNotNull(servicesManager.findServiceBy(1100));
+        assertNotNull(servicesManager.findServiceBy(1100, RegexRegisteredService.class));
+        assertNotNull(servicesManager.findServiceByName(TEST));
+        assertNotNull(servicesManager.findServiceByName(TEST, RegexRegisteredService.class));
+        assertTrue(servicesManager.count() > 0);
     }
 
     @Test
@@ -82,8 +88,8 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         assertFalse(isServiceInCache(TEST, 0));
         serviceRegistry.save(service);
         assertNotNull(serviceRegistry.findServiceByExactServiceId(TEST));
-        assertNotNull(servicesManager.findServiceByExactServiceId(TEST));
-        assertNotNull(servicesManager.findServiceBy(TEST, RegexRegisteredService.class));
+        val svc = new WebApplicationServiceFactory().createService(TEST);
+        assertNotNull(servicesManager.findServiceBy(svc, RegexRegisteredService.class));
         assertTrue(isServiceInCache(TEST, 0));
     }
 
@@ -93,11 +99,11 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         r.setId(1000);
         r.setName(TEST);
         r.setServiceId(TEST);
-        this.servicesManager.save(r);
+        servicesManager.save(r);
         assertTrue(isServiceInCache(null, 1000));
-        assertNotNull(this.servicesManager.findServiceBy(r.getServiceId()));
-        this.servicesManager.delete(r);
-        assertNull(this.servicesManager.findServiceBy(r.getId()));
+        assertNotNull(servicesManager.findServiceBy(serviceFactory.createService(r.getServiceId())));
+        servicesManager.delete(r);
+        assertNull(servicesManager.findServiceBy(r.getId()));
         assertFalse(isServiceInCache(null, 1000));
     }
 
@@ -111,8 +117,8 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         expirationPolicy.setNotifyWhenExpired(true);
         expirationPolicy.setExpirationDate(LocalDateTime.now(ZoneOffset.UTC).minusDays(2).toString());
         r.setExpirationPolicy(expirationPolicy);
-        this.servicesManager.save(r);
-        assertNotNull(this.servicesManager.findServiceBy(r.getServiceId()));
+        servicesManager.save(r);
+        assertNotNull(servicesManager.findServiceBy(serviceFactory.createService(r.getServiceId())));
     }
 
     @Test
@@ -127,8 +133,8 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         expirationPolicy.setDeleteWhenExpired(true);
         expirationPolicy.setNotifyWhenDeleted(true);
         r.setExpirationPolicy(expirationPolicy);
-        this.servicesManager.save(r);
-        assertNull(this.servicesManager.findServiceBy(r.getServiceId()));
+        servicesManager.save(r);
+        assertNull(servicesManager.findServiceBy(serviceFactory.createService(r.getServiceId())));
     }
 
     protected ServicesManager getServicesManagerInstance() {

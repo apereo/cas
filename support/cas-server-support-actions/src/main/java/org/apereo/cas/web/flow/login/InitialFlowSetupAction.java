@@ -106,7 +106,7 @@ public class InitialFlowSetupAction extends AbstractAction {
         if (service != null) {
             LOGGER.debug("Placing service in context scope: [{}]", service.getId());
             val selectedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
-            val registeredService = this.servicesManager.findServiceBy(selectedService);
+            val registeredService = servicesManager.findServiceBy(selectedService);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service.getId(), registeredService);
             if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
                 LOGGER.debug("Placing registered service [{}] with id [{}] in context scope",

@@ -80,7 +80,7 @@ public class CollectionUtils {
      */
     @SuppressWarnings("JdkObsolete")
     public static Set<Object> toCollection(final Object obj) {
-        val c = new LinkedHashSet<Object>(MAP_SIZE);
+        val c = new LinkedHashSet<>(MAP_SIZE);
         if (obj == null) {
             LOGGER.trace("Converting null obj to empty collection");
         } else if (obj instanceof Collection) {

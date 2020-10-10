@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryInitializer;
@@ -44,12 +45,16 @@ public class CasServiceRegistryInitializationConfigurationTests {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory webApplicationServiceFactory;
+
     @Test
     public void verifyOperation() {
         assertNotNull(serviceRegistryInitializer);
         assertNotNull(embeddedJsonServiceRegistry);
         assertEquals(1, servicesManager.count());
         assertNotNull(servicesManager.findServiceBy(12345));
-        assertNotNull(servicesManager.findServiceBy("https://init.cas.org"));
+        assertNotNull(servicesManager.findServiceBy(webApplicationServiceFactory.createService("https://init.cas.org")));
     }
 }

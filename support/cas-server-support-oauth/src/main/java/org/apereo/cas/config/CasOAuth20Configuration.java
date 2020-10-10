@@ -257,7 +257,8 @@ public class CasOAuth20Configuration {
         val server = casProperties.getServer();
 
         val cfg = new CasConfiguration(server.getLoginUrl());
-        cfg.setDefaultTicketValidator(new CasServerApiBasedTicketValidator(centralAuthenticationService.getObject()));
+        val validator = new CasServerApiBasedTicketValidator(centralAuthenticationService.getObject(), webApplicationServiceFactory.getObject());
+        cfg.setDefaultTicketValidator(validator);
 
         val oauthCasClient = new CasClient(cfg);
         oauthCasClient.setRedirectionActionBuilder(webContext ->

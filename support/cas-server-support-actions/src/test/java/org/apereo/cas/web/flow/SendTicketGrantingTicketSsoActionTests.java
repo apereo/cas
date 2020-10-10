@@ -12,7 +12,6 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -37,12 +36,14 @@ import static org.mockito.Mockito.*;
 public class SendTicketGrantingTicketSsoActionTests extends AbstractWebflowActionsTests {
 
     private static final String LOCALHOST_IP = "127.0.0.1";
+
     private static final String TEST_STRING = "test";
+
     private static final String SUCCESS = "success";
 
     @Autowired
     @Qualifier("sendTicketGrantingTicketAction")
-    private ObjectProvider<Action> action;
+    private Action action;
 
     private MockRequestContext context;
 
@@ -67,7 +68,7 @@ public class SendTicketGrantingTicketSsoActionTests extends AbstractWebflowActio
         request.setCookies(new Cookie("TGT", "test5"));
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        assertEquals(SUCCESS, action.getObject().execute(this.context).getId());
+        assertEquals(SUCCESS, action.execute(this.context).getId());
         assertEquals(0, response.getCookies().length);
     }
 
@@ -91,7 +92,7 @@ public class SendTicketGrantingTicketSsoActionTests extends AbstractWebflowActio
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         this.context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, svc);
 
-        assertEquals(SUCCESS, action.getObject().execute(this.context).getId());
+        assertEquals(SUCCESS, action.execute(this.context).getId());
         assertEquals(0, response.getCookies().length);
     }
 }

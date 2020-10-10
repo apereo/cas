@@ -15,6 +15,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -51,10 +53,10 @@ public class SamlIdPObjectSignerTests extends BaseSamlIdPConfigurationTests {
     private AuthnRequest getAuthnRequest(final SamlRegisteredService samlRegisteredService) {
         var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
-        var authnRequest = (AuthnRequest) builder.buildObject();
+        var authnRequest = (AuthnRequest) Objects.requireNonNull(builder).buildObject();
         builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
-        val issuer = (Issuer) builder.buildObject();
+        val issuer = (Issuer) Objects.requireNonNull(builder).buildObject();
         issuer.setValue(samlRegisteredService.getServiceId());
         authnRequest.setIssuer(issuer);
         return authnRequest;

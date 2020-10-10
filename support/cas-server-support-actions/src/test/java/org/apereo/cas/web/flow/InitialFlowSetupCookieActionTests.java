@@ -62,7 +62,6 @@ public class InitialFlowSetupCookieActionTests extends AbstractWebflowActionsTes
 
     @BeforeEach
     public void initialize() throws Exception {
-
         val warn = CookieGenerationContext.builder()
             .name("warn")
             .path(StringUtils.EMPTY)

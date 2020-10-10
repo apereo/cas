@@ -3,8 +3,10 @@ package org.apereo.cas.oidc.services;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategy;
+import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,9 +44,10 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
         assertEquals(Ordered.HIGHEST_PRECEDENCE, oidcServicesManagerRegisteredServiceLocator.getOrder());
         val service = getOidcRegisteredService(UUID.randomUUID().toString());
         service.setMatchingStrategy(new PartialRegexRegisteredServiceMatchingStrategy());
+        val svc = webApplicationServiceFactory.createService(
+            String.format("https://oauth.example.org/whatever?%s=clientid", OAuth20Constants.CLIENT_ID));
         val result = oidcServicesManagerRegisteredServiceLocator.locate(List.of(service),
-            "https://oauth.example.org/whatever",
-            r -> r.matches("https://oauth.example.org/whatever"));
+            svc, r -> r.matches("https://oauth.example.org/whatever"));
         assertNotNull(result);
     }
 
@@ -62,9 +65,15 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
         service3.setEvaluationOrder(15);
 
         servicesManager.save(service1, service2, service3);
-        val result = servicesManager.findServiceBy("https://app.example.org");
-        assertNotNull(result);
+
+        var svc = webApplicationServiceFactory.createService(
+            String.format("https://app.example.org/whatever?%s=clientid", OAuth20Constants.CLIENT_ID));
+        var result = servicesManager.findServiceBy(svc);
         assertTrue(result instanceof OidcRegisteredService);
+
+        svc = webApplicationServiceFactory.createService("https://app.example.org/whatever?hello=world");
+        result = servicesManager.findServiceBy(svc);
+        assertTrue(result instanceof RegexRegisteredService);
     }
 
 }

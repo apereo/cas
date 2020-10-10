@@ -112,7 +112,8 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
     public RegisteredServicesEndpoint registeredServicesReportEndpoint() {
-        return new RegisteredServicesEndpoint(casProperties, servicesManager.getObject());
+        return new RegisteredServicesEndpoint(casProperties, servicesManager.getObject(),
+            webApplicationServiceFactory.getObject());
     }
 
     @Bean
