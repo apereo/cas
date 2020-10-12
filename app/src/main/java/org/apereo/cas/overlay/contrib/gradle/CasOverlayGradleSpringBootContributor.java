@@ -5,10 +5,6 @@ import io.spring.initializr.generator.project.contributor.SingleResourceProjectC
 public class CasOverlayGradleSpringBootContributor extends SingleResourceProjectContributor {
 
     public CasOverlayGradleSpringBootContributor() {
-        this("classpath:overlay/gradle/springboot.gradle");
-    }
-
-    private CasOverlayGradleSpringBootContributor(String resourcePattern) {
-        super("gradle/springboot.gradle", resourcePattern);
+        super("gradle/springboot.gradle", "classpath:overlay/gradle/springboot.gradle");
     }
 }

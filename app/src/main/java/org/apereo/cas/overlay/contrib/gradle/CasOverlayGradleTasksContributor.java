@@ -5,10 +5,6 @@ import io.spring.initializr.generator.project.contributor.SingleResourceProjectC
 public class CasOverlayGradleTasksContributor extends SingleResourceProjectContributor {
 
     public CasOverlayGradleTasksContributor() {
-        this("classpath:overlay/gradle/tasks.gradle");
-    }
-
-    private CasOverlayGradleTasksContributor(String resourcePattern) {
-        super("gradle/tasks.gradle", resourcePattern);
+        super("gradle/tasks.gradle", "classpath:overlay/gradle/tasks.gradle");
     }
 }
