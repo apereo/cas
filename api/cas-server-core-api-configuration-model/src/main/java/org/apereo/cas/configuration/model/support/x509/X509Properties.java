@@ -350,6 +350,7 @@ public class X509Properties implements Serializable {
 
     @Getter
     @Setter
+    @RequiresModule(name = "cas-server-support-x509-webflow")
     public static class Ldap extends AbstractLdapSearchProperties {
 
         private static final long serialVersionUID = -1655068554291000206L;

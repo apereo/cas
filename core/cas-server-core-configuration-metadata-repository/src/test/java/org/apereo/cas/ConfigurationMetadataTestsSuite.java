@@ -1,5 +1,6 @@
-package org.apereo.cas.metadata;
+package org.apereo.cas;
 
+import org.apereo.cas.metadata.CasConfigurationMetadataRepositoryTests;
 import org.apereo.cas.metadata.rest.CasConfigurationMetadataServerEndpointTests;
 import org.apereo.cas.metadata.rest.ConfigurationMetadataSearchResultTests;
 
@@ -14,6 +15,7 @@ import org.junit.runner.RunWith;
  * @since 6.2.0
  */
 @SelectClasses({
+    CasConfigurationMetadataRepositoryTests.class,
     CasConfigurationMetadataServerEndpointTests.class,
     ConfigurationMetadataSearchResultTests.class
 })
