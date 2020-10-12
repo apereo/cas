@@ -69,5 +69,8 @@ this will not be a blocker for the final release.
 ## Library Upgrades
 
 - Lettuce Redis Client
+- Apache Tomcat
+- Gradle
+
 
 

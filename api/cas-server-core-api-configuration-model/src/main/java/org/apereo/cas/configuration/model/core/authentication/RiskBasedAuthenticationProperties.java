@@ -17,7 +17,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RequiresModule(name = "cas-server-support-electrofence", automated = true)
+@RequiresModule(name = "cas-server-support-electrofence")
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -66,6 +66,7 @@ public class RiskBasedAuthenticationProperties implements Serializable {
     @Getter
     @Setter
     @Accessors(chain = true)
+    @RequiresModule(name = "cas-server-support-electrofence")
     public static class IpAddress implements Serializable {
 
         private static final long serialVersionUID = 577801361041617794L;
@@ -79,6 +80,8 @@ public class RiskBasedAuthenticationProperties implements Serializable {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
+    @RequiresModule(name = "cas-server-support-electrofence")
     public static class Agent implements Serializable {
 
         private static final long serialVersionUID = 7766080681971729400L;
@@ -92,6 +95,8 @@ public class RiskBasedAuthenticationProperties implements Serializable {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
+    @RequiresModule(name = "cas-server-support-electrofence")
     public static class GeoLocation implements Serializable {
 
         private static final long serialVersionUID = 4115333388680538358L;
@@ -105,6 +110,8 @@ public class RiskBasedAuthenticationProperties implements Serializable {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
+    @RequiresModule(name = "cas-server-support-electrofence")
     public static class DateTime implements Serializable {
 
         private static final long serialVersionUID = -3776875583039922050L;
@@ -124,6 +131,8 @@ public class RiskBasedAuthenticationProperties implements Serializable {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
+    @RequiresModule(name = "cas-server-support-electrofence")
     public static class Response implements Serializable {
 
         private static final long serialVersionUID = 8254082561120701582L;

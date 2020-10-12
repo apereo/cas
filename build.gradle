@@ -58,8 +58,6 @@ ext {
     skipBootifulArtifact = providers.systemProperty("skipBootifulArtifact").forUseAtConfigurationTime().present
     skipErrorProneCompiler = providers.systemProperty("skipErrorProneCompiler").forUseAtConfigurationTime().present
 
-    forceBom = Boolean.getBoolean("forceBom")
-
     enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")
     remoteDebuggingSuspend = Boolean.getBoolean("remoteDebuggingSuspend") ? "y" : "n"
     generateGitProperties = Boolean.getBoolean("generateGitProperties")

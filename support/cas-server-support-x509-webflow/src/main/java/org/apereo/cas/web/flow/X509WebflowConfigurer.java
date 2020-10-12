@@ -50,17 +50,24 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
     protected void doInitialize() {
         val flow = getLoginFlow();
         if (flow != null) {
-            val actionState = createActionState(flow, STATE_ID_START_X509, createEvaluateAction("x509Check"));
+            val actionState = createActionState(flow, STATE_ID_START_X509, "x509Check");
             val transitionSet = actionState.getTransitionSet();
-            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
-            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.TRANSITION_ID_WARN));
-            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
-            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
-
+            
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN,
+                CasWebflowConstants.TRANSITION_ID_WARN));
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR,
+                CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
+                CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS,
+                CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS));
+            
             actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
 
-            val state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
-            createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_START_X509, true);
+            val initState = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
+            createTransitionForState(initState, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_START_X509, true);
         }
     }
 }

@@ -67,7 +67,6 @@ The following commandline boolean flags are supported by the build and can be pa
 | `skipSonarqube`                   | Ignore reporting results to Sonarqube.
 | `skipErrorProneCompiler`          | Skip running the `error-prone` static-analysis compiler.
 | `skipBootifulArtifact`            | Do not apply the Spring Boot plugin to bootify application artifacts.
-| `forceBom`                        | Force the generation of the CAS Maven BOM.
 | `ignoreJavadocFailures`           | Ignore javadoc failures and let the build resume.
 | `ignoreFindbugsFailures`          | Ignore Findbugs failures and let the build resume.
 | `ignoreTestFailures`              | Ignore test failures and let the build resume.
