@@ -117,7 +117,7 @@ public class DefaultLogoutWebflowConfigurer extends AbstractCasWebflowConfigurer
      * @param flow the flow
      */
     private void createDoLogoutActionState(final Flow flow) {
-        val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DO_LOGOUT, createEvaluateAction("logoutAction"));
+        val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DO_LOGOUT, "logoutAction");
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_FINISH, CasWebflowConstants.STATE_ID_FINISH_LOGOUT);
         createTransitionForState(actionState, "front", CasWebflowConstants.STATE_ID_FRONT_LOGOUT);
     }

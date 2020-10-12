@@ -34,7 +34,7 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
         if (flow != null) {
             createStopWebflowViewState(flow);
 
-            val actionState = createActionState(flow, STATE_ID_WS_FEDERATION_ACTION, createEvaluateAction(STATE_ID_WS_FEDERATION_ACTION));
+            val actionState = createActionState(flow, STATE_ID_WS_FEDERATION_ACTION, STATE_ID_WS_FEDERATION_ACTION);
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET);
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_REDIRECT, WS_FEDERATION_REDIRECT);
 

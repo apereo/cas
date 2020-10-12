@@ -47,7 +47,7 @@ public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_CONFIRM, STATE_ID_CONSENT_CONFIRM);
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_CANCEL, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
 
-        val action = createActionState(flow, STATE_ID_CONSENT_CONFIRM, createEvaluateAction("confirmConsentAction"));
+        val action = createActionState(flow, STATE_ID_CONSENT_CONFIRM, "confirmConsentAction");
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS, ACTION_GEN_SERVICE_TICKET_AFTER_CONSENT);
     }
 

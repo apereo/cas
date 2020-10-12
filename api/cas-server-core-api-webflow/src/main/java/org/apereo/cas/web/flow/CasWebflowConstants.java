@@ -290,6 +290,11 @@ public interface CasWebflowConstants {
     String STATE_ID_TICKET_GRANTING_TICKET_CHECK = "ticketGrantingTicketCheck";
 
     /**
+     * The state id 'startX509Authenticate'.
+     */
+    String STATE_ID_X509_START = "startX509Authenticate";
+
+    /**
      * The state id 'createTicketGrantingTicket'.
      */
     String STATE_ID_CREATE_TICKET_GRANTING_TICKET = "createTicketGrantingTicket";
@@ -298,6 +303,11 @@ public interface CasWebflowConstants {
      * The state 'initializeLoginForm'.
      */
     String STATE_ID_INIT_LOGIN_FORM = "initializeLoginForm";
+
+    /**
+     * The state 'afterInitializeLoginForm'.
+     */
+    String STATE_ID_AFTER_INIT_LOGIN_FORM = "afterInitializeLoginForm";
 
     /**
      * The state 'cancel'.
@@ -764,9 +774,30 @@ public interface CasWebflowConstants {
      */
 
     /**
+     * Action id 'injectResponseHeadersAction'.
+     */
+    String ACTION_ID_INJECT_RESPONSE_HEADERS = "injectResponseHeadersAction";
+
+    /**
+     * Action id 'serviceAuthorizationCheck'.
+     */
+    String ACTION_ID_SERVICE_AUTHZ_CHECK = "serviceAuthorizationCheck";
+
+    /**
+     * Action id 'gatewayServicesManagementCheck'.
+     */
+    String ACTION_ID_GATEWAY_CHECK = "gatewayServicesManagementCheck";
+
+    /**
      * Action id 'validateCaptchaAction'.
      */
     String ACTION_ID_VALIDATE_CAPTCHA = "validateCaptchaAction";
+
+    /**
+     * Action id 'x509Check'.
+     */
+    String ACTION_ID_X509_CHECK = "x509Check";
+
     /**
      * Action id 'initializeLoginAction'.
      */

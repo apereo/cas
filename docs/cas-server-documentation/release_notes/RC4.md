@@ -68,8 +68,10 @@ this will not be a blocker for the final release.
 
 ## Library Upgrades
 
-- Lettuce Redis Client
+- Lettuce
 - Apache Tomcat
+- Java Melody
+- Oshi
 - Gradle
 
 
