@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import io.spring.initializr.generator.buildsystem.BuildItemResolver;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import org.apereo.cas.overlay.CasOverlayGradleBuild;
+import org.apereo.cas.overlay.contrib.CasOverlayConfigurationPropertiesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayLoggingConfigurationContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayProjectLicenseContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayReadMeContributor;
@@ -19,7 +20,7 @@ import org.apereo.cas.overlay.contrib.gradle.CasOverlayGradleSpringBootContribut
 import org.apereo.cas.overlay.contrib.gradle.CasOverlayGradleTasksContributor;
 import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperConfigurationContributor;
 import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperExecutablesContributor;
-import org.apereo.cas.overlay.contrib.CasApplicationYamlPropertiesContributor;
+import org.apereo.cas.overlay.contrib.CasOverlayApplicationYamlPropertiesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayOverrideConfigurationContributor;
 import org.apereo.cas.overlay.contrib.CasOverlaySpringFactoriesContributor;
 import org.springframework.beans.factory.ObjectProvider;
@@ -57,7 +58,8 @@ public class CasOverlayProjectGenerationConfiguration {
         chain.addContributor(new CasOverlayGradleSettingsContributor());
         chain.addContributor(new CasOverlayGradleSpringBootContributor());
         chain.addContributor(new CasOverlayGradleTasksContributor());
-        chain.addContributor(new CasApplicationYamlPropertiesContributor());
+        chain.addContributor(new CasOverlayApplicationYamlPropertiesContributor());
+        chain.addContributor(new CasOverlayConfigurationPropertiesContributor(applicationContext));
         chain.addContributor(new CasOverlayOverrideConfigurationContributor());
         chain.addContributor(new CasOverlaySpringFactoriesContributor());
         chain.addContributor(new CasOverlayProjectLicenseContributor());
