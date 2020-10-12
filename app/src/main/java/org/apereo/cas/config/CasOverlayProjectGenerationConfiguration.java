@@ -3,12 +3,12 @@ package org.apereo.cas.config;
 import io.spring.initializr.generator.buildsystem.BuildItemResolver;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import org.apereo.cas.overlay.CasOverlayGradleBuild;
-import org.apereo.cas.overlay.contrib.CasOverlayConfigurationContributor;
+import org.apereo.cas.overlay.contrib.CasOverlayLoggingConfigurationContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayProjectLicenseContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayReadMeContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayWebXmlContributor;
-import org.apereo.cas.overlay.contrib.ChainingMultipleResourcesProjectContributor;
-import org.apereo.cas.overlay.contrib.ChainingSingleResourceProjectContributor;
+import org.apereo.cas.overlay.contrib.util.ChainingMultipleResourcesProjectContributor;
+import org.apereo.cas.overlay.contrib.util.ChainingSingleResourceProjectContributor;
 import org.apereo.cas.overlay.contrib.docker.CasOverlayDockerContributor;
 import org.apereo.cas.overlay.contrib.docker.jib.CasOverlayGradleJibContributor;
 import org.apereo.cas.overlay.contrib.docker.jib.CasOverlayGradleJibEntrypointContributor;
@@ -19,8 +19,9 @@ import org.apereo.cas.overlay.contrib.gradle.CasOverlayGradleSpringBootContribut
 import org.apereo.cas.overlay.contrib.gradle.CasOverlayGradleTasksContributor;
 import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperConfigurationContributor;
 import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperExecutablesContributor;
-import org.apereo.cas.overlay.contrib.spring.CasApplicationYamlPropertiesContributor;
-import org.apereo.cas.overlay.contrib.spring.CasOverlaySpringBootConfigurationContributor;
+import org.apereo.cas.overlay.contrib.CasApplicationYamlPropertiesContributor;
+import org.apereo.cas.overlay.contrib.CasOverlayOverrideConfigurationContributor;
+import org.apereo.cas.overlay.contrib.CasOverlaySpringFactoriesContributor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -44,33 +45,8 @@ public class CasOverlayProjectGenerationConfiguration {
     }
 
     @Bean
-    public CasOverlayReadMeContributor casOverlayReadMeContributor() {
-        return new CasOverlayReadMeContributor();
-    }
-
-    @Bean
-    public CasOverlayConfigurationContributor casOverlayConfigurationContributor() {
-        return new CasOverlayConfigurationContributor();
-    }
-
-    @Bean
-    public CasOverlayProjectLicenseContributor casOverlayProjectLicenseContributor() {
-        return new CasOverlayProjectLicenseContributor();
-    }
-
-    @Bean
     public CasOverlayDockerContributor casOverlayDockerContributor() {
         return new CasOverlayDockerContributor();
-    }
-
-    @Bean
-    public CasOverlaySpringBootConfigurationContributor casOverlaySpringBootConfigurationContributor() {
-        return new CasOverlaySpringBootConfigurationContributor();
-    }
-    
-    @Bean
-    public CasOverlayWebXmlContributor casOverlayWebXmlContributor() {
-        return new CasOverlayWebXmlContributor();
     }
     
     @Bean
@@ -82,6 +58,12 @@ public class CasOverlayProjectGenerationConfiguration {
         chain.addContributor(new CasOverlayGradleSpringBootContributor());
         chain.addContributor(new CasOverlayGradleTasksContributor());
         chain.addContributor(new CasApplicationYamlPropertiesContributor());
+        chain.addContributor(new CasOverlayOverrideConfigurationContributor());
+        chain.addContributor(new CasOverlaySpringFactoriesContributor());
+        chain.addContributor(new CasOverlayProjectLicenseContributor());
+        chain.addContributor(new CasOverlayWebXmlContributor());
+        chain.addContributor(new CasOverlayLoggingConfigurationContributor());
+        chain.addContributor(new CasOverlayReadMeContributor());
         return chain;
     }
 

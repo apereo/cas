@@ -5,8 +5,7 @@ import io.spring.initializr.generator.project.contributor.MultipleResourcesProje
 public class CasOverlayDockerContributor extends MultipleResourcesProjectContributor {
 
     public CasOverlayDockerContributor() {
-        super("classpath:overlay/docker",
-            filename -> filename.endsWith(".sh"));
+        super("classpath:overlay/docker", filename -> filename.endsWith(".sh"));
     }
 
 }

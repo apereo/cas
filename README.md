@@ -64,5 +64,5 @@ curl -H 'Accept: application/json' http://localhost:8080
 Or using `HTTPie`:
 
 ```bash
-http https://start.spring.io Accept:application/json
+http http://localhost:8080 Accept:application/json
 ```
