@@ -3,6 +3,4 @@
 **/src/test/
 .m2
 test
-**/*.md
-cas-server-documentation/
 target
