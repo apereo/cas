@@ -4,8 +4,5 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
-    <action-state id="initializeLoginForm">
-        <evaluate expression="initializeLoginAction" />
-        <transition on="success" to="viewLoginForm"/>
-    </action-state>
+    <end-state id="theEnd" />
 </flow>
